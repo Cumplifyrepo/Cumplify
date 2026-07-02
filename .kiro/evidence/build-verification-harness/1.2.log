@@ -1,0 +1,68 @@
+=== EVIDENCE LOG ===
+spec: build-verification-harness
+task: 1.2
+git-sha: ee53190a0ddf7a6b34bf100cca4149217cb7f284
+started: 2026-07-02T19:22:48.567Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-02T19:22:48.567Z] ===
+
+added 181 packages, and audited 182 packages in 794ms
+
+51 packages are looking for funding
+  run `npm fund` for details
+
+5 vulnerabilities (3 moderate, 1 high, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+=== STEP 1: npm ci [PASS 2026-07-02T19:22:49.420Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-02T19:22:49.420Z] ===
+
+=== STEP 2: tsc --noEmit [PASS 2026-07-02T19:22:50.014Z] ===
+
+=== STEP 3: eslint + prettier [START 2026-07-02T19:22:50.014Z] ===
+
+> cumplify@0.1.0 lint
+> eslint . --ext .ts,.tsx
+
+
+> cumplify@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+=== STEP 3: eslint + prettier [PASS 2026-07-02T19:22:50.774Z] ===
+
+=== STEP 4: unit + property tests [START 2026-07-02T19:22:50.777Z] ===
+
+ RUN  v2.1.9 /home/julio-medrano/cumplify
+
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  15:22:51
+   Duration  216ms (transform 16ms, setup 0ms, collect 40ms, tests 9ms, environment 0ms, prepare 28ms)
+
+
+=== STEP 4: unit + property tests [PASS 2026-07-02T19:22:51.283Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-02T19:22:51.283Z] ===
+No CDK entrypoint found in infra/bin/ — skipping synth.
+=== STEP 5: cdk synth + CDK Nag [SKIPPED 2026-07-02T19:22:51.283Z] ===
+
+=== STEP 6: integration tests (module: none specified) [START 2026-07-02T19:22:51.283Z] ===
+No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-02T19:22:51.283Z] ===
+
+=== RESULT: PASS (4 green, 2 skipped) | MAX-RUNG: D1 ===
+=== ENDED: 2026-07-02T19:22:51.284Z ===
