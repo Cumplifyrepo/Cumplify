@@ -25,11 +25,8 @@ STOP, flag it in the spec's Open Questions, do not implement.
 Part 30.1 (v4, higher precedence) classifies "NCTriage-class" as a Nova Micro
 duty. Applying corpus precedence (v4 > spine): NCTriage → Nova Micro.
 
-Embeddings: `amazon.titan-embed-text-v2:0`, 1024 dimensions (default; also
-supports 512 and 256). **⚠ OPEN QUESTION:** The corpus states 1536 dimensions
-throughout (00-stack-facts template, Part 4 diagram, spine). AWS docs confirm
-max output is 1024. The kickoff pack source must be corrected before the
-constitution files are placed — owner to amend.
+Embeddings: `amazon.titan-embed-text-v2:0`, 1024 dimensions, default; also
+supports 512/256. Verified via aws-docs MCP 2026-07-02, corpus corrected at source.
 
 ## Verified AWS Services (Appendices A–H consolidated)
 **Compute & API:** Lambda, AppSync (GraphQL), API Gateway (HTTP + WebSocket),
