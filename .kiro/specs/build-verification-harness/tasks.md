@@ -1,0 +1,178 @@
+# Spec 38 — build-verification-harness: Tasks
+
+**Design approved:** 2026-07-02
+**Self-hosting constraint:** This spec builds the evidence gate. Task 1 creates
+the gate script itself; its completion evidence is the gate executed on the
+repo as it stands, retroactively covering task 1. Every later task closes
+through the gate normally.
+
+---
+
+## Dependency Wave 1 — Foundation (sequential, self-hosting bootstrap)
+
+### Task 1.1: Project tooling setup + evidence-gate script
+**Traces to:** AC-1.1, AC-1.2, AC-1.3, AC-1.4, AC-1.5, NFR-1, NFR-2, §4 (log format), §9 (tech.md)
+**D-rung:** D1 (compiles & synths — the script itself passes its own gate)
+**Depends on:** nothing
+
+**Deliverables:**
+- [ ] `package.json` at repo root with: TypeScript, Vitest, fast-check, eslint,
+  prettier, tsx as devDependencies. `tsconfig.json` configured.
+- [ ] `scripts/verify.ts` implementing the ordered 6-step evidence gate per
+  design §4 (log format, SKIPPED semantics, halt-on-first-failure, MAX-RUNG
+  line). Accepts `--spec`, `--task`, `--module` arguments.
+- [ ] `npm run verify` script entry in package.json.
+- [ ] `.kiro/evidence/` directory exists (README already present).
+- [ ] Skip logic: step 5 skips gracefully when no CDK entrypoint in `infra/bin/`;
+  step 6 skips when no module specified or no integration tests exist. Both
+  emit SKIPPED (never PASS). npm ci is unconditional.
+- [ ] tech.md amendment: add dev/test tooling line (Vitest, fast-check, eslint,
+  prettier, tsx, LocalStack with Docker prerequisite note).
+
+**Completion evidence:** Run `npm run verify -- --spec build-verification-harness --task 1.1`
+on the repo as it stands. The log shows steps 1–3 PASS (TypeScript compiles,
+lint passes), step 4 PASS (no services/* code → no property-test check fires),
+step 5 SKIPPED (no CDK app), step 6 SKIPPED (no module). MAX-RUNG: D1.
+This retroactively proves task 1.1.
+
+---
+
+### Task 1.2: Property-based test scaffold
+**Traces to:** AC-3.1, AC-3.2, AC-3.3, AC-3.4, §6 (mechanical check)
+**D-rung:** D1
+**Depends on:** 1.1
+
+**Deliverables:**
+- [ ] `services/_scaffold/example.property.test.ts` — a reference property-based
+  test using fast-check demonstrating: arbitrary generator, property assertion,
+  vitest integration.
+- [ ] `services/_scaffold/` excluded from the §6 mechanical check in
+  `scripts/verify.ts`.
+- [ ] The evidence-gate step 4 discovers `*.property.test.ts` files alongside
+  unit tests and runs them via Vitest.
+- [ ] Mechanical existence check implemented: every `services/<name>/` (excluding
+  `_scaffold`) with source .ts files must contain at least one
+  `*.property.test.ts`, else step 4 FAILs with named error.
+
+**Completion evidence:** `npm run verify -- --spec build-verification-harness --task 1.2`.
+Step 4 passes (scaffold test runs and passes; no other services/ dirs to check).
+
+---
+
+## Dependency Wave 2 — Readback framework
+
+### Task 2.1: Readback test framework + sample assertion
+**Traces to:** AC-2.1, AC-2.3, AC-2.4, AC-2.5, AC-5.2, §7 (readback framework), NFR-4
+**D-rung:** D1 (framework code compiles; no deployment to verify against yet)
+**Depends on:** 1.1
+
+**Deliverables:**
+- [ ] `infra/readback/` directory with Vitest config (serial execution, no
+  watch mode, AOSS assertions carry 45s timeout).
+- [ ] `infra/readback/helpers.ts` — `assertResource(name, designed, observed)`
+  utility that formats pass/fail output per AC-2.4 (resource ARN/name,
+  designed value, actual observed value).
+- [ ] `infra/readback/sample-defect.test.ts` — the S3 ObjectLock assertion
+  used for AC-5.2 (checks `ObjectLockConfiguration.Mode = COMPLIANCE`).
+- [ ] `infra/readback/sample-defect-stack.ts` — minimal CDK stack
+  `Spec38SampleDefect` with one S3 bucket WITHOUT ObjectLockConfiguration,
+  `RemovalPolicy.DESTROY`, no data.
+- [ ] `npm run readback` script entry in package.json.
+- [ ] Graceful handling when no resources deployed (AC-2.5): "no deployed
+  resources to verify" message, exit 0.
+- [ ] @dev tag on all readback tests; 45-second timeout on AOSS assertions
+  per 02-aoss-rule.md.
+
+**Completion evidence:** `npm run verify -- --spec build-verification-harness --task 2.1`.
+Framework compiles; readback invoked in isolation reports "no deployed resources"
+gracefully (AC-2.5 proven).
+
+---
+
+## Dependency Wave 3 — Hook wiring + deliberate-failure proofs
+
+### Task 3.1: Hook prompt updates
+**Traces to:** AC-4.1, AC-4.2, AC-4.3, AC-4.4, §8 (hook prompts), F-9
+**D-rung:** D1
+**Depends on:** 1.1, 2.1
+
+**Deliverables:**
+- [ ] `verify-evidence.json` prompt updated to reference
+  `npm run verify -- --spec <name> --task <id> --module <module>` with
+  --module omission rationale requirement.
+- [ ] `deploy-readback.json` prompt updated to reference `npm run readback`.
+- [ ] `dod-gate.json` prompt updated to check evidence log existence, all
+  steps PASS (SKIPPED = not-green for D2+), readback appended for D3+.
+- [ ] Early-exit guards remain as first sentence in each prompt.
+
+**Completion evidence:** `npm run verify -- --spec build-verification-harness --task 3.1`.
+Hook JSON files are valid JSON, TypeScript compiles (no code changes beyond hooks),
+lint passes.
+
+---
+
+### Task 3.2: AC-5.1 — Deliberate evidence-gate failure proof
+**Traces to:** AC-5.1, AC-5.3
+**D-rung:** D2 (tested — the test IS the proof)
+**Depends on:** 1.1, 1.2
+
+**Deliverables:**
+- [ ] A temporary TypeScript file with a deliberate type error placed in a
+  test fixture directory.
+- [ ] Run `npm run verify` against it → step 2 (tsc --noEmit) FAILS.
+- [ ] Evidence log captured showing verbatim failure with the type error
+  in the output.
+- [ ] The broken file is removed after proof capture (it is not merged;
+  only the evidence log of the failure is committed).
+
+**Completion evidence:** `.kiro/evidence/build-verification-harness/3.2.log`
+shows STEP 2 FAIL with the type error. The harness caught it.
+
+---
+
+### Task 3.3: AC-5.2 — Deliberate readback failure proof (REQUIRES-HUMAN)
+**Traces to:** AC-5.2, AC-5.2a, AC-5.3
+**D-rung:** D3 (deployed & read back — the readback failure IS the D3 proof)
+**Depends on:** 2.1
+**REQUIRES-HUMAN**
+
+**Deliverables:**
+- [ ] Human deploys `Spec38SampleDefect` stack to dev account using their
+  own deploy credentials (not cumplify-dev-readonly).
+- [ ] Human runs `npm run readback` → `sample-defect.test.ts` assertion FAILS
+  with output: `observed: undefined, designed: COMPLIANCE`.
+- [ ] Evidence log captured showing the readback failure with observed vs
+  designed values.
+- [ ] Human tears down `Spec38SampleDefect` stack (`cdk destroy`).
+- [ ] Evidence log committed (the failure output, not the stack).
+
+**Completion evidence:** `.kiro/evidence/build-verification-harness/3.3.log`
+shows the readback assertion failure: S3 bucket ObjectLockConfiguration
+observed=undefined, designed=COMPLIANCE. Then teardown confirmed.
+
+---
+
+## Sequencing Summary
+
+```
+Wave 1 (self-hosting bootstrap):
+  1.1 → 1.2  (1.1 must complete first — it IS the gate)
+
+Wave 2 (readback, parallel with 1.2):
+  2.1
+
+Wave 3 (wiring + proofs, after waves 1+2):
+  3.1, 3.2 (parallel)
+  3.3 (REQUIRES-HUMAN, after 2.1)
+
+Gate: AC-5.3 — after 3.2 AND 3.3 pass, other specs may close tasks.
+```
+
+---
+
+## Post-completion standing rule
+
+After all tasks complete: **no task from any other spec (including spec 1
+platform-foundation) may be marked complete until AC-5.1 (task 3.2) and
+AC-5.2 (task 3.3) evidence logs exist proving the harness catches failures.**
+This is the Part 42.4 invariant.
