@@ -36,7 +36,9 @@ It provides:
   3. `eslint + prettier check`
   4. Unit + property-based tests
   5. `cdk synth --all` + CDK Nag (warnings = failures)
-  6. Targeted integration tests for the touched module
+  6. Targeted integration tests for the touched module (LocalStack where
+     applicable; real dev account for IAM/KMS/AOSS semantics that
+     emulators cannot faithfully reproduce)
 
 - AC-1.2: WHERE any step fails, THEN the script writes the verbatim failure
   output to `.kiro/evidence/<spec>/<task>.log`, reports the failure, and the
@@ -128,13 +130,18 @@ real executable scripts (not just prompt-only behavior),
   the assertion table.
 
 - AC-4.3: The `dod-gate` hook SHALL verify that the evidence log exists at
-  `.kiro/evidence/<spec>/<task>.log` for the declared D-rung:
-  - D1: L2 steps 1–4 logs green.
-  - D2: Unit + property + integration logs green.
-  - D3: D2 + deploy-readback assertion table green.
-  - D4: D3 + golden-path suites green in staging.
-  - D5: D4 + human UAT script passed.
-  - D6: D5 + canary survived + synthetics green 24h.
+  `.kiro/evidence/<spec>/<task>.log` and satisfies the exit evidence per
+  Part 40's D-rung table (normative):
+  - D1 (Compiles & synths): L2 steps 1–5 logs green (npm ci, tsc, lint,
+    tests, cdk synth + Nag).
+  - D2 (Tested): D1 + unit + property + module integration logs green;
+    coverage didn't drop.
+  - D3 (Deployed & read back): D2 + deployed to dev via pipeline +
+    readback assertion table green against the live account.
+  - D4 (Behaves): D3 + golden-path suites green in staging; DLQs empty
+    after run; no new CloudWatch errors.
+  - D5 (Human-user ready): D4 + human UAT script passed.
+  - D6 (Live-proven): D5 + canary survived + synthetics green 24h.
 
 - AC-4.4: WHERE the dod-gate hook runs on a task that is not `close:*` or a
   phase-gate task, THEN it replies "not a gate task — skipped" and stops.
@@ -155,6 +162,14 @@ real executable scripts (not just prompt-only behavior),
   missing Object Lock) SHALL fail readback with observed-vs-designed values
   shown in the assertion output.
 
+- AC-5.2a: The deliberate mis-deployment requires deploy credentials that
+  exceed the cumplify-dev-readonly profile. This step is REQUIRES-HUMAN:
+  a human deploys a throwaway CDK stack (with the intentional defect) via
+  their own credentials, runs the readback, confirms the failure output,
+  then tears down the stack. The evidence is the readback log showing the
+  observed-vs-designed mismatch. Sequence: human deploys → readback runs →
+  failure captured → human tears down → evidence committed.
+
 - AC-5.3: UNTIL AC-5.1 and AC-5.2 are demonstrated green (the harness
   catches both failure types), no task from any other spec (including spec 1
   platform-foundation) may be marked complete.
@@ -174,18 +189,14 @@ real executable scripts (not just prompt-only behavior),
 
 ## 4. Open Questions
 
-- OQ-1: Should the evidence-gate script be a standalone `scripts/verify.ts`
-  invoked by the hook, or a package.json script entry (`npm run verify`)?
-  Leaning toward package.json for discoverability + the hook instructs the
-  agent to run it.
-- OQ-2: For the readback framework, should assertions be written as Jest/Vitest
-  tests (leveraging the existing test runner) or a custom assertion runner?
-  Jest/Vitest provides familiar assertion syntax + parallel execution, but
-  adds the test framework as a dependency on infra/ code. Leaning Vitest
-  (already needed for services/ tests).
-- OQ-3: The Part 39 readback table includes assertions about Guardrails and
-  AppSync WAF/authorizer — these resources don't exist until spec 1 and spec 4
-  deploy them. Should the initial assertion set include placeholder/skip
-  annotations for not-yet-deployed resources, or should the set grow per-spec?
-  Leaning toward grow-per-spec (each spec's design.md §7 adds its readback
-  assertions).
+- OQ-1: **Resolved.** The evidence-gate script lives at `scripts/verify.ts`,
+  exposed as `npm run verify`. Hooks instruct the agent to call the npm entry.
+
+- OQ-2: **Resolved.** Test tooling = Vitest + fast-check. Readback suites
+  run serially (no watch mode); AOSS-touching assertions carry the 45-second
+  budget. A "Dev/test tooling" line will be added to tech.md in design phase
+  per 14-simplicity.md (covering vitest, fast-check, eslint, prettier, tsx).
+
+- OQ-3: **Resolved.** Assertion set grows per-spec per Part 39's own rule:
+  each spec's design.md §7 owns its readback assertions. No placeholders
+  for not-yet-deployed resources.
