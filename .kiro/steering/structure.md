@@ -17,7 +17,7 @@ cumplify/
 │   │   ├── eventing-backbone/...
 │   │   └── ... (specs 1–41)
 │   ├── hooks/             # Agent hooks (quality gates)
-│   │   └── *.json
+│   │   └── *.kiro.hook
 │   ├── settings/
 │   │   └── mcp.json       # MCP server configuration
 │   └── evidence/          # Execution evidence logs per spec/task
@@ -36,6 +36,8 @@ cumplify/
 │   │   ├── eventing-stack.ts
 │   │   ├── api-stack.ts
 │   │   ├── ai-stack.ts
+│   │   ├── compute-stack.ts
+│   │   ├── edge-stack.ts
 │   │   ├── growth-stack.ts
 │   │   ├── billing-stack.ts
 │   │   ├── lifecycle-stack.ts

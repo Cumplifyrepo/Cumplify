@@ -15,13 +15,21 @@ STOP, flag it in the spec's Open Questions, do not implement.
 ## AI Models (Nova-first mandate, Part 30)
 | Model | Profile ID | Duty class |
 |---|---|---|
-| Nova Micro | `us.amazon.nova-micro-v1:0` | Classification, routing, triage, telemetry summarization |
+| Nova Micro | `us.amazon.nova-micro-v1:0` | Classification, routing, triage, telemetry summarization, NCTriage (see note below) |
 | Nova Lite | `us.amazon.nova-lite-v1:0` | Lightweight agents (RecordsVault, ObjectiveTracker, ContextCartographer, SupplierScout, CompetenceKeeper, EmergencyPlanner, WorkerVoice) |
 | Nova Pro | `us.amazon.nova-pro-v1:0` | Workhorse agents (ControlTower, DocStudio, LeadAuditor, CAPAGuru, RiskSentinel, AspectWarden, HazardScout, IncidentInvestigator, ReviewOrchestrator, ComplianceCopilot) |
-| Nova Premier | `us.amazon.nova-premier-v1:0` | Highest-reasoning Nova; mandatory first candidate for former Sonnet duties |
+| Nova Premier | `us.amazon.nova-premier-v1:0` | Highest-reasoning Nova; ISO9001 Domain Guru, ISO14001 Domain Guru, ISO45001 Domain Guru (reassigned from Sonnet per Part 30.2; quarterly 30.3 eval re-validates — if Nova Premier fails the clause-accuracy benchmark, seat reverts to Sonnet under a fresh MODELEXCEPTION record) |
 | **Claude Sonnet 4.6** | `us.anthropic.claude-sonnet-4-6` | **SOLE exception:** LegalLedger (M8) only, quarterly-expiring justification, IAM-scoped to that one agent |
 
-Embeddings: `amazon.titan-embed-text-v2:0`, 1536 dimensions, everywhere.
+**NCTriage assignment note:** agent-catalog.md assigns NCTriage to Nova Lite;
+Part 30.1 (v4, higher precedence) classifies "NCTriage-class" as a Nova Micro
+duty. Applying corpus precedence (v4 > spine): NCTriage → Nova Micro.
+
+Embeddings: `amazon.titan-embed-text-v2:0`, 1024 dimensions (default; also
+supports 512 and 256). **⚠ OPEN QUESTION:** The corpus states 1536 dimensions
+throughout (00-stack-facts template, Part 4 diagram, spine). AWS docs confirm
+max output is 1024. The kickoff pack source must be corrected before the
+constitution files are placed — owner to amend.
 
 ## Verified AWS Services (Appendices A–H consolidated)
 **Compute & API:** Lambda, AppSync (GraphQL), API Gateway (HTTP + WebSocket),
