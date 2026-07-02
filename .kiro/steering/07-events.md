@@ -12,10 +12,12 @@ EventBridge is the nervous system. Every domain mutation is an event.
   consumers, a single schema registry.
 
 ## Event naming
-- Pattern: `<Domain>.<Action>` in PascalCase.
-- Examples: `Audit.FindingRaised`, `Incident.Reported`, `Capa.Closed`,
-  `Doc.Published`, `Hazard.Identified`, `Aspect.SignificantImpact`,
-  `Obligation.Evaluated`, `Kpi.Progress`, `Supplier.Evaluated`.
+- Pattern: `<Domain>.<Action>` in PascalCase (module-spec supersedes spine's
+  lowercase names).
+- Examples (per module-spec): `Audit.FindingRaised`, `Incident.Reported`,
+  `CAPA.Closed`, `Document.Published`, `Hazard.Identified`,
+  `Aspect.SignificantImpact`, `Compliance.Evaluated`, `Objectives.OffTrack`,
+  `Supplier.Evaluated`.
 - Every event carries: `tenantId`, `eventId` (ULID), `timestamp`, `actor`,
   `module`, `clauseRef`, `standard`, `payload`.
 - Why: consistent naming = reliable rules; tenantId on every event = audit
@@ -24,14 +26,16 @@ EventBridge is the nervous system. Every domain mutation is an event.
 ## SQS + DLQ topology
 - Every consumer queue has a paired DLQ. DLQ depth > 0 for 15 min = page.
 - FIFO queues (messageGroupId = `tenantId`) where per-tenant ordering matters:
-  CAPA lifecycle, audit sink, Marketplace lifecycle.
+  CAPA lifecycle, audit sink.
+- Marketplace `mp-lifecycle` queue: FIFO by `CustomerIdentifier` (events
+  arrive before tenant resolution — do NOT group by tenantId).
 - Standard queues elsewhere (hazard, aspect, review fan-out).
 - Why: FIFO-by-tenant = causal ordering within a tenant without global
   ordering bottlenecks; DLQ = no silent event loss.
 
 ## Event chains (module-spec Appendix B)
-- NC chain: `Audit.FindingRaised` / `Incident.Reported` → NCTriage →
-  CAPAGuru → RecordsVault.
+- NC chain: `Audit.FindingRaised` / `Incident.Reported` /
+  `Aspect.SignificantImpact` → NCTriage → CAPAGuru → RecordsVault.
 - Hazard chain: `Hazard.Identified` → HazardScout → RiskSentinel → CAPAGuru.
 - Aspect chain: `Aspect.SignificantImpact` → AspectWarden → RiskSentinel.
 - Management review fan-in: ReviewOrchestrator gathers 9.3.2 inputs in

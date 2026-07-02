@@ -11,17 +11,18 @@ state), the agent PAUSES via Bedrock `returnControl` and the write commits
 only after `returnControlInvocationResults` carries approval from an
 authorized human role. Read/draft/advisory actions run autonomously.
 
-## Role mapping for approvals
+## Role mapping for approvals (normative source: agent-catalog.md per-agent HITL notes)
 | Agent action | Approving role(s) |
 |---|---|
 | ControlTower governance writes | Executive, Quality/EHS Manager |
 | DocStudio publish/approve | Quality Manager (+ EHS Manager for 14001/45001 policy) |
 | LeadAuditor finding/readiness writes | Auditor, Quality Manager |
 | CAPAGuru CAPA lifecycle mutations | Quality Manager (9001), EHS Manager (14001/45001) |
-| RecordsVault (sealing) | Automated (append-only, no approval needed — immutability layer handles integrity) |
+| RecordsVault retention-schedule changes | Quality Manager |
+| RecordsVault sealing (append-only writes) | Automated — immutability layer, no HITL |
 | RiskSentinel risk-rating changes | Quality/EHS Manager |
-| LegalLedger obligation mappings | EHS Manager, IMS Lead |
-| All other mutating agents | Role per the Part 13 permission matrix |
+| LegalLedger obligation mappings | Quality Manager, EHS Manager |
+| NCTriage low-severity auto-route | Per tenant policy: low-severity NCs may auto-route to CAPAGuru without HITL (configurable exception) |
 
 ## Part 35 Layer 5 — The upgraded HITL card
 Every AI-drafted artifact displays:

@@ -5,9 +5,11 @@ fileMatchPattern: "{services/legal/**,frontend/**signup**}"
 # Legal Consent Architecture (Parts 12.1, 21.2)
 Every acceptance is an audit event. Contract formation is cryptographic evidence.
 
-## The legal document stack (8 instruments)
-ToS, AI Output Terms, AUP, Privacy Policy + DPA, SLA (Enterprise), Affiliate
-Agreement, Beta Terms, Trial Terms. Each versioned, click-wrapped, recorded.
+## The legal document stack (9 instruments, post-v3)
+ToS, EULA (software-license grant, non-transferable, revocable), AI Output
+Terms, AUP, Privacy Policy + DPA, SLA (Enterprise), Affiliate Agreement, Beta
+Terms, Trial Terms. Plus: referral-attribution notice when `partnerRef` present.
+Each versioned, click-wrapped, recorded.
 
 ## Signup legal gate (Part 21.2 — S4b ceremony)
 ```
@@ -41,8 +43,8 @@ Every acceptance emits:
 ## Build rules
 1. Every consent event MUST be written through the immutable trail path —
    never a standalone database write.
-2. Re-accept flow on material doc change: existing users prompted on next
-   login; new version acceptance logged as a distinct event.
+2. Re-accept on material doc change: click-wrap re-acceptance required per
+   Part 12.1 (re-accept on material change); logged as a distinct event.
 3. Day-5 trial reminder email MUST fire (click-to-cancel compliance).
 4. Cancellation = one click in Settings → Billing, no retention call,
    immediate confirmation email.

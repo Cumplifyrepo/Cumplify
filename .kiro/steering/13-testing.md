@@ -12,11 +12,11 @@ A task that produces code without its paired test is incomplete.
 ## The pyramid
 1. Unit tests: fast, isolated, mock external services. Cover business logic,
    transformers, validators, permission checks.
-2. Property-based tests: mandatory on `services/*` code where input domains
-   are broad (parsers, credit calculations, event handlers). Use fast-check
+2. Property-based tests: mandatory on `services/*` code. Use fast-check
    or equivalent.
 3. Integration tests: per-module, against real AWS services in dev account.
-   Cover the happy path + at least one failure/retry path.
+   Use LocalStack where applicable; real dev account for IAM/KMS/AOSS
+   semantics. Cover the happy path + at least one failure/retry path.
 4. Tenant-isolation suite: MANDATORY in CI. For every data path, assert that
    Tenant-A cannot read/write Tenant-B's data. A missing denial test is a
    review-blocking defect.
@@ -25,7 +25,6 @@ A task that produces code without its paired test is incomplete.
 - Tests are proportional to the code they protect. Do not generate speculative
   abstraction layers, config options, or TODO scaffolds nobody asked for.
 - Prefer concrete assertions over generic parametric frameworks.
-- One test file per source file, co-located or in a parallel `__tests__/` dir.
 - Test names describe the behavior, not the implementation.
 
 ## What "passes" means

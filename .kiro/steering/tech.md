@@ -18,8 +18,8 @@ STOP, flag it in the spec's Open Questions, do not implement.
 | Nova Micro | `us.amazon.nova-micro-v1:0` | Classification, routing, triage, telemetry summarization, NCTriage (see note below) |
 | Nova Lite | `us.amazon.nova-lite-v1:0` | Lightweight agents (RecordsVault, ObjectiveTracker, ContextCartographer, SupplierScout, CompetenceKeeper, EmergencyPlanner, WorkerVoice) |
 | Nova Pro | `us.amazon.nova-pro-v1:0` | Workhorse agents (ControlTower, DocStudio, LeadAuditor, CAPAGuru, RiskSentinel, AspectWarden, HazardScout, IncidentInvestigator, ReviewOrchestrator, ComplianceCopilot) |
-| Nova Premier | `us.amazon.nova-premier-v1:0` | Highest-reasoning Nova; ISO9001 Domain Guru, ISO14001 Domain Guru, ISO45001 Domain Guru (reassigned from Sonnet per Part 30.2; quarterly 30.3 eval re-validates — if Nova Premier fails the clause-accuracy benchmark, seat reverts to Sonnet under a fresh MODELEXCEPTION record) |
-| **Claude Sonnet 4.6** | `us.anthropic.claude-sonnet-4-6` | **SOLE exception:** LegalLedger (M8) only, quarterly-expiring justification, IAM-scoped to that one agent |
+| Nova Premier | `us.amazon.nova-premier-v1:0` | Highest-reasoning Nova; ISO9001 Domain Guru, ISO14001 Domain Guru, ISO45001 Domain Guru (reassigned from Sonnet per Part 30.2; one-time 30.3 parity gate before P1 exit — if Nova Premier fails the clause-accuracy benchmark, seat reverts to Sonnet under a fresh MODELEXCEPTION record) |
+| **Claude Sonnet 4.6** | `us.anthropic.claude-sonnet-4-6` | **SOLE exception:** LegalLedger (M8) only, quarterly-expiring justification, IAM-scoped to that one agent. Quarterly 30.3 re-benchmark: the day Premier passes LegalLedger's duty, this seat flips. |
 
 **NCTriage assignment note:** agent-catalog.md assigns NCTriage to Nova Lite;
 Part 30.1 (v4, higher precedence) classifies "NCTriage-class" as a Nova Micro

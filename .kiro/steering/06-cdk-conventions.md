@@ -41,4 +41,4 @@ One app, one pipeline, N environment accounts. No exceptions.
 ## Why these rules
 Finer stack boundaries = smaller blast radius. CDK Nag = automated compliance.
 crossAccountKeys = the pipeline actually works cross-account. Graviton =
-cost lever (Part 27). Zero NAT gateways = no silent $32/mo/AZ tax.
+cost lever (Part 25). Zero NAT gateways = no silent $32/mo/AZ tax (Part 25).
