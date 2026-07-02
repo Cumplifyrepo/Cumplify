@@ -1,0 +1,72 @@
+=== EVIDENCE LOG ===
+spec: build-verification-harness
+task: 2.1
+git-sha: c667bde5d6c9d79137ecf07f5c0f83522d1b61d6
+dirty: 5 files
+started: 2026-07-02T19:28:51.180Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-02T19:28:51.180Z] ===
+
+added 186 packages, and audited 187 packages in 767ms
+
+56 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+=== STEP 1: npm ci [PASS 2026-07-02T19:28:51.991Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-02T19:28:51.991Z] ===
+
+=== STEP 2: tsc --noEmit [PASS 2026-07-02T19:28:52.658Z] ===
+
+=== STEP 3: eslint + prettier [START 2026-07-02T19:28:52.658Z] ===
+
+> cumplify@0.1.0 lint
+> eslint . --ext .ts,.tsx
+
+
+> cumplify@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+=== STEP 3: eslint + prettier [PASS 2026-07-02T19:28:53.437Z] ===
+
+=== STEP 4: unit + property tests [START 2026-07-02T19:28:53.439Z] ===
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 5ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
+stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > reports gracefully when no deployed resources to verify (AC-2.5)
+No deployed resources to verify — readback skipped gracefully (AC-2.5).
+
+stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
+Bucket cumplify-spec38-sample-defect does not exist — no deployed resources to verify (AC-2.5).
+
+ ✓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > reports gracefully when no deployed resources to verify (AC-2.5) 1ms
+ ✓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 0ms
+
+ Test Files  2 passed (2)
+      Tests  5 passed (5)
+   Start at  15:28:53
+   Duration  1.22s (transform 32ms, setup 0ms, import 71ms, tests 1.14s, environment 0ms)
+
+
+=== STEP 4: unit + property tests [PASS 2026-07-02T19:28:54.942Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-02T19:28:54.942Z] ===
+No CDK entrypoint found in infra/bin/ — skipping synth.
+=== STEP 5: cdk synth + CDK Nag [SKIPPED 2026-07-02T19:28:54.942Z] ===
+
+=== STEP 6: integration tests (module: none specified) [START 2026-07-02T19:28:54.942Z] ===
+No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-02T19:28:54.942Z] ===
+
+=== RESULT: PASS (4 green, 2 skipped) | MAX-RUNG: D1 ===
+=== ENDED: 2026-07-02T19:28:54.942Z ===

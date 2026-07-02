@@ -60,6 +60,18 @@ function getGitSha(): string {
   }
 }
 
+function getDirtyCount(): number {
+  try {
+    const output = execSync('git status --porcelain', { cwd: ROOT, encoding: 'utf-8' });
+    return output
+      .trim()
+      .split('\n')
+      .filter((l) => l.length > 0).length;
+  } catch {
+    return -1;
+  }
+}
+
 // --- Step runner ---
 type StepResult = 'PASS' | 'FAIL' | 'SKIPPED';
 
@@ -155,6 +167,7 @@ function main() {
   log(`spec: ${specName}`);
   log(`task: ${taskId}`);
   log(`git-sha: ${getGitSha()}`);
+  log(`dirty: ${getDirtyCount()} files`);
   log(`started: ${timestamp()}`);
   log(`script-version: ${SCRIPT_VERSION}`);
   log('=====================================');
