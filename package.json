@@ -1,0 +1,25 @@
+{
+  "name": "cumplify",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "tsx scripts/verify.ts",
+    "readback": "vitest run infra/readback/ --reporter=verbose",
+    "test": "vitest run",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "fast-check": "^3.19.0",
+    "prettier": "^3.3.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

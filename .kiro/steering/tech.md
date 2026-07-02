@@ -56,6 +56,10 @@ SBT-AWS AWSMarketplaceSaaSProduct construct
 - Tiptap/ProseMirror, Yjs, tldraw, Mermaid (MIT front-end libs)
 - SBT-AWS, Powertools for Lambda (OSS CDK/runtime libraries)
 - next-intl/ICU (i18n)
+- Vitest (test runner), fast-check (property-based testing), eslint, prettier,
+  tsx (TypeScript execution) — dev/test tooling only, not deployed
+- LocalStack (Docker-run AWS service emulator for @local integration tests) —
+  dev/test only, not deployed. Machine prerequisite: Docker.
 
 ## Runtime libraries
 - CDK (TypeScript), Powertools for Lambda (TypeScript)

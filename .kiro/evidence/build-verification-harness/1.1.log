@@ -1,0 +1,56 @@
+=== EVIDENCE LOG ===
+spec: build-verification-harness
+task: 1.1
+git-sha: 4e13a1198f8eb9c03c49c6f504d0b2aba9b71dc2
+started: 2026-07-02T19:22:02.769Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-02T19:22:02.770Z] ===
+
+added 181 packages, and audited 182 packages in 1s
+
+51 packages are looking for funding
+  run `npm fund` for details
+
+5 vulnerabilities (3 moderate, 1 high, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+=== STEP 1: npm ci [PASS 2026-07-02T19:22:04.216Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-02T19:22:04.216Z] ===
+
+=== STEP 2: tsc --noEmit [PASS 2026-07-02T19:22:04.727Z] ===
+
+=== STEP 3: eslint + prettier [START 2026-07-02T19:22:04.727Z] ===
+
+> cumplify@0.1.0 lint
+> eslint . --ext .ts,.tsx
+
+
+> cumplify@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+=== STEP 3: eslint + prettier [PASS 2026-07-02T19:22:05.453Z] ===
+
+=== STEP 4: unit + property tests [START 2026-07-02T19:22:05.458Z] ===
+No test files found (no services/* or infra/* test code yet). Skipping.
+=== STEP 4: unit + property tests [SKIPPED 2026-07-02T19:22:05.458Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-02T19:22:05.458Z] ===
+No CDK entrypoint found in infra/bin/ — skipping synth.
+=== STEP 5: cdk synth + CDK Nag [SKIPPED 2026-07-02T19:22:05.458Z] ===
+
+=== STEP 6: integration tests (module: none specified) [START 2026-07-02T19:22:05.458Z] ===
+No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-02T19:22:05.458Z] ===
+
+=== RESULT: PASS (3 green, 3 skipped) | MAX-RUNG: D1 ===
+=== ENDED: 2026-07-02T19:22:05.459Z ===
