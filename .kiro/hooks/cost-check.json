@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Cost Check",
+      "trigger": "PostFileSave",
+      "description": "Identify added/modified/removed resources, estimate monthly cost delta via aws-pricing MCP, append to infra/cost-estimates.md, flag if delta > $200/mo.",
+      "matcher": "infra/",
+      "action": {
+        "type": "agent",
+        "prompt": "Identify added/modified/removed resources. Use the aws-pricing MCP to estimate the monthly cost delta. Append to infra/cost-estimates.md. FLAG LOUDLY if delta > $200/mo (Part 27 tripwire)."
+      }
+    }
+  ]
+}

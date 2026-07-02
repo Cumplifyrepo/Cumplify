@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Clause Integrity",
+      "trigger": "PostFileSave",
+      "description": "Validate every clauseRef value against the canonical clause list in docs/architecture/iso-requirements-map.md (numbers AND titles, edition-aware).",
+      "matcher": "\\.(ts|sql|md)$",
+      "action": {
+        "type": "agent",
+        "prompt": "Validate every clauseRef value in the saved file against the canonical clause list in docs/architecture/iso-requirements-map.md (numbers AND titles, edition-aware per Part 33). Any invented or mistitled clause is a CRITICAL finding."
+      }
+    }
+  ]
+}

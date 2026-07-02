@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "DoD Gate",
+      "trigger": "PreTaskExec",
+      "description": "Before executing close:* or phase-gate tasks, verify all D-rung evidence exists. Refuse to proceed with missing evidence.",
+      "action": {
+        "type": "agent",
+        "prompt": "Before executing, enumerate the D-rung evidence required (Part 40 table) and verify each artifact exists. Refuse to proceed with missing evidence; list exactly what's missing."
+      }
+    }
+  ]
+}

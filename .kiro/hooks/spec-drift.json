@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Spec Drift",
+      "trigger": "PostTaskExec",
+      "description": "Verify the just-completed task's acceptance criteria still hold against the actual diff. If code and spec diverged, open a refresh note.",
+      "action": {
+        "type": "agent",
+        "prompt": "Verify the just-completed task's acceptance criteria still hold against the actual diff. If code and spec diverged, open a refresh note in the spec folder and mark the task for review. If the change touches services/ai-invoker/**, prompts/**, or KB ingestion configs: also require the clause-accuracy and grounding-adversarial suites to run against staging before the task may close."
+      }
+    }
+  ]
+}

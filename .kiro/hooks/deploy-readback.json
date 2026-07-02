@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Deploy Readback",
+      "trigger": "PostTaskExec",
+      "description": "Execute infra/readback tests against the dev account via aws-api MCP. Report each assertion pass/fail with observed vs designed values.",
+      "action": {
+        "type": "agent",
+        "prompt": "Execute infra/readback tests against the dev account via aws-api MCP creds. Report each assertion pass/fail with the observed value next to the designed value. Any mismatch is a defect on the deploying spec."
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Verify Evidence",
+      "trigger": "PostTaskExec",
+      "description": "Run the Layer-2 execution gate in order and write full output to .kiro/evidence/<spec>/<task>.log. If any step fails, mark the task NOT complete.",
+      "action": {
+        "type": "agent",
+        "prompt": "Run the Layer-2 execution gate in order (npm ci → tsc --noEmit → lint → unit+property tests → cdk synth --all + CDK Nag → module integration tests). Write full output to .kiro/evidence/<spec>/<task>.log. If any step fails, mark the task NOT complete, report the verbatim failure, and stop. Do not summarize failures as partial successes."
+      }
+    }
+  ]
+}

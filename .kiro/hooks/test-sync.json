@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Test Sync",
+      "trigger": "PostFileSave",
+      "description": "Per 13-testing.md: create/update the paired test for the changed file, run it, report pass/fail verbatim. Keep tests simple and proportional.",
+      "matcher": "(services|infra)/.*\\.ts$",
+      "action": {
+        "type": "agent",
+        "prompt": "Per 13-testing.md: create/update the paired test for the changed file, run it, report pass/fail verbatim. Keep tests simple and proportional."
+      }
+    }
+  ]
+}
