@@ -5,7 +5,7 @@
       "name": "Security Scan",
       "trigger": "PostFileSave",
       "description": "Review security-sensitive file changes against 01-tenancy-rules, 03-auth-modes, 16-identity-boundaries, 11-soc2. Report findings by severity.",
-      "matcher": "(iam|policy|auth|infra/.*security)",
+      "matcher": "(^|/)(iam|auth)|policy|infra/.*security",
       "action": {
         "type": "agent",
         "prompt": "Review the change against 01-tenancy-rules, 03-auth-modes, 16-identity-boundaries, 11-soc2. Report findings by severity CRITICAL/HIGH/MEDIUM/LOW with exact locations and fixes. Do not auto-fix; propose."

@@ -8,7 +8,7 @@
       "matcher": "\\.(ts|sql|md)$",
       "action": {
         "type": "agent",
-        "prompt": "Validate every clauseRef value in the saved file against the canonical clause list in docs/architecture/iso-requirements-map.md (numbers AND titles, edition-aware per Part 33). Any invented or mistitled clause is a CRITICAL finding."
+        "prompt": "If the saved file contains no clauseRef occurrence, do nothing and stop. Validate every clauseRef value in the saved file against the canonical clause list in docs/architecture/iso-requirements-map.md (numbers AND titles, edition-aware per Part 33). Any invented or mistitled clause is a CRITICAL finding."
       }
     }
   ]

@@ -17,7 +17,7 @@ cumplify/
 │   │   ├── eventing-backbone/...
 │   │   └── ... (specs 1–41)
 │   ├── hooks/             # Agent hooks (quality gates)
-│   │   └── *.kiro.hook
+│   │   └── *.json         # (v1 JSON schema per current Kiro)
 │   ├── settings/
 │   │   └── mcp.json       # MCP server configuration
 │   └── evidence/          # Execution evidence logs per spec/task
