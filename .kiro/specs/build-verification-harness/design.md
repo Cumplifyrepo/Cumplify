@@ -124,9 +124,14 @@ script-version: <package.json version of scripts/verify.ts>
 <output or "no integration tests defined for module X">
 === STEP 6: integration tests (module: <name>) [SKIPPED 2026-07-02T14:31:00Z] ===
 
-=== RESULT: PASS (steps 1-5 green, step 6 skipped) ===
+=== RESULT: PASS (steps 1-5 green, step 6 skipped) | MAX-RUNG: D1 ===
 === ENDED: 2026-07-02T14:31:00Z ===
 ```
+
+The RESULT line encodes the **maximum eligible D-rung** based on what passed:
+- All steps PASS, no SKIPPED → MAX-RUNG per the highest evidence gathered.
+- Any SKIPPED step → MAX-RUNG capped at the rung below what that step proves
+  (e.g., step 6 SKIPPED → max D1; readback not appended → max D2).
 
 ### Skip rules (F-1/F-2/F-4 tightenings)
 
@@ -168,13 +173,16 @@ The evidence-gate script enforces the 13-testing.md property-based mandate
 mechanically in step 4:
 
 ```
-For every directory matching services/<name>/:
+For every directory matching services/<name>/ (excluding services/_scaffold/):
   IF the directory contains source .ts files (excluding index.ts, types.ts)
   AND does NOT contain at least one *.property.test.ts file
   THEN step 4 FAILS with:
     "FAIL: services/<name>/ has no property-based test (*.property.test.ts).
      Per 13-testing.md, property-based tests are mandatory on services/*."
 ```
+
+The scaffold template lives at `services/_scaffold/example.property.test.ts`
+and is excluded from this check (it is a reference, not production code).
 
 This is a hard gate, not advisory. The test-sync hook provides earlier
 feedback at file-save time (advisory), but the evidence gate is the
@@ -222,9 +230,11 @@ After scripts are implemented, the three hook prompts are updated:
 **verify-evidence.json:**
 ```
 "Run `npm run verify -- --spec <spec-name> --task <task-id> --module <touched-module>`.
- The script writes to .kiro/evidence/<spec>/<task>.log. If the script exits
- non-zero, the task is NOT complete — report the failure verbatim from the log.
- The log file is the completion truth, not this message."
+ Omitting --module is intentional only when the task touches no single service
+ module (e.g., cross-cutting scripts or infra-only changes) — state the reason
+ in the task context. The script writes to .kiro/evidence/<spec>/<task>.log.
+ If the script exits non-zero, the task is NOT complete — report the failure
+ verbatim from the log. The log file is the completion truth, not this message."
 ```
 
 **deploy-readback.json:**
@@ -254,6 +264,8 @@ Add to tech.md `## Third-party (non-AWS)` section:
 ```
 - Vitest (test runner), fast-check (property-based testing), eslint, prettier,
   tsx (TypeScript execution) — dev/test tooling only, not deployed
+- LocalStack (Docker-run AWS service emulator for @local integration tests) —
+  dev/test only, not deployed. Machine prerequisite: Docker (confirmed installed).
 ```
 
 This will be committed as part of spec 38's implementation tasks.
@@ -291,18 +303,16 @@ that produces no compliance-state mutations emits no audit events.
 
 ## 12. Cost Impact
 
-**Monthly cost delta: ~$0.** (Via aws-pricing MCP reasoning, not formal query
-— no always-on resources are created.)
+**Monthly cost delta: $0 by construction — no persistent resources created,
+nothing to price.**
 
 - The `Spec38SampleDefect` S3 bucket exists only during the AC-5.2 proof
-  (REQUIRES-HUMAN, immediate teardown). Cost: fractions of a cent for the
-  minutes it exists.
-- `npm run readback` uses the aws-api MCP (read-only API calls against the
-  dev account). AWS API describe/get calls are free or negligible.
+  (REQUIRES-HUMAN, immediate teardown, seconds to minutes). No data stored.
+- `npm run readback` makes read-only API calls against the dev account.
 - All other components are local scripts and CI steps — no deployed
   infrastructure.
 
-**Part 27 tripwire:** Not triggered ($0 << $200/mo threshold).
+**Part 27 tripwire:** Not triggered ($0).
 
 ---
 
