@@ -1,0 +1,27 @@
+=== EVIDENCE LOG ===
+spec: build-verification-harness
+task: 3.2-deliberate-fail
+git-sha: 736613a86183445e9eb8f0c8ca9e7aff6791b420
+dirty: 1 files
+started: 2026-07-02T20:24:11.652Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-02T20:24:11.652Z] ===
+
+added 186 packages, and audited 187 packages in 779ms
+
+56 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+=== STEP 1: npm ci [PASS 2026-07-02T20:24:12.477Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-02T20:24:12.477Z] ===
+scripts/test-fixtures/deliberate-type-error.ts(7,7): error TS2322: Type 'string' is not assignable to type 'number'.
+
+=== STEP 2: tsc --noEmit [FAIL 2026-07-02T20:24:13.111Z] ===
+
+=== RESULT: FAIL (1 failed) | MAX-RUNG: NONE ===
+=== ENDED: 2026-07-02T20:24:13.111Z ===

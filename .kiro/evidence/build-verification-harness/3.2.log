@@ -1,0 +1,68 @@
+=== EVIDENCE LOG ===
+spec: build-verification-harness
+task: 3.2
+git-sha: 736613a86183445e9eb8f0c8ca9e7aff6791b420
+dirty: 1 files
+started: 2026-07-02T20:24:25.379Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-02T20:24:25.379Z] ===
+
+added 186 packages, and audited 187 packages in 770ms
+
+56 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+=== STEP 1: npm ci [PASS 2026-07-02T20:24:26.193Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-02T20:24:26.193Z] ===
+
+=== STEP 2: tsc --noEmit [PASS 2026-07-02T20:24:26.844Z] ===
+
+=== STEP 3: eslint + prettier [START 2026-07-02T20:24:26.844Z] ===
+
+> cumplify@0.1.0 lint
+> eslint . --ext .ts,.tsx
+
+
+> cumplify@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+=== STEP 3: eslint + prettier [PASS 2026-07-02T20:24:27.624Z] ===
+
+=== STEP 4: unit + property tests [START 2026-07-02T20:24:27.626Z] ===
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 5ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
+stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
+Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
+
+ ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed | 1 skipped (4)
+   Start at  16:24:27
+   Duration  1.83s (transform 31ms, setup 0ms, import 70ms, tests 1.76s, environment 0ms)
+
+
+=== STEP 4: unit + property tests [PASS 2026-07-02T20:24:29.741Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-02T20:24:29.741Z] ===
+No CDK entrypoint found in infra/bin/ — skipping synth.
+=== STEP 5: cdk synth + CDK Nag [SKIPPED 2026-07-02T20:24:29.741Z] ===
+
+=== STEP 6: integration tests (module: none specified) [START 2026-07-02T20:24:29.741Z] ===
+No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-02T20:24:29.741Z] ===
+
+=== RESULT: PASS (4 green, 2 skipped) | MAX-RUNG: D1 ===
+=== ENDED: 2026-07-02T20:24:29.741Z ===
