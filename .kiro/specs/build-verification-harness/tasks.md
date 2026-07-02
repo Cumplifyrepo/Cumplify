@@ -155,21 +155,27 @@ gate catches type errors.
 **REQUIRES-HUMAN**
 
 **Deliverables:**
-- [ ] Human deploys `Spec38SampleDefect` stack to dev account using their
-  own deploy credentials (not cumplify-dev-readonly).
-- [ ] Human runs `npm run readback` → `sample-defect.test.ts` assertion FAILS
-  with output: `observed: undefined, designed: COMPLIANCE`.
+- [ ] Human creates `cumplify-spec38-sample-defect` S3 bucket in dev account
+  via AWS CLI (no ObjectLock, no CDK — aws-cdk-lib stays out of spec 38):
+  `aws s3api create-bucket --bucket cumplify-spec38-sample-defect --profile cumplify-dev-deploy`
+- [ ] Human (or agent) runs `npm run readback` → `sample-defect.test.ts`
+  assertion FAILS with output: `observed: undefined, designed: "COMPLIANCE"`.
 - [ ] Deliberate-failure evidence captured as
   `.kiro/evidence/build-verification-harness/3.3-deliberate-fail.log`
   (the artifact being proven — this log intentionally shows readback FAIL).
-- [ ] Human tears down `Spec38SampleDefect` stack (`cdk destroy`).
+- [ ] Human tears down the bucket:
+  `aws s3api delete-bucket --bucket cumplify-spec38-sample-defect --profile cumplify-dev-deploy`
 - [ ] Task 3.3's own completion evidence is a normal readback PASS (or
-  "no deployed resources" graceful exit) on the cleaned-up account.
+  SKIPPED in pre-deploy mode) on the cleaned-up account.
 
 **Completion evidence:** `.kiro/evidence/build-verification-harness/3.3.log`
-shows a normal run (graceful "no deployed resources" after teardown). The
+shows a normal run (SKIPPED in pre-deploy mode after teardown). The
 deliberate-failure artifact at `3.3-deliberate-fail.log` is committed alongside
 as the proof that readback catches mis-deployed resources.
+
+**Note:** The commented CDK stack file (`sample-defect-stack.ts`) is retained as
+documentation of the intended defect pattern for when aws-cdk-lib arrives with
+spec 1. It is not used for this task's proof.
 
 ---
 

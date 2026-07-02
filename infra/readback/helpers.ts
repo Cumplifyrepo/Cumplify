@@ -18,6 +18,10 @@ const results: AssertionResult[] = [];
 /**
  * Assert a deployed resource property matches the designed intent.
  * Logs the result in the standard format and throws on mismatch for Vitest.
+ *
+ * Post-deploy mode semantics: if a resource is expected but absent after
+ * infrastructure is deployed, pass observed='ABSENT' — this FAILS the
+ * assertion. A missing resource must never pass green once anything is deployed.
  */
 export function assertResource(
   resource: string,
