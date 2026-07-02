@@ -56,7 +56,7 @@ Authoritative authoring, versioning, approval, and controlled distribution of al
 Cache the current approved manual/procedure index and controlled-distribution acknowledgment status per tenant (hot read on every module's "linked procedure" lookups). Invalidate on `Document.Published`.
 
 ### OpenSearch use
-AOSS VECTORSEARCH backs Bedrock KB semantic search over tenant documents + ISO standard text (dimension 1536, Titan Embed v2). **All AOSS reads use exponential-backoff retry with a ≥45 s cold-start timeout budget (scale-to-zero cold start up to 45 s).** Bedrock KB service role must be present in the AOSS data-access policy.
+AOSS VECTORSEARCH backs Bedrock KB semantic search over tenant documents + ISO standard text (dimension 1024, Titan Embed v2). **All AOSS reads use exponential-backoff retry with a ≥45 s cold-start timeout budget (scale-to-zero cold start up to 45 s).** Bedrock KB service role must be present in the AOSS data-access policy.
 
 ---
 

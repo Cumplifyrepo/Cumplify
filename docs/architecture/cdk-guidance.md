@@ -282,7 +282,7 @@ Bedrock hosts the verified 22-agent roster. **Model IDs are exact and non-negoti
 - Nova Pro heavy agents (ControlTower, DocStudio, LeadAuditor, CAPAGuru, RiskSentinel, AspectWarden, HazardScout, IncidentInvestigator, ReviewOrchestrator, ComplianceCopilot): `amazon.nova-pro-v1:0` (cross-region `us.amazon.nova-pro-v1:0`).
 - Nova Lite support agents (RecordsVault, ObjectiveTracker, ContextCartographer, SupplierScout, CompetenceKeeper, EmergencyPlanner, WorkerVoice, NCTriage): `amazon.nova-lite-v1:0` / `us.amazon.nova-lite-v1:0`.
 - Claude Sonnet 4.6 advisory (3 Domain Gurus, LegalLedger): **NOT available in-region in us-east-1 — MUST use `us.anthropic.claude-sonnet-4-6`.**
-- Embeddings: Titan Text v2 `amazon.titan-embed-text-v2:0` = **1536 dims**.
+- Embeddings: Titan Text v2 `amazon.titan-embed-text-v2:0` = **1024 dims**.
 
 **Verified IAM rules:**
 - `bedrock:InvokeModel` requires **Resource `'*'`** (no resource-level conditions on models).
@@ -313,7 +313,7 @@ new bedrock.CfnAgent(this, 'ISO45001Guru', {
   instruction: 'Advisory Q&A on ISO 45001:2018 clauses (hazards, OH&S risks, workers, incidents)...',
 });
 
-// KB → OpenSearch Serverless + Titan Embed v2 (1536 dims).
+// KB → OpenSearch Serverless + Titan Embed v2 (1024 dims).
 const isoKb = new bedrock.CfnKnowledgeBase(this, 'ISOKb', {
   name: 'CumplifyISOKB',
   roleArn: kbRole.roleArn,
@@ -321,7 +321,7 @@ const isoKb = new bedrock.CfnKnowledgeBase(this, 'ISOKb', {
     type: 'VECTOR',
     vectorKnowledgeBaseConfiguration: {
       embeddingModelArn: 'arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0',
-      embeddingModelConfiguration: { bedrockEmbeddingModelConfiguration: { dimensions: 1536 } },
+      embeddingModelConfiguration: { bedrockEmbeddingModelConfiguration: { dimensions: 1024 } },
     },
   },
   storageConfiguration: {
@@ -724,7 +724,7 @@ CI/CD chain (verified PHASE-19): `synth (npm ci/test/audit/cdk synth/CDK Nag) �
 | Cognito 3 User Pools + groups | all | 5.3 roles/responsibilities/authorities (all 3); role gating for Quality/EHS/Auditor/Employee/Executive |
 | AppSync GraphqlApi + subscriptions | all | user-facing IMS surface; agent comms; 7.4 Communication (all 3) |
 | Bedrock CfnAgent roster | M1–M13 | detect→draft→route→verify→close across 9001 (product/customer), 14001 (aspects/impacts/obligations), 45001 (hazards/workers/incidents) |
-| Bedrock CfnKnowledgeBase + Titan v2 (1536) | advisory | ISO 9001/14001/45001 clause Q&A grounding |
+| Bedrock CfnKnowledgeBase + Titan v2 (1024) | advisory | ISO 9001/14001/45001 clause Q&A grounding |
 | OpenSearch VECTORSEARCH (45s budget) | M1, M4 | compliance-doc semantic search + audit-trail retrieval |
 | DynamoDB CumplifyCore (LeadingKeys) | M4 | 7.5 control of documented information; **immutable audit trail** (append-only mirror) |
 | RDS PostgreSQL (system of record) | M5, M7, M8, M9, M10, M12, M13, M2 | ISO domain registers with relationships/joins/reporting |

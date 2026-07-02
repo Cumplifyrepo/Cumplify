@@ -253,7 +253,7 @@ The supervisor `ControlTower` coordinates all chains via Bedrock multi-agent col
 **Polyglot persistence (reconciled):**
 - **RDS PostgreSQL** = relational **system-of-record** for ISO domain entities (registers with rich relationships, joins, reporting). All ISO schema domains live here.
 - **DynamoDB** (`CumplifyCore`, single-table, PK/SK, on-demand, CMK, 9 GSIs) = tenant/user metadata, agent sessions, idempotency, rate limits, and the **append-only immutable audit-event mirror**.
-- **OpenSearch Serverless VECTORSEARCH** (NextGen, scale-to-zero) = Bedrock KB (ISO standards + tenant docs), compliance-document semantic search, and audit-trail retrieval. Dimension **1536** (Titan Text Embeddings v2, `amazon.titan-embed-text-v2:0`).
+- **OpenSearch Serverless VECTORSEARCH** (NextGen, scale-to-zero) = Bedrock KB (ISO standards + tenant docs), compliance-document semantic search, and audit-trail retrieval. Dimension **1024** (Titan Text Embeddings v2, `amazon.titan-embed-text-v2:0`).
 - **ElastiCache (Redis)** = hot compliance register cache.
 - **S3 + Object Lock COMPLIANCE mode** = WORM document/evidence storage + sealed audit-event archive.
 
@@ -315,7 +315,7 @@ Immutable audit-event item:
 
 ### C.3 OpenSearch Serverless — Index Strategy (VECTORSEARCH, NextGen scale-to-zero)
 
-Collection type **VECTORSEARCH**, dimension **1536** (Titan Text v2). Three required policies via CDK `CfnCollection` + `CfnSecurityPolicy` / `CfnAccessPolicy`: **encryption**, **network**, **data-access** — and the **Bedrock KB service role MUST be included in the AOSS data-access policy**.
+Collection type **VECTORSEARCH**, dimension **1024** (Titan Text v2). Three required policies via CDK `CfnCollection` + `CfnSecurityPolicy` / `CfnAccessPolicy`: **encryption**, **network**, **data-access** — and the **Bedrock KB service role MUST be included in the AOSS data-access policy**.
 
 **Indexes:**
 1. `iso-standards-kb` — the three ISO standards (9001/14001/45001), chunked + embedded; source for the Domain Gurus and all draft actions. Metadata: `standard`, `clause`, `title`.

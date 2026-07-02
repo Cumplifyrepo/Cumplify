@@ -318,7 +318,7 @@ flowchart TB
     AGENTS[21 collaborator agents — Nova Pro/Lite + Sonnet via us.anthropic.claude-sonnet-4-6]
     BR[Bedrock InvokeModel/InvokeAgent + CfnGuardrail PII+PROMPT_ATTACK]
     KB[Bedrock KBs — ISO-KB · TENANT-DOCS-KB]
-    AOSS[(OpenSearch Serverless VECTORSEARCH — 1536-dim Titan v2; 45s cold-start budget + exp backoff EVERYWHERE)]
+    AOSS[(OpenSearch Serverless VECTORSEARCH — 1024-dim Titan v2; 45s cold-start budget + exp backoff EVERYWHERE)]
     CT --> AGENTS --> BR
     KB --> AOSS
   end
@@ -532,7 +532,7 @@ Kiro is spec-driven: each unit below becomes a Kiro spec (`requirements.md` in E
 
 ```
 .kiro/steering/
-  00-stack-facts.md        # verified model IDs, cross-region Sonnet profile, 1536-dim
+  00-stack-facts.md        # verified model IDs, cross-region Sonnet profile, 1024-dim
                            # Titan v2, account IDs, region rules — verbatim from spine
   01-tenancy-rules.md      # LeadingKeys ABAC, RLS, ID-token-only tenantId, claim checks
   02-aoss-rule.md          # THE 45s cold-start + exponential-backoff rule; every AOSS
@@ -749,7 +749,7 @@ Drag-drop up to 500 files (docx/pdf/xlsx/scans) → S3 multipart presigned uploa
  → GuardDuty Malware Protection for S3 [NEW — Appendix C] quarantines infected objects
  → ingestion Step Functions (Map state, concurrency 25):
      Textract [NEW — Appendix C] OCR/layout for scans & PDFs; native parse for docx
-     → chunk + Titan v2 embed (1536-dim) → AOSS tenant-docs index
+     → chunk + Titan v2 embed (1024-dim) → AOSS tenant-docs index
        (45s cold-start budget + exponential backoff [SPINE rule])
      → DocStudio classification pass: doc_type, standard(s), owner suggestion
      → **AI Clause Mapping**: semantic match vs ISO-KB → proposed clause_refs[]

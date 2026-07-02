@@ -73,7 +73,7 @@ inclusion: always
   us.amazon.nova-lite-v1:0, us.amazon.nova-pro-v1:0, us.amazon.nova-premier-v1:0.
   SOLE exception: LegalLedger uses us.anthropic.claude-sonnet-4-6 (quarterly-
   expiring justification, IAM-scoped to that one agent).
-- Embeddings: amazon.titan-embed-text-v2:0, 1536 dimensions, everywhere.
+- Embeddings: amazon.titan-embed-text-v2:0, 1024 dimensions, everywhere.
 - bedrock:InvokeModel IAM requires Resource:'*'. Action-group Lambdas need a
   resource-based policy for bedrock.amazonaws.com (SourceAccount + SourceArn).
 - DynamoDB CumplifyCore: single table, PK/SK, on-demand, CMK (all 6 KMS

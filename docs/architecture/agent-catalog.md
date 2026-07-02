@@ -13,11 +13,11 @@
   - Nova Pro: `amazon.nova-pro-v1:0` — invoked via cross-region inference profile `us.amazon.nova-pro-v1:0`.
   - Nova Lite: `amazon.nova-lite-v1:0` — cross-region `us.amazon.nova-lite-v1:0`.
   - Claude Sonnet 4.6: **NOT available in-region us-east-1** → MUST use cross-region inference profile `us.anthropic.claude-sonnet-4-6`.
-  - Embeddings (all KB ingest/query): Titan Text Embeddings v2 `amazon.titan-embed-text-v2:0` = **1536 dimensions**.
+  - Embeddings (all KB ingest/query): Titan Text Embeddings v2 `amazon.titan-embed-text-v2:0` = **1024 dimensions**.
 - **`bedrock:InvokeModel`** IAM statements require `Resource: '*'`. Each action-group Lambda requires a **resource-based policy allowing principal `bedrock.amazonaws.com`** (with `SourceAccount` + agent-alias `SourceArn` conditions).
 - **Knowledge Base retrieval (OpenSearch Serverless VECTORSEARCH, NextGen scale-to-zero):** ALL data access to AOSS MUST implement **application-side retry with exponential backoff and a minimum 45-second cold-start timeout budget** (cold start up to 45 s). The Bedrock KB service role MUST be present in the AOSS **data-access policy**; AOSS also requires its 3 policies (encryption, network, data-access). This is restated per agent that reads AOSS.
 - **KB sources** referenced below:
-  - `ISO-KB` = Bedrock Knowledge Base holding the ISO 9001/14001/45001 standard text, embedded with Titan v2 (1536-dim) in AOSS.
+  - `ISO-KB` = Bedrock Knowledge Base holding the ISO 9001/14001/45001 standard text, embedded with Titan v2 (1024-dim) in AOSS.
   - `TENANT-DOCS-KB` = tenant-scoped compliance documents (manuals, procedures, evidence) embedded with Titan v2 in AOSS; tenant isolation enforced via metadata filter on `tenantId`.
 - **Data targets:**
   - **RDS PostgreSQL** = relational system-of-record for ISO domain entities (registers, joins, reporting).
@@ -83,7 +83,7 @@
   - `doc-draft` → drafts manual/procedure/work-instruction; reads `ISO-KB` + `TENANT-DOCS-KB`.
   - `doc-version-control` → writes document metadata, version, approval state, controlled-distribution list to **RDS PostgreSQL**; stores the controlled document file to **S3 (Object Lock COMPLIANCE)**.
   - `doc-publish` → AppSync mutation `publishAgentMessage` (**`@aws_iam`**) to notify subscribers; subscription is **`@aws_cognito`** (tenant-claim verified).
-- **Knowledge base sources:** `ISO-KB`, `TENANT-DOCS-KB` (Titan v2, 1536-dim). **AOSS reads require 45 s cold-start timeout + exponential backoff.**
+- **Knowledge base sources:** `ISO-KB`, `TENANT-DOCS-KB` (Titan v2, 1024-dim). **AOSS reads require 45 s cold-start timeout + exponential backoff.**
 - **Output format:** Structured document draft (Markdown/DOCX payload) + version-control JSON record.
 - **Handoff target:** RecordsVault (retention/control of the controlled copy); ControlTower on policy/scope changes.
 - **HITL:** Required for approval/publish transitions (mutating) — Quality Manager (and EHS Manager for 14001/45001 policy) approval via `returnControl`.
@@ -153,7 +153,7 @@
 - **Role:** Advisory (Q&A), read-only.
 - **Trigger:** User (routed from ComplianceCopilot).
 - **Tools / action groups:** None mutating. `guru-retrieve-9001` → retrieval-only over `ISO-KB` (9001 partition) + `TENANT-DOCS-KB`.
-- **Knowledge base sources:** `ISO-KB` (ISO 9001:2015 full text, Titan v2 1536-dim), `TENANT-DOCS-KB`. **AOSS reads require 45 s cold-start timeout + exponential backoff.**
+- **Knowledge base sources:** `ISO-KB` (ISO 9001:2015 full text, Titan v2 1024-dim), `TENANT-DOCS-KB`. **AOSS reads require 45 s cold-start timeout + exponential backoff.**
 - **Output format:** Cited advisory answer (clause number + title referenced verbatim).
 - **Handoff target:** Returns to ComplianceCopilot / user.
 - **HITL:** Not applicable (read-only).
