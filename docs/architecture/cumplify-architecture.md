@@ -120,7 +120,7 @@ The five existing modules form the **compliance transaction core**. They share d
 
 ```
                          ┌─────────────────────────────────────────────────┐
-                         │        EventBridge custom bus: cumplify-ims       │
+                         │        EventBridge custom bus: cumplify-events       │
                          │  (domain events; rules fan out to SQS + agents)   │
                          └───────────────▲─────────────────┬────────────────┘
                                          │ emit            │ deliver (rule→SQS)
@@ -149,7 +149,7 @@ The five existing modules form the **compliance transaction core**. They share d
 
 **Trigger semantics (event-driven, decoupled):**
 
-1. **Audit → CAPA.** M3 Audit Studio raises an `audit.finding.raised` event on the `cumplify-ims` EventBridge bus. A rule routes it to the CAPA intake SQS queue; M2 opens a nonconformity/corrective-action record (10.2). This is the `LeadAuditor → CAPAGuru` agent chain (Section B).
+1. **Audit → CAPA.** M3 Audit Studio raises an `audit.finding.raised` event on the `cumplify-events` EventBridge bus. A rule routes it to the CAPA intake SQS queue; M2 opens a nonconformity/corrective-action record (10.2). This is the `LeadAuditor → CAPAGuru` agent chain (Section B).
 2. **CAPA → Records.** On `capa.opened`, `capa.verified`, `capa.closed`, M2 emits events that M4 records as evidence (7.5) and appends to the immutable trail. Effectiveness-verification records are retained under 7.5.3.
 3. **Document ↔ Risk.** M1 published controlled documents (`doc.published`) reference risks/controls owned by M5 via RDS foreign keys, so a risk register entry (6.1) traces to the procedure that mitigates it. Superseding a document (`doc.superseded`) triggers a risk re-evaluation task in M5.
 4. **Risk aggregation.** M5 hosts the **cross-register risk view**, consuming OH&S hazards from M10 (`hazard.assessed`) and environmental aspects from M9 (`aspect.significant`) so 6.1 across all three standards is a single normalized register with per-standard terminology preserved.
@@ -178,7 +178,7 @@ Cumplify's differentiation vs. CertifyAero (a client-side browser generator) is 
 ### B.1 Orchestration Model
 
 - **Supervisor:** `ControlTower` (Nova Pro) using **Bedrock multi-agent collaboration** as the supervisor/orchestrator. It owns cross-standard governance clauses 4.4, 5.1, 5.3 and dispatches to specialist agents.
-- **Event-driven substrate:** **EventBridge (`cumplify-ims` custom bus) + SQS**. Domain events trigger agents; agent-to-agent hand-offs are events, not synchronous calls, so failures are retried via SQS with DLQs.
+- **Event-driven substrate:** **EventBridge (`cumplify-events` custom bus) + SQS**. Domain events trigger agents; agent-to-agent hand-offs are events, not synchronous calls, so failures are retried via SQS with DLQs.
 - **HITL:** For any *mutating* action (publishing a document, closing a CAPA, changing a risk rating), the agent **pauses** and uses `returnControlInvocationResults` — a human (per Cognito role) approves before the mutation commits. Read/draft actions run autonomously.
 - **Guardrails:** Every agent invocation passes through a Bedrock `CfnGuardrail` with **PII anonymize/block** and **PROMPT_ATTACK** filtering.
 - **Model invocation:** `bedrock:InvokeModel` requires `Resource: '*'`. Action-group Lambdas carry a **resource-based policy for `bedrock.amazonaws.com`**. Claude Sonnet 4.6 is **not available in-region** in us-east-1 → all Sonnet agents **must** use the cross-region inference profile `us.anthropic.claude-sonnet-4-6`. Nova Pro/Lite use `us.amazon.nova-pro-v1:0` / `us.amazon.nova-lite-v1:0`.
@@ -423,10 +423,10 @@ Roles map to **IAM/ABAC** via the Lambda authorizer (`aws:PrincipalTag/tenantId`
 
 ### D.4 SQS Topology of Compliance Events
 
-EventBridge `cumplify-ims` bus rules route domain events to SQS queues; each consumer is a Lambda (or Fargate task for long-running agent work). Every queue has a **DLQ**.
+EventBridge `cumplify-events` bus rules route domain events to SQS queues; each consumer is a Lambda (or Fargate task for long-running agent work). Every queue has a **DLQ**.
 
 ```
-                 EventBridge bus: cumplify-ims
+                 EventBridge bus: cumplify-events
    ┌──────────────┬──────────────┬──────────────┬──────────────┐
    │ rule:        │ rule:        │ rule:        │ rule:        │
    │ nc.detected  │ audit.finding│ hazard.*     │ aspect.*     │
