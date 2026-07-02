@@ -7,7 +7,7 @@
       "description": "Execute infra/readback tests against the dev account via aws-api MCP. Report each assertion pass/fail with observed vs designed values.",
       "action": {
         "type": "agent",
-        "prompt": "If the just-completed task performed no deployment (no cdk deploy in its evidence log), reply 'no deploy — skipped' and stop. Execute infra/readback tests against the dev account via aws-api MCP creds. Report each assertion pass/fail with the observed value next to the designed value. Any mismatch is a defect on the deploying spec."
+        "prompt": "If the just-completed task performed no deployment (no cdk deploy in its evidence log), reply 'no deploy — skipped' and stop. Otherwise run `npm run readback`. Report each assertion pass/fail with the observed value next to the designed value. Any mismatch is a defect on the deploying spec."
       }
     }
   ]
