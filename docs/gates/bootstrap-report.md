@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-02
 **Branch:** develop
-**Commits:** 11 (67d1977 → 4f81da9)
+**Commits:** 12 (67d1977 → 0a82a14, plus this cleanup)
 **Stages completed:** 0 (scaffold), 1 (foundation steering), 2 (constitution + 15 generated steering), 3 (agent hooks)
 
 ---
@@ -23,7 +23,7 @@
 | `docs/architecture/gap-and-opportunity-matrix.md` | CertifyAero gap analysis |
 | `docs/architecture/competitive-analysis.md` | CertifyAero competitive intelligence |
 
-### Steering files (.kiro/steering/) — 21 files
+### Steering files (.kiro/steering/) — 24 files
 | Path | Inclusion | Source |
 |---|---|---|
 | `00-stack-facts.md` | always | Hand-placed verbatim from corrected pack |
