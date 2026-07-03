@@ -16,12 +16,10 @@
 import * as cdk from 'aws-cdk-lib';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
-import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 import { type EnvConfig } from './env-config.js';
-import { DR_REGION } from './env-config.js';
 
 export interface SecurityStackProps extends cdk.StackProps {
   readonly envConfig: EnvConfig;
@@ -40,7 +38,6 @@ export interface SecurityOutputs {
   readonly bedrockKey: kms.IKey;
   readonly regionalWaf: wafv2.CfnWebACL;
   readonly cloudfrontWaf: wafv2.CfnWebACL;
-  readonly rdsSecret: secretsmanager.Secret;
 }
 
 /**
@@ -253,27 +250,6 @@ export class SecurityStack extends cdk.Stack {
     });
 
     // -----------------------------------------------------------------------
-    // Secrets Manager — RDS master credentials
-    // 30-day rotation configured. Prod-only: replica to us-west-2.
-    // Rotation Lambda is created by Aurora's addRotationSingleUser in DataStack.
-    // -----------------------------------------------------------------------
-    const rdsSecret = new secretsmanager.Secret(this, 'RdsMasterSecret', {
-      secretName: `cumplify/${envConfig.envName}/rds-master`,
-      description: 'RDS Aurora PostgreSQL master credentials',
-      encryptionKey: secretsKey,
-      generateSecretString: {
-        secretStringTemplate: JSON.stringify({ username: 'cumplify_admin' }),
-        generateStringKey: 'password',
-        excludePunctuation: true,
-        passwordLength: 32,
-      },
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-      replicaRegions: envConfig.secretsReplica
-        ? [{ region: DR_REGION, encryptionKey: secretsKey }]
-        : undefined,
-    });
-
-    // -----------------------------------------------------------------------
     // CDK Nag suppressions for this stack
     // -----------------------------------------------------------------------
 
@@ -293,17 +269,6 @@ export class SecurityStack extends cdk.Stack {
       true,
     );
 
-    // Secrets Manager secret doesn't have rotation schedule configured yet —
-    // rotation is wired in DataStack via Aurora's addRotationSingleUser.
-    NagSuppressions.addResourceSuppressions(rdsSecret, [
-      {
-        id: 'AwsSolutions-SMG4',
-        reason:
-          'Rotation is configured in DataStack via cluster.addRotationSingleUser() which ' +
-          'creates the rotation Lambda in the same VPC. Cannot wire here without circular dependency.',
-      },
-    ]);
-
     // -----------------------------------------------------------------------
     // Outputs
     // -----------------------------------------------------------------------
@@ -320,7 +285,6 @@ export class SecurityStack extends cdk.Stack {
       bedrockKey,
       regionalWaf,
       cloudfrontWaf,
-      rdsSecret,
     };
   }
 }
