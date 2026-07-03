@@ -149,7 +149,10 @@ export class NetworkStack extends cdk.Stack {
     // -----------------------------------------------------------------------
     const interfaceEndpoints: Array<{ id: string; service: ec2.InterfaceVpcEndpointAwsService }> = [
       {
-        id: 'AossControlPlaneEndpoint',
+        // IMPORTANT: construct ID must remain 'AossEndpoint' for CloudFormation logical ID
+        // stability (deployed as CumplifyVpcAossEndpointAAA7F404). Never rename construct IDs
+        // of deployed resources — it forces create-before-delete replacement.
+        id: 'AossEndpoint',
         service: new ec2.InterfaceVpcEndpointAwsService('aoss'),
       },
       { id: 'SecretsManagerEndpoint', service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER },

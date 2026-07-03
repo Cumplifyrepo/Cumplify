@@ -1,13 +1,13 @@
 === EVIDENCE LOG ===
 spec: platform-foundation
 task: 1.2
-git-sha: b2b41697b2b8182a2bd1227ae53414e43dff86fa
-dirty: 6 files
-started: 2026-07-03T21:45:07.819Z
+git-sha: 640787a2cecc7a5fc45f6caf2a34c530b168b22c
+dirty: 2 files
+started: 2026-07-03T21:57:52.993Z
 script-version: 0.1.0
 =====================================
 
-=== STEP 1: npm ci [START 2026-07-03T21:45:07.820Z] ===
+=== STEP 1: npm ci [START 2026-07-03T21:57:52.994Z] ===
 
 added 197 packages, and audited 217 packages in 2s
 
@@ -16,13 +16,13 @@ added 197 packages, and audited 217 packages in 2s
 
 found 0 vulnerabilities
 
-=== STEP 1: npm ci [PASS 2026-07-03T21:45:09.458Z] ===
+=== STEP 1: npm ci [PASS 2026-07-03T21:57:54.650Z] ===
 
-=== STEP 2: tsc --noEmit [START 2026-07-03T21:45:09.458Z] ===
+=== STEP 2: tsc --noEmit [START 2026-07-03T21:57:54.650Z] ===
 
-=== STEP 2: tsc --noEmit [PASS 2026-07-03T21:45:11.764Z] ===
+=== STEP 2: tsc --noEmit [PASS 2026-07-03T21:57:56.999Z] ===
 
-=== STEP 3: eslint + prettier [START 2026-07-03T21:45:11.764Z] ===
+=== STEP 3: eslint + prettier [START 2026-07-03T21:57:56.999Z] ===
 
 > cumplify@0.1.0 lint
 > eslint . --ext .ts,.tsx
@@ -34,31 +34,31 @@ found 0 vulnerabilities
 Checking formatting...
 All matched files use Prettier code style!
 
-=== STEP 3: eslint + prettier [PASS 2026-07-03T21:45:12.725Z] ===
+=== STEP 3: eslint + prettier [PASS 2026-07-03T21:57:58.019Z] ===
 
-=== STEP 4: unit + property tests [START 2026-07-03T21:45:12.728Z] ===
+=== STEP 4: unit + property tests [START 2026-07-03T21:57:58.021Z] ===
 
  RUN  v4.1.9 /home/julio-medrano/cumplify
 
- ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 7ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 6ms
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > always produces valid claims structure for any input 14ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > tenantId in claims matches userAttributes passthrough 5ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role is first group when groups are non-empty 3ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role falls back to Employee when groups are empty or undefined 3ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > poolClass resolves to known value or unknown 3ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > poolClass resolves to known value or unknown 4ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > buildClaims always returns exactly 3 keys 5ms
 
  Test Files  2 passed (2)
       Tests  9 passed (9)
-   Start at  17:45:12
-   Duration  155ms (transform 34ms, setup 0ms, import 107ms, tests 44ms, environment 0ms)
+   Start at  17:57:58
+   Duration  161ms (transform 34ms, setup 0ms, import 111ms, tests 44ms, environment 0ms)
 
 
-=== STEP 4: unit + property tests [PASS 2026-07-03T21:45:13.161Z] ===
+=== STEP 4: unit + property tests [PASS 2026-07-03T21:57:58.474Z] ===
 
-=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T21:45:13.161Z] ===
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T21:57:58.474Z] ===
 Metadata:
   cdk_nag:
     rules_to_suppress:
@@ -1916,11 +1916,11 @@ Parameters:
     Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
 
 
-=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T21:45:15.382Z] ===
+=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T21:58:00.718Z] ===
 
-=== STEP 6: integration tests (module: none specified) [START 2026-07-03T21:45:15.382Z] ===
+=== STEP 6: integration tests (module: none specified) [START 2026-07-03T21:58:00.718Z] ===
 No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
-=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T21:45:15.382Z] ===
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T21:58:00.718Z] ===
 
 === RESULT: PASS (5 green, 1 skipped) | MAX-RUNG: D1 ===
-=== ENDED: 2026-07-03T21:45:15.382Z ===
+=== ENDED: 2026-07-03T21:58:00.718Z ===

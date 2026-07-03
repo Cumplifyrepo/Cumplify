@@ -42,3 +42,16 @@ One app, one pipeline, N environment accounts. No exceptions.
 Finer stack boundaries = smaller blast radius. CDK Nag = automated compliance.
 crossAccountKeys = the pipeline actually works cross-account. Graviton =
 cost lever (Part 25). Zero NAT gateways = no silent $32/mo/AZ tax (Part 25).
+
+## Logical ID stability (CRITICAL — deploy safety)
+- **Never rename the construct ID** of a deployed stateful resource (VPC
+  endpoints, S3 buckets, KMS keys, DynamoDB tables, RDS clusters, Cognito
+  pools, security groups, etc.).
+- The construct ID string passed to the constructor determines the
+  CloudFormation logical ID. Changing it forces create-before-delete
+  replacement, which can fail (private-DNS conflicts, name collisions,
+  resource limits) and leave the stack in ROLLBACK state.
+- If you need to clarify intent, use code comments or variable names — NOT
+  the construct ID parameter.
+- Rule of thumb: once a resource is deployed, its construct ID is a contract
+  with CloudFormation. Treat it as immutable.
