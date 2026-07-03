@@ -14,25 +14,26 @@ closes via Template F at D3 (deployed to dev + readback green).
 **Depends on:** nothing
 
 **Deliverables:**
-- [ ] `infra/bin/cumplify.ts` — CDK app entrypoint. Instantiates PipelineStack
+- [x] `infra/bin/cumplify.ts` — CDK app entrypoint. Instantiates PipelineStack
   (mgmt account) and CumplifyStage per environment.
-- [ ] `infra/lib/pipeline-stack.ts` — CodePipeline with crossAccountKeys,
+- [x] `infra/lib/pipeline-stack.ts` — CodePipeline with crossAccountKeys,
   enableKeyRotation, selfMutation. Stages: Dev (no gate), Staging
   (ManualApprovalStep + SmokeTest post-deploy), Prod (ManualApprovalStep +
   LegalSignoffGuard + RollbackInitiator post-deploy). Synth: npm ci, test,
   audit, cdk synth --all.
-- [ ] `infra/lib/cumplify-stage.ts` — CumplifyStage accepting EnvConfig props
+- [x] `infra/lib/cumplify-stage.ts` — CumplifyStage accepting EnvConfig props
   (§1.2 table). Instantiates NetworkStack → SecurityStack → DataStack →
   IdentityStack with addDependency.
-- [ ] `infra/lib/env-config.ts` — EnvConfig interface + dev/staging/prod configs.
-- [ ] CodeStar Connection ARN parameterized in cdk.context.json.
-- [ ] AwsSolutionsChecks applied at App level with verbose:true.
-- [ ] CDK Nag: all warnings = failures.
-- [ ] aws-cdk-lib + constructs as dependencies in package.json.
-- [ ] `cdk synth --all -c env=dev` passes clean (empty stacks at this point).
+- [x] `infra/lib/env-config.ts` — EnvConfig interface + dev/staging/prod configs.
+- [x] CodeStar Connection ARN parameterized in cdk.context.json.
+- [x] AwsSolutionsChecks applied at App level with verbose:true.
+- [x] CDK Nag: all warnings = failures.
+- [x] aws-cdk-lib + constructs as dependencies in package.json.
+- [x] `cdk synth --all -c env=dev` passes clean (empty stacks at this point).
 
 **Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.1`.
 Steps 1–5 PASS (TypeScript compiles, lint, synth with empty stacks + Nag clean).
+**Closed D1:** .kiro/evidence/platform-foundation/1.1.log
 
 ---
 
@@ -42,19 +43,20 @@ Steps 1–5 PASS (TypeScript compiles, lint, synth with empty stacks + Nag clean
 **Depends on:** 1.1
 
 **Deliverables:**
-- [ ] `infra/lib/network-stack.ts` — VPC with private isolated subnets only,
+- [x] `infra/lib/network-stack.ts` — VPC with private isolated subnets only,
   minimum 2 AZs, zero NAT gateways.
-- [ ] VPC Interface Endpoints: AOSS, Secrets Manager, KMS, bedrock-runtime,
+- [x] VPC Interface Endpoints: AOSS, Secrets Manager, KMS, bedrock-runtime,
   execute-api.
-- [ ] VPC Gateway Endpoints: S3, DynamoDB.
-- [ ] Flow logs to S3 (dedicated flow-logs bucket, s3-general CMK, 90-day
+- [x] VPC Gateway Endpoints: S3, DynamoDB.
+- [x] Flow logs to S3 (dedicated flow-logs bucket, s3-general CMK, 90-day
   lifecycle expiry).
-- [ ] Exports: VPC, subnets, security groups via props (not stack outputs).
-- [ ] Note: ecr.api, ecr.dkr, logs endpoints deferred to ComputeStack.
+- [x] Exports: VPC, subnets, security groups via props (not stack outputs).
+- [x] Note: ecr.api, ecr.dkr, logs endpoints deferred to ComputeStack.
   bedrock-agent-runtime deferred to spec 4 (AiStack).
 
 **Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.2`.
 Synth passes; CDK Nag clean; zero-NAT assertion in synth output.
+**Closed D3:** .kiro/evidence/platform-foundation/2.1-closure.md (readback R-7..R-9, R-23)
 
 ---
 
@@ -64,19 +66,20 @@ Synth passes; CDK Nag clean; zero-NAT assertion in synth output.
 **Depends on:** 1.1
 
 **Deliverables:**
-- [ ] `infra/lib/security-stack.ts` — 10 KMS CMKs with aliases
+- [x] `infra/lib/security-stack.ts` — 10 KMS CMKs with aliases
   (cumplify/<env>/dynamodb, rds, elasticache, s3-general, secrets,
   cloudwatch-logs, sns, sqs, eventbridge, bedrock). All with key rotation
   enabled. Key policies per service principal (no wildcard).
-- [ ] Prod dynamodb CMK: `multiRegion: true` (for Global Table DR).
-- [ ] WAFv2 WebACLs: REGIONAL (CommonRuleSet, RateLimit 2000/5min,
+- [x] Prod dynamodb CMK: `multiRegion: true` (for Global Table DR).
+- [x] WAFv2 WebACLs: REGIONAL (CommonRuleSet, RateLimit 2000/5min,
   IpReputationList) + CLOUDFRONT scope in us-east-1.
-- [ ] Secrets Manager secret for RDS master credentials (30-day rotation
+- [x] Secrets Manager secret for RDS master credentials (30-day rotation
   configured). Prod-only: replica to us-west-2.
-- [ ] All outputs passed via props to consuming stacks.
+- [x] All outputs passed via props to consuming stacks.
 
 **Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.3`.
 Synth passes; CDK Nag clean; 10 CMKs in synth output.
+**Closed D3:** .kiro/evidence/platform-foundation/2.1-closure.md (readback R-19, R-20)
 
 ---
 
@@ -86,7 +89,7 @@ Synth passes; CDK Nag clean; 10 CMKs in synth output.
 **Depends on:** 1.2, 1.3
 
 **Deliverables:**
-- [ ] `infra/lib/data-stack.ts`:
+- [x] `infra/lib/data-stack.ts`:
   - DynamoDB CumplifyCore TableV2: PK/SK, on-demand, dynamodb CMK, PITR,
     streams NEW_AND_OLD_IMAGES, deletion protection, RETAIN, 9 GSIs.
     Prod-only: Global Table replica us-west-2 (using multi-Region key).
@@ -106,11 +109,12 @@ Synth passes; CDK Nag clean; 10 CMKs in synth output.
     CMK, block public, server access logs, RETAIN, eventBridge enabled.
     Prod-only: CRR to us-west-2.
   - S3 static/general bucket: versioned, CMK, block public, RETAIN.
-- [ ] All CMKs received via props from SecurityStack.
-- [ ] 6 KMS actions policy documented for any Lambda role touching DynamoDB.
+- [x] All CMKs received via props from SecurityStack.
+- [x] 6 KMS actions policy documented for any Lambda role touching DynamoDB.
 
 **Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.4`.
 Synth passes; CDK Nag clean.
+**Closed D3:** .kiro/evidence/platform-foundation/2.1-closure.md (readback R-1..R-6, R-10..R-15)
 
 ---
 
@@ -120,7 +124,7 @@ Synth passes; CDK Nag clean.
 **Depends on:** 1.4 (PreTokenGen reads DynamoDB table name from DataStack props)
 
 **Deliverables:**
-- [ ] `infra/lib/identity-stack.ts`:
+- [x] `infra/lib/identity-stack.ts`:
   - Pool A (cumplify-internal): MFA REQUIRED, ESSENTIALS, groups
     (PlatformAdmin, SupportEngineer, FinanceOps, SecurityOps). COG4
     suppression with reason.
@@ -134,14 +138,15 @@ Synth passes; CDK Nag clean.
     self-signup disabled, EMAIL_ONLY recovery, deletion protection, RETAIN.
   - App clients: Pool A code flow (IdC federation deferred to task 3.2).
     Pool B/C code flow + SRP. Attributes restricted.
-- [ ] `services/pre-token-gen/index.ts` — PreTokenGeneration Lambda stub.
+- [x] `services/pre-token-gen/index.ts` — PreTokenGeneration Lambda stub.
   Node.js 22.x, arm64, 5s timeout. Stamps tenantId + poolClass into ID token.
   Falls back to Cognito group as role (logs fallback — no silent paths).
-- [ ] Property-based test: `services/pre-token-gen/handler.property.test.ts`
+- [x] Property-based test: `services/pre-token-gen/handler.property.test.ts`
   (arbitrary tenantId/group inputs → valid token claims output).
 
 **Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.5`.
 Steps 1–5 PASS including property test execution and synth + Nag clean.
+**Closed D3:** .kiro/evidence/platform-foundation/2.1-closure.md (readback R-16..R-18)
 
 ---
 
@@ -151,16 +156,17 @@ Steps 1–5 PASS including property test execution and synth + Nag clean.
 **Depends on:** 1.2, 1.3, 1.4, 1.5
 
 **Deliverables:**
-- [ ] `infra/readback/platform-foundation.test.ts` — all 22 assertions from
+- [x] `infra/readback/platform-foundation.test.ts` — all 22 assertions from
   design §7 using assertResource helper. Env-conditional assertions
   (R-21, R-22 prod-only) read envConfig from cdk-outputs.json.
-- [ ] R-11 (AOSS CollectionStatus=ACTIVE) waits up to 45s budget for
+- [x] R-11 (AOSS CollectionStatus=ACTIVE) waits up to 45s budget for
   collection to settle.
-- [ ] All assertions use ABSENT=FAIL semantics (post-deploy mode).
-- [ ] `cdk-outputs.json` loading utility for readback tests.
+- [x] All assertions use ABSENT=FAIL semantics (post-deploy mode).
+- [x] `cdk-outputs.json` loading utility for readback tests.
 
 **Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.6`.
 Compiles; readback framework reports SKIPPED (no deployed resources yet).
+**Closed D1:** .kiro/evidence/platform-foundation/1.6.log
 
 ---
 
@@ -171,16 +177,17 @@ Compiles; readback framework reports SKIPPED (no deployed resources yet).
 **REQUIRES-HUMAN**
 
 **Deliverables:**
-- [ ] Dev (697114252993): re-bootstrap with `--trust 157082218687
+- [x] Dev (697114252993): re-bootstrap with `--trust 157082218687
   --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess`.
   Verify CDKToolkit version >= 21 and trust is correct after bootstrap.
-- [ ] Mgmt (157082218687): bootstrap.
-- [ ] Staging (889007427685): fresh bootstrap with same trust.
-- [ ] Prod (077405654066): fresh bootstrap us-east-1 AND us-west-2.
-- [ ] Readback: verify each account's CDKToolkit has correct trust principal.
+- [x] Mgmt (157082218687): bootstrap.
+- [x] Staging (889007427685): fresh bootstrap with same trust.
+- [x] Prod (077405654066): fresh bootstrap us-east-1 AND us-west-2.
+- [x] Readback: verify each account's CDKToolkit has correct trust principal.
 
 **Completion evidence:** `3 accounts × bootstrap readback showing trust to 157082218687`.
 Evidence captured manually (human-executed, readback of CDKToolkit stacks).
+**Closed D3:** Human-executed bootstrap. CDKToolkit trust verified.
 
 ---
 
@@ -216,17 +223,18 @@ Synth passes for all env contexts (dev, staging, prod). Nag clean.
 **REQUIRES-HUMAN**
 
 **Deliverables:**
-- [ ] Human runs `cdk deploy --all --app 'npx tsx infra/bin/cumplify.ts'
+- [x] Human runs `cdk deploy --all --app 'npx tsx infra/bin/cumplify.ts'
   -c env=dev` with deploy credentials.
-- [ ] All 4 stacks deploy successfully to dev.
-- [ ] `cdk-outputs.json` committed to repo (declared-truth readback input).
-- [ ] Run `npm run readback` — all dev-applicable assertions (R-1 through
+- [x] All 4 stacks deploy successfully to dev.
+- [x] `cdk-outputs.json` committed to repo (declared-truth readback input).
+- [x] Run `npm run readback` — all dev-applicable assertions (R-1 through
   R-20) PASS. (R-21, R-22 skipped — prod-only.)
-- [ ] Readback evidence captured as
+- [x] Readback evidence captured as
   `.kiro/evidence/platform-foundation/2.1.log`.
 
 **Completion evidence:** `.kiro/evidence/platform-foundation/2.1.log` shows
 all 20 dev readback assertions PASS.
+**Closed D3:** .kiro/evidence/platform-foundation/2.1-closure.md + 2.1-readback-architect-witness.log
 
 ---
 
