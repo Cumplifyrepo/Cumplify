@@ -373,7 +373,7 @@ export class DataStack extends cdk.Stack {
     // S3 General/Static bucket (AC-4.6)
     // Versioned, CMK, block public, RETAIN
     // -----------------------------------------------------------------------
-    new s3.Bucket(this, 'GeneralBucket', {
+    const generalBucket = new s3.Bucket(this, 'GeneralBucket', {
       versioned: true,
       encryption: s3.BucketEncryption.KMS,
       encryptionKey: securityOutputs.s3GeneralKey,
@@ -508,5 +508,20 @@ export class DataStack extends cdk.Stack {
       ],
       true,
     );
+
+    // -----------------------------------------------------------------------
+    // CfnOutputs — per design §2 / F-9 (consumed by readback via cdk-outputs.json)
+    // -----------------------------------------------------------------------
+    new cdk.CfnOutput(this, 'TableName', { value: this.tableName });
+    new cdk.CfnOutput(this, 'TableArn', { value: this.tableArn });
+    new cdk.CfnOutput(this, 'ClusterEndpoint', { value: this.clusterEndpoint });
+    new cdk.CfnOutput(this, 'EvidenceBucketName', { value: evidenceBucket.bucketName });
+    new cdk.CfnOutput(this, 'EvidenceBucketArn', { value: this.evidenceBucketArn });
+    new cdk.CfnOutput(this, 'AccessLogsBucketName', { value: accessLogsBucket.bucketName });
+    new cdk.CfnOutput(this, 'GeneralBucketName', { value: generalBucket.bucketName });
+    new cdk.CfnOutput(this, 'AossCollectionEndpoint', {
+      value: aossCollection.attrCollectionEndpoint,
+    });
+    new cdk.CfnOutput(this, 'AossCollectionName', { value: collectionName });
   }
 }

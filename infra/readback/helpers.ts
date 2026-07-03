@@ -5,6 +5,9 @@
  * resource ARN/name, designed value, actual observed value.
  */
 
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 export interface AssertionResult {
   resource: string;
   property: string;
@@ -69,4 +72,33 @@ export function formatResultsTable(): string {
     );
   }
   return lines.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// cdk-outputs.json loader — per design §2 / F-9
+// ---------------------------------------------------------------------------
+
+export type StackOutputs = Record<string, Record<string, string>>;
+
+/**
+ * Load cdk-outputs.json from the repo root (or CDK_OUTPUTS_FILE env var).
+ * Returns null if the file does not exist (pre-deploy mode).
+ */
+export function loadCdkOutputs(): StackOutputs | null {
+  const filePath = process.env.CDK_OUTPUTS_FILE ?? resolve(process.cwd(), 'cdk-outputs.json');
+  if (!existsSync(filePath)) return null;
+  const content = readFileSync(filePath, 'utf-8');
+  return JSON.parse(content) as StackOutputs;
+}
+
+/**
+ * Get a specific output value from a stack.
+ * Returns undefined if the file or key is not found.
+ */
+export function getOutput(
+  outputs: StackOutputs | null,
+  stackName: string,
+  outputKey: string,
+): string | undefined {
+  return outputs?.[stackName]?.[outputKey];
 }

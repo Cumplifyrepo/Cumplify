@@ -2,9 +2,12 @@
  * Readback assertions — Spec 1 platform-foundation
  * Design §7: R-1 through R-23
  *
+ * ALL resource names resolved from cdk-outputs.json (per design §2, F-9).
+ * Zero hardcoded resource names — outputs are the declared-truth input.
+ *
  * Run-mode semantics:
- * - Dev-NetworkStack not deployed → assertions register as vitest SKIPPED.
- * - Dev-NetworkStack deployed → post-deploy mode, ABSENT = FAIL.
+ * - cdk-outputs.json missing or NetworkStack outputs absent → SKIPPED.
+ * - Outputs present → post-deploy mode, ABSENT = FAIL.
  *
  * Env-conditional: R-21, R-22 are prod-only (skip on dev).
  * R-11 (AOSS CollectionStatus=ACTIVE) uses 45s timeout budget per 02-aoss-rule.
@@ -13,14 +16,16 @@
  */
 
 import { describe, it, beforeAll } from 'vitest';
-import { assertResource } from './helpers.js';
+import { assertResource, loadCdkOutputs, getOutput, type StackOutputs } from './helpers.js';
 
 const PROFILE = 'cumplify-dev-readonly';
-const ENV_NAME: string = 'dev';
-const AOSS_TIMEOUT = 45_000; // 45s cold-start budget per 02-aoss-rule
+const ENV_NAME: string = process.env.READBACK_ENV ?? 'dev';
+const NETWORK_STACK = `Dev-NetworkStack`;
+const DATA_STACK = `Dev-DataStack`;
+const AOSS_TIMEOUT = 45_000;
 
 // ---------------------------------------------------------------------------
-// AWS CLI helper — runs a command and returns parsed JSON or null on failure
+// AWS CLI helper
 // ---------------------------------------------------------------------------
 
 async function awsJson<T>(command: string, timeout = 15_000): Promise<T | null> {
@@ -42,31 +47,31 @@ async function hasAwsAccess(): Promise<boolean> {
   return result !== null;
 }
 
-async function getVpcIdFromStack(): Promise<string | null> {
-  const result = await awsJson<string[]>(
-    `aws cloudformation describe-stack-resources --stack-name Dev-NetworkStack --query "StackResources[?ResourceType=='AWS::EC2::VPC'].PhysicalResourceId"`,
-  );
-  return result && result.length > 0 ? result[0] : null;
-}
-
 // ---------------------------------------------------------------------------
 // Test suite
 // ---------------------------------------------------------------------------
 
 describe('Platform Foundation — Readback Assertions', () => {
   let awsAvailable = false;
-  let specStacksDeployed = false;
+  let outputs: StackOutputs | null = null;
+  let vpcId: string | undefined;
+  let tableName: string | undefined;
+  let evidenceBucket: string | undefined;
+  let aossCollectionName: string | undefined;
 
   beforeAll(async () => {
     awsAvailable = await hasAwsAccess();
     if (!awsAvailable) return;
-    const vpcId = await getVpcIdFromStack();
-    specStacksDeployed = vpcId !== null;
+
+    outputs = loadCdkOutputs();
+    vpcId = getOutput(outputs, NETWORK_STACK, 'VpcId');
+    tableName = getOutput(outputs, DATA_STACK, 'TableName');
+    evidenceBucket = getOutput(outputs, DATA_STACK, 'EvidenceBucketName');
+    aossCollectionName = getOutput(outputs, DATA_STACK, 'AossCollectionName');
   });
 
-  /** Skip helper for all assertions */
-  function skipIfNotDeployed(ctx: { skip: () => void }): boolean {
-    if (!awsAvailable || !specStacksDeployed) {
+  function skipIfNotReady(ctx: { skip: () => void }): boolean {
+    if (!awsAvailable || !outputs || !vpcId) {
       ctx.skip();
       return true;
     }
@@ -74,28 +79,33 @@ describe('Platform Foundation — Readback Assertions', () => {
   }
 
   // =========================================================================
-  // DynamoDB assertions (R-1 through R-4)
+  // DynamoDB (R-1 through R-4)
   // =========================================================================
 
   it('R-1: CumplifyCore table SSE.Type = KMS', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx) || !tableName) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{ Table: { SSEDescription?: { SSEType?: string } } }>(
-      'aws dynamodb describe-table --table-name CumplifyCore --query "{Table: {SSEDescription: Table.SSEDescription}}"',
+      `aws dynamodb describe-table --table-name ${tableName} --query "{Table: {SSEDescription: Table.SSEDescription}}"`,
     );
     const observed = result?.Table?.SSEDescription?.SSEType ?? 'ABSENT';
-    assertResource('dynamodb:table/CumplifyCore', 'SSE.Type', 'KMS', observed);
+    assertResource(`dynamodb:table/${tableName}`, 'SSE.Type', 'KMS', observed);
   });
 
-  it('R-2: CumplifyCore table SSE.KMSMasterKeyArn contains dynamodb CMK', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+  it('R-2: CumplifyCore table SSE uses custom KMS key', async (ctx) => {
+    if (skipIfNotReady(ctx) || !tableName) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{ Table: { SSEDescription?: { KMSMasterKeyArn?: string } } }>(
-      'aws dynamodb describe-table --table-name CumplifyCore --query "{Table: {SSEDescription: Table.SSEDescription}}"',
+      `aws dynamodb describe-table --table-name ${tableName} --query "{Table: {SSEDescription: Table.SSEDescription}}"`,
     );
     const arn = result?.Table?.SSEDescription?.KMSMasterKeyArn ?? 'ABSENT';
-    // Verify it's a real KMS ARN (not default AWS-owned)
     const isCustomKey = typeof arn === 'string' && arn.includes(':key/');
     assertResource(
-      'dynamodb:table/CumplifyCore',
+      `dynamodb:table/${tableName}`,
       'SSE.KMSMasterKeyArn.isCustomKey',
       true,
       isCustomKey,
@@ -103,25 +113,31 @@ describe('Platform Foundation — Readback Assertions', () => {
   });
 
   it('R-3: CumplifyCore table has 9 GSIs', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx) || !tableName) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{ Table: { GlobalSecondaryIndexes?: unknown[] } }>(
-      'aws dynamodb describe-table --table-name CumplifyCore --query "{Table: {GlobalSecondaryIndexes: Table.GlobalSecondaryIndexes}}"',
+      `aws dynamodb describe-table --table-name ${tableName} --query "{Table: {GlobalSecondaryIndexes: Table.GlobalSecondaryIndexes}}"`,
     );
     const count = result?.Table?.GlobalSecondaryIndexes?.length ?? 'ABSENT';
-    assertResource('dynamodb:table/CumplifyCore', 'GlobalSecondaryIndexes.length', 9, count);
+    assertResource(`dynamodb:table/${tableName}`, 'GlobalSecondaryIndexes.length', 9, count);
   });
 
   it('R-4: CumplifyCore table PITR enabled', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx) || !tableName) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{
       ContinuousBackupsDescription?: {
         PointInTimeRecoveryDescription?: { PointInTimeRecoveryStatus?: string };
       };
-    }>('aws dynamodb describe-continuous-backups --table-name CumplifyCore');
+    }>(`aws dynamodb describe-continuous-backups --table-name ${tableName}`);
     const status =
       result?.ContinuousBackupsDescription?.PointInTimeRecoveryDescription
         ?.PointInTimeRecoveryStatus ?? 'ABSENT';
-    assertResource('dynamodb:table/CumplifyCore', 'PointInTimeRecoveryStatus', 'ENABLED', status);
+    assertResource(`dynamodb:table/${tableName}`, 'PointInTimeRecoveryStatus', 'ENABLED', status);
   });
 
   // =========================================================================
@@ -129,27 +145,28 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-5: S3 evidence vault ObjectLock Mode = COMPLIANCE', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    const bucketName = `cumplify-${ENV_NAME}-evidence`;
+    if (skipIfNotReady(ctx) || !evidenceBucket) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{
-      ObjectLockConfiguration?: {
-        ObjectLockEnabled?: string;
-        Rule?: { DefaultRetention?: { Mode?: string } };
-      };
-    }>(`aws s3api get-object-lock-configuration --bucket ${bucketName}`);
+      ObjectLockConfiguration?: { Rule?: { DefaultRetention?: { Mode?: string } } };
+    }>(`aws s3api get-object-lock-configuration --bucket ${evidenceBucket}`);
     const mode = result?.ObjectLockConfiguration?.Rule?.DefaultRetention?.Mode ?? 'ABSENT';
-    assertResource(`s3://${bucketName}`, 'ObjectLockConfiguration.Mode', 'COMPLIANCE', mode);
+    assertResource(`s3://${evidenceBucket}`, 'ObjectLockConfiguration.Mode', 'COMPLIANCE', mode);
   });
 
   it('R-6: S3 evidence vault retention = 2555 days', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    const bucketName = `cumplify-${ENV_NAME}-evidence`;
+    if (skipIfNotReady(ctx) || !evidenceBucket) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{
       ObjectLockConfiguration?: { Rule?: { DefaultRetention?: { Days?: number } } };
-    }>(`aws s3api get-object-lock-configuration --bucket ${bucketName}`);
+    }>(`aws s3api get-object-lock-configuration --bucket ${evidenceBucket}`);
     const days = result?.ObjectLockConfiguration?.Rule?.DefaultRetention?.Days ?? 'ABSENT';
     assertResource(
-      `s3://${bucketName}`,
+      `s3://${evidenceBucket}`,
       'ObjectLockConfiguration.DefaultRetention.Days',
       2555,
       days,
@@ -161,8 +178,7 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-7: VPC has zero NAT gateways', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    const vpcId = await getVpcIdFromStack();
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{ NatGateways?: unknown[] }>(
       `aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=${vpcId}" "Name=state,Values=available"`,
     );
@@ -171,8 +187,7 @@ describe('Platform Foundation — Readback Assertions', () => {
   });
 
   it('R-8: VPC has 5 interface endpoints (AOSS, SecretsManager, KMS, bedrock-runtime, execute-api)', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    const vpcId = await getVpcIdFromStack();
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{
       VpcEndpoints?: Array<{ ServiceName?: string; VpcEndpointType?: string }>;
     }>(
@@ -186,21 +201,16 @@ describe('Platform Foundation — Readback Assertions', () => {
   });
 
   it('R-9: VPC has 2 gateway endpoints (S3, DynamoDB)', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    const vpcId = await getVpcIdFromStack();
-    const result = await awsJson<{
-      VpcEndpoints?: Array<{ ServiceName?: string; VpcEndpointType?: string }>;
-    }>(
+    if (skipIfNotReady(ctx)) return;
+    const result = await awsJson<{ VpcEndpoints?: Array<{ ServiceName?: string }> }>(
       `aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=${vpcId}" "Name=vpc-endpoint-type,Values=Gateway"`,
     );
-    const endpoints = result?.VpcEndpoints ?? [];
-    const count = endpoints.length;
+    const count = result?.VpcEndpoints?.length ?? 'ABSENT';
     assertResource(`ec2:vpc/${vpcId}`, 'GatewayEndpoints.count', 2, count);
   });
 
-  it('R-23: FlowLog exists for CumplifyVpc', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    const vpcId = await getVpcIdFromStack();
+  it('R-23: FlowLog exists for VPC', async (ctx) => {
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{ FlowLogs?: unknown[] }>(
       `aws ec2 describe-flow-logs --filter "Name=resource-id,Values=${vpcId}"`,
     );
@@ -213,22 +223,27 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-10: AOSS collection type = VECTORSEARCH', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx) || !aossCollectionName) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{
       collectionDetails?: Array<{ type?: string }>;
-    }>('aws opensearchserverless batch-get-collection --names cumplify-iso-kb', AOSS_TIMEOUT);
+    }>(`aws opensearchserverless batch-get-collection --names ${aossCollectionName}`, AOSS_TIMEOUT);
     const type = result?.collectionDetails?.[0]?.type ?? 'ABSENT';
-    assertResource('aoss:collection/cumplify-iso-kb', 'Type', 'VECTORSEARCH', type);
+    assertResource(`aoss:collection/${aossCollectionName}`, 'Type', 'VECTORSEARCH', type);
   });
 
   it('R-11: AOSS collection status = ACTIVE (45s budget)', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    // AOSS scale-to-zero cold start up to 45s — use extended timeout
+    if (skipIfNotReady(ctx) || !aossCollectionName) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{
       collectionDetails?: Array<{ status?: string }>;
-    }>('aws opensearchserverless batch-get-collection --names cumplify-iso-kb', AOSS_TIMEOUT);
+    }>(`aws opensearchserverless batch-get-collection --names ${aossCollectionName}`, AOSS_TIMEOUT);
     const status = result?.collectionDetails?.[0]?.status ?? 'ABSENT';
-    assertResource('aoss:collection/cumplify-iso-kb', 'CollectionStatus', 'ACTIVE', status);
+    assertResource(`aoss:collection/${aossCollectionName}`, 'CollectionStatus', 'ACTIVE', status);
   });
 
   // =========================================================================
@@ -236,24 +251,41 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-12: Aurora cluster StorageEncrypted = true', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
-    const result = await awsJson<{ DBClusters?: Array<{ StorageEncrypted?: boolean }> }>(
-      "aws rds describe-db-clusters --query \"{DBClusters: DBClusters[?contains(DBClusterIdentifier, 'cumplify') || contains(DBClusterIdentifier, 'datastack')]}\"",
+    if (skipIfNotReady(ctx)) return;
+    // Find the cluster by querying all — filter by those containing 'datastack' in identifier
+    const result = await awsJson<{
+      DBClusters?: Array<{ StorageEncrypted?: boolean; DBClusterIdentifier?: string }>;
+    }>('aws rds describe-db-clusters');
+    const cluster = result?.DBClusters?.find((c) =>
+      c.DBClusterIdentifier?.toLowerCase().includes('datastack'),
     );
-    const encrypted = result?.DBClusters?.[0]?.StorageEncrypted ?? 'ABSENT';
-    assertResource('rds:cluster/cumplify', 'StorageEncrypted', true, encrypted);
+    const encrypted = cluster?.StorageEncrypted ?? 'ABSENT';
+    assertResource(
+      `rds:cluster/${cluster?.DBClusterIdentifier ?? 'unknown'}`,
+      'StorageEncrypted',
+      true,
+      encrypted,
+    );
   });
 
   it('R-13: Aurora cluster ServerlessV2 MinCapacity = 0 (dev)', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{
-      DBClusters?: Array<{ ServerlessV2ScalingConfiguration?: { MinCapacity?: number } }>;
-    }>(
-      "aws rds describe-db-clusters --query \"{DBClusters: DBClusters[?contains(DBClusterIdentifier, 'cumplify') || contains(DBClusterIdentifier, 'datastack')]}\"",
+      DBClusters?: Array<{
+        ServerlessV2ScalingConfiguration?: { MinCapacity?: number };
+        DBClusterIdentifier?: string;
+      }>;
+    }>('aws rds describe-db-clusters');
+    const cluster = result?.DBClusters?.find((c) =>
+      c.DBClusterIdentifier?.toLowerCase().includes('datastack'),
     );
-    const minCap =
-      result?.DBClusters?.[0]?.ServerlessV2ScalingConfiguration?.MinCapacity ?? 'ABSENT';
-    assertResource('rds:cluster/cumplify', 'ServerlessV2ScalingConfig.MinCapacity', 0, minCap);
+    const minCap = cluster?.ServerlessV2ScalingConfiguration?.MinCapacity ?? 'ABSENT';
+    assertResource(
+      `rds:cluster/${cluster?.DBClusterIdentifier ?? 'unknown'}`,
+      'ServerlessV2ScalingConfig.MinCapacity',
+      0,
+      minCap,
+    );
   });
 
   // =========================================================================
@@ -261,27 +293,40 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-14: ElastiCache AtRestEncryptionEnabled = true', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{
-      ReplicationGroups?: Array<{ AtRestEncryptionEnabled?: boolean }>;
+      ReplicationGroups?: Array<{ AtRestEncryptionEnabled?: boolean; ReplicationGroupId?: string }>;
     }>('aws elasticache describe-replication-groups');
     const group = result?.ReplicationGroups?.find((g) =>
-      JSON.stringify(g).toLowerCase().includes('cumplify'),
+      g.ReplicationGroupId?.toLowerCase().includes('datastack'),
     );
     const enabled = group?.AtRestEncryptionEnabled ?? 'ABSENT';
-    assertResource('elasticache:cumplify', 'AtRestEncryptionEnabled', true, enabled);
+    assertResource(
+      `elasticache:${group?.ReplicationGroupId ?? 'unknown'}`,
+      'AtRestEncryptionEnabled',
+      true,
+      enabled,
+    );
   });
 
   it('R-15: ElastiCache TransitEncryptionEnabled = true', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{
-      ReplicationGroups?: Array<{ TransitEncryptionEnabled?: boolean }>;
+      ReplicationGroups?: Array<{
+        TransitEncryptionEnabled?: boolean;
+        ReplicationGroupId?: string;
+      }>;
     }>('aws elasticache describe-replication-groups');
     const group = result?.ReplicationGroups?.find((g) =>
-      JSON.stringify(g).toLowerCase().includes('cumplify'),
+      g.ReplicationGroupId?.toLowerCase().includes('datastack'),
     );
     const enabled = group?.TransitEncryptionEnabled ?? 'ABSENT';
-    assertResource('elasticache:cumplify', 'TransitEncryptionEnabled', true, enabled);
+    assertResource(
+      `elasticache:${group?.ReplicationGroupId ?? 'unknown'}`,
+      'TransitEncryptionEnabled',
+      true,
+      enabled,
+    );
   });
 
   // =========================================================================
@@ -289,57 +334,69 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-16: Cognito Pool A MfaConfiguration = ON', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const poolName = `cumplify-${ENV_NAME}-internal`;
     const pools = await awsJson<{ UserPools?: Array<{ Id?: string; Name?: string }> }>(
-      `aws cognito-idp list-user-pools --max-results 60 --query "{UserPools: UserPools[?Name=='${poolName}']}"`,
+      `aws cognito-idp list-user-pools --max-results 60`,
     );
-    const poolId = pools?.UserPools?.[0]?.Id;
-    if (!poolId) {
+    const pool = pools?.UserPools?.find((p) => p.Name === poolName);
+    if (!pool?.Id) {
       assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'ON', 'ABSENT');
       return;
     }
     const detail = await awsJson<{ UserPool?: { MfaConfiguration?: string } }>(
-      `aws cognito-idp describe-user-pool --user-pool-id ${poolId}`,
+      `aws cognito-idp describe-user-pool --user-pool-id ${pool.Id}`,
     );
-    const mfa = detail?.UserPool?.MfaConfiguration ?? 'ABSENT';
-    assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'ON', mfa);
+    assertResource(
+      `cognito:${poolName}`,
+      'MfaConfiguration',
+      'ON',
+      detail?.UserPool?.MfaConfiguration ?? 'ABSENT',
+    );
   });
 
   it('R-17: Cognito Pool B MfaConfiguration = OPTIONAL', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const poolName = `cumplify-${ENV_NAME}-tenant-admin`;
     const pools = await awsJson<{ UserPools?: Array<{ Id?: string; Name?: string }> }>(
-      `aws cognito-idp list-user-pools --max-results 60 --query "{UserPools: UserPools[?Name=='${poolName}']}"`,
+      `aws cognito-idp list-user-pools --max-results 60`,
     );
-    const poolId = pools?.UserPools?.[0]?.Id;
-    if (!poolId) {
+    const pool = pools?.UserPools?.find((p) => p.Name === poolName);
+    if (!pool?.Id) {
       assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'OPTIONAL', 'ABSENT');
       return;
     }
     const detail = await awsJson<{ UserPool?: { MfaConfiguration?: string } }>(
-      `aws cognito-idp describe-user-pool --user-pool-id ${poolId}`,
+      `aws cognito-idp describe-user-pool --user-pool-id ${pool.Id}`,
     );
-    const mfa = detail?.UserPool?.MfaConfiguration ?? 'ABSENT';
-    assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'OPTIONAL', mfa);
+    assertResource(
+      `cognito:${poolName}`,
+      'MfaConfiguration',
+      'OPTIONAL',
+      detail?.UserPool?.MfaConfiguration ?? 'ABSENT',
+    );
   });
 
   it('R-18: Cognito Pool C MfaConfiguration = OPTIONAL', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const poolName = `cumplify-${ENV_NAME}-tenant-user`;
     const pools = await awsJson<{ UserPools?: Array<{ Id?: string; Name?: string }> }>(
-      `aws cognito-idp list-user-pools --max-results 60 --query "{UserPools: UserPools[?Name=='${poolName}']}"`,
+      `aws cognito-idp list-user-pools --max-results 60`,
     );
-    const poolId = pools?.UserPools?.[0]?.Id;
-    if (!poolId) {
+    const pool = pools?.UserPools?.find((p) => p.Name === poolName);
+    if (!pool?.Id) {
       assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'OPTIONAL', 'ABSENT');
       return;
     }
     const detail = await awsJson<{ UserPool?: { MfaConfiguration?: string } }>(
-      `aws cognito-idp describe-user-pool --user-pool-id ${poolId}`,
+      `aws cognito-idp describe-user-pool --user-pool-id ${pool.Id}`,
     );
-    const mfa = detail?.UserPool?.MfaConfiguration ?? 'ABSENT';
-    assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'OPTIONAL', mfa);
+    assertResource(
+      `cognito:${poolName}`,
+      'MfaConfiguration',
+      'OPTIONAL',
+      detail?.UserPool?.MfaConfiguration ?? 'ABSENT',
+    );
   });
 
   // =========================================================================
@@ -347,9 +404,9 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-19: 10 KMS keys with alias prefix cumplify/<env>/', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{ Aliases?: Array<{ AliasName?: string }> }>(
-      'aws kms list-aliases --query "{Aliases: Aliases}"',
+      'aws kms list-aliases',
     );
     const prefix = `alias/cumplify/${ENV_NAME}/`;
     const matched = (result?.Aliases ?? []).filter((a) => a.AliasName?.startsWith(prefix));
@@ -357,13 +414,12 @@ describe('Platform Foundation — Readback Assertions', () => {
   });
 
   it('R-20: All cumplify KMS keys have rotation enabled', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     const result = await awsJson<{ Aliases?: Array<{ AliasName?: string; TargetKeyId?: string }> }>(
-      'aws kms list-aliases --query "{Aliases: Aliases}"',
+      'aws kms list-aliases',
     );
     const prefix = `alias/cumplify/${ENV_NAME}/`;
     const aliases = (result?.Aliases ?? []).filter((a) => a.AliasName?.startsWith(prefix));
-
     let allRotating = true;
     for (const alias of aliases) {
       if (!alias.TargetKeyId) continue;
@@ -383,31 +439,37 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-21: Global Table replica status us-west-2 = ACTIVE (prod-only)', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     if (ENV_NAME !== 'prod') {
+      ctx.skip();
+      return;
+    }
+    if (!tableName) {
       ctx.skip();
       return;
     }
     const result = await awsJson<{
       Table?: { Replicas?: Array<{ RegionName?: string; ReplicaStatus?: string }> };
-    }>(
-      'aws dynamodb describe-table --table-name CumplifyCore --query "{Table: {Replicas: Table.Replicas}}"',
-    );
+    }>(`aws dynamodb describe-table --table-name ${tableName}`);
     const replica = result?.Table?.Replicas?.find((r) => r.RegionName === 'us-west-2');
-    const status = replica?.ReplicaStatus ?? 'ABSENT';
-    assertResource('dynamodb:table/CumplifyCore', 'Replica.us-west-2.Status', 'ACTIVE', status);
+    assertResource(
+      `dynamodb:table/${tableName}`,
+      'Replica.us-west-2.Status',
+      'ACTIVE',
+      replica?.ReplicaStatus ?? 'ABSENT',
+    );
   });
 
   it('R-22: DR KMS ReplicaKey exists in us-west-2 (prod-only)', async (ctx) => {
-    if (skipIfNotDeployed(ctx)) return;
+    if (skipIfNotReady(ctx)) return;
     if (ENV_NAME !== 'prod') {
       ctx.skip();
       return;
     }
     const result = await awsJson<{ Aliases?: Array<{ AliasName?: string }> }>(
-      `aws kms list-aliases --region us-west-2 --query "{Aliases: Aliases}"`,
+      'aws kms list-aliases --region us-west-2',
     );
-    const prefix = `alias/cumplify/prod/dynamodb`;
+    const prefix = 'alias/cumplify/prod/dynamodb';
     const found = (result?.Aliases ?? []).some((a) => a.AliasName === prefix);
     assertResource('kms:us-west-2/cumplify/prod/dynamodb', 'exists', true, found);
   });

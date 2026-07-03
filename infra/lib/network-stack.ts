@@ -241,5 +241,12 @@ export class NetworkStack extends cdk.Stack {
       ],
       true,
     );
+
+    // -----------------------------------------------------------------------
+    // CfnOutputs — per design §2 / F-9 (consumed by readback via cdk-outputs.json)
+    // -----------------------------------------------------------------------
+    new cdk.CfnOutput(this, 'VpcId', { value: vpc.vpcId });
+    new cdk.CfnOutput(this, 'FlowLogsBucketName', { value: flowLogsBucket.bucketName });
+    new cdk.CfnOutput(this, 'AossVpcEndpointId', { value: this.aossVpcEndpointId });
   }
 }
