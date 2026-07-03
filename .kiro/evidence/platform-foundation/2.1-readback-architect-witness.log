@@ -1,0 +1,40 @@
+
+> cumplify@0.1.0 readback
+> vitest run --config infra/readback/vitest.config.ts --reporter=verbose
+
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-1: CumplifyCore table SSE.Type = KMS 598ms
+stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
+Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
+
+ ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-2: CumplifyCore table SSE uses custom KMS key 509ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-3: CumplifyCore table has 9 GSIs 1001ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-4: CumplifyCore table PITR enabled 661ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-5: S3 evidence vault ObjectLock Mode = COMPLIANCE 646ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-6: S3 evidence vault retention = 2555 days 499ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-7: VPC has zero NAT gateways 678ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-8: VPC has 5 interface endpoints (AOSS, SecretsManager, KMS, bedrock-runtime, execute-api) 846ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-9: VPC has 2 gateway endpoints (S3, DynamoDB) 660ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for VPC 614ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-10: AOSS collection type = VECTORSEARCH 564ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-11: AOSS collection status = ACTIVE (45s budget) 679ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-12: Aurora cluster StorageEncrypted = true 612ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-13: Aurora cluster ServerlessV2 MinCapacity = 0 (dev) 696ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-14: ElastiCache AtRestEncryptionEnabled = true 824ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-15: ElastiCache TransitEncryptionEnabled = true 564ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-16: Cognito Pool A MfaConfiguration = ON 1231ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-17: Cognito Pool B MfaConfiguration = OPTIONAL 1247ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-18: Cognito Pool C MfaConfiguration = OPTIONAL 1379ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-19: 10 KMS keys with alias prefix cumplify/<env>/ 609ms
+ ✓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-20: All cumplify KMS keys have rotation enabled 5922ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-21: Global Table replica status us-west-2 = ACTIVE (prod-only) 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-22: DR KMS ReplicaKey exists in us-west-2 (prod-only) 0ms
+
+ Test Files  2 passed (2)
+      Tests  21 passed | 3 skipped (24)
+   Start at  19:04:33
+   Duration  21.69s (transform 48ms, setup 0ms, import 64ms, tests 23.24s, environment 0ms)
+

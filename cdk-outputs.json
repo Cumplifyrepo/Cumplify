@@ -1,9 +1,12 @@
 {
   "Dev-NetworkStack": {
     "ExportsOutputFnGetAttAossDataPlaneEndpointId34C57578": "vpce-089b26b4a26fc80f5",
+    "AossVpcEndpointId": "vpce-089b26b4a26fc80f5",
     "ExportsOutputRefCumplifyVpcPrivateSubnet2SubnetBCF2F8DDCC08E448": "subnet-07b642d7669e69159",
+    "VpcId": "vpc-067b2b0b8e1693b6d",
     "ExportsOutputRefCumplifyVpcPrivateSubnet1Subnet6CCF0B0453B0556C": "subnet-055a3986564c71b2b",
     "ExportsOutputRefCumplifyVpc9A18F5DDE97ED386": "vpc-067b2b0b8e1693b6d",
+    "FlowLogsBucketName": "dev-networkstack-flowlogsbucket8912dcdb-qd9lod43vvc9",
     "ExportsOutputFnGetAttCumplifyVpc9A18F5DDCidrBlock6D76CD16": "10.0.0.0/16"
   },
   "Dev-SecurityStack": {
@@ -15,6 +18,16 @@
     "ExportsOutputFnGetAttelasticacheKey12E9856BArn0B51FE06": "arn:aws:kms:us-east-1:697114252993:key/25fa404f-707e-4618-a8fd-5865702b74f2"
   },
   "Dev-DataStack": {
+    "TableName": "CumplifyCore",
+    "AossCollectionName": "cumplify-iso-kb",
+    "EvidenceBucketName": "dev-datastack-evidencevault2b2802b4-9gbjwnn7s30y",
+    "TableArn": "arn:aws:dynamodb:us-east-1:697114252993:table/CumplifyCore",
+    "EvidenceBucketArn": "arn:aws:s3:::dev-datastack-evidencevault2b2802b4-9gbjwnn7s30y",
+    "GeneralBucketName": "dev-datastack-generalbucketad391c6e-lbcsvfej9hap",
+    "AossCollectionEndpoint": "https://1s4upf7qgp7o64dnfrj8.us-east-1.aoss.amazonaws.com",
+    "CacheReplicationGroupId": "der1rf2gylq8r2kh",
+    "ClusterEndpoint": "dev-datastack-auroracluster23d869c0-zmmgimmc0vnd.cluster-cwvaka2ewzl8.us-east-1.rds.amazonaws.com",
+    "AccessLogsBucketName": "dev-datastack-evidenceaccesslogsbd172ac0-tliadjniegei",
     "ExportsOutputRefCumplifyCoreFBF4CB4F0E2D644A": "CumplifyCore"
   }
 }
