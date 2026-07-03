@@ -339,3 +339,20 @@ replication); the wiring is deferred to task 1.8.
 **Forward fix:** Task 1.8 implements DrRegionStack (us-west-2), wires the
 Global Table replica with ReplicaKey ARN, and configures S3 CRR. R-21, R-22,
 and R-24 readback assertions verify at D3 (prod deployment).
+
+### AC-2.1 / AC-2.5: AZ pinning for AOSS endpoint availability
+
+**Original:** "Minimum 2 AZs" (AC-2.1), no explicit AZ selection guidance.
+**Actual:** VPC uses **exactly 2 pinned AZs** from the AOSS-supported
+intersection, specified per-account in `envConfig.availabilityZones`.
+**Rationale:** Deploy attempt #1 to dev failed: `com.amazonaws.us-east-1.aoss`
+VPC endpoint service is only available in us-east-1b/1c/1d in account
+697114252993. CDK's default AZ selection (1a+1b) included an unsupported AZ,
+causing the AOSS interface endpoint creation to fail with
+`InvalidParameter: The VPC endpoint service ... is not supported in the
+availability zone of the subnet`. All other endpoint services (secretsmanager,
+kms, bedrock-runtime, execute-api) support all six AZs.
+**Forward fix:** `envConfig.availabilityZones` is populated per-account from
+`describe-vpc-endpoint-services` intersection query. Dev = `['us-east-1b',
+'us-east-1c']`. Staging/prod values populated as a task 3.1 runbook step
+before first pipeline deploy to those accounts.

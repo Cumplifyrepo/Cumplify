@@ -241,6 +241,13 @@ all 20 dev readback assertions PASS.
 **Deliverables:**
 - [ ] Create GitHub remote (`strivanallc-crypto/Cumplify`), push develop branch.
 - [ ] Create CodeStar Connection in mgmt account. Authorize (PENDING→AVAILABLE).
+- [ ] **Populate staging/prod availabilityZones** in `infra/lib/env-config.ts`:
+  Run `aws ec2 describe-vpc-endpoint-services --service-names
+  com.amazonaws.us-east-1.aoss com.amazonaws.us-east-1.secretsmanager
+  com.amazonaws.us-east-1.kms com.amazonaws.us-east-1.bedrock-runtime
+  com.amazonaws.us-east-1.execute-api --query 'ServiceDetails[].AvailabilityZones'`
+  in each target account. Intersect the results → pick 2 AZs common to all
+  five services. Commit the populated arrays before pipeline first run.
 - [ ] Deploy PipelineStack to mgmt account.
 - [ ] Pipeline self-mutates successfully.
 - [ ] **Pipeline first run completes as a no-op** against the already-deployed

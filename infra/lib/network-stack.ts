@@ -73,10 +73,16 @@ export class NetworkStack extends cdk.Stack {
     ]);
 
     // -----------------------------------------------------------------------
-    // VPC — private isolated subnets only, 2 AZs, zero NAT (AC-2.1, AC-2.4)
+    // VPC — private isolated subnets only, pinned AZs, zero NAT (AC-2.1, AC-2.4)
+    // AZs are pinned to the AOSS-supported intersection per account (AC-2.5).
     // -----------------------------------------------------------------------
     const vpc = new ec2.Vpc(this, 'CumplifyVpc', {
-      maxAzs: 2,
+      // Pin AZs to those supporting all VPC endpoint services (especially AOSS).
+      // If availabilityZones is empty (staging/prod before first deploy), fall back
+      // to maxAzs:2 — synth will succeed but deploy requires populating the array.
+      ...(envConfig.availabilityZones.length > 0
+        ? { availabilityZones: envConfig.availabilityZones }
+        : { maxAzs: 2 }),
       natGateways: 0, // Zero NAT — AC-2.4, Part 25 cost lever
       subnetConfiguration: [
         {

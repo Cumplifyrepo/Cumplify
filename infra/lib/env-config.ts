@@ -7,6 +7,16 @@ export interface EnvConfig {
   readonly envName: 'dev' | 'staging' | 'prod';
   readonly account: string;
   readonly region: string;
+  /**
+   * Pinned AZs for VPC creation. Must be the intersection of AZs that support
+   * ALL required VPC endpoint services (especially com.amazonaws.us-east-1.aoss
+   * which is NOT available in all AZs). AZ-name-to-physical mapping is randomized
+   * per account — values are account-specific.
+   *
+   * Empty array [] = not yet populated (MUST run describe-vpc-endpoint-services
+   * intersection query against the target account before first deploy).
+   */
+  readonly availabilityZones: string[];
   // Stage-conditional resource parameters
   readonly globalTableReplica: boolean;
   readonly drRegionStack: boolean;
@@ -24,6 +34,9 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     envName: 'dev',
     account: '697114252993',
     region: 'us-east-1',
+    // Pinned to AOSS-supported AZs (verified: com.amazonaws.us-east-1.aoss
+    // available in 1b/1c/1d only in account 697114252993, deploy #1 failure).
+    availabilityZones: ['us-east-1b', 'us-east-1c'],
     globalTableReplica: false,
     drRegionStack: false,
     secretsReplica: false,
@@ -38,6 +51,9 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     envName: 'staging',
     account: '889007427685',
     region: 'us-east-1',
+    // MUST be populated from describe-vpc-endpoint-services intersection query
+    // against the target account before that env's first deploy — see task 3.1 runbook.
+    availabilityZones: [],
     globalTableReplica: false,
     drRegionStack: false,
     secretsReplica: false,
@@ -52,6 +68,9 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     envName: 'prod',
     account: '077405654066',
     region: 'us-east-1',
+    // MUST be populated from describe-vpc-endpoint-services intersection query
+    // against the target account before that env's first deploy — see task 3.1 runbook.
+    availabilityZones: [],
     globalTableReplica: true,
     drRegionStack: true,
     secretsReplica: true,
