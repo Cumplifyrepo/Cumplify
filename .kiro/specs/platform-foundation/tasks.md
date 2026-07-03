@@ -279,3 +279,17 @@ Wave 3 (pipeline + federation — after Wave 2):
   must go through aws-pricing MCP per NFR-6.
 - Prod deployment is NOT in scope for this spec's tasks (dev-only D3). Staging
   and prod deploy via the pipeline in later phases once the pipeline is proven.
+
+## Closure semantics (what the dod-gate enforces)
+
+- **Tasks 1.1, 1.6:** Close at D1 (code-only tasks). Their deployment proofs
+  live in tasks 3.1 (pipeline no-op) and 2.1 (readback green) respectively.
+  Checkboxes marked at D1 evidence-gate pass.
+- **Tasks 1.2–1.5:** Produce D1 evidence at code-complete (synth + Nag clean),
+  but **checkboxes are marked only when task 2.1's readback covers their
+  resources** — the spec's D3 closure rule applies to final closure, not to
+  interim evidence. The dod-gate will reject a close attempt on these tasks
+  until 2.1's readback log shows their assertions green.
+- **Task 1.7:** Closes at D3 (bootstrap is itself a deployment; readback =
+  CDKToolkit trust verification).
+- **Tasks 2.1, 3.1, 3.2:** Close at D3 per Template F (deployed + readback green).
