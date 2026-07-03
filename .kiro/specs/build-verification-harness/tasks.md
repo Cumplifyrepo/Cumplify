@@ -31,17 +31,17 @@ the highest rung they can mechanically satisfy (D1).
 **Depends on:** nothing
 
 **Deliverables:**
-- [ ] `package.json` at repo root with: TypeScript, Vitest, fast-check, eslint,
+- [x] `package.json` at repo root with: TypeScript, Vitest, fast-check, eslint,
   prettier, tsx as devDependencies. `tsconfig.json` configured.
-- [ ] `scripts/verify.ts` implementing the ordered 6-step evidence gate per
+- [x] `scripts/verify.ts` implementing the ordered 6-step evidence gate per
   design §4 (log format, SKIPPED semantics, halt-on-first-failure, MAX-RUNG
   line). Accepts `--spec`, `--task`, `--module` arguments.
-- [ ] `npm run verify` script entry in package.json.
-- [ ] `.kiro/evidence/` directory exists (README already present).
-- [ ] Skip logic: step 5 skips gracefully when no CDK entrypoint in `infra/bin/`;
+- [x] `npm run verify` script entry in package.json.
+- [x] `.kiro/evidence/` directory exists (README already present).
+- [x] Skip logic: step 5 skips gracefully when no CDK entrypoint in `infra/bin/`;
   step 6 skips when no module specified or no integration tests exist. Both
   emit SKIPPED (never PASS). npm ci is unconditional.
-- [ ] tech.md amendment: add dev/test tooling line (Vitest, fast-check, eslint,
+- [x] tech.md amendment: add dev/test tooling line (Vitest, fast-check, eslint,
   prettier, tsx, LocalStack with Docker prerequisite note).
 
 **Completion evidence:** Run `npm run verify -- --spec build-verification-harness --task 1.1`
@@ -58,14 +58,14 @@ This retroactively proves task 1.1.
 **Depends on:** 1.1
 
 **Deliverables:**
-- [ ] `services/_scaffold/example.property.test.ts` — a reference property-based
+- [x] `services/_scaffold/example.property.test.ts` — a reference property-based
   test using fast-check demonstrating: arbitrary generator, property assertion,
   vitest integration.
-- [ ] `services/_scaffold/` excluded from the §6 mechanical check in
+- [x] `services/_scaffold/` excluded from the §6 mechanical check in
   `scripts/verify.ts`.
-- [ ] The evidence-gate step 4 discovers `*.property.test.ts` files alongside
+- [x] The evidence-gate step 4 discovers `*.property.test.ts` files alongside
   unit tests and runs them via Vitest.
-- [ ] Mechanical existence check implemented: every `services/<name>/` (excluding
+- [x] Mechanical existence check implemented: every `services/<name>/` (excluding
   `_scaffold`) with source .ts files must contain at least one
   `*.property.test.ts`, else step 4 FAILs with named error.
 
@@ -82,20 +82,20 @@ Step 4 passes (scaffold test runs and passes; no other services/ dirs to check).
 **Depends on:** 1.1
 
 **Deliverables:**
-- [ ] `infra/readback/` directory with Vitest config (serial execution, no
+- [x] `infra/readback/` directory with Vitest config (serial execution, no
   watch mode, AOSS assertions carry 45s timeout).
-- [ ] `infra/readback/helpers.ts` — `assertResource(name, designed, observed)`
+- [x] `infra/readback/helpers.ts` — `assertResource(name, designed, observed)`
   utility that formats pass/fail output per AC-2.4 (resource ARN/name,
   designed value, actual observed value).
-- [ ] `infra/readback/sample-defect.test.ts` — the S3 ObjectLock assertion
+- [x] `infra/readback/sample-defect.test.ts` — the S3 ObjectLock assertion
   used for AC-5.2 (checks `ObjectLockConfiguration.Mode = COMPLIANCE`).
-- [ ] `infra/readback/sample-defect-stack.ts` — minimal CDK stack
+- [x] `infra/readback/sample-defect-stack.ts` — minimal CDK stack
   `Spec38SampleDefect` with one S3 bucket WITHOUT ObjectLockConfiguration,
   `RemovalPolicy.DESTROY`, no data.
-- [ ] `npm run readback` script entry in package.json.
-- [ ] Graceful handling when no resources deployed (AC-2.5): "no deployed
+- [x] `npm run readback` script entry in package.json.
+- [x] Graceful handling when no resources deployed (AC-2.5): "no deployed
   resources to verify" message, exit 0.
-- [ ] @dev tag on all readback tests; 45-second timeout on AOSS assertions
+- [x] @dev tag on all readback tests; 45-second timeout on AOSS assertions
   per 02-aoss-rule.md.
 
 **Completion evidence:** `npm run verify -- --spec build-verification-harness --task 2.1`.
@@ -112,13 +112,13 @@ gracefully (AC-2.5 proven).
 **Depends on:** 1.1, 2.1
 
 **Deliverables:**
-- [ ] `verify-evidence.json` prompt updated to reference
+- [x] `verify-evidence.json` prompt updated to reference
   `npm run verify -- --spec <name> --task <id> --module <module>` with
   --module omission rationale requirement.
-- [ ] `deploy-readback.json` prompt updated to reference `npm run readback`.
-- [ ] `dod-gate.json` prompt updated to check evidence log existence, all
+- [x] `deploy-readback.json` prompt updated to reference `npm run readback`.
+- [x] `dod-gate.json` prompt updated to check evidence log existence, all
   steps PASS (SKIPPED = not-green for D2+), readback appended for D3+.
-- [ ] Early-exit guards remain as first sentence in each prompt.
+- [x] Early-exit guards remain as first sentence in each prompt.
 
 **Completion evidence:** `npm run verify -- --spec build-verification-harness --task 3.1`.
 Hook JSON files are valid JSON, TypeScript compiles (no code changes beyond hooks),
@@ -132,14 +132,14 @@ lint passes.
 **Depends on:** 1.1, 1.2
 
 **Deliverables:**
-- [ ] A temporary TypeScript file with a deliberate type error placed in a
+- [x] A temporary TypeScript file with a deliberate type error placed in a
   test fixture directory.
-- [ ] Run `npm run verify` against it → step 2 (tsc --noEmit) FAILS.
-- [ ] Deliberate-failure evidence captured as
+- [x] Run `npm run verify` against it → step 2 (tsc --noEmit) FAILS.
+- [x] Deliberate-failure evidence captured as
   `.kiro/evidence/build-verification-harness/3.2-deliberate-fail.log`
   (the artifact being proven — this log intentionally shows FAIL).
-- [ ] The broken file is removed after proof capture.
-- [ ] Task 3.2's own completion evidence is a normal PASS run on the
+- [x] The broken file is removed after proof capture.
+- [x] Task 3.2's own completion evidence is a normal PASS run on the
   cleaned-up repo (separate from the deliberate-failure artifact).
 
 **Completion evidence:** `.kiro/evidence/build-verification-harness/3.2.log`
@@ -156,17 +156,17 @@ gate catches type errors.
 **REQUIRES-HUMAN**
 
 **Deliverables:**
-- [ ] Human creates `cumplify-spec38-sample-defect` S3 bucket in dev account
+- [x] Human creates `cumplify-spec38-sample-defect` S3 bucket in dev account
   via AWS CLI (no ObjectLock, no CDK — aws-cdk-lib stays out of spec 38):
   `aws s3api create-bucket --bucket cumplify-spec38-sample-defect --profile cumplify-dev-deploy`
-- [ ] Human (or agent) runs `npm run readback` → `sample-defect.test.ts`
+- [x] Human (or agent) runs `npm run readback` → `sample-defect.test.ts`
   assertion FAILS with output: `observed: undefined, designed: "COMPLIANCE"`.
-- [ ] Deliberate-failure evidence captured as
+- [x] Deliberate-failure evidence captured as
   `.kiro/evidence/build-verification-harness/3.3-deliberate-fail.log`
   (the artifact being proven — this log intentionally shows readback FAIL).
-- [ ] Human tears down the bucket:
+- [x] Human tears down the bucket:
   `aws s3api delete-bucket --bucket cumplify-spec38-sample-defect --profile cumplify-dev-deploy`
-- [ ] Task 3.3's own completion evidence is a normal readback PASS (or
+- [x] Task 3.3's own completion evidence is a normal readback PASS (or
   SKIPPED in pre-deploy mode) on the cleaned-up account.
 
 **Completion evidence:** `.kiro/evidence/build-verification-harness/3.3.log`
