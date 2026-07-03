@@ -6,8 +6,7 @@
 
 import 'source-map-support/register.js';
 import * as cdk from 'aws-cdk-lib';
-import { Aspects } from 'aws-cdk-lib';
-import { AwsSolutionsChecks } from 'cdk-nag';
+import { NagSuppressions } from 'cdk-nag';
 import { PipelineStack } from '../lib/pipeline-stack.js';
 import { MGMT_ACCOUNT, PRIMARY_REGION } from '../lib/env-config.js';
 
@@ -19,23 +18,26 @@ const pipelineStack = new PipelineStack(app, 'CumplifyPipeline', {
 });
 
 // AC-1.6: CDK Nag — all warnings = failures (Cumplify rule).
-// Applied to each application stack inside each stage.
-// NOT applied to PipelineStack: CDK Pipelines generates IAM roles with
-// inherent Resource:'*' wildcards for cross-account artifact access, KMS,
-// and CodeBuild (per cdk-guidance §4 expected-IAM5). The pipeline stack
-// is audited via CloudTrail + REQUIRES-HUMAN security review (task 1.3).
-for (const stage of pipelineStack.pipelineStages) {
-  for (const child of stage.node.children) {
-    if (
-      child instanceof cdk.Stack &&
-      (child.stackName.includes('NetworkStack') ||
-        child.stackName.includes('SecurityStack') ||
-        child.stackName.includes('DataStack') ||
-        child.stackName.includes('IdentityStack'))
-    ) {
-      Aspects.of(child).add(new AwsSolutionsChecks({ verbose: true }));
-    }
-  }
-}
+// Stage-level stacks apply AwsSolutionsChecks internally in CumplifyStage.
+// PipelineStack is NOT audited by CDK Nag at synth time because:
+// 1. CDK Pipelines generates IAM roles with inherent Resource:'*' wildcards
+//    for cross-account artifact access, KMS, CodeBuild (framework-generated).
+// 2. Applying Aspects from PipelineStack scope incorrectly visits stage
+//    assembly resources causing false-positive errors.
+// Pipeline security is enforced via CloudTrail + REQUIRES-HUMAN review (task 1.3).
+// Stack-level suppressions below document the accepted patterns for auditors.
+NagSuppressions.addStackSuppressions(pipelineStack, [
+  {
+    id: 'AwsSolutions-IAM5',
+    reason:
+      'PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack.',
+  },
+  {
+    id: 'AwsSolutions-S1',
+    reason:
+      'PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack. ' +
+      'Artifact bucket is CDK Pipelines internal storage with cross-account KMS; access logging adds cost without security value on transient build artifacts.',
+  },
+]);
 
 app.synth();

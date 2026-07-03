@@ -12,6 +12,7 @@ import { ENV_CONFIGS } from './env-config.js';
 
 export class PipelineStack extends cdk.Stack {
   public readonly pipelineStages: cdk.Stage[] = [];
+  public readonly pipeline: pipelines.CodePipeline;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -83,5 +84,11 @@ export class PipelineStack extends cdk.Stack {
       ],
     });
     this.pipelineStages.push(prodStage);
+
+    // Force eager construction of CodeBuild projects and IAM roles so that
+    // CDK Nag aspects can visit them and NagSuppressions can be applied.
+    pipeline.buildPipeline();
+
+    this.pipeline = pipeline;
   }
 }

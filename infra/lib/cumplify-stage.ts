@@ -5,6 +5,8 @@
  */
 
 import * as cdk from 'aws-cdk-lib';
+import { Aspects } from 'aws-cdk-lib';
+import { AwsSolutionsChecks } from 'cdk-nag';
 import { Construct } from 'constructs';
 import { type EnvConfig } from './env-config.js';
 import { NetworkStack } from './network-stack.js';
@@ -39,5 +41,9 @@ export class CumplifyStage extends cdk.Stage {
       tableName: dataStack.tableName,
     });
     identityStack.addDependency(dataStack);
+
+    // AC-1.6: CDK Nag — all warnings = failures (Cumplify rule).
+    // Applied at the stage level so all stacks within the stage are audited.
+    Aspects.of(this).add(new AwsSolutionsChecks({ verbose: true }));
   }
 }
