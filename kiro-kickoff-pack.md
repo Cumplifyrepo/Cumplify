@@ -186,6 +186,13 @@ inclusion: always
    green is the one unforgivable move.
 6. Uncertainty is a valid deliverable: Open Questions sections exist so you
    can use them.
+7. A task closure commit always includes its tasks.md checkbox edit —
+   evidence and record move together or not at all. A closure without its
+   checkbox ticked is not recorded; a checkbox ticked without evidence is
+   fabrication.
+8. Every readback table in evidence carries the run's timestamp, exit code,
+   and the git blob SHA of the cdk-outputs.json it resolved against.
+   Evidence without provenance is invalid.
 ```
 
 ### 2g. Generate the remaining fifteen
