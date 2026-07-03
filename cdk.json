@@ -1,0 +1,7 @@
+{
+  "app": "npx tsx infra/bin/cumplify.ts",
+  "context": {
+    "codestarConnectionArn": "arn:aws:codestar-connections:us-east-1:157082218687:connection/PLACEHOLDER",
+    "env": "dev"
+  }
+}

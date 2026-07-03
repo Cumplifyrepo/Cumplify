@@ -1,0 +1,349 @@
+=== EVIDENCE LOG ===
+spec: platform-foundation
+task: 1.1
+git-sha: e67a32939c770e29cfcd5c7deb13f26088012ee4
+dirty: 7 files
+started: 2026-07-03T16:25:10.284Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-03T16:25:10.284Z] ===
+
+added 197 packages, and audited 217 packages in 2s
+
+57 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+=== STEP 1: npm ci [PASS 2026-07-03T16:25:11.901Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-03T16:25:11.901Z] ===
+
+=== STEP 2: tsc --noEmit [PASS 2026-07-03T16:25:14.015Z] ===
+
+=== STEP 3: eslint + prettier [START 2026-07-03T16:25:14.015Z] ===
+
+> cumplify@0.1.0 lint
+> eslint . --ext .ts,.tsx
+
+
+> cumplify@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+=== STEP 3: eslint + prettier [PASS 2026-07-03T16:25:14.840Z] ===
+
+=== STEP 4: unit + property tests [START 2026-07-03T16:25:14.843Z] ===
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 6ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
+stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
+Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
+
+ ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed | 1 skipped (4)
+   Start at  12:25:15
+   Duration  1.79s (transform 31ms, setup 0ms, import 70ms, tests 1.72s, environment 0ms)
+
+
+=== STEP 4: unit + property tests [PASS 2026-07-03T16:25:16.917Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T16:25:16.917Z] ===
+Unknown option(s): --all. These will be ignored. Run 'cdk --help' to see available options.
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The S3 Bucket has server access logs disabled. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/ArtifactsBucket/Resource aws-cdk-lib.aws_s3.CfnBucket
+   Acknowledge with 'AwsSolutions::AwsSolutions-S1'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetBucket*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetBucket*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetBucket*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetBucket*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetBucket*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:GetBucket*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:List*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:List*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:List*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:List*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:List*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:List*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:DeleteObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:DeleteObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:DeleteObject*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:Abort*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:Abort*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::s3:Abort*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::<CumplifyPipelineArtifactsBucket09700117.Arn>/*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::<CumplifyPipelineArtifactsBucket09700117.Arn>/*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::<CumplifyPipelineArtifactsBucket09700117.Arn>/*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::<CumplifyPipelineArtifactsBucket09700117.Arn>/*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::<CumplifyPipelineArtifactsBucket09700117.Arn>/*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::<CumplifyPipelineArtifactsBucket09700117.Arn>/*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:ReEncrypt*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:ReEncrypt*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:ReEncrypt*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:ReEncrypt*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:ReEncrypt*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:ReEncrypt*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:GenerateDataKey*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:GenerateDataKey*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:GenerateDataKey*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:GenerateDataKey*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:GenerateDataKey*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Action::kms:GenerateDataKey*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<CumplifyPipelineBuildSynthCdkBuildProject036B309C>:*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:codebuild:us-east-1:157082218687:report-group/<CumplifyPipelineBuildSynthCdkBuildProject036B309C>-*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<CumplifyPipelineStagingSmokeTestB3662089>:*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:codebuild:us-east-1:157082218687:report-group/<CumplifyPipelineStagingSmokeTestB3662089>-*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<CumplifyPipelineProdLegalSignoffGuard546A8F96>:*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:codebuild:us-east-1:157082218687:report-group/<CumplifyPipelineProdLegalSignoffGuard546A8F96>-*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8>:*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:<AWS::Partition>:codebuild:us-east-1:157082218687:report-group/<CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8>-*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::arn:*:iam::157082218687:role/*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission. (AwsSolutions)
+   CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource aws-cdk-lib.aws_iam.CfnPolicy
+   Acknowledge with 'AwsSolutions::AwsSolutions-IAM5[Resource::*]'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The VPC does not have an associated Flow Log. (AwsSolutions)
+   CumplifyPipeline/Dev/NetworkStack/CumplifyVpc/Resource aws-cdk-lib.aws_ec2.CfnVPC
+   Acknowledge with 'AwsSolutions::AwsSolutions-VPC7'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The VPC does not have an associated Flow Log. (AwsSolutions)
+   CumplifyPipeline/Staging/NetworkStack/CumplifyVpc/Resource aws-cdk-lib.aws_ec2.CfnVPC
+   Acknowledge with 'AwsSolutions::AwsSolutions-VPC7'
+
+file:///home/julio-medrano/cumplify/infra/bin/cumplify.ts:2:29
+ERROR The VPC does not have an associated Flow Log. (AwsSolutions)
+   CumplifyPipeline/Prod/NetworkStack/CumplifyVpc/Resource aws-cdk-lib.aws_ec2.CfnVPC
+   Acknowledge with 'AwsSolutions::AwsSolutions-VPC7'
+
+WARNING V1 pipeline type is implicitly selected when `pipelineType` is not set. If you want to use V2 type, set `PipelineType.V2`. (Construct Annotations)
+   CumplifyPipeline/CumplifyPipeline
+   Acknowledge with 'Construct-Annotations::@aws-cdk/aws-codepipeline:unspecifiedPipelineType'
+Synthesis finished with errors
+
+=== STEP 5: cdk synth + CDK Nag [FAIL 2026-07-03T16:25:18.609Z] ===
+
+=== RESULT: FAIL (1 failed) | MAX-RUNG: NONE ===
+=== ENDED: 2026-07-03T16:25:18.609Z ===
