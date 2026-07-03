@@ -29,38 +29,41 @@ export class CumplifyStage extends cdk.Stage {
 
     const securityStack = new SecurityStack(this, 'SecurityStack', { envConfig });
 
+    // DrRegionStack — prod-only, cross-region DR in us-west-2 (AC-1.8)
+    // Must be created before DataStack to provide replica key + CRR destination ARNs.
+    let drRegionStack: DrRegionStack | undefined;
+    if (envConfig.drRegionStack) {
+      drRegionStack = new DrRegionStack(this, 'DrRegionStack', {
+        envConfig,
+        primaryDynamodbKeyArn: securityStack.outputs.dynamodbKey.keyArn,
+        env: { account: envConfig.account, region: DR_REGION },
+      });
+      drRegionStack.addDependency(securityStack);
+    }
+
     const dataStack = new DataStack(this, 'DataStack', {
       envConfig,
       vpc: networkStack.vpc,
       aossVpcEndpointId: networkStack.aossVpcEndpointId,
       securityOutputs: securityStack.outputs,
+      ...(drRegionStack
+        ? {
+            drReplicaKeyArn: drRegionStack.replicaKeyArn,
+            crrDestinationBucketArn: drRegionStack.crrDestinationBucketArn,
+          }
+        : {}),
     });
     dataStack.addDependency(networkStack);
     dataStack.addDependency(securityStack);
+    if (drRegionStack) {
+      dataStack.addDependency(drRegionStack);
+    }
 
     const identityStack = new IdentityStack(this, 'IdentityStack', {
       envConfig,
       tableName: dataStack.tableName,
     });
     identityStack.addDependency(dataStack);
-
-    // -----------------------------------------------------------------------
-    // DrRegionStack — prod-only, cross-region DR in us-west-2 (AC-1.8)
-    // KMS ReplicaKey + S3 CRR destination bucket.
-    // Global Table replica + S3 CRR wiring deferred: requires DrRegionStack
-    // deployed first (cross-region dependency cannot resolve at synth time).
-    // -----------------------------------------------------------------------
-    if (envConfig.drRegionStack) {
-      const drRegionStack = new DrRegionStack(this, 'DrRegionStack', {
-        envConfig,
-        primaryDynamodbKeyArn: securityStack.outputs.dynamodbKey.keyArn,
-        env: {
-          account: envConfig.account,
-          region: DR_REGION,
-        },
-      });
-      drRegionStack.addDependency(securityStack);
-    }
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

@@ -27,7 +27,7 @@ export class DrRegionStack extends cdk.Stack {
   public readonly crrDestinationBucketArn: string;
 
   constructor(scope: Construct, id: string, props: DrRegionStackProps) {
-    super(scope, id, props);
+    super(scope, id, { ...props, crossRegionReferences: true });
 
     const { envConfig, primaryDynamodbKeyArn } = props;
 

@@ -33,6 +33,10 @@ export interface DataStackProps extends cdk.StackProps {
   /** OpenSearch Serverless-managed VPC endpoint ID for AOSS network policy. */
   readonly aossVpcEndpointId: string;
   readonly securityOutputs: SecurityOutputs;
+  /** ARN of the KMS ReplicaKey in DR region (prod-only, from DrRegionStack). */
+  readonly drReplicaKeyArn?: string;
+  /** ARN of the S3 CRR destination bucket in DR region (prod-only, from DrRegionStack). */
+  readonly crrDestinationBucketArn?: string;
 }
 
 export class DataStack extends cdk.Stack {
@@ -42,7 +46,7 @@ export class DataStack extends cdk.Stack {
   public readonly evidenceBucketArn: string;
 
   constructor(scope: Construct, id: string, props: DataStackProps) {
-    super(scope, id, props);
+    super(scope, id, { ...props, crossRegionReferences: true });
 
     const { envConfig, vpc, aossVpcEndpointId, securityOutputs } = props;
 
@@ -56,23 +60,21 @@ export class DataStack extends cdk.Stack {
       partitionKey: { name: 'PK', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'SK', type: dynamodb.AttributeType.STRING },
       billing: dynamodb.Billing.onDemand(),
-      encryption: dynamodb.TableEncryptionV2.customerManagedKey(securityOutputs.dynamodbKey),
+      encryption: dynamodb.TableEncryptionV2.customerManagedKey(
+        securityOutputs.dynamodbKey,
+        envConfig.globalTableReplica && props.drReplicaKeyArn
+          ? { 'us-west-2': props.drReplicaKeyArn }
+          : undefined,
+      ),
       pointInTimeRecovery: true,
       dynamoStream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
       deletionProtection: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
-      // Global Table replica deferred: requires DrRegionStack in us-west-2 to host
-      // the KMS ReplicaKey. Will be wired when prod DR region is bootstrapped.
-      // The dynamodb CMK is created as multiRegion=true (prod), ready for replication.
-      // TODO [AC-1.8]: Wire Global Table replica when DrRegionStack is deployed:
-      //   replicas: envConfig.globalTableReplica ? [{
-      //     region: DR_REGION,
-      //     tableOptions: {
-      //       encryption: dynamodb.TableEncryptionV2.customerManagedKey(
-      //         kms.Key.fromKeyArn(this, 'DrReplicaKey', drReplicaKeyArn)
-      //       ),
-      //     },
-      //   }] : undefined,
+      ...(envConfig.globalTableReplica
+        ? {
+            replicas: [{ region: 'us-west-2' }],
+          }
+        : {}),
       globalSecondaryIndexes: [
         {
           indexName: 'GSI1',
@@ -374,17 +376,24 @@ export class DataStack extends cdk.Stack {
       eventBridgeEnabled: true,
       serverAccessLogsBucket: accessLogsBucket,
       serverAccessLogsPrefix: 'evidence-vault/',
+      ...(envConfig.s3Crr && props.crrDestinationBucketArn
+        ? {
+            replicationRules: [
+              {
+                destination: s3.Bucket.fromBucketArn(
+                  this,
+                  'CrrDestination',
+                  props.crrDestinationBucketArn,
+                ),
+                sseKmsEncryptedObjects: true,
+                kmsKey: securityOutputs.s3GeneralKey,
+              },
+            ],
+          }
+        : {}),
     });
 
     this.evidenceBucketArn = evidenceBucket.bucketArn;
-
-    // TODO [AC-1.8]: Wire S3 CRR replication when DrRegionStack is deployed:
-    //   When envConfig.s3Crr === true, add CfnBucket replication configuration:
-    //   - Role: S3 replication IAM role (needs s3:ReplicateObject, s3:ReplicateDelete)
-    //   - Rules: [{ Status: 'Enabled', Destination: { Bucket: crrDestinationBucketArn,
-    //       EncryptionConfiguration: { ReplicaKmsKeyID: drReplicaKeyArn },
-    //       StorageClass: 'STANDARD' } }]
-    //   Cross-region dependency: DrRegionStack must be deployed first.
 
     // -----------------------------------------------------------------------
     // S3 General/Static bucket (AC-4.6)
