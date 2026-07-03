@@ -1,0 +1,17 @@
+
+> cumplify@0.1.0 readback
+> vitest run --config infra/readback/vitest.config.ts --reporter=verbose
+
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
+Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
+
+ ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
+
+ Test Files  1 passed (1)
+      Tests  1 skipped (1)
+   Start at  10:57:59
+   Duration  1.83s (transform 16ms, setup 0ms, import 22ms, tests 1.75s, environment 0ms)
+

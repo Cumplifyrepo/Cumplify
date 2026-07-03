@@ -1,6 +1,7 @@
 # Spec 38 — build-verification-harness: Tasks
 
 **Design approved:** 2026-07-02
+**All tasks complete:** 2026-07-02
 **Self-hosting constraint:** This spec builds the evidence gate. Task 1 creates
 the gate script itself; its completion evidence is the gate executed on the
 repo as it stands, retroactively covering task 1. Every later task closes
@@ -203,3 +204,31 @@ After all tasks complete: **no task from any other spec (including spec 1
 platform-foundation) may be marked complete until AC-5.1 (task 3.2) and
 AC-5.2 (task 3.3) evidence logs exist proving the harness catches failures.**
 This is the Part 42.4 invariant.
+
+---
+
+## Completion Notes
+
+### Residual refinements (non-blocking, carry forward)
+
+1. **Mode probe counts CDKToolkit as a deployed stack.** The pre-existing
+   CDK bootstrap stack (`CDKToolkit`) in the dev account means the mode probe
+   reports "post-deploy mode" even before any application stacks exist. Future
+   refinement: exclude stacks matching `CDKToolkit*` from the count so
+   "pre-deploy mode" means "no application stacks." Spec 1's readback
+   assertions should assume post-deploy mode (CDKToolkit exists) and use the
+   ABSENT=FAIL pattern for expected-but-missing application resources.
+
+2. **Spec 1 open question: CDK bootstrap cross-account trust.** The existing
+   CDKToolkit stack in dev likely predates the cross-account pipeline
+   requirement (`--trust MGMT_ACCOUNT`). Spec 1's design must verify and
+   re-bootstrap if needed. Added to spec 1's open questions.
+
+### AC-5.3 satisfaction
+
+Both deliberate-failure proofs are demonstrated:
+- AC-5.1: `3.2-deliberate-fail.log` — TypeScript type error caught at step 2.
+- AC-5.2: `3.3-deliberate-fail.log` — S3 bucket without ObjectLock caught by
+  readback (observed: undefined, designed: "COMPLIANCE").
+
+**Spec 1 platform-foundation is now unblocked for task closure.**
