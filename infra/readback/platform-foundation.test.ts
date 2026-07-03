@@ -58,6 +58,7 @@ describe('Platform Foundation — Readback Assertions', () => {
   let tableName: string | undefined;
   let evidenceBucket: string | undefined;
   let aossCollectionName: string | undefined;
+  let cacheReplicationGroupId: string | undefined;
 
   beforeAll(async () => {
     awsAvailable = await hasAwsAccess();
@@ -68,6 +69,7 @@ describe('Platform Foundation — Readback Assertions', () => {
     tableName = getOutput(outputs, DATA_STACK, 'TableName');
     evidenceBucket = getOutput(outputs, DATA_STACK, 'EvidenceBucketName');
     aossCollectionName = getOutput(outputs, DATA_STACK, 'AossCollectionName');
+    cacheReplicationGroupId = getOutput(outputs, DATA_STACK, 'CacheReplicationGroupId');
   });
 
   function skipIfNotReady(ctx: { skip: () => void }): boolean {
@@ -293,16 +295,18 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-14: ElastiCache AtRestEncryptionEnabled = true', async (ctx) => {
-    if (skipIfNotReady(ctx)) return;
+    if (skipIfNotReady(ctx) || !cacheReplicationGroupId) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{
-      ReplicationGroups?: Array<{ AtRestEncryptionEnabled?: boolean; ReplicationGroupId?: string }>;
-    }>('aws elasticache describe-replication-groups');
-    const group = result?.ReplicationGroups?.find((g) =>
-      g.ReplicationGroupId?.toLowerCase().includes('datastack'),
+      ReplicationGroups?: Array<{ AtRestEncryptionEnabled?: boolean }>;
+    }>(
+      `aws elasticache describe-replication-groups --replication-group-id ${cacheReplicationGroupId}`,
     );
-    const enabled = group?.AtRestEncryptionEnabled ?? 'ABSENT';
+    const enabled = result?.ReplicationGroups?.[0]?.AtRestEncryptionEnabled ?? 'ABSENT';
     assertResource(
-      `elasticache:${group?.ReplicationGroupId ?? 'unknown'}`,
+      `elasticache:${cacheReplicationGroupId}`,
       'AtRestEncryptionEnabled',
       true,
       enabled,
@@ -310,19 +314,18 @@ describe('Platform Foundation — Readback Assertions', () => {
   });
 
   it('R-15: ElastiCache TransitEncryptionEnabled = true', async (ctx) => {
-    if (skipIfNotReady(ctx)) return;
+    if (skipIfNotReady(ctx) || !cacheReplicationGroupId) {
+      ctx.skip();
+      return;
+    }
     const result = await awsJson<{
-      ReplicationGroups?: Array<{
-        TransitEncryptionEnabled?: boolean;
-        ReplicationGroupId?: string;
-      }>;
-    }>('aws elasticache describe-replication-groups');
-    const group = result?.ReplicationGroups?.find((g) =>
-      g.ReplicationGroupId?.toLowerCase().includes('datastack'),
+      ReplicationGroups?: Array<{ TransitEncryptionEnabled?: boolean }>;
+    }>(
+      `aws elasticache describe-replication-groups --replication-group-id ${cacheReplicationGroupId}`,
     );
-    const enabled = group?.TransitEncryptionEnabled ?? 'ABSENT';
+    const enabled = result?.ReplicationGroups?.[0]?.TransitEncryptionEnabled ?? 'ABSENT';
     assertResource(
-      `elasticache:${group?.ReplicationGroupId ?? 'unknown'}`,
+      `elasticache:${cacheReplicationGroupId}`,
       'TransitEncryptionEnabled',
       true,
       enabled,

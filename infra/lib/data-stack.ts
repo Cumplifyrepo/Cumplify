@@ -209,7 +209,7 @@ export class DataStack extends cdk.Stack {
     });
     cacheSg.addIngressRule(ec2.Peer.ipv4(vpc.vpcCidrBlock), ec2.Port.tcp(6379), 'Redis from VPC');
 
-    new elasticache.CfnReplicationGroup(this, 'RedisCluster', {
+    const redisCluster = new elasticache.CfnReplicationGroup(this, 'RedisCluster', {
       replicationGroupDescription: `Cumplify ${envConfig.envName} Redis`,
       engine: 'redis',
       cacheNodeType: envConfig.cacheNodeType,
@@ -523,5 +523,6 @@ export class DataStack extends cdk.Stack {
       value: aossCollection.attrCollectionEndpoint,
     });
     new cdk.CfnOutput(this, 'AossCollectionName', { value: collectionName });
+    new cdk.CfnOutput(this, 'CacheReplicationGroupId', { value: redisCluster.ref });
   }
 }
