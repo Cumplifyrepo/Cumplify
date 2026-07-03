@@ -122,7 +122,8 @@ export class DataStack extends cdk.Stack {
     // 30-day rotation. Prod-only: replica to us-west-2.
     // -----------------------------------------------------------------------
     const rdsSecret = new secretsmanager.Secret(this, 'RdsMasterSecret', {
-      secretName: `cumplify/${envConfig.envName}/rds-master`,
+      // No secretName — auto-generated to avoid recovery-window collision on rollback.
+      // ARN flows via stack outputs; readback reads from cdk-outputs.json.
       description: 'RDS Aurora PostgreSQL master credentials',
       encryptionKey: securityOutputs.secretsKey,
       generateSecretString: {

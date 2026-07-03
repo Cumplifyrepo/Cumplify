@@ -7,11 +7,15 @@
  * Behavior:
  * 1. Reads custom:tenantId from the user's Cognito attributes.
  * 2. Reads the user's first Cognito group as the role.
- * 3. Determines poolClass from the USER_POOL_ID environment variable mapping.
+ * 3. Determines poolClass by reading the pool-class-map from SSM Parameter
+ *    Store (cached on cold start). SSM path is in POOL_CLASS_MAP_PARAM env var.
  * 4. Returns claimsToAddOrOverride with tenantId, role, poolClass.
  *
  * Fallback: If group membership is empty, falls back to 'Employee' and LOGS
  * the fallback (no silent paths per F-8 tightening).
+ *
+ * Dependency design: Lambda references SSM parameter by static path (no pool
+ * IDs in env vars). Pools → SSM param (stores pool IDs). Acyclic.
  */
 
 export interface PreTokenGenEvent {
@@ -35,19 +39,61 @@ export interface PreTokenGenEvent {
 
 export type PreTokenGenResult = PreTokenGenEvent;
 
+// ---------------------------------------------------------------------------
+// Pool-class resolution via SSM (cached on cold start)
+// ---------------------------------------------------------------------------
+
+let poolClassMapCache: Record<string, string> | null = null;
+
+/**
+ * Load the pool-class-map from SSM Parameter Store.
+ * Cached after first invocation (cold start). The parameter contains a JSON
+ * object mapping pool IDs to pool class names.
+ */
+async function loadPoolClassMap(): Promise<Record<string, string>> {
+  if (poolClassMapCache) return poolClassMapCache;
+
+  const paramName = process.env.POOL_CLASS_MAP_PARAM;
+  if (!paramName) {
+    console.warn('[PreTokenGen] POOL_CLASS_MAP_PARAM not set — poolClass will be "unknown"');
+    poolClassMapCache = {};
+    return poolClassMapCache;
+  }
+
+  try {
+    // AWS SDK v3 is available in the Node.js 22.x Lambda runtime.
+    // Dynamic import avoids compile-time dependency on @aws-sdk/client-ssm.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { SSMClient, GetParameterCommand } = await (Function(
+      'return import("@aws-sdk/client-ssm")',
+    )() as Promise<{
+      SSMClient: new (config: object) => {
+        send: (cmd: unknown) => Promise<{ Parameter?: { Value?: string } }>;
+      };
+      GetParameterCommand: new (input: { Name: string }) => unknown;
+    }>);
+    const client = new SSMClient({});
+    const response = await client.send(new GetParameterCommand({ Name: paramName }));
+    const value = response.Parameter?.Value ?? '{}';
+    poolClassMapCache = JSON.parse(value);
+    return poolClassMapCache!;
+  } catch (err) {
+    console.error('[PreTokenGen] Failed to load pool-class-map from SSM:', err);
+    poolClassMapCache = {};
+    return poolClassMapCache;
+  }
+}
+
 /**
  * Determine poolClass from the User Pool ID.
- * The pool ID suffix is mapped via POOL_CLASS_MAP environment variable (JSON).
- * Defaults to 'unknown' if not found.
+ * Reads from SSM-cached map. Defaults to 'unknown' if pool not found.
  */
-export function resolvePoolClass(userPoolId: string): string {
-  const mapJson = process.env.POOL_CLASS_MAP ?? '{}';
-  try {
-    const map: Record<string, string> = JSON.parse(mapJson);
-    return map[userPoolId] ?? 'unknown';
-  } catch {
-    return 'unknown';
-  }
+export async function resolvePoolClass(
+  userPoolId: string,
+  map?: Record<string, string>,
+): Promise<string> {
+  const poolMap = map ?? (await loadPoolClassMap());
+  return poolMap[userPoolId] ?? 'unknown';
 }
 
 /**
@@ -88,7 +134,7 @@ export async function handler(event: PreTokenGenEvent): Promise<PreTokenGenResul
   const groups = request.groupConfiguration.groupsToOverride;
 
   const { role, fallback } = resolveRole(groups);
-  const poolClass = resolvePoolClass(userPoolId);
+  const poolClass = await resolvePoolClass(userPoolId);
   const claims = buildClaims(tenantId, role, poolClass);
 
   if (fallback) {

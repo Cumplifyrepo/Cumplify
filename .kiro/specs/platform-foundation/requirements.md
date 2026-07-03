@@ -371,3 +371,30 @@ rollback collisions structurally impossible. Readback reads bucket names from
 `cdk-outputs.json` (declared-truth input), not from hardcoded constants.
 **Forward fix:** None needed. Bucket ARNs/names are exported via stack outputs
 and consumed by readback assertions from `cdk-outputs.json`.
+
+### AC-5.3: Pool-class-map moved to SSM (circular dependency break)
+
+**Original:** Lambda environment variable `POOL_CLASS_MAP` contains JSON
+mapping pool IDs to pool class names.
+**Actual:** Lambda reads the pool-class-map from an SSM StringParameter at
+`/cumplify/<env>/identity/pool-class-map` on cold start (cached). The Lambda's
+env carries only the static parameter path string — no pool ID references.
+**Rationale:** CloudFormation circular dependency. Pools declare the Lambda as
+`lambdaTriggers.preTokenGeneration` (Pool → Lambda permission). If the
+Lambda env references pool IDs, that creates Lambda → Pool → Lambda cycle.
+Moving the map to SSM breaks the cycle: Lambda → SSM param path (static
+string); Pools created independently; SSM param depends on pools (stores their
+IDs). Nothing depends on the SSM param. Graph: Lambda ← Pools ← SSM param.
+**Forward fix:** None needed. The Lambda reads SSM on cold start with ~50ms
+overhead (well within the 5s Cognito trigger budget). ssm:GetParameter granted
+on the static ARN pattern.
+
+### AC-3.3 / AC-4.2: RDS secret name removed (auto-generated)
+
+**Original:** Secret with `secretName: cumplify/<env>/rds-master`.
+**Actual:** No hardcoded `secretName` — CloudFormation auto-generates.
+**Rationale:** Secrets Manager recovery window (7–30 days) makes hardcoded
+names the worst rollback collision offender. After a failed stack create, the
+orphaned secret blocks the next attempt with "A resource with the ID
+already exists." Auto-naming eliminates this class of failure permanently.
+Secret ARN flows via stack outputs for consuming stacks.

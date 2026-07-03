@@ -7,9 +7,10 @@
  * 2. Role is never empty — either group-derived or 'Employee' fallback
  * 3. TenantId passthrough: whatever is in userAttributes appears in claims
  * 4. No exceptions thrown for any valid input shape
+ * 5. resolvePoolClass returns known value or 'unknown' given a map
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import {
   handler,
@@ -55,25 +56,12 @@ function buildEvent(
 }
 
 describe('PreTokenGen handler (property-based)', () => {
-  const originalEnv = process.env.POOL_CLASS_MAP;
-
-  beforeEach(() => {
-    process.env.POOL_CLASS_MAP = JSON.stringify({
-      'us-east-1_TestPool1': 'internal',
-      'us-east-1_TestPool2': 'tenant-admin',
-      'us-east-1_TestPool3': 'tenant-user',
-    });
-  });
-
-  afterEach(() => {
-    if (originalEnv !== undefined) {
-      process.env.POOL_CLASS_MAP = originalEnv;
-    } else {
-      delete process.env.POOL_CLASS_MAP;
-    }
-  });
-
+  // Set SSM param env to empty — handler will use empty map (no SSM call in tests)
+  // resolvePoolClass falls back to 'unknown' when map is empty
   it('always produces valid claims structure for any input', async () => {
+    // Remove POOL_CLASS_MAP_PARAM so handler uses empty cache
+    delete process.env.POOL_CLASS_MAP_PARAM;
+
     await fc.assert(
       fc.asyncProperty(tenantIdArb, groupsArb, userPoolIdArb, async (tenantId, groups, poolId) => {
         const event = buildEvent(tenantId, groups, poolId);
@@ -97,6 +85,8 @@ describe('PreTokenGen handler (property-based)', () => {
   });
 
   it('tenantId in claims matches userAttributes passthrough', async () => {
+    delete process.env.POOL_CLASS_MAP_PARAM;
+
     await fc.assert(
       fc.asyncProperty(tenantIdArb, groupsArb, userPoolIdArb, async (tenantId, groups, poolId) => {
         const event = buildEvent(tenantId, groups, poolId);
@@ -129,10 +119,16 @@ describe('PreTokenGen handler (property-based)', () => {
     );
   });
 
-  it('poolClass resolves to known value or unknown', () => {
-    fc.assert(
-      fc.property(userPoolIdArb, (poolId) => {
-        const poolClass = resolvePoolClass(poolId);
+  it('resolvePoolClass returns mapped value or unknown given explicit map', async () => {
+    const testMap = {
+      'us-east-1_Pool1': 'internal',
+      'us-east-1_Pool2': 'tenant-admin',
+      'us-east-1_Pool3': 'tenant-user',
+    };
+
+    await fc.assert(
+      fc.asyncProperty(userPoolIdArb, async (poolId) => {
+        const poolClass = await resolvePoolClass(poolId, testMap);
         expect(typeof poolClass).toBe('string');
         expect(poolClass.length).toBeGreaterThan(0);
         // Must be one of the mapped values or 'unknown'

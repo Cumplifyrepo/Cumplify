@@ -10,11 +10,19 @@
  * All pools: custom:tenantId immutable, PreTokenGeneration V1_0,
  * sign-in email, self-signup disabled, EMAIL_ONLY recovery,
  * deletion protection, RETAIN.
+ *
+ * Dependency design (avoids circular reference):
+ *   Lambda (references SSM param path — static string, no pool refs)
+ *   → Pools (declare Lambda as trigger)
+ *   → SSM StringParameter (stores poolId→poolClass JSON map, depends on pools)
+ * Nothing depends on the SSM param. Graph is acyclic.
  */
 
 import * as cdk from 'aws-cdk-lib';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 import { type EnvConfig } from './env-config.js';
@@ -43,13 +51,16 @@ export class IdentityStack extends cdk.Stack {
 
     const { envConfig, tableName } = props;
 
+    // Static SSM parameter path — Lambda references this string (no pool IDs)
+    const poolClassMapParamName = `/cumplify/${envConfig.envName}/identity/pool-class-map`;
+
     // -----------------------------------------------------------------------
     // PreTokenGeneration Lambda — Node.js 22.x, arm64, 5s timeout
     // Stamps tenantId + role + poolClass into ID token.
+    // Reads pool-class-map from SSM on cold start (cached).
     // Falls back to Cognito group as role (logs fallback — no silent paths).
     // -----------------------------------------------------------------------
     const preTokenGenFn = new lambda.Function(this, 'PreTokenGenFn', {
-      functionName: `cumplify-${envConfig.envName}-pre-token-gen`,
       runtime: lambda.Runtime.NODEJS_22_X,
       architecture: lambda.Architecture.ARM_64,
       handler: 'index.handler',
@@ -58,10 +69,18 @@ export class IdentityStack extends cdk.Stack {
       memorySize: 128,
       environment: {
         TABLE_NAME: tableName,
-        // POOL_CLASS_MAP is set after pool creation (circular avoidance)
+        POOL_CLASS_MAP_PARAM: poolClassMapParamName, // static path — no pool refs
       },
       description: 'PreTokenGeneration V1_0 — stamps tenantId/role/poolClass into ID token',
     });
+
+    // Grant ssm:GetParameter on the static path (acyclic — no pool references)
+    preTokenGenFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [`arn:aws:ssm:${this.region}:${this.account}:parameter${poolClassMapParamName}`],
+      }),
+    );
 
     // -----------------------------------------------------------------------
     // Pool definitions
@@ -99,7 +118,6 @@ export class IdentityStack extends cdk.Stack {
     ];
 
     const createdPools: Record<string, cognito.UserPool> = {};
-    const poolClassMap: Record<string, string> = {};
 
     for (const poolConfig of pools) {
       const pool = new cognito.UserPool(this, poolConfig.id, {
@@ -153,7 +171,6 @@ export class IdentityStack extends cdk.Stack {
           callbackUrls: ['http://localhost:3000/callback'], // Placeholder — spec 3 updates
         },
         preventUserExistenceErrors: true,
-        // Restrict read/write attributes — app clients cannot write custom:tenantId
         readAttributes: new cognito.ClientAttributes().withStandardAttributes({
           email: true,
           emailVerified: true,
@@ -164,11 +181,8 @@ export class IdentityStack extends cdk.Stack {
       });
 
       createdPools[poolConfig.id] = pool;
-      poolClassMap[pool.userPoolId] = poolConfig.poolClass;
 
-      // CDK Nag COG4/COG8 suppression — FeaturePlan.PLUS (advanced threat protection)
-      // is not used because the cost is not justified for dev/staging and the
-      // ESSENTIALS tier provides standard protections.
+      // CDK Nag COG4/COG8 suppression
       NagSuppressions.addResourceSuppressions(pool, [
         {
           id: 'AwsSolutions-COG4',
@@ -187,14 +201,23 @@ export class IdentityStack extends cdk.Stack {
       ]);
     }
 
-    // Update PreTokenGen Lambda environment with pool class mapping
-    // (Pool IDs are tokens at synth time — the map is resolved at deploy)
-    preTokenGenFn.addEnvironment(
-      'POOL_CLASS_MAP',
-      cdk.Lazy.string({
-        produce: () => JSON.stringify(poolClassMap),
+    // -----------------------------------------------------------------------
+    // SSM StringParameter — pool-class-map (depends on pools, nothing depends on it)
+    // Stores JSON: { "<poolId>": "internal"|"tenant-admin"|"tenant-user", ... }
+    // Lambda reads this on cold start via ssm:GetParameter.
+    // -----------------------------------------------------------------------
+    new ssm.StringParameter(this, 'PoolClassMapParam', {
+      parameterName: poolClassMapParamName,
+      description: 'Maps Cognito User Pool IDs to pool class names for PreTokenGen Lambda',
+      stringValue: cdk.Lazy.string({
+        produce: () =>
+          JSON.stringify({
+            [createdPools['PoolA'].userPoolId]: 'internal',
+            [createdPools['PoolB'].userPoolId]: 'tenant-admin',
+            [createdPools['PoolC'].userPoolId]: 'tenant-user',
+          }),
       }),
-    );
+    });
 
     // Export pool IDs
     this.poolAId = createdPools['PoolA'].userPoolId;

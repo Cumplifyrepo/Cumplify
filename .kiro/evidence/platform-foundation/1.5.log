@@ -1,13 +1,13 @@
 === EVIDENCE LOG ===
 spec: platform-foundation
 task: 1.5
-git-sha: 595db3c7b6c9efcb1cedc0a8843224a408a722d2
-dirty: 2 files
-started: 2026-07-03T19:57:36.317Z
+git-sha: 56f0b67f73b1018527151527e0e3a75f2b752361
+dirty: 5 files
+started: 2026-07-03T22:32:04.349Z
 script-version: 0.1.0
 =====================================
 
-=== STEP 1: npm ci [START 2026-07-03T19:57:36.318Z] ===
+=== STEP 1: npm ci [START 2026-07-03T22:32:04.349Z] ===
 
 added 197 packages, and audited 217 packages in 2s
 
@@ -16,13 +16,13 @@ added 197 packages, and audited 217 packages in 2s
 
 found 0 vulnerabilities
 
-=== STEP 1: npm ci [PASS 2026-07-03T19:57:37.908Z] ===
+=== STEP 1: npm ci [PASS 2026-07-03T22:32:05.999Z] ===
 
-=== STEP 2: tsc --noEmit [START 2026-07-03T19:57:37.908Z] ===
+=== STEP 2: tsc --noEmit [START 2026-07-03T22:32:05.999Z] ===
 
-=== STEP 2: tsc --noEmit [PASS 2026-07-03T19:57:40.223Z] ===
+=== STEP 2: tsc --noEmit [PASS 2026-07-03T22:32:08.392Z] ===
 
-=== STEP 3: eslint + prettier [START 2026-07-03T19:57:40.223Z] ===
+=== STEP 3: eslint + prettier [START 2026-07-03T22:32:08.392Z] ===
 
 > cumplify@0.1.0 lint
 > eslint . --ext .ts,.tsx
@@ -34,9 +34,9 @@ found 0 vulnerabilities
 Checking formatting...
 All matched files use Prettier code style!
 
-=== STEP 3: eslint + prettier [PASS 2026-07-03T19:57:41.165Z] ===
+=== STEP 3: eslint + prettier [PASS 2026-07-03T22:32:09.414Z] ===
 
-=== STEP 4: unit + property tests [START 2026-07-03T19:57:41.167Z] ===
+=== STEP 4: unit + property tests [START 2026-07-03T22:32:09.417Z] ===
 
  RUN  v4.1.9 /home/julio-medrano/cumplify
 
@@ -44,35 +44,40 @@ All matched files use Prettier code style!
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > always produces valid claims structure for any input 15ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > tenantId in claims matches userAttributes passthrough 6ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > tenantId in claims matches userAttributes passthrough 7ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role is first group when groups are non-empty 4ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role falls back to Employee when groups are empty or undefined 3ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > poolClass resolves to known value or unknown 3ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role falls back to Employee when groups are empty or undefined 2ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > resolvePoolClass returns mapped value or unknown given explicit map 4ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > buildClaims always returns exactly 3 keys 4ms
-stdout | infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc
-Dev-NetworkStack not deployed yet — skipping readback (pre-deploy for this spec).
 
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc 1ms
-stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
-Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
-
- ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
-
- Test Files  4 passed (4)
-      Tests  9 passed | 2 skipped (11)
-   Start at  15:57:41
-   Duration  4.66s (transform 64ms, setup 0ms, import 167ms, tests 6.01s, environment 0ms)
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  18:32:09
+   Duration  162ms (transform 35ms, setup 0ms, import 107ms, tests 47ms, environment 0ms)
 
 
-=== STEP 4: unit + property tests [PASS 2026-07-03T19:57:46.098Z] ===
+=== STEP 4: unit + property tests [PASS 2026-07-03T22:32:09.866Z] ===
 
-=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T19:57:46.098Z] ===
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T22:32:09.866Z] ===
 Metadata:
   cdk_nag:
     rules_to_suppress:
       - reason: PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack.
         id: AwsSolutions-IAM5
-      - reason: PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack. Artifact bucket is CDK Pipelines internal storage with cross-account KMS; access logging adds cost without security value on transient build artifacts.
+        applies_to:
+          - regex: /^Resource::arn:<AWS::Partition>:logs:.+:log-group:.+codebuild.+$/
+          - regex: /^Resource::arn:<AWS::Partition>:codebuild:.+:report-group.+$/
+          - regex: /^Resource::arn:\*:iam::.+:role.+$/
+          - Resource::*
+          - regex: /^Resource::<.+ArtifactsBucket.+\.Arn>.+$/
+          - Action::s3:Abort*
+          - Action::s3:DeleteObject*
+          - Action::s3:GetBucket*
+          - Action::s3:GetObject*
+          - Action::s3:List*
+          - Action::kms:GenerateDataKey*
+          - Action::kms:ReEncrypt*
+      - reason: Artifact bucket is CDK Pipelines internal storage with cross-account KMS; access logging adds cost without security value on transient build artifacts.
         id: AwsSolutions-S1
 Resources:
   CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73:
@@ -1888,9 +1893,9 @@ Resources:
               },
               "build": {
                 "commands": [
-                  "cdk-assets --path \"assembly-CumplifyPipeline-Dev/CumplifyPipelineDevIdentityStackE8CC97D1.assets.json\" --verbose publish \"ca8f85e2df9a94e1a3f4e21156ebdc05bd4f28de63fd8353e0f8d84dd0b4a69a:697114252993-us-east-1-1b029408\"",
-                  "cdk-assets --path \"assembly-CumplifyPipeline-Staging/CumplifyPipelineStagingIdentityStackC7CA0733.assets.json\" --verbose publish \"ca8f85e2df9a94e1a3f4e21156ebdc05bd4f28de63fd8353e0f8d84dd0b4a69a:889007427685-us-east-1-54d3c04c\"",
-                  "cdk-assets --path \"assembly-CumplifyPipeline-Prod/CumplifyPipelineProdIdentityStack6EACD579.assets.json\" --verbose publish \"ca8f85e2df9a94e1a3f4e21156ebdc05bd4f28de63fd8353e0f8d84dd0b4a69a:077405654066-us-east-1-f82f6005\""
+                  "cdk-assets --path \"assembly-CumplifyPipeline-Dev/CumplifyPipelineDevIdentityStackE8CC97D1.assets.json\" --verbose publish \"5c9839a70c0cb378879b3e1c8b36c812cf6be6fd5b8e354a8131cc4b8dc31662:697114252993-us-east-1-59d6eaf0\"",
+                  "cdk-assets --path \"assembly-CumplifyPipeline-Staging/CumplifyPipelineStagingIdentityStackC7CA0733.assets.json\" --verbose publish \"5c9839a70c0cb378879b3e1c8b36c812cf6be6fd5b8e354a8131cc4b8dc31662:889007427685-us-east-1-63f3b0ae\"",
+                  "cdk-assets --path \"assembly-CumplifyPipeline-Prod/CumplifyPipelineProdIdentityStack6EACD579.assets.json\" --verbose publish \"5c9839a70c0cb378879b3e1c8b36c812cf6be6fd5b8e354a8131cc4b8dc31662:077405654066-us-east-1-53f87255\""
                 ]
               }
             }
@@ -1911,11 +1916,11 @@ Parameters:
     Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
 
 
-=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T19:57:48.752Z] ===
+=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T22:32:12.119Z] ===
 
-=== STEP 6: integration tests (module: none specified) [START 2026-07-03T19:57:48.752Z] ===
+=== STEP 6: integration tests (module: none specified) [START 2026-07-03T22:32:12.119Z] ===
 No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
-=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T19:57:48.752Z] ===
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T22:32:12.119Z] ===
 
 === RESULT: PASS (5 green, 1 skipped) | MAX-RUNG: D1 ===
-=== ENDED: 2026-07-03T19:57:48.752Z ===
+=== ENDED: 2026-07-03T22:32:12.119Z ===
