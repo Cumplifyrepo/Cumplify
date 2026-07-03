@@ -115,7 +115,8 @@ Each stack receives its dependencies as props (never Fn::ImportValue).
 ### Produced
 - Stack outputs via `cdk-outputs.json` (F-9): VPC ID, subnet IDs, security
   group IDs, CMK ARNs, table name/ARN, cluster endpoint, pool IDs/ARNs,
-  AOSS collection endpoint, bucket ARNs.
+  AOSS collection endpoint, bucket ARNs. **Dev's `cdk-outputs.json` is
+  committed to the repo as the declared-truth input for readback tests.**
 - Props interfaces: `INetworkStackProps`, `ISecurityStackOutputs`,
   `IDataStackOutputs`, `IIdentityStackOutputs` — consumed by specs 2–5.
 
@@ -193,6 +194,17 @@ A dedicated flow-logs bucket in NetworkStack:
 - No Object Lock (logs are not compliance records).
 - Block all public access.
 
+## 6b. Secrets Manager Rotation Lambda (F-6 resolution)
+
+The Secrets Manager rotation Lambda is created by `cluster.addRotationSingleUser()`
+inside DataStack. It runs in the **same VPC private subnets** as the RDS cluster.
+Its Secrets Manager API calls traverse the **secretsmanager interface endpoint**
+(AC-2.2) — no NAT gateway, no public egress path.
+
+Any future "rotation is failing, add a NAT" instinct is **wrong by construction**.
+The interface endpoint provides private connectivity. If rotation fails, the
+root cause is security group rules or endpoint policy — never missing NAT.
+
 ---
 
 ## 7. Readback Assertions (§7 — grows with this spec)
@@ -213,7 +225,7 @@ exists). Env-conditional assertions driven by `cdk-outputs.json` + envConfig.
 | R-8 | VPC | VpcEndpoints (interface) | AOSS, SecretsManager, KMS, bedrock-runtime, execute-api |
 | R-9 | VPC | VpcEndpoints (gateway) | S3, DynamoDB |
 | R-10 | AOSS collection | Type | VECTORSEARCH |
-| R-11 | AOSS collection | CollectionStatus | ACTIVE or CREATING |
+| R-11 | AOSS collection | CollectionStatus | ACTIVE |
 | R-12 | Aurora cluster | StorageEncrypted | true |
 | R-13 | Aurora cluster | ServerlessV2ScalingConfig.MinCapacity | 0 (dev) |
 | R-14 | ElastiCache | AtRestEncryptionEnabled | true |
@@ -273,13 +285,16 @@ operational logging, not compliance audit events.
 | DynamoDB (on-demand, no traffic) | **$0** | Pay-per-request, no requests |
 | **Total dev standing cost** | **~$96/mo** | |
 
-**Part 27 tripwire check:** $96/mo << $200/mo threshold. Not triggered.
+**Part 27 tripwire check:** $96/mo << $200/mo threshold. Not triggered for dev.
 
 **Prod delta (additive):** Global Table replica (+$0 idle with on-demand),
 Secrets Manager replica ($0.40/secret/month/region), S3 CRR (per-GB transfer),
 ElastiCache multi-AZ (~2× node cost), Aurora min 0.5 ACU (~$44/mo floor).
-Prod estimate: ~$200–$250/mo total (still within tripwire for initial deployment
-with no traffic).
+Prod estimate: ~$200–$250/mo total.
+
+**Tripwire TRIGGERED for prod deployment.** Standing platform cost approved by
+owner 2026-07-03 as expected foundation base (Part 27 economics). Dev remains
+under threshold at ~$96/mo.
 
 ---
 
