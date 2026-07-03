@@ -64,6 +64,15 @@ export class DataStack extends cdk.Stack {
       // Global Table replica deferred: requires DrRegionStack in us-west-2 to host
       // the KMS ReplicaKey. Will be wired when prod DR region is bootstrapped.
       // The dynamodb CMK is created as multiRegion=true (prod), ready for replication.
+      // TODO [AC-1.8]: Wire Global Table replica when DrRegionStack is deployed:
+      //   replicas: envConfig.globalTableReplica ? [{
+      //     region: DR_REGION,
+      //     tableOptions: {
+      //       encryption: dynamodb.TableEncryptionV2.customerManagedKey(
+      //         kms.Key.fromKeyArn(this, 'DrReplicaKey', drReplicaKeyArn)
+      //       ),
+      //     },
+      //   }] : undefined,
       globalSecondaryIndexes: [
         {
           indexName: 'GSI1',
@@ -368,6 +377,14 @@ export class DataStack extends cdk.Stack {
     });
 
     this.evidenceBucketArn = evidenceBucket.bucketArn;
+
+    // TODO [AC-1.8]: Wire S3 CRR replication when DrRegionStack is deployed:
+    //   When envConfig.s3Crr === true, add CfnBucket replication configuration:
+    //   - Role: S3 replication IAM role (needs s3:ReplicateObject, s3:ReplicateDelete)
+    //   - Rules: [{ Status: 'Enabled', Destination: { Bucket: crrDestinationBucketArn,
+    //       EncryptionConfiguration: { ReplicaKmsKeyID: drReplicaKeyArn },
+    //       StorageClass: 'STANDARD' } }]
+    //   Cross-region dependency: DrRegionStack must be deployed first.
 
     // -----------------------------------------------------------------------
     // S3 General/Static bucket (AC-4.6)

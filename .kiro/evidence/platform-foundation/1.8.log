@@ -1,0 +1,70 @@
+=== EVIDENCE LOG ===
+spec: platform-foundation
+task: 1.8
+git-sha: c3454c93443355b26599c1c21606508ca44ea922
+dirty: 6 files
+started: 2026-07-03T23:26:46.681Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-03T23:26:46.681Z] ===
+
+added 197 packages, and audited 217 packages in 2s
+
+57 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+=== STEP 1: npm ci [PASS 2026-07-03T23:26:48.262Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-03T23:26:48.262Z] ===
+
+=== STEP 2: tsc --noEmit [PASS 2026-07-03T23:26:50.507Z] ===
+
+=== STEP 3: eslint + prettier [START 2026-07-03T23:26:50.507Z] ===
+
+> cumplify@0.1.0 lint
+> eslint . --ext .ts,.tsx
+
+
+> cumplify@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+=== STEP 3: eslint + prettier [PASS 2026-07-03T23:26:51.495Z] ===
+
+=== STEP 4: unit + property tests [START 2026-07-03T23:26:51.498Z] ===
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 6ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > always produces valid claims structure for any input 13ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > tenantId in claims matches userAttributes passthrough 5ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role is first group when groups are non-empty 4ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role falls back to Employee when groups are empty or undefined 2ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > resolvePoolClass returns mapped value or unknown given explicit map 3ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > buildClaims always returns exactly 3 keys 5ms
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  19:26:51
+   Duration  155ms (transform 33ms, setup 0ms, import 105ms, tests 43ms, environment 0ms)
+
+
+=== STEP 4: unit + property tests [PASS 2026-07-03T23:26:51.925Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T23:26:51.925Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T23:26:54.131Z] ===
+
+=== STEP 6: integration tests (module: none specified) [START 2026-07-03T23:26:54.131Z] ===
+No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T23:26:54.131Z] ===
+
+=== RESULT: PASS (5 green, 1 skipped) | MAX-RUNG: D1 ===
+=== ENDED: 2026-07-03T23:26:54.131Z ===

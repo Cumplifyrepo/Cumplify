@@ -1,6 +1,6 @@
 /**
  * Readback assertions — Spec 1 platform-foundation
- * Design §7: R-1 through R-23
+ * Design §7: R-1 through R-24
  *
  * ALL resource names resolved from cdk-outputs.json (per design §2, F-9).
  * Zero hardcoded resource names — outputs are the declared-truth input.
@@ -475,5 +475,28 @@ describe('Platform Foundation — Readback Assertions', () => {
     const prefix = 'alias/cumplify/prod/dynamodb';
     const found = (result?.Aliases ?? []).some((a) => a.AliasName === prefix);
     assertResource('kms:us-west-2/cumplify/prod/dynamodb', 'exists', true, found);
+  });
+
+  // =========================================================================
+  // S3 CRR (R-24) — prod-only
+  // =========================================================================
+
+  it('R-24: S3 CRR replication enabled on evidence vault (prod-only)', async (ctx) => {
+    if (skipIfNotReady(ctx)) return;
+    if (ENV_NAME !== 'prod') {
+      ctx.skip();
+      return;
+    }
+    const bucket = getOutput(outputs, DATA_STACK, 'EvidenceBucketName');
+    if (!bucket) {
+      ctx.skip();
+      return;
+    }
+    const result = await awsJson<{
+      ReplicationConfiguration?: { Rules?: Array<{ Status?: string }> };
+    }>(`aws s3api get-bucket-replication --bucket ${bucket}`);
+    const rule = result?.ReplicationConfiguration?.Rules?.[0];
+    const status = rule?.Status ?? 'ABSENT';
+    assertResource(`s3://${bucket}`, 'ReplicationConfiguration.Rules[0].Status', 'Enabled', status);
   });
 });

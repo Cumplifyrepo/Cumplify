@@ -22,6 +22,29 @@ const pipelineStack = new PipelineStack(app, 'CumplifyPipeline', {
 // Applied at the App level so EVERY stack (pipeline + application) is audited.
 Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
 
+// --- Cross-region support stack suppressions ---
+// CDK Pipelines creates cross-region support stacks (replication buckets) when
+// stages contain stacks in different regions. These are framework-generated and
+// cannot be customized. Suppress Nag findings on all cross-region support stacks.
+for (const child of app.node.children) {
+  if (child instanceof cdk.Stack && child.node.id.startsWith('cross-region-stack-')) {
+    NagSuppressions.addStackSuppressions(child, [
+      {
+        id: 'AwsSolutions-S1',
+        reason:
+          'Cross-region replication bucket is CDK Pipelines framework infrastructure ' +
+          'for cross-region artifact delivery. Cannot add logging without forking internals.',
+      },
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'Cross-region support stack IAM roles are CDK Pipelines framework-generated ' +
+          'for artifact replication. Cannot scope further.',
+      },
+    ]);
+  }
+}
+
 // --- PipelineStack IAM5/S1 suppressions ---
 // CDK Pipelines generates IAM roles with inherent Resource:'*' wildcards for
 // cross-account artifact access, KMS key grants, CodeBuild log groups, and
@@ -44,6 +67,8 @@ NagSuppressions.addStackSuppressions(pipelineStack, [
       'Resource::*',
       // Artifact bucket object-level wildcard
       { regex: '/^Resource::<.+ArtifactsBucket.+\\.Arn>.+$/' },
+      // Cross-region replication bucket object-level wildcard (prod DR us-west-2)
+      { regex: '/^Resource::arn:<AWS::Partition>:s3:::.+eplicationbucket.+$/' },
       // S3 action wildcards on artifact bucket
       'Action::s3:Abort*',
       'Action::s3:DeleteObject*',
@@ -58,8 +83,9 @@ NagSuppressions.addStackSuppressions(pipelineStack, [
   {
     id: 'AwsSolutions-S1',
     reason:
-      'Artifact bucket is CDK Pipelines internal storage with cross-account KMS; ' +
-      'access logging adds cost without security value on transient build artifacts.',
+      'Artifact bucket and cross-region replication bucket are CDK Pipelines internal storage ' +
+      'with cross-account KMS; access logging adds cost without security value on transient ' +
+      'build artifacts.',
   },
 ]);
 

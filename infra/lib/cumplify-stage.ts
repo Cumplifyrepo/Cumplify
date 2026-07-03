@@ -8,11 +8,12 @@ import * as cdk from 'aws-cdk-lib';
 import { Aspects } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { type EnvConfig } from './env-config.js';
+import { type EnvConfig, DR_REGION } from './env-config.js';
 import { NetworkStack } from './network-stack.js';
 import { SecurityStack } from './security-stack.js';
 import { DataStack } from './data-stack.js';
 import { IdentityStack } from './identity-stack.js';
+import { DrRegionStack } from './dr-region-stack.js';
 
 export interface CumplifyStageProps extends cdk.StageProps {
   readonly envConfig: EnvConfig;
@@ -42,6 +43,24 @@ export class CumplifyStage extends cdk.Stage {
       tableName: dataStack.tableName,
     });
     identityStack.addDependency(dataStack);
+
+    // -----------------------------------------------------------------------
+    // DrRegionStack — prod-only, cross-region DR in us-west-2 (AC-1.8)
+    // KMS ReplicaKey + S3 CRR destination bucket.
+    // Global Table replica + S3 CRR wiring deferred: requires DrRegionStack
+    // deployed first (cross-region dependency cannot resolve at synth time).
+    // -----------------------------------------------------------------------
+    if (envConfig.drRegionStack) {
+      const drRegionStack = new DrRegionStack(this, 'DrRegionStack', {
+        envConfig,
+        primaryDynamodbKeyArn: securityStack.outputs.dynamodbKey.keyArn,
+        env: {
+          account: envConfig.account,
+          region: DR_REGION,
+        },
+      });
+      drRegionStack.addDependency(securityStack);
+    }
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —
