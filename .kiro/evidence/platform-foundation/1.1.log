@@ -1,13 +1,13 @@
 === EVIDENCE LOG ===
 spec: platform-foundation
 task: 1.1
-git-sha: 97321ba2612d1287f4d0d4c8b0a9f0c73a90f350
-dirty: 4 files
-started: 2026-07-03T19:31:14.099Z
+git-sha: bce585e204c23ee717e129bab81c83ed811db349
+dirty: 5 files
+started: 2026-07-03T20:16:21.079Z
 script-version: 0.1.0
 =====================================
 
-=== STEP 1: npm ci [START 2026-07-03T19:31:14.099Z] ===
+=== STEP 1: npm ci [START 2026-07-03T20:16:21.080Z] ===
 
 added 197 packages, and audited 217 packages in 2s
 
@@ -16,13 +16,13 @@ added 197 packages, and audited 217 packages in 2s
 
 found 0 vulnerabilities
 
-=== STEP 1: npm ci [PASS 2026-07-03T19:31:15.728Z] ===
+=== STEP 1: npm ci [PASS 2026-07-03T20:16:22.747Z] ===
 
-=== STEP 2: tsc --noEmit [START 2026-07-03T19:31:15.728Z] ===
+=== STEP 2: tsc --noEmit [START 2026-07-03T20:16:22.747Z] ===
 
-=== STEP 2: tsc --noEmit [PASS 2026-07-03T19:31:18.034Z] ===
+=== STEP 2: tsc --noEmit [PASS 2026-07-03T20:16:25.045Z] ===
 
-=== STEP 3: eslint + prettier [START 2026-07-03T19:31:18.034Z] ===
+=== STEP 3: eslint + prettier [START 2026-07-03T20:16:25.045Z] ===
 
 > cumplify@0.1.0 lint
 > eslint . --ext .ts,.tsx
@@ -34,39 +34,77 @@ found 0 vulnerabilities
 Checking formatting...
 All matched files use Prettier code style!
 
-=== STEP 3: eslint + prettier [PASS 2026-07-03T19:31:18.897Z] ===
+=== STEP 3: eslint + prettier [PASS 2026-07-03T20:16:26.033Z] ===
 
-=== STEP 4: unit + property tests [START 2026-07-03T19:31:18.899Z] ===
+=== STEP 4: unit + property tests [START 2026-07-03T20:16:26.035Z] ===
 
  RUN  v4.1.9 /home/julio-medrano/cumplify
 
- ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 5ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 6ms
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
-stdout | infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc
-Dev-NetworkStack not deployed yet — skipping readback (pre-deploy for this spec).
-
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc 1ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > always produces valid claims structure for any input 14ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > tenantId in claims matches userAttributes passthrough 5ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role is first group when groups are non-empty 4ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role falls back to Employee when groups are empty or undefined 2ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > poolClass resolves to known value or unknown 3ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > buildClaims always returns exactly 3 keys 5ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-1: CumplifyCore table SSE.Type = KMS 1ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-2: CumplifyCore table SSE.KMSMasterKeyArn contains dynamodb CMK 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-3: CumplifyCore table has 9 GSIs 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-4: CumplifyCore table PITR enabled 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-5: S3 evidence vault ObjectLock Mode = COMPLIANCE 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-6: S3 evidence vault retention = 2555 days 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-7: VPC has zero NAT gateways 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-8: VPC has 5 interface endpoints (AOSS, SecretsManager, KMS, bedrock-runtime, execute-api) 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-9: VPC has 2 gateway endpoints (S3, DynamoDB) 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-10: AOSS collection type = VECTORSEARCH 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-11: AOSS collection status = ACTIVE (45s budget) 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-12: Aurora cluster StorageEncrypted = true 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-13: Aurora cluster ServerlessV2 MinCapacity = 0 (dev) 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-14: ElastiCache AtRestEncryptionEnabled = true 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-15: ElastiCache TransitEncryptionEnabled = true 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-16: Cognito Pool A MfaConfiguration = ON 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-17: Cognito Pool B MfaConfiguration = OPTIONAL 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-18: Cognito Pool C MfaConfiguration = OPTIONAL 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-19: 10 KMS keys with alias prefix cumplify/<env>/ 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-20: All cumplify KMS keys have rotation enabled 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-21: Global Table replica status us-west-2 = ACTIVE (prod-only) 0ms
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-22: DR KMS ReplicaKey exists in us-west-2 (prod-only) 0ms
 stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
 Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
 
  ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
 
- Test Files  3 passed (3)
-      Tests  3 passed | 2 skipped (5)
-   Start at  15:31:19
-   Duration  1.90s (transform 52ms, setup 0ms, import 98ms, tests 3.03s, environment 0ms)
+ Test Files  4 passed (4)
+      Tests  9 passed | 24 skipped (33)
+   Start at  16:16:26
+   Duration  7.61s (transform 105ms, setup 0ms, import 207ms, tests 9.42s, environment 0ms)
 
 
-=== STEP 4: unit + property tests [PASS 2026-07-03T19:31:21.086Z] ===
+=== STEP 4: unit + property tests [PASS 2026-07-03T20:16:33.932Z] ===
 
-=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T19:31:21.086Z] ===
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T20:16:33.932Z] ===
 Metadata:
   cdk_nag:
     rules_to_suppress:
       - reason: PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack.
         id: AwsSolutions-IAM5
-      - reason: PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack. Artifact bucket is CDK Pipelines internal storage with cross-account KMS; access logging adds cost without security value on transient build artifacts.
+        applies_to:
+          - regex: /^Resource::arn:<AWS::Partition>:logs:.+:log-group:.+codebuild.+$/
+          - regex: /^Resource::arn:<AWS::Partition>:codebuild:.+:report-group.+$/
+          - regex: /^Resource::arn:\*:iam::.+:role.+$/
+          - Resource::*
+          - regex: /^Resource::<.+ArtifactsBucket.+\.Arn>.+$/
+          - Action::s3:Abort*
+          - Action::s3:DeleteObject*
+          - Action::s3:GetBucket*
+          - Action::s3:GetObject*
+          - Action::s3:List*
+          - Action::kms:GenerateDataKey*
+          - Action::kms:ReEncrypt*
+      - reason: Artifact bucket is CDK Pipelines internal storage with cross-account KMS; access logging adds cost without security value on transient build artifacts.
         id: AwsSolutions-S1
 Resources:
   CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73:
@@ -435,6 +473,24 @@ Resources:
                   - Arn
               RunOrder: 1
           Name: UpdatePipeline
+        - Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName:
+                  Ref: CumplifyPipelineAssetsFileAsset12A0BCC7E
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: PreTokenGenFn_Code
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineCodeBuildActionRole70C1564C
+                  - Arn
+              RunOrder: 1
+          Name: Assets
         - Actions:
             - ActionTypeId:
                 Category: Deploy
@@ -1574,6 +1630,15 @@ Resources:
             Effect: Allow
             Resource:
               Fn::GetAtt:
+                - CumplifyPipelineAssetsFileAsset12A0BCC7E
+                - Arn
+          - Action:
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuild
+              - codebuild:StopBuild
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
                 - CumplifyPipelineStagingSmokeTestB3662089
                 - Arn
           - Action:
@@ -1739,6 +1804,132 @@ Resources:
         Type: CODEPIPELINE
     Metadata:
       aws:cdk:path: CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Resource
+  CumplifyPipelineAssetsFileRole6E16A0A6:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Assets/FileRole/Resource
+  CumplifyPipelineAssetsFileRoleDefaultPolicyC9378238:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :logs:us-east-1:157082218687:log-group:/aws/codebuild/*
+          - Action:
+              - codebuild:CreateReportGroup
+              - codebuild:CreateReport
+              - codebuild:UpdateReport
+              - codebuild:BatchPutTestCases
+              - codebuild:BatchPutCodeCoverages
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :codebuild:us-east-1:157082218687:report-group/*
+          - Action:
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuild
+              - codebuild:StopBuild
+            Effect: Allow
+            Resource: "*"
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              - Fn::Sub: arn:${AWS::Partition}:iam::697114252993:role/cdk-hnb659fds-file-publishing-role-697114252993-us-east-1
+              - Fn::Sub: arn:${AWS::Partition}:iam::889007427685:role/cdk-hnb659fds-file-publishing-role-889007427685-us-east-1
+              - Fn::Sub: arn:${AWS::Partition}:iam::077405654066:role/cdk-hnb659fds-file-publishing-role-077405654066-us-east-1
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineAssetsFileRoleDefaultPolicyC9378238
+      Roles:
+        - Ref: CumplifyPipelineAssetsFileRole6E16A0A6
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Assets/FileRole/DefaultPolicy/Resource
+  CumplifyPipelineAssetsFileAsset12A0BCC7E:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      Description: Pipeline step CumplifyPipeline/Pipeline/Assets/PreTokenGenFn_Code
+      EncryptionKey:
+        Fn::GetAtt:
+          - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+          - Arn
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+      ServiceRole:
+        Fn::GetAtt:
+          - CumplifyPipelineAssetsFileRole6E16A0A6
+          - Arn
+      Source:
+        BuildSpec: |-
+          {
+            "version": "0.2",
+            "phases": {
+              "install": {
+                "commands": [
+                  "npm install -g cdk-assets@latest"
+                ]
+              },
+              "build": {
+                "commands": [
+                  "cdk-assets --path \"assembly-CumplifyPipeline-Dev/CumplifyPipelineDevIdentityStackE8CC97D1.assets.json\" --verbose publish \"ca8f85e2df9a94e1a3f4e21156ebdc05bd4f28de63fd8353e0f8d84dd0b4a69a:697114252993-us-east-1-1b029408\"",
+                  "cdk-assets --path \"assembly-CumplifyPipeline-Staging/CumplifyPipelineStagingIdentityStackC7CA0733.assets.json\" --verbose publish \"ca8f85e2df9a94e1a3f4e21156ebdc05bd4f28de63fd8353e0f8d84dd0b4a69a:889007427685-us-east-1-54d3c04c\"",
+                  "cdk-assets --path \"assembly-CumplifyPipeline-Prod/CumplifyPipelineProdIdentityStack6EACD579.assets.json\" --verbose publish \"ca8f85e2df9a94e1a3f4e21156ebdc05bd4f28de63fd8353e0f8d84dd0b4a69a:077405654066-us-east-1-f82f6005\""
+                ]
+              }
+            }
+          }
+        Type: CODEPIPELINE
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Assets/FileAsset1/Resource
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
@@ -1752,11 +1943,11 @@ Parameters:
     Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
 
 
-=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T19:31:22.841Z] ===
+=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T20:16:36.198Z] ===
 
-=== STEP 6: integration tests (module: none specified) [START 2026-07-03T19:31:22.841Z] ===
+=== STEP 6: integration tests (module: none specified) [START 2026-07-03T20:16:36.198Z] ===
 No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
-=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T19:31:22.841Z] ===
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T20:16:36.198Z] ===
 
 === RESULT: PASS (5 green, 1 skipped) | MAX-RUNG: D1 ===
-=== ENDED: 2026-07-03T19:31:22.842Z ===
+=== ENDED: 2026-07-03T20:16:36.199Z ===

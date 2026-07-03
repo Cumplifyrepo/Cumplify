@@ -300,3 +300,42 @@ Assertions assume post-deploy mode: a resource expected but ABSENT = FAIL.
 
 - OQ-5: **Resolved.** Mgmt account = 157082218687 (verified via Organizations).
   00-stack-facts.md updated.
+
+---
+
+## 5. Spec-Drift Notes (implementation deviations from original ACs)
+
+These notes document where the implementation diverged from the original AC
+text due to technical constraints discovered during development. Each carries
+a rationale and forward-fix reference.
+
+### AC-3.3: RDS secret relocated to DataStack
+
+**Original:** "Secrets Manager secrets for RDS master credentials" in SecurityStack.
+**Actual:** The `rdsSecret` (Secrets Manager) is created in **DataStack**, not
+SecurityStack.
+**Rationale:** Cross-stack circular dependency. The Aurora cluster in DataStack
+references the secret (Credentials.fromSecret), and `addRotationSingleUser()`
+creates a rotation Lambda that references the cluster. If the secret lives in
+SecurityStack and the cluster in DataStack, CloudFormation requires a cyclic
+cross-stack reference (Security→Data for rotation, Data→Security for the secret).
+Moving the secret to DataStack co-locates it with the cluster, eliminating the cycle.
+**Forward fix:** None needed — the secret is encrypted with `secretsKey` from
+SecurityStack (passed via props). Rotation, VPC placement, and replica behavior
+are unchanged. The SecurityOutputs interface no longer exports `rdsSecret`.
+
+### AC-4.1 / AC-4.5: DR code delivered by task 1.8
+
+**Original:** AC-4.1 specifies "Global Table replication to us-west-2: prod-only"
+and AC-4.5 specifies "Prod-only: S3 WORM evidence vault CRR to us-west-2."
+**Actual:** Task 1.4 (DataStack) creates the table and bucket WITHOUT the DR
+wiring. The Global Table replica and S3 CRR replication configuration are
+delivered by **task 1.8 (DrRegionStack + prod DR wiring)**.
+**Rationale:** Global Table replica requires a KMS ReplicaKey in us-west-2.
+S3 CRR requires a destination bucket in us-west-2. Both require a cross-region
+stack (`DrRegionStack`) that didn't exist in the original task decomposition.
+The dynamodb CMK is created with `multiRegion: true` in prod (ready for
+replication); the wiring is deferred to task 1.8.
+**Forward fix:** Task 1.8 implements DrRegionStack (us-west-2), wires the
+Global Table replica with ReplicaKey ARN, and configures S3 CRR. R-21, R-22,
+and R-24 readback assertions verify at D3 (prod deployment).

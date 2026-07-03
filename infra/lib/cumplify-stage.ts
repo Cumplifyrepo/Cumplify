@@ -42,8 +42,11 @@ export class CumplifyStage extends cdk.Stage {
     });
     identityStack.addDependency(dataStack);
 
-    // AC-1.6: CDK Nag — all warnings = failures (Cumplify rule).
-    // Applied at the stage level so all stacks within the stage are audited.
+    // AC-1.6: CDK Nag also applied at stage level.
+    // Required because CDK Pipelines stages are separate cloud assemblies —
+    // App-level Aspects do not propagate into stage assemblies (verified:
+    // Nag reports are only generated for PipelineStack when Aspect is at app
+    // level alone; stage stacks produce no findings/reports without this).
     Aspects.of(this).add(new AwsSolutionsChecks({ verbose: true }));
   }
 }

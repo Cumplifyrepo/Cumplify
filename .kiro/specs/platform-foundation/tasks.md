@@ -184,6 +184,29 @@ Evidence captured manually (human-executed, readback of CDKToolkit stacks).
 
 ---
 
+### Task 1.8: DrRegionStack + prod DR wiring
+**Traces to:** AC-4.1 (Global Table replica), AC-4.5 (S3 CRR), AC-3.3 (secrets replica)
+**D-rung:** D1 (`cdk synth --all -c env=prod` clean with Nag)
+**Depends on:** 1.3 (CMKs), 1.4 (DataStack)
+**D3 deferred:** to prod deployment (task 2.1 is dev-only; prod deploy is post-pipeline)
+
+**Deliverables:**
+- [ ] `infra/lib/dr-region-stack.ts` — us-west-2 cross-region stack (prod-only):
+  - KMS ReplicaKey from the multi-region dynamodb CMK (for Global Table DR).
+  - S3 CRR destination bucket (Object Lock COMPLIANCE, CMK, for evidence vault).
+- [ ] Wire Global Table replica in DataStack using the ReplicaKey ARN
+  (conditional on `envConfig.globalTableReplica`).
+- [ ] Wire S3 CRR replication configuration on evidence vault
+  (conditional on `envConfig.s3Crr`).
+- [ ] Add R-24 readback assertion: S3 CRR replication status = ENABLED
+  (prod-only, in `infra/readback/platform-foundation.test.ts`).
+- [ ] `cdk synth --all -c env=prod` passes clean with CDK Nag.
+
+**Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.8`.
+Synth passes for all env contexts (dev, staging, prod). Nag clean.
+
+---
+
 ## Dependency Wave 2 — Direct Deploy + Readback (human-gated)
 
 ### Task 2.1: Direct CLI deploy to dev (REQUIRES-HUMAN)
@@ -258,6 +281,7 @@ Wave 1 (CDK code + bootstrap):
                  → 1.4 (data, needs 1.2+1.3) → 1.5 (identity, needs 1.4)
                  → 1.6 (readback assertions, needs all stacks)
   1.7 (bootstrap, REQUIRES-HUMAN, needs 1.1)
+  1.8 (DR region stack + prod wiring, needs 1.3+1.4)
 
 Wave 2 (direct deploy — after Wave 1 complete):
   2.1 (cdk deploy + readback, REQUIRES-HUMAN)
