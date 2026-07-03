@@ -6,6 +6,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
+import { NagSuppressions } from 'cdk-nag';
 import { type EnvConfig } from './env-config.js';
 
 export interface NetworkStackProps extends cdk.StackProps {
@@ -39,5 +40,20 @@ export class NetworkStack extends cdk.Stack {
     });
 
     this.vpc = vpc;
+
+    // CDK Nag VPC7 suppression: FlowLog IS synthesized (verified in
+    // cdk.out templates 2026-07-03) but cdk-nag L2 detection doesn't
+    // recognize the flowLogs prop association. False positive.
+    NagSuppressions.addResourceSuppressions(
+      vpc,
+      [
+        {
+          id: 'AwsSolutions-VPC7',
+          reason:
+            'FlowLog IS present in synthesized template (AWS::EC2::FlowLog resource verified in cdk.out 2026-07-03). cdk-nag detection false positive on L2 flowLogs prop.',
+        },
+      ],
+      true,
+    );
   }
 }
