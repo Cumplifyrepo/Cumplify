@@ -1,0 +1,1762 @@
+=== EVIDENCE LOG ===
+spec: platform-foundation
+task: 1.3
+git-sha: bfb4c5fc43495d3408042189d54304df39e68e0a
+dirty: 1 files
+started: 2026-07-03T19:39:14.768Z
+script-version: 0.1.0
+=====================================
+
+=== STEP 1: npm ci [START 2026-07-03T19:39:14.768Z] ===
+
+added 197 packages, and audited 217 packages in 2s
+
+57 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+=== STEP 1: npm ci [PASS 2026-07-03T19:39:16.873Z] ===
+
+=== STEP 2: tsc --noEmit [START 2026-07-03T19:39:16.873Z] ===
+
+=== STEP 2: tsc --noEmit [PASS 2026-07-03T19:39:19.067Z] ===
+
+=== STEP 3: eslint + prettier [START 2026-07-03T19:39:19.067Z] ===
+
+> cumplify@0.1.0 lint
+> eslint . --ext .ts,.tsx
+
+
+> cumplify@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+=== STEP 3: eslint + prettier [PASS 2026-07-03T19:39:19.938Z] ===
+
+=== STEP 4: unit + property tests [START 2026-07-03T19:39:19.941Z] ===
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 6ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
+stdout | infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc
+Dev-NetworkStack not deployed yet — skipping readback (pre-deploy for this spec).
+
+ ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc 1ms
+stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
+Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
+
+ ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
+
+ Test Files  3 passed (3)
+      Tests  3 passed | 2 skipped (5)
+   Start at  15:39:20
+   Duration  2.64s (transform 56ms, setup 0ms, import 104ms, tests 4.18s, environment 0ms)
+
+
+=== STEP 4: unit + property tests [PASS 2026-07-03T19:39:22.856Z] ===
+
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T19:39:22.856Z] ===
+Metadata:
+  cdk_nag:
+    rules_to_suppress:
+      - reason: PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack.
+        id: AwsSolutions-IAM5
+      - reason: PipelineStack contains only framework-generated pipeline constructs; no application resources in this stack. Artifact bucket is CDK Pipelines internal storage with cross-account KMS; access logging adds cost without security value on transient build artifacts.
+        id: AwsSolutions-S1
+Resources:
+  CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73:
+    Type: AWS::KMS::Key
+    Properties:
+      EnableKeyRotation: true
+      KeyPolicy:
+        Statement:
+          - Action: kms:*
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::157082218687:root
+            Resource: "*"
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+            Resource: "*"
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+            Resource: "*"
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+            Resource: "*"
+        Version: "2012-10-17"
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/ArtifactsBucketEncryptionKey/Resource
+  CumplifyPipelineArtifactsBucketEncryptionKeyAlias1BD4B546:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/codepipeline-cumplifypipeline0004aa14
+      TargetKeyId:
+        Fn::GetAtt:
+          - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+          - Arn
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/ArtifactsBucketEncryptionKeyAlias/Resource
+  CumplifyPipelineArtifactsBucket09700117:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              KMSMasterKeyID:
+                Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                  - Arn
+              SSEAlgorithm: aws:kms
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/ArtifactsBucket/Resource
+  CumplifyPipelineArtifactsBucketPolicyB1F98A23:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: CumplifyPipelineArtifactsBucket09700117
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/ArtifactsBucket/Policy/Resource
+  CumplifyPipelineRole9C194C0D:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Role/Resource
+  CumplifyPipelineRoleDefaultPolicy182CAF0D:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineSourcestrivanallccryptoCumplifyCodePipelineActionRoleCFC0F0A7
+                - Arn
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineCodeBuildActionRole70C1564C
+                - Arn
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineStagingApproveToStagingCodePipelineActionRoleE464DD38
+                - Arn
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineProdApproveToProdCodePipelineActionRole26CE80E5
+                - Arn
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineRoleDefaultPolicy182CAF0D
+      Roles:
+        - Ref: CumplifyPipelineRole9C194C0D
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource
+  CumplifyPipelineDAB3503F:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        EncryptionKey:
+          Id:
+            Fn::GetAtt:
+              - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+              - Arn
+          Type: KMS
+        Location:
+          Ref: CumplifyPipelineArtifactsBucket09700117
+        Type: S3
+      Name: CumplifyPipeline
+      PipelineType: V1
+      RestartExecutionOnUpdate: true
+      RoleArn:
+        Fn::GetAtt:
+          - CumplifyPipelineRole9C194C0D
+          - Arn
+      Stages:
+        - Actions:
+            - ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: "1"
+              Configuration:
+                ConnectionArn: arn:aws:codestar-connections:us-east-1:157082218687:connection/PLACEHOLDER
+                FullRepositoryId: strivanallc-crypto/Cumplify
+                BranchName: develop
+              Name: strivanallc-crypto_Cumplify
+              OutputArtifacts:
+                - Name: strivanallc_crypto_Cumplify_Source
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineSourcestrivanallccryptoCumplifyCodePipelineActionRoleCFC0F0A7
+                  - Arn
+              RunOrder: 1
+          Name: Source
+        - Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName:
+                  Ref: CumplifyPipelineBuildSynthCdkBuildProject036B309C
+                EnvironmentVariables: '[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"927f2cd5a095066d56672396813dc3a656db63447daf97933b05f9b32c344953"}]'
+              InputArtifacts:
+                - Name: strivanallc_crypto_Cumplify_Source
+              Name: Synth
+              OutputArtifacts:
+                - Name: Synth_Output
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineCodeBuildActionRole70C1564C
+                  - Arn
+              RunOrder: 1
+          Name: Build
+        - Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName:
+                  Ref: CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8
+                EnvironmentVariables: '[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"1f178918f935271eb6a023d5ed61a8068215e422f6f08abeb483d5d0d7d3cf3a"}]'
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: SelfMutate
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineCodeBuildActionRole70C1564C
+                  - Arn
+              RunOrder: 1
+          Name: UpdatePipeline
+        - Actions:
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-NetworkStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::697114252993:role/cdk-hnb659fds-cfn-exec-role-697114252993-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Dev/CumplifyPipelineDevNetworkStackCD58F4ED.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: NetworkStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 1
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-SecurityStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::697114252993:role/cdk-hnb659fds-cfn-exec-role-697114252993-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Dev/CumplifyPipelineDevSecurityStack1926AA4D.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: SecurityStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 1
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-NetworkStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: NetworkStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 2
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-SecurityStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: SecurityStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 2
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-DataStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::697114252993:role/cdk-hnb659fds-cfn-exec-role-697114252993-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Dev/CumplifyPipelineDevDataStack7144C69E.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: DataStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 3
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-DataStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: DataStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 4
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-IdentityStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::697114252993:role/cdk-hnb659fds-cfn-exec-role-697114252993-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Dev/CumplifyPipelineDevIdentityStackE8CC97D1.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: IdentityStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 5
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Dev-IdentityStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: IdentityStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::697114252993:role/cdk-hnb659fds-deploy-role-697114252993-us-east-1
+              RunOrder: 6
+          Name: Dev
+        - Actions:
+            - ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Provider: Manual
+                Version: "1"
+              Name: ApproveToStaging
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineStagingApproveToStagingCodePipelineActionRoleE464DD38
+                  - Arn
+              RunOrder: 1
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-NetworkStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::889007427685:role/cdk-hnb659fds-cfn-exec-role-889007427685-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Staging/CumplifyPipelineStagingNetworkStack279108DC.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: NetworkStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 2
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-SecurityStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::889007427685:role/cdk-hnb659fds-cfn-exec-role-889007427685-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Staging/CumplifyPipelineStagingSecurityStack557764C2.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: SecurityStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 2
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-NetworkStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: NetworkStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 3
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-SecurityStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: SecurityStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 3
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-DataStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::889007427685:role/cdk-hnb659fds-cfn-exec-role-889007427685-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Staging/CumplifyPipelineStagingDataStack3314D7F5.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: DataStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 4
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-DataStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: DataStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 5
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-IdentityStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::889007427685:role/cdk-hnb659fds-cfn-exec-role-889007427685-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Staging/CumplifyPipelineStagingIdentityStackC7CA0733.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: IdentityStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 6
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Staging-IdentityStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: IdentityStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::889007427685:role/cdk-hnb659fds-deploy-role-889007427685-us-east-1
+              RunOrder: 7
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName:
+                  Ref: CumplifyPipelineStagingSmokeTestB3662089
+              InputArtifacts:
+                - Name: strivanallc_crypto_Cumplify_Source
+              Name: SmokeTest
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineCodeBuildActionRole70C1564C
+                  - Arn
+              RunOrder: 8
+          Name: Staging
+        - Actions:
+            - ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Provider: Manual
+                Version: "1"
+              Name: ApproveToProd
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineProdApproveToProdCodePipelineActionRole26CE80E5
+                  - Arn
+              RunOrder: 1
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName:
+                  Ref: CumplifyPipelineProdLegalSignoffGuard546A8F96
+              InputArtifacts:
+                - Name: strivanallc_crypto_Cumplify_Source
+              Name: LegalSignoffGuard
+              RoleArn:
+                Fn::GetAtt:
+                  - CumplifyPipelineCodeBuildActionRole70C1564C
+                  - Arn
+              RunOrder: 1
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-NetworkStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::077405654066:role/cdk-hnb659fds-cfn-exec-role-077405654066-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Prod/CumplifyPipelineProdNetworkStack6BDB2185.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: NetworkStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 2
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-SecurityStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::077405654066:role/cdk-hnb659fds-cfn-exec-role-077405654066-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Prod/CumplifyPipelineProdSecurityStack71B91177.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: SecurityStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 2
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-NetworkStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: NetworkStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 3
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-SecurityStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: SecurityStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 3
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-DataStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::077405654066:role/cdk-hnb659fds-cfn-exec-role-077405654066-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Prod/CumplifyPipelineProdDataStackBCD9EB2B.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: DataStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 4
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-DataStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: DataStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 5
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-IdentityStack
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:"
+                      - Ref: AWS::Partition
+                      - :iam::077405654066:role/cdk-hnb659fds-cfn-exec-role-077405654066-us-east-1
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: PipelineChange
+                TemplatePath: Synth_Output::assembly-CumplifyPipeline-Prod/CumplifyPipelineProdIdentityStack6EACD579.template.json
+              InputArtifacts:
+                - Name: Synth_Output
+              Name: IdentityStack.Prepare
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 6
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: Prod-IdentityStack
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: PipelineChange
+              Name: IdentityStack.Deploy
+              RoleArn:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::077405654066:role/cdk-hnb659fds-deploy-role-077405654066-us-east-1
+              RunOrder: 7
+          Name: Prod
+    DependsOn:
+      - CumplifyPipelineRoleDefaultPolicy182CAF0D
+      - CumplifyPipelineRole9C194C0D
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Resource
+  CumplifyPipelineSourcestrivanallccryptoCumplifyCodePipelineActionRoleCFC0F0A7:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - CumplifyPipelineRole9C194C0D
+                  - Arn
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/Resource
+  CumplifyPipelineSourcestrivanallccryptoCumplifyCodePipelineActionRoleDefaultPolicy5E6181C4:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: codestar-connections:UseConnection
+            Effect: Allow
+            Resource: arn:aws:codestar-connections:us-east-1:157082218687:connection/PLACEHOLDER
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+          - Action:
+              - s3:PutObjectAcl
+              - s3:PutObjectVersionAcl
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - CumplifyPipelineArtifactsBucket09700117
+                      - Arn
+                  - /*
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineSourcestrivanallccryptoCumplifyCodePipelineActionRoleDefaultPolicy5E6181C4
+      Roles:
+        - Ref: CumplifyPipelineSourcestrivanallccryptoCumplifyCodePipelineActionRoleCFC0F0A7
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Source/strivanallc-crypto_Cumplify/CodePipelineActionRole/DefaultPolicy/Resource
+  CumplifyPipelineBuildSynthCdkBuildProjectRoleECDB7A83:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/Resource
+  CumplifyPipelineBuildSynthCdkBuildProjectRoleDefaultPolicy98B87C97:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineBuildSynthCdkBuildProject036B309C
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineBuildSynthCdkBuildProject036B309C
+                    - :*
+          - Action:
+              - codebuild:CreateReportGroup
+              - codebuild:CreateReport
+              - codebuild:UpdateReport
+              - codebuild:BatchPutTestCases
+              - codebuild:BatchPutCodeCoverages
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :codebuild:us-east-1:157082218687:report-group/
+                  - Ref: CumplifyPipelineBuildSynthCdkBuildProject036B309C
+                  - -*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+          - Action:
+              - kms:Decrypt
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineBuildSynthCdkBuildProjectRoleDefaultPolicy98B87C97
+      Roles:
+        - Ref: CumplifyPipelineBuildSynthCdkBuildProjectRoleECDB7A83
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/DefaultPolicy/Resource
+  CumplifyPipelineBuildSynthCdkBuildProject036B309C:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      Description: Pipeline step CumplifyPipeline/Pipeline/Build/Synth
+      EncryptionKey:
+        Fn::GetAtt:
+          - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+          - Arn
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+      ServiceRole:
+        Fn::GetAtt:
+          - CumplifyPipelineBuildSynthCdkBuildProjectRoleECDB7A83
+          - Arn
+      Source:
+        BuildSpec: |-
+          {
+            "version": "0.2",
+            "phases": {
+              "build": {
+                "commands": [
+                  "npm ci",
+                  "npm run test",
+                  "npm audit --audit-level=high",
+                  "npx cdk synth --all"
+                ]
+              }
+            },
+            "artifacts": {
+              "base-directory": "cdk.out",
+              "files": "**/*"
+            }
+          }
+        Type: CODEPIPELINE
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Resource
+  CumplifyPipelineStagingApproveToStagingCodePipelineActionRoleE464DD38:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - CumplifyPipelineRole9C194C0D
+                  - Arn
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/ApproveToStaging/CodePipelineActionRole/Resource
+  CumplifyPipelineStagingSmokeTestRole22478511:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/Resource
+  CumplifyPipelineStagingSmokeTestRoleDefaultPolicy1D3E43E4:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineStagingSmokeTestB3662089
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineStagingSmokeTestB3662089
+                    - :*
+          - Action:
+              - codebuild:CreateReportGroup
+              - codebuild:CreateReport
+              - codebuild:UpdateReport
+              - codebuild:BatchPutTestCases
+              - codebuild:BatchPutCodeCoverages
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :codebuild:us-east-1:157082218687:report-group/
+                  - Ref: CumplifyPipelineStagingSmokeTestB3662089
+                  - -*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+          - Action:
+              - kms:Decrypt
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineStagingSmokeTestRoleDefaultPolicy1D3E43E4
+      Roles:
+        - Ref: CumplifyPipelineStagingSmokeTestRole22478511
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/DefaultPolicy/Resource
+  CumplifyPipelineStagingSmokeTestB3662089:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      Description: Pipeline step CumplifyPipeline/Pipeline/Staging/SmokeTest
+      EncryptionKey:
+        Fn::GetAtt:
+          - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+          - Arn
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+      ServiceRole:
+        Fn::GetAtt:
+          - CumplifyPipelineStagingSmokeTestRole22478511
+          - Arn
+      Source:
+        BuildSpec: |-
+          {
+            "version": "0.2",
+            "phases": {
+              "build": {
+                "commands": [
+                  "curl -f https://staging.cumplify.ai/health || true"
+                ]
+              }
+            }
+          }
+        Type: CODEPIPELINE
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Resource
+  CumplifyPipelineProdApproveToProdCodePipelineActionRole26CE80E5:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - CumplifyPipelineRole9C194C0D
+                  - Arn
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/ApproveToProd/CodePipelineActionRole/Resource
+  CumplifyPipelineProdLegalSignoffGuardRole64443B85:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/Resource
+  CumplifyPipelineProdLegalSignoffGuardRoleDefaultPolicy7528B581:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineProdLegalSignoffGuard546A8F96
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineProdLegalSignoffGuard546A8F96
+                    - :*
+          - Action:
+              - codebuild:CreateReportGroup
+              - codebuild:CreateReport
+              - codebuild:UpdateReport
+              - codebuild:BatchPutTestCases
+              - codebuild:BatchPutCodeCoverages
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :codebuild:us-east-1:157082218687:report-group/
+                  - Ref: CumplifyPipelineProdLegalSignoffGuard546A8F96
+                  - -*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+          - Action:
+              - kms:Decrypt
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineProdLegalSignoffGuardRoleDefaultPolicy7528B581
+      Roles:
+        - Ref: CumplifyPipelineProdLegalSignoffGuardRole64443B85
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Role/DefaultPolicy/Resource
+  CumplifyPipelineProdLegalSignoffGuard546A8F96:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      Description: Pipeline step CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard
+      EncryptionKey:
+        Fn::GetAtt:
+          - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+          - Arn
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+      ServiceRole:
+        Fn::GetAtt:
+          - CumplifyPipelineProdLegalSignoffGuardRole64443B85
+          - Arn
+      Source:
+        BuildSpec: |-
+          {
+            "version": "0.2",
+            "phases": {
+              "build": {
+                "commands": [
+                  "npx tsx scripts/assert-legal-signoff.ts"
+                ]
+              }
+            }
+          }
+        Type: CODEPIPELINE
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGuard/Resource
+  CumplifyPipelineCodeBuildActionRole70C1564C:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - CumplifyPipelineRole9C194C0D
+                  - Arn
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/CodeBuildActionRole/Resource
+  CumplifyPipelineCodeBuildActionRoleDefaultPolicyF8553A81:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuild
+              - codebuild:StopBuild
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineBuildSynthCdkBuildProject036B309C
+                - Arn
+          - Action:
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuild
+              - codebuild:StopBuild
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8
+                - Arn
+          - Action:
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuild
+              - codebuild:StopBuild
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineStagingSmokeTestB3662089
+                - Arn
+          - Action:
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuild
+              - codebuild:StopBuild
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineProdLegalSignoffGuard546A8F96
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineCodeBuildActionRoleDefaultPolicyF8553A81
+      Roles:
+        - Ref: CumplifyPipelineCodeBuildActionRole70C1564C
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/CodeBuildActionRole/DefaultPolicy/Resource
+  CumplifyPipelineUpdatePipelineSelfMutationRole4F909EA2:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/Resource
+  CumplifyPipelineUpdatePipelineSelfMutationRoleDefaultPolicy5C1D76BD:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :logs:us-east-1:157082218687:log-group:/aws/codebuild/
+                    - Ref: CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8
+                    - :*
+          - Action:
+              - codebuild:CreateReportGroup
+              - codebuild:CreateReport
+              - codebuild:UpdateReport
+              - codebuild:BatchPutTestCases
+              - codebuild:BatchPutCodeCoverages
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :codebuild:us-east-1:157082218687:report-group/
+                  - Ref: CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8
+                  - -*
+          - Action: sts:AssumeRole
+            Condition:
+              ForAnyValue:StringEquals:
+                iam:ResourceTag/aws-cdk:bootstrap-role:
+                  - image-publishing
+                  - file-publishing
+                  - deploy
+            Effect: Allow
+            Resource: arn:*:iam::157082218687:role/*
+          - Action: cloudformation:DescribeStacks
+            Effect: Allow
+            Resource: "*"
+          - Action: s3:ListBucket
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CumplifyPipelineArtifactsBucket09700117
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - CumplifyPipelineArtifactsBucket09700117
+                        - Arn
+                    - /*
+          - Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+          - Action:
+              - kms:Decrypt
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: CumplifyPipelineUpdatePipelineSelfMutationRoleDefaultPolicy5C1D76BD
+      Roles:
+        - Ref: CumplifyPipelineUpdatePipelineSelfMutationRole4F909EA2
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource
+  CumplifyPipelineUpdatePipelineSelfMutationB28A4CF8:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      Description: Pipeline step CumplifyPipeline/Pipeline/UpdatePipeline/SelfMutate
+      EncryptionKey:
+        Fn::GetAtt:
+          - CumplifyPipelineArtifactsBucketEncryptionKey9FD34B73
+          - Arn
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+      Name: CumplifyPipeline-selfupdate
+      ServiceRole:
+        Fn::GetAtt:
+          - CumplifyPipelineUpdatePipelineSelfMutationRole4F909EA2
+          - Arn
+      Source:
+        BuildSpec: |-
+          {
+            "version": "0.2",
+            "phases": {
+              "install": {
+                "commands": [
+                  "npm install -g aws-cdk@2"
+                ]
+              },
+              "build": {
+                "commands": [
+                  "cdk -a . deploy CumplifyPipeline --require-approval=never --verbose"
+                ]
+              }
+            }
+          }
+        Type: CODEPIPELINE
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/0VOSw6CMBA9i/syakncK0s3BA9gSjsmA4USBiSk6d1N+cjqfZP3JMjbFS4nNXGiTZ1YKsG/BqVr0VGHllpkyJzBfFNCTfz22hncc/D/LPu0Ow+ibhj8E+foRrhbUhzFQoLgFPxj1DUO0dzYCrmzpOfDXnUQpBrwhbPL0oJHc+/Ea+VI1hy/8t5VqJeZjYYgCmQ39hqDaJ1BqPj8lRKkhPRUMVHSj+1ADUKx4g+33e+5KQEAAA==
+    Metadata:
+      aws:cdk:path: CumplifyPipeline/CDKMetadata/Default
+Parameters:
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
+
+
+=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T19:39:24.762Z] ===
+
+=== STEP 6: integration tests (module: none specified) [START 2026-07-03T19:39:24.762Z] ===
+No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T19:39:24.762Z] ===
+
+=== RESULT: PASS (5 green, 1 skipped) | MAX-RUNG: D1 ===
+=== ENDED: 2026-07-03T19:39:24.762Z ===
