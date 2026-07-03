@@ -41,7 +41,7 @@ Group stacks into a `Stage` per environment. Recommended stack boundaries inside
 | Stack | Contents |
 |-------|----------|
 | `NetworkStack` | VPC, subnets, VPC endpoints (incl. AOSS interface endpoint, execute-api, Secrets Manager, KMS, Bedrock), flow logs |
-| `SecurityStack` | 8 KMS CMKs (dynamodb, s3-general, secrets, cloudwatch-logs, sns, sqs, eventbridge, bedrock), WAFv2 WebACLs (REGIONAL for AppSync, CLOUDFRONT/us-east-1 for CDN), Secrets Manager secrets |
+| `SecurityStack` | 10 KMS CMKs (dynamodb, s3-general, secrets, cloudwatch-logs, sns, sqs, eventbridge, bedrock, rds, elasticache), WAFv2 WebACLs (REGIONAL for AppSync, CLOUDFRONT/us-east-1 for CDN), Secrets Manager secrets |
 | `DataStack` | DynamoDB `CumplifyCore` TableV2, RDS PostgreSQL cluster, ElastiCache Redis, OpenSearch Serverless collection + 3 policies, S3 Object Lock buckets |
 | `IdentityStack` | 3 Cognito User Pools + clients + PreTokenGeneration Lambda + groups |
 | `AiStack` | Bedrock CfnAgent (22 agents), CfnKnowledgeBase, CfnGuardrail, action-group Lambdas |

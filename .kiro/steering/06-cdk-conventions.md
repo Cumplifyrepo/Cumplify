@@ -9,7 +9,7 @@ One app, one pipeline, N environment accounts. No exceptions.
 | Stack | Contents |
 |---|---|
 | NetworkStack | VPC, subnets, VPC endpoints (AOSS, Secrets, KMS, Bedrock, execute-api), flow logs |
-| SecurityStack | 8 KMS CMKs, WAFv2 WebACLs (REGIONAL + CLOUDFRONT), Secrets Manager secrets |
+| SecurityStack | 10 KMS CMKs (dynamodb, rds, elasticache, s3-general, secrets, cloudwatch-logs, sns, sqs, eventbridge, bedrock), WAFv2 WebACLs (REGIONAL + CLOUDFRONT), Secrets Manager secrets |
 | DataStack | DynamoDB CumplifyCore TableV2, Aurora Serverless v2, ElastiCache, AOSS collection + 3 policies, S3 Object Lock buckets |
 | IdentityStack | 3 Cognito User Pools + clients + PreTokenGeneration Lambda + groups |
 | AiStack | Bedrock CfnAgent (22), CfnKnowledgeBase, CfnGuardrail, action-group Lambdas |

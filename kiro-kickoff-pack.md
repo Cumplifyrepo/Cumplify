@@ -68,7 +68,7 @@ inclusion: always
 ---
 # Verified Stack Facts (non-negotiable)
 - Region: us-east-1 primary, us-west-2 DR. Accounts: dev 697114252993,
-  staging 889007427685, prod 077405654066, pipeline in mgmt account.
+  staging 889007427685, prod 077405654066, pipeline in mgmt account 157082218687.
 - Models (Part 30 Nova ladder ONLY): us.amazon.nova-micro-v1:0,
   us.amazon.nova-lite-v1:0, us.amazon.nova-pro-v1:0, us.amazon.nova-premier-v1:0.
   SOLE exception: LegalLedger uses us.anthropic.claude-sonnet-4-6 (quarterly-
@@ -390,7 +390,7 @@ Create via the Kiro panel (Agent Hooks → +) or as `.kiro/hooks/*.kiro.hook` fi
 > Plan). Source: consolidated Parts 4, 9, 11, 32; cdk-guidance.md §1–§2.
 > Scope: the CDK app skeleton + pipeline (mgmt account, crossAccountKeys:true,
 > selfMutation, dev→staging→prod stages), NetworkStack (VPC, endpoints incl.
-> S3/DynamoDB gateway endpoints, ZERO NAT gateways), SecurityStack (8 CMKs,
+> S3/DynamoDB gateway endpoints, ZERO NAT gateways), SecurityStack (10 CMKs,
 > WAF ACLs, Secrets), DataStack (CumplifyCore TableV2, Aurora Serverless v2
 > with auto-pause 0 ACU on dev/staging, ElastiCache, AOSS collection + its 3
 > policies, S3 Object Lock buckets), IdentityStack (3 pools A/B/C with app

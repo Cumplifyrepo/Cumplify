@@ -504,7 +504,7 @@ All **[SPINE]** controls remain law; this section adds the new planes into the s
 | Immutability | 3-layer: append-only `attribute_not_exists(pk)` + no Update/Delete IAM on AUDITLOG + hash chain (payloadHash/prevHash) + S3 Object Lock COMPLIANCE WORM sealing | SPINE |
 | Pre-auth surface | Snapshot API: WAF Bot Control, per-IP rate limits, no tenant data reachable, isolated growth S3 bucket with TTL, isolated IAM (no RDS/agent permissions) | NEW |
 | Billing | Stripe-hosted checkout; webhook signature verification + idempotency; no card data at rest | NEW |
-| Secrets/KMS | Secrets Manager per-secret least privilege; 8 CMKs per env; DynamoDB CMK 6-action rule | SPINE |
+| Secrets/KMS | Secrets Manager per-secret least privilege; 10 CMKs per env; DynamoDB CMK 6-action rule | SPINE |
 | Env isolation | 3 accounts (dev/staging/prod), no shared state; CDK Pipelines mgmt account, `crossAccountKeys: true`; CDK Nag warnings = failures | SPINE |
 | Network | VPC + interface endpoints (AOSS, Secrets Manager, KMS, Bedrock, execute-api); RDS/Redis private subnets; flow logs | SPINE |
 | Compliance roadmap (sellable) | SOC 2 Type I by GA + Type II at GA+9mo (the immutable trail, HITL gates, and CloudTrail/Config evidence make the audit largely self-documenting — a deliberate architectural dividend); pen test pre-GA; DPA + subprocessor list (AWS, Stripe, Anthropic-via-Bedrock) | NEW |
@@ -1138,7 +1138,7 @@ Fairness/efficiency rules that make grants go further (customer-visible win, COG
 | CC3/CC4 Risk & monitoring | Cumplify's own M5 risk register; Security Hub findings triaged as NCs into M2 | Security Hub → EventBridge → NC records |
 | CC5 Control activities | SoD engine, HITL gates, permission sets | AUDITLOG events |
 | CC6 Logical access | Cognito MFA policy, ABAC, quarterly **access reviews** (new: scheduled review job generates the user-role attestation packet; IMS Lead signs via e-sig) | Review records in M4 |
-| CC6.6/6.7 Encryption & boundaries | 8 CMKs, TLS, VPC endpoints, WAF | AWS Config rules (conformance pack) |
+| CC6.6/6.7 Encryption & boundaries | 10 CMKs, TLS, VPC endpoints, WAF | AWS Config rules (conformance pack) |
 | CC7 Ops & incidents | GuardDuty + Security Hub + CloudWatch alarms → incident runbooks → incidents logged in M2 (10.2!) | Incident records + postmortems in M1 |
 | CC8 Change management | CDK Pipelines only path to prod, PR review required, CDK Nag = fail, pipeline approvals staging→prod | CodePipeline history + CloudTrail |
 | CC9 Vendor mgmt | Subprocessor register in Cumplify's own M8 (LegalLedger manages our vendors — dogfood) | M8 register + evaluations |
