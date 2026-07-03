@@ -356,3 +356,18 @@ kms, bedrock-runtime, execute-api) support all six AZs.
 `describe-vpc-endpoint-services` intersection query. Dev = `['us-east-1b',
 'us-east-1c']`. Staging/prod values populated as a task 3.1 runbook step
 before first pipeline deploy to those accounts.
+
+### Design §6 / AC-4.5: Bucket names removed (auto-generated)
+
+**Original:** Design §6 specifies `cumplify-<env>-vpc-flow-logs` named bucket.
+AC-4.5 implies named evidence/general buckets.
+**Actual:** All S3 buckets use CloudFormation auto-generated names (no
+`bucketName` prop).
+**Rationale:** Hardcoded bucket names cause rollback collisions — if a stack
+CREATE_FAILED and was rolled back, the bucket may have been created before the
+failure. On the next deploy attempt, CloudFormation tries to create the same
+named bucket and fails with "BucketAlreadyExists". Auto-generated names make
+rollback collisions structurally impossible. Readback reads bucket names from
+`cdk-outputs.json` (declared-truth input), not from hardcoded constants.
+**Forward fix:** None needed. Bucket ARNs/names are exported via stack outputs
+and consumed by readback assertions from `cdk-outputs.json`.

@@ -31,6 +31,7 @@ export class CumplifyStage extends cdk.Stage {
     const dataStack = new DataStack(this, 'DataStack', {
       envConfig,
       vpc: networkStack.vpc,
+      aossVpcEndpointId: networkStack.aossVpcEndpointId,
       securityOutputs: securityStack.outputs,
     });
     dataStack.addDependency(networkStack);

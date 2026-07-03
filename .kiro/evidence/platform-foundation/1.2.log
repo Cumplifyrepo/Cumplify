@@ -1,13 +1,13 @@
 === EVIDENCE LOG ===
 spec: platform-foundation
 task: 1.2
-git-sha: 6a8c6e24d9a81db1ad0e9824aa8065c33fae9fe2
-dirty: 4 files
-started: 2026-07-03T21:22:51.011Z
+git-sha: b2b41697b2b8182a2bd1227ae53414e43dff86fa
+dirty: 6 files
+started: 2026-07-03T21:45:07.819Z
 script-version: 0.1.0
 =====================================
 
-=== STEP 1: npm ci [START 2026-07-03T21:22:51.011Z] ===
+=== STEP 1: npm ci [START 2026-07-03T21:45:07.820Z] ===
 
 added 197 packages, and audited 217 packages in 2s
 
@@ -16,13 +16,13 @@ added 197 packages, and audited 217 packages in 2s
 
 found 0 vulnerabilities
 
-=== STEP 1: npm ci [PASS 2026-07-03T21:22:52.589Z] ===
+=== STEP 1: npm ci [PASS 2026-07-03T21:45:09.458Z] ===
 
-=== STEP 2: tsc --noEmit [START 2026-07-03T21:22:52.589Z] ===
+=== STEP 2: tsc --noEmit [START 2026-07-03T21:45:09.458Z] ===
 
-=== STEP 2: tsc --noEmit [PASS 2026-07-03T21:22:54.792Z] ===
+=== STEP 2: tsc --noEmit [PASS 2026-07-03T21:45:11.764Z] ===
 
-=== STEP 3: eslint + prettier [START 2026-07-03T21:22:54.792Z] ===
+=== STEP 3: eslint + prettier [START 2026-07-03T21:45:11.764Z] ===
 
 > cumplify@0.1.0 lint
 > eslint . --ext .ts,.tsx
@@ -34,58 +34,31 @@ found 0 vulnerabilities
 Checking formatting...
 All matched files use Prettier code style!
 
-=== STEP 3: eslint + prettier [PASS 2026-07-03T21:22:55.758Z] ===
+=== STEP 3: eslint + prettier [PASS 2026-07-03T21:45:12.725Z] ===
 
-=== STEP 4: unit + property tests [START 2026-07-03T21:22:55.761Z] ===
+=== STEP 4: unit + property tests [START 2026-07-03T21:45:12.728Z] ===
 
  RUN  v4.1.9 /home/julio-medrano/cumplify
 
- ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 6ms
+ ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > always returns a non-negative integer when inputs are non-negative 7ms
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > is monotonically non-decreasing in raw when weight is fixed 2ms
  ✓ services/_scaffold/example.property.test.ts > normalizeCredits (property-based) > returns zero when raw is zero regardless of weight 1ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > always produces valid claims structure for any input 15ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > tenantId in claims matches userAttributes passthrough 8ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role is first group when groups are non-empty 4ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > always produces valid claims structure for any input 14ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > tenantId in claims matches userAttributes passthrough 5ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role is first group when groups are non-empty 3ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role falls back to Employee when groups are empty or undefined 3ms
- ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > poolClass resolves to known value or unknown 4ms
+ ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > poolClass resolves to known value or unknown 3ms
  ✓ services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > buildClaims always returns exactly 3 keys 5ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-1: CumplifyCore table SSE.Type = KMS 1ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-2: CumplifyCore table SSE.KMSMasterKeyArn contains dynamodb CMK 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-3: CumplifyCore table has 9 GSIs 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-4: CumplifyCore table PITR enabled 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-5: S3 evidence vault ObjectLock Mode = COMPLIANCE 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-6: S3 evidence vault retention = 2555 days 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-7: VPC has zero NAT gateways 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-8: VPC has 5 interface endpoints (AOSS, SecretsManager, KMS, bedrock-runtime, execute-api) 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-9: VPC has 2 gateway endpoints (S3, DynamoDB) 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-23: FlowLog exists for CumplifyVpc 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-10: AOSS collection type = VECTORSEARCH 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-11: AOSS collection status = ACTIVE (45s budget) 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-12: Aurora cluster StorageEncrypted = true 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-13: Aurora cluster ServerlessV2 MinCapacity = 0 (dev) 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-14: ElastiCache AtRestEncryptionEnabled = true 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-15: ElastiCache TransitEncryptionEnabled = true 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-16: Cognito Pool A MfaConfiguration = ON 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-17: Cognito Pool B MfaConfiguration = OPTIONAL 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-18: Cognito Pool C MfaConfiguration = OPTIONAL 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-19: 10 KMS keys with alias prefix cumplify/<env>/ 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-20: All cumplify KMS keys have rotation enabled 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-21: Global Table replica status us-west-2 = ACTIVE (prod-only) 0ms
- ↓ infra/readback/platform-foundation.test.ts > Platform Foundation — Readback Assertions > R-22: DR KMS ReplicaKey exists in us-west-2 (prod-only) 0ms
-stdout | infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket
-Bucket cumplify-spec38-sample-defect does not exist — sample-defect bucket not yet created for AC-5.2 proof.
 
- ↓ infra/readback/sample-defect.test.ts > S3 Evidence Bucket — ObjectLock Readback > asserts ObjectLockConfiguration.Mode = COMPLIANCE on evidence bucket 1ms
-
- Test Files  4 passed (4)
-      Tests  9 passed | 24 skipped (33)
-   Start at  17:22:56
-   Duration  1.97s (transform 109ms, setup 0ms, import 202ms, tests 3.15s, environment 0ms)
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  17:45:12
+   Duration  155ms (transform 34ms, setup 0ms, import 107ms, tests 44ms, environment 0ms)
 
 
-=== STEP 4: unit + property tests [PASS 2026-07-03T21:22:58.002Z] ===
+=== STEP 4: unit + property tests [PASS 2026-07-03T21:45:13.161Z] ===
 
-=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T21:22:58.002Z] ===
+=== STEP 5: cdk synth + CDK Nag [START 2026-07-03T21:45:13.161Z] ===
 Metadata:
   cdk_nag:
     rules_to_suppress:
@@ -1943,11 +1916,11 @@ Parameters:
     Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
 
 
-=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T21:23:00.066Z] ===
+=== STEP 5: cdk synth + CDK Nag [PASS 2026-07-03T21:45:15.382Z] ===
 
-=== STEP 6: integration tests (module: none specified) [START 2026-07-03T21:23:00.066Z] ===
+=== STEP 6: integration tests (module: none specified) [START 2026-07-03T21:45:15.382Z] ===
 No --module specified (intentional for cross-cutting/infra-only tasks). Skipping integration tests.
-=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T21:23:00.066Z] ===
+=== STEP 6: integration tests (module: none specified) [SKIPPED 2026-07-03T21:45:15.382Z] ===
 
 === RESULT: PASS (5 green, 1 skipped) | MAX-RUNG: D1 ===
-=== ENDED: 2026-07-03T21:23:00.066Z ===
+=== ENDED: 2026-07-03T21:45:15.382Z ===

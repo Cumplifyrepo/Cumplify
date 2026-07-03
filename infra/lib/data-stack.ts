@@ -30,6 +30,8 @@ import { DR_REGION } from './env-config.js';
 export interface DataStackProps extends cdk.StackProps {
   readonly envConfig: EnvConfig;
   readonly vpc: ec2.IVpc;
+  /** OpenSearch Serverless-managed VPC endpoint ID for AOSS network policy. */
+  readonly aossVpcEndpointId: string;
   readonly securityOutputs: SecurityOutputs;
 }
 
@@ -42,7 +44,7 @@ export class DataStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: DataStackProps) {
     super(scope, id, props);
 
-    const { envConfig, vpc, securityOutputs } = props;
+    const { envConfig, vpc, aossVpcEndpointId, securityOutputs } = props;
 
     // -----------------------------------------------------------------------
     // DynamoDB CumplifyCore — TableV2 (AC-4.1)
@@ -265,7 +267,12 @@ export class DataStack extends cdk.Stack {
             },
           ],
           AllowFromPublic: false,
-          SourceVPCEs: ['*'], // Will be scoped to specific VPC endpoint in spec 4
+          // SourceVPCEs accepts only OpenSearch Serverless-managed VPC endpoint IDs
+          // (format vpce-xxxx, regex ^vpce-[a-zA-Z0-9]{8,20}$). This is the data-plane
+          // endpoint created in NetworkStack (AWS::OpenSearchServerless::VpcEndpoint),
+          // NOT the EC2 interface endpoint for control-plane API calls.
+          SourceVPCEs: [aossVpcEndpointId],
+          SourceServices: ['bedrock.amazonaws.com'],
         },
       ]),
     });
@@ -328,7 +335,6 @@ export class DataStack extends cdk.Stack {
 
     // Access logs bucket for the evidence vault
     const accessLogsBucket = new s3.Bucket(this, 'EvidenceAccessLogs', {
-      bucketName: `cumplify-${envConfig.envName}-evidence-access-logs`,
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
@@ -345,7 +351,6 @@ export class DataStack extends cdk.Stack {
     ]);
 
     const evidenceBucket = new s3.Bucket(this, 'EvidenceVault', {
-      bucketName: `cumplify-${envConfig.envName}-evidence`,
       versioned: true,
       encryption: s3.BucketEncryption.KMS,
       encryptionKey: securityOutputs.s3GeneralKey,
@@ -368,7 +373,6 @@ export class DataStack extends cdk.Stack {
     // Versioned, CMK, block public, RETAIN
     // -----------------------------------------------------------------------
     new s3.Bucket(this, 'GeneralBucket', {
-      bucketName: `cumplify-${envConfig.envName}-general`,
       versioned: true,
       encryption: s3.BucketEncryption.KMS,
       encryptionKey: securityOutputs.s3GeneralKey,
