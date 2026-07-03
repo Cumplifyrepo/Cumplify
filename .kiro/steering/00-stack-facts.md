@@ -3,7 +3,7 @@ inclusion: always
 ---
 # Verified Stack Facts (non-negotiable)
 - Region: us-east-1 primary, us-west-2 DR. Accounts: dev 697114252993,
-  staging 889007427685, prod 077405654066, pipeline in mgmt account.
+  staging 889007427685, prod 077405654066, pipeline in mgmt account 157082218687.
 - Models (Part 30 Nova ladder ONLY): us.amazon.nova-micro-v1:0,
   us.amazon.nova-lite-v1:0, us.amazon.nova-pro-v1:0, us.amazon.nova-premier-v1:0.
   SOLE exception: LegalLedger uses us.anthropic.claude-sonnet-4-6 (quarterly-
