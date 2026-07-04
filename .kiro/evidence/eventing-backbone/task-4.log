@@ -40,3 +40,17 @@ Suppressions applied:
 - Demo consumer Lambda (512MB, 60s, NODEJS_22_X, ARM_64)
 - 8 CloudWatch alarms (treatMissingData: NOT_BREACHING)
 - All 16 queues: enforceSSL: true
+
+## INCIDENT (architect template audit, 2026-07-04)
+
+InputTransformers absent from synth output (Lazy-token silent no-op) — caught
+by architect template audit, fixed via addPropertyOverride + template-assertion
+test (infra/lib/eventing-stack.unit.test.ts, 5 assertions).
+
+Root cause: applyInputTransformer() read cfnRule.targets as if it were a
+resolved array, but it is a CDK Lazy token (renders at synth time). The array
+mutation had no effect. Fix: cfnRule.addPropertyOverride('Targets.0.InputTransformer', ...)
+which merges AFTER lazy resolution.
+
+Regression gate: template-assertion test now FAILS the build if any
+AWS::Events::Rule target lacks an InputTransformer.

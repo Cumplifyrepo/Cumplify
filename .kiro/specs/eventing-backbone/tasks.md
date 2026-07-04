@@ -27,10 +27,10 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
 **D-rung:** D1 (compiles)
 **Depends on:** none
 
-- [ ] 1.1 Create `services/eventing/package.json` (`@cumplify/eventing`, private, workspace package)
-- [ ] 1.2 Create `services/eventing/tsconfig.json` (extends root, target ES2022, module NodeNext)
-- [ ] 1.3 Add workspace reference in root `package.json` (or pnpm-workspace.yaml)
-- [ ] 1.4 Verify: `npm install` / `pnpm install` resolves the workspace package
+- [x] 1.1 Create `services/eventing/package.json` (`@cumplify/eventing`, private, workspace package)
+- [x] 1.2 Create `services/eventing/tsconfig.json` (extends root, target ES2022, module NodeNext)
+- [x] 1.3 Add workspace reference in root `package.json` (or pnpm-workspace.yaml)
+- [x] 1.4 Verify: `npm install` / `pnpm install` resolves the workspace package
 
 **Evidence:** `npm ci && tsc --noEmit` passes → `.kiro/evidence/eventing-backbone/task-1.log`
 
@@ -40,13 +40,13 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
 **D-rung:** D2 (tested)
 **Depends on:** Task 1
 
-- [ ] 2.1 Create `src/types.ts` — `CumplifyEvent<T>` interface + `QueueMessage<T>` interface (design §5.1)
-- [ ] 2.2 Create `src/constants.ts` — source prefixes, event-name enum/const registry
-- [ ] 2.3 Create `src/publisher.ts` — `publish()` function (design §5.2)
-- [ ] 2.4 Create `src/index.ts` — barrel export
-- [ ] 2.5 Install deps: `@aws-sdk/client-eventbridge`, `@aws-lambda-powertools/logger`, `ulid`
-- [ ] 2.6 Write `__tests__/publisher.test.ts` — mock EventBridgeClient, assert envelope shape, ULID generation, error on FailedEntryCount > 0
-- [ ] 2.7 Verify: `tsc --noEmit && vitest run` passes
+- [x] 2.1 Create `src/types.ts` — `CumplifyEvent<T>` interface + `QueueMessage<T>` interface (design §5.1)
+- [x] 2.2 Create `src/constants.ts` — source prefixes, event-name enum/const registry
+- [x] 2.3 Create `src/publisher.ts` — `publish()` function (design §5.2)
+- [x] 2.4 Create `src/index.ts` — barrel export
+- [x] 2.5 Install deps: `@aws-sdk/client-eventbridge`, `@aws-lambda-powertools/logger`, `ulid`
+- [x] 2.6 Write `__tests__/publisher.test.ts` — mock EventBridgeClient, assert envelope shape, ULID generation, error on FailedEntryCount > 0
+- [x] 2.7 Verify: `tsc --noEmit && vitest run` passes
 
 **Evidence:** test output → `.kiro/evidence/eventing-backbone/task-2.log`
 
@@ -56,13 +56,13 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
 **D-rung:** D2 (tested)
 **Depends on:** Task 1
 
-- [ ] 3.1 Create `src/consumer.ts` — `createHandler()` with canonical QueueMessage parsing (FIX-1), explicit DLQ send on poison (D-2), partial batch failures (design §5.3)
-- [ ] 3.2 Create `handlers/fifo-router.ts` — router handler with QUEUE_MAP, canonical MessageBody (FIX-1), MessageGroupId/DeduplicationId (design §6.1)
-- [ ] 3.3 Create `handlers/demo-consumer.ts` — log-and-ack using createHandler (design §7.2)
-- [ ] 3.4 Install deps: `@aws-sdk/client-sqs`, `aws-lambda` (types)
-- [ ] 3.5 Write `__tests__/consumer.test.ts` — assert: valid QueueMessage passes handler; malformed JSON → PoisonMessageError + DLQ send; missing detail field → PoisonMessageError; transient error → batchItemFailures
-- [ ] 3.6 Write `__tests__/fifo-router.test.ts` — assert: known targetQueue → SendMessage with correct params; unknown targetQueue → throw
-- [ ] 3.7 Verify: `tsc --noEmit && vitest run` passes
+- [x] 3.1 Create `src/consumer.ts` — `createHandler()` with canonical QueueMessage parsing (FIX-1), explicit DLQ send on poison (D-2), partial batch failures (design §5.3)
+- [x] 3.2 Create `handlers/fifo-router.ts` — router handler with QUEUE_MAP, canonical MessageBody (FIX-1), MessageGroupId/DeduplicationId (design §6.1)
+- [x] 3.3 Create `handlers/demo-consumer.ts` — log-and-ack using createHandler (design §7.2)
+- [x] 3.4 Install deps: `@aws-sdk/client-sqs`, `aws-lambda` (types)
+- [x] 3.5 Write `__tests__/consumer.test.ts` — assert: valid QueueMessage passes handler; malformed JSON → PoisonMessageError + DLQ send; missing detail field → PoisonMessageError; transient error → batchItemFailures
+- [x] 3.6 Write `__tests__/fifo-router.test.ts` — assert: known targetQueue → SendMessage with correct params; unknown targetQueue → throw
+- [x] 3.7 Verify: `tsc --noEmit && vitest run` passes
 
 **Evidence:** test output → `.kiro/evidence/eventing-backbone/task-3.log`
 
@@ -72,35 +72,35 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
 **D-rung:** D1 (synths + CDK Nag clean)
 **Depends on:** Tasks 2, 3
 
-- [ ] 4.1 Create `infra/lib/eventing-stack.ts` with:
+- [x] 4.1 Create `infra/lib/eventing-stack.ts` with:
   - EventBridge bus (`eventBusName: 'cumplify-events'`)
   - 7 consumer queues + 7 DLQs (FIFO: capa-intake, audit-sink; Standard: nc-triage, hazard-q, aspect-q, review-fanout, records-q)
   - 1 delivery-failure DLQ (shared)
-  - All 16 queues: `enforceSSL: true` (FIX-3)
+  - All 15 queues: `enforceSSL: true` (FIX-3)
   - All 8 DLQs: NagSuppression for AwsSolutions-SQS3 (FIX-3)
   - visibilityTimeout: 360s on consumer queues; maxReceiveCount: 3
-- [ ] 4.2 Add 7 EventBridge rules with event patterns per routing table (design §4)
+- [x] 4.2 Add 7 EventBridge rules with event patterns per routing table (design §4)
   - Input transformer on ALL rule targets (canonical contract, FIX-1/FIX-2)
   - R-2/R-3 extended transformer with `targetQueue` field (D-3, §4.1)
   - All targets: RetryPolicy + DeadLetterConfig → delivery-failure DLQ
   - R-2/R-3 target: FIFO-router Lambda
   - R-1, R-4–R-7 target: direct SQS with input transformer
-  - Note: use L1 CfnRule escape hatch for input transformers if L2 auto-quoting corrupts (FIX-2)
-- [ ] 4.3 Add FIFO-router Lambda (NodejsFunction, NODEJS_22_X, ARM_64, 512MB, 30s, externalModules:[], target:node22)
+  - InputTransformer applied via `addPropertyOverride('Targets.0.InputTransformer', ...)` (NOT array mutation — Lazy token)
+- [x] 4.3 Add FIFO-router Lambda (NodejsFunction, NODEJS_22_X, ARM_64, 512MB, 30s, externalModules:[], target:node22)
   - Env vars: CAPA_INTAKE_QUEUE_URL, AUDIT_SINK_QUEUE_URL, POWERTOOLS_SERVICE_NAME
   - Grants: capaIntakeQueue.grantSendMessages, auditSinkQueue.grantSendMessages, deliveryFailureDlq.grantSendMessages (FIX-5)
   - onFailure: SqsDestination(deliveryFailureDlq) (FIX-5)
-- [ ] 4.4 Add demo consumer Lambda (NodejsFunction, NODEJS_22_X, ARM_64, 512MB, 60s, externalModules:[], target:node22)
+- [x] 4.4 Add demo consumer Lambda (NodejsFunction, NODEJS_22_X, ARM_64, 512MB, 60s, externalModules:[], target:node22)
   - Env vars: NC_TRIAGE_DLQ_URL, POWERTOOLS_SERVICE_NAME
   - Grant: ncTriageDlq.grantSendMessages
   - ESM: SqsEventSource(ncTriageQueue, batchSize:10, reportBatchItemFailures:true)
-- [ ] 4.5 Add 8 CloudWatch alarms (7 consumer DLQs + 1 delivery-failure DLQ)
+- [x] 4.5 Add 8 CloudWatch alarms (7 consumer DLQs + 1 delivery-failure DLQ)
   - Metric: ApproximateNumberOfMessagesVisible, threshold 1, period 5m, evaluationPeriods 3
   - `treatMissingData: TreatMissingData.NOT_BREACHING` (FIX-6)
   - No alarm actions (spec 14 wires alerting)
-- [ ] 4.6 Add CfnOutputs: bus name+ARN, 7× queue URL+ARN, 7× DLQ ARN, delivery-DLQ ARN, 7× rule name, router Lambda ARN, demo consumer Lambda ARN, demo consumer log group name
-- [ ] 4.7 Register EventingStack in CumplifyStage (not a standalone dev-only stack)
-- [ ] 4.8 Verify: `cdk synth --all` succeeds + CDK Nag (`AwsSolutionsChecks`) clean (zero warnings)
+- [x] 4.6 Add CfnOutputs: bus name+ARN, 7× queue URL+ARN, 7× DLQ ARN, delivery-DLQ ARN, 7× rule name, router Lambda ARN, demo consumer Lambda ARN, demo consumer log group name
+- [x] 4.7 Register EventingStack in CumplifyStage (not a standalone dev-only stack)
+- [x] 4.8 Verify: `cdk synth --all` succeeds + CDK Nag (`AwsSolutionsChecks`) clean (zero warnings)
 
 **Evidence:** synth + Nag output → `.kiro/evidence/eventing-backbone/task-4.log`
 
@@ -110,7 +110,7 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
 **D-rung:** D2 (tested, pre-deploy gate)
 **Depends on:** Task 1 (needs SDK dep)
 
-- [ ] 5.1 Create `__tests__/event-pattern.test.ts`:
+- [x] 5.1 Create `__tests__/event-pattern.int.test.ts`:
   - Build the R-3 pattern: `{"detail-type": [{"suffix":".Approved"},{"suffix":".Closed"},{"suffix":".Raised"},{"suffix":".Evaluated"},"AuditEvent.Appended"]}`
   - Call `TestEventPattern` (EventBridgeClient) with:
     - `Document.Approved` → assert **matches**
@@ -118,8 +118,8 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
     - `AuditEvent.Appended` → assert **matches**
     - `Hazard.Identified` → assert **does NOT match**
   - If the mixed array is rejected by the API, implement fallback: replace `"AuditEvent.Appended"` with `{"suffix": ".Appended"}` and re-run assertions
-- [ ] 5.2 If fallback triggered, update the routing table in design.md §4 and note the broadened scope in `contracts/events.md`
-- [ ] 5.3 Verify: `vitest run __tests__/event-pattern.test.ts` passes
+- [x] 5.2 If fallback triggered, update the routing table in design.md §4 and note the broadened scope in `contracts/events.md`
+- [x] 5.3 Verify: `vitest run __tests__/event-pattern.int.test.ts` passes (via int config; default run confirms exclusion)
 
 **Evidence:** test output → `.kiro/evidence/eventing-backbone/task-5.log`
 

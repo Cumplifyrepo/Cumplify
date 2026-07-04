@@ -389,31 +389,20 @@ export class EventingStack extends cdk.Stack {
   }
 
   /**
-   * Apply an input transformer to a rule's first target at the L1 (CfnRule) level.
-   * L2 targets.SqsQueue/LambdaFunction do not expose InputTransformer, so we
-   * escape to L1 and set it directly (FIX-2: avoids auto-quoting corruption).
+   * Apply an input transformer to a rule's first target via addPropertyOverride.
+   * L2 targets render lazily — cfnRule.targets is a Lazy token at synth time,
+   * NOT a readable array. addPropertyOverride merges AFTER lazy resolution,
+   * guaranteeing the transformer appears in the synthesized template.
+   * (Incident: prior array-mutation approach silently no-oped due to Lazy token.)
    */
   private applyInputTransformer(
     rule: events.Rule,
     transformer: { inputPathsMap: Record<string, string>; inputTemplate: string },
   ): void {
     const cfnRule = rule.node.defaultChild as events.CfnRule;
-    const existingTargets = cfnRule.targets as events.CfnRule.TargetProperty[];
-    if (existingTargets && existingTargets.length > 0) {
-      // Mutate the first target to add the input transformer
-      const updated = existingTargets.map((t, i) => {
-        if (i === 0) {
-          return {
-            ...t,
-            inputTransformer: {
-              inputPathsMap: transformer.inputPathsMap,
-              inputTemplate: transformer.inputTemplate,
-            },
-          };
-        }
-        return t;
-      });
-      cfnRule.targets = updated;
-    }
+    cfnRule.addPropertyOverride('Targets.0.InputTransformer', {
+      InputPathsMap: transformer.inputPathsMap,
+      InputTemplate: transformer.inputTemplate,
+    });
   }
 }
