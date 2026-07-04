@@ -282,14 +282,19 @@ from the dev stage. Captured in `.kiro/evidence/platform-foundation/3.1.log`.
 **REQUIRES-HUMAN**
 
 **Deliverables:**
-- [ ] Create SAML application in IAM Identity Center (instance
+- [x] Create SAML application in IAM Identity Center (instance
   ssoins-7223ecc47a6f8a22) pointing to Pool A's SAML endpoint.
-- [ ] Download IdC SAML metadata → configure Cognito SAML identity provider
-  on Pool A.
-- [ ] Configure Cognito callback URLs in IdC app.
+  (cumplify-pool-a-sso apl-7223d822671e7fe5 ENABLED; user assigned. 3.2.log)
+- [x] Download IdC SAML metadata → configure Cognito SAML identity provider
+  on Pool A. (CumplifyIdC deployed + read back; metadata HTTP 200 validated.)
+- [x] Configure Cognito callback URLs in IdC app.
+  (ACS/entityID trust proven: authorize → 302 to IdC with valid SAMLRequest.)
 - [ ] Verify SSO login flow: IdC user → Pool A → ID token with tenantId +
-  poolClass=internal.
-- [ ] Readback: Pool A has SAML provider configured.
+  poolClass=internal. (PENDING 2 proven-irreducibly-human steps: IdC email
+  attribute mapping [console-only, proven 4 ways] + interactive password login
+  [no password API]. Cognito→IdC leg already proven. Details: 3.2.log.)
+- [x] Readback: Pool A has SAML provider configured.
+  (list-identity-providers: CumplifyIdC SAML; client supports it.)
 
 **Completion evidence:** Successful SSO login captured + readback showing
 SAML provider on Pool A. `.kiro/evidence/platform-foundation/3.2.log`.

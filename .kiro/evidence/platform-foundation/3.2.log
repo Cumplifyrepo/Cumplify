@@ -1,0 +1,58 @@
+Task 3.2 — Pool A IAM Identity Center Federation — STATUS
+================================================================================
+Date: 2026-07-04
+D-rung target: D3 (deployed + federation working)
+Executor: Architect (Claude), profiles cumplify / cumplify-dev-readonly + assume-role
+
+INFRASTRUCTURE: COMPLETE, DEPLOYED, CLOUD-VERIFIED
+--------------------------------------------------------------------------------
+- SAML app cumplify-pool-a-sso (apl-7223d822671e7fe5) ENABLED — describe-application.
+- IdC user claude@devloper (1438a448-...) assigned to app — create+list-application-assignment.
+- Cognito SAML provider CumplifyIdC on Pool A (us-east-1_9qpRA11kb) — list-identity-providers.
+- Pool A client 56fjvrrghkd735a8fjrtrqnmf8 supports [COGNITO, CumplifyIdC]
+  — describe-user-pool-client (fixed 1f20d23: CDK omits late-registered providers).
+- Metadata URL validated: HTTP 200, EntityDescriptor, signing cert, both SSO bindings.
+- Commits: f060e2a (pre-wire, dormant-proven) / 42235f4 (activate) / 1f20d23 (client fix).
+
+FEDERATION LEG PROVEN WORKING (real test, no creds):
+--------------------------------------------------------------------------------
+  GET <domain>/oauth2/authorize?...&identity_provider=CumplifyIdC
+  -> HTTP 302 to https://portal.sso.us-east-1.amazonaws.com/saml/assertion/
+     MTU3MDgyMjE4Njg3X2lucy03MjIzZDgyMjY3MWU3ZmU1  (matches IdC entityID)
+     with a valid deflated SAMLRequest + RelayState.
+  => Cognito -> IdC leg (provider, domain, client, ACS/entityID trust) all correct.
+
+REMAINING: two steps, both PROVEN irreducibly human (no CLI/API exists)
+--------------------------------------------------------------------------------
+1. IdC SAML email attribute mapping (email -> ${user:email}) — REQUIRED because
+   Pool A marks email Required=true (describe-user-pool) and Cognito requires the
+   SAML assertion to carry an email claim (AWS Cognito dev guide). IdC does NOT
+   send email by default (only Subject). CONSOLE-ONLY — proven 4 ways:
+     a. sso-admin service model has NO saml/assertion/attribute-mapping operation.
+     b. Live API: list-application-authentication-methods + list-application-grants
+        return ValidationException "not supported for this action" for this app.
+     c. CreateApplication/UpdateApplication PortalOptions carries only SignInOptions
+        (Origin, ApplicationUrl) + Visibility — no assertion/attribute fields.
+     d. Full scan of EVERY AWS service model: no IdC SAML-mapping write API anywhere.
+2. Interactive SSO login (human enters IdC password) to mint the ID token and
+   verify PreTokenGen claims tenantId + poolClass=internal. No API sets an IdC
+   user password (identitystore has zero password ops; sso portal only issues
+   AWS role creds) — cannot be scripted; needs the human at the IdC login page.
+
+CHECKBOX STATE (rule 7 — tick only what is verified):
+  [x] Create SAML application in IdC
+  [x] Download IdC metadata -> configure Cognito SAML IdP on Pool A
+  [x] Configure Cognito callback/ACS URL in IdC app
+  [ ] Verify SSO login flow (IdC user -> Pool A -> token tenantId+poolClass) — PENDING
+      the two human steps above; NOT ticked (no fabricated evidence).
+  [x] Readback: Pool A has SAML provider configured
+
+EXACT HUMAN ACTIONS (each ~60s), then architect closes the login checkbox:
+  Console mapping (IdC -> Applications -> cumplify-pool-a-sso -> Attribute mappings):
+    Row "Subject":  Maps to = ${user:subject}   Format = persistent
+    Row 2:          User attribute in application = email
+                    Maps to = ${user:email}      Format = unspecified
+    (The greyed Save was caused by the Subject "Maps to" being empty and
+     ${user:subject} placed in the left column of row 2 — swap as above.)
+  Login test URL (paste the resulting localhost?code=... back to architect):
+    https://cumplify-dev-internal-auth.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=56fjvrrghkd735a8fjrtrqnmf8&response_type=code&scope=openid+email+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback&identity_provider=CumplifyIdC
