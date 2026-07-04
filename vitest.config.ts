@@ -8,7 +8,7 @@ export default defineConfig({
       'services/**/*.property.test.ts',
       'infra/**/*.unit.test.ts',
     ],
-    exclude: ['node_modules', 'dist', 'cdk.out', 'infra/readback/**'],
+    exclude: ['node_modules', 'dist', 'cdk.out', 'infra/readback/**', '**/*.int.test.ts'],
     reporters: ['verbose'],
     testTimeout: 60_000,
   },

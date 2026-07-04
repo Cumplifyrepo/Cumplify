@@ -1,0 +1,32 @@
+# Task 5 Evidence — R-3 event pattern verification (FIX-7)
+# D-rung: D2 (tested, pre-deploy gate)
+# Timestamp: 2026-07-04T18:31Z
+
+## Primary pattern CONFIRMED by live EventBridge TestEventPattern API
+
+Pattern tested:
+  {"detail-type": [{"suffix":".Approved"},{"suffix":".Closed"},{"suffix":".Raised"},{"suffix":".Evaluated"},"AuditEvent.Appended"]}
+
+Results (9/9 pass):
+ ✓ should validate the primary pattern (or activate fallback) (245ms)
+ ✓ should match Document.Approved (suffix .Approved) (17ms)
+ ✓ should match CAPA.Closed (suffix .Closed) (16ms)
+ ✓ should match NC.Raised (suffix .Raised) (17ms)
+ ✓ should match Compliance.Evaluated (suffix .Evaluated) (15ms)
+ ✓ should match AuditEvent.Appended (16ms)
+ ✓ should NOT match Hazard.Identified (16ms)
+ ✓ should NOT match CAPA.Opened (19ms)
+ ✓ reports fallback status (1ms)
+
+stdout: PRIMARY PATTERN CONFIRMED: mixed array (suffix + constant) accepted by API.
+
+## Exclusion from default test run VERIFIED
+
+Default `npm run test` (vitest run):
+- Test Files: 6 passed (6) — event-pattern.int.test.ts NOT collected
+- vitest.config.ts exclude: ['**/*.int.test.ts'] added
+
+Integration test run via:
+  npx vitest run --config services/eventing/__tests__/vitest.int.config.ts
+
+## Conclusion: No fallback needed. R-3 pattern uses the primary mixed array as designed.
