@@ -129,16 +129,16 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
 **D-rung:** D3 (deployed)
 **Depends on:** Tasks 4, 5
 
-- [ ] 6.1 Create `contracts/events.md`:
+- [x] 6.1 Create `contracts/events.md`:
   - Seed taxonomy table (requirements §3.1)
   - Envelope schema (ET-4)
   - Canonical queue-message contract (FIX-1)
   - Naming convention (`<Domain>.<Action>`)
   - Prefix-match note: `Change.Planned` is Risk domain but does NOT match R-7's `Risk.` prefix
   - R-3 scope note (suffix patterns + constant or fallback)
-- [ ] 6.2 Deploy EventingStack to dev via pipeline (or `cdk deploy --context env=dev`)
-- [ ] 6.3 Capture `cdk-outputs.json` and commit it
-- [ ] 6.4 Verify: stack reaches CREATE_COMPLETE / UPDATE_COMPLETE; all outputs present
+- [x] 6.2 Deploy EventingStack to dev via pipeline (or `cdk deploy --context env=dev`)
+- [x] 6.3 Capture `cdk-outputs.json` and commit it
+- [x] 6.4 Verify: stack reaches CREATE_COMPLETE / UPDATE_COMPLETE; all outputs present
 
 **Evidence:** deploy output + `cdk-outputs.json` blob SHA → `.kiro/evidence/eventing-backbone/task-6.log`
 

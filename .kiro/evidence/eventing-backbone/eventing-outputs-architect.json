@@ -1,42 +1,4 @@
 {
-  "Dev-NetworkStack": {
-    "ExportsOutputFnGetAttAossDataPlaneEndpointId34C57578": "vpce-089b26b4a26fc80f5",
-    "AossVpcEndpointId": "vpce-089b26b4a26fc80f5",
-    "ExportsOutputRefCumplifyVpcPrivateSubnet2SubnetBCF2F8DDCC08E448": "subnet-07b642d7669e69159",
-    "VpcId": "vpc-067b2b0b8e1693b6d",
-    "ExportsOutputRefCumplifyVpcPrivateSubnet1Subnet6CCF0B0453B0556C": "subnet-055a3986564c71b2b",
-    "ExportsOutputRefCumplifyVpc9A18F5DDE97ED386": "vpc-067b2b0b8e1693b6d",
-    "FlowLogsBucketName": "dev-networkstack-flowlogsbucket8912dcdb-qd9lod43vvc9",
-    "ExportsOutputFnGetAttCumplifyVpc9A18F5DDCidrBlock6D76CD16": "10.0.0.0/16"
-  },
-  "Dev-SecurityStack": {
-    "ExportsOutputFnGetAttbedrockKey60F1F2EEArnF350AF9A": "arn:aws:kms:us-east-1:697114252993:key/3364abad-7680-41b3-939d-b4a76c2eb195",
-    "ExportsOutputFnGetAttsecretsKeyD1C87AAFArn6ADD876F": "arn:aws:kms:us-east-1:697114252993:key/786f7bd7-41a2-4c55-9682-4641eee71e97",
-    "ExportsOutputFnGetAtts3generalKey5F91ABDBArnC3476A21": "arn:aws:kms:us-east-1:697114252993:key/81a40edc-20af-44b0-8a83-62f24fd97622",
-    "ExportsOutputFnGetAttdynamodbKey4DD1A14AArn6E19723C": "arn:aws:kms:us-east-1:697114252993:key/3fc42e6f-bf26-4589-8b90-b215aa179731",
-    "ExportsOutputFnGetAttrdsKeyEA8BDDA4Arn98B5C351": "arn:aws:kms:us-east-1:697114252993:key/2db8dba5-6482-4791-9495-341218a42fe2",
-    "ExportsOutputFnGetAttelasticacheKey12E9856BArn0B51FE06": "arn:aws:kms:us-east-1:697114252993:key/25fa404f-707e-4618-a8fd-5865702b74f2"
-  },
-  "Dev-IdentityStack": {
-    "PoolAId": "us-east-1_9qpRA11kb",
-    "PoolBId": "us-east-1_cmiNNOAst",
-    "PoolCId": "us-east-1_xCFIYac5r",
-    "PoolAClientId": "56fjvrrghkd735a8fjrtrqnmf8",
-    "PoolADomainPrefix": "cumplify-dev-internal-auth"
-  },
-  "Dev-DataStack": {
-    "TableName": "CumplifyCore",
-    "AossCollectionName": "cumplify-iso-kb",
-    "EvidenceBucketName": "dev-datastack-evidencevault2b2802b4-9gbjwnn7s30y",
-    "TableArn": "arn:aws:dynamodb:us-east-1:697114252993:table/CumplifyCore",
-    "EvidenceBucketArn": "arn:aws:s3:::dev-datastack-evidencevault2b2802b4-9gbjwnn7s30y",
-    "GeneralBucketName": "dev-datastack-generalbucketad391c6e-lbcsvfej9hap",
-    "AossCollectionEndpoint": "https://1s4upf7qgp7o64dnfrj8.us-east-1.aoss.amazonaws.com",
-    "CacheReplicationGroupId": "der1rf2gylq8r2kh",
-    "ClusterEndpoint": "dev-datastack-auroracluster23d869c0-zmmgimmc0vnd.cluster-cwvaka2ewzl8.us-east-1.rds.amazonaws.com",
-    "AccessLogsBucketName": "dev-datastack-evidenceaccesslogsbd172ac0-tliadjniegei",
-    "ExportsOutputRefCumplifyCoreFBF4CB4F0E2D644A": "CumplifyCore"
-  },
   "Dev-EventingStack": {
     "EventBusName": "cumplify-events",
     "EventBusArn": "arn:aws:events:us-east-1:697114252993:event-bus/cumplify-events",
