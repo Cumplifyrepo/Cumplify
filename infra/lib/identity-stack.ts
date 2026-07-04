@@ -166,6 +166,16 @@ export class IdentityStack extends cdk.Stack {
       const client = pool.addClient(`${poolConfig.id}Client`, {
         userPoolClientName: `${poolConfig.poolName}-client`,
         authFlows,
+        // Explicit list required: CDK's default was read back as ["COGNITO"]
+        // only — late-registered SAML provider is NOT picked up implicitly
+        // (verified against deployed client 2026-07-04, task 3.2).
+        supportedIdentityProviders:
+          poolConfig.id === 'PoolA' && envConfig.samlMetadataUrl
+            ? [
+                cognito.UserPoolClientIdentityProvider.COGNITO,
+                cognito.UserPoolClientIdentityProvider.custom('CumplifyIdC'),
+              ]
+            : undefined,
         oAuth: {
           flows: { authorizationCodeGrant: true, implicitCodeGrant: false },
           scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
