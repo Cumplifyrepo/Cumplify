@@ -44,6 +44,10 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     // Pinned to AOSS-supported AZs (verified: com.amazonaws.us-east-1.aoss
     // available in 1b/1c/1d only in account 697114252993, deploy #1 failure).
     availabilityZones: ['us-east-1b', 'us-east-1c'],
+    // IdC app cumplify-pool-a-sso (apl-7223d822671e7fe5); metadata validated
+    // 2026-07-04: HTTP 200, EntityDescriptor + signing cert (task 3.2).
+    samlMetadataUrl:
+      'https://portal.sso.us-east-1.amazonaws.com/saml/metadata/MTU3MDgyMjE4Njg3X2lucy03MjIzZDgyMjY3MWU3ZmU1',
     globalTableReplica: false,
     drRegionStack: false,
     secretsReplica: false,
