@@ -12,7 +12,7 @@
 - `docs/architecture/cumplify-CONSOLIDATED-master-architecture-v7-full.md` — Part 18.2
 
 **Depends on:** Spec 1 (`platform-foundation`), Spec 2 (`eventing-backbone`)
-**Revision:** R2 — architect review revisions (REV-1 through REV-10 applied)
+**Revision:** R2.1 — REV-1 through REV-10 applied; AMEND-1/AMEND-2 folded (approved)
 
 ---
 
@@ -136,8 +136,8 @@
 | ID | Requirement (EARS) |
 |----|-------------------|
 | TW-1 | **[REV-6] A DynamoDB Streams consumer path shall** detect MODIFY and REMOVE operations on AUDITLOG items in near-real-time (seconds, not daily). |
-| TW-2 | **The tamper-tripwire path shall** use the CumplifyCore stream with `FilterCriteria` matching: `dynamodb.Keys.PK.S` pattern `TENANT#*#AUDITLOG` AND `eventName` in `[MODIFY, REMOVE]`. Implementation choice (design decides): either a second ESM on the stream with its own filter, or a widened filter on the sealer ESM that also processes MODIFY/REMOVE records in addition to INSERT. |
-| TW-3 | **When** a MODIFY or REMOVE stream record is detected on an AUDITLOG item, **the system shall** emit a CloudWatch custom metric `AuditTamperAttempt` (dimension: `tenantId`, value: 1) and log the event at CRITICAL level with the affected PK, SK, eventName, and the identity that performed the operation (from stream record `userIdentity`). |
+| TW-2 | **The tamper-tripwire path shall** use a SECOND DynamoDB Streams ESM (separate from the sealer ESM) on the CumplifyCore stream, with its own dedicated Lambda and its own minimal IAM role. `FilterCriteria` matches: `dynamodb.Keys.PK.S` pattern `TENANT#*#AUDITLOG` AND `eventName` in `[MODIFY, REMOVE]`. The widened-sealer-filter option is explicitly excluded — the sealer's role holds `s3:PutObject`, so a combined Lambda cannot satisfy TW-5's "observe-and-alert only" constraint. |
+| TW-3 | **When** a MODIFY or REMOVE stream record is detected on an AUDITLOG item, **the system shall** emit a CloudWatch custom metric `AuditTamperAttempt` (dimension: `tenantId`, value: 1) and log the event at CRITICAL level with the affected PK, SK, eventName, and OldImage/NewImage digests (sha256 of serialized images). **Note:** DynamoDB Streams `userIdentity` is populated ONLY for TTL-expired deletions — regular UpdateItem/DeleteItem records carry NO caller identity. Caller attribution requires CloudTrail data-event correlation, which is OUT of scope (future security-services spec). |
 | TW-4 | **[REV-8] A CloudWatch alarm shall** trigger on `AuditTamperAttempt` metric (`Sum >= 1`, period 1m, evaluationPeriods 1, `treatMissingData: NOT_BREACHING`). |
 | TW-5 | **The tamper-tripwire consumer shall** NOT have `UpdateItem`, `DeleteItem`, or `events:PutEvents` permissions. It is observe-and-alert only. |
 | TW-6 | **A template-assertion unit test shall** prove the synthesized template contains the MODIFY/REMOVE filter criteria (C-12). |
