@@ -14,6 +14,7 @@ import { SecurityStack } from './security-stack.js';
 import { DataStack } from './data-stack.js';
 import { IdentityStack } from './identity-stack.js';
 import { DrRegionStack } from './dr-region-stack.js';
+import { EventingStack } from './eventing-stack.js';
 
 export interface CumplifyStageProps extends cdk.StageProps {
   readonly envConfig: EnvConfig;
@@ -75,6 +76,9 @@ export class CumplifyStage extends cdk.Stage {
       tableName: dataStack.tableName,
     });
     identityStack.addDependency(dataStack);
+
+    // EventingStack — no cross-stack deps from spec-1 stacks; deploys independently.
+    new EventingStack(this, 'EventingStack', { envConfig });
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

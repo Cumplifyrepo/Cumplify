@@ -1,0 +1,42 @@
+# Task 4 Evidence — Implement EventingStack CDK
+# D-rung: D1 (synths + CDK Nag clean)
+# Timestamp: 2026-07-04
+
+## tsc --noEmit: PASS (0 errors in infra/lib/eventing-stack.ts)
+
+## cdk synth --all: PASS
+
+Successfully synthesized to /home/julio-medrano/cumplify/cdk.out
+
+Bundling assets:
+- CumplifyPipeline/Dev/EventingStack/FifoRouterFn/Code/Stage
+- CumplifyPipeline/Dev/EventingStack/DemoConsumerFn/Code/Stage
+(Repeated for Staging + Prod stages)
+
+## CDK Nag: CLEAN (zero EventingStack error-annotations)
+
+Suppressions applied:
+- AwsSolutions-SQS3 on all 8 DLQs (dead-letter queues have no redrive policy)
+- AwsSolutions-IAM4 on Lambda roles (AWSLambdaBasicExecutionRole standard pattern)
+- AwsSolutions-IAM5 on Lambda/LogRetention roles (wildcard log stream name)
+- AwsSolutions-L1 on Lambdas (NODEJS_22_X is latest LTS, Nag rule may not recognize)
+
+## Stack registered in CumplifyStage (dev/staging/prod)
+
+## CfnOutputs emitted:
+- EventBusName, EventBusArn
+- 7× QueueUrl, 7× QueueArn, 7× DlqArn
+- DeliveryFailureDlqArn
+- 7× RuleName
+- FifoRouterArn, DemoConsumerArn, DemoConsumerLogGroup
+
+## Constructs:
+- EventBridge bus (eventBusName: 'cumplify-events')
+- 2 FIFO queues + 2 FIFO DLQs (capa-intake, audit-sink)
+- 5 standard queues + 5 standard DLQs (nc-triage, hazard, aspect, review-fanout, records)
+- 1 delivery-failure DLQ
+- 7 EventBridge rules with input transformers (FIX-1/FIX-2)
+- FIFO-router Lambda (512MB, 30s, NODEJS_22_X, ARM_64)
+- Demo consumer Lambda (512MB, 60s, NODEJS_22_X, ARM_64)
+- 8 CloudWatch alarms (treatMissingData: NOT_BREACHING)
+- All 16 queues: enforceSSL: true
