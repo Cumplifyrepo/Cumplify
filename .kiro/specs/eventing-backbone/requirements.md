@@ -172,6 +172,7 @@ The spine D.4 topology defines **seven** consumer queues. Each has a paired DLQ.
 | CON-5 | **The consumer shall** validate the mandatory envelope fields (ET-4) before passing the payload to business-logic handlers. Parse failure = poison → DLQ. | Scope definition |
 | CON-6 | **The consumer Lambda shall** be provisioned with `memorySize >= 512` and `timeout >= 60s` to handle cold starts within the queue visibility timeout. | C-4; C-8 |
 | CON-7 | **The consumer Lambda shall** be deployed using `NodejsFunction` (esbuild) with `bundling.externalModules: []` (SDK bundled inline). | C-3; C-4 |
+| CON-8 | **The system shall** deploy ONE demo/reference consumer Lambda in this spec — built on the `services/eventing` consumer library (CON-1..7), wired via an SQS event-source mapping to one consumer queue (design.md picks the queue). Business logic is throwaway-grade (log-and-ack) but plumbing is production-grade: NodejsFunction, inline SDK, >= 512 MB, Powertools structured logging, poison-message → explicit DLQ send per CON-2. This Lambda is required because ACC-1/ACC-2 cannot execute without a deployed consumer. | ACC-1; ACC-2; architect approval |
 
 ---
 
