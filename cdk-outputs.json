@@ -17,6 +17,13 @@
     "ExportsOutputFnGetAttrdsKeyEA8BDDA4Arn98B5C351": "arn:aws:kms:us-east-1:697114252993:key/2db8dba5-6482-4791-9495-341218a42fe2",
     "ExportsOutputFnGetAttelasticacheKey12E9856BArn0B51FE06": "arn:aws:kms:us-east-1:697114252993:key/25fa404f-707e-4618-a8fd-5865702b74f2"
   },
+  "Dev-IdentityStack": {
+    "PoolAId": "us-east-1_9qpRA11kb",
+    "PoolBId": "us-east-1_cmiNNOAst",
+    "PoolCId": "us-east-1_xCFIYac5r",
+    "PoolAClientId": "56fjvrrghkd735a8fjrtrqnmf8",
+    "PoolADomainPrefix": "cumplify-dev-internal-auth"
+  },
   "Dev-DataStack": {
     "TableName": "CumplifyCore",
     "AossCollectionName": "cumplify-iso-kb",

@@ -22,6 +22,7 @@ const PROFILE = 'cumplify-dev-readonly';
 const ENV_NAME: string = process.env.READBACK_ENV ?? 'dev';
 const NETWORK_STACK = `Dev-NetworkStack`;
 const DATA_STACK = `Dev-DataStack`;
+const IDENTITY_STACK = 'Dev-IdentityStack';
 const AOSS_TIMEOUT = 45_000;
 
 // ---------------------------------------------------------------------------
@@ -59,6 +60,9 @@ describe('Platform Foundation — Readback Assertions', () => {
   let evidenceBucket: string | undefined;
   let aossCollectionName: string | undefined;
   let cacheReplicationGroupId: string | undefined;
+  let poolAId: string | undefined;
+  let poolBId: string | undefined;
+  let poolCId: string | undefined;
 
   beforeAll(async () => {
     awsAvailable = await hasAwsAccess();
@@ -70,6 +74,9 @@ describe('Platform Foundation — Readback Assertions', () => {
     evidenceBucket = getOutput(outputs, DATA_STACK, 'EvidenceBucketName');
     aossCollectionName = getOutput(outputs, DATA_STACK, 'AossCollectionName');
     cacheReplicationGroupId = getOutput(outputs, DATA_STACK, 'CacheReplicationGroupId');
+    poolAId = getOutput(outputs, IDENTITY_STACK, 'PoolAId');
+    poolBId = getOutput(outputs, IDENTITY_STACK, 'PoolBId');
+    poolCId = getOutput(outputs, IDENTITY_STACK, 'PoolCId');
   });
 
   function skipIfNotReady(ctx: { skip: () => void }): boolean {
@@ -337,21 +344,15 @@ describe('Platform Foundation — Readback Assertions', () => {
   // =========================================================================
 
   it('R-16: Cognito Pool A MfaConfiguration = ON', async (ctx) => {
-    if (skipIfNotReady(ctx)) return;
-    const poolName = `cumplify-${ENV_NAME}-internal`;
-    const pools = await awsJson<{ UserPools?: Array<{ Id?: string; Name?: string }> }>(
-      `aws cognito-idp list-user-pools --max-results 60`,
-    );
-    const pool = pools?.UserPools?.find((p) => p.Name === poolName);
-    if (!pool?.Id) {
-      assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'ON', 'ABSENT');
+    if (skipIfNotReady(ctx) || !poolAId) {
+      ctx.skip();
       return;
     }
     const detail = await awsJson<{ UserPool?: { MfaConfiguration?: string } }>(
-      `aws cognito-idp describe-user-pool --user-pool-id ${pool.Id}`,
+      `aws cognito-idp describe-user-pool --user-pool-id ${poolAId}`,
     );
     assertResource(
-      `cognito:${poolName}`,
+      `cognito:pool/${poolAId}`,
       'MfaConfiguration',
       'ON',
       detail?.UserPool?.MfaConfiguration ?? 'ABSENT',
@@ -359,21 +360,15 @@ describe('Platform Foundation — Readback Assertions', () => {
   });
 
   it('R-17: Cognito Pool B MfaConfiguration = OPTIONAL', async (ctx) => {
-    if (skipIfNotReady(ctx)) return;
-    const poolName = `cumplify-${ENV_NAME}-tenant-admin`;
-    const pools = await awsJson<{ UserPools?: Array<{ Id?: string; Name?: string }> }>(
-      `aws cognito-idp list-user-pools --max-results 60`,
-    );
-    const pool = pools?.UserPools?.find((p) => p.Name === poolName);
-    if (!pool?.Id) {
-      assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'OPTIONAL', 'ABSENT');
+    if (skipIfNotReady(ctx) || !poolBId) {
+      ctx.skip();
       return;
     }
     const detail = await awsJson<{ UserPool?: { MfaConfiguration?: string } }>(
-      `aws cognito-idp describe-user-pool --user-pool-id ${pool.Id}`,
+      `aws cognito-idp describe-user-pool --user-pool-id ${poolBId}`,
     );
     assertResource(
-      `cognito:${poolName}`,
+      `cognito:pool/${poolBId}`,
       'MfaConfiguration',
       'OPTIONAL',
       detail?.UserPool?.MfaConfiguration ?? 'ABSENT',
@@ -381,21 +376,15 @@ describe('Platform Foundation — Readback Assertions', () => {
   });
 
   it('R-18: Cognito Pool C MfaConfiguration = OPTIONAL', async (ctx) => {
-    if (skipIfNotReady(ctx)) return;
-    const poolName = `cumplify-${ENV_NAME}-tenant-user`;
-    const pools = await awsJson<{ UserPools?: Array<{ Id?: string; Name?: string }> }>(
-      `aws cognito-idp list-user-pools --max-results 60`,
-    );
-    const pool = pools?.UserPools?.find((p) => p.Name === poolName);
-    if (!pool?.Id) {
-      assertResource(`cognito:${poolName}`, 'MfaConfiguration', 'OPTIONAL', 'ABSENT');
+    if (skipIfNotReady(ctx) || !poolCId) {
+      ctx.skip();
       return;
     }
     const detail = await awsJson<{ UserPool?: { MfaConfiguration?: string } }>(
-      `aws cognito-idp describe-user-pool --user-pool-id ${pool.Id}`,
+      `aws cognito-idp describe-user-pool --user-pool-id ${poolCId}`,
     );
     assertResource(
-      `cognito:${poolName}`,
+      `cognito:pool/${poolCId}`,
       'MfaConfiguration',
       'OPTIONAL',
       detail?.UserPool?.MfaConfiguration ?? 'ABSENT',

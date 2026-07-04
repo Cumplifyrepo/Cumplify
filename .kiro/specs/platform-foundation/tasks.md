@@ -198,19 +198,20 @@ Evidence captured manually (human-executed, readback of CDKToolkit stacks).
 **D3 deferred:** to prod deployment (task 2.1 is dev-only; prod deploy is post-pipeline)
 
 **Deliverables:**
-- [ ] `infra/lib/dr-region-stack.ts` — us-west-2 cross-region stack (prod-only):
+- [x] `infra/lib/dr-region-stack.ts` — us-west-2 cross-region stack (prod-only):
   - KMS ReplicaKey from the multi-region dynamodb CMK (for Global Table DR).
   - S3 CRR destination bucket (Object Lock COMPLIANCE, CMK, for evidence vault).
-- [ ] Wire Global Table replica in DataStack using the ReplicaKey ARN
+- [x] Wire Global Table replica in DataStack using the ReplicaKey ARN
   (conditional on `envConfig.globalTableReplica`).
-- [ ] Wire S3 CRR replication configuration on evidence vault
+- [x] Wire S3 CRR replication configuration on evidence vault
   (conditional on `envConfig.s3Crr`).
-- [ ] Add R-24 readback assertion: S3 CRR replication status = ENABLED
+- [x] Add R-24 readback assertion: S3 CRR replication status = ENABLED
   (prod-only, in `infra/readback/platform-foundation.test.ts`).
-- [ ] `cdk synth --all -c env=prod` passes clean with CDK Nag.
+- [x] `cdk synth --all -c env=prod` passes clean with CDK Nag.
 
 **Completion evidence:** `npm run verify -- --spec platform-foundation --task 1.8`.
 Synth passes for all env contexts (dev, staging, prod). Nag clean.
+**Closed D1:** .kiro/evidence/platform-foundation/1.8.log (synth clean for dev + prod)
 
 ---
 
