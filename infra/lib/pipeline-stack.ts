@@ -9,6 +9,7 @@ import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import { Construct } from 'constructs';
 import { CumplifyStage } from './cumplify-stage.js';
 import { ENV_CONFIGS } from './env-config.js';
+import { MgmtCostMonitor } from './mgmt-cost-monitor.js';
 
 export class PipelineStack extends cdk.Stack {
   public readonly pipelineStages: cdk.Stage[] = [];
@@ -95,5 +96,16 @@ export class PipelineStack extends cdk.Stack {
     pipeline.buildPipeline();
 
     this.pipeline = pipeline;
+
+    // Detective control: alert if the mgmt account's spend jumps (would signal
+    // a workload resource landing here out-of-band, bypassing the pipeline the
+    // preventive account-boundary guardrail protects).
+    const alertEmail =
+      (this.node.tryGetContext('costAlertEmail') as string) ?? 'julio@mbdesignremodel.com';
+    const mgmtBudgetUsd = Number(this.node.tryGetContext('mgmtBudgetLimitUsd') ?? 50);
+    new MgmtCostMonitor(this, 'MgmtCostMonitor', {
+      alertEmail,
+      monthlyBudgetUsd: mgmtBudgetUsd,
+    });
   }
 }
