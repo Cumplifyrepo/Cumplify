@@ -248,10 +248,10 @@ all 20 dev readback assertions PASS.
 **REQUIRES-HUMAN**
 
 **Deliverables:**
-- [ ] Create GitHub remote (`Cumplifyrepo/Cumplify`)
+- [x] Create GitHub remote (`Cumplifyrepo/Cumplify`)
   (Re-homed 2026-07-03 by owner order: prior account unwired from all functional
   references; historical evidence logs retain old slug as immutable record.), push develop branch.
-- [ ] Create CodeStar Connection in mgmt account. Authorize (PENDING→AVAILABLE).
+- [x] Create CodeStar Connection in mgmt account. Authorize (PENDING→AVAILABLE).
 - [ ] **Populate staging/prod availabilityZones** in `infra/lib/env-config.ts`:
   Run `aws ec2 describe-vpc-endpoint-services --service-names
   com.amazonaws.us-east-1.aoss com.amazonaws.us-east-1.secretsmanager
@@ -259,14 +259,16 @@ all 20 dev readback assertions PASS.
   com.amazonaws.us-east-1.execute-api --query 'ServiceDetails[].AvailabilityZones'`
   in each target account. Intersect the results → pick 2 AZs common to all
   five services. Commit the populated arrays before pipeline first run.
-- [ ] Deploy PipelineStack to mgmt account.
-- [ ] Pipeline self-mutates successfully.
-- [ ] **Pipeline first run completes as a no-op** against the already-deployed
+- [x] Deploy PipelineStack to mgmt account.
+- [x] Pipeline self-mutates successfully.
+- [x] **Pipeline first run completes as a no-op** against the already-deployed
   dev stacks (no resource changes, no drift).
-- [ ] Evidence: pipeline execution history showing successful no-op.
+- [x] Evidence: pipeline execution history showing successful no-op.
 
 **Completion evidence:** Pipeline execution ID + "no changes" confirmation
 from the dev stage. Captured in `.kiro/evidence/platform-foundation/3.1.log`.
+**Closed D3:** .kiro/evidence/platform-foundation/3.1-closure.md + 3.1-pipeline-noop-architect-witness.log
+**Carried condition:** staging/prod availabilityZones not yet populated (blocks gate approval).
 
 ---
 
