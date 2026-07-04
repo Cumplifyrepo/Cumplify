@@ -1,0 +1,29 @@
+# Task 2 Evidence — Implement publisher + types
+# D-rung: D2 (tested)
+# Timestamp: 2026-07-04T18:22:48Z
+
+## tsc --noEmit: PASS (0 errors in services/eventing/)
+
+## vitest run: PASS (4/4 tests)
+
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should publish an event and return the eventId (3ms)
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should auto-generate a ULID eventId when not provided (1ms)
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should throw on FailedEntryCount > 0 (1ms)
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should include all ET-4 envelope fields in the Detail payload (1ms)
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Duration  143ms
+
+## Files implemented:
+- services/eventing/src/types.ts (CumplifyEvent + QueueMessage — finalized)
+- services/eventing/src/publisher.ts (full implementation)
+- services/eventing/src/constants.ts (EVENT_SOURCES + EVENT_NAMES registry)
+- services/eventing/src/index.ts (updated barrel)
+- services/eventing/__tests__/publisher.test.ts (4 tests)
+
+## Dependencies added:
+- @aws-sdk/client-eventbridge
+- @aws-lambda-powertools/logger
+- ulid
+- aws-sdk-client-mock (devDep)
