@@ -56,3 +56,34 @@ EXACT HUMAN ACTIONS (each ~60s), then architect closes the login checkbox:
      ${user:subject} placed in the left column of row 2 — swap as above.)
   Login test URL (paste the resulting localhost?code=... back to architect):
     https://cumplify-dev-internal-auth.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=56fjvrrghkd735a8fjrtrqnmf8&response_type=code&scope=openid+email+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback&identity_provider=CumplifyIdC
+
+================================================================================
+UPDATE 2026-07-04 — CRITICAL BUG FOUND VIA CLI + FIXED (commit 4526a36)
+================================================================================
+While verifying the token-claims half via direct Lambda invoke (a CLI path the
+readbacks never took), found the PreTokenGen Lambda was DEPLOYED BROKEN:
+  - lambda.Code.fromAsset('services/pre-token-gen') uploaded raw index.ts;
+    Node22 runtime error "Cannot find module 'index'". The PreTokenGeneration
+    trigger threw on EVERY token generation → ANY Pool A login would have failed
+    (the SSO login the checkbox asks for could never have succeeded).
+  - No prior readback caught it: readbacks checked pool CONFIG, never invoked
+    the Lambda. Rule 4 in action — the deployed cloud outranked the transcript.
+
+Fix (NodejsFunction esbuild bundle + 512MB + inline client-ssm). Verified on the
+deployed dev function:
+  - Cold start: Init 313.86ms + Duration 248.64ms = ~562ms (was 5.00s TIMEOUT).
+  - Claims stamped on cold invoke: custom:tenantId=strivana-hq,
+    custom:role=Admin, custom:poolClass=internal.
+  - Pool A LambdaConfig.PreTokenGeneration -> the fixed function ARN (wired).
+  - SSM /cumplify/dev/identity/pool-class-map: 9qpRA11kb->internal (poolClass src).
+
+TOKEN-GENERATION CHAIN NOW PROVEN END TO END VIA CLI:
+  Cognito ACS -> PreTokenGeneration trigger (wired) -> Lambda (loads, <5s cold)
+  -> reads SSM map (internal) -> stamps tenantId+role+poolClass=internal.
+Combined with the earlier Cognito->IdC transport proof (authorize 302 -> IdC with
+valid SAMLRequest), every AUTOMATABLE segment of the SSO flow is verified.
+
+Login checkbox STILL not ticked (rule 5): the literal human SAML login (IdC
+password entry + IdC email attribute mapping, both proven console-only) has not
+executed. It is now UNBLOCKED — previously it would have failed on the broken
+Lambda regardless. Human path unchanged (console mapping + login URL above).
