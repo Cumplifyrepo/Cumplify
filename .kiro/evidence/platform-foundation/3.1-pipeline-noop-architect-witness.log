@@ -1,0 +1,43 @@
+ARCHITECT WITNESS — Task 3.1 acceptance: first pipeline run no-op vs deployed dev
+================================================================================
+Pipeline:            CumplifyPipeline (mgmt 157082218687, us-east-1)
+Execution ID:        6aec0e7a-561c-4008-b4fa-012d1345e877
+Executed:            2026-07-04 ~01:58Z-02:08Z
+Source:              Cumplifyrepo/Cumplify@develop, commit 430a901
+Connection:          arn:aws:codeconnections:us-east-1:157082218687:connection/efb63b51-75de-4a80-8e72-c218eb1f30ee
+Stage results:       Source OK | Build OK | UpdatePipeline OK (no self-mutation
+                     restart — deployed definition matched commit) | Assets OK |
+                     Dev OK | Staging PENDING at ManualApproval (left unapproved)
+
+No-op forensics (CloudFormation stack events, 02:00-02:15Z, dev 697114252993):
+  Dev-NetworkStack   : CDKMetadata only                      -> functional no-op
+  Dev-SecurityStack  : CDKMetadata only                      -> functional no-op
+  Dev-IdentityStack  : CDKMetadata only                      -> functional no-op
+  Dev-DataStack      : CDKMetadata + AuroraClusterRotationSingleUser nested-stack
+                       TemplateURL (presigned SAR URL of the SAME rotation app
+                       v1.1.671; zero resource changes beneath) -> functional no-op
+Verdict: ZERO functional resource changes across all 4 stacks. Acceptance MET.
+
+Known framework artifacts (expected on every run, documented pre-run):
+  1. AWS::CDK::Metadata analytics string differs between local and pipeline synth.
+  2. DataStack Aurora rotation nested stack presigned TemplateURL regenerates
+     every synth (serverlessrepo changeset copy). Not drift.
+
+Path to green (verbatim failure record, per truth discipline):
+  - 4 prior connection attempts failed at Source: "[GitHub] No Branch [develop]
+    found for FullRepositoryName [strivanallc-crypto/Cumplify]" — pipeline was
+    configured for the prior GitHub account's repo while owner had re-homed to
+    Cumplifyrepo (account created 2026-07-01, repo 2026-07-02, both pre-dating
+    the attempts). Resolved by owner-ordered unwiring (7aa30b1) + new connection
+    under Cumplifyrepo (42bc69e).
+  - Build cfd8a62d failed: "npm run test, exit status 1" — CodeBuild
+    standard:7.0 ships Node 18.20.8; toolchain requires >=20 (vitest 4,
+    aws-cdk-lib 2.261). Fixed 430a901: standard:8.0 (Node 22), image existence
+    verified via list-curated-environment-images.
+
+Standing constraints recorded:
+  - Staging/Prod ManualApproval gates MUST stay unapproved until per-account
+    describe-vpc-endpoint-services AZ intersection query populates envConfig
+    availabilityZones, and owner approves standing costs (~$96/mo staging,
+    ~$250/mo prod).
+Executor: Architect (Claude), local machine, profiles cumplify / cumplify-dev-readonly.
