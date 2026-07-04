@@ -17,6 +17,13 @@ export interface EnvConfig {
    * intersection query against the target account before first deploy).
    */
   readonly availabilityZones: string[];
+  /**
+   * IdC SAML metadata URL for Pool A federation (task 3.2). undefined =
+   * federation not wired yet. The URL is console-only (no API exposes it):
+   * IdC console -> Applications -> cumplify-pool-a-sso -> "IAM Identity Center
+   * SAML metadata file". Setting it activates the Cognito SAML provider.
+   */
+  readonly samlMetadataUrl?: string;
   // Stage-conditional resource parameters
   readonly globalTableReplica: boolean;
   readonly drRegionStack: boolean;

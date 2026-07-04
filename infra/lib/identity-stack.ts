@@ -218,6 +218,27 @@ export class IdentityStack extends cdk.Stack {
     });
 
     // -----------------------------------------------------------------------
+    // IdC SAML federation for Pool A (task 3.2). Dormant until the owner copies
+    // the IdC metadata URL (console-only) into envConfig.samlMetadataUrl.
+    // Client's supportedIdentityProviders is Lazy — CDK includes providers
+    // registered on the pool; explicit dependency enforces create order.
+    // -----------------------------------------------------------------------
+    if (envConfig.samlMetadataUrl) {
+      const idcProvider = new cognito.UserPoolIdentityProviderSaml(this, 'PoolAIdCSaml', {
+        userPool: createdPools['PoolA'],
+        name: 'CumplifyIdC',
+        metadata: cognito.UserPoolIdentityProviderSamlMetadata.url(envConfig.samlMetadataUrl),
+        attributeMapping: {
+          email: cognito.ProviderAttribute.other('email'),
+        },
+      });
+      poolAClient!.node.addDependency(idcProvider);
+      new cdk.CfnOutput(this, 'PoolASamlProviderName', {
+        value: idcProvider.providerName,
+      });
+    }
+
+    // -----------------------------------------------------------------------
     // SSM StringParameter — pool-class-map (depends on pools, nothing depends on it)
     // Stores JSON: { "<poolId>": "internal"|"tenant-admin"|"tenant-user", ... }
     // Lambda reads this on cold start via ssm:GetParameter.
