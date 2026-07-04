@@ -18,6 +18,8 @@
  * IDs in env vars). Pools → SSM param (stores pool IDs). Acyclic.
  */
 
+import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
+
 export interface PreTokenGenEvent {
   readonly request: {
     readonly userAttributes: Record<string, string>;
@@ -61,17 +63,8 @@ async function loadPoolClassMap(): Promise<Record<string, string>> {
   }
 
   try {
-    // AWS SDK v3 is available in the Node.js 22.x Lambda runtime.
-    // Dynamic import avoids compile-time dependency on @aws-sdk/client-ssm.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { SSMClient, GetParameterCommand } = await (Function(
-      'return import("@aws-sdk/client-ssm")',
-    )() as Promise<{
-      SSMClient: new (config: object) => {
-        send: (cmd: unknown) => Promise<{ Parameter?: { Value?: string } }>;
-      };
-      GetParameterCommand: new (input: { Name: string }) => unknown;
-    }>);
+    // Static import (bundled by esbuild) — avoids the runtime module-resolution
+    // cold-start cost that pushed the 128MB/external build past the 5s cap.
     const client = new SSMClient({});
     const response = await client.send(new GetParameterCommand({ Name: paramName }));
     const value = response.Parameter?.Value ?? '{}';

@@ -21,6 +21,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
@@ -60,13 +61,30 @@ export class IdentityStack extends cdk.Stack {
     // Reads pool-class-map from SSM on cold start (cached).
     // Falls back to Cognito group as role (logs fallback — no silent paths).
     // -----------------------------------------------------------------------
-    const preTokenGenFn = new lambda.Function(this, 'PreTokenGenFn', {
+    // NodejsFunction esbuild-bundles index.ts -> index.js. The prior
+    // lambda.Code.fromAsset('services/pre-token-gen') uploaded the raw .ts,
+    // which the Node 22 runtime cannot load ("Cannot find module 'index'") —
+    // the trigger threw on every token generation. Caught by direct invoke
+    // 2026-07-04; readbacks never exercised the Lambda. @aws-sdk/* stays
+    // external (present in runtime) so the dynamic client-ssm import resolves.
+    const preTokenGenFn = new NodejsFunction(this, 'PreTokenGenFn', {
       runtime: lambda.Runtime.NODEJS_22_X,
       architecture: lambda.Architecture.ARM_64,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset('services/pre-token-gen'),
+      entry: 'services/pre-token-gen/index.ts',
+      handler: 'handler',
       timeout: cdk.Duration.seconds(5), // Cognito trigger hard cap
-      memorySize: 128,
+      // 512MB (not 128) — memory-proportional CPU cuts SDK cold-start init; at
+      // 128MB the cold invoke exceeded the 5s Cognito cap. client-ssm bundled
+      // (not external) so cold start pays no runtime module resolution.
+      memorySize: 512,
+      bundling: {
+        minify: true,
+        target: 'node22',
+        // NodejsFunction externalizes @aws-sdk/* by default (assumes runtime
+        // copy). Override to [] so client-ssm is bundled inline — eliminates
+        // the runtime module-resolution cold-start cost that broke the 5s cap.
+        externalModules: [],
+      },
       environment: {
         TABLE_NAME: tableName,
         POOL_CLASS_MAP_PARAM: poolClassMapParamName, // static path — no pool refs
