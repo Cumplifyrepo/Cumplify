@@ -1,7 +1,7 @@
 {
   "app": "npx tsx infra/bin/cumplify.ts",
   "context": {
-    "codestarConnectionArn": "arn:aws:codeconnections:us-east-1:157082218687:connection/67e2a3ab-e0c0-41e8-ac2b-3d6b40ab122e",
+    "codestarConnectionArn": "arn:aws:codeconnections:us-east-1:157082218687:connection/REPLACE-AFTER-CUMPLIFYREPO-HANDSHAKE",
     "env": "dev"
   }
 }

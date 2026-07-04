@@ -248,7 +248,9 @@ all 20 dev readback assertions PASS.
 **REQUIRES-HUMAN**
 
 **Deliverables:**
-- [ ] Create GitHub remote (`strivanallc-crypto/Cumplify`), push develop branch.
+- [ ] Create GitHub remote (`Cumplifyrepo/Cumplify`)
+  (Re-homed 2026-07-03 by owner order: prior account unwired from all functional
+  references; historical evidence logs retain old slug as immutable record.), push develop branch.
 - [ ] Create CodeStar Connection in mgmt account. Authorize (PENDING→AVAILABLE).
 - [ ] **Populate staging/prod availabilityZones** in `infra/lib/env-config.ts`:
   Run `aws ec2 describe-vpc-endpoint-services --service-names

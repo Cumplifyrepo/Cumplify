@@ -42,7 +42,7 @@ closes via Template F at D3 (deployed to dev + readback green).
 - AC-1.4: Synth step runs: `npm ci`, `npm run test`, `npm audit --audit-level=high`,
   `npx cdk synth --all`. CDK Nag runs as an Aspect during synth (failures block).
 
-- AC-1.5 (REQUIRES-HUMAN): Source: `strivanallc-crypto/Cumplify@develop` via
+- AC-1.5 (REQUIRES-HUMAN): Source: `Cumplifyrepo/Cumplify@develop` via
   CodeStar Connection. Connection ARN parameterized via CDK context.
   Runbook (one-time): create GitHub remote, push develop branch, create
   CodeStar Connection in mgmt account, manually authorize (PENDING→AVAILABLE).

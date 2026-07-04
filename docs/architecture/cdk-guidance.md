@@ -73,7 +73,7 @@ const pipeline = new pipelines.CodePipeline(this, 'CumplifyPipeline', {
   selfMutation: true,         // pipeline updates its own definition before deploying stages
 
   synth: new pipelines.ShellStep('Synth', {
-    input: pipelines.CodePipelineSource.connection('strivanallc-crypto/Cumplify', 'develop', {
+    input: pipelines.CodePipelineSource.connection('Cumplifyrepo/Cumplify', 'develop', {
       connectionArn: 'arn:aws:codestar-connections:us-east-1:MGMT_ACCOUNT:connection/UUID',
       // NOTE: connection must be AVAILABLE (manually authorized) before first run
     }),

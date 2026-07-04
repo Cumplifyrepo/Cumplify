@@ -27,7 +27,7 @@ export class PipelineStack extends cdk.Stack {
       selfMutation: true, // AC-1.2 — pipeline updates its own definition
 
       synth: new pipelines.ShellStep('Synth', {
-        input: pipelines.CodePipelineSource.connection('strivanallc-crypto/Cumplify', 'develop', {
+        input: pipelines.CodePipelineSource.connection('Cumplifyrepo/Cumplify', 'develop', {
           connectionArn,
         }),
         commands: [

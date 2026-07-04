@@ -1,0 +1,28 @@
+ARCHITECT WITNESS RUN — validation of commit 018a509 (Identity outputs merge + R-16..18 refactor)
+================================================================================
+Timestamp (start): 2026-07-04T00:52:27Z
+Timestamp (end):   2026-07-04T00:53:00Z
+Exit code:         0
+cdk-outputs.json blob SHA (at 018a509): 3953f2365b1f112a5f65e9c3e2eb3957e8a349c7
+Command:           AWS_PROFILE=cumplify-dev-readonly npm run readback
+Executor:          Architect (Claude, local machine, cumplify-dev-readonly profile)
+
+Result: 21 PASS | 4 SKIP | 0 FAIL
+
+Skip accounting (all justified, none silent):
+  - R-21 Global Table replica us-west-2   (prod-only; env=dev)
+  - R-22 DR KMS ReplicaKey us-west-2      (prod-only; env=dev)
+  - R-24 S3 CRR on evidence vault         (prod-only; env=dev)
+  - sample-defect.test.ts ObjectLock demo (spec 38 deliberate-failure harness; skipped by design)
+
+Verified in this run:
+  - R-16..R-18 now resolve pool IDs from cdk-outputs.json (Dev-IdentityStack block)
+    and query describe-user-pool by ID: us-east-1_9qpRA11kb / us-east-1_cmiNNOAst /
+    us-east-1_xCFIYac5r — all PASS against live dev account 697114252993.
+  - Committed Dev-IdentityStack outputs block matches the architect's deploy
+    outputs byte-for-byte (PoolAId, PoolBId, PoolCId, PoolAClientId, PoolADomainPrefix).
+
+Finding (non-blocking, pre-existing): readback tests skip when an expected output
+key is absent (getOutput returns undefined -> ctx.skip()). On a deployed env a
+missing key should FAIL, not skip. Hardening task assigned to Kiro; pattern is
+file-wide and predates 018a509.
