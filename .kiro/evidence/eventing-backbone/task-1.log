@@ -1,0 +1,18 @@
+# Task 1 Evidence — Initialize services/eventing workspace package
+# D-rung: D1 (compiles)
+# Timestamp: 2026-07-04
+# Command: npx tsc --noEmit
+
+## Result: PASS (services/eventing compiles with zero errors)
+
+Note: 1 pre-existing error in infra/lib/env-config.unit.test.ts(13,5) — unrelated
+to this spec (Type '"test"' not assignable to '"dev" | "staging" | "prod"').
+No errors in services/eventing/**/*.ts.
+
+## Files created:
+- services/eventing/package.json
+- services/eventing/tsconfig.json
+- services/eventing/src/index.ts (barrel export)
+- services/eventing/src/types.ts (CumplifyEvent + QueueMessage interfaces)
+- services/eventing/src/publisher.ts (placeholder, Task 2)
+- services/eventing/src/consumer.ts (placeholder, Task 3)
