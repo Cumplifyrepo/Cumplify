@@ -1,0 +1,81 @@
+
+ RUN  v4.1.9 /home/julio-medrano/cumplify
+
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix)
+cdk-outputs.json blob SHA: de4a8bf0d6e7d0fca73075c6930102f75d63e902
+
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 1: bus exists (DescribeEventBus)
+  Bus ARN: arn:aws:events:us-east-1:697114252993:event-bus/cumplify-events
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 1: bus exists (DescribeEventBus) 651ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 2: all queues exist (GetQueueAttributes)
+  CapaIntakeQueueUrl: VisibilityTimeout=360, FIFO=true, SSL=enforced
+  AuditSinkQueueUrl: VisibilityTimeout=360, FIFO=true, SSL=enforced
+  NcTriageQueueUrl: VisibilityTimeout=360, FIFO=false, SSL=enforced
+  HazardQueueUrl: VisibilityTimeout=360, FIFO=false, SSL=enforced
+  AspectQueueUrl: VisibilityTimeout=360, FIFO=false, SSL=enforced
+  ReviewFanoutQueueUrl: VisibilityTimeout=360, FIFO=false, SSL=enforced
+  RecordsQueueUrl: VisibilityTimeout=360, FIFO=false, SSL=enforced
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 2: all queues exist (GetQueueAttributes) 3514ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 3: all rules exist (DescribeRule)
+  NcTriageRuleName: Dev-EventingStack-NcTriageRule8F64FE2A-hZseA0RLgFVT = ENABLED
+  CapaIntakeRuleName: Dev-EventingStack-CapaIntakeRule399D66A2-jNysde7iVQe6 = ENABLED
+  AuditSinkRuleName: Dev-EventingStack-AuditSinkRuleD0F0C09B-nDuKbSWxFk2x = ENABLED
+  HazardRuleName: Dev-EventingStack-HazardRuleEEA84E6C-lUiChRO5td85 = ENABLED
+  AspectRuleName: Dev-EventingStack-AspectRule96D165F1-gvzRcGQE4iYE = ENABLED
+  ReviewFanoutRuleName: Dev-EventingStack-ReviewFanoutRuleE73A3BD2-DHS20NTdr0qd = ENABLED
+  RecordsRuleName: Dev-EventingStack-RecordsRule1BD9F032-MFxuu0lDYVwx = ENABLED
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 3: all rules exist (DescribeRule) 3606ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 4: publish Hazard.Identified → arrives in hazard-q
+  eventId readback-t4-1783193134626 arrived in hazard-q ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 4: publish Hazard.Identified → arrives in hazard-q 6585ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 5: publish Document.Published → arrives in records-q
+  eventId readback-t5-1783193141211 arrived in records-q, detailType=Document.Published ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 5: publish Document.Published → arrives in records-q 6592ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 6: publish CAPA.Opened → arrives in capa-intake.fifo via router
+  eventId readback-t6-1783193147803 arrived in capa-intake.fifo via router ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 6: publish CAPA.Opened → arrives in capa-intake.fifo via router 6507ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 7: publish Document.Approved → arrives in audit-sink.fifo via router
+  eventId readback-t7-1783193154310 arrived in audit-sink.fifo (suffix rule matched) ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 7: publish Document.Approved → arrives in audit-sink.fifo via router 6518ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 8: publish Audit.FindingRaised → demo consumer logs eventId (D-1)
+  eventId readback-t8-1783193160828 found in demo consumer CloudWatch Logs (D-1 proven) ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 8: publish Audit.FindingRaised → demo consumer logs eventId (D-1) 17135ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 9: malformed JSON → nc-triage-dlq via explicit poison send (D-2)
+  Poison message found in DLQ. Reason: JSON parse failure
+  Poison → DLQ path proven (D-2: immediate explicit send) ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 9: malformed JSON → nc-triage-dlq via explicit poison send (D-2) 6555ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 10: cold-start FIFO-router Lambda (direct invoke)
+  FIFO-router cold-start: 498ms (< 30s) ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 10: cold-start FIFO-router Lambda (direct invoke) 499ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 11: cold-start demo consumer Lambda (direct invoke)
+  Demo consumer cold-start: 468ms (< 60s) ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 11: cold-start demo consumer Lambda (direct invoke) 469ms
+stdout | infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 12: all 8 DLQ alarms exist with treatMissingData=notBreaching
+  Alarm: Dev-EventingStack-AspectDlqAlarm06356580-6d60KgoRFMAw — treatMissingData=notBreaching ✓
+  Alarm: Dev-EventingStack-AuditSinkDlqAlarm16E3A413-FJ9EbzCEXc4x — treatMissingData=notBreaching ✓
+  Alarm: Dev-EventingStack-CapaIntakeDlqAlarm57177DA2-s5cgZBmN2krw — treatMissingData=notBreaching ✓
+  Alarm: Dev-EventingStack-DeliveryFailureDlqAlarmD627E383-b2mwJ8gGoa0a — treatMissingData=notBreaching ✓
+  Alarm: Dev-EventingStack-HazardDlqAlarmBB71A072-A9qX46LblmFl — treatMissingData=notBreaching ✓
+  Alarm: Dev-EventingStack-NcTriageDlqAlarm5474EB40-zRpy26i2X0ah — treatMissingData=notBreaching ✓
+  Alarm: Dev-EventingStack-RecordsDlqAlarm0ECF7847-f0ideE6cLIzQ — treatMissingData=notBreaching ✓
+  Alarm: Dev-EventingStack-ReviewFanoutDlqAlarm57CB3B82-faRn0Y9c0oxP — treatMissingData=notBreaching ✓
+  8 DLQ alarms verified ✓
+
+ ✓ infra/readback/eventing-backbone.test.ts > eventing-backbone readback (12-test matrix) > test 12: all 8 DLQ alarms exist with treatMissingData=notBreaching 521ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  15:25:26
+   Duration  59.25s (transform 24ms, setup 0ms, import 32ms, tests 59.16s, environment 0ms)
+

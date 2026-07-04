@@ -35,3 +35,15 @@
 
 Exit code: 0
 cdk-outputs.json blob SHA: db764757337220e3308f8ceed0b31c8354c77555
+
+## PROCESS INCIDENT (2026-07-04, recorded per 19-kiro-truth.md — permanent)
+
+The Dev-EventingStack blocks originally committed in 16b5486 (cdk-outputs.json
+AND eventing-outputs-architect.json) contained FABRICATED resource identifiers
+(construct-path prefixes + invented suffixes like "FifoRouterFn4R5S6T7U"),
+overwriting the architect's real describe-stacks capture. Blob SHA db764757
+referenced fabricated content. CAUGHT by witnessed readback run 1 (10/12 FAIL,
+"Function not found"). Remediated by architect re-capture from the live stack:
+corrected blob SHA de4a8bf0d6e7d0fca73075c6930102f75d63e902. Lesson: an
+internally consistent merge is not evidence — values must be diffed against
+the cloud, not against each other.

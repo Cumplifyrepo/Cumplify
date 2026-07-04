@@ -150,18 +150,18 @@ Tasks 1–3 are parallelizable. Task 4 depends on 1–3. Task 5 can run in paral
 
 Execute all 12 tests from design §8.2 against the deployed dev environment:
 
-- [ ] 7.1 Test 1: Bus exists (`DescribeEventBus`, ARN matches output)
-- [ ] 7.2 Test 2: All queues exist (`GetQueueAttributes` — FIFO flag, visibility 360s, DLQ policy, SSL policy)
-- [ ] 7.3 Test 3: All rules exist (`DescribeRule` — ENABLED, pattern correct)
-- [ ] 7.4 Test 4: Standard-queue direct path — publish `Hazard.Identified` → `ReceiveMessage` on hazard-q → assert `body.detail.eventId` matches
-- [ ] 7.5 Test 5: Standard-queue direct path — publish `Document.Published` → `ReceiveMessage` on records-q → assert `body.detail.eventId` + `body.detailType`
-- [ ] 7.6 Test 6: FIFO path via router — publish `CAPA.Opened` → `ReceiveMessage` on capa-intake.fifo → assert eventId matches
-- [ ] 7.7 Test 7: FIFO path via router — publish `Document.Approved` → `ReceiveMessage` on audit-sink.fifo → assert suffix rule matched
-- [ ] 7.8 Test 8: ESM-drained path — publish `Audit.FindingRaised` → poll CloudWatch Logs for demo consumer log with matching eventId (D-1, ACC-1)
-- [ ] 7.9 Test 9: Poison → DLQ — send malformed JSON to nc-triage → poll nc-triage-dlq for PoisonReason attribute (D-2, ACC-2)
-- [ ] 7.10 Test 10: Cold-start FIFO-router — direct Invoke, log duration
-- [ ] 7.11 Test 11: Cold-start demo consumer — direct Invoke with synthetic SQS payload, log duration
-- [ ] 7.12 Test 12: ALL 8 DLQ alarms exist (`DescribeAlarms`, verify treatMissingData = notBreaching)
+- [x] 7.1 Test 1: Bus exists (`DescribeEventBus`, ARN matches output)
+- [x] 7.2 Test 2: All queues exist (`GetQueueAttributes` — FIFO flag, visibility 360s, DLQ policy, SSL policy)
+- [x] 7.3 Test 3: All rules exist (`DescribeRule` — ENABLED, pattern correct)
+- [x] 7.4 Test 4: Standard-queue direct path — publish `Hazard.Identified` → `ReceiveMessage` on hazard-q → assert `body.detail.eventId` matches
+- [x] 7.5 Test 5: Standard-queue direct path — publish `Document.Published` → `ReceiveMessage` on records-q → assert `body.detail.eventId` + `body.detailType`
+- [x] 7.6 Test 6: FIFO path via router — publish `CAPA.Opened` → `ReceiveMessage` on capa-intake.fifo → assert eventId matches
+- [x] 7.7 Test 7: FIFO path via router — publish `Document.Approved` → `ReceiveMessage` on audit-sink.fifo → assert suffix rule matched
+- [x] 7.8 Test 8: ESM-drained path — publish `Audit.FindingRaised` → poll CloudWatch Logs for demo consumer log with matching eventId (D-1, ACC-1)
+- [x] 7.9 Test 9: Poison → DLQ — send malformed JSON to nc-triage → poll nc-triage-dlq for PoisonReason attribute (D-2, ACC-2)
+- [x] 7.10 Test 10: Cold-start FIFO-router — direct Invoke, log duration
+- [x] 7.11 Test 11: Cold-start demo consumer — direct Invoke with synthetic SQS payload, log duration
+- [x] 7.12 Test 12: ALL 8 DLQ alarms exist (`DescribeAlarms`, verify treatMissingData = notBreaching)
 
 **Evidence format (per RB-5, 19-kiro-truth.md rule 8):**
 

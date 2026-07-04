@@ -1,0 +1,39 @@
+# Task 7 Evidence — eventing-backbone readback (D3 closure, architect-witnessed)
+
+Run: 2026-07-04T19:25Z (run 3 — the accepted run), executed by architect with
+profile cumplify-dev-admin (role chain mgmt → OrganizationAccountAccessRole in
+dev 697114252993; no static credentials).
+Full vitest output: task-7-run3-full.log
+
+| Timestamp (UTC)      | Test | Result | Duration | Notes |
+|----------------------|------|--------|----------|-------|
+| 2026-07-04T19:25:28Z | 1    | PASS   | 651ms    | Bus cumplify-events, ARN matches output |
+| 2026-07-04T19:25:29Z | 2    | PASS   | 3514ms   | 7 queues: visibility 360s, redrive, FIFO flags, SSL policy |
+| 2026-07-04T19:25:32Z | 3    | PASS   | 3606ms   | 7 rules ENABLED (composite busName|ruleName Refs handled) |
+| 2026-07-04T19:25:34Z | 4    | PASS   | 6585ms   | Hazard.Identified → hazard-q, body.detail.eventId match |
+| 2026-07-04T19:25:41Z | 5    | PASS   | 6592ms   | Document.Published → records-q, canonical contract |
+| 2026-07-04T19:25:47Z | 6    | PASS   | 6507ms   | CAPA.Opened → FIFO-router → capa-intake.fifo |
+| 2026-07-04T19:25:54Z | 7    | PASS   | 6518ms   | Document.Approved → suffix rule → audit-sink.fifo |
+| 2026-07-04T19:26:00Z | 8    | PASS   | 17135ms  | Audit.FindingRaised → ESM → demo consumer log (D-1) |
+| 2026-07-04T19:26:18Z | 9    | PASS   | 6555ms   | Poison → nc-triage-dlq, PoisonReason="JSON parse failure" (D-2) |
+| 2026-07-04T19:26:24Z | 10   | PASS   | 499ms    | FIFO-router cold start 498ms |
+| 2026-07-04T19:26:25Z | 11   | PASS   | 469ms    | Demo consumer cold start 468ms |
+| 2026-07-04T19:26:25Z | 12   | PASS   | 521ms    | 8 DLQ alarms, all treatMissingData=notBreaching |
+
+Exit code: 0
+cdk-outputs.json blob SHA: de4a8bf0d6e7d0fca73075c6930102f75d63e902
+ACC-1 PROVEN: bus → rule → FIFO-router → FIFO queue (tests 6,7) and
+bus → rule → queue → ESM → consumer (test 8). ACC-2 PROVEN: test 9.
+
+## Run history (witness record)
+- Run 1 (19:18Z): 2/12 — FAILED on fabricated cdk-outputs.json identifiers
+  (see task-6.log incident). The readback did its job.
+- Run 2 (19:20Z): 7/12 after re-capture — remaining failures were HARNESS
+  defects, fixed by architect: (a) profile pinned to readonly → env-overridable
+  READBACK_PROFILE (writes require dev-admin); (b) alarm prefix used construct
+  path, deployed prefix is Dev-EventingStack; (c) aws() helper crashed on
+  empty CLI output (sqs delete-message / empty receive); (d) rule Ref on a
+  custom bus is "busName|ruleName" — split required. Infra itself needed NO
+  changes after run 1's data fix.
+- Queues purged of test residue between run 2 and 3 (purge-queue ×4) and the
+  nc-triage DLQ purged post-run (alarm reset). No production data existed.

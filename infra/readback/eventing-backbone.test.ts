@@ -24,7 +24,11 @@ import { loadCdkOutputs, type StackOutputs } from './helpers.js';
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const STACK = 'Dev-EventingStack';
-const PROFILE = 'cumplify-dev-readonly';
+// Behavioral tests (4-11) require WRITE access (PutEvents/SendMessage/Invoke) —
+// the readonly profile cannot execute them. Architect pre-flight fix: profile
+// is env-overridable; witnessed runs use cumplify-dev-admin (role chain via
+// OrganizationAccountAccessRole, no static credentials).
+const PROFILE = process.env.READBACK_PROFILE ?? 'cumplify-dev-readonly';
 const REGION = 'us-east-1';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -46,7 +50,8 @@ function aws<T>(command: string, timeout = 30_000): T {
     timeout,
     stdio: ['pipe', 'pipe', 'pipe'],
   });
-  return JSON.parse(output) as T;
+  // Some SQS operations (delete-message, empty receive-message) return no body.
+  return (output.trim() ? JSON.parse(output) : {}) as T;
 }
 
 function awsNoJson(command: string, timeout = 30_000): string {
@@ -149,7 +154,8 @@ describe('eventing-backbone readback (12-test matrix)', () => {
       'HazardRuleName', 'AspectRuleName', 'ReviewFanoutRuleName', 'RecordsRuleName',
     ];
     for (const key of ruleKeys) {
-      const ruleName = requireOutput(outputs, key);
+      // A rule's CFN Ref on a CUSTOM bus is "busName|ruleName" — strip the prefix.
+      const ruleName = requireOutput(outputs, key).split('|').pop()!;
       const result = aws<{ State: string; EventPattern: string }>(
         `events describe-rule --name "${ruleName}" --event-bus-name "${busName}"`,
       );
@@ -435,7 +441,9 @@ describe('eventing-backbone readback (12-test matrix)', () => {
 
   it('test 12: all 8 DLQ alarms exist with treatMissingData=notBreaching', () => {
     const result = aws<{ MetricAlarms: Array<{ AlarmName: string; TreatMissingData: string; Namespace: string }> }>(
-      `cloudwatch describe-alarms --alarm-name-prefix "CumplifyPipelineDevEven"`,
+      // Deployed stack name is Dev-EventingStack — CloudFormation prefixes
+      // physical alarm names with it (construct-path prefix was wrong here).
+      `cloudwatch describe-alarms --alarm-name-prefix "Dev-EventingStack"`,
     );
 
     const eventingAlarms = result.MetricAlarms.filter(
