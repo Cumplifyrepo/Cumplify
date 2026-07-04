@@ -5,6 +5,21 @@ fileMatchPattern: "infra/**"
 # CDK Conventions (cdk-guidance §1 + §4)
 One app, one pipeline, N environment accounts. No exceptions.
 
+## Account boundary — mgmt hosts ONLY the pipeline (ENFORCED)
+The management account (157082218687) hosts ONLY the CDK PipelineStack. Every
+application/workload stack (Network/Security/Data/Identity/Ai/…) deploys to a
+dedicated env account — dev/staging/prod — and NEVER to mgmt. The prior (May)
+project violated this and deployed the whole app into mgmt; that debris cost
+real money and widened blast radius. This is not advisory:
+- `assertWorkloadAccountBoundary()` in `env-config.ts` runs at module load and
+  fails synth if any `ENV_CONFIGS` entry targets mgmt or collides.
+- `CumplifyStage` throws at construction if its env resolves to mgmt.
+- Covered by `infra/lib/env-config.unit.test.ts` (runs in `npm run test`).
+Note: AWS SCPs cannot restrict the management account, so these synth-time
+checks — not an Org policy — are the enforced control. Do not add a workload
+stack to PipelineStack's own scope, and never set a workload env `account` to
+157082218687.
+
 ## Stack boundaries (§1.2)
 | Stack | Contents |
 |---|---|

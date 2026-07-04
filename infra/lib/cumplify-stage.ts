@@ -8,7 +8,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Aspects } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { type EnvConfig, DR_REGION } from './env-config.js';
+import { type EnvConfig, DR_REGION, MGMT_ACCOUNT } from './env-config.js';
 import { NetworkStack } from './network-stack.js';
 import { SecurityStack } from './security-stack.js';
 import { DataStack } from './data-stack.js';
@@ -24,6 +24,17 @@ export class CumplifyStage extends cdk.Stage {
     super(scope, id, props);
 
     const { envConfig } = props;
+
+    // GUARDRAIL: a workload stage must never target the management account.
+    // mgmt hosts ONLY the pipeline; SCPs can't restrict mgmt, so this synth-time
+    // check is the enforced control. Owner policy 2026-07-04. See env-config.ts
+    // assertWorkloadAccountBoundary() + 06-cdk-conventions.md.
+    if (envConfig.account === MGMT_ACCOUNT) {
+      throw new Error(
+        `CumplifyStage '${id}' resolves to the management account ${MGMT_ACCOUNT}. ` +
+          `Application stacks must never deploy to mgmt — use dev/staging/prod.`,
+      );
+    }
 
     const networkStack = new NetworkStack(this, 'NetworkStack', { envConfig });
 

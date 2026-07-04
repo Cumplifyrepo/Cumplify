@@ -99,3 +99,39 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
 export const MGMT_ACCOUNT = '157082218687';
 export const PRIMARY_REGION = 'us-east-1';
 export const DR_REGION = 'us-west-2';
+
+// -----------------------------------------------------------------------------
+// GUARDRAIL — workload/management account boundary (owner policy 2026-07-04)
+// The management account (157082218687) hosts ONLY the CDK Pipeline. Every
+// application/workload stack MUST deploy to a dedicated env account
+// (dev/staging/prod) — NEVER mgmt. The prior (May) project violated this and
+// dumped the whole app into mgmt, causing recurring cost + blast-radius pain.
+// AWS SCPs cannot restrict the management account (Organizations exempts it),
+// so this synth-time assertion is the PRIMARY preventive control: any workload
+// env pointed at mgmt (or an account collision) fails synth before deploy.
+// -----------------------------------------------------------------------------
+export function assertWorkloadAccountBoundary(
+  configs: Record<string, EnvConfig> = ENV_CONFIGS,
+): void {
+  const seen = new Map<string, string>();
+  for (const [name, cfg] of Object.entries(configs)) {
+    if (cfg.account === MGMT_ACCOUNT) {
+      throw new Error(
+        `Account boundary violation: env '${name}' targets the management account ` +
+          `${MGMT_ACCOUNT}. Workload stacks must deploy to a dedicated account, never ` +
+          `mgmt (mgmt hosts only the CDK Pipeline).`,
+      );
+    }
+    const prior = seen.get(cfg.account);
+    if (prior) {
+      throw new Error(
+        `Account collision: '${name}' and '${prior}' both target ${cfg.account}. ` +
+          `Each workload env needs its own account.`,
+      );
+    }
+    seen.set(cfg.account, name);
+  }
+}
+
+// Enforced at module load — importing env-config validates the boundary.
+assertWorkloadAccountBoundary();
