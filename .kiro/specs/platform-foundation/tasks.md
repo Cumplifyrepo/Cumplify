@@ -252,13 +252,16 @@ all 20 dev readback assertions PASS.
   (Re-homed 2026-07-03 by owner order: prior account unwired from all functional
   references; historical evidence logs retain old slug as immutable record.), push develop branch.
 - [x] Create CodeStar Connection in mgmt account. Authorize (PENDING→AVAILABLE).
-- [ ] **Populate staging/prod availabilityZones** in `infra/lib/env-config.ts`:
+- [x] **Populate staging/prod availabilityZones** in `infra/lib/env-config.ts`:
   Run `aws ec2 describe-vpc-endpoint-services --service-names
   com.amazonaws.us-east-1.aoss com.amazonaws.us-east-1.secretsmanager
   com.amazonaws.us-east-1.kms com.amazonaws.us-east-1.bedrock-runtime
   com.amazonaws.us-east-1.execute-api --query 'ServiceDetails[].AvailabilityZones'`
   in each target account. Intersect the results → pick 2 AZs common to all
   five services. Commit the populated arrays before pipeline first run.
+  (Resolved 2026-07-04 post-closure by architect: both accounts intersect to
+  b/c/d with AOSS constraining; picked us-east-1b/c. Evidence:
+  3.1-az-intersection.log. Gate approval now blocks only on owner cost sign-off.)
 - [x] Deploy PipelineStack to mgmt account.
 - [x] Pipeline self-mutates successfully.
 - [x] **Pipeline first run completes as a no-op** against the already-deployed

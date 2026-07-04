@@ -1,0 +1,34 @@
+ARCHITECT WITNESS — Task 3.1 carried condition: staging/prod AZ intersection query
+================================================================================
+Executed:   2026-07-04 (post-3.1-closure; resolves the one unchecked sub-item)
+Method:     aws sts assume-role (OrganizationAccountAccessRole) per account, then
+            aws ec2 describe-vpc-endpoint-services --service-names
+            com.amazonaws.us-east-1.{aoss,secretsmanager,kms,bedrock-runtime,execute-api}
+            --region us-east-1, per task 3.1 runbook.
+Note:       AZ names are per-account mappings; each query ran INSIDE its target
+            account, so results are valid for that account's envConfig verbatim.
+
+staging (889007427685):
+  aoss             [us-east-1b, us-east-1c, us-east-1d]
+  bedrock-runtime  [us-east-1a..us-east-1f]
+  execute-api      [us-east-1a..us-east-1f]
+  kms              [us-east-1a..us-east-1f]
+  secretsmanager   [us-east-1a..us-east-1f]
+  INTERSECTION: [us-east-1b, us-east-1c, us-east-1d]  ->  PICKED: [us-east-1b, us-east-1c]
+
+prod (077405654066):
+  aoss             [us-east-1b, us-east-1c, us-east-1d]
+  bedrock-runtime  [us-east-1a..us-east-1f]
+  execute-api      [us-east-1a..us-east-1f]
+  kms              [us-east-1a..us-east-1f]
+  secretsmanager   [us-east-1a..us-east-1f]
+  INTERSECTION: [us-east-1b, us-east-1c, us-east-1d]  ->  PICKED: [us-east-1b, us-east-1c]
+
+AOSS is the constraining service in both accounts (b/c/d only), matching dev.
+env-config.ts staging/prod availabilityZones set to ['us-east-1b','us-east-1c'].
+Synth verification: Staging + Prod NetworkStack templates now pin b/c explicitly;
+Fn::GetAZs fallback ABSENT from all three stage templates; Dev template unchanged.
+
+Gate approval remains blocked ONLY on owner cost approval now
+(~$96/mo staging, ~$250/mo prod) — the technical carried condition is resolved.
+Executor: Architect (Claude), local machine, profile cumplify + assume-role.

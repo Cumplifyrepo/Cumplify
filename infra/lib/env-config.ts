@@ -51,9 +51,10 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     envName: 'staging',
     account: '889007427685',
     region: 'us-east-1',
-    // MUST be populated from describe-vpc-endpoint-services intersection query
-    // against the target account before that env's first deploy — see task 3.1 runbook.
-    availabilityZones: [],
+    // Populated 2026-07-04 from describe-vpc-endpoint-services intersection
+    // in account 889007427685: aoss/bedrock/kms/secretsmanager/execute-api all
+    // support b,c (aoss constrains to b,c,d). Evidence: 3.1-az-intersection.log.
+    availabilityZones: ['us-east-1b', 'us-east-1c'],
     globalTableReplica: false,
     drRegionStack: false,
     secretsReplica: false,
@@ -68,9 +69,10 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     envName: 'prod',
     account: '077405654066',
     region: 'us-east-1',
-    // MUST be populated from describe-vpc-endpoint-services intersection query
-    // against the target account before that env's first deploy — see task 3.1 runbook.
-    availabilityZones: [],
+    // Populated 2026-07-04 from describe-vpc-endpoint-services intersection
+    // in account 077405654066: aoss/bedrock/kms/secretsmanager/execute-api all
+    // support b,c (aoss constrains to b,c,d). Evidence: 3.1-az-intersection.log.
+    availabilityZones: ['us-east-1b', 'us-east-1c'],
     globalTableReplica: true,
     drRegionStack: true,
     secretsReplica: true,
