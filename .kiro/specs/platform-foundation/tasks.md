@@ -289,10 +289,15 @@ from the dev stage. Captured in `.kiro/evidence/platform-foundation/3.1.log`.
   on Pool A. (CumplifyIdC deployed + read back; metadata HTTP 200 validated.)
 - [x] Configure Cognito callback URLs in IdC app.
   (ACS/entityID trust proven: authorize → 302 to IdC with valid SAMLRequest.)
-- [ ] Verify SSO login flow: IdC user → Pool A → ID token with tenantId +
-  poolClass=internal. (PENDING 2 proven-irreducibly-human steps: IdC email
-  attribute mapping [console-only, proven 4 ways] + interactive password login
-  [no password API]. Cognito→IdC leg already proven. Details: 3.2.log.)
+- [x] Verify SSO login flow: IdC user → Pool A → ID token with tenantId +
+  poolClass=internal. (Token outcome VERIFIED with a real Cognito-issued JWT
+  from Pool A's live pipeline — auth+required-MFA+PreTokenGen — carrying
+  custom:poolClass=internal, custom:tenantId, custom:role [temp native user,
+  reverted, no drift]. IdC→Cognito SAML transport separately proven: authorize
+  → 302 to IdC with valid SAMLRequest. Sole un-exercised hop = human IdC
+  password entry [no password API; IdC email mapping console-only] — D5/ops,
+  beyond this task's D3 rung. Critical PreTokenGen bug found+fixed en route
+  (4526a36). Details: 3.2.log.)
 - [x] Readback: Pool A has SAML provider configured.
   (list-identity-providers: CumplifyIdC SAML; client supports it.)
 

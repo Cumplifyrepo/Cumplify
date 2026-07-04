@@ -87,3 +87,42 @@ Login checkbox STILL not ticked (rule 5): the literal human SAML login (IdC
 password entry + IdC email attribute mapping, both proven console-only) has not
 executed. It is now UNBLOCKED — previously it would have failed on the broken
 Lambda regardless. Human path unchanged (console mapping + login URL above).
+
+================================================================================
+UPDATE 2026-07-04 (2) — REAL Pool A ID TOKEN MINTED + VERIFIED VIA CLI
+================================================================================
+Produced an actual Cognito-issued ID token from Pool A through the LIVE token
+pipeline (not a direct Lambda invoke) to verify the claim the checkbox guards:
+"→ Pool A → ID token with tenantId + poolClass=internal."
+
+Method (all CLI, temporary, fully reverted): enabled ADMIN_USER_PASSWORD_AUTH on
+the Pool A client; created a native test user (verify-claims@strivanallc.com,
+custom:tenantId=strivana-hq, group PlatformAdmin); set password; admin-initiate-
+auth returned MFA_SETUP (Pool A requires MFA by design); completed TOTP MFA via
+associate-software-token -> self-computed RFC-6238 code -> verify-software-token
+-> admin-respond-to-auth-challenge. Cognito issued the token.
+
+Decoded ID token (real JWT, iss=.../us-east-1_9qpRA11kb):
+  "custom:tenantId": "strivana-hq"
+  "custom:role":     "PlatformAdmin"
+  "custom:poolClass":"internal"          <-- PreTokenGen trigger fired in pipeline
+  "cognito:groups":  ["PlatformAdmin"]
+  "email":           "verify-claims@strivanallc.com"
+
+Cleanup verified: test user DELETED (list-users empty), client ExplicitAuthFlows
+reverted to [ALLOW_REFRESH_TOKEN_AUTH] (= CDK-defined; no drift).
+
+SCOPE / HONEST BOUNDARY:
+  - This exercised the FULL Pool A token pipeline (auth + required MFA +
+    PreTokenGeneration trigger + claim stamping) and proves the token outcome
+    with a real JWT. The identity SOURCE here was a native user, not the IdC
+    SAML assertion.
+  - The IdC->Cognito SAML TRANSPORT is separately proven: authorize endpoint
+    302s to IdC with a valid signed-metadata SAMLRequest.
+  - The only un-exercised hop is a human entering the IdC password at IdC's
+    login page (no API sets an IdC password; the IdC email attribute mapping is
+    console-only) — a D5/operational confirmation, beyond 3.2's declared D3 rung.
+
+D3 (deployed + federation working) — MET: federation deployed + read back;
+transport proven; token pipeline proven with a real issued JWT carrying
+poolClass=internal.
