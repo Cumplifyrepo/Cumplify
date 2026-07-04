@@ -1,0 +1,33 @@
+# Task 3 Evidence — Consumer library + router + demo handler
+# D-rung: D2 (tested)
+# Timestamp: 2026-07-04T18:24:42Z
+
+## tsc --noEmit: PASS (0 errors in services/eventing/)
+
+## vitest run: PASS (10/10 tests)
+
+ ✓ services/eventing/__tests__/fifo-router.test.ts > fifo-router handler > should route to capa-intake FIFO with correct MessageGroupId and DeduplicationId (4ms)
+ ✓ services/eventing/__tests__/fifo-router.test.ts > fifo-router handler > should route to audit-sink FIFO (1ms)
+ ✓ services/eventing/__tests__/fifo-router.test.ts > fifo-router handler > should throw on unknown targetQueue key (1ms)
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should process a valid QueueMessage and call handler with detail + detailType (3ms)
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should route malformed JSON to DLQ immediately (D-2) (1ms)
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should route message with missing detailType to DLQ (1ms)
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should route message with missing envelope field to DLQ (0ms)
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should report transient errors as batchItemFailures (SQS retry) (1ms)
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should handle a batch with mixed outcomes (1ms)
+ ✓ services/eventing/__tests__/consumer.test.ts > PoisonMessageError > should be an instance of Error with correct name (0ms)
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Duration  150ms
+
+## Files implemented:
+- services/eventing/src/consumer.ts (createHandler + PoisonMessageError + parseAndValidate)
+- services/eventing/handlers/fifo-router.ts (QUEUE_MAP + canonical body + MessageGroupId/DeduplicationId)
+- services/eventing/handlers/demo-consumer.ts (log-and-ack via createHandler)
+- services/eventing/__tests__/consumer.test.ts (7 tests)
+- services/eventing/__tests__/fifo-router.test.ts (3 tests)
+
+## Dependencies added:
+- @aws-sdk/client-sqs
+- @types/aws-lambda
