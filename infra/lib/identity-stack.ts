@@ -118,6 +118,7 @@ export class IdentityStack extends cdk.Stack {
     ];
 
     const createdPools: Record<string, cognito.UserPool> = {};
+    let poolAClient: cognito.UserPoolClient | undefined;
 
     for (const poolConfig of pools) {
       const pool = new cognito.UserPool(this, poolConfig.id, {
@@ -162,7 +163,7 @@ export class IdentityStack extends cdk.Stack {
           ? { userSrp: false, custom: false, userPassword: false }
           : { userSrp: true, custom: false, userPassword: false };
 
-      pool.addClient(`${poolConfig.id}Client`, {
+      const client = pool.addClient(`${poolConfig.id}Client`, {
         userPoolClientName: `${poolConfig.poolName}-client`,
         authFlows,
         oAuth: {
@@ -179,6 +180,10 @@ export class IdentityStack extends cdk.Stack {
           email: true,
         }),
       });
+
+      if (poolConfig.id === 'PoolA') {
+        poolAClient = client;
+      }
 
       createdPools[poolConfig.id] = pool;
 
@@ -202,6 +207,17 @@ export class IdentityStack extends cdk.Stack {
     }
 
     // -----------------------------------------------------------------------
+    // Cognito Domain for Pool A (required for SAML federation — task 3.2)
+    // Prefix must be globally unique, lowercase, no special chars except hyphens.
+    // Pattern: cumplify-<env>-internal-auth
+    // -----------------------------------------------------------------------
+    createdPools['PoolA'].addDomain('PoolADomain', {
+      cognitoDomain: {
+        domainPrefix: `cumplify-${envConfig.envName}-internal-auth`,
+      },
+    });
+
+    // -----------------------------------------------------------------------
     // SSM StringParameter — pool-class-map (depends on pools, nothing depends on it)
     // Stores JSON: { "<poolId>": "internal"|"tenant-admin"|"tenant-user", ... }
     // Lambda reads this on cold start via ssm:GetParameter.
@@ -223,6 +239,19 @@ export class IdentityStack extends cdk.Stack {
     this.poolAId = createdPools['PoolA'].userPoolId;
     this.poolBId = createdPools['PoolB'].userPoolId;
     this.poolCId = createdPools['PoolC'].userPoolId;
+
+    // -----------------------------------------------------------------------
+    // CfnOutputs — per design §2 / F-9 (consumed by readback via cdk-outputs.json)
+    // -----------------------------------------------------------------------
+    new cdk.CfnOutput(this, 'PoolAId', { value: this.poolAId });
+    new cdk.CfnOutput(this, 'PoolBId', { value: this.poolBId });
+    new cdk.CfnOutput(this, 'PoolCId', { value: this.poolCId });
+    new cdk.CfnOutput(this, 'PoolAClientId', {
+      value: poolAClient!.userPoolClientId,
+    });
+    new cdk.CfnOutput(this, 'PoolADomainPrefix', {
+      value: `cumplify-${envConfig.envName}-internal-auth`,
+    });
 
     // -----------------------------------------------------------------------
     // CDK Nag suppressions

@@ -398,3 +398,17 @@ names the worst rollback collision offender. After a failed stack create, the
 orphaned secret blocks the next attempt with "A resource with the ID
 already exists." Auto-naming eliminates this class of failure permanently.
 Secret ARN flows via stack outputs for consuming stacks.
+
+
+### AC-5.1: Pool names are env-prefixed
+
+**Original:** Part 32 specifies pool names as `cumplify-internal`,
+`cumplify-tenant-admin`, `cumplify-tenant-user`.
+**Actual:** Pool names are env-prefixed: `cumplify-dev-internal`,
+`cumplify-dev-tenant-admin`, `cumplify-dev-tenant-user`.
+**Rationale:** Multi-environment deployment into the same region requires
+unique pool names. Without env-prefix, deploying staging alongside dev would
+fail with "A user pool with the specified name already exists." The env-prefix
+is consistent with all other named resources (KMS aliases, SSM params, etc.).
+**Forward fix:** None needed. Pool name is an internal label; the pool ID
+(auto-generated, unique) is the external contract.
