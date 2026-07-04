@@ -41,7 +41,12 @@ export class PipelineStack extends cdk.Stack {
 
       codeBuildDefaults: {
         buildEnvironment: {
-          buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
+          // standard:8.0 (Ubuntu 24.04, Node 22 default) — required: toolchain
+          // needs Node >= 20 (aws-cdk-lib 2.261, vitest 4); standard:7.0 ships
+          // Node 18 and failed `npm run test` (build cfd8a62d, 2026-07-04).
+          // No STANDARD_8_0 constant in installed aws-cdk-lib; image existence
+          // verified via codebuild list-curated-environment-images (us-east-1).
+          buildImage: codebuild.LinuxBuildImage.fromCodeBuildImageId('aws/codebuild/standard:8.0'),
           computeType: codebuild.ComputeType.SMALL,
         },
       },
