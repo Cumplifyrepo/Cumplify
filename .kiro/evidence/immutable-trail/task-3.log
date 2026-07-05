@@ -1,0 +1,13 @@
+# Task 3 — services/eventing createFifoHandler extension (D1)
+Commit: 84baf50 | Architect verification: 2026-07-05
+
+src/consumer.ts: createFifoHandler — FIFO fail-forward-all on first transient
+failure, idempotentErrors set, FIX-3 FIFO DLQ poison send with MessageGroupId
+(tenantId or messageId) + MessageDeduplicationId (messageId). Exported from index.
+
+Verified via `npm run test` (consumer.test.ts, 12/12 incl. 5 new FIFO):
+- 5-msg batch, #2 transient fail → batchItemFailures = [#2,#3,#4,#5]
+- poison → FIFO DLQ SendMessage carries MessageGroupId + MessageDeduplicationId
+- idempotent error (ReplayDetectedError) → success, batch continues
+- existing standard-mode consumer tests still pass (non-breaking extension)
+D-rung D1 met. (rule-7 remediation — see task-1.log note.)

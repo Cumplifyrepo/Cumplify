@@ -1,0 +1,17 @@
+# Task 2 — appendAuditEvent library (D1)
+Commit: 64bc88e | Architect verification: 2026-07-05
+
+src/appender.ts: TransactWriteItems (chain item + AUDITDEDUP marker, FIX-1),
+monotonic SK (REV-1), itemType=AUDITLOG (FIX-4), 400KB guard (REV-2),
+AUDITMETA on genesis only (REV-7), ReplayDetectedError + ItemSizeExceededError.
+
+Verified via `npm run test` (appender.test.ts, all green):
+- GENESIS prevHash on empty partition; prevHash from predecessor PK+SK+payloadHash
+- monotonicity: SK derived from latest +1ms when append time <= latest
+- 400KB guard throws ItemSizeExceededError; under-limit passes
+- replay: ReplayDetectedError on dedup-marker AND chain-item conditional failure;
+  non-conditional transaction failures rethrown
+- AUDITMETA written only when prevHash===GENESIS
+- item schema: itemType=AUDITLOG, eventTimestamp, full payload, docVersionHash,
+  dedup marker itemType=AUDITDEDUP
+D-rung D1 met. (rule-7 remediation — see task-1.log note.)

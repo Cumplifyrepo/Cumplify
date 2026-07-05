@@ -1,0 +1,69 @@
+ ✓ services/audit-trail/__tests__/hash-chain.test.ts > hash-chain > computePrevHash > produces a deterministic SHA-256 hex digest 2ms
+ ✓ services/audit-trail/__tests__/hash-chain.test.ts > hash-chain > computePrevHash > produces different output for different inputs 0ms
+ ✓ services/audit-trail/__tests__/hash-chain.test.ts > hash-chain > computePrevHash > is consistent across multiple calls with same input 0ms
+ ✓ services/audit-trail/__tests__/hash-chain.test.ts > hash-chain > computePayloadHash > hashes canonical {before, after} JSON 0ms
+ ✓ services/audit-trail/__tests__/hash-chain.test.ts > hash-chain > computePayloadHash > defaults missing before/after to null 0ms
+ ✓ services/audit-trail/__tests__/hash-chain.test.ts > hash-chain > computePayloadHash > uses only before and after, ignoring other fields 0ms
+ ✓ services/audit-trail/__tests__/hash-chain.test.ts > hash-chain > GENESIS_HASH > is the string "GENESIS" 0ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should process a valid QueueMessage and call handler with detail + detailType 5ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should route malformed JSON to DLQ immediately (D-2) 2ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should route message with missing detailType to DLQ 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should route message with missing envelope field to DLQ 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should report transient errors as batchItemFailures (SQS retry) 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createHandler > should handle a batch with mixed outcomes 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > PoisonMessageError > should be an instance of Error with correct name 0ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createFifoHandler > CON-7a: on transient failure at message #2, reports #2..#5 as batchItemFailures 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createFifoHandler > CON-7b: poison send to FIFO DLQ includes MessageGroupId and MessageDeduplicationId 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createFifoHandler > FIX-3: poison send uses messageId as MessageGroupId when body is unparseable 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createFifoHandler > idempotentErrors: ReplayDetectedError is treated as success, batch continues 1ms
+ ✓ services/eventing/__tests__/consumer.test.ts > createFifoHandler > poison after transient: transient stops the batch before reaching poison 0ms
+ ✓ services/audit-trail/__tests__/tripwire.test.ts > tripwire handler > emits AuditTamperAttempt metric on MODIFY of AUDITLOG item 6ms
+ ✓ services/audit-trail/__tests__/tripwire.test.ts > tripwire handler > emits AuditTamperAttempt metric on REMOVE of AUDITLOG item 1ms
+ ✓ services/audit-trail/__tests__/tripwire.test.ts > tripwire handler > skips non-AUDITLOG items (FIX-4 defense-in-depth) 1ms
+ ✓ services/audit-trail/__tests__/tripwire.test.ts > tripwire handler > skips records without Keys 0ms
+ ✓ services/eventing/__tests__/fifo-router.test.ts > fifo-router handler > should route to capa-intake FIFO with correct MessageGroupId and DeduplicationId 4ms
+ ✓ services/eventing/__tests__/fifo-router.test.ts > fifo-router handler > should route to audit-sink FIFO 1ms
+ ✓ services/eventing/__tests__/fifo-router.test.ts > fifo-router handler > should throw on unknown targetQueue key 1ms
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should publish an event and return the eventId 4ms
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should auto-generate a ULID eventId when not provided 1ms
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should throw on FailedEntryCount > 0 1ms
+ ✓ services/eventing/__tests__/publisher.test.ts > publish > should include all ET-4 envelope fields in the Detail payload 1ms
+ ✓ services/audit-trail/__tests__/sealer.test.ts > sealer handler > writes sealed object to S3 with correct key format 5ms
+ ✓ services/audit-trail/__tests__/sealer.test.ts > sealer handler > sets Object Lock COMPLIANCE mode and retention 1ms
+ ✓ services/audit-trail/__tests__/sealer.test.ts > sealer handler > sets ChecksumAlgorithm to SHA256 (FIX-6) 1ms
+ ✓ services/audit-trail/__tests__/sealer.test.ts > sealer handler > skips non-AUDITLOG items (FIX-4 defense-in-depth) 1ms
+ ✓ services/audit-trail/__tests__/sealer.test.ts > sealer handler > skips non-INSERT events 1ms
+ ✓ services/audit-trail/__tests__/sealer.test.ts > sealer handler > computes retention from RETENTION_DAYS env var 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > hash chain computation > uses GENESIS prevHash when partition is empty (first event) 6ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > hash chain computation > computes prevHash from predecessor PK+SK+payloadHash 3ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > hash chain computation > computes payloadHash from {before, after} 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > monotonicity enforcement (REV-1) > derives SK from latest +1ms when append time <= latest SK timestamp 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > monotonicity enforcement (REV-1) > uses current time when append time > latest SK timestamp 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > 400KB item size guard (REV-2) > throws ItemSizeExceededError for oversized payload 3ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > 400KB item size guard (REV-2) > does NOT throw for payloads under 400KB 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > replay detection (FIX-1) > throws ReplayDetectedError when dedup marker already exists 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > replay detection (FIX-1) > throws ReplayDetectedError when chain item already exists 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > replay detection (FIX-1) > rethrows non-conditional transaction failures 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > AUDITMETA registration (REV-7) > writes AUDITMETA entry on first event (prevHash === GENESIS) 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > AUDITMETA registration (REV-7) > does NOT write AUDITMETA when partition already has items 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > item schema > includes itemType=AUDITLOG in the written item (FIX-4) 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > item schema > stores eventTimestamp from envelope (REV-1) 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > item schema > stores full payload in the item (REV-2) 1ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > item schema > includes docVersionHash when present in payload 2ms
+ ✓ services/audit-trail/__tests__/appender.test.ts > appendAuditEvent > item schema > writes dedup marker with itemType=AUDITDEDUP (FIX-1) 1ms
+ ✓ services/audit-trail/__tests__/verifier.test.ts > verifier handler > validates an untampered chain and returns chainValid=true 5ms
+ ✓ services/audit-trail/__tests__/verifier.test.ts > verifier handler > detects prevHash tampering and emits AuditChainBroken metric 2ms
+ ✓ services/audit-trail/__tests__/verifier.test.ts > verifier handler > detects payloadHash tampering (REV-2: recompute from stored payload) 1ms
+ ✓ services/audit-trail/__tests__/verifier.test.ts > verifier handler > checks S3 objects and counts mismatches 1ms
+ ✓ services/audit-trail/__tests__/verifier.test.ts > verifier handler > updates watermark after successful verification 1ms
+ ✓ infra/lib/eventing-stack.unit.test.ts > EventingStack — InputTransformer assertions > every AWS::Events::Rule target has an InputTransformer 2ms
+ ✓ infra/lib/eventing-stack.unit.test.ts > EventingStack — InputTransformer assertions > direct SQS rule (NcTriageRule) has canonical InputTemplate 2ms
+ ✓ infra/lib/eventing-stack.unit.test.ts > EventingStack — InputTransformer assertions > router rule (CapaIntakeRule) has extended InputTemplate with targetQueue 1ms
+ ✓ infra/lib/eventing-stack.unit.test.ts > EventingStack — InputTransformer assertions > audit-sink router rule has extended InputTemplate with audit targetQueue 1ms
+ ✓ infra/lib/eventing-stack.unit.test.ts > EventingStack — InputTransformer assertions > all 15 queues have enforceSSL (SQS policy with aws:SecureTransport) 0ms
+ ✓ infra/lib/audit-trail-stack.unit.test.ts > AuditTrailStack template assertions > Sealer ESM FilterCriteria (FIX-4) > contains INSERT + itemType=AUDITLOG filter on NewImage 2ms
+ ✓ infra/lib/audit-trail-stack.unit.test.ts > AuditTrailStack template assertions > Tripwire ESM FilterCriteria (FIX-4) > contains MODIFY/REMOVE + itemType=AUDITLOG filter on OldImage 0ms
+ ✓ infra/lib/audit-trail-stack.unit.test.ts > AuditTrailStack template assertions > IAM Deny Policy (FIX-2) > contains DenyAuditLogMutation with 5 actions and ForAnyValue:StringLike condition 1ms
+ ✓ infra/lib/audit-trail-stack.unit.test.ts > AuditTrailStack template assertions > Loop Prevention (LOOP-3) > no events:PutEvents grant exists anywhere in the template 0ms
+ Test Files  13 passed (13)
+      Tests  80 passed (80)

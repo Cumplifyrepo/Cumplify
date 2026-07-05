@@ -1,0 +1,21 @@
+# Task 5 — AuditTrailStack CDK + template assertions + stage wiring (D2)
+Commit: 421f2fe | Architect verification: 2026-07-05
+
+infra/lib/audit-trail-stack.ts + audit-trail-stack.unit.test.ts; env-config.ts
+(auditArchiveRetentionDays dev1/staging1/prod2555); data-stack.ts (tableStreamArn
+export); eventing-stack.ts (auditSinkQueueArn/DlqUrl/DlqArn exports); cumplify-stage.ts.
+
+Verified by architect DIRECT TEMPLATE AUDIT of synthesized Dev-AuditTrailStack:
+- Sealer ESM FilterCriteria: {"eventName":["INSERT"],"dynamodb":{"NewImage":{"itemType":{"S":["AUDITLOG"]}}}}
+- Tripwire ESM FilterCriteria: {"eventName":["MODIFY","REMOVE"],"dynamodb":{"OldImage":{"itemType":{"S":["AUDITLOG"]}}}}
+- IAM Deny: 5 actions (UpdateItem,DeleteItem,BatchWriteItem,PartiQLUpdate,PartiQLDelete)
+  + ForAnyValue:StringLike LeadingKeys TENANT#*#AUDITLOG, attached to 4/4 roles
+- events:PutEvents absent from template (LOOP-3)
+- audit-archive bucket: ObjectLock COMPLIANCE, 1-day retention (dev)
+- 3 alarms all treatMissingData=notBreaching; schedule cron(0 2 * * ? *)
+- Lambdas: consumer/sealer nodejs22 512MB, tripwire 512MB/30s, verifier 1024MB/900s
+- 15 CfnOutputs
+
+`cdk synth --all` clean; CDK Nag 0 Non-Compliant (Dev/Staging/Prod NagReport.csv).
+4 template-assertion tests pass. Full suite 80/80 across 13 files.
+D-rung D2 met (synth + Nag clean + assertions pass). (rule-7 remediation — see task-1.log note.)

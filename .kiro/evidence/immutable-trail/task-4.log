@@ -1,0 +1,17 @@
+# Task 4 — Lambda handlers: consumer, sealer, tripwire, verifier (D1)
+Commit: 519cb58 | Architect verification: 2026-07-05
+
+handlers/consumer.ts (createFifoHandler → appendAuditEvent,
+idempotentErrors:['ReplayDetectedError'], ItemSizeExceeded→PoisonMessageError),
+sealer.ts [REQUIRES-HUMAN] (S3 Object Lock COMPLIANCE + SHA256 checksum + itemType
+guard), tripwire.ts (MODIFY/REMOVE → AuditTamperAttempt metric, OldImage guard,
+image digests; AMEND-1 note re userIdentity), verifier.ts (AUDITMETA discovery,
+chain walk recomputing prevHash + payloadHash, incremental S3 watermark).
+
+Verified via `npm run test` (all green):
+- sealer: S3 key format, COMPLIANCE+retention, ChecksumAlgorithm SHA256 (FIX-6),
+  non-AUDITLOG skip, non-INSERT skip, retention-from-env
+- verifier: untampered chain valid; prevHash tamper → AuditChainBroken;
+  payloadHash tamper detected (REV-2 recompute); S3 mismatch count; watermark update
+- tripwire: metric emission, MODIFY/REMOVE handling, non-AUDITLOG skip
+D-rung D1 met. (rule-7 remediation — see task-1.log note.)

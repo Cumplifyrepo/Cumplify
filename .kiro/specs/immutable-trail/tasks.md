@@ -12,12 +12,12 @@
 **D-Rung:** D1 (code compiles, unit tests pass)
 
 ### Deliverables
-- [ ] `services/audit-trail/package.json` — `@cumplify/audit-trail` workspace package
-- [ ] `services/audit-trail/tsconfig.json`
-- [ ] `services/audit-trail/src/index.ts` — barrel export
-- [ ] `services/audit-trail/src/types.ts` — `AuditItem`, `AppendResult`, `VerifierResult`
-- [ ] `services/audit-trail/src/hash-chain.ts` — `computePrevHash`, `computePayloadHash`, `GENESIS_HASH` (REV-10: single source of truth)
-- [ ] `services/audit-trail/__tests__/hash-chain.test.ts` — deterministic output, GENESIS case, round-trip verification
+- [x] `services/audit-trail/package.json` — `@cumplify/audit-trail` workspace package
+- [x] `services/audit-trail/tsconfig.json`
+- [x] `services/audit-trail/src/index.ts` — barrel export
+- [x] `services/audit-trail/src/types.ts` — `AuditItem`, `AppendResult`, `VerifierResult`
+- [x] `services/audit-trail/src/hash-chain.ts` — `computePrevHash`, `computePayloadHash`, `GENESIS_HASH` (REV-10: single source of truth)
+- [x] `services/audit-trail/__tests__/hash-chain.test.ts` — deterministic output, GENESIS case, round-trip verification
 
 ### Acceptance
 - `npm run build` passes for the package
@@ -30,8 +30,8 @@
 **D-Rung:** D1 (code compiles, unit tests pass)
 
 ### Deliverables
-- [ ] `services/audit-trail/src/appender.ts` — per design §7.2: TransactWriteItems (chain item + dedup marker), monotonic SK, itemType='AUDITLOG', 400KB guard, AUDITMETA on first event, ReplayDetectedError
-- [ ] `services/audit-trail/__tests__/appender.test.ts` — unit tests:
+- [x] `services/audit-trail/src/appender.ts` — per design §7.2: TransactWriteItems (chain item + dedup marker), monotonic SK, itemType='AUDITLOG', 400KB guard, AUDITMETA on first event, ReplayDetectedError
+- [x] `services/audit-trail/__tests__/appender.test.ts` — unit tests:
   - Hash chain computation (prevHash from predecessor)
   - Monotonicity enforcement (newSK > latestSK)
   - 400KB item size guard → ItemSizeExceededError
@@ -49,9 +49,9 @@
 **D-Rung:** D1 (code compiles, unit tests pass)
 
 ### Deliverables
-- [ ] `services/eventing/src/consumer.ts` — add `createFifoHandler` (design §7.3): FIFO batch ordering (fail-forward-all on first transient error), idempotentErrors set, FIX-3 FIFO DLQ poison send with MessageGroupId + MessageDeduplicationId
-- [ ] `services/eventing/src/index.ts` — export `createFifoHandler`
-- [ ] `services/eventing/__tests__/consumer.test.ts` — extended with:
+- [x] `services/eventing/src/consumer.ts` — add `createFifoHandler` (design §7.3): FIFO batch ordering (fail-forward-all on first transient error), idempotentErrors set, FIX-3 FIFO DLQ poison send with MessageGroupId + MessageDeduplicationId
+- [x] `services/eventing/src/index.ts` — export `createFifoHandler`
+- [x] `services/eventing/__tests__/consumer.test.ts` — extended with:
   - (CON-7a) 5-message batch, #2 transient fail → batchItemFailures = [#2, #3, #4, #5]
   - (CON-7b) Poison to FIFO DLQ → SendMessage has MessageGroupId + MessageDeduplicationId
   - IdempotentError (ReplayDetectedError) → treated as success, batch continues
@@ -67,13 +67,13 @@
 **D-Rung:** D1 (code compiles, unit tests pass)
 
 ### Deliverables
-- [ ] `services/audit-trail/handlers/consumer.ts` — per design §7.4: createFifoHandler wrapping appendAuditEvent, idempotentErrors: ['ReplayDetectedError'], ItemSizeExceeded → PoisonMessageError
-- [ ] `services/audit-trail/handlers/sealer.ts` — per design §6.1 **[REQUIRES-HUMAN]**: DynamoDB Stream → S3 PutObject with Object Lock COMPLIANCE, ChecksumAlgorithm:'SHA256' (FIX-6), itemType guard
-- [ ] `services/audit-trail/handlers/tripwire.ts` — per design §7.5: MODIFY/REMOVE → AuditTamperAttempt metric, OldImage itemType guard, image digests in log
-- [ ] `services/audit-trail/handlers/verifier.ts` — per design §7.6: tenant discovery via AUDITMETA, chain walk (recompute prevHash + payloadHash), incremental S3 comparison with watermark, AuditChainBroken metric on break
-- [ ] `services/audit-trail/__tests__/sealer.test.ts` — S3 key format, retention calc, itemType guard, ChecksumAlgorithm present
-- [ ] `services/audit-trail/__tests__/tripwire.test.ts` — metric emission, MODIFY/REMOVE handling, non-AUDITLOG skip
-- [ ] `services/audit-trail/__tests__/verifier.test.ts` — chain walk correctness, watermark logic, payloadHash recomputation
+- [x] `services/audit-trail/handlers/consumer.ts` — per design §7.4: createFifoHandler wrapping appendAuditEvent, idempotentErrors: ['ReplayDetectedError'], ItemSizeExceeded → PoisonMessageError
+- [x] `services/audit-trail/handlers/sealer.ts` — per design §6.1 **[REQUIRES-HUMAN]**: DynamoDB Stream → S3 PutObject with Object Lock COMPLIANCE, ChecksumAlgorithm:'SHA256' (FIX-6), itemType guard
+- [x] `services/audit-trail/handlers/tripwire.ts` — per design §7.5: MODIFY/REMOVE → AuditTamperAttempt metric, OldImage itemType guard, image digests in log
+- [x] `services/audit-trail/handlers/verifier.ts` — per design §7.6: tenant discovery via AUDITMETA, chain walk (recompute prevHash + payloadHash), incremental S3 comparison with watermark, AuditChainBroken metric on break
+- [x] `services/audit-trail/__tests__/sealer.test.ts` — S3 key format, retention calc, itemType guard, ChecksumAlgorithm present
+- [x] `services/audit-trail/__tests__/tripwire.test.ts` — metric emission, MODIFY/REMOVE handling, non-AUDITLOG skip
+- [x] `services/audit-trail/__tests__/verifier.test.ts` — chain walk correctness, watermark logic, payloadHash recomputation
 
 ### Acceptance
 - All handler unit tests green with mocked AWS clients
@@ -86,16 +86,16 @@
 **D-Rung:** D2 (synth succeeds, CDK Nag zero warnings, template assertions pass)
 
 ### Deliverables
-- [ ] `infra/lib/audit-trail-stack.ts` — per design §9: audit-archive bucket, consumer Lambda + SQS ESM, sealer Lambda + DynamoDB ESM (native FilterCriteria, FIX-5), tripwire Lambda + DynamoDB ESM, verifier Lambda, EventBridge schedule, DLQs, alarms, IAM Deny policy **[REQUIRES-HUMAN]**, CfnOutputs
-- [ ] `infra/lib/audit-trail-stack.unit.test.ts` — template assertions (C-12):
+- [x] `infra/lib/audit-trail-stack.ts` — per design §9: audit-archive bucket, consumer Lambda + SQS ESM, sealer Lambda + DynamoDB ESM (native FilterCriteria, FIX-5), tripwire Lambda + DynamoDB ESM, verifier Lambda, EventBridge schedule, DLQs, alarms, IAM Deny policy **[REQUIRES-HUMAN]**, CfnOutputs
+- [x] `infra/lib/audit-trail-stack.unit.test.ts` — template assertions (C-12):
   - Sealer ESM FilterCriteria exact JSON (FIX-4: itemType='AUDITLOG' on NewImage)
   - Tripwire ESM FilterCriteria exact JSON (FIX-4: itemType='AUDITLOG' on OldImage)
   - IAM Deny policy: 5 actions (FIX-2), ForAnyValue:StringLike condition
   - Absence of events:PutEvents in entire template (LOOP-3)
-- [ ] `infra/lib/env-config.ts` — add `auditArchiveRetentionDays` (dev: 1, staging: 1, prod: 2555)
-- [ ] `infra/lib/data-stack.ts` — add `public readonly tableStreamArn` + CfnOutput
-- [ ] `infra/lib/eventing-stack.ts` — add `public readonly auditSinkQueueArn`, `auditSinkDlqUrl`, `auditSinkDlqArn`
-- [ ] `infra/lib/cumplify-stage.ts` — instantiate AuditTrailStack with cross-stack props (design §2.1)
+- [x] `infra/lib/env-config.ts` — add `auditArchiveRetentionDays` (dev: 1, staging: 1, prod: 2555)
+- [x] `infra/lib/data-stack.ts` — add `public readonly tableStreamArn` + CfnOutput
+- [x] `infra/lib/eventing-stack.ts` — add `public readonly auditSinkQueueArn`, `auditSinkDlqUrl`, `auditSinkDlqArn`
+- [x] `infra/lib/cumplify-stage.ts` — instantiate AuditTrailStack with cross-stack props (design §2.1)
 
 ### Acceptance
 - `cdk synth` produces valid CloudFormation
@@ -113,9 +113,9 @@
 > before any push-to-deploy proceeds.
 
 ### Review Artifacts
-- [ ] **IAM Deny policy** (design §5.1 + §5.2) — 5-action Deny on AUDITLOG items, attached to all 4 roles
-- [ ] **WORM sealer handler** (design §6.1) — S3 PutObject with COMPLIANCE retention, ChecksumAlgorithm:'SHA256'
-- [ ] **Sealer IAM permissions** (design §6.2) — s3:PutObject, s3:PutObjectRetention, KMS decrypt/encrypt
+- [x] **IAM Deny policy** (design §5.1 + §5.2) — 5-action Deny on AUDITLOG items, attached to all 4 roles
+- [x] **WORM sealer handler** (design §6.1) — S3 PutObject with COMPLIANCE retention, ChecksumAlgorithm:'SHA256'
+- [x] **Sealer IAM permissions** (design §6.2) — s3:PutObject, s3:PutObjectRetention, KMS decrypt/encrypt
 
 ### Mechanics (ADJ-3)
 - There are no PRs in this flow — commits land directly on develop.

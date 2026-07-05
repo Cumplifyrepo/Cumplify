@@ -1,0 +1,13 @@
+# Task 1 — services/audit-trail scaffold + hash-chain + types (D1)
+Commit: 35c3114 | Architect verification: 2026-07-05
+
+Deliverables present: package.json (@cumplify/audit-trail), tsconfig.json,
+src/index.ts, src/types.ts, src/hash-chain.ts (computePrevHash,
+computePayloadHash, GENESIS_HASH — REV-10 single source), __tests__/hash-chain.test.ts.
+
+Verified: full `npm run test` green; hash-chain deterministic-output + GENESIS
+cases pass. tsc clean (part of the 13-file / 80-test suite).
+D-rung D1 met (compiles + unit tests pass).
+NOTE: checkbox/evidence added post-hoc by architect (rule-7 remediation — Kiro
+committed tasks 1–5 without ticking boxes or writing logs; claims independently
+reproduced before ticking).
