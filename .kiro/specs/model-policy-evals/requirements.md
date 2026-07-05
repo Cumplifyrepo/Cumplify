@@ -7,12 +7,12 @@
 - `.kiro/steering/12-token-metering.md` — one-door rule (unchanged)
 - `docs/architecture/cumplify-CONSOLIDATED-master-architecture-v7-full.md` — Parts 27, 30, 36
 - `docs/architecture/agent-catalog.md` — 22 agents, seat assignments
-- `.kiro/evidence/phase-0-gate/bedrock-access-probe*.log` — accessible models (2026-07-05)
+- `.kiro/evidence/model-policy-evals/requirements-review-r1-probes.log` — accessible models + pricing coverage (architect-verified 2026-07-05, commit `0962ed5`)
 
 **Owner policy amendment (2026-07-05, supersedes steering 15 where conflict):**
 The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MODEL ON BEDROCK THAT PASSES THE SEAT'S EVAL BAR. Anthropic models only where the eval justifies the premium, always with a hard monthly budget cap. The one-door rule (12-token-metering) and the Register discipline are UNCHANGED.
 
-**Revision:** R1 — initial draft for architect review
+**Revision:** R2 — REV-1..7 applied (architect re-review pending)
 
 ---
 
@@ -22,7 +22,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 |----|-----------|
 | C-1 | The eval harness may call Bedrock Converse directly WITHIN `services/model-evals` ONLY — it is the measurement instrument. Product code retains the one-door rule; a direct bedrock-runtime call anywhere else fails review. |
 | C-2 | Margin bar: every seat's measured $/task must clear the Part 27 >50% net mandate at planned credit pricing. A model that passes quality but fails margin is not eligible. |
-| C-3 | Prices are NEVER hardcoded. The eval runner pulls live pricing from the Bedrock/Pricing API at run time and computes $/task from actual token usage × live price. |
+| C-3 | Prices are NEVER hardcoded as inline constants. The eval runner uses the AWS Pricing API as primary source; for models not covered (verified: Claude 4.x absent), a single committed price-snapshot data file with provenance (source URL + capture date) serves as the auditable fallback. Scored reports mark snapshot-priced entries. |
 | C-4 | Eval-set sizes and per-run token budgets require architect approval before any full benchmark run executes. Runs are architect-witnessed. |
 | C-5 | All P0/P1 build rules carry forward: NodejsFunction node22/ARM64/512MB, no hardcoded names, CfnOutputs, Nag zero, template assertions for L1 details, evidence from executed commands only, rules 7-8, checkbox + evidence per task commit. |
 | C-6 | The Register (`contracts/model-register.md`) is append-only. Amendments to steering 15 flow through the Register and are flagged REQUIRES-HUMAN for owner ratification. |
@@ -32,23 +32,26 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 
 ## 2. Accessible Models (architect-verified 2026-07-05)
 
-| Model | Profile ID | Available |
-|-------|-----------|-----------|
-| Nova Micro v1 | `us.amazon.nova-micro-v1:0` | ✓ |
-| Nova Lite v1 | `us.amazon.nova-lite-v1:0` | ✓ |
-| Nova Pro v1 | `us.amazon.nova-pro-v1:0` | ✓ |
-| Nova 2 Lite | `us.amazon.nova-2-lite-v1:0` | ✓ |
-| Qwen3 Next 80B A3B | (cross-region) | ✓ |
-| Qwen3 32B | (cross-region) | ✓ |
-| GLM 5 | (cross-region) | ✓ |
-| GLM 4.7 | (cross-region) | ✓ |
-| GLM 4.7 Flash | (cross-region) | ✓ |
-| DeepSeek v3.2 | (cross-region) | ✓ |
-| MiniMax M2.5 | (cross-region) | ✓ |
-| Kimi K2.5 | (cross-region) | ✓ |
-| Claude Sonnet 4.6 | `us.anthropic.claude-sonnet-4-6` | ✓ (incumbent anchor) |
+| Model | Profile / Model ID | Available | Invocation |
+|-------|-------------------|-----------|------------|
+| Nova Micro v1 | `us.amazon.nova-micro-v1:0` | ✓ | Cross-region inference profile |
+| Nova Lite v1 | `us.amazon.nova-lite-v1:0` | ✓ | Cross-region inference profile |
+| Nova Pro v1 | `us.amazon.nova-pro-v1:0` | ✓ | Cross-region inference profile |
+| Nova 2 Lite | `us.amazon.nova-2-lite-v1:0` | ✓ | Cross-region inference profile |
+| Qwen3 Next 80B A3B | `qwen.qwen3-next-80b-a3b` | ✓ | Direct model ID (no profile) |
+| Qwen3 32B | `qwen.qwen3-32b-v1:0` | ✓ | Direct model ID (no profile) |
+| GLM 5 | `zai.glm-5` | ✓ | Direct model ID (no profile) |
+| GLM 4.7 | `zai.glm-4.7` | ✓ | Direct model ID (no profile) |
+| GLM 4.7 Flash | `zai.glm-4.7-flash` | ✓ | Direct model ID (no profile) |
+| DeepSeek v3.2 | `deepseek.v3.2` | ✓ | Direct model ID (no profile) |
+| MiniMax M2.5 | `minimax.minimax-m2.5` | ✓ | Direct model ID (no profile) |
+| Kimi K2.5 | `moonshotai.kimi-k2.5` | ✓ | Direct model ID (no profile) |
+| Kimi K2 Thinking | `moonshot.kimi-k2-thinking` | ✓ | Direct model ID (no profile) |
+| Claude Sonnet 4.6 | `us.anthropic.claude-sonnet-4-6` | ✓ | Cross-region inference profile (incumbent anchor) |
 
-**Evidence:** `.kiro/evidence/phase-0-gate/bedrock-access-probe*.log`
+**Note:** Only Nova-family and Anthropic models use `us.*` cross-region inference profiles. All other models invoke by direct model ID — no cross-region profile exists for them.
+
+**Evidence:** `.kiro/evidence/model-policy-evals/requirements-review-r1-probes.log` (commit `0962ed5`)
 
 ---
 
@@ -60,7 +63,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 | REG-2 | **Every seat entry in the Register shall** contain: model ID, seat/duty, justification narrative, eval evidence link (commit + file path), measured $/task (P50 and P95), margin headroom at credit pricing, expiry/review date (max 1 quarter). |
 | REG-3 | **The Register shall** list ALL agent seats (22 agents from the catalog + Snapshot + editor-AI + pain-distiller), each with its assigned model and justification. |
 | REG-4 | **No model assignment shall** be recorded without executed eval evidence (quality pass + cost measurement). |
-| REG-5 | **The Register format shall** support quarterly re-validation: each entry carries an expiry date; an expired entry without re-validation blocks the seat from invoking until renewed. |
+| REG-5 | **Register entries past their expiry date without re-validation shall** be flagged as EXPIRED in the Register. Invoke-time enforcement of the EXPIRED flag (blocking the seat from invoking) is a NAMED CARRY to the `ai-core` spec — out of scope here (ai-invoker is §10). |
 
 ---
 
@@ -70,7 +73,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 |----|-------------------|
 | EV-1 | **The eval harness shall** reside in `services/model-evals/` as a workspace package (`@cumplify/model-evals`). |
 | EV-2 | **The runner shall** benchmark candidates via Bedrock Converse API, record exact token usage (input tokens, output tokens) per invocation, and compute $/task from `usage × live_price`. |
-| EV-3 | **The runner shall** pull pricing from the AWS Pricing API (or Bedrock GetFoundationModelAvailability) at run time. Prices are NEVER hardcoded (C-3). |
+| EV-3 | **The runner shall** pull pricing from the AWS Pricing API (`GetProducts`, service code `AmazonBedrock`) at run time as the primary source. For models absent from the Pricing API (architect-verified: no Claude 4.x pricing entries exist — only Claude 2/3-era), the runner reads a committed price-snapshot data file (`services/model-evals/data/price-snapshot.json`) carrying source URL + capture date. Scored reports mark such entries "snapshot-priced". Prices are NEVER inline constants (C-3). |
 | EV-4 | **The scoring pipeline shall** apply quality bar FIRST (pass/fail against the incumbent anchor), then rank passers by $/task (lowest wins). |
 | EV-5 | **The eval harness shall** support per-seat eval sets with distinct scoring methodologies (see §5). |
 | EV-6 | **Before a full benchmark run,** the harness shall output a cost estimate (eval-set size × estimated tokens/task × price) for architect approval (C-4). |
@@ -102,7 +105,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 
 | ID | Requirement (EARS) |
 |----|-------------------|
-| LITE-1 | **The lightweight eval set shall** cover the 7 Lite-class agent duties (record registration, objective tracking, context mapping). Minimum 20 tasks. |
+| LITE-1 | **The lightweight eval set shall** cover the 8 Lite-class agent duties (RecordsVault, ObjectiveTracker, ContextCartographer, SupplierScout, CompetenceKeeper, EmergencyPlanner, WorkerVoice, NCTriage). Minimum 20 tasks. |
 | LITE-2 | **Candidates:** nova-lite (incumbent), nova-2-lite, glm-4.7-flash, qwen3-32b. |
 | LITE-3 | **Scoring:** task correctness + $/task. Automated grading (structured output validation). |
 
@@ -114,12 +117,21 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 | MICRO-2 | **Candidates:** nova-micro (incumbent), glm-4.7-flash. |
 | MICRO-3 | **Scoring:** classification accuracy (F1 score), latency, $/task. Fully automated (exact-match grading). |
 
-### 5.5 LegalLedger Seat (highest-consequence)
+### 5.5 Non-Agent Seats (Snapshot, editor-AI, pain-distiller)
+
+| ID | Requirement (EARS) |
+|----|-------------------|
+| NONAG-1 | **[REV-3] The Register lists three non-agent seats** (Snapshot pipeline, editor-AI, pain-distiller) — REG-4 requires eval evidence for each. This section maps them to eval methodology. |
+| NONAG-2 | **Snapshot pipeline** is the most cost-sensitive seat (unauthenticated traffic, ~$0.03–0.08/run per Part 27). It shall have its own small high-volume eval set (minimum 30 snapshot-generation tasks) focused on cost-per-run and output quality. Scoring: automated (structured output compliance + factual grounding check). |
+| NONAG-3 | **Editor-AI** shall reuse the Lightweight tier methodology (LITE-1..3 eval set structure) with editor-specific task scenarios (inline suggestions, code/doc completion). Design decides eval-set size. |
+| NONAG-4 | **Pain-distiller** shall reuse the Workhorse tier methodology (WORK-1..4 structure) with pain-point extraction/synthesis tasks. Design decides eval-set size. |
+
+### 5.6 LegalLedger Seat (highest-consequence)
 
 | ID | Requirement (EARS) |
 |----|-------------------|
 | LEGAL-1 | **The LegalLedger eval set shall** cover statutory/legal-text interpretation across the three jurisdiction-heavy domains (14001 6.1.3, 45001 6.1.3, 9.1.2). Minimum 30 obligation-mapping scenarios. |
-| LEGAL-2 | **Candidates:** sonnet-4-6 (incumbent) WITH monthly budget cap, glm-5, deepseek.v3.2, kimi-k2.5-thinking. |
+| LEGAL-2 | **Candidates:** sonnet-4-6 (incumbent) WITH monthly budget cap, glm-5, deepseek.v3.2, moonshot.kimi-k2-thinking. |
 | LEGAL-3 | **Grading:** HUMAN-REVIEWED for every response. This is the highest-consequence seat — a wrong obligation mapping is regulatory exposure. No automated grader pretends to measure legal reasoning. |
 | LEGAL-4 | **The spec shall** produce a human-grading runbook (not a Lambda) for LegalLedger eval scoring. |
 | LEGAL-5 | **The monthly budget cap for LegalLedger shall** be recorded in the Register with the dollar amount and enforcement mechanism (credit-balance pre-check in ai-invoker). |
@@ -168,7 +180,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 | ACC-3 | Steering 15 amended + owner-ratified (REQUIRES-HUMAN sign-off recorded). |
 | ACC-4 | Re-validation mechanism in place (scheduler or runbook per seat, honest choice). |
 | ACC-5 | LegalLedger monthly budget cap recorded in the Register with enforcement mechanism documented. |
-| ACC-6 | Every model's $/task clears the >50% net margin mandate at credit pricing. |
+| ACC-6 | Every ASSIGNED seat model's $/task clears the >50% net margin mandate at credit pricing. Candidates that fail margin are simply not assigned. |
 
 ---
 
