@@ -193,3 +193,151 @@ describe('PoisonMessageError', () => {
     expect(err.message).toBe('test reason');
   });
 });
+
+// ─── FIFO Mode Tests (REV-3, FIX-1, FIX-3) ────────────────────────────────────
+
+import { createFifoHandler } from '../src/consumer.js';
+
+describe('createFifoHandler', () => {
+  it('CON-7a: on transient failure at message #2, reports #2..#5 as batchItemFailures', async () => {
+    let callCount = 0;
+    const handler = createFifoHandler({
+      fifo: true,
+      dlqUrl: DLQ_URL,
+      handler: async () => {
+        callCount++;
+        if (callCount === 2) throw new Error('DynamoDB timeout');
+      },
+    });
+
+    const sqsEvent: SQSEvent = {
+      Records: [
+        makeSqsRecord(makeValidBody(), 'msg-1'),
+        makeSqsRecord(makeValidBody(), 'msg-2'),
+        makeSqsRecord(makeValidBody(), 'msg-3'),
+        makeSqsRecord(makeValidBody(), 'msg-4'),
+        makeSqsRecord(makeValidBody(), 'msg-5'),
+      ],
+    };
+    const result = await handler(sqsEvent);
+
+    // msg-2, msg-3, msg-4, msg-5 reported as failures (FIFO ordering)
+    expect(result.batchItemFailures).toHaveLength(4);
+    expect(result.batchItemFailures.map((f) => f.itemIdentifier)).toEqual([
+      'msg-2',
+      'msg-3',
+      'msg-4',
+      'msg-5',
+    ]);
+    // Only msg-1 was processed successfully
+    expect(callCount).toBe(2); // called for msg-1 (success) and msg-2 (failure)
+  });
+
+  it('CON-7b: poison send to FIFO DLQ includes MessageGroupId and MessageDeduplicationId', async () => {
+    const handler = createFifoHandler({
+      fifo: true,
+      dlqUrl: DLQ_URL,
+      handler: async () => {
+        throw new PoisonMessageError('Item size exceeds 400KB limit');
+      },
+    });
+
+    const sqsEvent: SQSEvent = {
+      Records: [makeSqsRecord(makeValidBody({ tenantId: 'tenant-fifo-test' }), 'msg-fifo-1')],
+    };
+    const result = await handler(sqsEvent);
+
+    // Poison handled — not in batchItemFailures
+    expect(result.batchItemFailures).toHaveLength(0);
+
+    // DLQ send has FIFO params (FIX-3)
+    const calls = sqsMock.commandCalls(SendMessageCommand);
+    expect(calls).toHaveLength(1);
+    const input = calls[0].args[0].input;
+    expect(input.MessageGroupId).toBe('tenant-fifo-test');
+    expect(input.MessageDeduplicationId).toBe('msg-fifo-1');
+    expect(input.MessageAttributes?.PoisonReason?.StringValue).toBe(
+      'Item size exceeds 400KB limit',
+    );
+  });
+
+  it('FIX-3: poison send uses messageId as MessageGroupId when body is unparseable', async () => {
+    const handler = createFifoHandler({
+      fifo: true,
+      dlqUrl: DLQ_URL,
+      handler: async () => {},
+    });
+
+    // Malformed JSON body — parseAndValidate throws PoisonMessageError before handler
+    const sqsEvent: SQSEvent = {
+      Records: [makeSqsRecord('not json at all', 'msg-bad-json')],
+    };
+    const result = await handler(sqsEvent);
+
+    expect(result.batchItemFailures).toHaveLength(0);
+    const calls = sqsMock.commandCalls(SendMessageCommand);
+    expect(calls).toHaveLength(1);
+    const input = calls[0].args[0].input;
+    // Falls back to messageId since body can't be parsed
+    expect(input.MessageGroupId).toBe('msg-bad-json');
+    expect(input.MessageDeduplicationId).toBe('msg-bad-json');
+  });
+
+  it('idempotentErrors: ReplayDetectedError is treated as success, batch continues', async () => {
+    let callCount = 0;
+    const handler = createFifoHandler({
+      fifo: true,
+      dlqUrl: DLQ_URL,
+      handler: async () => {
+        callCount++;
+        if (callCount === 2) {
+          const err = new Error('Replay detected for eventId xyz');
+          err.name = 'ReplayDetectedError';
+          throw err;
+        }
+      },
+      idempotentErrors: ['ReplayDetectedError'],
+    });
+
+    const sqsEvent: SQSEvent = {
+      Records: [
+        makeSqsRecord(makeValidBody(), 'msg-1'),
+        makeSqsRecord(makeValidBody(), 'msg-2'), // replay → success
+        makeSqsRecord(makeValidBody(), 'msg-3'),
+      ],
+    };
+    const result = await handler(sqsEvent);
+
+    // All processed successfully (replay is not a failure)
+    expect(result.batchItemFailures).toHaveLength(0);
+    expect(callCount).toBe(3); // all three messages processed
+    // No DLQ send
+    expect(sqsMock.commandCalls(SendMessageCommand)).toHaveLength(0);
+  });
+
+  it('poison after transient: transient stops the batch before reaching poison', async () => {
+    let callCount = 0;
+    const handler = createFifoHandler({
+      fifo: true,
+      dlqUrl: DLQ_URL,
+      handler: async () => {
+        callCount++;
+        if (callCount === 1) throw new Error('transient');
+      },
+    });
+
+    const sqsEvent: SQSEvent = {
+      Records: [
+        makeSqsRecord(makeValidBody(), 'msg-1'), // transient → stop
+        makeSqsRecord('invalid json', 'msg-2'), // never reached
+      ],
+    };
+    const result = await handler(sqsEvent);
+
+    // Both reported as failures (FIFO fail-forward-all)
+    expect(result.batchItemFailures).toHaveLength(2);
+    expect(result.batchItemFailures.map((f) => f.itemIdentifier)).toEqual(['msg-1', 'msg-2']);
+    // No DLQ send (msg-2 never processed)
+    expect(sqsMock.commandCalls(SendMessageCommand)).toHaveLength(0);
+  });
+});

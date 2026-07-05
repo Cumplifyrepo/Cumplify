@@ -76,6 +76,99 @@ export class PoisonMessageError extends Error {
   }
 }
 
+// ─── FIFO Mode (REV-3, FIX-3) ─────────────────────────────────────────────────
+
+export interface FifoConsumerConfig extends ConsumerConfig {
+  /** Must be set to true to activate FIFO semantics. */
+  fifo: true;
+  /**
+   * Error names treated as idempotent replays (success, continue batch).
+   * E.g., ['ReplayDetectedError'] for the audit-trail consumer.
+   */
+  idempotentErrors?: string[];
+}
+
+/**
+ * Creates an SQS batch handler in FIFO mode.
+ *
+ * On the first TRANSIENT failure, reports that record AND ALL SUBSEQUENT
+ * records as batchItemFailures — preserving per-tenant message ordering.
+ * (Per AWS FIFO partial-batch guidance: a retried message must not chain
+ * AFTER its successors.)
+ *
+ * PoisonMessageError → explicit DLQ send (FIX-3: with MessageGroupId +
+ * MessageDeduplicationId for FIFO DLQ), then continue batch.
+ *
+ * Errors whose `.name` is in `idempotentErrors` → treated as success.
+ */
+export function createFifoHandler(config: FifoConsumerConfig) {
+  const idempotentErrors = new Set(config.idempotentErrors ?? []);
+
+  return async (sqsEvent: SQSEvent): Promise<SQSBatchResponse> => {
+    const batchItemFailures: SQSBatchItemFailure[] = [];
+
+    for (let i = 0; i < sqsEvent.Records.length; i++) {
+      const record = sqsEvent.Records[i];
+      try {
+        const msg = parseAndValidate(record.body);
+        logger.info('Processing event (FIFO)', {
+          detailType: msg.detailType,
+          tenantId: msg.detail.tenantId,
+          eventId: msg.detail.eventId,
+        });
+        await config.handler(msg.detail, msg.detailType);
+      } catch (err) {
+        if (err instanceof PoisonMessageError) {
+          // Poison → explicit DLQ send (FIX-3: FIFO DLQ needs GroupId + DedupId)
+          logger.warn('Poison message → DLQ (FIFO)', {
+            messageId: record.messageId,
+            reason: err.message,
+          });
+
+          // Extract tenantId if parseable, else fall back to messageId
+          let messageGroupId: string;
+          try {
+            const parsed = JSON.parse(record.body);
+            messageGroupId = parsed?.detail?.tenantId ?? record.messageId;
+          } catch {
+            messageGroupId = record.messageId;
+          }
+
+          await sqsClient.send(
+            new SendMessageCommand({
+              QueueUrl: config.dlqUrl,
+              MessageBody: record.body,
+              MessageGroupId: messageGroupId,
+              MessageDeduplicationId: record.messageId,
+              MessageAttributes: {
+                PoisonReason: { DataType: 'String', StringValue: err.message },
+                OriginalMessageId: { DataType: 'String', StringValue: record.messageId },
+              },
+            }),
+          );
+        } else if (idempotentErrors.has((err as Error).name)) {
+          // Idempotent replay — success, continue
+          logger.warn('Idempotent replay detected (FIFO)', {
+            messageId: record.messageId,
+            errorName: (err as Error).name,
+          });
+        } else {
+          // TRANSIENT FAILURE: report this + ALL subsequent as unprocessed
+          logger.error('Transient failure — stopping batch (FIFO)', {
+            messageId: record.messageId,
+            error: (err as Error).message,
+          });
+          for (let j = i; j < sqsEvent.Records.length; j++) {
+            batchItemFailures.push({ itemIdentifier: sqsEvent.Records[j].messageId });
+          }
+          break;
+        }
+      }
+    }
+    return { batchItemFailures };
+  };
+}
+
 /** FIX-1: parse canonical queue-message contract {detailType, detail} */
 function parseAndValidate(body: string): QueueMessage {
   let parsed: unknown;
