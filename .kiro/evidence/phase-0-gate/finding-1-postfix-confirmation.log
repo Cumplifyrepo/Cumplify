@@ -1,0 +1,33 @@
+FINDING-1 POST-DEPLOY confirmation | 2026-07-05T15:21:21Z | exec 25ef9beb deployed
+Role: arn:aws:iam::697114252993:role/Dev-AuditTrailStack-AuditSinkConsumerFnServiceRole2-3r6sN1ramrma
+--- [1] 5 mutation actions on AUDITLOG key (must stay explicitDeny — the Deny) ---
+---------------------------------------------
+|          SimulatePrincipalPolicy          |
++--------------------------+----------------+
+|          action          |   decision     |
++--------------------------+----------------+
+|  dynamodb:UpdateItem     |  explicitDeny  |
+|  dynamodb:DeleteItem     |  explicitDeny  |
+|  dynamodb:BatchWriteItem |  explicitDeny  |
+|  dynamodb:PartiQLUpdate  |  explicitDeny  |
+|  dynamodb:PartiQLDelete  |  explicitDeny  |
++--------------------------+----------------+
+--- [2] THE FIX: UpdateItem on NON-audit key (was 'allowed', must now be 'implicitDeny') ---
+---------------------------------------------
+|          SimulatePrincipalPolicy          |
++--------------------------+----------------+
+|          action          |   decision     |
++--------------------------+----------------+
+|  dynamodb:UpdateItem     |  implicitDeny  |
+|  dynamodb:DeleteItem     |  implicitDeny  |
+|  dynamodb:BatchWriteItem |  implicitDeny  |
++--------------------------+----------------+
+--- [3] function preserved: PutItem + Query still allowed (append path intact) ---
+----------------------------------
+|     SimulatePrincipalPolicy    |
++-------------------+------------+
+|      action       | decision   |
++-------------------+------------+
+|  dynamodb:PutItem |  allowed   |
+|  dynamodb:Query   |  allowed   |
++-------------------+------------+

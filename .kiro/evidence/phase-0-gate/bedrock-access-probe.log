@@ -1,0 +1,18 @@
+Bedrock access probe (spec-30 task-1 front-run) | 2026-07-05T15:13:21Z | profile cumplify-dev-admin
+us.amazon.nova-micro-v1:0                ACCESSIBLE (out=5 tok)
+us.amazon.nova-lite-v1:0                 ACCESSIBLE (out=5 tok)
+us.amazon.nova-pro-v1:0                  ACCESSIBLE (out=5 tok)
+us.amazon.nova-premier-v1:0              BLOCKED (ResourceNotFound)
+us.amazon.nova-2-lite-v1:0               ACCESSIBLE (out=5 tok)
+us.anthropic.claude-sonnet-4-6           ACCESSIBLE (out=5 tok)
+
+CONCLUSION (spec-30 task-1 input):
+- ACCESSIBLE now (no owner action): nova-micro, nova-lite, nova-pro, nova-2-lite, sonnet-4-6.
+- Nova Premier v1: profile ACTIVE (3-region) but Converse → ResourceNotFound; raw id → ValidationException
+  (on-demand unsupported). Model is LEGACY lifecycle. Diagnosis: model ACCESS not enabled for Premier
+  (console-only, owner action) AND/OR Premier being retired. OWNER ACTION IF PREMIER WANTED: enable
+  Nova Premier access in Bedrock console (dev, per region) — if still grantable given LEGACY status.
+- No Nova 2 top-tier (Pro/Premier equivalent) in catalog yet — only nova-2-lite.
+- IMPACT ON steering 15 Guru ladder: the pinned "Nova Premier for Domain Gurus" is NOT invocable as-is.
+  spec-30 eval must decide the Guru seat among AVAILABLE candidates: Nova Pro (gen1), Nova 2 Lite (new gen),
+  or retain Sonnet 4.6 (incumbent) — Premier only if owner enables access. Register-driven steering-15 amend.
