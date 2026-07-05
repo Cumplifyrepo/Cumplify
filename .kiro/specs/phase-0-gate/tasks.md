@@ -52,11 +52,11 @@
 **D-Rung:** — (documentation, no cloud writes)
 
 ### Deliverables
-- [ ] `docs/gates/phase-0-gate-report.md` fully populated: per-spec summary, GATE-1..8 results, N/A justifications, findings table, conclusion
-- [ ] `docs/gates/cost-estimates.md` populated with real Cost Explorer data
-- [ ] All evidence logs in `.kiro/evidence/phase-0-gate/` with proper naming
-- [ ] Gate verdict: PASS (all green/N/A) or FAIL (CRITICAL findings block P1)
-- [ ] Timestamp + cdk-outputs.json blob SHA in report header
+- [x] `docs/gates/phase-0-gate-report.md` fully populated: per-spec summary, GATE-1..8 results, N/A justifications, findings table, conclusion
+- [x] `docs/gates/cost-estimates.md` populated with real Cost Explorer data
+- [x] All evidence logs in `.kiro/evidence/phase-0-gate/` with proper naming
+- [x] Gate verdict: PASS (all green/N/A) or FAIL (CRITICAL findings block P1)
+- [x] Timestamp + cdk-outputs.json blob SHA in report header
 
 ### Acceptance
 - ACC-1..ACC-5 from requirements all satisfied
