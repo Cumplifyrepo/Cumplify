@@ -1,0 +1,47 @@
+GATE-7 Hallucination Audit — falsifications | 2026-07-05T14:49:05Z | HEAD 393b7b8
+
+##### A2 (task #2, harness 1.2): property-based scaffold #####
+--- re-execute: property tests pass on intact code ---
+   Duration  194ms (transform 21ms, setup 0ms, import 100ms, tests 33ms, environment 0ms)
+
+--- falsify: remove Employee fallback (return 'Admin' instead) ---
+0
+      Tests  6 passed (6)
+Updated 1 path from the index
+--- reverted; re-verify green ---
+
+
+##### A3 (task #27, trail 3): createFifoHandler fail-forward #####
+--- falsify: break fail-forward (only report the failed record, not subsequent) ---
+1
+ Test Files  1 failed (1)
+      Tests  2 failed | 10 passed (12)
+Updated 1 path from the index
+--- reverted; re-verify green ---
+
+
+##### A1 (task #16, platform 3.1): account-boundary guardrail #####
+--- falsify: point dev env at the MGMT account ---
+ Test Files  1 failed (1)
+      Tests  no tests
+--- synth must also fail ---
+synth exit code: 1
+Updated 1 path from the index
+--- reverted; re-verify green ---
+
+?? .kiro/evidence/phase-0-gate/gate-1-drift-dev.log
+?? .kiro/evidence/phase-0-gate/gate-1-drift-pipeline.log
+?? .kiro/evidence/phase-0-gate/gate-2-nag.log
+##### A2 REDO (2026-07-05T14:49:37Z) — first attempt was a NO-OP (sed pattern missed; recorded honestly) #####
+--- falsify attempt 2: fallback returns 'Admin' instead of 'Employee' ---
+mutation applied count: 1
+ × services/pre-token-gen/handler.property.test.ts > PreTokenGen handler (property-based) > role falls back to Employee when groups are empty or undefined 3ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+Updated 1 path from the index
+--- reverted; re-verify green ---
+      Tests  6 passed (6)
+?? .kiro/evidence/phase-0-gate/gate-1-drift-dev.log
+?? .kiro/evidence/phase-0-gate/gate-1-drift-pipeline.log
+?? .kiro/evidence/phase-0-gate/gate-2-nag.log

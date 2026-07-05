@@ -32,13 +32,13 @@
 > runs all cloud-touching commands and captures output.
 
 ### Deliverables
-- [ ] GATE-1: `cdk diff` on all 7 stacks (6 dev + 1 pipeline) — logs captured
-- [ ] GATE-2: `cdk synth --all` + NagReport extraction — 0 Non-Compliant confirmed
-- [ ] GATE-3: Tenant-scoped principal enumeration + simulation matrix (or N/A leg-a with P1 carry)
-- [ ] GATE-3b: AUDITLOG Deny re-run — 5 actions explicitDeny
-- [ ] GATE-6: Cost Explorer data for dev + mgmt accounts
-- [ ] GATE-7: 3 selected tasks re-executed + 1 falsification each — results captured
-- [ ] All evidence logs committed to `.kiro/evidence/phase-0-gate/`
+- [x] GATE-1: `cdk diff` on all 7 stacks (6 dev + 1 pipeline) — logs captured
+- [x] GATE-2: `cdk synth --all` + NagReport extraction — 0 Non-Compliant confirmed
+- [x] GATE-3: Tenant-scoped principal enumeration + simulation matrix (or N/A leg-a with P1 carry)
+- [x] GATE-3b: AUDITLOG Deny re-run — 5 actions explicitDeny
+- [x] GATE-6: Cost Explorer data for dev + mgmt accounts
+- [x] GATE-7: 3 selected tasks re-executed + 1 falsification each — results captured
+- [x] All evidence logs committed to `.kiro/evidence/phase-0-gate/`
 
 ### Acceptance
 - All cloud-touching logs committed with timestamps

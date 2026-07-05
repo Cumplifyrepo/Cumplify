@@ -1,0 +1,30 @@
+GATE-3 leg (b) — AUDITLOG Deny simulation matrix | 2026-07-05T14:47:22Z
+Role: arn:aws:iam::697114252993:role/Dev-AuditTrailStack-AuditSinkConsumerFnServiceRole2-3r6sN1ramrma
+--- 5 mutation actions on AUDITLOG key (expect explicitDeny) ---
+---------------------------------------------
+|          SimulatePrincipalPolicy          |
++--------------------------+----------------+
+|          action          |   decision     |
++--------------------------+----------------+
+|  dynamodb:UpdateItem     |  explicitDeny  |
+|  dynamodb:DeleteItem     |  explicitDeny  |
+|  dynamodb:BatchWriteItem |  explicitDeny  |
+|  dynamodb:PartiQLUpdate  |  explicitDeny  |
+|  dynamodb:PartiQLDelete  |  explicitDeny  |
++--------------------------+----------------+
+--- contrast: PutItem append path on AUDITLOG key (expect allowed) ---
+----------------------------------
+|     SimulatePrincipalPolicy    |
++-------------------+------------+
+|      action       | decision   |
++-------------------+------------+
+|  dynamodb:PutItem |  allowed   |
++-------------------+------------+
+--- contrast: UpdateItem on NON-audit key (expect implicitDeny, not the explicit deny) ---
+-------------------------------------
+|      SimulatePrincipalPolicy      |
++----------------------+------------+
+|        action        | decision   |
++----------------------+------------+
+|  dynamodb:UpdateItem |  allowed   |
++----------------------+------------+

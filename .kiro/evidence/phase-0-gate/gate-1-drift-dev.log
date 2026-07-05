@@ -1,0 +1,42 @@
+===== CumplifyPipeline/Dev/NetworkStack =====
+Stack CumplifyPipeline/Dev/NetworkStack (Dev-NetworkStack)
+There were no differences (CDK metadata changes were hidden, run cdk diff --strict to show)
+
+
+✨  Number of stacks with differences: 0
+
+===== CumplifyPipeline/Dev/SecurityStack =====
+Stack CumplifyPipeline/Dev/SecurityStack (Dev-SecurityStack)
+There were no differences (CDK metadata changes were hidden, run cdk diff --strict to show)
+
+
+✨  Number of stacks with differences: 0
+
+===== CumplifyPipeline/Dev/DataStack =====
+     └─ [+] https://awsserverlessrepo-changesets-plntc6bfnfj.s3.us-east-1.amazonaws.com/697114252993/arn%3Aaws%3Aserverlessrepo%3Aus-east-1%3A297356227824%3Aapplications-SecretsManagerRDSPostgreSQLRotationSingleUser-versions-1.1.671/e8ae6ae1-89a1-4eaf-bb11-8cb397c5eebd.yaml?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHcaCXVzLWVhc3QtMSJHMEUCIQCUu%2Btl9FJoFmg9SwCxrDJ80DH3wDwj%2F4D72jIkznr9gAIgKxrFRtKTgOFDC9uCb3%2FDTXhjZSJRo5aRwRj%2F%2FScTkmgqsAQIQBACGgwwNjYyNDI0Njg2NTQiDJwVUvTb9X7cnG5kaCqNBH2KDr%2Ft0FF%2BSKgz6fwMpLyzLYaXXq%2FF4tHJilzyaTV70bg6TWyAHVlywxN4cMaFFxeZhI7h%2F6dP9202ozqjqD6oXU4qYGUz%2FojBv1aRxdZMtxGxFrALxQ%2F4WwFAlDAY4AelRM%2BSRcc2FsEmAR3w43cTylSXJAkzk65XwBk3RBjJcy4LUq1Sv2goJpb02pYZ%2FM0fRCvVyWZ5Atl4%2BeKFZjSGlHPSlOR8MSbHCvC7KtlZsIdCORrUSBX0MaIoX7eqQlUlhKklcwCROzWImeK7mSZMsF6hQFWDsrnvuiylfOkjuIcUDhwoWwOweSG7finDomMR98WyokTovcg1Wh1pqBLwlQgom4T0AXlgiGmPWV%2BWIVibGJfPNQ8XtmDsMPl1yGjEg75JRWg9gK%2BXJD2k2SbrjtwMb94o1Mw%2Bd9h2c6cBMzx5SJiQtvU5pomwShLEyqEg16rFD09YCbkPfpZTPyVvFRqtfxMayv9f4wjoPuAN69i32oWv5l1wgx7OutvWPZbvp67o4qTp5unphWBAn%2FGEYXv%2FYhIGLRRiHnFG5j2fm%2FZ%2FTcqCyvWXBfkdTZbmh%2B1GJLHaJDvyEpXqPMT8%2BEAvTit9sMk5SBODuTERkJUi76HzkOMrJThu5HKJQo5%2Bu9SwkIJK%2FcOk%2ByR2GA6W8gkaewvz20n1emi2hrT6uI%2BWYHLypeGb41BaN0mqfzDd0anSBjqiAeGTYAErbPl4wH2NJxqCKqH0uCfitwyj%2Bd5EUNNjTfEwVqesUl1Ckxq9YrhN0bAJfbFkyzN8rg0ufq%2FKVq%2B2KwXJ9UJslUKclyC9NLB4nkEV%2BlZMjKzVPqsvhCSvk4gpmjcnvmX05oX5t8Aav9Qq1RWakWrL3XMuZZidmyFKOwsGFJONCGb7iID6fQYsjMBJrmjdxBvAut2cMHAtL1XRUHMWrA%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260705T143412Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=ASIAQ63C33MXLR6AFI6L%2F20260705%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=b91b2cabcafe60d52e367fbf0dcb4344af8399eba683c57b82dca178cf2c185d
+
+
+
+✨  Number of stacks with differences: 1
+
+===== CumplifyPipeline/Dev/IdentityStack =====
+Stack CumplifyPipeline/Dev/IdentityStack (Dev-IdentityStack)
+There were no differences (CDK metadata changes were hidden, run cdk diff --strict to show)
+
+
+✨  Number of stacks with differences: 1
+
+===== CumplifyPipeline/Dev/EventingStack =====
+Stack CumplifyPipeline/Dev/EventingStack (Dev-EventingStack)
+There were no differences (CDK metadata changes were hidden, run cdk diff --strict to show)
+
+
+✨  Number of stacks with differences: 0
+
+===== CumplifyPipeline/Dev/AuditTrailStack =====
+Stack CumplifyPipeline/Dev/AuditTrailStack (Dev-AuditTrailStack)
+There were no differences (CDK metadata changes were hidden, run cdk diff --strict to show)
+
+
+✨  Number of stacks with differences: 1
+

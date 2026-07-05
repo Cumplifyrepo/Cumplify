@@ -1,0 +1,270 @@
+GATE-2 Nag sweep 2026-07-05 — fresh cdk synth --all at HEAD 393b7b8
+Reports: 21 | Non-Compliant: 0 | Suppressed rows: 223
+
+SUPPRESSION INVENTORY (deduped rule+resource):
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/IdentityStack/PreTokenGenFn/ServiceRole/Resource
+    reason: PreTokenGeneration Lambda execution role uses AWSLambdaBasicExecutionRole (CDK-generated).
+- AwsSolutions-L1 @ CumplifyPipeline/Dev/IdentityStack/PreTokenGenFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-COG8 @ CumplifyPipeline/Dev/IdentityStack/PoolA/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-COG2 @ CumplifyPipeline/Dev/IdentityStack/PoolB/Resource
+    reason: MFA is configured per pool: Pool A REQUIRED, Pools B/C OPTIONAL. OPTIONAL allows tenant ad
+- AwsSolutions-COG8 @ CumplifyPipeline/Dev/IdentityStack/PoolB/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-COG2 @ CumplifyPipeline/Dev/IdentityStack/PoolC/Resource
+    reason: MFA is configured per pool: Pool A REQUIRED, Pools B/C OPTIONAL. OPTIONAL allows tenant ad
+- AwsSolutions-COG8 @ CumplifyPipeline/Dev/IdentityStack/PoolC/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-S1 @ CumplifyPipeline/Dev/NetworkStack/FlowLogsBucket/Resource
+    reason: Flow-logs bucket is itself a log destination. Enabling access logs would create circular l
+- AwsSolutions-EC23 @ CumplifyPipeline/Dev/NetworkStack/EndpointSG/Resource
+    reason: EC23 cannot validate Fn::GetAtt(CumplifyVpc, CidrBlock) at synth time. Security group ingr
+- AwsSolutions-S1 @ CumplifyPipeline/Prod/NetworkStack/FlowLogsBucket/Resource
+    reason: Flow-logs bucket is itself a log destination. Enabling access logs would create circular l
+- AwsSolutions-EC23 @ CumplifyPipeline/Prod/NetworkStack/EndpointSG/Resource
+    reason: EC23 cannot validate Fn::GetAtt(CumplifyVpc, CidrBlock) at synth time. Security group ingr
+- AwsSolutions-S1 @ cross-region-stack-157082218687:us-west-2/Default/CrossRegionCodePipelineReplica
+    reason: Cross-region replication bucket is CDK Pipelines framework infrastructure for cross-region
+- AwsSolutions-EC23 @ CumplifyPipeline/Dev/DataStack/AuroraSecurityGroup/Resource
+    reason: Security group ingress uses VPC CIDR (Fn::GetAtt) which cdk-nag cannot evaluate at synth t
+- AwsSolutions-RDS6 @ CumplifyPipeline/Dev/DataStack/AuroraCluster/Resource
+    reason: IAM authentication is not used for the master credential — Secrets Manager rotation handle
+- AwsSolutions-EC23 @ CumplifyPipeline/Dev/DataStack/CacheSecurityGroup/Resource
+    reason: Security group ingress uses VPC CIDR (Fn::GetAtt) which cdk-nag cannot evaluate at synth t
+- AwsSolutions-AEC4 @ CumplifyPipeline/Dev/DataStack/RedisCluster
+    reason: Multi-AZ is intentionally disabled for dev/staging (cost optimization). Prod enables multi
+- AwsSolutions-AEC5 @ CumplifyPipeline/Dev/DataStack/RedisCluster
+    reason: Default Redis port 6379 is used. Non-standard ports provide security-through-obscurity wit
+- AwsSolutions-AEC6 @ CumplifyPipeline/Dev/DataStack/RedisCluster
+    reason: Redis AUTH token is not configured at this stage. Application-level authentication will be
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/DataStack/BucketNotificationsHandler050a0587b7544547bf325f0
+    reason: Aurora rotation Lambda and DynamoDB auto-scaling use CDK-generated managed policies with m
+- AwsSolutions-SQS3 @ CumplifyPipeline/Prod/EventingStack/DeliveryFailureDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/EventingStack/FifoRouterFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-L1 @ CumplifyPipeline/Prod/EventingStack/FifoRouterFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/EventingStack/DemoConsumerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-L1 @ CumplifyPipeline/Prod/EventingStack/DemoConsumerFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/EventingStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/EventingStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a
+    reason: Lambda execution role and LogRetention custom resource have logs:* with wildcard on log st
+- AwsSolutions-SQS3 @ CumplifyPipeline/Staging/EventingStack/DeliveryFailureDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/EventingStack/FifoRouterFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-L1 @ CumplifyPipeline/Staging/EventingStack/FifoRouterFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/EventingStack/DemoConsumerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-L1 @ CumplifyPipeline/Staging/EventingStack/DemoConsumerFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/EventingStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efd
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-IAM5 @ CumplifyPipeline/Staging/EventingStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efd
+    reason: Lambda execution role and LogRetention custom resource have logs:* with wildcard on log st
+- AwsSolutions-S1 @ CumplifyPipeline/Prod/DrRegionStack/CrrDestinationBucket/Resource
+    reason: CRR destination bucket does not require access logging — it is a DR-only replica target. T
+- AwsSolutions-SQS3 @ CumplifyPipeline/Dev/EventingStack/DeliveryFailureDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/EventingStack/FifoRouterFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-L1 @ CumplifyPipeline/Dev/EventingStack/FifoRouterFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/EventingStack/DemoConsumerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-L1 @ CumplifyPipeline/Dev/EventingStack/DemoConsumerFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/EventingStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). This is the standa
+- AwsSolutions-IAM5 @ CumplifyPipeline/Dev/EventingStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/
+    reason: Lambda execution role and LogRetention custom resource have logs:* with wildcard on log st
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/AuditTrailStack/BucketNotificationsHandler050a0587b7544547b
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-SQS3 @ CumplifyPipeline/Dev/AuditTrailStack/SealerDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-SQS3 @ CumplifyPipeline/Dev/AuditTrailStack/TripwireDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/AuditTrailStack/AuditSinkConsumerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Dev/AuditTrailStack/AuditSinkConsumerFn/ServiceRole/DefaultPoli
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-L1 @ CumplifyPipeline/Dev/AuditTrailStack/AuditSinkConsumerFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/AuditTrailStack/WormSealerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Dev/AuditTrailStack/WormSealerFn/ServiceRole/DefaultPolicy/Reso
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-L1 @ CumplifyPipeline/Dev/AuditTrailStack/WormSealerFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/AuditTrailStack/TamperTripwireFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Dev/AuditTrailStack/TamperTripwireFn/ServiceRole/DefaultPolicy/
+    reason: cloudwatch:PutMetricData does not support resource-level permissions (AWS API limitation).
+- AwsSolutions-L1 @ CumplifyPipeline/Dev/AuditTrailStack/TamperTripwireFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/AuditTrailStack/ChainVerifierFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Dev/AuditTrailStack/ChainVerifierFn/ServiceRole/DefaultPolicy/R
+    reason: cloudwatch:PutMetricData does not support resource-level permissions. S3 read grant uses /
+- AwsSolutions-L1 @ CumplifyPipeline/Dev/AuditTrailStack/ChainVerifierFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM5 @ CumplifyPipeline/Dev/AuditTrailStack/VerifierSchedulerRole/DefaultPolicy/Resourc
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-IAM4 @ CumplifyPipeline/Dev/AuditTrailStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Dev/AuditTrailStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-EC23 @ CumplifyPipeline/Prod/DataStack/AuroraSecurityGroup/Resource
+    reason: Security group ingress uses VPC CIDR (Fn::GetAtt) which cdk-nag cannot evaluate at synth t
+- AwsSolutions-RDS6 @ CumplifyPipeline/Prod/DataStack/AuroraCluster/Resource
+    reason: IAM authentication is not used for the master credential — Secrets Manager rotation handle
+- AwsSolutions-EC23 @ CumplifyPipeline/Prod/DataStack/CacheSecurityGroup/Resource
+    reason: Security group ingress uses VPC CIDR (Fn::GetAtt) which cdk-nag cannot evaluate at synth t
+- AwsSolutions-AEC5 @ CumplifyPipeline/Prod/DataStack/RedisCluster
+    reason: Default Redis port 6379 is used. Non-standard ports provide security-through-obscurity wit
+- AwsSolutions-AEC6 @ CumplifyPipeline/Prod/DataStack/RedisCluster
+    reason: Redis AUTH token is not configured at this stage. Application-level authentication will be
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/DataStack/EvidenceVault/ReplicationRole/DefaultPolicy/Reso
+    reason: Aurora rotation Lambda requires secretsmanager:GetSecretValue with wildcard on version sta
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/DataStack/BucketNotificationsHandler050a0587b7544547bf325f
+    reason: Aurora rotation Lambda and DynamoDB auto-scaling use CDK-generated managed policies with m
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/AuditTrailStack/BucketNotificationsHandler050a0587b7544
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-SQS3 @ CumplifyPipeline/Staging/AuditTrailStack/SealerDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-SQS3 @ CumplifyPipeline/Staging/AuditTrailStack/TripwireDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/AuditTrailStack/AuditSinkConsumerFn/ServiceRole/Resourc
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Staging/AuditTrailStack/AuditSinkConsumerFn/ServiceRole/Default
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-L1 @ CumplifyPipeline/Staging/AuditTrailStack/AuditSinkConsumerFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/AuditTrailStack/WormSealerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Staging/AuditTrailStack/WormSealerFn/ServiceRole/DefaultPolicy/
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-L1 @ CumplifyPipeline/Staging/AuditTrailStack/WormSealerFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/AuditTrailStack/TamperTripwireFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Staging/AuditTrailStack/TamperTripwireFn/ServiceRole/DefaultPol
+    reason: cloudwatch:PutMetricData does not support resource-level permissions (AWS API limitation).
+- AwsSolutions-L1 @ CumplifyPipeline/Staging/AuditTrailStack/TamperTripwireFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/AuditTrailStack/ChainVerifierFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Staging/AuditTrailStack/ChainVerifierFn/ServiceRole/DefaultPoli
+    reason: cloudwatch:PutMetricData does not support resource-level permissions. S3 read grant uses /
+- AwsSolutions-L1 @ CumplifyPipeline/Staging/AuditTrailStack/ChainVerifierFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM5 @ CumplifyPipeline/Staging/AuditTrailStack/VerifierSchedulerRole/DefaultPolicy/Res
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/AuditTrailStack/LogRetentionaae0aa3c5b4d4f87b02d85b201e
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Staging/AuditTrailStack/LogRetentionaae0aa3c5b4d4f87b02d85b201e
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/IdentityStack/PreTokenGenFn/ServiceRole/Resource
+    reason: PreTokenGeneration Lambda execution role uses AWSLambdaBasicExecutionRole (CDK-generated).
+- AwsSolutions-L1 @ CumplifyPipeline/Staging/IdentityStack/PreTokenGenFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-COG8 @ CumplifyPipeline/Staging/IdentityStack/PoolA/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-COG2 @ CumplifyPipeline/Staging/IdentityStack/PoolB/Resource
+    reason: MFA is configured per pool: Pool A REQUIRED, Pools B/C OPTIONAL. OPTIONAL allows tenant ad
+- AwsSolutions-COG8 @ CumplifyPipeline/Staging/IdentityStack/PoolB/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-COG2 @ CumplifyPipeline/Staging/IdentityStack/PoolC/Resource
+    reason: MFA is configured per pool: Pool A REQUIRED, Pools B/C OPTIONAL. OPTIONAL allows tenant ad
+- AwsSolutions-COG8 @ CumplifyPipeline/Staging/IdentityStack/PoolC/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-S1 @ CumplifyPipeline/Staging/NetworkStack/FlowLogsBucket/Resource
+    reason: Flow-logs bucket is itself a log destination. Enabling access logs would create circular l
+- AwsSolutions-EC23 @ CumplifyPipeline/Staging/NetworkStack/EndpointSG/Resource
+    reason: EC23 cannot validate Fn::GetAtt(CumplifyVpc, CidrBlock) at synth time. Security group ingr
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/IdentityStack/PreTokenGenFn/ServiceRole/Resource
+    reason: PreTokenGeneration Lambda execution role uses AWSLambdaBasicExecutionRole (CDK-generated).
+- AwsSolutions-L1 @ CumplifyPipeline/Prod/IdentityStack/PreTokenGenFn/Resource
+    reason: Lambda uses NODEJS_22_X which is the latest LTS runtime. CDK Nag rule may not recognize ne
+- AwsSolutions-COG8 @ CumplifyPipeline/Prod/IdentityStack/PoolA/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-COG2 @ CumplifyPipeline/Prod/IdentityStack/PoolB/Resource
+    reason: MFA is configured per pool: Pool A REQUIRED, Pools B/C OPTIONAL. OPTIONAL allows tenant ad
+- AwsSolutions-COG8 @ CumplifyPipeline/Prod/IdentityStack/PoolB/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-COG2 @ CumplifyPipeline/Prod/IdentityStack/PoolC/Resource
+    reason: MFA is configured per pool: Pool A REQUIRED, Pools B/C OPTIONAL. OPTIONAL allows tenant ad
+- AwsSolutions-COG8 @ CumplifyPipeline/Prod/IdentityStack/PoolC/Resource
+    reason: Cognito PLUS tier / feature plan not enabled. ESSENTIALS tier provides standard protection
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/AuditTrailStack/BucketNotificationsHandler050a0587b7544547
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-SQS3 @ CumplifyPipeline/Prod/AuditTrailStack/SealerDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-SQS3 @ CumplifyPipeline/Prod/AuditTrailStack/TripwireDlq/Resource
+    reason: This is a dead-letter queue — no redrive policy needed
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/AuditTrailStack/AuditSinkConsumerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/AuditTrailStack/AuditSinkConsumerFn/ServiceRole/DefaultPol
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-L1 @ CumplifyPipeline/Prod/AuditTrailStack/AuditSinkConsumerFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/AuditTrailStack/WormSealerFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/AuditTrailStack/WormSealerFn/ServiceRole/DefaultPolicy/Res
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-L1 @ CumplifyPipeline/Prod/AuditTrailStack/WormSealerFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/AuditTrailStack/TamperTripwireFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/AuditTrailStack/TamperTripwireFn/ServiceRole/DefaultPolicy
+    reason: cloudwatch:PutMetricData does not support resource-level permissions (AWS API limitation).
+- AwsSolutions-L1 @ CumplifyPipeline/Prod/AuditTrailStack/TamperTripwireFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/AuditTrailStack/ChainVerifierFn/ServiceRole/Resource
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/AuditTrailStack/ChainVerifierFn/ServiceRole/DefaultPolicy/
+    reason: cloudwatch:PutMetricData does not support resource-level permissions. S3 read grant uses /
+- AwsSolutions-L1 @ CumplifyPipeline/Prod/AuditTrailStack/ChainVerifierFn/Resource
+    reason: Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/AuditTrailStack/VerifierSchedulerRole/DefaultPolicy/Resour
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-IAM4 @ CumplifyPipeline/Prod/AuditTrailStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd
+    reason: Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal p
+- AwsSolutions-IAM5 @ CumplifyPipeline/Prod/AuditTrailStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd
+    reason: Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key res
+- AwsSolutions-EC23 @ CumplifyPipeline/Staging/DataStack/AuroraSecurityGroup/Resource
+    reason: Security group ingress uses VPC CIDR (Fn::GetAtt) which cdk-nag cannot evaluate at synth t
+- AwsSolutions-RDS6 @ CumplifyPipeline/Staging/DataStack/AuroraCluster/Resource
+    reason: IAM authentication is not used for the master credential — Secrets Manager rotation handle
+- AwsSolutions-EC23 @ CumplifyPipeline/Staging/DataStack/CacheSecurityGroup/Resource
+    reason: Security group ingress uses VPC CIDR (Fn::GetAtt) which cdk-nag cannot evaluate at synth t
+- AwsSolutions-AEC4 @ CumplifyPipeline/Staging/DataStack/RedisCluster
+    reason: Multi-AZ is intentionally disabled for dev/staging (cost optimization). Prod enables multi
+- AwsSolutions-AEC5 @ CumplifyPipeline/Staging/DataStack/RedisCluster
+    reason: Default Redis port 6379 is used. Non-standard ports provide security-through-obscurity wit
+- AwsSolutions-AEC6 @ CumplifyPipeline/Staging/DataStack/RedisCluster
+    reason: Redis AUTH token is not configured at this stage. Application-level authentication will be
+- AwsSolutions-IAM4 @ CumplifyPipeline/Staging/DataStack/BucketNotificationsHandler050a0587b7544547bf3
+    reason: Aurora rotation Lambda and DynamoDB auto-scaling use CDK-generated managed policies with m
+- AwsSolutions-S1 @ CumplifyPipeline/CumplifyPipeline/Pipeline/ArtifactsBucket/Resource
+    reason: Artifact bucket and cross-region replication bucket are CDK Pipelines internal storage wit
+- AwsSolutions-IAM5 @ CumplifyPipeline/CumplifyPipeline/Pipeline/Role/DefaultPolicy/Resource
+    reason: [Action::s3:GetObject*] PipelineStack contains only framework-generated pipeline construct
+- AwsSolutions-IAM5 @ CumplifyPipeline/CumplifyPipeline/Pipeline/Source/Cumplifyrepo_Cumplify/CodePipe
+    reason: [Action::s3:GetObject*] PipelineStack contains only framework-generated pipeline construct
+- AwsSolutions-IAM5 @ CumplifyPipeline/CumplifyPipeline/Pipeline/Build/Synth/CdkBuildProject/Role/Defa
+    reason: [Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<Cump
+- AwsSolutions-IAM5 @ CumplifyPipeline/CumplifyPipeline/Pipeline/Staging/SmokeTest/SmokeTest/Role/Defa
+    reason: [Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<Cump
+- AwsSolutions-IAM5 @ CumplifyPipeline/CumplifyPipeline/Pipeline/Prod/LegalSignoffGuard/LegalSignoffGu
+    reason: [Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<Cump
+- AwsSolutions-IAM5 @ CumplifyPipeline/CumplifyPipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy
+    reason: [Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/<Cump
+- AwsSolutions-IAM5 @ CumplifyPipeline/CumplifyPipeline/Assets/FileRole/DefaultPolicy/Resource
+    reason: [Resource::arn:<AWS::Partition>:logs:us-east-1:157082218687:log-group:/aws/codebuild/*] Pi
