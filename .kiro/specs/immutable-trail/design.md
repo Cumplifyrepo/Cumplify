@@ -964,7 +964,7 @@ The verifier is the most complex Lambda. Full code deferred to implementation; k
 | ... | ... | ... | ... | ... |
 
 Exit code: 0
-cdk-outputs.json blob SHA: <git hash-object infra/cdk-outputs.json>
+cdk-outputs.json blob SHA: <git hash-object cdk-outputs.json>
 ```
 
 ---

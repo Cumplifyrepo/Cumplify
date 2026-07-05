@@ -110,27 +110,35 @@
 **D-Rung:** — (gate, not code)
 
 > **This task gates deployment.** Owner reviews the REQUIRES-HUMAN artifacts
-> before any `cdk deploy` proceeds.
+> before any push-to-deploy proceeds.
 
 ### Review Artifacts
 - [ ] **IAM Deny policy** (design §5.1 + §5.2) — 5-action Deny on AUDITLOG items, attached to all 4 roles
 - [ ] **WORM sealer handler** (design §6.1) — S3 PutObject with COMPLIANCE retention, ChecksumAlgorithm:'SHA256'
 - [ ] **Sealer IAM permissions** (design §6.2) — s3:PutObject, s3:PutObjectRetention, KMS decrypt/encrypt
 
+### Mechanics (ADJ-3)
+- There are no PRs in this flow — commits land directly on develop.
+- HITL sign-off = owner's explicit approval message, recorded verbatim in `.kiro/evidence/immutable-trail/hitl-signoff.md` together with the commit hash reviewed.
+- **No push-to-deploy until that file exists.**
+
 ### Acceptance
-- Owner signs off on all three artifacts (comment/approval in PR)
+- Owner signs off on all three artifacts (approval message recorded)
+- `.kiro/evidence/immutable-trail/hitl-signoff.md` committed with approval text + commit hash
 - No deploy proceeds until this task is marked complete
 
 ---
 
-## Task 7: Deploy to dev + readback green
+## Task 7: Deploy to dev (pipeline) + readback green
 
 **D-Rung:** D3 (deployed to dev + readback green)
 
+**Deploy method (ADJ-2):** Push to `develop` triggers the CDK Pipeline — that IS the deploy path. Do NOT run `cdk deploy` (debugging fallback only). Adding AuditTrailStack to CumplifyStage changes the pipeline's own definition, so expect UpdatePipeline to self-mutate and RESTART the execution under a new ID (same as spec 2's deploy — normal, not a failure). Evidence records BOTH execution IDs.
+
 ### Deliverables
-- [ ] `cdk deploy` AuditTrailStack to dev (account 697114252993, us-east-1)
-- [ ] `infra/cdk-outputs.json` committed with new stack outputs
-- [ ] `infra/readback/immutable-trail.test.ts` — 12-test readback suite (design §8.2):
+- [ ] Push to `develop` → pipeline deploys AuditTrailStack to dev (account 697114252993, us-east-1)
+- [ ] `cdk-outputs.json` (repo root) committed with new stack outputs
+- [ ] `infra/readback/immutable-trail.test.ts` — 13-test readback suite (design §8.2 + ADJ-4):
 
 | # | Test | ACC | Asserts |
 |---|------|-----|---------|
@@ -146,11 +154,13 @@
 | 10 | TAMPER — tripwire | ACC-1a | UpdateItem via admin → AuditTamperAttempt metric |
 | 11 | TAMPER — verifier | ACC-1b | Manual invoke → AuditChainBroken metric |
 | 12 | VERIFICATION GREEN | ACC-4 | Invoke on untampered tenant → exit 0, no metric |
+| 13 | REPLAY IDEMPOTENCY (ADJ-4) | FIX-1 | Direct-invoke consumer TWICE with identical SQS payload (same eventId) → second invoke logs ReplayDetectedError, CumplifyCore contains EXACTLY ONE chain item for that eventId |
 
 ### Acceptance
-- All 12 readback tests PASS
-- Evidence table produced per §8.3 (timestamp, exit code, cdk-outputs.json blob SHA)
+- All 13 readback tests PASS
+- Evidence table produced per §8.3 (timestamp, exit code, cdk-outputs.json blob SHA from repo root)
 - All identifiers from executed commands only (CF-3)
+- Both pipeline execution IDs recorded
 
 ---
 
@@ -159,8 +169,8 @@
 **D-Rung:** D3 (final)
 
 ### Deliverables
-- [ ] Evidence table committed to `progress.md` or spec closure file
-- [ ] `cdk-outputs.json` blob SHA recorded: `git hash-object infra/cdk-outputs.json`
+- [ ] Evidence logs committed: `.kiro/evidence/immutable-trail/task-{n}.log` per spec-2 convention
+- [ ] `cdk-outputs.json` (repo root) blob SHA recorded: `git hash-object cdk-outputs.json`
 - [ ] All task checkboxes above marked complete (rule 7: checkbox edits in closure commits only)
 - [ ] Timestamp + exit code of final readback run (rule 8)
 
