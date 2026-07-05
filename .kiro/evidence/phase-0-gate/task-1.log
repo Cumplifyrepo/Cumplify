@@ -1,0 +1,38 @@
+# Phase-0 Gate — Task 1 Evidence Log
+
+**Timestamp:** 2026-07-05T01:30:00Z
+**Spec:** phase-0-gate
+**Task:** 1 (Prepare)
+
+## Deliverables Produced
+
+1. `.kiro/evidence/phase-0-gate/task-universe.md`
+   - 32 completed P0 tasks enumerated across 4 specs
+   - GATE-7 derivation from seed a39229919879e57826643c9fae99c208fadb6cbd
+   - 3 tasks selected: platform-foundation/3.1, build-verification-harness/1.2, immutable-trail/3
+
+2. `docs/gates/phase-0-gate-report.md`
+   - Report skeleton with all GATE sections
+   - GATE-4, GATE-5, GATE-8 pre-populated (citation/N/A — no cloud-touching needed)
+
+3. `docs/gates/cost-estimates.md`
+   - Skeleton with structure for dev + mgmt cost data
+
+4. `.kiro/evidence/phase-0-gate/gate-scripts.sh`
+   - COR-2 applied: construct paths use CumplifyPipeline/Dev/StackName format
+   - All 7 gate items with executable commands
+
+5. GATE-7 selection (COR-1):
+   - Seed: approved spec commit a392299 (full: a39229919879e57826643c9fae99c208fadb6cbd)
+   - sha256(seed) = e40278cf182ed7ee9c51b7013596fbcae204f18be8c9c59a35d32856e68444f4
+   - Window 1 (e40278cf) → 3825367247 mod 32 = 15 → platform-foundation/3.1 ✓
+   - Window 2 (182ed7ee) → 405723118 mod 32 = 14 → platform-foundation/2.1 SKIP (same spec)
+   - Window 3 (9c51b701) → 2622600961 mod 32 = 1 → build-verification-harness/1.2 ✓
+   - Window 4 (3596fbca) → 899087306 mod 32 = 10 → platform-foundation/1.5 SKIP (same spec)
+   - Window 5 (e204f18b) → 3791974795 mod 32 = 11 → platform-foundation/1.6 SKIP (same spec)
+   - Window 6 (e8c9c59a) → 3905537434 mod 32 = 26 → immutable-trail/3 ✓
+   - Result: 3 tasks across 3 specs
+
+## Exit
+MAX-RUNG: N/A (preparation task, no cloud writes)
+Exit code: 0

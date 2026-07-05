@@ -11,11 +11,11 @@
 **D-Rung:** — (preparation, no cloud writes)
 
 ### Deliverables
-- [ ] `.kiro/evidence/phase-0-gate/task-universe.md` — numbered list of ALL completed P0 tasks across 4 specs
-- [ ] Report skeleton committed at `docs/gates/phase-0-gate-report.md` (empty sections, metadata populated)
-- [ ] `docs/gates/cost-estimates.md` skeleton committed
-- [ ] Command scripts from design §2 prepared as executable shell snippets in `.kiro/evidence/phase-0-gate/gate-scripts.sh`
-- [ ] GATE-7 selection: derive 3 task indices from the Task 1 commit hash, document derivation, record which tasks are selected
+- [x] `.kiro/evidence/phase-0-gate/task-universe.md` — numbered list of ALL completed P0 tasks across 4 specs
+- [x] Report skeleton committed at `docs/gates/phase-0-gate-report.md` (empty sections, metadata populated)
+- [x] `docs/gates/cost-estimates.md` skeleton committed
+- [x] Command scripts from design §2 prepared as executable shell snippets in `.kiro/evidence/phase-0-gate/gate-scripts.sh`
+- [x] GATE-7 selection: derive 3 task indices from the Task 1 commit hash, document derivation, record which tasks are selected
 
 ### Acceptance
 - Task-universe enumeration committed and verifiable
