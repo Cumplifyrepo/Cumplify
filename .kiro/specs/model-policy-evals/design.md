@@ -3,7 +3,7 @@
 **Spec:** `model-policy-evals`
 **Requirements approved:** R2 (REV-1..7 applied)
 **Steering rules exercised:** `00-stack-facts.md`, `12-token-metering.md`, `15-model-policy.md`, `19-kiro-truth.md`
-**Revision:** R1 — initial design for architect review
+**Revision:** R2 — DREV-1..7 applied; DREV-2 corrected per owner ruling (no licensed ISO copies)
 
 ---
 
@@ -74,8 +74,8 @@ File: `services/model-evals/runbooks/legal-ledger-grading.md`
 # LegalLedger Eval Grading Runbook
 
 ## Grader Qualifications
-- Must understand ISO 14001 6.1.3 / 45001 6.1.3 / 9001 9.1.2 obligation structures
-- Architect or designated legal-domain reviewer
+- Architect (sole grader in P1) — must understand ISO 14001 6.1.3 / 45001 6.1.3 / 9001 9.1.2 obligation structures
+- OWNER DECISION (REQUIRES-HUMAN): whether to engage external legal review for grading validation is an owner decision recorded in the Register; no legal counsel exists on staff
 
 ## Per-Response Grading Criteria (1-5 scale each)
 1. **Obligation identification:** correct obligations extracted from scenario
@@ -104,21 +104,41 @@ File: `services/model-evals/runbooks/legal-ledger-grading.md`
 
 | Tier | Source | Authoring Method | Quality Validation |
 |------|--------|-----------------|-------------------|
-| **Guru** (150 Q&A) | ISO 9001:2015 / 14001:2015 / 45001:2018 clause text (from the `iso-standards-kb` corpus); 50 per standard | Architect authors Q&A pairs: question phrased as a practitioner query, expected answer cites specific clause with key requirements | Architect reviews; cross-checked against the standard text |
+| **Guru** (150 Q&A) | Ground truth = the COMMITTED corpus artifacts: `docs/architecture/iso-requirements-map.md`, `iso-coverage-matrix.md`, `agent-catalog.md` clause coverage sections. Contains clause numbers + paraphrased requirements. **Limitation (stated in every scored report):** grading measures consistency with OUR corpus maps, not verification against official standard text. Valid for seat selection because all candidates face identical ground truth (relative ranking). | Architect authors Q&A pairs: question phrased as a practitioner query, expected answer cites specific clause number with paraphrased requirements from the corpus maps. NO verbatim ISO standard text committed. | Architect reviews; cross-checked against the committed corpus maps |
 | **Workhorse** (30 tasks) | Agent-catalog duty definitions + module-spec scenario descriptions | Architect authors representative task prompts (draft a procedure, analyze a CAPA, assess a risk) with expected output structure | Architect validates outputs against module-spec requirements |
 | **Lightweight** (20 tasks) | Catalog duties for the 8 Lite-class agents | Architect authors structured-input/output pairs (register a record, track an objective) | Schema validation against expected output shape |
 | **Micro** (50 examples) | Labeled routing/classification corpus: event detail-type → target queue/agent | Generated from `contracts/events.md` taxonomy (46 events) + 4 synthetic edge cases | Labels verified against routing table (spec 2 design §4) |
 | **Snapshot** (30 tasks) | Pain-picker inputs → snapshot output schema (Part 2.2) | Representative industry/size/pain combinations with expected output conforming to snapshot schema | Schema + factual grounding (claims traceable to input) |
 | **Editor-AI** (20 tasks) | ISO document templates: policies, procedures, CAPA records, work instructions | Input = partial document + instruction (complete section X, suggest improvement); expected output = structurally valid completion | Architect reviews structural + ISO-alignment quality |
 | **Pain-distiller** (20 tasks) | Sample customer feedback + support transcripts → expected pain-point extractions | Synthetic inputs with ground-truth pain-point labels | Label coverage check (all material pain-points identified) |
-| **LegalLedger** (30 scenarios) | Obligation-mapping scenarios: regulatory text + jurisdiction context → obligation register entries | Architect + legal counsel author scenarios from real 14001/45001/9001 obligation structures | Legal-domain review before benchmark |
+| **LegalLedger** (30 scenarios) | Obligation-mapping scenarios sourced from PUBLIC-DOMAIN regulatory texts (OSHA/EPA regulations, statutes) + the corpus clause framing for 14001 6.1.3 / 45001 6.1.3 / 9.1.2. NO licensed ISO text required — scenarios use regulatory obligations that map TO ISO clause structures. | Architect authors scenarios: regulatory text context (public-domain) + jurisdiction + expected obligation register entries mapped to ISO clause numbers | Architect domain review before benchmark. OWNER DECISION (REQUIRES-HUMAN): whether to engage external legal review for grading validation. |
 
-### 3.2 Set Quality Gate
+### 3.2 Non-Agent Seat Candidate Lists (DREV-3)
+
+| Seat | Incumbent | Candidates | Count | Notes |
+|------|-----------|-----------|-------|-------|
+| **Snapshot pipeline** | nova-pro | nova-lite, nova-2-lite, glm-4.7-flash | 4 | Most cost-sensitive seat (~$0.03–0.08/run); lightweight models preferred |
+| **Editor-AI** | nova-pro | nova-lite, deepseek.v3.2, glm-4.7 | 4 | Document drafting needs quality; Pro-class challengers appropriate |
+| **Pain-distiller** | nova-pro | deepseek.v3.2, qwen.qwen3-next-80b-a3b | 3 | Extraction + synthesis; Pro-class |
+
+These counts match the §4.2 budget table (Snapshot 4, Editor-AI 4, Pain-distiller 3).
+
+### 3.3 Set Quality Gate
 
 No benchmark run executes until:
 1. Eval set committed to `services/model-evals/data/eval-sets/`
 2. Architect sign-off on set quality (review comment on the committing PR/commit)
 3. Token budget approved (§4)
+
+### 3.4 Ground-Truth Limitations & Carries (DREV-2)
+
+**Owner ruling (2026-07-05):** NO licensed ISO standard copies will be purchased for the build. In the product, tenants upload their OWN licensed standards (tenant responsibility).
+
+**Consequence for evals:** Guru ground-truth is the committed corpus (iso-requirements-map, iso-coverage-matrix) — clause numbers + architect-paraphrased requirements. Every scored report states this limitation: "Grading measures consistency with Cumplify corpus maps, not verification against official ISO standard text. Valid for model selection because all candidates face identical ground truth (relative ranking)."
+
+**NAMED CARRY to spec 4 (knowledge-base):** `iso-standards-kb` becomes a tenant-upload-based per-tenant index (corpus v7 amendment). The Snapshot pipeline (pre-auth, tenant-less) grounds on model knowledge + Cumplify's own authored baselines, never ISO text.
+
+**Snapshot grounding:** The Snapshot eval set tests model ability to produce a structured readiness assessment from industry/pain inputs using general ISO knowledge. No standard text is provided as context — the model relies on its training knowledge of ISO frameworks (same as the product experience for unauthenticated Snapshot users who haven't uploaded standards yet).
 
 ---
 
@@ -218,24 +238,64 @@ The runner checks staleness BEFORE any invocations (part of the pre-flight budge
 
 ## 7. Re-Validation Mechanism (Decision 6)
 
-| Tier | Mechanism | Rationale |
-|------|-----------|-----------|
-| Guru | **Runbook** (human spot-review required) | 20% human-graded component cannot be automated end-to-end |
-| Workhorse | **Runbook** (human content-quality review required) | 30% human-graded component |
-| Lightweight | **Scheduler** (EventBridge, quarterly) | Fully automated grading → can run unattended |
-| Micro | **Scheduler** (EventBridge, quarterly) | Fully automated grading → can run unattended |
-| Snapshot | **Scheduler** (EventBridge, quarterly) | Fully automated grading |
-| Editor-AI | **Runbook** (human spot-review) | 20% human-graded |
-| Pain-distiller | **Scheduler** (EventBridge, quarterly) | Fully automated |
-| LegalLedger | **Runbook** (100% human-graded) | Cannot automate legal reasoning assessment |
+**ARCHITECT RULING (DREV-1):** ALL 8 seats are runbook-initiated in P1. No scheduled Lambda or Step Function — that would violate C-4 (unattended Bedrock spend without architect-approved estimate) and NFR-4/§1 (harness is CLI, not deployed infra).
 
-**Scheduler seats (4):** A single EventBridge schedule (quarterly) invokes a Step Function or Lambda that runs the eval harness for Lightweight + Micro + Snapshot + Pain-distiller, commits results, and updates the Register expiry.
+### 7.1 Quarterly Cadence
 
-**Runbook seats (4):** The committed runbook documents the quarterly process: architect initiates the run, collects outputs, performs/coordinates human grading, scores, updates Register. A calendar reminder (not infrastructure) triggers the process.
+A single re-validation runbook (`services/model-evals/runbooks/quarterly-revalidation.md`) documents the quarterly process for ALL seats:
+
+1. Architect checks Register for entries approaching expiry (< 30 days remaining)
+2. Architect runs `--estimate-only` for each expiring seat
+3. Architect approves budget (evidence logged)
+4. Architect runs `--run` for automated-grading seats; initiates human-grading process for human-graded seats
+5. Scored reports committed; Register entries updated with new expiry
+6. Any newly accessible Bedrock models added to candidate lists (REVAL-4)
+
+### 7.2 Staleness Visibility
+
+Register expiry dates + REVAL-3's EXPIRED flag provide staleness visibility with zero infrastructure. An EXPIRED entry is a standing process signal — the quarterly runbook catches it.
+
+### 7.3 Future Option (not built in P1)
+
+Automation (Scheduler → Lambda → harness) is contingent on a standing-approval mechanism: a pre-approved quarterly budget recorded in the Register per seat. Until that mechanism is designed (future spec), all runs require explicit architect approval per C-4.
+
+| Tier | Grading Type | Re-Validation Process |
+|------|-------------|----------------------|
+| Guru | Mixed (automated + 20% human spot-review) | Runbook: architect initiates, reviews human-graded sample |
+| Workhorse | Mixed (automated + 30% human review) | Runbook: architect initiates, reviews content quality |
+| Lightweight | Fully automated | Runbook: architect approves budget, runs CLI, commits results |
+| Micro | Fully automated | Runbook: architect approves budget, runs CLI, commits results |
+| Snapshot | Fully automated | Runbook: architect approves budget, runs CLI, commits results |
+| Editor-AI | Mixed (automated + 20% human review) | Runbook: architect initiates, reviews document quality |
+| Pain-distiller | Fully automated | Runbook: architect approves budget, runs CLI, commits results |
+| LegalLedger | 100% human-graded | Runbook: architect initiates, performs blind grading, scores |
 
 ---
 
-## 8. Runner Implementation
+## 8. Division of Labor (DREV-5)
+
+| Work Item | Executor | Rationale |
+|-----------|----------|-----------|
+| Guru eval set (150 Q&A) | **[ARCHITECT]** | Requires domain expertise + committed corpus maps (iso-requirements-map, iso-coverage-matrix) |
+| LegalLedger eval set (30 scenarios) | **[ARCHITECT]** | Requires domain expertise + public-domain regulatory texts + corpus clause framing |
+| Micro eval set (50 examples) | **[KIRO]** — draft from `contracts/events.md` (46 registered events + 4 synthetic edge cases at authoring time) | Machine-derivable from committed taxonomy |
+| Lightweight eval set (20 tasks) | **[KIRO]** — draft from catalog duty definitions + module-spec schemas | Structured tasks derivable from committed specs |
+| Snapshot eval set (30 tasks) | **[KIRO]** — draft from Part 2.2 snapshot schema (no ISO text context — model general knowledge) | Structured I/O derivable from committed schema |
+| Pain-distiller eval set (20 tasks) | **[KIRO]** — draft synthetic inputs with ground-truth labels | Pattern-based extraction tasks |
+| Editor-AI eval set (20 tasks) | **[KIRO]** — draft from document templates/schemas | Structured completion tasks |
+| Workhorse eval set (30 tasks) | **[KIRO]** — draft from catalog duty definitions | Representative scenarios from committed specs |
+| ALL eval-set validation | **[ARCHITECT]** | §3.3 quality gate: no run without architect sign-off |
+| ALL benchmark runs | **[ARCHITECT]**-witnessed | C-4: no unattended Bedrock spend |
+| Human grading (Guru spot-review, Workhorse, Editor-AI, LegalLedger) | **[ARCHITECT]** | Domain judgment required |
+| Eval harness code (`services/model-evals/`) | **[KIRO]** | Standard TypeScript implementation |
+| Register assembly | **[KIRO]** — post-eval, from scored reports | Mechanical assembly from evidence |
+| Steering 15 amendment | **[KIRO]** — draft; **[OWNER]** ratifies (REQUIRES-HUMAN) | Owner policy change |
+
+**tasks.md must tag each task [KIRO] or [ARCHITECT] accordingly.**
+
+---
+
+## 9. Runner Implementation
 
 ### 8.1 CLI Interface
 
@@ -280,7 +340,7 @@ const client = new BedrockRuntimeClient({ region: 'us-east-1' });
 const response = await client.send(new ConverseCommand({
   modelId: candidate.modelId,
   messages: [{ role: 'user', content: [{ text: task.prompt }] }],
-  inferenceConfig: { temperature: seatConfig.temperature, maxTokens: 4096 },
+  inferenceConfig: { temperature: seatConfig.temperature, maxTokens: seatConfig.maxTokens },
 }));
 
 // Extract token usage from response.usage
@@ -290,9 +350,24 @@ const usage = {
 };
 ```
 
+### 9.4 Per-Seat maxTokens Configuration (DREV-7)
+
+| Seat | maxTokens | Rationale |
+|------|-----------|-----------|
+| Guru | 2048 | Clause Q&A answers are focused; 600 tokens typical |
+| Workhorse | 4096 | Document drafts, CAPA analysis can be lengthy |
+| Lightweight | 1024 | Short structured outputs |
+| Micro | 256 | Classification labels only |
+| Snapshot | 2048 | Structured snapshot output |
+| Editor-AI | 4096 | Document section completion |
+| Pain-distiller | 2048 | Extraction summaries |
+| LegalLedger | 8192 | Complex obligation mapping; `moonshot.kimi-k2-thinking` emits reasoning tokens as output — actual generation may exceed the 800-token estimate significantly |
+
+**Note on reasoning models:** `moonshot.kimi-k2-thinking` (LegalLedger candidate) emits chain-of-thought reasoning tokens as part of its output. This means LegalLedger per-task output may far exceed the 800-token average estimate. The per-seat budget cap ($3.00) halts overruns, but the §4.2 estimate should be read as a planning figure, not a ceiling. Actual LegalLedger cost will be determined by the first run's real token consumption.
+
 ---
 
-## 9. Scored Report Format
+## 10. Scored Report Format
 
 ```markdown
 # Eval Report: <seat> — <timestamp>
@@ -320,35 +395,80 @@ const usage = {
 
 ---
 
-## 10. NONAG-3 Correction (architect directive)
+## 11. NONAG-3 Correction (architect directive)
 
 Editor-AI eval examples cover **inline suggestions for ISO document drafting/completion** — policies, procedures, CAPA records, work instructions. NOT code. The eval set tests the model's ability to complete document sections, suggest improvements to procedures, and draft ISO-aligned content.
 
 ---
 
-## 11. Contracts Produced / Updated
+## 12. Margin-Inputs Data File (DREV-6)
+
+### 12.1 Schema (`services/model-evals/data/margin-inputs.json`)
+
+```json
+{
+  "capturedAt": "2026-07-05T00:00:00Z",
+  "source": "cumplify-CONSOLIDATED-master-architecture-v7-full.md Parts 17/22",
+  "capturedBy": "architect",
+  "creditPricingPerTask": {
+    "guru": { "creditsPerTask": 5, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.0198 },
+    "workhorse": { "creditsPerTask": 3, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.01188 },
+    "lightweight": { "creditsPerTask": 1, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00396 },
+    "micro": { "creditsPerTask": 0.5, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00198 },
+    "snapshot": { "creditsPerTask": 2, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00792 },
+    "editor-ai": { "creditsPerTask": 2, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00792 },
+    "pain-distiller": { "creditsPerTask": 3, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.01188 },
+    "legal-ledger": { "creditsPerTask": 10, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.0396 }
+  },
+  "marginMandate": 0.50,
+  "notes": "Credit pricing from Part 22 (25,000 credits = $99 → $0.00396/credit). Credits per task are ESTIMATES pending product pricing finalization — the architect updates this file when pricing is confirmed."
+}
+```
+
+### 12.2 Margin Computation in Reports
+
+The scored report's "Margin at credit pricing" line computes:
+
+```
+margin = 1 - (model_cost_per_task / effective_price_per_task)
+```
+
+Where `model_cost_per_task` = actual measured $/task from the eval, and `effective_price_per_task` comes from `margin-inputs.json`. A margin < 50% means the model FAILS the margin bar and is not eligible for assignment.
+
+### 12.3 Provenance
+
+Same provenance discipline as `price-snapshot.json`: `capturedAt`, `source`, `capturedBy`. Updated when credit pricing changes (owner decision).
+
+---
+
+## 13. Contracts Produced / Updated
 
 | Artifact | Action |
 |----------|--------|
 | `contracts/model-register.md` | **Created** — all seats, post-eval |
 | `services/model-evals/` | **Created** — eval harness package |
 | `services/model-evals/data/price-snapshot.json` | **Created** — Claude 4.x pricing |
+| `services/model-evals/data/margin-inputs.json` | **Created** — credit pricing per task class (Parts 17/22) |
 | `services/model-evals/data/eval-sets/*.json` | **Created** — per-seat eval sets |
 | `services/model-evals/runbooks/legal-ledger-grading.md` | **Created** — human-grading runbook |
+| `services/model-evals/runbooks/quarterly-revalidation.md` | **Created** — re-validation process for all 8 seats |
 | `.kiro/steering/15-model-policy.md` | **Modified** — owner-ratified amendment (REQUIRES-HUMAN) |
 | `.kiro/evidence/model-policy-evals/` | **Created** — scored reports per seat eval |
 
 ---
 
-## 12. Accepted Decisions
+## 14. Accepted Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| LegalLedger grading | 100% human | Cannot automate legal reasoning; wrong obligation = regulatory exposure |
+| LegalLedger grading | 100% human (architect only; owner decides on external legal — REQUIRES-HUMAN) | Cannot automate legal reasoning; no legal counsel on staff |
 | Editor-AI temperature | 0.3 | Document drafting needs mild variation; rubric scores structure not exact wording |
-| Re-validation: 4 seats automated | Scheduler (quarterly) | Fully automated grading enables unattended re-runs |
-| Re-validation: 4 seats manual | Runbook | Human-graded components cannot run unattended |
+| Re-validation: ALL 8 seats | Runbook-initiated (DREV-1) | C-4 forbids unattended Bedrock spend; NFR-4 forbids deployed Lambdas for harness |
+| Future automation | Contingent on standing-approval mechanism in Register | Not built in P1 |
 | Budget cap | $15 per campaign, $3 per seat | 2× worst-case estimate with investigation margin |
 | Staleness limit | 90 days | Aligns with quarterly re-validation cadence |
 | Eval harness form factor | CLI tool (not Lambda) | Development-time benchmarking; no deployed infra needed |
-| Micro F1 threshold | Design-decides at eval-set authoring time (recorded in eval-set metadata) | Threshold depends on routing complexity; set empirically |
+| maxTokens | Per-seat config (256–8192) | Seats have vastly different output lengths; reasoning models emit extra tokens |
+| Guru/LegalLedger ground-truth | Guru: corpus maps (iso-requirements-map, iso-coverage-matrix); LegalLedger: public-domain regulatory texts + corpus clause framing. NO licensed ISO copies purchased (owner ruling 2026-07-05). Verbatim ISO text never committed. | Valid for relative ranking: all candidates face identical ground truth |
+| Non-agent candidates | Named per §3.2 (Snapshot: 4, Editor-AI: 4, Pain-distiller: 3) | Budget table alignment; challengers from verified-accessible set |
+| Margin input source | `margin-inputs.json` with provenance | Single auditable artifact for credit pricing; updated when pricing changes |
