@@ -5,7 +5,6 @@ import {
   QueryCommand,
   TransactWriteItemsCommand,
 } from '@aws-sdk/client-dynamodb';
-import { marshall } from '@aws-sdk/util-dynamodb';
 import { appendAuditEvent, ItemSizeExceededError, ReplayDetectedError } from '../src/appender.js';
 import { computePayloadHash, GENESIS_HASH } from '../src/hash-chain.js';
 

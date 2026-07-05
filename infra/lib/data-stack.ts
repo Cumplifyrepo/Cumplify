@@ -42,6 +42,7 @@ export interface DataStackProps extends cdk.StackProps {
 export class DataStack extends cdk.Stack {
   public readonly tableName: string;
   public readonly tableArn: string;
+  public readonly tableStreamArn: string;
   public readonly clusterEndpoint: string;
   public readonly evidenceBucketArn: string;
 
@@ -126,6 +127,7 @@ export class DataStack extends cdk.Stack {
 
     this.tableName = table.tableName;
     this.tableArn = table.tableArn;
+    this.tableStreamArn = table.tableStreamArn!;
 
     // -----------------------------------------------------------------------
     // Secrets Manager — RDS master credentials (AC-3.4, created in DataStack
@@ -540,6 +542,7 @@ export class DataStack extends cdk.Stack {
     // -----------------------------------------------------------------------
     new cdk.CfnOutput(this, 'TableName', { value: this.tableName });
     new cdk.CfnOutput(this, 'TableArn', { value: this.tableArn });
+    new cdk.CfnOutput(this, 'TableStreamArn', { value: this.tableStreamArn });
     new cdk.CfnOutput(this, 'ClusterEndpoint', { value: this.clusterEndpoint });
     new cdk.CfnOutput(this, 'EvidenceBucketName', { value: evidenceBucket.bucketName });
     new cdk.CfnOutput(this, 'EvidenceBucketArn', { value: this.evidenceBucketArn });

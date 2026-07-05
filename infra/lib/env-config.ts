@@ -34,6 +34,8 @@ export interface EnvConfig {
   readonly auroraMaxCapacity: number;
   readonly cacheMultiAz: boolean;
   readonly cacheNodeType: string;
+  /** Object Lock COMPLIANCE retention for the audit-archive bucket (days). */
+  readonly auditArchiveRetentionDays: number;
 }
 
 export const ENV_CONFIGS: Record<string, EnvConfig> = {
@@ -57,6 +59,7 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     auroraMaxCapacity: 4,
     cacheMultiAz: false,
     cacheNodeType: 'cache.t4g.micro',
+    auditArchiveRetentionDays: 1,
   },
   staging: {
     envName: 'staging',
@@ -75,6 +78,7 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     auroraMaxCapacity: 4,
     cacheMultiAz: false,
     cacheNodeType: 'cache.t4g.micro',
+    auditArchiveRetentionDays: 1,
   },
   prod: {
     envName: 'prod',
@@ -93,6 +97,7 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     auroraMaxCapacity: 16,
     cacheMultiAz: true,
     cacheNodeType: 'cache.t4g.medium',
+    auditArchiveRetentionDays: 2555,
   },
 };
 

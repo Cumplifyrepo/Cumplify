@@ -15,6 +15,7 @@ import { DataStack } from './data-stack.js';
 import { IdentityStack } from './identity-stack.js';
 import { DrRegionStack } from './dr-region-stack.js';
 import { EventingStack } from './eventing-stack.js';
+import { AuditTrailStack } from './audit-trail-stack.js';
 
 export interface CumplifyStageProps extends cdk.StageProps {
   readonly envConfig: EnvConfig;
@@ -78,7 +79,23 @@ export class CumplifyStage extends cdk.Stage {
     identityStack.addDependency(dataStack);
 
     // EventingStack — no cross-stack deps from spec-1 stacks; deploys independently.
-    new EventingStack(this, 'EventingStack', { envConfig });
+    const eventingStack = new EventingStack(this, 'EventingStack', { envConfig });
+
+    // AuditTrailStack — cross-stack deps: DataStack, SecurityStack, EventingStack.
+    const auditTrailStack = new AuditTrailStack(this, 'AuditTrailStack', {
+      envConfig,
+      tableArn: dataStack.tableArn,
+      tableName: dataStack.tableName,
+      tableStreamArn: dataStack.tableStreamArn,
+      dynamodbKey: securityStack.outputs.dynamodbKey,
+      s3GeneralKey: securityStack.outputs.s3GeneralKey,
+      auditSinkQueueArn: eventingStack.auditSinkQueueArn,
+      auditSinkDlqUrl: eventingStack.auditSinkDlqUrl,
+      auditSinkDlqArn: eventingStack.auditSinkDlqArn,
+    });
+    auditTrailStack.addDependency(dataStack);
+    auditTrailStack.addDependency(securityStack);
+    auditTrailStack.addDependency(eventingStack);
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

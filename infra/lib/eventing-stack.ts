@@ -24,6 +24,10 @@ export interface EventingStackProps extends cdk.StackProps {
 }
 
 export class EventingStack extends cdk.Stack {
+  public readonly auditSinkQueueArn: string;
+  public readonly auditSinkDlqUrl: string;
+  public readonly auditSinkDlqArn: string;
+
   constructor(scope: Construct, id: string, props: EventingStackProps) {
     super(scope, id, props);
 
@@ -53,6 +57,10 @@ export class EventingStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(360),
       deadLetterQueue: { queue: auditSinkDlq, maxReceiveCount: 3 },
     });
+
+    this.auditSinkQueueArn = auditSinkQueue.queueArn;
+    this.auditSinkDlqUrl = auditSinkDlq.queueUrl;
+    this.auditSinkDlqArn = auditSinkDlq.queueArn;
 
     // ─── Standard Queues ────────────────────────────────────────────────────
     const ncTriageDlq = this.createStdDlq('NcTriageDlq');
