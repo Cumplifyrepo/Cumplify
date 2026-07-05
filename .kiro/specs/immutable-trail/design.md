@@ -4,7 +4,7 @@
 **Requirements approved:** R2.1 (AMEND-1/AMEND-2 folded)
 **Steering rules exercised:** `00-stack-facts.md`, `04-immutability.md`, `02-aoss-rule.md`, `06-cdk-conventions.md`, `14-simplicity.md`, `19-kiro-truth.md`
 **Architect design directives:** D-1 (cross-stack), D-2 (template assertions), D-3 (readback plan), D-4 (services layout), D-5 (HITL checkpoints)
-**Revision:** R1 — initial design for architect review
+**Revision:** R2 — FIX-1 through FIX-6 + minors applied (architect review pending)
 
 ---
 
@@ -82,6 +82,7 @@ const auditTrailStack = new AuditTrailStack(this, 'AuditTrailStack', {
   s3GeneralKey: securityStack.outputs.s3GeneralKey,
   auditSinkQueueArn: eventingStack.auditSinkQueueArn,  // NEW export
   auditSinkDlqUrl: eventingStack.auditSinkDlqUrl,      // NEW export
+  auditSinkDlqArn: eventingStack.auditSinkDlqArn,      // NEW export (minor-c)
 });
 auditTrailStack.addDependency(dataStack);
 auditTrailStack.addDependency(securityStack);
@@ -93,7 +94,7 @@ auditTrailStack.addDependency(eventingStack);
 | Stack | Addition | Rationale |
 |-------|----------|-----------|
 | `DataStack` | `public readonly tableStreamArn: string` + CfnOutput `TableStreamArn` | AuditTrailStack needs the stream ARN for ESM creation. `TableV2` exposes `tableStreamArn`. |
-| `EventingStack` | `public readonly auditSinkQueueArn: string` + `public readonly auditSinkDlqUrl: string` | Consumer ESM needs queue ARN; poison routing needs DLQ URL. Values already in CfnOutputs — just expose as class properties. |
+| `EventingStack` | `public readonly auditSinkQueueArn: string` + `public readonly auditSinkDlqUrl: string` + `public readonly auditSinkDlqArn: string` | Consumer ESM needs queue ARN; poison routing needs DLQ URL; consumer Lambda's poison-send grant needs the DLQ ARN. Values already in CfnOutputs — just expose as class properties. |
 
 **Cycle analysis:** No cycles. Data flows one-way: DataStack → AuditTrailStack, EventingStack → AuditTrailStack. Neither DataStack nor EventingStack imports from AuditTrailStack.
 
@@ -109,6 +110,7 @@ export interface AuditTrailStackProps extends cdk.StackProps {
   readonly s3GeneralKey: kms.IKey;
   readonly auditSinkQueueArn: string;
   readonly auditSinkDlqUrl: string;
+  readonly auditSinkDlqArn: string;
 }
 ```
 
@@ -137,53 +139,113 @@ export interface AuditTrailStackProps extends cdk.StackProps {
 
 ## 4. DynamoDB Streams ESM Filter Patterns (D-2 — verbatim expected JSON)
 
-### 4.1 Sealer ESM FilterCriteria (INSERT on AUDITLOG items)
+### 4.1 Sealer ESM FilterCriteria (INSERT on AUDITLOG items — FIX-4)
 
 ```json
 {
   "Filters": [
     {
-      "Pattern": "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"NewImage\":{\"PK\":{\"S\":[{\"prefix\":\"TENANT#\"}]}}}}"
+      "Pattern": "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"NewImage\":{\"itemType\":{\"S\":[\"AUDITLOG\"]}}}}"
     }
   ]
 }
 ```
 
-**Explanation:** DynamoDB Streams event filtering uses the EventBridge content-filter syntax on the stream record JSON. The filter matches:
-- `eventName` = `INSERT` (not MODIFY/REMOVE)
-- `dynamodb.NewImage.PK.S` starts with `TENANT#`
+**Explanation (FIX-4):** The appender stamps `itemType: 'AUDITLOG'` on every chain item. The filter matches:
+- `eventName` = `INSERT`
+- `dynamodb.NewImage.itemType.S` = exact value `"AUDITLOG"`
 
-**Why prefix-only, not suffix?** DynamoDB Streams filtering does NOT support `suffix` operators on string values (unlike EventBridge rule patterns). The `#AUDITLOG` suffix cannot be expressed in a filter. We use prefix `TENANT#` and add an application-level guard in the sealer handler that skips records where PK does not end with `#AUDITLOG`. This is documented and tested.
+This is an **exact-match filter** — no prefix/suffix gymnastics. Benefits:
+- No per-write Lambda invocations for ordinary tenant items (metadata, sessions, counters).
+- `AUDITDEDUP` marker items are naturally excluded (they have `itemType: 'AUDITDEDUP'`).
+- No reliance on suffix operator support (which DynamoDB Streams filtering does not have).
 
-**Sealer handler guard (application-level suffix check):**
+**Defense-in-depth guard (kept in handler):**
 ```typescript
-// Skip non-AUDITLOG items that pass the prefix-only stream filter
-if (!pk.endsWith('#AUDITLOG')) {
-  logger.debug('Skipping non-AUDITLOG item', { pk });
-  return; // no-op, message acknowledged
+if (item.itemType !== 'AUDITLOG') {
+  logger.debug('Skipping non-AUDITLOG item', { pk, itemType: item.itemType });
+  return;
 }
 ```
 
-### 4.2 Tripwire ESM FilterCriteria (MODIFY/REMOVE on AUDITLOG items)
+### 4.2 Tripwire ESM FilterCriteria (MODIFY/REMOVE on AUDITLOG items — FIX-4)
 
 ```json
 {
   "Filters": [
     {
-      "Pattern": "{\"eventName\":[\"MODIFY\",\"REMOVE\"],\"dynamodb\":{\"Keys\":{\"PK\":{\"S\":[{\"prefix\":\"TENANT#\"}]}}}}"
+      "Pattern": "{\"eventName\":[\"MODIFY\",\"REMOVE\"],\"dynamodb\":{\"OldImage\":{\"itemType\":{\"S\":[\"AUDITLOG\"]}}}}"
     }
   ]
 }
 ```
 
-**Explanation:** Matches MODIFY or REMOVE events where the key PK starts with `TENANT#`. Uses `dynamodb.Keys` (always present on stream records) rather than `dynamodb.NewImage` (absent on REMOVE). Same prefix-only limitation applies — application-level `#AUDITLOG` suffix guard in the tripwire handler.
+**Explanation (FIX-4):** Uses `dynamodb.OldImage` (always present for both MODIFY and REMOVE because the stream is `NEW_AND_OLD_IMAGES`). Exact match on `itemType: 'AUDITLOG'`.
 
-### 4.3 Template-Assertion Tests (C-12)
+**Defense-in-depth guard (kept in handler):**
+```typescript
+const oldItemType = record.dynamodb?.OldImage?.itemType?.S;
+if (oldItemType !== 'AUDITLOG') {
+  logger.debug('Skipping non-AUDITLOG event', { pk, oldItemType });
+  return;
+}
+```
 
-Each filter pattern gets a dedicated assertion in `infra/lib/audit-trail-stack.unit.test.ts`:
+### 4.3 CDK Implementation (FIX-5 — native FilterCriteria, no L1 gymnastics)
+
+`DynamoEventSource` natively supports the `filters` property via `lambda.FilterCriteria.filter()`. No `findAll()`/`addPropertyOverride` needed — that pattern risks silent-skip bugs (the if-guard in R1's §9.2 would no-op if the construct tree traversal failed).
 
 ```typescript
-// Sealer ESM filter assertion
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { FilterCriteria, FilterRule } from 'aws-cdk-lib/aws-lambda';
+
+// --- Sealer ESM (FIX-5: native filters) ---
+sealerFn.addEventSource(new DynamoEventSource(table, {
+  startingPosition: lambda.StartingPosition.LATEST,
+  batchSize: 10,
+  maxBatchingWindow: cdk.Duration.seconds(5),
+  bisectBatchOnFunctionError: true,
+  retryAttempts: 3,
+  onFailure: new destinations.SqsDestination(sealerDlq),
+  filters: [
+    FilterCriteria.filter({
+      eventName: FilterRule.isEqual('INSERT'),
+      dynamodb: {
+        NewImage: {
+          itemType: { S: FilterRule.isEqual('AUDITLOG') },
+        },
+      },
+    }),
+  ],
+}));
+
+// --- Tripwire ESM (FIX-5: native filters, AMEND-2: separate Lambda) ---
+tripwireFn.addEventSource(new DynamoEventSource(table, {
+  startingPosition: lambda.StartingPosition.LATEST,
+  batchSize: 10,
+  bisectBatchOnFunctionError: true,
+  retryAttempts: 3,
+  onFailure: new destinations.SqsDestination(tripwireDlq),
+  filters: [
+    FilterCriteria.filter({
+      eventName: FilterRule.or('MODIFY', 'REMOVE'),
+      dynamodb: {
+        OldImage: {
+          itemType: { S: FilterRule.isEqual('AUDITLOG') },
+        },
+      },
+    }),
+  ],
+}));
+```
+
+**Minor (a):** Neither ESM uses `reportBatchItemFailures` — the chosen semantics are throw → bisect/retry → DLQ. A void-returning handler makes the flag misleading.
+
+### 4.4 Template-Assertion Tests (C-12)
+
+```typescript
+// Sealer ESM filter assertion (FIX-4 itemType exact match)
 const sealerEsm = template.findResources('AWS::Lambda::EventSourceMapping', {
   Properties: {
     FunctionName: { Ref: Match.stringLikeRegexp('WormSealerFn') },
@@ -193,7 +255,7 @@ const sealerEsm = template.findResources('AWS::Lambda::EventSourceMapping', {
         {
           Pattern: JSON.stringify({
             eventName: ['INSERT'],
-            dynamodb: { NewImage: { PK: { S: [{ prefix: 'TENANT#' }] } } },
+            dynamodb: { NewImage: { itemType: { S: ['AUDITLOG'] } } },
           }),
         },
       ],
@@ -202,7 +264,7 @@ const sealerEsm = template.findResources('AWS::Lambda::EventSourceMapping', {
 });
 expect(Object.keys(sealerEsm)).toHaveLength(1);
 
-// Tripwire ESM filter assertion
+// Tripwire ESM filter assertion (FIX-4 itemType exact match on OldImage)
 const tripwireEsm = template.findResources('AWS::Lambda::EventSourceMapping', {
   Properties: {
     FunctionName: { Ref: Match.stringLikeRegexp('TamperTripwireFn') },
@@ -211,7 +273,7 @@ const tripwireEsm = template.findResources('AWS::Lambda::EventSourceMapping', {
         {
           Pattern: JSON.stringify({
             eventName: ['MODIFY', 'REMOVE'],
-            dynamodb: { Keys: { PK: { S: [{ prefix: 'TENANT#' }] } } },
+            dynamodb: { OldImage: { itemType: { S: ['AUDITLOG'] } } },
           }),
         },
       ],
@@ -236,7 +298,10 @@ expect(Object.keys(tripwireEsm)).toHaveLength(1);
       "Effect": "Deny",
       "Action": [
         "dynamodb:UpdateItem",
-        "dynamodb:DeleteItem"
+        "dynamodb:DeleteItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PartiQLUpdate",
+        "dynamodb:PartiQLDelete"
       ],
       "Resource": [
         "arn:aws:dynamodb:us-east-1:*:table/CumplifyCore"
@@ -253,8 +318,12 @@ expect(Object.keys(tripwireEsm)).toHaveLength(1);
 }
 ```
 
-**Design notes:**
-- `ForAnyValue:StringLike` (per REV-4): matches if ANY of the leading keys in the request matches the pattern. For single-item operations (UpdateItem/DeleteItem), there is exactly one leading key.
+**Design notes (FIX-2):**
+- `dynamodb:BatchWriteItem` can DELETE items and is not covered by denying `DeleteItem` alone.
+- `dynamodb:PartiQLUpdate` and `dynamodb:PartiQLDelete` cover the PartiQL execution path which has its own IAM actions distinct from the classic API.
+- `LeadingKeys` condition supports all five actions (transactions are covered per constituent action — `TransactWriteItems` decomposes into the action of each item in the transaction).
+- This also deny-blocks batch PUTs to AUDITLOG partitions — correct; nothing may batch-write audit items (the appender uses `TransactWriteItems` which is not blocked by this deny because its constituent `PutItem` is not in the deny list).
+- `ForAnyValue:StringLike` (per REV-4): matches if ANY of the leading keys in the request matches the pattern. For single-item operations there is exactly one leading key.
 - Resource scoped to CumplifyCore table (explicit name — pre-existing exception per C-5).
 - Account wildcard `*` in ARN: the policy travels with the role to any account the stage deploys to.
 - This Deny is UNCONDITIONAL for the scoped actions+resource+condition — even if another statement Allows these actions, the explicit Deny wins (IAM evaluation logic).
@@ -269,7 +338,13 @@ const auditLogDenyPolicy = new iam.ManagedPolicy(this, 'AuditLogDenyPolicy', {
     new iam.PolicyStatement({
       sid: 'DenyAuditLogMutation',
       effect: iam.Effect.DENY,
-      actions: ['dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+      actions: [
+        'dynamodb:UpdateItem',
+        'dynamodb:DeleteItem',
+        'dynamodb:BatchWriteItem',
+        'dynamodb:PartiQLUpdate',
+        'dynamodb:PartiQLDelete',
+      ],
       resources: [props.tableArn],
       conditions: {
         'ForAnyValue:StringLike': {
@@ -290,14 +365,20 @@ verifierFn.role!.addManagedPolicy(auditLogDenyPolicy);
 ### 5.3 Template-Assertion Test (C-12)
 
 ```typescript
-// IAM Deny assertion — proves the Deny statement exists with correct shape
+// IAM Deny assertion — proves the Deny statement exists with correct shape (FIX-2: all 5 actions)
 template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
   PolicyDocument: {
     Statement: Match.arrayWith([
       Match.objectLike({
         Sid: 'DenyAuditLogMutation',
         Effect: 'Deny',
-        Action: ['dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        Action: [
+          'dynamodb:UpdateItem',
+          'dynamodb:DeleteItem',
+          'dynamodb:BatchWriteItem',
+          'dynamodb:PartiQLUpdate',
+          'dynamodb:PartiQLDelete',
+        ],
         Condition: {
           'ForAnyValue:StringLike': {
             'dynamodb:LeadingKeys': ['TENANT#*#AUDITLOG'],
@@ -353,9 +434,9 @@ async function sealRecord(record: DynamoDBRecord): Promise<void> {
   const item = unmarshall(record.dynamodb.NewImage as Record<string, any>);
   const pk = item.PK as string;
 
-  // Application-level suffix guard (stream filter is prefix-only)
-  if (!pk.endsWith('#AUDITLOG')) {
-    logger.debug('Skipping non-AUDITLOG item', { pk });
+  // Application-level itemType guard (defense-in-depth, FIX-4)
+  if (item.itemType !== 'AUDITLOG') {
+    logger.debug('Skipping non-AUDITLOG item', { pk, itemType: item.itemType });
     return;
   }
 
@@ -383,6 +464,7 @@ async function sealRecord(record: DynamoDBRecord): Promise<void> {
       ContentType: 'application/json',
       ObjectLockMode: 'COMPLIANCE',
       ObjectLockRetainUntilDate: retainUntilDate,
+      ChecksumAlgorithm: 'SHA256', // FIX-6: S3 REQUIRES content checksum on PutObject with Object Lock params
     }),
   );
 
@@ -473,7 +555,7 @@ export function computePayloadHash(payload: Record<string, unknown>): string {
 ### 7.2 `services/audit-trail/src/appender.ts` (core logic)
 
 ```typescript
-import { DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand, TransactWriteItemsCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { ulid } from 'ulid';
@@ -510,9 +592,10 @@ export async function appendAuditEvent(event: CumplifyEvent, detailType: string)
 
   let prevHash: string;
   let latestSK: string | undefined;
+  const isFirstEvent = !latestResp.Items || latestResp.Items.length === 0;
 
-  if (latestResp.Items && latestResp.Items.length > 0) {
-    const prev = latestResp.Items[0];
+  if (!isFirstEvent) {
+    const prev = latestResp.Items![0];
     prevHash = computePrevHash(
       prev.PK!.S!,
       prev.SK!.S!,
@@ -544,6 +627,7 @@ export async function appendAuditEvent(event: CumplifyEvent, detailType: string)
   const item: Record<string, unknown> = {
     PK: pk,
     SK: sk,
+    itemType: 'AUDITLOG',  // FIX-4: discriminator for stream filtering
     eventType: detailType,
     actor: event.actor,
     module: event.module,
@@ -569,30 +653,76 @@ export async function appendAuditEvent(event: CumplifyEvent, detailType: string)
     );
   }
 
-  // 6. PutItem with attribute_not_exists (idempotent, append-only)
-  await ddb.send(new PutItemCommand({
-    TableName: TABLE_NAME,
-    Item: marshall(item, { removeUndefinedValues: true }),
-    ConditionExpression: 'attribute_not_exists(PK)',
-  }));
+  // 6. FIX-1: TransactWriteItems — atomically write chain item + dedup marker
+  //    Dedup marker: PK=TENANT#<tenantId>#AUDITDEDUP, SK=EVENT#<eventId>
+  //    On replay: ConditionalCheckFailed on marker → ReplayDetectedError
+  const dedupPK = `TENANT#${tenantId}#AUDITDEDUP`;
+  const dedupSK = `EVENT#${eventId}`;
+
+  try {
+    await ddb.send(new TransactWriteItemsCommand({
+      TransactItems: [
+        {
+          Put: {
+            TableName: TABLE_NAME,
+            Item: marshall(item, { removeUndefinedValues: true }),
+            ConditionExpression: 'attribute_not_exists(PK)',
+          },
+        },
+        {
+          Put: {
+            TableName: TABLE_NAME,
+            Item: marshall({
+              PK: dedupPK,
+              SK: dedupSK,
+              itemType: 'AUDITDEDUP',
+              eventId,
+              createdAt: new Date().toISOString(),
+            }),
+            ConditionExpression: 'attribute_not_exists(PK)',
+          },
+        },
+      ],
+    }));
+  } catch (err: any) {
+    if (err.name === 'TransactionCanceledException') {
+      const reasons = err.CancellationReasons ?? [];
+      // If the dedup marker (index 1) failed → replay
+      if (reasons[1]?.Code === 'ConditionalCheckFailed') {
+        throw new ReplayDetectedError(`Replay detected for eventId ${eventId}`);
+      }
+      // If the chain item (index 0) failed → also a replay (item already exists)
+      if (reasons[0]?.Code === 'ConditionalCheckFailed') {
+        throw new ReplayDetectedError(`Chain item already exists for eventId ${eventId}`);
+      }
+      throw err; // Other transaction failure — transient
+    }
+    throw err;
+  }
 
   logger.info('Audit event appended', { tenantId, eventId, sk, prevHash: prevHash.substring(0, 8) });
 
-  // 7. Register tenant in AUDITMETA (REV-7) — append-once, ignore ConditionalCheckFailed
-  try {
-    await ddb.send(new PutItemCommand({
-      TableName: TABLE_NAME,
-      Item: marshall({
-        PK: 'AUDITMETA',
-        SK: `TENANT#${tenantId}`,
-        registeredAt: new Date().toISOString(),
-      }),
-      ConditionExpression: 'attribute_not_exists(PK)',
-    }));
-    logger.info('Tenant registered in AUDITMETA', { tenantId });
-  } catch (err: any) {
-    if (err.name !== 'ConditionalCheckFailedException') throw err;
-    // Already registered — expected for subsequent events
+  // 7. Register tenant in AUDITMETA (REV-7) — only on first event (prevHash === GENESIS)
+  if (isFirstEvent) {
+    try {
+      await ddb.send(new TransactWriteItemsCommand({
+        TransactItems: [{
+          Put: {
+            TableName: TABLE_NAME,
+            Item: marshall({
+              PK: 'AUDITMETA',
+              SK: `TENANT#${tenantId}`,
+              registeredAt: new Date().toISOString(),
+            }),
+            ConditionExpression: 'attribute_not_exists(PK)',
+          },
+        }],
+      }));
+      logger.info('Tenant registered in AUDITMETA', { tenantId });
+    } catch (err: any) {
+      if (err.name !== 'TransactionCanceledException') throw err;
+      // Already registered — race condition with parallel first events (safe)
+    }
   }
 
   return { pk, sk, payloadHash, prevHash };
@@ -600,6 +730,10 @@ export async function appendAuditEvent(event: CumplifyEvent, detailType: string)
 
 export class ItemSizeExceededError extends Error {
   constructor(msg: string) { super(msg); this.name = 'ItemSizeExceededError'; }
+}
+
+export class ReplayDetectedError extends Error {
+  constructor(msg: string) { super(msg); this.name = 'ReplayDetectedError'; }
 }
 ```
 
@@ -618,8 +752,10 @@ export interface FifoConsumerConfig extends ConsumerConfig {
  * records as batchItemFailures — preserving per-tenant message ordering.
  *
  * PoisonMessageError → DLQ (not a failure for ordering purposes).
- * ConditionalCheckFailedException signaled via config.idempotentErrors →
+ * ReplayDetectedError signaled via config.idempotentErrors →
  *   treated as success (idempotent replay, safe to continue).
+ *
+ * FIX-3: Poison send to FIFO DLQ requires MessageGroupId + MessageDeduplicationId.
  */
 export function createFifoHandler(config: FifoConsumerConfig & { idempotentErrors?: string[] }) {
   const idempotentErrors = new Set(config.idempotentErrors ?? []);
@@ -639,18 +775,30 @@ export function createFifoHandler(config: FifoConsumerConfig & { idempotentError
         await config.handler(msg.detail, msg.detailType);
       } catch (err) {
         if (err instanceof PoisonMessageError) {
-          // Poison → explicit DLQ send, continue batch (ordering irrelevant for bad data)
+          // Poison → explicit DLQ send (FIX-3: FIFO DLQ needs GroupId + DedupId)
           logger.warn('Poison message → DLQ (FIFO)', { messageId: record.messageId, reason: err.message });
+
+          // Extract tenantId if parseable, else fall back to messageId
+          let messageGroupId: string;
+          try {
+            const parsed = JSON.parse(record.body);
+            messageGroupId = parsed?.detail?.tenantId ?? record.messageId;
+          } catch {
+            messageGroupId = record.messageId;
+          }
+
           await sqsClient.send(new SendMessageCommand({
             QueueUrl: config.dlqUrl,
             MessageBody: record.body,
+            MessageGroupId: messageGroupId,
+            MessageDeduplicationId: record.messageId,
             MessageAttributes: {
               PoisonReason: { DataType: 'String', StringValue: err.message },
               OriginalMessageId: { DataType: 'String', StringValue: record.messageId },
             },
           }));
         } else if (idempotentErrors.has((err as Error).name)) {
-          // Idempotent replay (e.g., ConditionalCheckFailedException) — success, continue
+          // Idempotent replay (e.g., ReplayDetectedError) — success, continue
           logger.warn('Idempotent replay detected (FIFO)', { messageId: record.messageId, errorName: (err as Error).name });
         } else {
           // TRANSIENT FAILURE: report this + ALL subsequent as unprocessed (FIFO ordering)
@@ -674,7 +822,7 @@ export function createFifoHandler(config: FifoConsumerConfig & { idempotentError
 
 ```typescript
 import { createFifoHandler } from '@cumplify/eventing';
-import { appendAuditEvent, ItemSizeExceededError } from '../src/appender.js';
+import { appendAuditEvent, ItemSizeExceededError, ReplayDetectedError } from '../src/appender.js';
 import { PoisonMessageError } from '@cumplify/eventing';
 import type { CumplifyEvent } from '@cumplify/eventing';
 
@@ -696,7 +844,7 @@ export const handler = createFifoHandler({
   fifo: true,
   dlqUrl: DLQ_URL,
   handler: businessLogic,
-  idempotentErrors: ['ConditionalCheckFailedException'], // CON-3
+  idempotentErrors: ['ReplayDetectedError'], // FIX-1: dedup marker collision = success
 });
 ```
 
@@ -802,7 +950,7 @@ The verifier is the most complex Lambda. Full code deferred to implementation; k
 | 6 | Schedule exists | ACC-4 | `scheduler:GetSchedule` on schedule name from outputs | State=ENABLED, cron expression = `cron(0 2 * * ? *)` |
 | 7 | All alarms exist (3) | — | `DescribeAlarms` filtered by alarm names from outputs | 3 alarms found; all `treatMissingData: notBreaching` |
 | 8 | **END-TO-END (ACC-3)** | ACC-3 | Publish synthetic `Document.Approved` event → (a) poll CloudWatch Logs for consumer log with matching eventId (< 60s, D-1 ESM-drained rule), (b) `GetItem` on CumplifyCore for expected PK/SK — confirm payload stored + payloadHash + prevHash valid, (c) poll S3 for sealed object (< 90s) — `HeadObject` confirms `ObjectLockMode=COMPLIANCE`, `ObjectLockRetainUntilDate` set | All three hops green |
-| 9 | **IAM DENIED (ACC-2)** | ACC-2 | `aws iam simulate-principal-policy --policy-source-arn <consumerRoleArn> --action-names dynamodb:UpdateItem dynamodb:DeleteItem --resource-arns <tableArn> --context-entries ContextKeyName=dynamodb:LeadingKeys,ContextKeyValues=TENANT#readback-synthetic-001#AUDITLOG,ContextKeyType=string` | Both actions return `EvalDecision: explicitDeny` |
+| 9 | **IAM DENIED (ACC-2)** | ACC-2 | `aws iam simulate-principal-policy --policy-source-arn <consumerRoleArn> --action-names dynamodb:UpdateItem dynamodb:DeleteItem dynamodb:BatchWriteItem dynamodb:PartiQLUpdate dynamodb:PartiQLDelete --resource-arns <tableArn> --context-entries ContextKeyName=dynamodb:LeadingKeys,ContextKeyValues=TENANT#readback-synthetic-001#AUDITLOG,ContextKeyType=string` | All five actions return `EvalDecision: explicitDeny` |
 | 10 | **TAMPER DETECTED — tripwire (ACC-1a)** | ACC-1 | Using `cumplify-dev-admin` role: `UpdateItem` on the chained item from test 8 (change an attribute). Within 60s, query CloudWatch metric `AuditTamperAttempt` (dimension tenantId=readback-synthetic-001) | Metric datapoint with value >= 1 appears |
 | 11 | **TAMPER DETECTED — verifier (ACC-1b)** | ACC-1 | Invoke verifier Lambda manually (direct `Invoke` with payload `{"tenantId":"readback-synthetic-001"}`). | Returns chain-break report; `AuditChainBroken` metric emitted |
 | 12 | **VERIFICATION GREEN (ACC-4)** | ACC-4 | Publish a SECOND synthetic event (builds valid chain of 2). Invoke verifier on untampered tenant `readback-synthetic-002`. | Exit 0; no `AuditChainBroken` metric; log confirms "chain valid" |
@@ -854,10 +1002,11 @@ const auditArchiveBucket = new s3.Bucket(this, 'AuditArchiveBucket', {
 });
 ```
 
-### 9.2 ESM Wiring with L1 FilterCriteria Override
+### 9.2 ESM Wiring (FIX-5 — native FilterCriteria, no L1 overrides)
 
 ```typescript
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { FilterCriteria, FilterRule } from 'aws-cdk-lib/aws-lambda';
 
 // Import table + stream via ARN
 const table = dynamodb.Table.fromTableAttributes(this, 'CumplifyCore', {
@@ -865,63 +1014,64 @@ const table = dynamodb.Table.fromTableAttributes(this, 'CumplifyCore', {
   tableStreamArn: props.tableStreamArn,
 });
 
-// --- Sealer ESM ---
-const sealerEventSource = new DynamoEventSource(table, {
+// --- Sealer ESM (FIX-5: native filters, minor-a: no reportBatchItemFailures) ---
+sealerFn.addEventSource(new DynamoEventSource(table, {
   startingPosition: lambda.StartingPosition.LATEST,
   batchSize: 10,
   maxBatchingWindow: cdk.Duration.seconds(5),
   bisectBatchOnFunctionError: true,
   retryAttempts: 3,
   onFailure: new destinations.SqsDestination(sealerDlq),
-  reportBatchItemFailures: true,
-});
-sealerFn.addEventSource(sealerEventSource);
+  filters: [
+    FilterCriteria.filter({
+      eventName: FilterRule.isEqual('INSERT'),
+      dynamodb: {
+        NewImage: {
+          itemType: { S: FilterRule.isEqual('AUDITLOG') },
+        },
+      },
+    }),
+  ],
+}));
 
-// L1 override for FilterCriteria (C-12 mandates template assertion)
-const sealerEsmCfn = sealerFn.node.children.find(
-  (c) => (c as any).cfnResourceType === 'AWS::Lambda::EventSourceMapping'
-    && (c as cdk.CfnResource).getAtt('EventSourceArn').toString().includes('stream'),
-) as cdk.CfnResource;
-// Alternative: find by construct tree path
-const sealerMapping = sealerFn.node.findAll().find(
-  (n) => n.node.id === 'EventSourceMapping' || (n as any).cfnResourceType === 'AWS::Lambda::EventSourceMapping',
-) as lambda.CfnEventSourceMapping | undefined;
-if (sealerMapping) {
-  (sealerMapping as lambda.CfnEventSourceMapping).addPropertyOverride('FilterCriteria', {
-    Filters: [{
-      Pattern: JSON.stringify({
-        eventName: ['INSERT'],
-        dynamodb: { NewImage: { PK: { S: [{ prefix: 'TENANT#' }] } } },
-      }),
-    }],
-  });
-}
-
-// --- Tripwire ESM (SECOND ESM, own Lambda, AMEND-2) ---
-const tripwireEventSource = new DynamoEventSource(table, {
+// --- Tripwire ESM (AMEND-2: separate Lambda + role, FIX-5: native filters) ---
+tripwireFn.addEventSource(new DynamoEventSource(table, {
   startingPosition: lambda.StartingPosition.LATEST,
   batchSize: 10,
   bisectBatchOnFunctionError: true,
   retryAttempts: 3,
   onFailure: new destinations.SqsDestination(tripwireDlq),
-  reportBatchItemFailures: true,
-});
-tripwireFn.addEventSource(tripwireEventSource);
+  filters: [
+    FilterCriteria.filter({
+      eventName: FilterRule.or('MODIFY', 'REMOVE'),
+      dynamodb: {
+        OldImage: {
+          itemType: { S: FilterRule.isEqual('AUDITLOG') },
+        },
+      },
+    }),
+  ],
+}));
+```
 
-// L1 override for tripwire filter (MODIFY/REMOVE)
-const tripwireMapping = tripwireFn.node.findAll().find(
-  (n) => (n as any).cfnResourceType === 'AWS::Lambda::EventSourceMapping',
-) as lambda.CfnEventSourceMapping | undefined;
-if (tripwireMapping) {
-  (tripwireMapping as lambda.CfnEventSourceMapping).addPropertyOverride('FilterCriteria', {
-    Filters: [{
-      Pattern: JSON.stringify({
-        eventName: ['MODIFY', 'REMOVE'],
-        dynamodb: { Keys: { PK: { S: [{ prefix: 'TENANT#' }] } } },
-      }),
-    }],
-  });
-}
+### 9.2.1 Tripwire IAM (minor-d)
+
+```typescript
+// Tripwire role: CloudWatch PutMetricData only (resource '*' — API supports no resource scoping)
+tripwireFn.addToRolePolicy(new iam.PolicyStatement({
+  actions: ['cloudwatch:PutMetricData'],
+  resources: ['*'],
+  conditions: {
+    StringEquals: { 'cloudwatch:namespace': 'Cumplify/AuditTrail' },
+  },
+}));
+
+NagSuppressions.addResourceSuppressions(tripwireFn.role!, [
+  {
+    id: 'AwsSolutions-IAM5',
+    reason: 'cloudwatch:PutMetricData does not support resource-level permissions (AWS API limitation). Scoped by namespace condition.',
+  },
+], true);
 ```
 
 ### 9.3 EnvConfig Addition
@@ -941,6 +1091,7 @@ new cdk.CfnOutput(this, 'ConsumerRoleArn', { value: consumerFn.role!.roleArn });
 new cdk.CfnOutput(this, 'SealerFnArn', { value: sealerFn.functionArn });
 new cdk.CfnOutput(this, 'TripwireFnArn', { value: tripwireFn.functionArn });
 new cdk.CfnOutput(this, 'VerifierFnArn', { value: verifierFn.functionArn });
+new cdk.CfnOutput(this, 'VerifierRoleArn', { value: verifierFn.role!.roleArn }); // minor-e
 new cdk.CfnOutput(this, 'SealerDlqArn', { value: sealerDlq.queueArn });
 new cdk.CfnOutput(this, 'SealerDlqUrl', { value: sealerDlq.queueUrl });
 new cdk.CfnOutput(this, 'TripwireDlqArn', { value: tripwireDlq.queueArn });
@@ -991,15 +1142,19 @@ new cdk.CfnOutput(this, 'ConsumerLogGroup', { value: consumerFn.logGroup.logGrou
 
 | Decision | Rationale |
 |----------|-----------|
-| Prefix-only stream filter + application-level suffix guard | DynamoDB Streams filtering does not support `suffix` on string values. The prefix `TENANT#` narrows scope significantly; the `#AUDITLOG` suffix check in handler code guarantees correctness. Template assertion proves the prefix filter exists. |
-| `startingPosition: LATEST` for both ESMs | No AUDITLOG items exist before this spec deploys. TRIM_HORIZON would process the entire stream backlog (all CumplifyCore item types) — unnecessary and would overwhelm the suffix guard with no-ops. |
+| `itemType` discriminator filter (FIX-4) | Exact-match on `itemType: 'AUDITLOG'` in stream filter. No prefix/suffix gymnastics — DynamoDB Streams doesn't support suffix. AUDITDEDUP markers excluded naturally. In-handler guards kept as defense-in-depth. |
+| `startingPosition: LATEST` for both ESMs | No AUDITLOG items exist before this spec deploys. TRIM_HORIZON would process the entire stream backlog (all CumplifyCore item types) — unnecessary and would overwhelm the guard with no-ops. |
 | Sealer batch size 10, max batching window 5s | Balance between latency (< 60s p99 per NFR-2) and cost (fewer invocations). Design-level choice per REV-9. |
 | Tripwire: separate Lambda (AMEND-2) | The sealer holds `s3:PutObject` — combining them violates TW-5 ("observe-and-alert only"). Second ESM with a minimal-role Lambda. |
 | Verifier timeout 900s, memorySize 1024 | Chain walks are CPU+network bound (hashing + DynamoDB queries + S3 HeadObject). 15-min timeout accommodates large tenants. Extra memory = proportionally more CPU. |
 | `ForAnyValue:StringLike` on Deny condition (REV-4) | For single-item ops there's exactly one leading key; `ForAnyValue` matches correctly. Architect-mandated over `ForAllValues`. |
 | Dev `auditArchiveRetentionDays: 1` | Test sealed objects must not persist 7 years. 1-day COMPLIANCE retention means objects are undeletable for 24h only — acceptable for dev cleanup. |
 | SSE-KMS (s3-general key) for audit-archive | Consistent with EvidenceVault pattern. CMK enables key-policy control over who can decrypt sealed records. |
-| Consumer DLQ = spec 2's `audit-sink-dlq.fifo` | Re-uses existing FIFO DLQ already paired with the queue. No new DLQ needed for the consumer — poison messages route to the same DLQ via `createFifoHandler`. |
+| Consumer DLQ = spec 2's `audit-sink-dlq.fifo` | Re-uses existing FIFO DLQ already paired with the queue. No new DLQ needed for the consumer — poison messages route to the same DLQ via `createFifoHandler` (FIX-3: with MessageGroupId + MessageDeduplicationId). |
+| TransactWriteItems for append + dedup (FIX-1) | Atomic chain-item + dedup-marker write. Prevents replay duplicates after partial-batch redelivery (append-time SK makes SK collision impossible for replays). |
+| 5-action Deny list (FIX-2) | BatchWriteItem can delete; PartiQL has distinct IAM actions. All mutation paths to AUDITLOG items are blocked. |
+| `ChecksumAlgorithm: 'SHA256'` on sealer PutObject (FIX-6) | S3 requires a content checksum on PutObject with Object Lock parameters. Explicit setting avoids SDK version-dependent behavior. |
+| Native `FilterCriteria` via L2 construct (FIX-5) | `DynamoEventSource` supports `filters` natively — no L1 overrides needed. Avoids silent-skip risk from construct-tree traversal patterns. |
 
 ---
 
