@@ -136,9 +136,9 @@
 **Deploy method (ADJ-2):** Push to `develop` triggers the CDK Pipeline — that IS the deploy path. Do NOT run `cdk deploy` (debugging fallback only). Adding AuditTrailStack to CumplifyStage changes the pipeline's own definition, so expect UpdatePipeline to self-mutate and RESTART the execution under a new ID (same as spec 2's deploy — normal, not a failure). Evidence records BOTH execution IDs.
 
 ### Deliverables
-- [ ] Push to `develop` → pipeline deploys AuditTrailStack to dev (account 697114252993, us-east-1)
-- [ ] `cdk-outputs.json` (repo root) committed with new stack outputs
-- [ ] `infra/readback/immutable-trail.test.ts` — 13-test readback suite (design §8.2 + ADJ-4):
+- [x] Push to `develop` → pipeline deploys AuditTrailStack to dev (account 697114252993, us-east-1)
+- [x] `cdk-outputs.json` (repo root) committed with new stack outputs
+- [x] `infra/readback/immutable-trail.test.ts` — 13-test readback suite (design §8.2 + ADJ-4):
 
 | # | Test | ACC | Asserts |
 |---|------|-----|---------|
@@ -169,10 +169,10 @@
 **D-Rung:** D3 (final)
 
 ### Deliverables
-- [ ] Evidence logs committed: `.kiro/evidence/immutable-trail/task-{n}.log` per spec-2 convention
-- [ ] `cdk-outputs.json` (repo root) blob SHA recorded: `git hash-object cdk-outputs.json`
-- [ ] All task checkboxes above marked complete (rule 7: checkbox edits in closure commits only)
-- [ ] Timestamp + exit code of final readback run (rule 8)
+- [x] Evidence logs committed: `.kiro/evidence/immutable-trail/task-{n}.log` per spec-2 convention
+- [x] `cdk-outputs.json` (repo root) blob SHA recorded: `git hash-object cdk-outputs.json`
+- [x] All task checkboxes above marked complete (rule 7: checkbox edits in closure commits only)
+- [x] Timestamp + exit code of final readback run (rule 8)
 
 ### Acceptance
 - Spec meets D3 floor: deployed to dev + readback green + Template F witnessed

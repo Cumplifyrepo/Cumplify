@@ -1,0 +1,26 @@
+{
+  "_provenance": {
+    "capturedBy": "architect",
+    "method": "describe-stacks cumplify-dev-readonly",
+    "stackStatus": "CREATE_COMPLETE",
+    "pipelineExecution": "81840a46 (self-mutated from 1ca7743a)",
+    "commit": "f9a34f9"
+  },
+  "Dev-AuditTrailStack": {
+    "SealerDlqAlarmName": "Dev-AuditTrailStack-SealerDlqAlarmE7FBDED1-4huOWl9sleLH",
+    "VerifierFnArn": "arn:aws:lambda:us-east-1:697114252993:function:Dev-AuditTrailStack-ChainVerifierFnFEA50391-oxkASyYc84hi",
+    "SealerDlqUrl": "https://sqs.us-east-1.amazonaws.com/697114252993/Dev-AuditTrailStack-SealerDlq7EFA9EB9-4YvCSsWf79jO",
+    "AuditArchiveBucketName": "dev-audittrailstack-auditarchivebucketa3e17f42-h1exbinu1fdt",
+    "TripwireFnArn": "arn:aws:lambda:us-east-1:697114252993:function:Dev-AuditTrailStack-TamperTripwireFn35DE0AAF-HWvhWd2nN41r",
+    "VerifierRoleArn": "arn:aws:iam::697114252993:role/Dev-AuditTrailStack-ChainVerifierFnServiceRoleA7814-YvB4hmLSeked",
+    "SealerDlqArn": "arn:aws:sqs:us-east-1:697114252993:Dev-AuditTrailStack-SealerDlq7EFA9EB9-4YvCSsWf79jO",
+    "ChainBrokenAlarmName": "Dev-AuditTrailStack-AuditChainBrokenAlarm6C137436-MehsuaIg4hr2",
+    "ScheduleName": "Dev-AuditTrailStack-DailyVerifierSchedule-121HY468DB1EJ",
+    "TripwireDlqArn": "arn:aws:sqs:us-east-1:697114252993:Dev-AuditTrailStack-TripwireDlq337AE3AA-mjrLjhtn9NSk",
+    "ConsumerFnArn": "arn:aws:lambda:us-east-1:697114252993:function:Dev-AuditTrailStack-AuditSinkConsumerFn312BCD9D-hlKmLT7CVCLy",
+    "ConsumerRoleArn": "arn:aws:iam::697114252993:role/Dev-AuditTrailStack-AuditSinkConsumerFnServiceRole2-3r6sN1ramrma",
+    "ConsumerLogGroup": "/aws/lambda/Dev-AuditTrailStack-AuditSinkConsumerFn312BCD9D-hlKmLT7CVCLy",
+    "SealerFnArn": "arn:aws:lambda:us-east-1:697114252993:function:Dev-AuditTrailStack-WormSealerFn1D8922D5-sOSFzDMONhxw",
+    "TamperAlarmName": "Dev-AuditTrailStack-AuditTamperAttemptAlarmA14D35CF-xnfjTxJwxTRK"
+  }
+}

@@ -1,0 +1,33 @@
+# Task 7 — Deploy to dev + readback (D3, architect-witnessed)
+
+Deploy: pipeline exec 1ca7743a (commit f9a34f9) → self-mutated → 81840a46.
+Dev-AuditTrailStack CREATE_COMPLETE 2026-07-05, dev acct 697114252993, 15 outputs.
+Readback executed 2026-07-05 by architect, profile cumplify-dev-admin (role chain
+mgmt → OrganizationAccountAccessRole; write-capable — behavioral tests need
+PutEvents/UpdateItem/Invoke that the readonly profile lacks).
+
+| Test | ACC | Result | Notes |
+|------|-----|--------|-------|
+| 1 bucket + Object Lock | — | PASS | COMPLIANCE / 1-day retention |
+| 2 consumer cold start | — | PASS | init 240.8ms |
+| 3 sealer cold start | — | PASS | init 328.6ms |
+| 4 tripwire cold start | — | PASS | init 229.6ms |
+| 5 verifier cold start | — | PASS | init 355.4ms |
+| 6 daily schedule | ACC-4 | PASS | ENABLED, cron(0 2 * * ? *) |
+| 7 three DLQ/metric alarms | — | PASS | all treatMissingData=notBreaching |
+| 8 END-TO-END | ACC-3 | PASS | bus→router→audit-sink→consumer→DDB chain item (prevHash=GENESIS)→sealed S3 COMPLIANCE until 2026-07-06 |
+| 9 IAM DENIED | ACC-2 | PASS | 5 mutation actions all explicitDeny (simulate-principal-policy on consumer role) |
+| 10 TAMPER tripwire | ACC-1a | PASS | admin UpdateItem on chain item → AuditTamperAttempt metric sum=1 within seconds |
+| 11 TAMPER verifier | ACC-1b | PASS | verifier chainValid=false, brokenLinks=1 (payloadHash break) |
+| 12 VERIFICATION GREEN | ACC-4 | PASS | untampered tenant chainValid=true |
+| 13 REPLAY IDEMPOTENCY | ADJ-4 | PASS | double consumer invoke, same eventId → exactly 1 chain item (ReplayDetectedError swallowed) |
+
+Exit code: 0 (13/13 PASS)
+cdk-outputs.json blob SHA: f3bb0a09384b874dd42ca44c6ef3e3feb9467151
+Full log: infra/readback run — imt-readback-run1 (scratchpad).
+
+ACC-1/2/3/4 all proven. Synthetic readback data (tenants readback-synthetic-001/002/003)
+purged from CumplifyCore post-run via admin (10 items). S3 sealed objects intentionally
+retained (COMPLIANCE lock, expire 2026-07-06) — physical immutability is the design.
+Readback test authored by architect (task 7 is architect-executed); verifier's tenantId-scoped
+return value used for deterministic tamper/green assertions.
