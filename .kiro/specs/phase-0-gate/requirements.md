@@ -10,13 +10,13 @@
 - `docs/architecture/cumplify-CONSOLIDATED-master-architecture-v7-full.md` — Part 27 (cost tripwires)
 
 **P0 composition (4 specs, 6 deployed dev stacks):**
-- `build-verification-harness` — closing commit 38
-- `platform-foundation` — closing commit 1 (stacks: Network, Security, Data, Identity)
-- `eventing-backbone` — closing commit 2 (stack: Eventing)
-- `immutable-trail` — closing commit 5 (stack: AuditTrail)
+- `build-verification-harness` — closing commit `ac961bb`
+- `platform-foundation` — closing commit `7b80078` (stacks: Network, Security, Data, Identity)
+- `eventing-backbone` — closing commit `bdd389b` (stack: Eventing)
+- `immutable-trail` — closing commit `24de927` (stack: AuditTrail)
 
 **Max D-rung achieved:** D3 (deployed to dev + readback green) per spec.
-**Revision:** R1 — initial draft for architect review
+**Revision:** R1.1 — AMEND-1..4 applied (approved)
 
 ---
 
@@ -43,12 +43,13 @@
 | G1-2 | **Any drift** detected between deployed state and synthesized template **shall** be reported as a CRITICAL blocking finding with the specific resource and property that diverged. |
 | G1-3 | **The known-benign exception** (Dev-DataStack Aurora rotation SAR `TemplateURL` re-presigns every synth — zero resource change) **shall** be pre-classified as non-blocking with its documentation reference (spec 1 closure). |
 | G1-4 | **Evidence method:** `cdk diff` against each deployed stack; output captured verbatim. Zero-diff (or only the SAR pre-sign) = PASS. |
+| G1-5 | **[AMEND-4] The drift check shall** also cover the management-account P0 footprint — CumplifyPipeline stack (including MgmtCostMonitor). Its `cdk diff` output is included in the evidence. |
 
 ### GATE-2: CDK Nag Clean
 
 | ID | Requirement (EARS) |
 |----|-------------------|
-| G2-1 | **The gate report shall** prove 0 Non-Compliant findings across all 6 deployed dev stacks by presenting the NagReport.csv set from a fresh `cdk synth`. |
+| G2-1 | **The gate report shall** prove 0 Non-Compliant findings across all 6 deployed dev stacks AND the management-account CumplifyPipeline stack by presenting the NagReport.csv set from a fresh `cdk synth`. |
 | G2-2 | **Every NagSuppression** applied across P0 **shall** be listed in the report with its construct path, suppressed rule ID, and the written justification from the source code. |
 | G2-3 | **Evidence method:** `cdk synth` with `AwsSolutionsChecks` Aspect (already applied at stage level in `cumplify-stage.ts`); capture the generated NagReport CSV files from `cdk.out/assembly-*/`. |
 
@@ -56,8 +57,9 @@
 
 | ID | Requirement (EARS) |
 |----|-------------------|
+| G3-0 | **[AMEND-2] Before running the denial matrix,** the gate SHALL enumerate the deployed IAM roles/policies in dev that carry `dynamodb:LeadingKeys` / `aws:PrincipalTag/tenantId` scoping (from synthesized templates + live IAM). IF such a tenant-scoped runtime principal exists, run G3-4 against it (simulation must supply BOTH `LeadingKeys` AND `aws:PrincipalTag/tenantId` context entries). IF NONE exists, leg (a) is N/A with reason "tenant-scoped runtime data role arrives with api-core, P1" and becomes a P1 carry — leg (b), the AUDITLOG Deny (spec 5 test 9), stands regardless. |
 | G3-1 | **The gate report shall** prove tenant isolation at the IAM data layer: a tenant-A-scoped principal CANNOT reach tenant-B items in CumplifyCore. |
-| G3-2 | **The proof shall** use `aws iam simulate-principal-policy` against: (a) the platform-foundation tenant-isolation policies (`dynamodb:LeadingKeys` + `PrincipalTag:tenantId`), AND (b) the immutable-trail AUDITLOG Deny (already proven in spec 5 readback test 9 — cite that evidence). |
+| G3-2 | **The proof shall** use `aws iam simulate-principal-policy` against: (a) any deployed tenant-scoped principal (if one exists per G3-0), AND (b) the immutable-trail AUDITLOG Deny (already proven in spec 5 readback test 9 — cite that evidence). |
 | G3-3 | **Green =** every cross-tenant action returns `implicitDeny` or `explicitDeny`; every same-tenant action returns `allowed`. |
 | G3-4 | **The test matrix shall** cover at minimum: (a) `GetItem` with cross-tenant key → denied, (b) `GetItem` with same-tenant key → allowed, (c) `PutItem` on AUDITLOG partition cross-tenant → denied, (d) `UpdateItem` on AUDITLOG partition same-tenant → explicitDeny (the 5-action Deny applies even to same-tenant). |
 | G3-5 | **Evidence method:** `simulate-principal-policy` CLI output captured verbatim. Role ARN and table ARN from cdk-outputs.json. |
@@ -92,7 +94,7 @@
 
 | ID | Requirement (EARS) |
 |----|-------------------|
-| G7-1 | **The gate shall** select 3 random COMPLETED P0 tasks across the 4 specs. Selection must span at least 2 different specs. |
+| G7-1 | **[AMEND-3] The gate shall** select 3 tasks via verifiable deterministic derivation: (a) enumerate ALL completed P0 tasks as a numbered list, committed as `.kiro/evidence/phase-0-gate/task-universe.md`; (b) derive the 3 indices from `sha256(gate-execution-commit-hash) mod N`, iterated (skipping same-spec duplicates until 2+ specs covered), so the selection is verifiable by anyone and controllable by no one. Document the derivation formula and intermediate values in the report. |
 | G7-2 | **For each selected task,** the audit shall: (a) rerun its evidence gate from scratch, (b) re-execute its readback assertions against live dev, (c) attempt ONE falsification (break the thing the test protects; confirm the test catches it). |
 | G7-3 | **A failed audit** (evidence does not reproduce, or falsification is not caught) **shall** be reported as a CRITICAL finding on our own process. |
 | G7-4 | **Context the report must state:** P0 already suffered TWO fabrication incidents (spec 1 task 2.1 fabricated readback; spec 5 task 6 fabricated cdk-outputs identifiers). This audit is the check that they are the only two. |
