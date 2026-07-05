@@ -122,8 +122,11 @@ export class AuditTrailStack extends cdk.Stack {
       },
     });
 
-    // Consumer needs: DynamoDB read/write, KMS, send to DLQ (poison)
-    table.grantReadWriteData(consumerFn);
+    // Consumer needs EXACTLY: Query (prevHash lookup) + PutItem (the TransactWriteItems
+    // chain-item + dedup-marker, both conditional Puts). NOT UpdateItem/DeleteItem/
+    // BatchWriteItem — the append path never mutates existing items. (Gate FINDING-1:
+    // grantReadWriteData was over-broad, allowing UpdateItem on non-audit partitions.)
+    table.grant(consumerFn, 'dynamodb:Query', 'dynamodb:PutItem');
     props.dynamodbKey.grant(consumerFn,
       'kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt*',
       'kms:GenerateDataKey*', 'kms:DescribeKey', 'kms:CreateGrant',
@@ -240,8 +243,11 @@ export class AuditTrailStack extends cdk.Stack {
       },
     });
 
-    // Verifier needs: DynamoDB read + write (watermark), S3 read, KMS
-    table.grantReadWriteData(verifierFn);
+    // Verifier needs EXACTLY: Query (tenant discovery + chain walk) + GetItem
+    // (watermark read) + PutItem (watermark write). NOT UpdateItem/DeleteItem —
+    // it is read-only over the trail; watermark is an append-once/overwrite Put.
+    // (Gate FINDING-1: grantReadWriteData was over-broad.)
+    table.grant(verifierFn, 'dynamodb:Query', 'dynamodb:GetItem', 'dynamodb:PutItem');
     props.dynamodbKey.grant(verifierFn,
       'kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt*',
       'kms:GenerateDataKey*', 'kms:DescribeKey', 'kms:CreateGrant',

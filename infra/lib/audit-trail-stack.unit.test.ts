@@ -143,6 +143,28 @@ describe('AuditTrailStack template assertions', () => {
       expect(templateJson).not.toContain('events:PutEvents');
     });
   });
+
+  describe('Least-privilege on AUDITLOG mutation (gate FINDING-1)', () => {
+    it('no Allow statement grants dynamodb:UpdateItem or dynamodb:DeleteItem — those appear only in the Deny', () => {
+      const json = template.toJSON() as {
+        Resources: Record<string, { Type: string; Properties?: any }>;
+      };
+      const mutationActions = ['dynamodb:UpdateItem', 'dynamodb:DeleteItem', 'dynamodb:BatchWriteItem'];
+      const offenders: string[] = [];
+      for (const [id, res] of Object.entries(json.Resources)) {
+        if (res.Type !== 'AWS::IAM::Policy' && res.Type !== 'AWS::IAM::ManagedPolicy') continue;
+        const statements = res.Properties?.PolicyDocument?.Statement ?? [];
+        for (const st of statements) {
+          if (st.Effect !== 'Allow') continue;
+          const actions = Array.isArray(st.Action) ? st.Action : [st.Action];
+          for (const a of actions) {
+            if (mutationActions.includes(a)) offenders.push(`${id}: Allow ${a}`);
+          }
+        }
+      }
+      expect(offenders, `Allow statements must not grant AUDITLOG-mutation actions: ${offenders.join(', ')}`).toHaveLength(0);
+    });
+  });
 });
 
 // vitest globals
