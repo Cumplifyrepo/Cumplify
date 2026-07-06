@@ -14,7 +14,6 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
       'qwen.qwen3-next-80b-a3b',
       'moonshotai.kimi-k2.5',
       'us.amazon.nova-pro-v1:0',
-      'us.anthropic.claude-sonnet-4-6', // anchor
     ],
     temperature: 0,
     maxTokens: 2048,
@@ -107,7 +106,6 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
   'legal-ledger': {
     seat: 'legal-ledger',
     candidates: [
-      'us.anthropic.claude-sonnet-4-6',
       'zai.glm-5',
       'deepseek.v3.2',
       'moonshot.kimi-k2-thinking',

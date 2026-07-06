@@ -1,14 +1,8 @@
 {
-  "capturedAt": "2026-07-05T00:00:00Z",
+  "capturedAt": "2026-07-06T00:00:00Z",
   "sourceUrl": "https://aws.amazon.com/bedrock/pricing/",
   "capturedBy": "architect",
   "stalenessLimitDays": 90,
-  "models": {
-    "us.anthropic.claude-sonnet-4-6": {
-      "inputPricePerMToken": 3.00,
-      "outputPricePerMToken": 15.00,
-      "unit": "USD per 1M tokens",
-      "notes": "Not available in AWS Pricing API (only Claude 2/3-era entries exist). Source: aws.amazon.com/bedrock/pricing/ 2026-07-05. Status: PENDING-OWNER-ACTION (Anthropic use-case form gate blocks invocation)."
-    }
-  }
+  "models": {},
+  "notes": "Mechanism retained for future API-absent models. No current entries — all candidates are live-API-priced. Anthropic Claude Sonnet 4.6 removed by owner decision 2026-07-06 (use-case form declined + margin-fail at credit pricing)."
 }

@@ -3,7 +3,7 @@
 **Spec:** `model-policy-evals`
 **Requirements approved:** R2 (REV-1..7 applied)
 **Steering rules exercised:** `00-stack-facts.md`, `12-token-metering.md`, `15-model-policy.md`, `19-kiro-truth.md`
-**Revision:** R2 — DREV-1..7 applied; DREV-2 corrected per owner ruling (no licensed ISO copies)
+**Revision:** R3 — owner decision 2026-07-06: Anthropic removed; absolute quality bars defined
 
 ---
 
@@ -96,6 +96,21 @@ File: `services/model-evals/runbooks/legal-ledger-grading.md`
 5. Scoring aggregated by runner post-grading → final pass/fail + $/task
 ```
 
+### 2.3 Absolute Quality Bars (R3 — no anchor)
+
+With Anthropic removed, quality bars are ABSOLUTE per tier (not relative to an incumbent):
+
+| Tier | Quality Bar | Rationale |
+|------|------------|-----------|
+| **Guru** | Clause-citation mean >= 85% + architect spot-review confirms on human sample | Clause accuracy is measurable; 85% = 128/150 clauses correctly cited |
+| **Workhorse** | Schema compliance 100% AND task-correctness >= 85% | Structured output must be perfect; content quality threshold 85% |
+| **Lightweight** | Task correctness >= 90% | Simple structured tasks; high bar appropriate |
+| **Micro** | Multi-label set-F1 >= 0.95 | Classification must be near-perfect for routing |
+| **Snapshot** | Schema compliance 100% + factual grounding pass (all claims traceable to input) | Output structure must be valid; claims must not hallucinate |
+| **Editor-AI** | Schema compliance 100% + architect spot-review confirms quality on 20% sample | Document drafting quality requires human judgment |
+| **Pain-distiller** | Label coverage >= 85% (ground-truth pain-points identified) | Extraction completeness is the key metric |
+| **LegalLedger** | Rubric mean >= 4.0, no criterion at 1 (unchanged — already anchor-free) | Human-graded; catastrophic failure = disqualification |
+
 ---
 
 ## 3. Eval-Set Construction (Decision 2)
@@ -156,17 +171,17 @@ No benchmark run executes until:
 
 | Tier | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Total Tokens | Est. Cost (worst-case) |
 |------|-------|-----------|-------------|-------------------|--------------------|--------------------|----------------------|
-| Guru | 150 | 6 | 900 | 1,080,000 | 540,000 | 1,620,000 | ~$4.50 |
+| Guru | 150 | 5 | 750 | 900,000 | 450,000 | 1,350,000 | ~$3.75 |
 | Workhorse | 30 | 5 | 150 | 120,000 | 60,000 | 180,000 | ~$0.60 |
 | Lightweight | 20 | 4 | 80 | 64,000 | 32,000 | 96,000 | ~$0.15 |
 | Micro | 50 | 2 | 100 | 20,000 | 5,000 | 25,000 | ~$0.03 |
 | Snapshot | 30 | 4 | 120 | 96,000 | 48,000 | 144,000 | ~$0.25 |
 | Editor-AI | 20 | 4 | 80 | 64,000 | 32,000 | 96,000 | ~$0.15 |
 | Pain-distiller | 20 | 3 | 60 | 48,000 | 24,000 | 72,000 | ~$0.12 |
-| LegalLedger | 30 | 4 | 120 | 180,000 | 96,000 | 276,000 | ~$2.00 |
-| **TOTAL** | **350** | — | **1,610** | **1,672,000** | **837,000** | **2,509,000** | **~$7.80** |
+| LegalLedger | 30 | 3 | 90 | 135,000 | 72,000 | 207,000 | ~$1.50 |
+| **TOTAL** | **350** | — | **1,370** | **1,427,000** | **717,000** | **2,144,000** | **~$6.55** |
 
-**Worst-case estimate:** ~$7.80 for the entire campaign (using highest per-token rates across candidates). Actual will be lower because cheaper models dominate the candidate set.
+**Worst-case estimate:** ~$6.55 for the entire campaign (using highest per-token rates across candidates). Actual will be lower because cheaper models dominate the candidate set.
 
 **Budget cap (hard halt):** $15.00 per full campaign run (2× worst-case margin for retries/reruns). The runner halts with error if cumulative spend exceeds this.
 

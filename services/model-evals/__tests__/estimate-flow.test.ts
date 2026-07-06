@@ -81,8 +81,8 @@ describe('estimate flow (integration-shaped, fixture-priced)', () => {
     const snapshot = loadSnapshot(resolve(DATA_DIR, 'price-snapshot.json'));
     // Should not throw (captured today or recently)
     expect(() => checkStaleness(snapshot)).not.toThrow();
-    // Should contain only sonnet-4-6
-    expect(Object.keys(snapshot.models)).toEqual(['us.anthropic.claude-sonnet-4-6']);
+    // Should contain no entries (all candidates live-API-priced after Anthropic removal)
+    expect(Object.keys(snapshot.models)).toHaveLength(0);
   });
 });
 

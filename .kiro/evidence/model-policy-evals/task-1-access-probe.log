@@ -32,3 +32,6 @@ us.anthropic.claude-sonnet-4-6         BLOCKED     exit=254 latency=  562ms ts=2
 # Anthropic), console-only per established fact. Must be cleared BEFORE Tasks 7-8 benchmark
 # runs. Tasks 2-6 are unblocked (no Sonnet invocations).
 # All 12 non-Anthropic candidates: zero gating, immediately invocable.
+
+# Resolution (2026-07-06)
+sonnet-4-6 PENDING-OWNER-ACTION resolved by owner decision 2026-07-06: model REMOVED from platform entirely; no use-case form needed. Reason: form declined + margin-fail ($0.0126/task vs $0.0198 revenue = 36% margin, below >50% mandate).

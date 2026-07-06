@@ -12,7 +12,7 @@
 **Owner policy amendment (2026-07-05, supersedes steering 15 where conflict):**
 The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MODEL ON BEDROCK THAT PASSES THE SEAT'S EVAL BAR. Anthropic models only where the eval justifies the premium, always with a hard monthly budget cap. The one-door rule (12-token-metering) and the Register discipline are UNCHANGED.
 
-**Revision:** R2 — REV-1..7 applied (architect re-review pending)
+**Revision:** R3 — owner decision 2026-07-06: Anthropic REMOVED (use-case form declined + margin-fail)
 
 ---
 
@@ -47,7 +47,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 | MiniMax M2.5 | `minimax.minimax-m2.5` | ✓ | Direct model ID (no profile) |
 | Kimi K2.5 | `moonshotai.kimi-k2.5` | ✓ | Direct model ID (no profile) |
 | Kimi K2 Thinking | `moonshot.kimi-k2-thinking` | ✓ | Direct model ID (no profile) |
-| Claude Sonnet 4.6 | `us.anthropic.claude-sonnet-4-6` | ✓ | Cross-region inference profile (incumbent anchor) |
+| Claude Sonnet 4.6 | `us.anthropic.claude-sonnet-4-6` | REMOVED | — | **REMOVED** (owner decision 2026-07-06: Bedrock use-case form declined + margin-fail at credit pricing: $0.0126/task vs $0.0198 revenue = 36% margin, below >50% mandate) |
 
 **Note:** Only Nova-family and Anthropic models use `us.*` cross-region inference profiles. All other models invoke by direct model ID — no cross-region profile exists for them.
 
@@ -74,7 +74,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 | EV-1 | **The eval harness shall** reside in `services/model-evals/` as a workspace package (`@cumplify/model-evals`). |
 | EV-2 | **The runner shall** benchmark candidates via Bedrock Converse API, record exact token usage (input tokens, output tokens) per invocation, and compute $/task from `usage × live_price`. |
 | EV-3 | **The runner shall** pull pricing from the AWS Pricing API (`GetProducts`, service code `AmazonBedrock`) at run time as the primary source. For models absent from the Pricing API (architect-verified: no Claude 4.x pricing entries exist — only Claude 2/3-era), the runner reads a committed price-snapshot data file (`services/model-evals/data/price-snapshot.json`) carrying source URL + capture date. Scored reports mark such entries "snapshot-priced". Prices are NEVER inline constants (C-3). |
-| EV-4 | **The scoring pipeline shall** apply quality bar FIRST (pass/fail against the incumbent anchor), then rank passers by $/task (lowest wins). |
+| EV-4 | **The scoring pipeline shall** apply an ABSOLUTE quality bar per tier (pass/fail threshold defined in design), then rank passers by $/task (lowest wins). |
 | EV-5 | **The eval harness shall** support per-seat eval sets with distinct scoring methodologies (see §5). |
 | EV-6 | **Before a full benchmark run,** the harness shall output a cost estimate (eval-set size × estimated tokens/task × price) for architect approval (C-4). |
 | EV-7 | **Each eval run shall** produce a scored report: per-candidate results (quality score, $/task P50/P95, token usage breakdown), ranking, and pass/fail verdict. Committed to `.kiro/evidence/model-policy-evals/`. |
@@ -88,7 +88,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 | ID | Requirement (EARS) |
 |----|-------------------|
 | GURU-1 | **The Guru eval set shall** consist of clause-grounded Q&A pairs (minimum 50 per standard, 150 total) with expected answers citing specific ISO clause numbers. |
-| GURU-2 | **Candidates:** glm-5, deepseek.v3.2, qwen3-next-80b, kimi-k2.5, nova-pro. **Anchor:** sonnet-4-6. |
+| GURU-2 | **Candidates:** glm-5, deepseek.v3.2, qwen3-next-80b, kimi-k2.5, nova-pro. No anchor — quality bar is absolute per tier. |
 | GURU-3 | **Scoring shall** measure: (a) clause-citation accuracy (correct clause identified), (b) answer factual correctness (grounded in standard text), (c) hallucination rate (claims not supported by standard). |
 | GURU-4 | **Grading methodology (design decides):** automated rubric scoring where measurable (clause-citation = exact match), with human spot-review for subjective correctness on a sampled subset. The design must declare which components are automated vs. human-graded. |
 
@@ -131,7 +131,7 @@ The model default is no longer "the Nova family" — it is THE LOWEST-$/TASK MOD
 | ID | Requirement (EARS) |
 |----|-------------------|
 | LEGAL-1 | **The LegalLedger eval set shall** cover statutory/legal-text interpretation across the three jurisdiction-heavy domains (14001 6.1.3, 45001 6.1.3, 9.1.2). Minimum 30 obligation-mapping scenarios. |
-| LEGAL-2 | **Candidates:** sonnet-4-6 (incumbent) WITH monthly budget cap, glm-5, deepseek.v3.2, moonshot.kimi-k2-thinking. |
+| LEGAL-2 | **Candidates:** glm-5, deepseek.v3.2, moonshot.kimi-k2-thinking. Monthly budget cap applies to whichever model is assigned. |
 | LEGAL-3 | **Grading:** HUMAN-REVIEWED for every response. This is the highest-consequence seat — a wrong obligation mapping is regulatory exposure. No automated grader pretends to measure legal reasoning. |
 | LEGAL-4 | **The spec shall** produce a human-grading runbook (not a Lambda) for LegalLedger eval scoring. |
 | LEGAL-5 | **The monthly budget cap for LegalLedger shall** be recorded in the Register with the dollar amount and enforcement mechanism (credit-balance pre-check in ai-invoker). |

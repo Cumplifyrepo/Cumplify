@@ -42,9 +42,11 @@ const MODEL_DISPLAY_NAMES: Record<string, string> = {
 /**
  * Models known to be ABSENT from the Pricing API.
  * Only these may fall back to the snapshot. All others MUST resolve via API.
+ * Currently EMPTY — all candidates are live-API-priced (owner decision 2026-07-06:
+ * Anthropic removed; sonnet-4-6 was the only snapshot-only model).
  */
-const SNAPSHOT_ONLY_MODELS = new Set([
-  'us.anthropic.claude-sonnet-4-6',
+const SNAPSHOT_ONLY_MODELS = new Set<string>([
+  // Mechanism retained for future API-absent models; no current entries.
 ]);
 
 export interface PricingResult {
