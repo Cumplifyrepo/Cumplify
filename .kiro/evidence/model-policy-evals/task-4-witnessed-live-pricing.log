@@ -1,0 +1,36 @@
+# Task 4 witnessed live-pricing confirmation [ARCHITECT]
+# Executed: 2026-07-06T14:13:11Z | profile cumplify-dev-readonly | HEAD 7b7e924
+
+$ npx tsx services/model-evals/run.ts --seat micro --estimate-only
+[model-evals] Seat: micro
+[model-evals] Candidates: us.amazon.nova-micro-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 2 models
+  us.amazon.nova-micro-v1:0: live-api ($35/$140 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($35/$200 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 2 | 100 | 20,000 | 5,000 | $1.7000 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+EXIT: 0
+
+$ npx tsx services/model-evals/run.ts --seat guru --estimate-only
+[model-evals] Seat: guru
+[model-evals] Candidates: zai.glm-5, deepseek.v3.2, qwen.qwen3-next-80b-a3b, moonshotai.kimi-k2.5, us.amazon.nova-pro-v1:0, us.anthropic.claude-sonnet-4-6
+ERROR: Failed to load eval set at /home/julio-medrano/cumplify/services/model-evals/data/eval-sets/guru-iso9001.json: ENOENT: no such file or directory, open '/home/julio-medrano/cumplify/services/model-evals/data/eval-sets/guru-iso9001.json'
+EXIT: 1
+
+# ARCHITECT VERDICT on this witnessed run: FAIL (FINDING-D).
+# live-api path now genuinely queries and matches (progress vs incident #4), BUT:
+# - nova-micro displayed $35/$140 per M (true: $0.035/$0.14) — 1000x inflation.
+# - glm-4.7-flash displayed $35/$200 per M (true: $0.07/$0.40) — 500x + wrong dims.
+# Root cause (raw API dump captured 2026-07-06, see below): every priceDimension
+# unit is "1K tokens" (USD per 1K); per-M = x1000, code applied x1,000,000. AND
+# inferenceType is substring-matched, letting "Input tokens flex"/"batch"/"priority"
+# dims leak in. Guru run correctly hard-failed ENOENT (guru eval set is Task-6
+# architect work, not yet authored) — loud-failure behavior confirmed working.
