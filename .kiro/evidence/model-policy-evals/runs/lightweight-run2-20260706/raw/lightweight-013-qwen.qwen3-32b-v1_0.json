@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-013",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "EmergencyPlanner: Log emergency drill result — Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"plan\": \"Chemical Spill Response (ERP-007)\",\n  \"date\": \"2025-02-20\",\n  \"participants\": 18,\n  \"evacuation_time\": \"3 min 42 sec\",\n  \"target_evacuation_time\": \"under 4 min\",\n  \"issues_found\": [\n    \"2 blocked exit signs in corridor B\"\n  ],\n  \"corrective_actions_required\": [\n    \"Replace signage by 2025-03-01\"\n  ]\n}\n```",
+  "inputTokens": 122,
+  "outputTokens": 122,
+  "latencyMs": 1362,
+  "costUsd": 0.00009149999999999999
+}

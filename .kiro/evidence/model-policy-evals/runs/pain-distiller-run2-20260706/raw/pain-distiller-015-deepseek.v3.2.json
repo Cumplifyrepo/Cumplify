@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-015",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'Our risk register has 300 items and nobody looks at it. It was built during certification 5 years ago and never meaningfully updated. New risks from our expansion into battery manufacturing aren't captured. The risk methodology is too complex — a 5x5 matrix with 10 criteria that takes an hour per risk. People avoid updating it.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Ineffective tool: The risk register is ignored and not actively used.\",\n    \"Outdated content: It has not been meaningfully updated in five years since its creation for certification.\",\n    \"Incomplete risk coverage: New risks from business expansion (e.g., battery manufacturing) are missing.\",\n    \"Cumbersome methodology: The process is overly complex (5x5 matrix with 10 criteria), taking an hour per risk.\",\n    \"Low user adoption: The complexity and time burden cause people to avoid updating it.\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Ineffective tool: The risk register is ignored and not actively used.\", \"Outdated content: It has not been meaningfully updated in five years since its creation for certification.\", \"Incomplete risk coverage: New risks from business expansion (e.g., battery manufacturing) are missing.\", \"Cumbersome methodology: The process is overly complex (5x5 matrix with 10 criteria), taking an hour per risk.\", \"Low user adoption: The complexity and time burden cause people to avoid updating it.\"]}",
+  "inputTokens": 98,
+  "outputTokens": 227,
+  "latencyMs": 4181,
+  "costUsd": 0.00048070999999999997
+}

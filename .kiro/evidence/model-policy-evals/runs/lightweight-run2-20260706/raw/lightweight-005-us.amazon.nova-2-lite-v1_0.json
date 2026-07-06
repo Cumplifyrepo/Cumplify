@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-005",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 — Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"objective_id\": \"OBJ-2025-012\",\n  \"current_value\": 41,\n  \"baseline\": 45,\n  \"trend\": \"Improving\",\n  \"notes\": \"New inspection protocol showing early results\",\n  \"risk_level\": \"Medium\",\n  \"risk_context\": \"seasonal demand spike approaching\",\n  \"status\": \"On Track\"\n}\n```\nANSWER: {\"objective_id\":\"OBJ-2025-012\",\"current_value\":41,\"baseline\":45,\"trend\":\"Improving\",\"notes\":\"New inspection protocol showing early results\",\"risk_level\":\"Medium\",\"risk_context\":\"seasonal demand spike approaching\",\"status\":\"On Track\"}",
+  "inputTokens": 113,
+  "outputTokens": 136,
+  "latencyMs": 966,
+  "costUsd": 0.00041129
+}

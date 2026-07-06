@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-013",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Our internal audits find the same things every time — minor documentation gaps, training records not current. But we never find the real problems. Our auditors are too close to the processes they audit. We had a major customer escape that none of our audits caught. The audit program adds no value.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Internal audits repeatedly identify only minor documentation gaps and outdated training records, missing critical issues.\",\n    \"Auditors are too close to the processes they audit, leading to bias and blind spots.\",\n    \"Major quality failures (e.g., customer escapes) go undetected by the current audit program.\",\n    \"The audit program is perceived as adding no real value to the organization.\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Internal audits repeatedly identify only minor documentation gaps and outdated training records, missing critical issues.\",\"Auditors are too close to the processes they audit, leading to bias and blind spots.\",\"Major quality failures (e.g., customer escapes) go undetected by the current audit program.\",\"The audit program is perceived as adding no real value to the organization.\"]}",
+  "inputTokens": 92,
+  "outputTokens": 165,
+  "latencyMs": 5176,
+  "costUsd": 0.00021088
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-009",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Our supplier management is a nightmare. We have 200+ suppliers and most haven't been audited in 3 years. When we get bad material, it takes forever to trace it back and get corrective action from the supplier. Three of our key suppliers let their ISO certifications lapse and we didn't notice for 6 months.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"large_number_of_suppliers\",\"infrequent_audits\",\"difficulty_tracing_bad_material\",\"delayed_corrective_action\",\"lapsed_ISO_certifications\",\"lack_of_monitoring\"]}",
+  "inputTokens": 94,
+  "outputTokens": 54,
+  "latencyMs": 746,
+  "costUsd": 0.000248
+}

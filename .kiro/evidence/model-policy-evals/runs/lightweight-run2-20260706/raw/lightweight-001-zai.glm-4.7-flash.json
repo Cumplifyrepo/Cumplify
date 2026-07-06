@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-001",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "RecordsVault: Register this calibration record — Equipment: Torque Wrench TW-042, Calibration Date: 2025-03-15, Next Due: 2026-03-15, Technician: Maria Gonzalez, Result: Pass, Certificate: CAL-2025-0891\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"action\": \"register_calibration_record\",\n  \"equipment\": {\n    \"id\": \"TW-042\",\n    \"name\": \"Torque Wrench TW-042\"\n  },\n  \"calibration_date\": \"2025-03-15\",\n  \"next_due_date\": \"2026-03-15\",\n  \"technician\": {\n    \"name\": \"Maria Gonzalez\"\n  },\n  \"result\": \"Pass\",\n  \"certificate\": {\n    \"id\": \"CAL-2025-0891\"\n  }\n}\n```\nANSWER: {\"action\": \"register_calibration_record\", \"equipment\": {\"id\": \"TW-042\", \"name\": \"Torque Wrench TW-042\"}, \"calibration_date\": \"2025-03-15\", \"next_due_date\": \"2026-03-15\", \"technician\": {\"name\": \"Maria Gonzalez\"}, \"result\": \"Pass\", \"certificate\": {\"id\": \"CAL-2025-0891\"}}",
+  "inputTokens": 82,
+  "outputTokens": 215,
+  "latencyMs": 1426,
+  "costUsd": 0.00009174
+}

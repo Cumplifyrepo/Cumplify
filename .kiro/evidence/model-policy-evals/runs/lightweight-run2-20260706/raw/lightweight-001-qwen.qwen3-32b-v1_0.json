@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-001",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "RecordsVault: Register this calibration record — Equipment: Torque Wrench TW-042, Calibration Date: 2025-03-15, Next Due: 2026-03-15, Technician: Maria Gonzalez, Result: Pass, Certificate: CAL-2025-0891\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"equipment\": \"Torque Wrench TW-042\",\n  \"calibration_date\": \"2025-03-15\",\n  \"next_due\": \"2026-03-15\",\n  \"technician\": \"Maria Gonzalez\",\n  \"result\": \"Pass\",\n  \"certificate\": \"CAL-2025-0891\"\n}\n```",
+  "inputTokens": 101,
+  "outputTokens": 90,
+  "latencyMs": 815,
+  "costUsd": 0.00006915
+}

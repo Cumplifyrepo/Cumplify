@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-007",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "ContextCartographer: Update organizational context — Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"update\": {\n    \"factor\": \"New competitor entered Latin American market with ISO-certified products\",\n    \"type\": \"External-Competitive\",\n    \"impact\": \"High\",\n    \"affectedStandards\": [\"ISO 9001\"],\n    \"responseNeeded\": \"Accelerate certification timeline for Mexico plant\"\n  }\n}\n```\nANSWER: {\"update\": {\"factor\": \"New competitor entered Latin American market with ISO-certified products\", \"type\": \"External-Competitive\", \"impact\": \"High\", \"affectedStandards\": [\"ISO 9001\"], \"responseNeeded\": \"Accelerate certification timeline for Mexico plant\"}}",
+  "inputTokens": 111,
+  "outputTokens": 128,
+  "latencyMs": 881,
+  "costUsd": 0.00038863
+}

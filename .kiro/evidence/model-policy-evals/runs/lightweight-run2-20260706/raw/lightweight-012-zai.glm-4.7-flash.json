@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-012",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "EmergencyPlanner: Create emergency response plan — Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"planName\": \"Emergency Response Plan: Chemical Spill in Mixing Area\",\n  \"scenario\": \"Chemical spill in mixing area\",\n  \"severity\": \"High\",\n  \"responseTeam\": {\n    \"primary\": \"HazMat team\",\n    \"support\": \"Shift supervisor\"\n  },\n  \"evacuation\": {\n    \"zone\": \"Zone B\",\n    \"radius\": \"50m\",\n    \"radiusUnit\": \"meters\"\n  },\n  \"containment\": [\n    \"Deploy spill kit SK-003\",\n    \"Activate sump pump\"\n  ],\n  \"notification\": [\n    {\n      \"recipient\": \"Fire department\",\n      \"timeframe\": \"within 5 minutes\"\n    },\n    {\n      \"recipient\": \"EPA\",\n      \"timeframe\": \"within 24 hours\"\n    }\n  ]\n}\n```\nANSWER: {\"planName\": \"Emergency Response Plan: Chemical Spill in Mixing Area\", \"scenario\": \"Chemical spill in mixing area\", \"severity\": \"High\", \"responseTeam\": {\"primary\": \"HazMat team\", \"support\": \"Shift supervisor\"}, \"evacuation\": {\"zone\": \"Zone B\", \"radius\": \"50m\", \"radiusUnit\": \"meters\"}, \"containment\": [\"Deploy spill kit SK-003\", \"Activate sump pump\"], \"notification\": [{\"recipient\": \"Fire department\", \"timeframe\": \"within 5 minutes\"}, {\"recipient\": \"EPA\", \"timeframe\": \"within 24 hours\"}]}",
+  "inputTokens": 94,
+  "outputTokens": 320,
+  "latencyMs": 1943,
+  "costUsd": 0.00013458000000000003
+}

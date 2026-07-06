@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-016",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Calibration is out of control. We have 800 instruments across the plant. Somehow 15% are overdue at any given time. When an instrument is found out of cal, we can't easily determine which products were affected — the link between instrument and product batch doesn't exist in our system. We've had two recalls traced back to out-of-cal gauges.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Calibration process is poorly managed, with 15% of 800 instruments consistently overdue\",\n    \"Lack of system integration between instrument calibration status and product batch tracking\",\n    \"Inability to quickly identify affected product batches when an instrument is found out of calibration\",\n    \"Repeated product recalls due to out-of-calibration gauges, indicating serious quality and compliance risks\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Calibration process is poorly managed, with 15% of 800 instruments consistently overdue\",\"Lack of system integration between instrument calibration status and product batch tracking\",\"Inability to quickly identify affected product batches when an instrument is found out of calibration\",\"Repeated product recalls due to out-of-calibration gauges, indicating serious quality and compliance risks\"]}",
+  "inputTokens": 110,
+  "outputTokens": 168,
+  "latencyMs": 2745,
+  "costUsd": 0.000217
+}

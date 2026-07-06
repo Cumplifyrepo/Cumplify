@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-022",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Bakery (industrial scale), Company Size: 250 employees, Pain Points: Allergen management inconsistent across shifts, cleaning validation records missing, equipment maintenance reactive not preventive, high staff turnover losing competency\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"readiness\":\"Poor\",\"issues\":[\"inconsistent allergen management\",\"missing cleaning validation records\",\"reactive equipment maintenance\",\"high staff turnover\"]}",
+  "inputTokens": 65,
+  "outputTokens": 30,
+  "latencyMs": 668,
+  "costUsd": 0.0000111
+}

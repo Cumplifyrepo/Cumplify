@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-016",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'Calibration is out of control. We have 800 instruments across the plant. Somehow 15% are overdue at any given time. When an instrument is found out of cal, we can't easily determine which products were affected — the link between instrument and product batch doesn't exist in our system. We've had two recalls traced back to out-of-cal gauges.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Poor calibration management leading to high overdue rates (15% of 800 instruments)\",\n    \"Inability to trace out-of-calibration instruments to affected product batches\",\n    \"Lack of system integration between instrument calibration data and production batch records\",\n    \"Recalls directly caused by undetected out-of-calibration instruments\",\n    \"Reactive discovery of calibration failures rather than proactive prevention\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Poor calibration management leading to high overdue rates (15% of 800 instruments)\", \"Inability to trace out-of-calibration instruments to affected product batches\", \"Lack of system integration between instrument calibration data and production batch records\", \"Recalls directly caused by undetected out-of-calibration instruments\", \"Reactive discovery of calibration failures rather than proactive prevention\"]}",
+  "inputTokens": 103,
+  "outputTokens": 171,
+  "latencyMs": 3321,
+  "costUsd": 0.00038021
+}

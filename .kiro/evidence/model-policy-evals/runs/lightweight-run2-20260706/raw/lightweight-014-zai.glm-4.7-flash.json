@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-014",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "WorkerVoice: Log worker consultation — Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"meeting_log\": {\n    \"worker_consultation\": true,\n    \"meeting_name\": \"Monthly Safety Committee\",\n    \"date\": \"2025-03-05\",\n    \"attendees\": {\n      \"worker_reps\": 8,\n      \"management\": 3\n    },\n    \"topics\": [\n      {\n        \"topic\": \"New forklift traffic pattern concerns\",\n        \"status\": \"discussed\"\n      },\n      {\n        \"topic\": \"PPE comfort in summer heat\",\n        \"status\": \"discussed\"\n      },\n      {\n        \"topic\": \"Near-miss reporting app feedback\",\n        \"status\": \"discussed\"\n      }\n    ],\n    \"actions\": [\n      {\n        \"item\": \"Trial cooling vests\",\n        \"deadline\": \"2025-04-01\"\n      },\n      {\n        \"item\": \"Update forklift routes\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n}\n```\nANSWER: {\"meeting_log\": {\"worker_consultation\": true, \"meeting_name\": \"Monthly Safety Committee\", \"date\": \"2025-03-05\", \"attendees\": {\"worker_reps\": 8, \"management\": 3}, \"topics\": [{\"topic\": \"New forklift traffic pattern concerns\", \"status\": \"discussed\"}, {\"topic\": \"PPE comfort in summer heat\", \"status\": \"discussed\"}, {\"topic\": \"Near-miss reporting app feedback\", \"status\": \"discussed\"}], \"actions\": [{\"item\": \"Trial cooling vests\", \"deadline\": \"2025-04-01\"}, {\"item\": \"Update forklift routes\", \"status\": \"pending\"}]}}",
+  "inputTokens": 94,
+  "outputTokens": 357,
+  "latencyMs": 2280,
+  "costUsd": 0.00014938
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-003",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Our CAPA process is a joke. We open corrective actions and they sit there for months. Nobody follows up. The same problems keep recurring — we had the same weld defect issue 3 times this year. Management just wants to close CAPAs quickly without actually fixing root causes.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"CAPA process is ineffective and disrespected ('a joke')\",\n    \"Corrective actions are left unattended for months\",\n    \"Lack of follow-up and accountability\",\n    \"Recurring issues due to unresolved root causes\",\n    \"Management prioritizes closing CAPAs over genuine problem resolution\",\n    \"Same weld defect occurred three times in one year, indicating systemic failure\"\n  ]\n}\nANSWER: {\"pain_points\":[\"CAPA process is ineffective and disrespected ('a joke')\",\"Corrective actions are left unattended for months\",\"Lack of follow-up and accountability\",\"Recurring issues due to unresolved root causes\",\"Management prioritizes closing CAPAs over genuine problem resolution\",\"Same weld defect occurred three times in one year, indicating systemic failure\"]}",
+  "inputTokens": 89,
+  "outputTokens": 162,
+  "latencyMs": 2180,
+  "costUsd": 0.00020686
+}

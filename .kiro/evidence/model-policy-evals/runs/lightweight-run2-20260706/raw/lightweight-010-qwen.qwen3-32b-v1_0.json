@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-010",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "CompetenceKeeper: Identify competence gap — Employee: Ana Torres (EMP-2011), Role: Environmental Compliance Specialist, Required: ISO 14001 Lead Auditor certification, Current: ISO 14001 Internal Auditor only, Gap: Lead Auditor qualification needed by June 2025 for upcoming surveillance audit\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"employee\": {\n    \"name\": \"Ana Torres\",\n    \"employee_id\": \"EMP-2011\"\n  },\n  \"role\": \"Environmental Compliance Specialist\",\n  \"required_competence\": \"ISO 14001 Lead Auditor certification\",\n  \"current_competence\": \"ISO 14001 Internal Auditor\",\n  \"competence_gap\": \"Lead Auditor qualification\",\n  \"deadline\": \"June 2025\",\n  \"reason\": \"Required for upcoming surveillance audit\"\n}\n```",
+  "inputTokens": 98,
+  "outputTokens": 115,
+  "latencyMs": 1649,
+  "costUsd": 0.0000837
+}

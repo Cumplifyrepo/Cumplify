@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-004",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "ObjectiveTracker: Create a new quality objective — Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"Objective\":\"Reduce customer complaints by 20% in Q3 2025\",\"Owner\":\"Quality Director\",\"Baseline\":45,\"Target\":36,\"Measurement\":\"Monthly complaint log\",\"Standard\":\"ISO 9001 clause 6.2\"}",
+  "inputTokens": 87,
+  "outputTokens": 60,
+  "latencyMs": 521,
+  "costUsd": 0.000019620000000000002
+}

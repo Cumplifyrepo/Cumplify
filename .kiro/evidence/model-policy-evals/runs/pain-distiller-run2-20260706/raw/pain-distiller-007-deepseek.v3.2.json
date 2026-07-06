@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-007",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'We had a serious near-miss last week — forklift almost hit a pedestrian. When I investigated, I found out workers stopped reporting near-misses because nothing ever happens when they do. The forms are complicated, supervisors don't follow up, and there's a blame culture. We're sitting on a time bomb.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Serious safety incident (near-miss with forklift and pedestrian)\",\n    \"Lack of reporting due to perceived inaction\",\n    \"Overly complicated reporting forms\",\n    \"Supervisor failure to follow up on reports\",\n    \"Existence of a blame culture discouraging reporting\",\n    \"Fear of impending major accident ('sitting on a time bomb')\"\n  ]\n}\nANSWER: <your JSON response>",
+  "inputTokens": 93,
+  "outputTokens": 93,
+  "latencyMs": 2037,
+  "costUsd": 0.00022971
+}

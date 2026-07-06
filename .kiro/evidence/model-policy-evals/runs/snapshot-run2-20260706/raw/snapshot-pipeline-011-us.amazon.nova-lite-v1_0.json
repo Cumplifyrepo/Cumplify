@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-011",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Plastics Injection Molding, Company Size: 95 employees, Pain Points: Mold changeover takes too long causing quality drift, no SPC on critical dimensions, operator training is buddy-system only, customer audits finding repeat issues\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"ISOReadinessAssessment\":{\"Industry\":\"Plastics Injection Molding\",\"CompanySize\":95,\"PainPoints\":[\"Long mold changeover times causing quality drift\",\"No Statistical Process Control (SPC) on critical dimensions\",\"Buddy-system only for operator training\",\"Repeat issues found in customer audits\"}}}",
+  "inputTokens": 69,
+  "outputTokens": 64,
+  "latencyMs": 952,
+  "costUsd": 0.000019500000000000003
+}

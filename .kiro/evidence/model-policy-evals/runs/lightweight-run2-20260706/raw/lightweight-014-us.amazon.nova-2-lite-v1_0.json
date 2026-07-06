@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-014",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "WorkerVoice: Log worker consultation — Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"meeting_log\":{\"date\":\"2025-03-05\",\"committee\":\"Monthly Safety Committee\",\"attendees\":{\"worker_reps\":8,\"management\":3},\"topics\":[{\"topic\":\"New forklift traffic pattern concerns\",\"status\":\"under_review\"},{\"topic\":\"PPE comfort in summer heat\",\"status\":\"trial_cooling_vests_by_april\"},{\"topic\":\"Near-miss reporting app feedback\",\"status\":\"pending_review\"}],\"actions\":[\"Trial cooling vests by April\",\"Update forklift routes\"]}}",
+  "inputTokens": 128,
+  "outputTokens": 94,
+  "latencyMs": 982,
+  "costUsd": 0.00030073999999999997
+}

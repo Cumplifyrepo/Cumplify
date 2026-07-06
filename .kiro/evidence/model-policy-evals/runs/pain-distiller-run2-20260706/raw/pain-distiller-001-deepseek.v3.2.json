@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-001",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'We spent 3 months preparing for our ISO 9001 audit and still got 4 major nonconformities. Our consultant gave us templates but they didn't match our actual processes. The auditor said our document control was a mess — versions everywhere, nobody knew which was current. We're a 50-person machine shop, not Boeing, but the system feels like it was built for a corporation.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Significant time investment with poor outcome: spent 3 months preparing but still received 4 major nonconformities.\",\n    \"Consultant provided generic, mismatched templates that did not align with actual company processes.\",\n    \"Poor document control system: multiple uncontrolled versions, confusion over current versions.\",\n    \"System complexity and inappropriateness: ISO 9001 system feels overly complex and built for a large corporation, not a 50-person machine shop.\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Significant time investment with poor outcome: spent 3 months preparing but still received 4 major nonconformities.\", \"Consultant provided generic, mismatched templates that did not align with actual company processes.\", \"Poor document control system: multiple uncontrolled versions, confusion over current versions.\", \"System complexity and inappropriateness: ISO 9001 system feels overly complex and built for a large corporation, not a 50-person machine shop.\"]}",
+  "inputTokens": 110,
+  "outputTokens": 200,
+  "latencyMs": 3865,
+  "costUsd": 0.0004382
+}

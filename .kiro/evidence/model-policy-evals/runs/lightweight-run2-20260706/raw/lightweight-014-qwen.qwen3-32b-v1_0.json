@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-014",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "WorkerVoice: Log worker consultation — Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"meeting\": {\n    \"name\": \"Monthly Safety Committee\",\n    \"date\": \"2025-03-05\",\n    \"attendees\": {\n      \"worker_reps\": 8,\n      \"management\": 3\n    },\n    \"topics\": [\n      \"New forklift traffic pattern concerns\",\n      \"PPE comfort in summer heat\",\n      \"Near-miss reporting app feedback\"\n    ],\n    \"actions\": [\n      \"Trial cooling vests by April\",\n      \"Update forklift routes\"\n    ]\n  }\n}\n```",
+  "inputTokens": 105,
+  "outputTokens": 121,
+  "latencyMs": 4684,
+  "costUsd": 0.00008835
+}

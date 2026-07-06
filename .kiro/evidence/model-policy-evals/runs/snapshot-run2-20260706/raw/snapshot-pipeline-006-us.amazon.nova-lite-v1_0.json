@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-006",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Logistics & Warehousing, Company Size: 650 employees, Pain Points: 12% order error rate, no root cause analysis for recurring issues, fleet maintenance records on paper only, driver competency assessments overdue\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"readiness\":\"Poor\",\"issues\":[\"High order error rate\",\"Lack of root cause analysis\",\"Paper-based maintenance records\",\"Overdue competency assessments\"]}",
+  "inputTokens": 68,
+  "outputTokens": 35,
+  "latencyMs": 679,
+  "costUsd": 0.000012479999999999999
+}

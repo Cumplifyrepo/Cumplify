@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-015",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "WorkerVoice: Record worker feedback — Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"source\": \"Anonymous suggestion box\", \"date\": \"2025-03-12\", \"category\": \"Ergonomics\", \"feedback\": \"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\", \"affected_workers\": 6, \"suggested_solution\": \"Adjustable platform or tool balancer\"}",
+  "inputTokens": 86,
+  "outputTokens": 80,
+  "latencyMs": 680,
+  "costUsd": 0.000024360000000000004
+}

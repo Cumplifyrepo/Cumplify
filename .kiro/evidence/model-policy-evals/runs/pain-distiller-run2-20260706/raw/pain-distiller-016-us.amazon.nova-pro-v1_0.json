@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-016",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Calibration is out of control. We have 800 instruments across the plant. Somehow 15% are overdue at any given time. When an instrument is found out of cal, we can't easily determine which products were affected — the link between instrument and product batch doesn't exist in our system. We've had two recalls traced back to out-of-cal gauges.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"Calibration management is inefficient with 15% of instruments overdue.\",\"Difficulty in determining which products are affected by out-of-cal instruments.\",\"Lack of system linkage between instruments and product batches.\",\"Previous recalls have been traced back to out-of-cal gauges.\"]}\n\n",
+  "inputTokens": 108,
+  "outputTokens": 67,
+  "latencyMs": 731,
+  "costUsd": 0.0003008
+}

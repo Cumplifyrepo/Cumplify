@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-002",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Every time we have a customer complaint, it takes us 2 weeks just to figure out which batch it came from. Our traceability is basically someone writing lot numbers in a notebook. We lost a $2M contract because we couldn't provide objective evidence of our process controls. The ERP system doesn't talk to quality.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Extremely slow batch traceability (takes 2 weeks to identify source of customer complaint)\",\n    \"Manual, non-digital traceability process (lot numbers recorded in a notebook)\",\n    \"Inability to provide objective evidence of process controls, leading to loss of a $2M contract\",\n    \"Lack of integration between ERP system and quality management systems\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Extremely slow batch traceability (takes 2 weeks to identify source of customer complaint)\",\"Manual, non-digital traceability process (lot numbers recorded in a notebook)\",\"Inability to provide objective evidence of process controls, leading to loss of a $2M contract\",\"Lack of integration between ERP system and quality management systems\"]}",
+  "inputTokens": 98,
+  "outputTokens": 158,
+  "latencyMs": 2737,
+  "costUsd": 0.00020331999999999997
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-008",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "SupplierScout: Onboard new supplier — Company: Precision Metals Ltd, Category: Critical Raw Material, Location: Monterrey Mexico, Certifications: ISO 9001:2015 IATF 16949, Products: Aluminum extrusions and machined components, Annual Spend: $2.4M, Risk Tier: Tier 1\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"supplier\": {\n    \"company_name\": \"Precision Metals Ltd\",\n    \"category\": \"Critical Raw Material\",\n    \"location\": {\n      \"city\": \"Monterrey\",\n      \"country\": \"Mexico\"\n    },\n    \"certifications\": [\n      \"ISO 9001:2015\",\n      \"IATF 16949\"\n    ],\n    \"products\": [\n      \"Aluminum extrusions\",\n      \"Machined components\"\n    ],\n    \"financials\": {\n      \"annual_spend\": 2400000\n    },\n    \"risk_assessment\": {\n      \"tier\": \"Tier 1\"\n    }\n  }\n}\n```\nANSWER: {\"supplier\": {\"company_name\": \"Precision Metals Ltd\", \"category\": \"Critical Raw Material\", \"location\": {\"city\": \"Monterrey\", \"country\": \"Mexico\"}, \"certifications\": [\"ISO 9001:2015\", \"IATF 16949\"], \"products\": [\"Aluminum extrusions\", \"Machined components\"], \"financials\": {\"annual_spend\": 2400000}, \"risk_assessment\": {\"tier\": \"Tier 1\"}}",
+  "inputTokens": 91,
+  "outputTokens": 245,
+  "latencyMs": 2934,
+  "costUsd": 0.00010436999999999999
+}

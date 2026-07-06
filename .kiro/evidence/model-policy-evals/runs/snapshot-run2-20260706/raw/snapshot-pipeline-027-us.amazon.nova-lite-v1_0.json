@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-027",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Packaging (corrugated), Company Size: 140 employees, Pain Points: Print quality defects 4% of orders, die-cutting waste above target, no customer feedback loop, machine guards removed for maintenance and not replaced, ink VOC monitoring absent\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"readiness\":\"Poor\",\"issues\":[\"4% print quality defects\",\"die-cutting waste above target\",\"no customer feedback loop\",\"machine guards not replaced\",\"absent ink VOC monitoring\"]}",
+  "inputTokens": 77,
+  "outputTokens": 42,
+  "latencyMs": 663,
+  "costUsd": 0.000014700000000000002
+}

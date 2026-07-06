@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-016",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "NCTriage: Classify this nonconformity — Source: Customer complaint CC-2025-089, Description: Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0±0.1mm), Quantity Affected: 240 units, Customer: AutoParts GmbH, Severity: Major (production line stopped)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"nonconformity_id\": \"CC-2025-089\",\n  \"source\": \"Customer complaint\",\n  \"description\": \"Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0±0.1mm)\",\n  \"quantity_affected\": 240,\n  \"customer\": \"AutoParts GmbH\",\n  \"severity\": \"Major\",\n  \"classification\": {\n    \"type\": \"Dimensional Nonconformity\",\n    \"category\": \"Product Defect\",\n    \"impact\": \"Production Line Stoppage\",\n    \"priority\": \"High\"\n  }\n}\n```\nANSWER: {\"nonconformity_id\": \"CC-2025-089\", \"source\": \"Customer complaint\", \"description\": \"Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0±0.1mm)\", \"quantity_affected\": 240, \"customer\": \"AutoParts GmbH\", \"severity\": \"Major\", \"classification\": {\"type\": \"Dimensional Nonconformity\", \"category\": \"Product Defect\", \"impact\": \"Production Line Stoppage\", \"priority\": \"High\"}}",
+  "inputTokens": 99,
+  "outputTokens": 257,
+  "latencyMs": 1613,
+  "costUsd": 0.00010973000000000001
+}

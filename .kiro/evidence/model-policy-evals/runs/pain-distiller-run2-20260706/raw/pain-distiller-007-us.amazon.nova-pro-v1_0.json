@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-007",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'We had a serious near-miss last week — forklift almost hit a pedestrian. When I investigated, I found out workers stopped reporting near-misses because nothing ever happens when they do. The forms are complicated, supervisors don't follow up, and there's a blame culture. We're sitting on a time bomb.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"near-miss incident\",\"workers stopped reporting near-misses\",\"complicated forms\",\"supervisors don't follow up\",\"blame culture\",\"potential for future incidents\"]}",
+  "inputTokens": 92,
+  "outputTokens": 42,
+  "latencyMs": 613,
+  "costUsd": 0.000208
+}

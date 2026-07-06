@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-010",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Management review is a PowerPoint theater. We show nice graphs, everyone nods, actions are assigned, and nothing changes until next quarter. The same risks stay on the register year after year. Nobody challenges whether our objectives are actually being met. It's pure compliance theater.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"Management review is superficial\",\"Actions assigned but not implemented\",\"Repeated risks year after year\",\"Lack of objective assessment\",\"Focus on compliance rather than improvement\"]}",
+  "inputTokens": 79,
+  "outputTokens": 40,
+  "latencyMs": 1057,
+  "costUsd": 0.00019120000000000004
+}

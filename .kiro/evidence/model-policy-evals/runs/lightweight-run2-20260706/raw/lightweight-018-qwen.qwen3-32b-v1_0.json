@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-018",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ObjectiveTracker: Flag objective as off-track — Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"objective_id\": \"OBJ-2025-008\",\n  \"status\": \"off-track\",\n  \"current_progress\": \"2% reduction achieved\",\n  \"root_cause\": \"Production volume increased 15% unexpectedly\",\n  \"recommendation\": \"Adjust target to per-unit consumption metric\"\n}\n```",
+  "inputTokens": 91,
+  "outputTokens": 73,
+  "latencyMs": 812,
+  "costUsd": 0.00005745
+}

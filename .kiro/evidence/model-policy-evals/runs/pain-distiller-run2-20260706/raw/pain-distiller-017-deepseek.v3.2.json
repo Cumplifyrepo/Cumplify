@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-017",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'Getting certified was easy compared to keeping the system alive. After the auditor left, momentum died. People went back to old habits within 3 months. The management representative retired and nobody took over. We're coming up on our surveillance audit and I'd say we've regressed significantly. Recertification might fail.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Sustaining system compliance post-certification is difficult\",\n    \"Loss of momentum after the initial audit\",\n    \"Reverting to old habits and processes within a short timeframe (3 months)\",\n    \"Lack of succession planning for key roles (e.g., management representative retirement with no replacement)\",\n    \"Significant regression in system adherence over time\",\n    \"Risk of failing upcoming surveillance audit and losing certification\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Sustaining system compliance post-certification is difficult\", \"Loss of momentum after the initial audit\", \"Reverting to old habits and processes within a short timeframe (3 months)\", \"Lack of succession planning for key roles (e.g., management representative retirement with no replacement)\", \"Significant regression in system adherence over time\", \"Risk of failing upcoming surveillance audit and losing certification\"]}",
+  "inputTokens": 92,
+  "outputTokens": 182,
+  "latencyMs": 3872,
+  "costUsd": 0.00039374000000000006
+}

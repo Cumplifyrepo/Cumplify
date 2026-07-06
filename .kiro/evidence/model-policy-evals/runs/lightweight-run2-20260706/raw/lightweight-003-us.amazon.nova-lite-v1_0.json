@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-003",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "RecordsVault: Log this training completion — Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"Employee\": \"Carlos Mendez (EMP-1042)\", \"Course\": \"ISO 45001 Internal Auditor\", \"Completion Date\": \"2025-02-28\", \"Score\": \"92%\", \"Instructor\": \"Diane Foster\", \"Expiry\": \"2027-02-28\"}",
+  "inputTokens": 89,
+  "outputTokens": 79,
+  "latencyMs": 792,
+  "costUsd": 0.0000243
+}

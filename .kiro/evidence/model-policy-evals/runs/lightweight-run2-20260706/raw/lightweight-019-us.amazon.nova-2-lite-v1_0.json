@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-019",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "SupplierScout: Flag supplier nonconformance — Supplier: ChemFlow Solvents (SUP-0134), Issue: Certificate of Analysis missing for Batch SOL-8821, Impact: 500L of solvent quarantined cannot be used in production, Required Action: Supplier must provide CoA within 48h or batch is rejected\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"supplier_id\": \"SUP-0134\", \"supplier_name\": \"ChemFlow Solvents\", \"issue\": \"Certificate of Analysis missing for Batch SOL-8821\", \"impact\": \"500L of solvent quarantined cannot be used in production\", \"required_action\": \"Supplier must provide CoA within 48h or batch is rejected\", \"status\": \"Nonconformance Flagged\", \"urgency\": \"High\"}",
+  "inputTokens": 127,
+  "outputTokens": 89,
+  "latencyMs": 799,
+  "costUsd": 0.00028665999999999994
+}

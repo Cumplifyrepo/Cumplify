@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-020",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Our biggest issue is connecting the dots between standards. We're certified to ISO 9001, 14001, and 45001 but run them as three separate systems. Three sets of objectives, three audit programs, three management reviews. The overlap is enormous but integration seems impossible with our current tools. Consultants tell us to integrate but don't explain how practically.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Difficulty connecting dots between ISO 9001, 14001, and 45001 standards\",\n    \"Managing three separate, redundant systems (objectives, audit programs, management reviews)\",\n    \"Significant operational overlap with no effective integration\",\n    \"Lack of practical guidance on how to integrate the systems despite consultant recommendations\",\n    \"Current tools are inadequate for enabling system integration\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Difficulty connecting dots between ISO 9001, 14001, and 45001 standards\",\"Managing three separate, redundant systems (objectives, audit programs, management reviews)\",\"Significant operational overlap with no effective integration\",\"Lack of practical guidance on how to integrate the systems despite consultant recommendations\",\"Current tools are inadequate for enabling system integration\"]}",
+  "inputTokens": 114,
+  "outputTokens": 180,
+  "latencyMs": 3015,
+  "costUsd": 0.00023196000000000002
+}

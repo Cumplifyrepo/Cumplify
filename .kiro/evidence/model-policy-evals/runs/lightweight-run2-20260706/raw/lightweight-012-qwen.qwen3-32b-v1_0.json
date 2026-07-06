@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-012",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "EmergencyPlanner: Create emergency response plan — Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"scenario\": \"Chemical spill in mixing area\",\n  \"severity\": \"High\",\n  \"response_team\": [\"HazMat team\", \"Shift supervisor\"],\n  \"evacuation\": {\n    \"zone\": \"Zone B\",\n    \"radius\": \"50m\"\n  },\n  \"containment\": {\n    \"spill_kit\": \"SK-003\",\n    \"sump_pump\": \"Activate\"\n  },\n  \"notification\": {\n    \"fire_department\": \"Within 5 minutes\",\n    \"epa\": \"Within 24 hours\"\n  }\n}\n```",
+  "inputTokens": 104,
+  "outputTokens": 128,
+  "latencyMs": 1782,
+  "costUsd": 0.0000924
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-008",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'We're trying to get ISO 14001 certified but we don't even know where to start with aspects and impacts. Our consultant quoted $80K for gap analysis and implementation support. We're a 100-person company — that's our entire training budget for the year. Everything online is generic checklists that don't help.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Lack of foundational knowledge on where to start with ISO 14001 aspects and impacts identification.\",\n    \"Prohibitive cost of professional support ($80K) relative to company size and budget constraints.\",\n    \"Consultant quote consumes the entire annual training budget for a 100-person company.\",\n    \"Inadequate online resources that are too generic (e.g., checklists) and not actionable for their specific needs.\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Lack of foundational knowledge on where to start with ISO 14001 aspects and impacts identification.\", \"Prohibitive cost of professional support ($80K) relative to company size and budget constraints.\", \"Consultant quote consumes the entire annual training budget for a 100-person company.\", \"Inadequate online resources that are too generic (e.g., checklists) and not actionable for their specific needs.\"]}",
+  "inputTokens": 95,
+  "outputTokens": 184,
+  "latencyMs": 3741,
+  "costUsd": 0.00039930000000000006
+}

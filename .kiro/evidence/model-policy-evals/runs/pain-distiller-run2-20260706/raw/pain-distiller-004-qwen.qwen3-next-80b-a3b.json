@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-004",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'I'm the quality manager AND the EHS manager AND the training coordinator. There are 200 people here and I'm supposed to track everyone's competency records, run the environmental program, and manage the QMS. I can't keep up with internal audits — we're 6 months behind schedule. I need automation, not another spreadsheet.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Overburdened role with multiple high-responsibility positions (Quality Manager, EHS Manager, Training Coordinator)\",\n    \"Manual tracking of competency records for 200 employees\",\n    \"Inability to keep up with internal audit schedule (6 months behind)\",\n    \"Lack of automation leading to reliance on error-prone spreadsheets\",\n    \"Insufficient tools to manage environmental program and QMS simultaneously\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Overburdened role with multiple high-responsibility positions (Quality Manager, EHS Manager, Training Coordinator)\", \"Manual tracking of competency records for 200 employees\", \"Inability to keep up with internal audit schedule (6 months behind)\", \"Lack of automation leading to reliance on error-prone spreadsheets\", \"Insufficient tools to manage environmental program and QMS simultaneously\"]}",
+  "inputTokens": 103,
+  "outputTokens": 183,
+  "latencyMs": 2709,
+  "costUsd": 0.00023401999999999999
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-011",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "CompetenceKeeper: Record training event — Training: Lockout/Tagout Refresher, Date: 2025-03-10, Duration: 4 hours, Attendees: 12 maintenance technicians (Shift A), Trainer: External (SafetyFirst Inc), Assessment: Practical demonstration + written test, Pass Rate: 100%\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"competence_keeper\": {\n    \"record_training_event\": {\n      \"training\": \"Lockout/Tagout Refresher\",\n      \"date\": \"2025-03-10\",\n      \"duration\": \"4 hours\",\n      \"attendees\": [\n        {\n          \"role\": \"maintenance technician\",\n          \"shift\": \"Shift A\",\n          \"count\": 12\n        }\n      ],\n      \"trainer\": {\n        \"name\": \"SafetyFirst Inc\",\n        \"type\": \"External\"\n      },\n      \"assessment\": {\n        \"methods\": [\n          \"Practical demonstration\",\n          \"Written test\"\n        ]\n      },\n      \"pass_rate\": \"100%\"\n    }\n  }\n}\n```\nANSWER: {\"competence_keeper\": {\"record_training_event\": {\"training\": \"Lockout/Tagout Refresher\", \"date\": \"2025-03-10\", \"duration\": \"4 hours\", \"attendees\": [{\"role\": \"maintenance technician\", \"shift\": \"Shift A\", \"count\": 12}], \"trainer\": {\"name\": \"SafetyFirst Inc\", \"type\": \"External\"}, \"assessment\": {\"methods\": [\"Practical demonstration\", \"Written test\"]}, \"pass_rate\": \"100%\"}}}",
+  "inputTokens": 88,
+  "outputTokens": 258,
+  "latencyMs": 1242,
+  "costUsd": 0.00010936
+}

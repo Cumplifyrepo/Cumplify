@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-008",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "SupplierScout: Onboard new supplier — Company: Precision Metals Ltd, Category: Critical Raw Material, Location: Monterrey Mexico, Certifications: ISO 9001:2015 IATF 16949, Products: Aluminum extrusions and machined components, Annual Spend: $2.4M, Risk Tier: Tier 1\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"supplier\": {\n    \"name\": \"Precision Metals Ltd\",\n    \"category\": \"Critical Raw Material\",\n    \"location\": \"Monterrey, Mexico\",\n    \"certifications\": [\n      \"ISO 9001:2015\",\n      \"IATF 16949\"\n    ],\n    \"products\": [\n      \"Aluminum extrusions\",\n      \"Machined components\"\n    ],\n    \"annual_spend\": \"$2.4M\",\n    \"risk_tier\": \"Tier 1\"\n  },\n  \"status\": \"Onboarded\",\n  \"next_steps\": [\n    \"Conduct site audit\",\n    \"Review quality control processes\",\n    \"Establish supply chain contingency plan\"\n  ]\n}\n```\n\nANSWER: {\"supplier\": {\"name\": \"Precision Metals Ltd\", \"category\": \"Critical Raw Material\", \"location\": \"Monterrey, Mexico\", \"certifications\": [\"ISO 9001:2015\", \"IATF 16949\"], \"products\": [\"Aluminum extrusions\", \"Machined components\"], \"annual_spend\": \"$2.4M\", \"risk_tier\": \"Tier 1\"}, \"status\": \"Onboarded\", \"next_steps\": [\"Conduct site audit\", \"Review quality control processes\", \"Establish supply chain contingency plan\"]}",
+  "inputTokens": 105,
+  "outputTokens": 288,
+  "latencyMs": 1530,
+  "costUsd": 0.00018855
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-007",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ContextCartographer: Update organizational context — Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"factor\": \"New competitor entered Latin American market with ISO-certified products\",\n  \"type\": \"External-Competitive\",\n  \"impact\": \"High\",\n  \"affected_standards\": [\"ISO 9001\"],\n  \"response_needed\": \"Accelerate certification timeline for Mexico plant\"\n}\n```",
+  "inputTokens": 83,
+  "outputTokens": 69,
+  "latencyMs": 552,
+  "costUsd": 0.000053849999999999994
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-017",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Getting certified was easy compared to keeping the system alive. After the auditor left, momentum died. People went back to old habits within 3 months. The management representative retired and nobody took over. We're coming up on our surveillance audit and I'd say we've regressed significantly. Recertification might fail.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"loss_of_momentum_after_certification\",\"reversion_to_old_habits\",\"lack_of_succession_planning_for_management_representative\",\"significant_regression_in_standards\",\"risk_of_recertification_failure\"]}",
+  "inputTokens": 90,
+  "outputTokens": 62,
+  "latencyMs": 740,
+  "costUsd": 0.0002704
+}

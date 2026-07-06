@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-007",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'We had a serious near-miss last week — forklift almost hit a pedestrian. When I investigated, I found out workers stopped reporting near-misses because nothing ever happens when they do. The forms are complicated, supervisors don't follow up, and there's a blame culture. We're sitting on a time bomb.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Workers stopped reporting near-misses due to perceived inaction\",\n    \"Near-miss reporting forms are overly complicated\",\n    \"Supervisors fail to follow up on reported incidents\",\n    \"Blame culture discourages open reporting\",\n    \"Lack of accountability and systemic response creates unsafe working conditions\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Workers stopped reporting near-misses due to perceived inaction\",\"Near-miss reporting forms are overly complicated\",\"Supervisors fail to follow up on reported incidents\",\"Blame culture discourages open reporting\",\"Lack of accountability and systemic response creates unsafe working conditions\"]}",
+  "inputTokens": 98,
+  "outputTokens": 132,
+  "latencyMs": 2356,
+  "costUsd": 0.00017212
+}

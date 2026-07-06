@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-013",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Our internal audits find the same things every time — minor documentation gaps, training records not current. But we never find the real problems. Our auditors are too close to the processes they audit. We had a major customer escape that none of our audits caught. The audit program adds no value.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"repetitive_minor_issues\",\"outdated_training_records\",\"lack_of_real_problem_detection\",\"auditor_proximity_to_processes\",\"major_issues_undetected\",\"perceived_lack_of_audit_value\"]}",
+  "inputTokens": 83,
+  "outputTokens": 64,
+  "latencyMs": 717,
+  "costUsd": 0.0002712
+}

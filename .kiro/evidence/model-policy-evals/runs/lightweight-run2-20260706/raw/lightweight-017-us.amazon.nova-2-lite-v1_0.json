@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-017",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "NCTriage: Prioritize and route these nonconformities — NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"prioritized_nonconformities\": [{\"nc_id\": \"NC-102\", \"priority\": \"Critical\", \"action\": \"Immediate halt of production; perform root cause analysis and implement corrective actions; notify quality assurance and safety teams\"}, {\"nc_id\": \"NC-103\", \"priority\": \"Major\", \"action\": \"Quarantine affected materials; assess impact on current production; initiate supplier notification and replacement request; update purchase order and quality records\"}, {\"nc_id\": \"NC-101\", \"priority\": \"Low\", \"action\": \"Repackage or relabel affected boxes; update inventory records; monitor for recurrence\"}, {\"nc_id\": \"NC-104\", \"priority\": \"Minor\", \"action\": \"Update document revision in system; verify completeness; notify relevant departments of revision\"}]}",
+  "inputTokens": 130,
+  "outputTokens": 164,
+  "latencyMs": 1291,
+  "costUsd": 0.0004939
+}

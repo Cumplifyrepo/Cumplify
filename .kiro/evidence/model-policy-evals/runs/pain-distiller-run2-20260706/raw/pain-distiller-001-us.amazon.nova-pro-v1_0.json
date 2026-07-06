@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-001",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'We spent 3 months preparing for our ISO 9001 audit and still got 4 major nonconformities. Our consultant gave us templates but they didn't match our actual processes. The auditor said our document control was a mess — versions everywhere, nobody knew which was current. We're a 50-person machine shop, not Boeing, but the system feels like it was built for a corporation.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"Extended preparation time (3 months) without successful outcome\",\"Mismatch between provided templates and actual processes\",\"Poor document control leading to confusion about current versions\",\"Feeling that the ISO 9001 system is overly complex for a small business\"]}",
+  "inputTokens": 111,
+  "outputTokens": 56,
+  "latencyMs": 1120,
+  "costUsd": 0.000268
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-019",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "SupplierScout: Flag supplier nonconformance — Supplier: ChemFlow Solvents (SUP-0134), Issue: Certificate of Analysis missing for Batch SOL-8821, Impact: 500L of solvent quarantined cannot be used in production, Required Action: Supplier must provide CoA within 48h or batch is rejected\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"supplier\": \"ChemFlow Solvents (SUP-0134)\",\n  \"issue\": \"Certificate of Analysis missing for Batch SOL-8821\",\n  \"impact\": \"500L of solvent quarantined, cannot be used in production\",\n  \"required_action\": \"Supplier must provide CoA within 48h or batch is rejected\"\n}\n```",
+  "inputTokens": 103,
+  "outputTokens": 84,
+  "latencyMs": 821,
+  "costUsd": 0.00006585
+}

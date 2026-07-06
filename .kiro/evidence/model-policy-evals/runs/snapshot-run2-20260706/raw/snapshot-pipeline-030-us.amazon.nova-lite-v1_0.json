@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-030",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Precast Concrete, Company Size: 230 employees, Pain Points: Compressive strength test failures 3% of batches, rebar placement errors on-site, no design review process for custom molds, crane operation near-misses, silica dust monitoring not performed\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"industry\":\"Precast Concrete\",\"companySize\":230,\"painPoints\":[\"Compressive strength test failures 3% of batches\",\"rebar placement errors on-site\",\"no design review process for custom molds\",\"crane operation near-misses\",\"silica dust monitoring not performed\"]}",
+  "inputTokens": 79,
+  "outputTokens": 62,
+  "latencyMs": 641,
+  "costUsd": 0.000019620000000000002
+}

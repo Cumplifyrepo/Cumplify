@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-010",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Aerospace (MRO services), Company Size: 220 employees, Pain Points: Tool calibration overdue for 15% of instruments, FOD incidents last quarter, no formal risk register, traceability gaps in component history\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"readiness\":\"Partial\",\"issues\":{\"calibration\":\"15% overdue\",\"FOD incidents\":\"present\",\"risk register\":\"absent\",\"traceability\":\"gaps\"}}",
+  "inputTokens": 68,
+  "outputTokens": 37,
+  "latencyMs": 743,
+  "costUsd": 0.00001296
+}

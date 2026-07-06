@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-005",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 — Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"objective_id\": \"OBJ-2025-012\",\n  \"current_value\": 41,\n  \"baseline_value\": 45,\n  \"trend\": \"Improving\",\n  \"notes\": \"New inspection protocol showing early results\",\n  \"risk\": \"Medium (seasonal demand spike approaching)\"\n}\n```\nANSWER: {\"objective_id\": \"OBJ-2025-012\", \"current_value\": 41, \"baseline_value\": 45, \"trend\": \"Improving\", \"notes\": \"New inspection protocol showing early results\", \"risk\": \"Medium (seasonal demand spike approaching)\"}",
+  "inputTokens": 75,
+  "outputTokens": 134,
+  "latencyMs": 1540,
+  "costUsd": 0.00005885
+}

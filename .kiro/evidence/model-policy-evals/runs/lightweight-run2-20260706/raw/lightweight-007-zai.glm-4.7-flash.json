@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-007",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "ContextCartographer: Update organizational context — Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"context_update\": {\n    \"factor\": \"New competitor entered Latin American market with ISO-certified products\",\n    \"type\": \"External-Competitive\",\n    \"impact\": \"High\",\n    \"affected_standards\": [\n      \"ISO 9001\"\n    ],\n    \"response_needed\": \"Accelerate certification timeline for Mexico plant\"\n  }\n}\n```\nANSWER: {\"context_update\": {\"factor\": \"New competitor entered Latin American market with ISO-certified products\", \"type\": \"External-Competitive\", \"impact\": \"High\", \"affected_standards\": [\"ISO 9001\"], \"response_needed\": \"Accelerate certification timeline for Mexico plant\"}}",
+  "inputTokens": 74,
+  "outputTokens": 142,
+  "latencyMs": 962,
+  "costUsd": 0.00006198
+}

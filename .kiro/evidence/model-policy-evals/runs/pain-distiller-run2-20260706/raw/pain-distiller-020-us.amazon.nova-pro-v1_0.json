@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-020",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Our biggest issue is connecting the dots between standards. We're certified to ISO 9001, 14001, and 45001 but run them as three separate systems. Three sets of objectives, three audit programs, three management reviews. The overlap is enormous but integration seems impossible with our current tools. Consultants tell us to integrate but don't explain how practically.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"Connecting the dots between standards\",\"Running certifications as separate systems\",\"Three sets of objectives\",\"Three audit programs\",\"Three management reviews\",\"Enormous overlap\",\"Integration seems impossible with current tools\",\"Lack of practical explanation from consultants\"]}",
+  "inputTokens": 108,
+  "outputTokens": 55,
+  "latencyMs": 866,
+  "costUsd": 0.00026240000000000004
+}

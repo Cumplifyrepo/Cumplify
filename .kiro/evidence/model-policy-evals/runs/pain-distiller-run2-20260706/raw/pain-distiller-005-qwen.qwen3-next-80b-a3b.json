@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-005",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'We operate 6 sites across 3 countries. Each site has its own quality system, own forms, own way of doing things. When corporate asks for a consolidated management review, it takes us 3 weeks to gather data. We can't benchmark sites against each other because nothing is standardized.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Lack of standardization across sites: each site has its own quality system, forms, and processes\",\n    \"Time-intensive data collection: 3 weeks required to consolidate management review data\",\n    \"Inability to benchmark performance between sites due to non-standardized metrics and procedures\",\n    \"Inefficiency and operational friction from decentralized systems across 6 sites in 3 countries\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Lack of standardization across sites: each site has its own quality system, forms, and processes\", \"Time-intensive data collection: 3 weeks required to consolidate management review data\", \"Inability to benchmark performance between sites due to non-standardized metrics and procedures\", \"Inefficiency and operational friction from decentralized systems across 6 sites in 3 countries\"]}",
+  "inputTokens": 92,
+  "outputTokens": 170,
+  "latencyMs": 2608,
+  "costUsd": 0.00021688
+}

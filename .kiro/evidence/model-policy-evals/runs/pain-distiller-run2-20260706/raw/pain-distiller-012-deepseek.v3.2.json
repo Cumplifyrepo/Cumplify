@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-012",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'We just integrated an acquisition — 150 new employees with completely different quality practices. They were ISO certified too, but their procedures conflict with ours. Harmonizing two document control systems is killing us. Customers are confused about which entity they're dealing with. It's been 8 months and we still can't do a combined management review.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Post-merger integration complexity due to differing quality practices\",\n    \"Conflicting procedures despite both entities being ISO certified\",\n    \"Difficulty harmonizing two separate document control systems\",\n    \"Customer confusion regarding company identity and point of contact\",\n    \"Prolonged timeline (8 months) without resolution of core integration issues\",\n    \"Inability to perform a unified management review, hindering oversight\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Post-merger integration complexity due to differing quality practices\", \"Conflicting procedures despite both entities being ISO certified\", \"Difficulty harmonizing two separate document control systems\", \"Customer confusion regarding company identity and point of contact\", \"Prolonged timeline (8 months) without resolution of core integration issues\", \"Inability to perform a unified management review, hindering oversight\"]}",
+  "inputTokens": 96,
+  "outputTokens": 174,
+  "latencyMs": 3599,
+  "costUsd": 0.00038142000000000004
+}

@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-011",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "CompetenceKeeper: Record training event — Training: Lockout/Tagout Refresher, Date: 2025-03-10, Duration: 4 hours, Attendees: 12 maintenance technicians (Shift A), Trainer: External (SafetyFirst Inc), Assessment: Practical demonstration + written test, Pass Rate: 100%\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"Training\":{\"Event\":\"Lockout/Tagout Refresher\",\"Date\":\"2025-03-10\",\"Duration\":\"4 hours\",\"Attendees\":\"12 maintenance technicians (Shift A)\",\"Trainer\":\"External (SafetyFirst Inc)\",\"Assessment\":\"Practical demonstration + written test\",\"Pass Rate\":\"100%\"}}",
+  "inputTokens": 88,
+  "outputTokens": 72,
+  "latencyMs": 601,
+  "costUsd": 0.00002256
+}

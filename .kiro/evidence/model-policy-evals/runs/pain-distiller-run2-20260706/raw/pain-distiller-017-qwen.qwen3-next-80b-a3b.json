@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-017",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Getting certified was easy compared to keeping the system alive. After the auditor left, momentum died. People went back to old habits within 3 months. The management representative retired and nobody took over. We're coming up on our surveillance audit and I'd say we've regressed significantly. Recertification might fail.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Lack of sustained momentum after certification\",\n    \"Employees reverted to old habits within 3 months\",\n    \"No succession plan for the management representative\",\n    \"Absence of ownership or accountability post-audit\",\n    \"Significant regression in compliance before surveillance audit\",\n    \"High risk of recertification failure due to non-compliance\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Lack of sustained momentum after certification\",\"Employees reverted to old habits within 3 months\",\"No succession plan for the management representative\",\"Absence of ownership or accountability post-audit\",\"Significant regression in compliance before surveillance audit\",\"High risk of recertification failure due to non-compliance\"]}",
+  "inputTokens": 96,
+  "outputTokens": 146,
+  "latencyMs": 3021,
+  "costUsd": 0.00018864
+}

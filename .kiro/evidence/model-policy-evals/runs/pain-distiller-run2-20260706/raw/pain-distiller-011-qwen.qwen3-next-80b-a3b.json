@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-011",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Our workers speak 4 different languages on the shop floor. Safety procedures are only in English. Training sign-off sheets show everyone was trained but I guarantee half of them didn't understand the content. We've had incidents where workers didn't follow lockout/tagout because they couldn't read the procedure posted on the machine.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Safety procedures are only available in English, despite workers speaking 4 different languages.\",\n    \"Training sign-off sheets falsely indicate comprehension, as many workers did not understand the content.\",\n    \"Workers failed to follow critical safety protocols (e.g., lockout/tagout) due to inability to read posted procedures.\",\n    \"Language barrier leads to unsafe work practices and potential for serious incidents.\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Safety procedures are only available in English, despite workers speaking 4 different languages.\", \"Training sign-off sheets falsely indicate comprehension, as many workers did not understand the content.\", \"Workers failed to follow critical safety protocols (e.g., lockout/tagout) due to inability to read posted procedures.\", \"Language barrier leads to unsafe work practices and potential for serious incidents.\"]}",
+  "inputTokens": 97,
+  "outputTokens": 171,
+  "latencyMs": 2371,
+  "costUsd": 0.00021878
+}

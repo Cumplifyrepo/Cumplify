@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-003",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "RecordsVault: Log this training completion — Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"training_completion\": {\n    \"employee_id\": \"EMP-1042\",\n    \"employee_name\": \"Carlos Mendez\",\n    \"course_name\": \"ISO 45001 Internal Auditor\",\n    \"completion_date\": \"2025-02-28\",\n    \"score_percentage\": 92,\n    \"instructor\": \"Diane Foster\",\n    \"expiry_date\": \"2027-02-28\"\n  }\n}\n```\nANSWER: {\"training_completion\": {\"employee_id\": \"EMP-1042\", \"employee_name\": \"Carlos Mendez\", \"course_name\": \"ISO 45001 Internal Auditor\", \"completion_date\": \"2025-02-28\", \"score_percentage\": 92, \"instructor\": \"Diane Foster\", \"expiry_date\": \"2027-02-28\"}}",
+  "inputTokens": 81,
+  "outputTokens": 172,
+  "latencyMs": 2210,
+  "costUsd": 0.00007447000000000001
+}

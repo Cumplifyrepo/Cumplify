@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-005",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 — Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"objective_id\": \"OBJ-2025-012\",\n  \"current_value\": 41,\n  \"month\": \"February\",\n  \"baseline\": 45,\n  \"trend\": \"Improving\",\n  \"notes\": \"New inspection protocol showing early results\",\n  \"risk\": \"Medium\",\n  \"risk_description\": \"Seasonal demand spike approaching\"\n}\n```",
+  "inputTokens": 87,
+  "outputTokens": 88,
+  "latencyMs": 816,
+  "costUsd": 0.00006585
+}

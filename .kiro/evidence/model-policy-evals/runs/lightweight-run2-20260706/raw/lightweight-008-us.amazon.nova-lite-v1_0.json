@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-008",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "SupplierScout: Onboard new supplier — Company: Precision Metals Ltd, Category: Critical Raw Material, Location: Monterrey Mexico, Certifications: ISO 9001:2015 IATF 16949, Products: Aluminum extrusions and machined components, Annual Spend: $2.4M, Risk Tier: Tier 1\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"SupplierScout\":{\"Company\":\"Precision Metals Ltd\",\"Category\":\"Critical Raw Material\",\"Location\":\"Monterrey Mexico\",\"Certifications\":[\"ISO 9001:2015\",\"IATF 16949\"],\"Products\":[\"Aluminum extrusions\",\"machined components\"],\"AnnualSpend\":2400000,\"RiskTier\":\"Tier 1\"}}",
+  "inputTokens": 90,
+  "outputTokens": 82,
+  "latencyMs": 769,
+  "costUsd": 0.000025080000000000004
+}

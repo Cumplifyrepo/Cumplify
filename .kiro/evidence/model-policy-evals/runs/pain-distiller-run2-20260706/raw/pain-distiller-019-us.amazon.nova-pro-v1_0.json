@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-019",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'We tried 3 different QMS software packages and abandoned all of them. The first was too rigid — couldn't match our workflows. The second required a full-time admin. The third had no offline capability and our plant floor has poor connectivity. We're back to SharePoint and Access databases. At least people use it, even if it's chaotic.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"rigidity_of_software\",\"required_full_time_admin\",\"lack_of_offline_capability\",\"poor_connectivity_on_plant_floor\",\"reversion_to_less_efficient_solutions\"]}",
+  "inputTokens": 99,
+  "outputTokens": 54,
+  "latencyMs": 832,
+  "costUsd": 0.000252
+}

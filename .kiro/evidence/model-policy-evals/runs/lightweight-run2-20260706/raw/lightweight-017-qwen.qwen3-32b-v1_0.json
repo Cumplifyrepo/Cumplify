@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-017",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "NCTriage: Prioritize and route these nonconformities — NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"prioritized_ncs\": [\n    {\n      \"nc_number\": \"NC-102\",\n      \"severity\": \"Critical\",\n      \"action_team\": \"Engineering & Quality Assurance\",\n      \"priority\": 1\n    },\n    {\n      \"nc_number\": \"NC-103\",\n      \"severity\": \"Major\",\n      \"action_team\": \"Procurement & Quality Control\",\n      \"priority\": 2\n    },\n    {\n      \"nc_number\": \"NC-101\",\n      \"severity\": \"Low\",\n      \"action_team\": \"Packaging & Quality\",\n      \"priority\": 3\n    },\n    {\n      \"nc_number\": \"NC-104\",\n      \"severity\": \"Low\",\n      \"action_team\": \"Document Control\",\n      \"priority\": 4\n    }\n  ]\n}\n```",
+  "inputTokens": 109,
+  "outputTokens": 180,
+  "latencyMs": 1336,
+  "costUsd": 0.00012435000000000001
+}

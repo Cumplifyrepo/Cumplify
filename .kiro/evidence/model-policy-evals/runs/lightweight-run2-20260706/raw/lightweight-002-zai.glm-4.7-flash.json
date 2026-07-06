@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-002",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "RecordsVault: Archive this controlled document — Title: Quality Policy QP-001 Rev 5, Approved by: VP Quality, Effective Date: 2025-04-01, Supersedes: QP-001 Rev 4, Retention: 7 years\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"action\": \"archive\",\n  \"document\": {\n    \"title\": \"Quality Policy QP-001\",\n    \"revision\": 5,\n    \"approved_by\": \"VP Quality\",\n    \"effective_date\": \"2025-04-01\",\n    \"supersedes\": \"QP-001 Rev 4\",\n    \"retention\": \"7 years\"\n  }\n}\n```\nANSWER: {\"action\": \"archive\", \"document\": {\"title\": \"Quality Policy QP-001\", \"revision\": 5, \"approved_by\": \"VP Quality\", \"effective_date\": \"2025-04-01\", \"supersedes\": \"QP-001 Rev 4\", \"retention\": \"7 years\"}}",
+  "inputTokens": 77,
+  "outputTokens": 156,
+  "latencyMs": 2131,
+  "costUsd": 0.00006779
+}

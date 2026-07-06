@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-018",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "ObjectiveTracker: Flag objective as off-track — Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"objective_id\": \"OBJ-2025-008\",\n  \"objective_name\": \"Reduce energy consumption by 10%\",\n  \"status\": \"Off-Track\",\n  \"current_progress\": {\n    \"value\": 2,\n    \"unit\": \"%\",\n    \"milestone\": \"Midpoint\"\n  },\n  \"root_cause\": {\n    \"issue\": \"Unexpected increase in production volume\",\n    \"impact\": \"Production volume increased by 15%\"\n  },\n  \"recommendation\": \"Adjust the target to a per-unit consumption metric to better reflect actual efficiency and isolate the impact of production volume.\"\n}\n```\nANSWER: {\"objective_id\": \"OBJ-2025-008\", \"objective_name\": \"Reduce energy consumption by 10%\", \"status\": \"Off-Track\", \"current_progress\": {\"value\": 2, \"unit\": \"%\", \"milestone\": \"Midpoint\"}, \"root_cause\": {\"issue\": \"Unexpected increase in production volume\", \"impact\": \"Production volume increased by 15%\"}, \"recommendation\": \"Adjust the target to a per-unit consumption metric to better reflect actual efficiency and isolate the impact of production volume.\"}",
+  "inputTokens": 79,
+  "outputTokens": 248,
+  "latencyMs": 2067,
+  "costUsd": 0.00010473000000000001
+}

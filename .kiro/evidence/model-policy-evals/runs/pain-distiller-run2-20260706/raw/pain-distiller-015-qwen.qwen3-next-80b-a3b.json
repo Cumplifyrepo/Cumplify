@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-015",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Our risk register has 300 items and nobody looks at it. It was built during certification 5 years ago and never meaningfully updated. New risks from our expansion into battery manufacturing aren't captured. The risk methodology is too complex — a 5x5 matrix with 10 criteria that takes an hour per risk. People avoid updating it.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Risk register is outdated and not maintained since certification 5 years ago\",\n    \"No one reviews or uses the risk register\",\n    \"New risks from battery manufacturing expansion are not captured\",\n    \"Risk methodology is overly complex (5x5 matrix with 10 criteria)\",\n    \"Updating a single risk takes an hour, deterring users\",\n    \"Employees avoid updating the risk register due to inefficiency\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Risk register is outdated and not maintained since certification 5 years ago\",\"No one reviews or uses the risk register\",\"New risks from battery manufacturing expansion are not captured\",\"Risk methodology is overly complex (5x5 matrix with 10 criteria)\",\"Updating a single risk takes an hour, deterring users\",\"Employees avoid updating the risk register due to inefficiency\"]}",
+  "inputTokens": 105,
+  "outputTokens": 174,
+  "latencyMs": 3833,
+  "costUsd": 0.0002235
+}

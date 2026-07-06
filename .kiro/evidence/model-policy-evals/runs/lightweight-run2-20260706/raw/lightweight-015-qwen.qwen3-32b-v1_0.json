@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-015",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "WorkerVoice: Record worker feedback — Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"feedback_id\": \"WV-2025-03-12-ERG-001\",\n  \"source\": \"Anonymous suggestion box\",\n  \"date\": \"2025-03-12\",\n  \"category\": \"Ergonomics\",\n  \"feedback\": \"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\",\n  \"affected_workers\": \"~6 per shift\",\n  \"suggested_solution\": \"Adjustable platform or tool balancer\"\n}\n```\n\nANSWER: {\"feedback_id\":\"WV-2025-03-12-ERG-001\",\"source\":\"Anonymous suggestion box\",\"date\":\"2025-03-12\",\"category\":\"Ergonomics\",\"feedback\":\"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\",\"affected_workers\":\"~6 per shift\",\"suggested_solution\":\"Adjustable platform or tool balancer\"}",
+  "inputTokens": 100,
+  "outputTokens": 210,
+  "latencyMs": 1318,
+  "costUsd": 0.000141
+}

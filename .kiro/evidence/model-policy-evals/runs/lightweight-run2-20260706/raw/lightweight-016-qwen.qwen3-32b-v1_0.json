@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-016",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "NCTriage: Classify this nonconformity — Source: Customer complaint CC-2025-089, Description: Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0±0.1mm), Quantity Affected: 240 units, Customer: AutoParts GmbH, Severity: Major (production line stopped)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"nonconformity_id\": \"CC-2025-089\",\n  \"description\": \"Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0±0.1mm)\",\n  \"quantity_affected\": 240,\n  \"customer\": \"AutoParts GmbH\",\n  \"severity\": \"Major\",\n  \"classification\": \"Product Nonconformity\",\n  \"impact\": {\n    \"operational\": \"Production line stopped\",\n    \"customer_impact\": \"High\",\n    \"safety\": \"Low\",\n    \"regulatory\": \"Low\"\n  }\n}\n```",
+  "inputTokens": 114,
+  "outputTokens": 145,
+  "latencyMs": 3009,
+  "costUsd": 0.0001041
+}

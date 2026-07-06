@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-010",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'Management review is a PowerPoint theater. We show nice graphs, everyone nods, actions are assigned, and nothing changes until next quarter. The same risks stay on the register year after year. Nobody challenges whether our objectives are actually being met. It's pure compliance theater.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Management reviews are performative and lack substance ('PowerPoint theater')\",\n    \"No real follow-through on assigned actions\",\n    \"Risks remain unaddressed and persist year after year\",\n    \"Lack of critical evaluation of whether objectives are actually being met\",\n    \"Process is driven by compliance rather than meaningful improvement ('compliance theater')\",\n    \"Culture of passive agreement ('everyone nods') without accountability\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Management reviews are performative and lack substance ('PowerPoint theater')\",\"No real follow-through on assigned actions\",\"Risks remain unaddressed and persist year after year\",\"Lack of critical evaluation of whether objectives are actually being met\",\"Process is driven by compliance rather than meaningful improvement ('compliance theater')\",\"Culture of passive agreement ('everyone nods') without accountability\"]}",
+  "inputTokens": 86,
+  "outputTokens": 176,
+  "latencyMs": 3422,
+  "costUsd": 0.00022323999999999998
+}

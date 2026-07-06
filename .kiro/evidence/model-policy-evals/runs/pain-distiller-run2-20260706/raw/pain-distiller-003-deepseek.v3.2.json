@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-003",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'Our CAPA process is a joke. We open corrective actions and they sit there for months. Nobody follows up. The same problems keep recurring — we had the same weld defect issue 3 times this year. Management just wants to close CAPAs quickly without actually fixing root causes.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Ineffective CAPA process perceived as a joke\",\n    \"Corrective actions remain open for months without resolution\",\n    \"Lack of follow-up and accountability\",\n    \"Recurring problems (e.g., same weld defect three times in a year)\",\n    \"Management prioritizes quick closure over addressing root causes\",\n    \"Systemic failure to implement true corrective actions\"\n  ]\n}\n\nANSWER: {\"pain_points\": [\"Ineffective CAPA process perceived as a joke\", \"Corrective actions remain open for months without resolution\", \"Lack of follow-up and accountability\", \"Recurring problems (e.g., same weld defect three times in a year)\", \"Management prioritizes quick closure over addressing root causes\", \"Systemic failure to implement true corrective actions\"]}",
+  "inputTokens": 85,
+  "outputTokens": 168,
+  "latencyMs": 3812,
+  "costUsd": 0.0003635
+}

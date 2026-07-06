@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-006",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Our environmental compliance is reactive. We only find out about permit exceedances when the regulator tells us. Monitoring data sits in operator logbooks and nobody analyzes trends. Last month we got fined $45K for a discharge that had been creeping up for weeks. We need real-time visibility.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"reactive_compliance\",\"late_detection_of_exceedances\",\"unanalyzed_monitoring_data\",\"financial_penalties\",\"lack_of_real_time_visibility\"]}",
+  "inputTokens": 84,
+  "outputTokens": 48,
+  "latencyMs": 621,
+  "costUsd": 0.0002208
+}

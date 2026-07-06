@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-026",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Waste Management & Recycling, Company Size: 190 employees, Pain Points: Vehicle safety incidents monthly, hazardous waste classification errors, no legal compliance register, environmental aspect identification never done formally\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"ISOReadiness\":{\"Industry\":\"Waste Management & Recycling\",\"CompanySize\":190,\"PainPoints\":[\"Vehicle safety incidents monthly\",\"hazardous waste classification errors\",\"no legal compliance register\",\"environmental aspect identification never done formally\"]}}",
+  "inputTokens": 62,
+  "outputTokens": 49,
+  "latencyMs": 771,
+  "costUsd": 0.00001548
+}

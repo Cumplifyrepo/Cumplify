@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-001",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'We spent 3 months preparing for our ISO 9001 audit and still got 4 major nonconformities. Our consultant gave us templates but they didn't match our actual processes. The auditor said our document control was a mess — versions everywhere, nobody knew which was current. We're a 50-person machine shop, not Boeing, but the system feels like it was built for a corporation.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Excessive time and effort spent preparing for ISO 9001 audit with poor results (4 major nonconformities)\",\n    \"Consultant-provided templates were irrelevant and did not align with actual operational processes\",\n    \"Poor document control: multiple versions of documents, lack of clarity on current versions\",\n    \"ISO 9001 system feels overly complex and misaligned with the scale and reality of a small 50-person machine shop\",\n    \"Perception that the quality management system was designed for large corporations, not small manufacturing businesses\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Excessive time and effort spent preparing for ISO 9001 audit with poor results (4 major nonconformities)\",\"Consultant-provided templates were irrelevant and did not align with actual operational processes\",\"Poor document control: multiple versions of documents, lack of clarity on current versions\",\"ISO 9001 system feels overly complex and misaligned with the scale and reality of a small 50-person machine shop\",\"Perception that the quality management system was designed for large corporations, not small manufacturing businesses\"]}",
+  "inputTokens": 117,
+  "outputTokens": 236,
+  "latencyMs": 3554,
+  "costUsd": 0.00029958
+}

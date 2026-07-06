@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-019",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "SupplierScout: Flag supplier nonconformance — Supplier: ChemFlow Solvents (SUP-0134), Issue: Certificate of Analysis missing for Batch SOL-8821, Impact: 500L of solvent quarantined cannot be used in production, Required Action: Supplier must provide CoA within 48h or batch is rejected\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"alert_id\": \"SUP-0134-001\",\n  \"alert_type\": \"Nonconformance\",\n  \"supplier\": \"ChemFlow Solvents\",\n  \"supplier_id\": \"SUP-0134\",\n  \"issue\": \"Certificate of Analysis missing for Batch SOL-8821\",\n  \"batch_id\": \"SOL-8821\",\n  \"impact\": \"500L of solvent quarantined cannot be used in production\",\n  \"required_action\": \"Supplier must provide CoA within 48h or batch is rejected\",\n  \"status\": \"Open\",\n  \"priority\": \"High\"\n}\n```\nANSWER: {\"alert_id\": \"SUP-0134-001\", \"alert_type\": \"Nonconformance\", \"supplier\": \"ChemFlow Solvents\", \"supplier_id\": \"SUP-0134\", \"issue\": \"Certificate of Analysis missing for Batch SOL-8821\", \"batch_id\": \"SOL-8821\", \"impact\": \"500L of solvent quarantined cannot be used in production\", \"required_action\": \"Supplier must provide CoA within 48h or batch is rejected\", \"status\": \"Open\", \"priority\": \"High\"}",
+  "inputTokens": 91,
+  "outputTokens": 257,
+  "latencyMs": 2242,
+  "costUsd": 0.00010917
+}

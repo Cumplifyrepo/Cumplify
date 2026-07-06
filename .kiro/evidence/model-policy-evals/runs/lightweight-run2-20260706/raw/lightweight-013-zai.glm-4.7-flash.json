@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-013",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "EmergencyPlanner: Log emergency drill result — Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"log_id\": \"ERP-007-20250220\",\n  \"plan_name\": \"Chemical Spill Response (ERP-007)\",\n  \"date\": \"2025-02-20\",\n  \"participants\": 18,\n  \"evacuation_time_seconds\": 222,\n  \"evacuation_time_target_seconds\": 240,\n  \"evacuation_time_status\": \"PASSED\",\n  \"issues_found\": [\n    \"2 blocked exit signs in corridor B\"\n  ],\n  \"corrective_action_required\": \"Replace signage by 2025-03-01\"\n}\n```\nANSWER: {\"log_id\": \"ERP-007-20250220\", \"plan_name\": \"Chemical Spill Response (ERP-007)\", \"date\": \"2025-02-20\", \"participants\": 18, \"evacuation_time_seconds\": 222, \"evacuation_time_target_seconds\": 240, \"evacuation_time_status\": \"PASSED\", \"issues_found\": [\"2 blocked exit signs in corridor B\"], \"corrective_action_required\": \"Replace signage by 2025-03-01\"}",
+  "inputTokens": 103,
+  "outputTokens": 244,
+  "latencyMs": 1625,
+  "costUsd": 0.00010481
+}

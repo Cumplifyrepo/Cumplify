@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-012",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'We just integrated an acquisition — 150 new employees with completely different quality practices. They were ISO certified too, but their procedures conflict with ours. Harmonizing two document control systems is killing us. Customers are confused about which entity they're dealing with. It's been 8 months and we still can't do a combined management review.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Integration of 150 new employees with conflicting quality practices\",\n    \"Incompatible document control systems between acquired and existing entities\",\n    \"Confusion among customers regarding which entity they are interacting with\",\n    \"Failure to harmonize processes despite 8 months of effort\",\n    \"Inability to conduct a combined management review due to systemic misalignment\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Integration of 150 new employees with conflicting quality practices\", \"Incompatible document control systems between acquired and existing entities\", \"Confusion among customers regarding which entity they are interacting with\", \"Failure to harmonize processes despite 8 months of effort\", \"Inability to conduct a combined management review due to systemic misalignment\"]}",
+  "inputTokens": 102,
+  "outputTokens": 157,
+  "latencyMs": 2121,
+  "costUsd": 0.00020268
+}

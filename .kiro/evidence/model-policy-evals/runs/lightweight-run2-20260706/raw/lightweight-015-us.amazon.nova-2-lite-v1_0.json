@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-015",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "WorkerVoice: Record worker feedback — Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"recordId\": \"WV-20250312-ERG\",\n  \"date\": \"2025-03-12\",\n  \"category\": \"Ergonomics\",\n  \"source\": \"Anonymous suggestion box\",\n  \"feedback\": \"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\",\n  \"affectedWorkers\": \"~6 per shift\",\n  \"suggestedSolution\": \"Adjustable platform or tool balancer\",\n  \"status\": \"Recorded - Awaiting review\",\n  \"priority\": \"Medium\"\n}\n```\nANSWER: {\"recordId\":\"WV-20250312-ERG\",\"date\":\"2025-03-12\",\"category\":\"Ergonomics\",\"source\":\"Anonymous suggestion box\",\"feedback\":\"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\",\"affectedWorkers\":\"~6 per shift\",\"suggestedSolution\":\"Adjustable platform or tool balancer\",\"status\":\"Recorded - Awaiting review\",\"priority\":\"Medium\"}",
+  "inputTokens": 125,
+  "outputTokens": 202,
+  "latencyMs": 1205,
+  "costUsd": 0.0005967500000000001
+}

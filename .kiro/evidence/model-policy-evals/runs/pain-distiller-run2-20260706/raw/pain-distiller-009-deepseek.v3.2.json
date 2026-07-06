@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-009",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'Our supplier management is a nightmare. We have 200+ suppliers and most haven't been audited in 3 years. When we get bad material, it takes forever to trace it back and get corrective action from the supplier. Three of our key suppliers let their ISO certifications lapse and we didn't notice for 6 months.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Inefficient supplier management process described as a 'nightmare'\",\n    \"Large supplier base (200+) making oversight difficult\",\n    \"Lack of regular audits (most not audited in 3+ years)\",\n    \"Slow traceability of defective materials to the source\",\n    \"Delayed or difficult corrective action from suppliers\",\n    \"Poor monitoring of supplier certifications (ISO lapses unnoticed for 6 months)\",\n    \"Reactive rather than proactive supplier quality management\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Inefficient supplier management process described as a 'nightmare'\", \"Large supplier base (200+) making oversight difficult\", \"Lack of regular audits (most not audited in 3+ years)\", \"Slow traceability of defective materials to the source\", \"Delayed or difficult corrective action from suppliers\", \"Poor monitoring of supplier certifications (ISO lapses unnoticed for 6 months)\", \"Reactive rather than proactive supplier quality management\"]}",
+  "inputTokens": 95,
+  "outputTokens": 205,
+  "latencyMs": 3635,
+  "costUsd": 0.00043815000000000005
+}

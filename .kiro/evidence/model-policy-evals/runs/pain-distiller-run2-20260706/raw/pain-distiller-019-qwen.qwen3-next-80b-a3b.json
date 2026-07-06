@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-019",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'We tried 3 different QMS software packages and abandoned all of them. The first was too rigid — couldn't match our workflows. The second required a full-time admin. The third had no offline capability and our plant floor has poor connectivity. We're back to SharePoint and Access databases. At least people use it, even if it's chaotic.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"QMS software too rigid and unable to match existing workflows\",\n    \"Required a full-time administrator, increasing operational burden\",\n    \"Lacked offline capability, making it unusable in areas with poor connectivity\",\n    \"Overall poor fit for plant floor environment and operational realities\",\n    \"Current solution (SharePoint and Access) is chaotic but preferred due to usability and availability\"\n  ]\n}\nANSWER: {\"pain_points\":[\"QMS software too rigid and unable to match existing workflows\",\"Required a full-time administrator, increasing operational burden\",\"Lacked offline capability, making it unusable in areas with poor connectivity\",\"Overall poor fit for plant floor environment and operational realities\",\"Current solution (SharePoint and Access) is chaotic but preferred due to usability and availability\"]}",
+  "inputTokens": 103,
+  "outputTokens": 160,
+  "latencyMs": 2942,
+  "costUsd": 0.00020642
+}

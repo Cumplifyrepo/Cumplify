@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-005",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'We operate 6 sites across 3 countries. Each site has its own quality system, own forms, own way of doing things. When corporate asks for a consolidated management review, it takes us 3 weeks to gather data. We can't benchmark sites against each other because nothing is standardized.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"Multiple quality systems across sites\",\"Diverse forms and processes\",\"Lengthy data consolidation (3 weeks)\",\"Inability to benchmark sites due to lack of standardization\"]}",
+  "inputTokens": 85,
+  "outputTokens": 40,
+  "latencyMs": 647,
+  "costUsd": 0.00019600000000000005
+}

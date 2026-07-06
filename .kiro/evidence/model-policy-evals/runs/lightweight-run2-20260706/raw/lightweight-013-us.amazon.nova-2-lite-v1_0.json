@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-013",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "EmergencyPlanner: Log emergency drill result — Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"plan_id\": \"ERP-007\", \"plan_name\": \"Chemical Spill Response\", \"drill_date\": \"2025-02-20\", \"participants\": 18, \"evacuation_time\": \"3 min 42 sec\", \"evacuation_target\": \"under 4 min\", \"issues_found\": [\"2 blocked exit signs in corridor B\"], \"corrective_actions\": {\"action\": \"Replace signage\", \"deadline\": \"2025-03-01\"}}",
+  "inputTokens": 140,
+  "outputTokens": 101,
+  "latencyMs": 805,
+  "costUsd": 0.00032395
+}

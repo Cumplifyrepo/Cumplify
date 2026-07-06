@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-018",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Our environmental monitoring generates 50,000 data points per month from sensors, but we only look at daily averages in a report that's 2 weeks old by the time management sees it. The trend that led to our permit breach was visible 3 weeks before the exceedance, but nobody was watching. We need predictive alerts, not backward-looking reports.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"large_volume_of_data\",\"delay_in_report_generation\",\"reliance_on_daily_averages\",\"lack_of_real_time_monitoring\",\"missed_trend_detection\",\"need_for_predictive_alerts\"]}",
+  "inputTokens": 101,
+  "outputTokens": 61,
+  "latencyMs": 751,
+  "costUsd": 0.000276
+}

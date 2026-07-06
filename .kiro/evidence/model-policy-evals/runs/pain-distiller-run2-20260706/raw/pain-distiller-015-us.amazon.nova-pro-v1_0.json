@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-015",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Our risk register has 300 items and nobody looks at it. It was built during certification 5 years ago and never meaningfully updated. New risks from our expansion into battery manufacturing aren't captured. The risk methodology is too complex — a 5x5 matrix with 10 criteria that takes an hour per risk. People avoid updating it.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"large_number_of_items\",\"lack_of_review\",\"outdated_information\",\"missing_new_risks\",\"complex_methodology\",\"time_consuming_process\",\"avoidance_of_updates\"]}",
+  "inputTokens": 97,
+  "outputTokens": 54,
+  "latencyMs": 993,
+  "costUsd": 0.0002504
+}

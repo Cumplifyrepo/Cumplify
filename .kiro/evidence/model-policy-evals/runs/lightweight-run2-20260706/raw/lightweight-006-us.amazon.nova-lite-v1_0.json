@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-006",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "ContextCartographer: Map this interested party — Party: Local Environmental Authority (EPA Region 4), Interest: Compliance with air emission permits, Influence: High (can issue stop-work orders), Communication: Quarterly emission reports, Requirements: EPA Form R annual submission\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"Party\":\"Local Environmental Authority (EPA Region 4)\",\"Interest\":\"Compliance with air emission permits\",\"Influence\":\"High (can issue stop-work orders)\",\"Communication\":\"Quarterly emission reports\",\"Requirements\":\"EPA Form R annual submission\"}",
+  "inputTokens": 69,
+  "outputTokens": 51,
+  "latencyMs": 613,
+  "costUsd": 0.000016380000000000002
+}

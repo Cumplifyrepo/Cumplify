@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-018",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Agricultural Chemicals (pesticides), Company Size: 130 employees, Pain Points: Label compliance issues in 2 markets, environmental monitoring not performed at boundary, transport documentation gaps, worker exposure monitoring lapsed\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"industry\":\"Agricultural Chemicals (pesticides)\",\"companySize\":130,\"painPoints\":[\"Label compliance issues in 2 markets\",\"environmental monitoring not performed at boundary\",\"transport documentation gaps\",\"worker exposure monitoring lapsed\"]}",
+  "inputTokens": 66,
+  "outputTokens": 50,
+  "latencyMs": 538,
+  "costUsd": 0.000015960000000000003
+}

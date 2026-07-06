@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-009",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "SupplierScout: Evaluate supplier performance — Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"supplier_id\": \"SUP-0087\",\n  \"supplier_name\": \"Precision Metals Ltd\",\n  \"evaluation_period\": \"Q1 2025\",\n  \"performance_metrics\": {\n    \"quality_score\": {\n      \"score\": \"94%\",\n      \"non_conformance_reports\": \"3 NCRs\",\n      \"total_deliveries\": 48,\n      \"comment\": \"Strong quality performance with minimal defects\"\n    },\n    \"delivery_performance\": {\n      \"on_time_rate\": \"97%\",\n      \"comment\": \"Excellent adherence to delivery schedules\"\n    },\n    \"responsiveness_rating\": {\n      \"score\": \"4.2/5\",\n      \"comment\": \"Highly responsive to inquiries and issues\"\n    },\n    \"corrective_actions\": {\n      \"open_capas_previous_quarter\": 2,\n      \"status\": \"Resolved\",\n      \"comment\": \"All prior corrective actions successfully closed\"\n    }\n  },\n  \"overall_assessment\": \"Precision Metals Ltd demonstrates exceptional performance across all key metrics for Q1 2025. The supplier maintains high standards in quality, delivery reliability, and communication while effectively resolving historical issues. Continued monitoring recommended to sustain this performance level.\"\n}\n```\nANSWER: <your JSON response>",
+  "inputTokens": 135,
+  "outputTokens": 256,
+  "latencyMs": 1464,
+  "costUsd": 0.00074855
+}

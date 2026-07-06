@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-002",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "RecordsVault: Archive this controlled document — Title: Quality Policy QP-001 Rev 5, Approved by: VP Quality, Effective Date: 2025-04-01, Supersedes: QP-001 Rev 4, Retention: 7 years\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"document_title\": \"Quality Policy QP-001 Rev 5\",\n  \"action\": \"Archive\",\n  \"approved_by\": \"VP Quality\",\n  \"effective_date\": \"2025-04-01\",\n  \"supersedes\": \"QP-001 Rev 4\",\n  \"retention_period\": \"7 years\"\n}\n```",
+  "inputTokens": 92,
+  "outputTokens": 84,
+  "latencyMs": 619,
+  "costUsd": 0.0000642
+}

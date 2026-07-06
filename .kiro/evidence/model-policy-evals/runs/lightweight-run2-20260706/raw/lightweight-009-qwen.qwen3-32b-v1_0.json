@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-009",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "SupplierScout: Evaluate supplier performance — Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"supplier\": \"Precision Metals Ltd (SUP-0087)\",\n  \"period\": \"Q1 2025\",\n  \"quality_score\": 94,\n  \"non_conformance_rate\": {\n    \"ncrs\": 3,\n    \"total_deliveries\": 48\n  },\n  \"delivery_performance\": {\n    \"on_time_delivery\": 97\n  },\n  \"responsiveness\": 4.2,\n  \"corrective_actions\": {\n    \"open_capas\": 0,\n    \"resolved_capas\": 2\n  },\n  \"overall_performance\": \"Strong performance with high quality and on-time delivery. Responsiveness is good. All open CAPAs from the previous quarter have been resolved, indicating effective corrective action implementation.\"\n}\n```",
+  "inputTokens": 111,
+  "outputTokens": 168,
+  "latencyMs": 1650,
+  "costUsd": 0.00011745
+}

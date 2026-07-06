@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-013",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'Our internal audits find the same things every time — minor documentation gaps, training records not current. But we never find the real problems. Our auditors are too close to the processes they audit. We had a major customer escape that none of our audits caught. The audit program adds no value.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Ineffective audit findings (repetitive minor issues like documentation gaps and outdated training records)\",\n    \"Failure to detect major risks (audits missing critical problems, evidenced by a major customer escape)\",\n    \"Lack of auditor objectivity (auditors are too close to the processes they audit)\",\n    \"Perceived lack of value (audit program seen as not adding value to the organization)\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Ineffective audit findings (repetitive minor issues like documentation gaps and outdated training records)\", \"Failure to detect major risks (audits missing critical problems, evidenced by a major customer escape)\", \"Lack of auditor objectivity (auditors are too close to the processes they audit)\", \"Perceived lack of value (audit program seen as not adding value to the organization)\"]}",
+  "inputTokens": 87,
+  "outputTokens": 179,
+  "latencyMs": 5735,
+  "costUsd": 0.00038509
+}

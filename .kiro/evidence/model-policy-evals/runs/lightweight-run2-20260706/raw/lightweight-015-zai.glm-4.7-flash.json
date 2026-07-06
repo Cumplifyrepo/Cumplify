@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-015",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "WorkerVoice: Record worker feedback — Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"source\": \"Anonymous suggestion box\",\n  \"date\": \"2025-03-12\",\n  \"category\": \"Ergonomics\",\n  \"feedback\": \"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\",\n  \"affected_workers\": \"~6 per shift\",\n  \"suggested_solution\": \"Adjustable platform or tool balancer\"\n}\n```\nANSWER: {\"source\": \"Anonymous suggestion box\", \"date\": \"2025-03-12\", \"category\": \"Ergonomics\", \"feedback\": \"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\", \"affected_workers\": \"~6 per shift\", \"suggested_solution\": \"Adjustable platform or tool balancer\"}",
+  "inputTokens": 89,
+  "outputTokens": 161,
+  "latencyMs": 1751,
+  "costUsd": 0.00007063
+}

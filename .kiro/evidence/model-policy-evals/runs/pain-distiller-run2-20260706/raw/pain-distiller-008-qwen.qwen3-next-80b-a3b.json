@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-008",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'We're trying to get ISO 14001 certified but we don't even know where to start with aspects and impacts. Our consultant quoted $80K for gap analysis and implementation support. We're a 100-person company — that's our entire training budget for the year. Everything online is generic checklists that don't help.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Uncertainty about how to begin identifying environmental aspects and impacts for ISO 14001 certification\",\n    \"Prohibitive cost of consultant services ($80K) that exceeds the company’s entire annual training budget\",\n    \"Lack of tailored, actionable guidance — online resources are too generic and not useful for their specific context\",\n    \"Disproportionate cost burden relative to company size (100 employees)\",\n    \"Feeling overwhelmed by the complexity of certification without affordable or accessible support\"\n  ]\n}\nANSWER: {\"pain_points\":[\"Uncertainty about how to begin identifying environmental aspects and impacts for ISO 14001 certification\",\"Prohibitive cost of consultant services ($80K) that exceeds the company’s entire annual training budget\",\"Lack of tailored, actionable guidance — online resources are too generic and not useful for their specific context\",\"Disproportionate cost burden relative to company size (100 employees)\",\"Feeling overwhelmed by the complexity of certification without affordable or accessible support\"]}",
+  "inputTokens": 105,
+  "outputTokens": 216,
+  "latencyMs": 3623,
+  "costUsd": 0.00027389999999999994
+}

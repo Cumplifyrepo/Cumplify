@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-004",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'I'm the quality manager AND the EHS manager AND the training coordinator. There are 200 people here and I'm supposed to track everyone's competency records, run the environmental program, and manage the QMS. I can't keep up with internal audits — we're 6 months behind schedule. I need automation, not another spreadsheet.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"Overloaded roles\",\"Large team management\",\"Competency record tracking\",\"Environmental program management\",\"QMS management\",\"Internal audit backlog\",\"Lack of automation\"]}",
+  "inputTokens": 100,
+  "outputTokens": 40,
+  "latencyMs": 1031,
+  "costUsd": 0.00020800000000000001
+}

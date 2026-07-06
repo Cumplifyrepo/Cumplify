@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-003",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "RecordsVault: Log this training completion — Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"employee\": {\n    \"name\": \"Carlos Mendez\",\n    \"id\": \"EMP-1042\"\n  },\n  \"course\": \"ISO 45001 Internal Auditor\",\n  \"completion_date\": \"2025-02-28\",\n  \"score\": \"92%\",\n  \"instructor\": \"Diane Foster\",\n  \"expiry\": \"2027-02-28\"\n}\n```\n\nANSWER: {\"employee\":{\"name\":\"Carlos Mendez\",\"id\":\"EMP-1042\"},\"course\":\"ISO 45001 Internal Auditor\",\"completion_date\":\"2025-02-28\",\"score\":\"92%\",\"instructor\":\"Diane Foster\",\"expiry\":\"2027-02-28\"}",
+  "inputTokens": 102,
+  "outputTokens": 175,
+  "latencyMs": 1074,
+  "costUsd": 0.0001203
+}

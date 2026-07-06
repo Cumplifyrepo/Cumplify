@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-018",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'Our environmental monitoring generates 50,000 data points per month from sensors, but we only look at daily averages in a report that's 2 weeks old by the time management sees it. The trend that led to our permit breach was visible 3 weeks before the exceedance, but nobody was watching. We need predictive alerts, not backward-looking reports.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"High data volume with underutilization: 50,000 data points per month are collected but only aggregated into daily averages.\",\n    \"Delayed reporting: Reports are based on data that is 2 weeks old by the time management reviews them.\",\n    \"Reactive, not proactive monitoring: Lack of real-time or near-real-time analysis leads to missed early warnings.\",\n    \"Ineffective data visibility: Critical trends (like the permit breach precursor) are not detected in time because no one is actively monitoring the data.\",\n    \"Compliance risk: Late detection of trends resulted in an actual permit breach that could have been prevented.\",\n    \"Inadequate alerting: Reliance on backward-looking reports instead of predictive or real-time alerts.\"\n  ]\n}\nANSWER: <your JSON response>",
+  "inputTokens": 100,
+  "outputTokens": 168,
+  "latencyMs": 3257,
+  "costUsd": 0.0003728
+}

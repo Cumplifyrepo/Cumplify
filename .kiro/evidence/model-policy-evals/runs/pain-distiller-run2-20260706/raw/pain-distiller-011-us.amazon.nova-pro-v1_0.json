@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-011",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Extract pain points from this customer feedback: 'Our workers speak 4 different languages on the shop floor. Safety procedures are only in English. Training sign-off sheets show everyone was trained but I guarantee half of them didn't understand the content. We've had incidents where workers didn't follow lockout/tagout because they couldn't read the procedure posted on the machine.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"pain_points\":[\"Language barrier in safety procedures\",\"Inadequate understanding of training content\",\"Non-compliance with lockout/tagout procedures due to language issues\"]}",
+  "inputTokens": 94,
+  "outputTokens": 36,
+  "latencyMs": 619,
+  "costUsd": 0.00019040000000000002
+}

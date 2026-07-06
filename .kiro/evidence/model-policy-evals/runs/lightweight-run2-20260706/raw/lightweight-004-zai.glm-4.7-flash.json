@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-004",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "ObjectiveTracker: Create a new quality objective — Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"objective\": \"Reduce customer complaints by 20% in Q3 2025\",\n  \"owner\": \"Quality Director\",\n  \"baseline\": \"45 complaints/month\",\n  \"target\": \"36 complaints/month\",\n  \"measurement\": \"Monthly complaint log\",\n  \"standard\": \"ISO 9001 clause 6.2\"\n}\n```\nANSWER: {\"objective\": \"Reduce customer complaints by 20% in Q3 2025\", \"owner\": \"Quality Director\", \"baseline\": \"45 complaints/month\", \"target\": \"36 complaints/month\", \"measurement\": \"Monthly complaint log\", \"standard\": \"ISO 9001 clause 6.2\"}",
+  "inputTokens": 84,
+  "outputTokens": 143,
+  "latencyMs": 1013,
+  "costUsd": 0.00006308000000000001
+}

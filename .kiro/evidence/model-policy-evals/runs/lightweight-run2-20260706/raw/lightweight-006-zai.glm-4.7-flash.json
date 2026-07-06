@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-006",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "ContextCartographer: Map this interested party — Party: Local Environmental Authority (EPA Region 4), Interest: Compliance with air emission permits, Influence: High (can issue stop-work orders), Communication: Quarterly emission reports, Requirements: EPA Form R annual submission\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"party\": \"Local Environmental Authority (EPA Region 4)\",\n  \"interest\": \"Compliance with air emission permits\",\n  \"influence\": \"High (can issue stop-work orders)\",\n  \"communication\": \"Quarterly emission reports\",\n  \"requirements\": \"EPA Form R annual submission\"\n}\n```\nANSWER: {\"party\": \"Local Environmental Authority (EPA Region 4)\", \"interest\": \"Compliance with air emission permits\", \"influence\": \"High (can issue stop-work orders)\", \"communication\": \"Quarterly emission reports\", \"requirements\": \"EPA Form R annual submission\"}",
+  "inputTokens": 74,
+  "outputTokens": 132,
+  "latencyMs": 1220,
+  "costUsd": 0.00005798000000000001
+}

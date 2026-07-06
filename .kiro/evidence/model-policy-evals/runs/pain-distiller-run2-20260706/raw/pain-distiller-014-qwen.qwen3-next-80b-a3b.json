@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-014",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Extract pain points from this customer feedback: 'We're a contract manufacturer and every customer wants something different — their own forms, their own audit schedule, their own corrective action format. We're running 12 different quality systems for 12 customers. The overhead is enormous. One person just manages customer-specific requirements full time.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Managing 12 different quality systems for 12 customers\",\n    \"Each customer demands unique forms, audit schedules, and corrective action formats\",\n    \"High administrative overhead due to customization demands\",\n    \"Dedicated full-time resource needed just to manage customer-specific requirements\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Managing 12 different quality systems for 12 customers\", \"Each customer demands unique forms, audit schedules, and corrective action formats\", \"High administrative overhead due to customization demands\", \"Dedicated full-time resource needed just to manage customer-specific requirements\"]}",
+  "inputTokens": 90,
+  "outputTokens": 128,
+  "latencyMs": 2132,
+  "costUsd": 0.0001662
+}

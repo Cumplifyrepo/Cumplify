@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-004",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Extract pain points from this customer feedback: 'I'm the quality manager AND the EHS manager AND the training coordinator. There are 200 people here and I'm supposed to track everyone's competency records, run the environmental program, and manage the QMS. I can't keep up with internal audits — we're 6 months behind schedule. I need automation, not another spreadsheet.'\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "{\n  \"pain_points\": [\n    \"Role overload due to wearing multiple hats (Quality Manager, EHS Manager, Training Coordinator)\",\n    \"Unmanageable workload for a single person supporting 200 employees\",\n    \"Difficulty tracking and maintaining competency records for all personnel\",\n    \"Struggling to run the environmental program effectively\",\n    \"Difficulty managing the Quality Management System (QMS)\",\n    \"Falling behind on critical internal audits (6 months behind schedule)\",\n    \"Ineffective tools (reliance on spreadsheets) leading to inefficiency\",\n    \"Lack of automation to streamline processes and reduce manual workload\"\n  ]\n}\nANSWER: {\"pain_points\": [\"Role overload due to wearing multiple hats (Quality Manager, EHS Manager, Training Coordinator)\", \"Unmanageable workload for a single person supporting 200 employees\", \"Difficulty tracking and maintaining competency records for all personnel\", \"Struggling to run the environmental program effectively\", \"Difficulty managing the Quality Management System (QMS)\", \"Falling behind on critical internal audits (6 months behind schedule)\", \"Ineffective tools (reliance on spreadsheets) leading to inefficiency\", \"Lack of automation to streamline processes and reduce manual workload\"]}",
+  "inputTokens": 97,
+  "outputTokens": 250,
+  "latencyMs": 4374,
+  "costUsd": 0.00052264
+}

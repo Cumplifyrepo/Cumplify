@@ -1,0 +1,10 @@
+{
+  "taskId": "snapshot-pipeline-017",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Steel Fabrication, Company Size: 200 employees, Pain Points: Welder qualification records expired for 8 staff, no NDE procedure for critical joints, material traceability lost at cutting stage, heat treatment records incomplete\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "ANSWER: {\"readiness\":\"Poor\",\"issues\":[\"Expired welder qualification records\",\"No NDE procedure for critical joints\",\"Lost material traceability\",\"Incomplete heat treatment records\"]}",
+  "inputTokens": 68,
+  "outputTokens": 35,
+  "latencyMs": 631,
+  "costUsd": 0.000012479999999999999
+}

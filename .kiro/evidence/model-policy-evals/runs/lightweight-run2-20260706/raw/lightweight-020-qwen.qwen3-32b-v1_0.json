@@ -1,0 +1,10 @@
+{
+  "taskId": "lightweight-020",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ContextCartographer: Assess change impact — Change: New EU CSRD sustainability reporting directive effective January 2026, Scope: Affects all EU operations and supply chain, Standards Impacted: ISO 14001 (environmental aspects), ISO 9001 (customer requirements), Actions Needed: Gap assessment, update context of organization, identify new interested party requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+  "response": "```json\n{\n  \"change_impact_assessment\": {\n    \"change\": \"New EU CSRD sustainability reporting directive effective January 2026\",\n    \"scope\": \"Affects all EU operations and supply chain\",\n    \"standards_impacted\": [\n      \"ISO 14001 (environmental aspects)\",\n      \"ISO 9001 (customer requirements)\"\n    ],\n    \"actions_needed\": [\n      \"Gap assessment\",\n      \"Update context of organization\",\n      \"Identify new interested party requirements\"\n    ]\n  }\n}\n```\n\nANSWER: {\"change_impact_assessment\": {\"change\": \"New EU CSRD sustainability reporting directive effective January 2026\", \"scope\": \"Affects all EU operations and supply chain\", \"standards_impacted\": [\"ISO 14001 (environmental aspects)\", \"ISO 9001 (customer requirements)\"], \"actions_needed\": [\"Gap assessment\", \"Update context of organization\", \"Identify new interested party requirements\"]}}",
+  "inputTokens": 107,
+  "outputTokens": 214,
+  "latencyMs": 1427,
+  "costUsd": 0.00014445000000000001
+}
