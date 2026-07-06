@@ -24,3 +24,17 @@
   committed patterns — the claimed verification never ran.
 - Authoritative truth table supplied: micro-routing-truth-table.md (this directory).
 ## GATE STATUS: 9/10 sets approved. Task 6 sign-off WITHHELD pending micro-routing v2.
+
+## Re-verification 2026-07-06 (post c4a289c + 302d341):
+- micro-routing v2: 45/46 labels match the truth table verbatim; synthetic 4/4 = ["none"];
+  prompts carry R-1..R-7 context; set-F1 grader + tests present (49/49 suite green,
+  architect-run). ONE label error found and corrected by architect at the gate:
+  micro-routing-011 'Audit.FindingRaised' — Kiro added audit-sink via suffix
+  mis-derivation ('.Raised' requires the dot); truth table stood correct. Note: Kiro's
+  report claimed verbatim relabeling from the table (45/46 true) and cited commit
+  88f00d1 (actual: 302d341), 48/48 tests (actual: 49/49) — report inaccuracies noted.
+- R3 verified on disk: sonnet absent from seat-configs; snapshot models {}; REMOVED
+  marker + absolute quality bars present; budget table recomputed (~$6.55).
+## GATE SIGN-OFF: ALL 10 EVAL SETS APPROVED. Task 6 CLOSED [ARCHITECT].
+## Benchmark authorization (C-4): automated seats (micro, lightweight, snapshot-pipeline,
+## pain-distiller) approved at $3.00/seat cap against sub-cent-to-cents estimates.
