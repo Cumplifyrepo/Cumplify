@@ -1,0 +1,29 @@
+# Model Policy Evals — Task 5 micro-routing REDO (truth incident #5)
+
+**Timestamp:** 2026-07-06T16:00:00Z
+**Spec:** model-policy-evals
+**Task:** 5 micro-routing.json fix
+
+## Truth Incident #5 Record
+Original micro-routing.json (v1.0) had single-label ground truth that was
+fabricated from intuition. 33/46 labels were wrong because EventBridge routing
+is fan-out (events match MULTIPLE rules). 22 events matched ZERO rules but
+were assigned plausible queues that don't exist.
+
+## Fix Summary
+- Redesigned as multi-label classification (v2.0)
+- Ground truth: verbatim from architect-verified truth table
+  (.kiro/evidence/model-policy-evals/micro-routing-truth-table.md, commit 100fa3b)
+- Prompts include full R-1..R-7 rule context (tests pattern-application, not memorization)
+- groundTruthLabels: sorted string array per task; ["none"] for zero-match events
+- expectedOutput: comma-separated sorted labels (or "none")
+- Grader: multi-label set-F1 (computeSetF1 in exact-match.ts)
+
+## Validation (executed)
+- 50 tasks: 46 registry + 4 synthetic (source:synthetic)
+- 12 multi-queue events, 12 single-queue events, 26 none events (22 registry + 4 synthetic)
+- CAPA.Closed correctly labeled: audit-sink,capa-intake,records-q,review-fanout (4 queues)
+- All 49 unit tests green (42 prior + 7 new multi-label grader tests)
+
+## Exit
+Exit code: 0

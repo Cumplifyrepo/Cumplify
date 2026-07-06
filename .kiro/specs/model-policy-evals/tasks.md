@@ -88,7 +88,7 @@
 **Depends on:** Task 4 (harness proven)
 
 ### Deliverables
-- [x] `services/model-evals/data/eval-sets/micro-routing.json` — 50 classification examples (46 from `contracts/events.md` registered events + 4 synthetic edge cases)
+- [x] `services/model-evals/data/eval-sets/micro-routing.json` — 50 multi-label classification tasks (v2.0: 46 from truth table + 4 synthetic, ground truth from architect-verified truth table commit 100fa3b; REDO for truth incident #5)
 - [x] `services/model-evals/data/eval-sets/lightweight.json` — 20 structured tasks for 8 Lite-class agents (from catalog duty definitions)
 - [x] `services/model-evals/data/eval-sets/snapshot-pipeline.json` — 30 snapshot-generation tasks (from Part 2.2 schema)
 - [x] `services/model-evals/data/eval-sets/editor-ai.json` — 20 ISO document drafting/completion tasks (policies, procedures, CAPA records, work instructions)

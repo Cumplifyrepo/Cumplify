@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { scoreExactMatch, computeF1 } from '../graders/exact-match.js';
+import { scoreExactMatch, computeF1, computeSetF1, scoreMultiLabel } from '../graders/exact-match.js';
 import { scoreSchemaValidation } from '../graders/schema-validator.js';
 import { scoreClauseCitation } from '../graders/clause-citation.js';
 import { aggregateRubricScores, type RubricScore } from '../graders/rubric.js';
@@ -39,6 +39,46 @@ describe('exact-match grader', () => {
     it('throws on length mismatch', () => {
       expect(() => computeF1(['a'], ['a', 'b'])).toThrow();
     });
+  });
+});
+
+describe('multi-label set F1 grader', () => {
+  it('returns 1.0 for exact match on 4-queue event', () => {
+    expect(computeSetF1(
+      'audit-sink, capa-intake, records-q, review-fanout',
+      'audit-sink,capa-intake,records-q,review-fanout',
+    )).toBe(1.0);
+  });
+
+  it('returns 1.0 for single-queue event', () => {
+    expect(computeSetF1('nc-triage', 'nc-triage')).toBe(1.0);
+  });
+
+  it('returns 1.0 for "none" match', () => {
+    expect(computeSetF1('none', 'none')).toBe(1.0);
+  });
+
+  it('returns 0.0 when predicted and expected have no overlap', () => {
+    expect(computeSetF1('hazard-q', 'nc-triage')).toBe(0.0);
+  });
+
+  it('returns partial F1 for partial overlap', () => {
+    // predicted: {audit-sink, capa-intake}, expected: {audit-sink, capa-intake, records-q, review-fanout}
+    // intersection=2, precision=2/2=1, recall=2/4=0.5, F1=2*1*0.5/(1+0.5)=0.667
+    const f1 = computeSetF1('audit-sink, capa-intake', 'audit-sink,capa-intake,records-q,review-fanout');
+    expect(f1).toBeCloseTo(2 / 3, 3);
+  });
+
+  it('penalizes extra predictions', () => {
+    // predicted: {nc-triage, hazard-q}, expected: {nc-triage}
+    // intersection=1, precision=1/2=0.5, recall=1/1=1, F1=2*0.5*1/(0.5+1)=0.667
+    const f1 = computeSetF1('nc-triage, hazard-q', 'nc-triage');
+    expect(f1).toBeCloseTo(2 / 3, 3);
+  });
+
+  it('scoreMultiLabel delegates to computeSetF1', () => {
+    expect(scoreMultiLabel('audit-sink', 'audit-sink')).toBe(1.0);
+    expect(scoreMultiLabel('none', 'audit-sink')).toBe(0.0);
   });
 });
 
