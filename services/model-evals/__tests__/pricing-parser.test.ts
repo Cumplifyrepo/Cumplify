@@ -131,6 +131,19 @@ describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
     expect(result!.outputPricePerMToken).toBeCloseTo(0.14, 6); // Not 0.07 (batch)
   });
 
+  it('nova-2-lite fixture parses to exactly $0.33 in / $2.75 out per M (cross-region-global dims excluded, FINDING-E)', () => {
+    const fixture = JSON.parse(readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-2-lite.json'), 'utf-8'));
+    // Fixture contains cross-region-global ($0.30/$2.50), batch, priority, custom-model
+    // dims alongside plain in-region on-demand. We invoke via us.* geo profiles, so the
+    // plain in-region dim is the billed rate — everything else must be excluded, and the
+    // parse must NOT throw the ambiguity error that voided task-7 run 1.
+    const result = parsePricingApiResponse(fixture.PriceList);
+
+    expect(result).not.toBeNull();
+    expect(result!.inputPricePerMToken).toBeCloseTo(0.33, 6);
+    expect(result!.outputPricePerMToken).toBeCloseTo(2.75, 6);
+  });
+
   it('handles duplicate dims with same price (agrees → takes the value)', () => {
     // Two "Input tokens" entries with identical prices (e.g., On-demand + custom-model-same-price)
     // After filtering, if only on-demand survives, this is just the normal case
