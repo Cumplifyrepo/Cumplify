@@ -38,3 +38,9 @@
 ## GATE SIGN-OFF: ALL 10 EVAL SETS APPROVED. Task 6 CLOSED [ARCHITECT].
 ## Benchmark authorization (C-4): automated seats (micro, lightweight, snapshot-pipeline,
 ## pain-distiller) approved at $3.00/seat cap against sub-cent-to-cents estimates.
+
+## Delta re-gate 2026-07-06 (8757c5f): pain-distiller v2 APPROVED — 14-category closed
+## taxonomy, top-level groundTruthLabels (placement verified), taxonomy enumerated in
+## every prompt, ANSWER protocol present, spot-checked labels plausible. Note: redundant
+## expectedOutput duplicates labels (consistent 20/20; groundTruthLabels authoritative).
+## micro candidates expanded to 4 (nova-lite, qwen3-32b added) per run-2 verdict.
