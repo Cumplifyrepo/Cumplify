@@ -7,7 +7,7 @@
  */
 
 import { parseArgs } from 'node:util';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SEAT_CONFIGS } from './src/seat-configs.js';
@@ -27,6 +27,7 @@ const { values } = parseArgs({
     run: { type: 'boolean', default: false },
     'approved-budget': { type: 'string' },
     candidate: { type: 'string' },
+    'run-id': { type: 'string' },
     help: { type: 'boolean', default: false },
   },
   strict: true,
@@ -127,13 +128,25 @@ if (!values['approved-budget']) {
   process.exit(1);
 }
 
+if (!values['run-id']) {
+  console.error('ERROR: --run requires --run-id (timestamp identifier for this run)');
+  process.exit(1);
+}
+
 const approvedBudget = parseFloat(values['approved-budget']);
 if (estimate.estimatedCostUsd > approvedBudget) {
   console.error(`ERROR: Estimated cost $${estimate.estimatedCostUsd.toFixed(4)} exceeds approved budget $${approvedBudget.toFixed(2)}`);
   process.exit(1);
 }
 
+const runId = values['run-id']!;
+const runDir = resolve('.kiro/evidence/model-policy-evals/runs', `${values.seat}-${runId}`);
+const rawDir = resolve(runDir, 'raw');
+mkdirSync(rawDir, { recursive: true });
+
 console.log(`[model-evals] Approved budget: $${approvedBudget.toFixed(2)}`);
+console.log(`[model-evals] Run ID: ${runId}`);
+console.log(`[model-evals] Output dir: ${runDir}`);
 console.log('[model-evals] Starting benchmark run...');
 
 const budgetGuard = createBudgetGuard(approvedBudget, approvedBudget);
@@ -147,6 +160,20 @@ for (const modelId of candidates) {
     try {
       const result = await invokeCandidate(modelId, task, seatConfig, prices[modelId], budgetGuard);
       results.push(result);
+
+      // FINDING-G: persist raw output per task per model
+      const rawFile = resolve(rawDir, `${task.id}-${modelId.replace(/[/:]/g, '_')}.json`);
+      writeFileSync(rawFile, JSON.stringify({
+        taskId: task.id,
+        modelId,
+        prompt: task.prompt,
+        response: result.response,
+        inputTokens: result.inputTokens,
+        outputTokens: result.outputTokens,
+        latencyMs: result.latencyMs,
+        costUsd: result.costUsd,
+      }, null, 2));
+
       process.stdout.write('.');
     } catch (err) {
       console.error(`\nERROR during invocation: ${(err as Error).message}`);
@@ -208,6 +235,11 @@ const report: ScoredReport = {
 
 const reportMd = generateReport(report);
 console.log('\n' + reportMd);
+
+// FINDING-G: persist scored report
+const reportFile = resolve(runDir, 'report.md');
+writeFileSync(reportFile, reportMd);
+console.log(`[model-evals] Report written to: ${reportFile}`);
 console.log(`[model-evals] Budget consumed: $${budgetGuard.consumed.toFixed(4)}`);
 console.log(`[model-evals] Winner: ${winner ?? 'NONE'}`);
 process.exit(0);

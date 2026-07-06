@@ -6,200 +6,400 @@
   "tasks": [
     {
       "id": "lightweight-001",
-      "prompt": "RecordsVault: Register this calibration record — Equipment: Torque Wrench TW-042, Calibration Date: 2025-03-15, Next Due: 2026-03-15, Technician: Maria Gonzalez, Result: Pass, Certificate: CAL-2025-0891",
+      "prompt": "RecordsVault: Register this calibration record \u2014 Equipment: Torque Wrench TW-042, Calibration Date: 2025-03-15, Next Due: 2026-03-15, Technician: Maria Gonzalez, Result: Pass, Certificate: CAL-2025-0891\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["recordId", "type", "equipmentId", "calibrationDate", "nextDueDate", "technician", "result", "certificateRef", "status"],
+          "required": [
+            "recordId",
+            "type",
+            "equipmentId",
+            "calibrationDate",
+            "nextDueDate",
+            "technician",
+            "result",
+            "certificateRef",
+            "status"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-002",
-      "prompt": "RecordsVault: Archive this controlled document — Title: Quality Policy QP-001 Rev 5, Approved by: VP Quality, Effective Date: 2025-04-01, Supersedes: QP-001 Rev 4, Retention: 7 years",
+      "prompt": "RecordsVault: Archive this controlled document \u2014 Title: Quality Policy QP-001 Rev 5, Approved by: VP Quality, Effective Date: 2025-04-01, Supersedes: QP-001 Rev 4, Retention: 7 years\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["recordId", "type", "title", "revision", "approvedBy", "effectiveDate", "supersedes", "retentionPeriod", "status"],
+          "required": [
+            "recordId",
+            "type",
+            "title",
+            "revision",
+            "approvedBy",
+            "effectiveDate",
+            "supersedes",
+            "retentionPeriod",
+            "status"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-003",
-      "prompt": "RecordsVault: Log this training completion — Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28",
+      "prompt": "RecordsVault: Log this training completion \u2014 Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["recordId", "type", "employeeId", "courseName", "completionDate", "score", "instructor", "expiryDate", "status"],
+          "required": [
+            "recordId",
+            "type",
+            "employeeId",
+            "courseName",
+            "completionDate",
+            "score",
+            "instructor",
+            "expiryDate",
+            "status"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-004",
-      "prompt": "ObjectiveTracker: Create a new quality objective — Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2",
+      "prompt": "ObjectiveTracker: Create a new quality objective \u2014 Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["objectiveId", "description", "owner", "baseline", "target", "measurementMethod", "clauseRef", "status", "dueDate"],
+          "required": [
+            "objectiveId",
+            "description",
+            "owner",
+            "baseline",
+            "target",
+            "measurementMethod",
+            "clauseRef",
+            "status",
+            "dueDate"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-005",
-      "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 — Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)",
+      "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 \u2014 Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["objectiveId", "currentValue", "trend", "progressPercentage", "notes", "riskFlag", "updatedAt"],
+          "required": [
+            "objectiveId",
+            "currentValue",
+            "trend",
+            "progressPercentage",
+            "notes",
+            "riskFlag",
+            "updatedAt"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-006",
-      "prompt": "ContextCartographer: Map this interested party — Party: Local Environmental Authority (EPA Region 4), Interest: Compliance with air emission permits, Influence: High (can issue stop-work orders), Communication: Quarterly emission reports, Requirements: EPA Form R annual submission",
+      "prompt": "ContextCartographer: Map this interested party \u2014 Party: Local Environmental Authority (EPA Region 4), Interest: Compliance with air emission permits, Influence: High (can issue stop-work orders), Communication: Quarterly emission reports, Requirements: EPA Form R annual submission\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["partyId", "name", "interest", "influenceLevel", "communicationMethod", "requirements", "category", "lastReviewDate"],
+          "required": [
+            "partyId",
+            "name",
+            "interest",
+            "influenceLevel",
+            "communicationMethod",
+            "requirements",
+            "category",
+            "lastReviewDate"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-007",
-      "prompt": "ContextCartographer: Update organizational context — Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant",
+      "prompt": "ContextCartographer: Update organizational context \u2014 Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["contextId", "factor", "type", "impactLevel", "affectedStandards", "responseAction", "identifiedDate", "reviewStatus"],
+          "required": [
+            "contextId",
+            "factor",
+            "type",
+            "impactLevel",
+            "affectedStandards",
+            "responseAction",
+            "identifiedDate",
+            "reviewStatus"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-008",
-      "prompt": "SupplierScout: Onboard new supplier — Company: Precision Metals Ltd, Category: Critical Raw Material, Location: Monterrey Mexico, Certifications: ISO 9001:2015 IATF 16949, Products: Aluminum extrusions and machined components, Annual Spend: $2.4M, Risk Tier: Tier 1",
+      "prompt": "SupplierScout: Onboard new supplier \u2014 Company: Precision Metals Ltd, Category: Critical Raw Material, Location: Monterrey Mexico, Certifications: ISO 9001:2015 IATF 16949, Products: Aluminum extrusions and machined components, Annual Spend: $2.4M, Risk Tier: Tier 1\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["supplierId", "companyName", "category", "location", "certifications", "products", "annualSpend", "riskTier", "onboardingStatus", "approvalDate"],
+          "required": [
+            "supplierId",
+            "companyName",
+            "category",
+            "location",
+            "certifications",
+            "products",
+            "annualSpend",
+            "riskTier",
+            "onboardingStatus",
+            "approvalDate"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-009",
-      "prompt": "SupplierScout: Evaluate supplier performance — Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved",
+      "prompt": "SupplierScout: Evaluate supplier performance \u2014 Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["evaluationId", "supplierId", "period", "qualityScore", "deliveryScore", "responsivenessScore", "overallRating", "openActions", "recommendation", "evaluatedDate"],
+          "required": [
+            "evaluationId",
+            "supplierId",
+            "period",
+            "qualityScore",
+            "deliveryScore",
+            "responsivenessScore",
+            "overallRating",
+            "openActions",
+            "recommendation",
+            "evaluatedDate"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-010",
-      "prompt": "CompetenceKeeper: Identify competence gap — Employee: Ana Torres (EMP-2011), Role: Environmental Compliance Specialist, Required: ISO 14001 Lead Auditor certification, Current: ISO 14001 Internal Auditor only, Gap: Lead Auditor qualification needed by June 2025 for upcoming surveillance audit",
+      "prompt": "CompetenceKeeper: Identify competence gap \u2014 Employee: Ana Torres (EMP-2011), Role: Environmental Compliance Specialist, Required: ISO 14001 Lead Auditor certification, Current: ISO 14001 Internal Auditor only, Gap: Lead Auditor qualification needed by June 2025 for upcoming surveillance audit\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["gapId", "employeeId", "role", "requiredCompetence", "currentCompetence", "gapDescription", "priority", "targetDate", "trainingPlan"],
+          "required": [
+            "gapId",
+            "employeeId",
+            "role",
+            "requiredCompetence",
+            "currentCompetence",
+            "gapDescription",
+            "priority",
+            "targetDate",
+            "trainingPlan"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-011",
-      "prompt": "CompetenceKeeper: Record training event — Training: Lockout/Tagout Refresher, Date: 2025-03-10, Duration: 4 hours, Attendees: 12 maintenance technicians (Shift A), Trainer: External (SafetyFirst Inc), Assessment: Practical demonstration + written test, Pass Rate: 100%",
+      "prompt": "CompetenceKeeper: Record training event \u2014 Training: Lockout/Tagout Refresher, Date: 2025-03-10, Duration: 4 hours, Attendees: 12 maintenance technicians (Shift A), Trainer: External (SafetyFirst Inc), Assessment: Practical demonstration + written test, Pass Rate: 100%\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["trainingId", "title", "date", "duration", "attendeeCount", "trainer", "assessmentMethod", "passRate", "status", "nextRefresherDate"],
+          "required": [
+            "trainingId",
+            "title",
+            "date",
+            "duration",
+            "attendeeCount",
+            "trainer",
+            "assessmentMethod",
+            "passRate",
+            "status",
+            "nextRefresherDate"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-012",
-      "prompt": "EmergencyPlanner: Create emergency response plan — Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h",
+      "prompt": "EmergencyPlanner: Create emergency response plan \u2014 Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["planId", "scenario", "severity", "responseTeam", "evacuationZone", "containmentActions", "notifications", "drillFrequency", "lastDrillDate", "status"],
+          "required": [
+            "planId",
+            "scenario",
+            "severity",
+            "responseTeam",
+            "evacuationZone",
+            "containmentActions",
+            "notifications",
+            "drillFrequency",
+            "lastDrillDate",
+            "status"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-013",
-      "prompt": "EmergencyPlanner: Log emergency drill result — Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01",
+      "prompt": "EmergencyPlanner: Log emergency drill result \u2014 Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["drillId", "planId", "date", "participantCount", "evacuationTime", "targetMet", "issuesFound", "correctiveActions", "nextDrillDate", "effectiveness"],
+          "required": [
+            "drillId",
+            "planId",
+            "date",
+            "participantCount",
+            "evacuationTime",
+            "targetMet",
+            "issuesFound",
+            "correctiveActions",
+            "nextDrillDate",
+            "effectiveness"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-014",
-      "prompt": "WorkerVoice: Log worker consultation — Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes",
+      "prompt": "WorkerVoice: Log worker consultation \u2014 Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["consultationId", "meetingType", "date", "attendeeCount", "workerRepCount", "topics", "actionsAgreed", "followUpDate", "status"],
+          "required": [
+            "consultationId",
+            "meetingType",
+            "date",
+            "attendeeCount",
+            "workerRepCount",
+            "topics",
+            "actionsAgreed",
+            "followUpDate",
+            "status"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-015",
-      "prompt": "WorkerVoice: Record worker feedback — Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer",
+      "prompt": "WorkerVoice: Record worker feedback \u2014 Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["feedbackId", "source", "date", "category", "description", "affectedWorkers", "suggestedSolution", "priority", "responseStatus", "assignedTo"],
+          "required": [
+            "feedbackId",
+            "source",
+            "date",
+            "category",
+            "description",
+            "affectedWorkers",
+            "suggestedSolution",
+            "priority",
+            "responseStatus",
+            "assignedTo"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-016",
-      "prompt": "NCTriage: Classify this nonconformity — Source: Customer complaint CC-2025-089, Description: Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0±0.1mm), Quantity Affected: 240 units, Customer: AutoParts GmbH, Severity: Major (production line stopped)",
+      "prompt": "NCTriage: Classify this nonconformity \u2014 Source: Customer complaint CC-2025-089, Description: Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0\u00b10.1mm), Quantity Affected: 240 units, Customer: AutoParts GmbH, Severity: Major (production line stopped)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["ncId", "source", "description", "severity", "category", "affectedQuantity", "customer", "containmentAction", "priority", "assignedTo", "status"],
+          "required": [
+            "ncId",
+            "source",
+            "description",
+            "severity",
+            "category",
+            "affectedQuantity",
+            "customer",
+            "containmentAction",
+            "priority",
+            "assignedTo",
+            "status"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-017",
-      "prompt": "NCTriage: Prioritize and route these nonconformities — NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)",
+      "prompt": "NCTriage: Prioritize and route these nonconformities \u2014 NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["triageResults", "priorityOrder", "routingDecisions", "escalations", "timestamp"],
+          "required": [
+            "triageResults",
+            "priorityOrder",
+            "routingDecisions",
+            "escalations",
+            "timestamp"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-018",
-      "prompt": "ObjectiveTracker: Flag objective as off-track — Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric",
+      "prompt": "ObjectiveTracker: Flag objective as off-track \u2014 Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["objectiveId", "status", "currentProgress", "targetProgress", "variance", "rootCause", "recommendation", "escalationRequired", "updatedAt"],
+          "required": [
+            "objectiveId",
+            "status",
+            "currentProgress",
+            "targetProgress",
+            "variance",
+            "rootCause",
+            "recommendation",
+            "escalationRequired",
+            "updatedAt"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-019",
-      "prompt": "SupplierScout: Flag supplier nonconformance — Supplier: ChemFlow Solvents (SUP-0134), Issue: Certificate of Analysis missing for Batch SOL-8821, Impact: 500L of solvent quarantined cannot be used in production, Required Action: Supplier must provide CoA within 48h or batch is rejected",
+      "prompt": "SupplierScout: Flag supplier nonconformance \u2014 Supplier: ChemFlow Solvents (SUP-0134), Issue: Certificate of Analysis missing for Batch SOL-8821, Impact: 500L of solvent quarantined cannot be used in production, Required Action: Supplier must provide CoA within 48h or batch is rejected\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["ncId", "supplierId", "issueDescription", "impact", "quarantineStatus", "requiredAction", "deadline", "escalationLevel", "status"],
+          "required": [
+            "ncId",
+            "supplierId",
+            "issueDescription",
+            "impact",
+            "quarantineStatus",
+            "requiredAction",
+            "deadline",
+            "escalationLevel",
+            "status"
+          ],
           "type": "object"
         }
       }
     },
     {
       "id": "lightweight-020",
-      "prompt": "ContextCartographer: Assess change impact — Change: New EU CSRD sustainability reporting directive effective January 2026, Scope: Affects all EU operations and supply chain, Standards Impacted: ISO 14001 (environmental aspects), ISO 9001 (customer requirements), Actions Needed: Gap assessment, update context of organization, identify new interested party requirements",
+      "prompt": "ContextCartographer: Assess change impact \u2014 Change: New EU CSRD sustainability reporting directive effective January 2026, Scope: Affects all EU operations and supply chain, Standards Impacted: ISO 14001 (environmental aspects), ISO 9001 (customer requirements), Actions Needed: Gap assessment, update context of organization, identify new interested party requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
       "expectedOutput": {
         "expectedSchema": {
-          "required": ["changeId", "description", "effectiveDate", "scope", "impactedStandards", "actionsRequired", "priority", "owner", "assessmentStatus"],
+          "required": [
+            "changeId",
+            "description",
+            "effectiveDate",
+            "scope",
+            "impactedStandards",
+            "actionsRequired",
+            "priority",
+            "owner",
+            "assessmentStatus"
+          ],
           "type": "object"
         }
       }

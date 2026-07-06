@@ -1,13 +1,29 @@
 /**
  * Exact-match grader — Micro tier: classification F1 / accuracy.
+ * FINDING-F: grading parses the ANSWER: line, not the whole response.
  */
 
+import { parseAnswerLine, normalizeMultiLabelAnswer } from './answer-parser.js';
+
 /**
- * Score a response against the expected output via exact match.
- * Returns 1.0 for match, 0.0 for mismatch.
+ * Score a response against the expected output via exact match on the ANSWER: line.
+ * Returns 1.0 for match, 0.0 for mismatch or missing answer line.
  * Comparison is case-insensitive and trimmed.
  */
 export function scoreExactMatch(response: string, expected: string): number {
+  const parsed = parseAnswerLine(response);
+  if (!parsed.found) return 0.0;
+
+  const normalized = parsed.answer.trim().toLowerCase();
+  const normalizedExpected = expected.trim().toLowerCase();
+  return normalized === normalizedExpected ? 1.0 : 0.0;
+}
+
+/**
+ * Score a response using exact match on the RAW response (legacy — for tests that
+ * don't use the ANSWER: protocol, e.g., schema-validation which parses JSON).
+ */
+export function scoreExactMatchRaw(response: string, expected: string): number {
   const normalized = response.trim().toLowerCase();
   const normalizedExpected = expected.trim().toLowerCase();
   return normalized === normalizedExpected ? 1.0 : 0.0;
@@ -71,8 +87,12 @@ export function computeSetF1(predictedStr: string, expectedStr: string): number 
 
 /**
  * Score a multi-label response against expected labels (for micro-routing).
- * Returns set-F1 score (0.0 - 1.0).
+ * Parses the ANSWER: line, normalizes labels, computes set-F1.
+ * Returns 0.0 if no ANSWER: line found.
  */
 export function scoreMultiLabel(response: string, expectedLabels: string): number {
-  return computeSetF1(response.trim(), expectedLabels);
+  const parsed = parseAnswerLine(response);
+  if (!parsed.found) return 0.0;
+  const normalizedAnswer = normalizeMultiLabelAnswer(parsed.answer);
+  return computeSetF1(normalizedAnswer, expectedLabels);
 }

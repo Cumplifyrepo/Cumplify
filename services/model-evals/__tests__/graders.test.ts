@@ -5,17 +5,25 @@ import { scoreClauseCitation } from '../graders/clause-citation.js';
 import { aggregateRubricScores, type RubricScore } from '../graders/rubric.js';
 
 describe('exact-match grader', () => {
-  describe('scoreExactMatch', () => {
-    it('returns 1.0 for exact match (case-insensitive)', () => {
-      expect(scoreExactMatch('hazard-q', 'HAZARD-Q')).toBe(1.0);
+  describe('scoreExactMatch (with ANSWER: line protocol)', () => {
+    it('returns 1.0 for correct answer line (case-insensitive)', () => {
+      expect(scoreExactMatch('Some reasoning...\nANSWER: hazard-q', 'HAZARD-Q')).toBe(1.0);
     });
 
-    it('returns 0.0 for mismatch', () => {
-      expect(scoreExactMatch('nc-triage', 'hazard-q')).toBe(0.0);
+    it('returns 0.0 for mismatch in answer line', () => {
+      expect(scoreExactMatch('ANSWER: nc-triage', 'hazard-q')).toBe(0.0);
     });
 
-    it('trims whitespace before comparing', () => {
-      expect(scoreExactMatch('  hazard-q  ', 'hazard-q')).toBe(1.0);
+    it('returns 0.0 when no ANSWER: line present', () => {
+      expect(scoreExactMatch('The answer is hazard-q based on rule R-4.', 'hazard-q')).toBe(0.0);
+    });
+
+    it('uses the LAST ANSWER: line when multiple exist', () => {
+      expect(scoreExactMatch('ANSWER: wrong\nMore text\nANSWER: hazard-q', 'hazard-q')).toBe(1.0);
+    });
+
+    it('ignores prose mentioning the correct label if not in ANSWER: line', () => {
+      expect(scoreExactMatch('Based on R-4, hazard-q is the target.\nANSWER: nc-triage', 'hazard-q')).toBe(0.0);
     });
   });
 
@@ -76,9 +84,13 @@ describe('multi-label set F1 grader', () => {
     expect(f1).toBeCloseTo(2 / 3, 3);
   });
 
-  it('scoreMultiLabel delegates to computeSetF1', () => {
-    expect(scoreMultiLabel('audit-sink', 'audit-sink')).toBe(1.0);
-    expect(scoreMultiLabel('none', 'audit-sink')).toBe(0.0);
+  it('scoreMultiLabel parses ANSWER: line and computes set-F1', () => {
+    expect(scoreMultiLabel('Reasoning here...\nANSWER: audit-sink', 'audit-sink')).toBe(1.0);
+    expect(scoreMultiLabel('No answer line here', 'audit-sink')).toBe(0.0);
+  });
+
+  it('scoreMultiLabel normalizes and dedupes labels from ANSWER: line', () => {
+    expect(scoreMultiLabel('ANSWER: Audit-Sink, AUDIT-SINK, records-q', 'audit-sink,records-q')).toBe(1.0);
   });
 });
 
