@@ -1,0 +1,1179 @@
+{
+  "seat": "legal-ledger",
+  "version": "1.0",
+  "taskCount": 30,
+  "gradingMethod": "human",
+  "notes": "Human-graded (blind protocol per runbook). Regulatory content from US public-domain sources; ISO framing from committed corpus maps. Architect-validated.",
+  "tasks": [
+    {
+      "id": "legal-ledger-001",
+      "prompt": "Company profile: Snack-food manufacturer in Columbus, Ohio; 120 employees; single plant running two shifts. Situation: The company is installing a new automated packaging line (case erector, powered conveyors, robotic palletizer). Maintenance technicians will clear jams and perform servicing that requires reaching into the equipment, and the line has electrical, pneumatic, and stored mechanical (spring/gravity) energy sources. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Establish an energy control (lockout/tagout) program with machine-specific written energy control procedures for the new line, covering electrical, pneumatic, and stored mechanical energy",
+            "source": "OSHA 29 CFR 1910.147",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Periodic inspection of each energy control procedure at least annually (1910.147 requirement); include in annual evaluation of compliance with documented evidence"
+          },
+          {
+            "requirement": "Train and designate authorized employees (maintenance) and affected employees (operators) on lockout/tagout; retrain when machines or procedures change",
+            "source": "OSHA 29 CFR 1910.147",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Verify training records at commissioning and during the annual LOTO procedure inspection"
+          },
+          {
+            "requirement": "Guard machine hazards (points of operation, ingoing nip points, rotating parts) on the new packaging line",
+            "source": "OSHA 29 CFR 1910.212",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Pre-startup safety verification before the line runs production, then periodic guarding inspections folded into the annual compliance evaluation"
+          }
+        ],
+        "graderNotes": "Complete answer must include 1910.147 with machine-specific procedures AND the annual periodic inspection requirement, plus machine guarding (1910.212). Credit recognition of the minor-servicing exception (routine, repetitive jam clearing during normal production may be exempt from LOTO only if effective alternative protection exists) — a strong answer raises it; a wrong answer asserts all jam clearing is categorically exempt. Mapping must be ISO 45001 6.1.3 (no environmental obligations here); citing ISO 14001 6.1.3 for LOTO is an error. Management-of-change (45001 8.1.3) is acceptable as context but not a substitute for the 6.1.3 register entries. Watch for invented OSHA subsections or citing 29 CFR 1926 (construction) for a general-industry plant."
+      }
+    },
+    {
+      "id": "legal-ledger-002",
+      "prompt": "Company profile: Metal fabrication shop in Fort Worth, Texas; 45 employees. Situation: Purchasing is introducing a new xylene-based degreasing solvent to replace a citrus-based cleaner. The solvent will be dispensed from 55-gallon drums into smaller wipe-down containers at three workstations. It is flammable and workers will have routine skin/inhalation exposure potential. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Update the written hazard communication program and workplace chemical inventory to add the new solvent",
+            "source": "OSHA 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Verify at introduction (before first use) and in the annual HazCom program audit"
+          },
+          {
+            "requirement": "Obtain the safety data sheet and keep it readily accessible to employees on all shifts",
+            "source": "OSHA 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Check SDS availability at first receipt; spot-check during annual compliance evaluation"
+          },
+          {
+            "requirement": "Ensure labels on shipped containers are maintained and that secondary/workstation containers are labeled with product identifier and hazard information",
+            "source": "OSHA 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Workstation labeling walkthrough at rollout, then quarterly area inspections feeding the annual evaluation"
+          },
+          {
+            "requirement": "Train affected employees on the new chemical hazard before initial exposure (a new hazard introduced into the work area triggers training)",
+            "source": "OSHA 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Training records verified before first use; refresher determination at annual evaluation"
+          },
+          {
+            "requirement": "Store and handle the flammable liquid per OSHA flammable liquids requirements (storage cabinets/quantity limits, ignition source control)",
+            "source": "OSHA 29 CFR 1910.106",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Storage arrangement verified at rollout; monthly housekeeping/fire inspections"
+          },
+          {
+            "requirement": "Make a hazardous waste determination on spent solvent and rags; spent xylene solvent is a listed spent solvent (F003) and likely ignitable (D001), which affects the shop's generator category",
+            "source": "EPA 40 CFR parts 261 and 262 (RCRA waste determination and generator standards)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Waste determination documented before first disposal; monthly waste-generation tally to confirm generator category"
+          }
+        ],
+        "graderNotes": "Must cover the four core HazCom elements (written program/inventory, SDS, labeling incl. secondary containers, training before exposure) plus flammable storage. A complete answer also catches the environmental leg: spent xylene solvent triggers a RCRA waste determination (F003 listing and/or D001 ignitability) mapping to ISO 14001 6.1.3 — this is the discriminator between adequate and strong answers. Watch for: training 'annually' asserted as an OSHA HazCom requirement (OSHA requires it at initial assignment and when new hazards are introduced, not on a fixed annual cycle); invented CFR subsections; missing the dual-standard mapping (this scenario is both 45001 and 14001)."
+      }
+    },
+    {
+      "id": "legal-ledger-003",
+      "prompt": "Company profile: Furniture refinishing company in Macon, Georgia; 30 employees. Situation: The company is adding spray application of solvent-borne lacquers and a two-component polyurethane topcoat (isocyanate hardener) in an existing spray booth. Employees have asked for respirators. No air sampling has been done yet. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Assess employee exposures to the coating components against OSHA permissible exposure limits to determine required controls",
+            "source": "OSHA 29 CFR 1910.1000 (air contaminants / PELs)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Baseline exposure assessment before or at process startup; re-assess on any coating or process change"
+          },
+          {
+            "requirement": "If respirators are required (or provided beyond voluntary filtering-facepiece use), implement a written respiratory protection program including medical evaluation before fit testing/use, fit testing, training, and program administration",
+            "source": "OSHA 29 CFR 1910.134",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Program elements verified at startup; fit testing at least annually; periodic program evaluation as required by the standard, rolled into annual compliance evaluation"
+          },
+          {
+            "requirement": "Conduct and certify a written PPE hazard assessment for the spray operation (respiratory, skin, eye protection)",
+            "source": "OSHA 29 CFR 1910.132",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "At process introduction; re-certify when coatings or tasks change"
+          },
+          {
+            "requirement": "Meet spray-finishing requirements for booth design, ventilation, ignition control, and residue cleanup",
+            "source": "OSHA 29 CFR 1910.107",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Booth verification at startup; monthly booth/filter inspections feeding annual evaluation"
+          },
+          {
+            "requirement": "Update hazard communication (SDSs, labels, training) for the lacquers and isocyanate hardener",
+            "source": "OSHA 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Before first use; annual HazCom audit"
+          }
+        ],
+        "graderNotes": "The trap: employees 'asking for respirators' does not by itself define the obligation — a complete answer sequences it correctly: exposure assessment first (hierarchy of controls, ventilation as primary), then 1910.134 program if respirators are required, with medical evaluation BEFORE fit testing. Voluntary-use provisions (1910.134 Appendix D for voluntary filtering facepieces; a program is still required for voluntary elastomeric use) distinguish strong answers. Isocyanates: most have no OSHA PEL (TDI is an exception) — an answer inventing PEL numbers for HDI should be marked down; referencing the general duty clause (OSH Act 5(a)(1)) for isocyanate sensitization is a plus. Wrong answers to watch: skipping medical evaluation, treating fit testing as one-time, mapping to ISO 14001 (environmental permitting for VOCs is a legitimate bonus mention but was not the dominant ask — credit if raised, don't require)."
+      }
+    },
+    {
+      "id": "legal-ledger-004",
+      "prompt": "Company profile: Distribution company in Allentown, Pennsylvania; 200 employees at a single distribution center. Situation: The company hired a roofing contractor to replace the 30-foot-high flat roof. The contract runs six weeks. The company's own maintenance staff will periodically go onto the roof to escort the contractor and inspect progress, and they also access rooftop HVAC units for routine maintenance year-round. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Contractor's roofing work is construction: fall protection required for employees on walking/working surfaces 6 feet or more above a lower level (with low-slope roof options such as guardrails, personal fall arrest, safety monitoring combinations)",
+            "source": "OSHA 29 CFR 1926.501 (contractor's obligation; host verifies as an 'other requirement')",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Pre-job verification of contractor fall protection plan; weekly site checks during the six-week project; close-out evaluation"
+          },
+          {
+            "requirement": "Contractor must train its workers on fall hazards and systems used",
+            "source": "OSHA 29 CFR 1926.503",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Verify contractor training documentation before mobilization"
+          },
+          {
+            "requirement": "Host's own maintenance employees accessing the roof (escort duties now, HVAC maintenance year-round) fall under general-industry fall protection duties (4-foot threshold; specific provisions for low-slope roof work near edges), not the construction standard",
+            "source": "OSHA 29 CFR 1910.28 (general industry walking-working surfaces / duty to have fall protection)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Assess roof-access controls before the project; annual evaluation of rooftop-access procedure compliance"
+          },
+          {
+            "requirement": "Host employer duties on a multi-employer worksite: do not expose own employees to contractor-created hazards; coordinate hazards with the contractor (contractor management as an 'other requirement' in the register)",
+            "source": "OSH Act Section 5(a)(1) (General Duty Clause) and OSHA multi-employer enforcement policy (descriptive)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Pre-job coordination documented; weekly coordination checks during the project"
+          }
+        ],
+        "graderNotes": "The discriminator is the 1926-vs-1910 split: contractor replacement work is construction (1926.501, 6-ft trigger); the host's own employees doing inspection/maintenance are general industry (1910.28, 4-ft trigger with specific low-slope roof provisions). An answer applying 1926.501 to the host's routine HVAC maintenance, or 1910 to the roofing contractor, has the frameworks confused. Multi-employer/host-contractor coordination should appear (General Duty Clause / contractor management; ISO 45001 8.1.4 procurement is fine as context). All mappings are 45001 6.1.3 — there is no environmental obligation here; inventing one (e.g., stormwater for a roof job) is over-reach unless carefully conditioned on demolition debris practices."
+      }
+    },
+    {
+      "id": "legal-ledger-005",
+      "prompt": "Company profile: Beverage distributor in Rockford, Illinois; 85 employees. Situation: Yesterday a sit-down counterbalance forklift tipped while turning with an elevated load; the operator was admitted to the hospital overnight for observation and treatment (in-patient admission). The operator was trained three years ago and has had no evaluation since. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Report the in-patient hospitalization to OSHA within 24 hours of learning of it",
+            "source": "OSHA 29 CFR 1904.39",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Immediate one-time verification that the report was made and documented; incident-triggered"
+          },
+          {
+            "requirement": "Record the injury on the OSHA 300 log and complete the OSHA 301 incident report within 7 calendar days of learning of the recordable case",
+            "source": "OSHA 29 CFR part 1904 (recordkeeping)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "7-day completion check; annual 300A summary certified and posted February 1 to April 30; annual recordkeeping audit"
+          },
+          {
+            "requirement": "Refresher training and re-evaluation of the operator: an accident/near-miss triggers refresher training, and every operator must be evaluated at least once every three years",
+            "source": "OSHA 29 CFR 1910.178(l)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Post-incident refresher completed before the operator resumes; verify the three-year evaluation cycle for all operators in the annual compliance evaluation"
+          },
+          {
+            "requirement": "Determine whether the establishment must electronically submit injury/illness data (size- and industry-dependent under OSHA's electronic reporting rule)",
+            "source": "OSHA 29 CFR 1904.41",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Annual applicability check ahead of the March 2 electronic submission deadline"
+          }
+        ],
+        "graderNotes": "Must include: 24-hour hospitalization report (1904.39 — 8 hours is for fatalities; answers that say 8 hours for hospitalization are wrong), 300/301 recording within 7 days, and the 1910.178(l) triggers (post-accident refresher + triennial evaluation — the scenario plants an overdue evaluation). The 1904.41 electronic submission item should be raised as an applicability determination, not asserted flatly. Incident investigation itself belongs to ISO 45001 10.2 (a different module/agent) — good answers may note the handoff but the register entries here are the legal reporting/recordkeeping/training duties under 6.1.3. Watch for confusing OSHA reporting with workers' compensation reporting (state obligation, acceptable as an 'other requirement' if labeled as such)."
+      }
+    },
+    {
+      "id": "legal-ledger-006",
+      "prompt": "Company profile: Metal stamping plant in Kenosha, Wisconsin; 150 employees. Situation: A new high-tonnage press line was commissioned. Area noise monitoring in the press bay shows employee full-shift exposures around 88 dBA TWA; the rest of the plant is below 80 dBA. About 25 employees work in the press bay. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Implement a hearing conservation program for employees exposed at or above the 85 dBA (8-hour TWA) action level: noise monitoring, employee notification, audiometric testing (baseline then annual), hearing protectors made available, and annual training",
+            "source": "OSHA 29 CFR 1910.95",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Baseline audiograms within 6 months of first exposure; annual audiograms with standard threshold shift review; annual training; re-monitor when production or equipment changes alter exposures"
+          },
+          {
+            "requirement": "Because exposures approach the 90 dBA PEL, evaluate feasible engineering and administrative controls for the press line (enclosures, damping, rotation), with hearing protection as the interim/back-up control",
+            "source": "OSHA 29 CFR 1910.95",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Controls feasibility study at commissioning; progress reviewed at each annual compliance evaluation"
+          }
+        ],
+        "graderNotes": "The numeric crux: 88 dBA TWA is above the 85 dBA action level (hearing conservation program mandatory for the 25 press-bay employees) and below the 90 dBA PEL (so mandatory engineering controls are not strictly triggered by the PEL, though good answers still evaluate them; OSHA requires HPD use in specific cases such as employees with standard threshold shifts). Wrong answers: claiming the PEL is exceeded at 88 dBA; requiring the program plant-wide when only the press bay is at/above 85; omitting the 6-month baseline audiogram window or annual audiogram/training cycle. Mapping is 45001 6.1.3 only. Community noise ordinances may be mentioned as an 'other requirement' but are not expected."
+      }
+    },
+    {
+      "id": "legal-ledger-007",
+      "prompt": "Company profile: Poultry further-processing plant in Wilkesboro, North Carolina; 60 employees. Situation: The company built a below-grade wastewater equalization pit (12 ft deep, hatch access, submerged mixer) ahead of its pretreatment system. Sanitation employees are expected to enter about quarterly to wash down solids and service the mixer. The atmosphere may contain hydrogen sulfide and may be oxygen-deficient. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Evaluate the workplace for permit-required confined spaces; the pit qualifies (limited entry/exit, hazardous atmosphere potential, engulfment/entrapment considerations). Post danger signage and inform exposed employees",
+            "source": "OSHA 29 CFR 1910.146",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Space evaluation and classification before first entry; re-evaluate when space use or configuration changes"
+          },
+          {
+            "requirement": "Implement a written permit-required confined space program: entry permits, atmospheric testing (oxygen, flammables, H2S), ventilation, attendant, entry supervisor, and rescue/emergency provisions (evaluated rescue capability, not just calling 911)",
+            "source": "OSHA 29 CFR 1910.146",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Program in place before first entry; review canceled permits and the program at least annually (single annual review permitted); per-entry permit verification"
+          },
+          {
+            "requirement": "Isolate the submerged mixer's hazardous energy during entry (lockout/tagout integrated with the entry permit)",
+            "source": "OSHA 29 CFR 1910.147",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Per-entry LOTO verification; annual LOTO procedure inspection"
+          },
+          {
+            "requirement": "If entries are contracted out instead, host-employer duties still apply: inform the contractor of permit spaces and hazards, coordinate entry operations, and debrief",
+            "source": "OSHA 29 CFR 1910.146 (host/contractor provisions)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Per-contract verification when entries are outsourced"
+          }
+        ],
+        "graderNotes": "Complete answers include: classification as a permit space (not merely a 'confined space'), the full permit program element list with rescue provisions explicitly (rescue is the most-missed element; 'call 911' without evaluating rescuer capability is inadequate), LOTO integration for the mixer, and the annual review using retained permits. The host/contractor duties item shows depth. Wrong answers: treating it as an alternate-procedures space (reclassification requires eliminating the hazardous atmosphere, which continuous H2S potential defeats); mapping to ISO 14001 (the wastewater system is environmental infrastructure but the entry obligations are OH&S). A bonus mention that the pretreatment discharge itself carries environmental obligations (separate register entries) is welcome but not required here."
+      }
+    },
+    {
+      "id": "legal-ledger-008",
+      "prompt": "Company profile: Custom cabinet shop in Grand Junction, Colorado; currently 8 employees, peaked at 9 employees last calendar year. Situation: The owner attended a trade-association seminar and is confused about which OSHA paperwork obligations apply at this size. The shop has table saws, a small spray-finish corner, and typical wood dust. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register — including obligations that do NOT apply and the basis for non-applicability. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Routine injury/illness recordkeeping (OSHA 300/301/300A) does NOT apply: employers with 10 or fewer employees at all times during the previous calendar year are partially exempt unless notified in writing by OSHA or BLS to keep records",
+            "source": "OSHA 29 CFR 1904.1",
+            "isoMapping": "ISO 45001 6.1.3 (recorded as evaluated-not-applicable with basis)",
+            "evaluationCadence": "Re-verify headcount against the 10-employee threshold each January; register entry flips if peak employment exceeds 10"
+          },
+          {
+            "requirement": "Severe-injury reporting still applies regardless of size: fatalities within 8 hours; in-patient hospitalizations, amputations, or loss of an eye within 24 hours",
+            "source": "OSHA 29 CFR 1904.39",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Event-triggered; verify the reporting procedure exists during the annual compliance evaluation"
+          },
+          {
+            "requirement": "All substantive OSHA standards still apply at any size: hazard communication for finishes/solvents (29 CFR 1910.1200), machine guarding on saws (29 CFR 1910.212), spray finishing (29 CFR 1910.107), PPE hazard assessment (29 CFR 1910.132)",
+            "source": "OSHA 29 CFR 1910 (as cited per standard)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Annual compliance evaluation across applicable standards; guarding checks quarterly"
+          },
+          {
+            "requirement": "Wood dust housekeeping and combustible dust hazard control (no comprehensive OSHA combustible dust standard; enforced via housekeeping provisions and the General Duty Clause)",
+            "source": "OSH Act Section 5(a)(1) and OSHA housekeeping/ventilation provisions (descriptive)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Monthly housekeeping inspections; dust accumulation criteria reviewed annually"
+          }
+        ],
+        "graderNotes": "This is an applicability-reasoning item. The correct structure: (1) recordkeeping FORMS exempt under 1904.1 based on prior-calendar-year peak ≤10 — with the register retaining the entry as 'evaluated, not applicable, basis documented, re-check trigger defined'; (2) 1904.39 severe-injury reporting NOT exempt; (3) substantive standards apply at any size. Fatal errors: 'OSHA doesn't apply to small businesses' (only some penalty/inspection policies differ); claiming the reporting duty is also exempt; basing the exemption on current headcount instead of previous-calendar-year peak. Credit answers noting the exemption is company-wide (all-times test) and that a BLS/OSHA written notice overrides it. Per the LegalLedger register model, non-applicable obligations stay in the register with applicability rationale — an answer that simply deletes them is incomplete."
+      }
+    },
+    {
+      "id": "legal-ledger-009",
+      "prompt": "Company profile: Custom metal fabricator in Tulsa, Oklahoma; 55 employees. Situation: The shop is taking on stainless-steel work for food-equipment customers: TIG and MIG welding plus plasma cutting of 304/316 stainless, roughly 20 hours of arc time per day across six welders. Welding on stainless can generate hexavalent chromium fume. Current ventilation is general dilution only. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Perform an initial exposure determination for hexavalent chromium for the welding/cutting tasks; the standard's action level is 2.5 µg/m3 and the PEL is 5 µg/m3 (8-hour TWA)",
+            "source": "OSHA 29 CFR 1910.1026",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Initial determination before or promptly at process start; periodic monitoring per the standard when results are at/above the action level; re-determination on process change"
+          },
+          {
+            "requirement": "If exposures are at/above the action level or PEL: engineering controls (local exhaust ventilation), respiratory protection during interim/exceedance periods, regulated-area and hygiene practices, and medical surveillance per the standard's triggers",
+            "source": "OSHA 29 CFR 1910.1026 (with respirators under 29 CFR 1910.134)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Controls verified at installation; exposure re-monitoring per the standard's schedule; medical surveillance tracked per trigger; annual program evaluation"
+          },
+          {
+            "requirement": "General welding, cutting, and brazing requirements: ventilation adequacy, fire prevention, and PPE for welders",
+            "source": "OSHA 29 CFR 1910 subpart Q (welding, cutting and brazing) and 29 CFR 1910.132/1910.133 (PPE, eye/face)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "PPE hazard assessment update at process introduction; quarterly welding-area inspections"
+          },
+          {
+            "requirement": "Update hazard communication for stainless consumables and fume hazards (SDSs, training on Cr(VI) and nickel fume)",
+            "source": "OSHA 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Before the new work begins; annual HazCom audit"
+          }
+        ],
+        "graderNotes": "The core is 1910.1026 with the correct numbers (AL 2.5 µg/m3, PEL 5 µg/m3) and the exposure-determination-first logic. Strong answers tie ventilation upgrades (LEV/fume extraction) to the finding that general dilution may be insufficient at 20 arc-hours/day, and mention medical surveillance triggers (exposure above the AL for 30+ days/year, among others). Watch for: inventing a specific 'welding fume PEL' citation; skipping straight to respirators without exposure data; missing HazCom. Environmental bonus (not required): welding fume dust collector waste may need a hazardous waste determination (chromium/nickel, potential D007) mapping to ISO 14001 6.1.3 — credit if raised correctly."
+      }
+    },
+    {
+      "id": "legal-ledger-010",
+      "prompt": "Company profile: E-commerce fulfillment company headquartered in Reno, Nevada, opening its first California site: a non-climate-controlled warehouse in Fresno, California with 140 employees, including yard workers moving trailers outdoors. Summer indoor temperatures on the mezzanine can exceed 85°F. Ask: The compliance-obligations register was built around federal OSHA. Identify the compliance obligations the California expansion creates or affects. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-CA",
+        "expectedObligations": [
+          {
+            "requirement": "California operates an OSHA-approved State Plan (Cal/OSHA); the register for the Fresno site must be re-based on California Title 8 regulations, which are in places more stringent than and different from federal OSHA",
+            "source": "Cal/OSHA State Plan; California Code of Regulations, Title 8 (framework entry)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "One-time re-baseline before site opening; ongoing regulatory-change monitoring for Title 8"
+          },
+          {
+            "requirement": "Establish, implement, and maintain a written Injury and Illness Prevention Program (IIPP) — a Cal/OSHA requirement with no direct federal equivalent",
+            "source": "California 8 CCR 3203",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "IIPP in place at opening; periodic effectiveness review at least annually; inspections per the program"
+          },
+          {
+            "requirement": "Outdoor heat illness prevention for yard workers: water, shade, rest, training, high-heat procedures, and a written plan",
+            "source": "California 8 CCR 3395",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Seasonal readiness verification before the high-heat season each year; event-triggered checks on high-heat days"
+          },
+          {
+            "requirement": "Indoor heat illness prevention for the warehouse/mezzanine (California adopted an indoor heat standard effective 2024 with an 82°F trigger and additional controls at higher temperatures)",
+            "source": "California indoor heat illness prevention standard, 8 CCR (Title 8; commonly cited as section 3396)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Temperature/heat-index monitoring during warm months; annual plan review"
+          },
+          {
+            "requirement": "Warehouse quota disclosure duties: California law requires large warehouse distribution centers to disclose production quotas and prohibits quotas that prevent meal/rest breaks (applicability depends on statutory employee-count thresholds)",
+            "source": "California AB 701 (Labor Code warehouse quota provisions) — descriptive",
+            "isoMapping": "ISO 45001 6.1.3 (as an 'other requirement')",
+            "evaluationCadence": "Applicability determination at opening; re-evaluate on headcount changes; annual verification of quota disclosures"
+          }
+        ],
+        "graderNotes": "The register-architecture point is primary: a state-plan state means the OH&S register cannot simply reuse federal citations — 8 CCR 3203 (IIPP) is the flagship 'no federal equivalent' example and must appear. Outdoor heat (3395) applies to the yard workers; indoor heat applies to the warehouse — an answer covering only one heat standard is incomplete. AB 701 is an 'other requirement' showing register breadth (45001 6.1.3 covers legal AND other requirements); do not penalize absence heavily, but credit it. Wrong answers: applying federal 29 CFR 1910 citations as the operative source in California; claiming Nevada rules follow the company into California. Note for grader: verify the indoor heat standard section number (3396) and AB 701 thresholds independently — the scenario intentionally keeps them descriptive."
+      }
+    },
+    {
+      "id": "legal-ledger-011",
+      "prompt": "Company profile: Plastics injection molder in Cookeville, Tennessee; 95 direct employees plus 25 temporary production workers supplied by a staffing agency, supervised day-to-day by the company's shift leads. Situation: The temp headcount just doubled for a seasonal ramp, and a temp worker suffered a laceration last week; the staffing agency claims all OSHA duties are theirs. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Record injuries/illnesses of temporary workers whom the host supervises on a day-to-day basis on the HOST's OSHA 300 log (the laceration, if recordable, goes on the company's log, not the agency's)",
+            "source": "OSHA 29 CFR 1904.31 (covered employees)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Case-by-case recordability determination within 7 days; quarterly reconciliation of temp injuries with the agency; annual recordkeeping audit"
+          },
+          {
+            "requirement": "Provide site-specific and hazard-specific training to temporary workers (machine hazards, HazCom for chemicals in their work areas, emergency procedures); generic agency orientation does not discharge host duties for site hazards",
+            "source": "OSHA 29 CFR 1910.1200 (HazCom training) and applicable machine-specific standards; joint host/agency responsibility per OSHA's Temporary Worker Initiative (descriptive)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Training verified before assignment for each temp cohort; quarterly training-records sampling"
+          },
+          {
+            "requirement": "PPE hazard assessment covers temp workers' tasks; required PPE is provided at no cost to the worker (host/agency allocation set by contract, but compliance cannot be contracted away)",
+            "source": "OSHA 29 CFR 1910.132",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "At assignment of each new task type; annual PPE assessment review"
+          },
+          {
+            "requirement": "Define host/agency responsibility split in the staffing contract and treat it as an 'other requirement' in the register (host generally controls site-specific hazards; agency generally handles generic training and workers' comp)",
+            "source": "OSH Act Section 5(a)(1) and OSHA multi-employer/Temporary Worker Initiative guidance (descriptive)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Contract review annually and at each staffing-agency change"
+          }
+        ],
+        "graderNotes": "The load-bearing fact is 1904.31: day-to-day supervision puts temp injuries on the HOST's 300 log — the agency's claim in the scenario is wrong and the model must say so. Joint responsibility (host = site-specific hazards/training; agency = generic duties) should be framed as shared-but-not-delegable. Wrong answers: accepting the agency's position; putting the laceration on the agency's log; treating temps as outside the OH&S management system scope (ISO 45001 explicitly covers workers not employed by the organization). All mappings 45001 6.1.3."
+      }
+    },
+    {
+      "id": "legal-ledger-012",
+      "prompt": "Company profile: Grocery distribution center in Tolleson, Arizona; 300 employees. Situation: The company is converting its forklift fleet from propane to electric and building a battery charging/changing area: 40 chargers, a battery-washing station, and lead-acid batteries containing sulfuric acid electrolyte. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Battery charging installations: designated area with facilities for flushing/neutralizing spilled electrolyte, fire protection, protection of charging apparatus from truck damage, and adequate ventilation for gases from charging (hydrogen)",
+            "source": "OSHA 29 CFR 1910.178(g)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Design verification before commissioning; monthly area inspections"
+          },
+          {
+            "requirement": "Suitable facilities for quick drenching/flushing of eyes and body where employees may be exposed to corrosive materials (emergency eyewash/shower at the battery area)",
+            "source": "OSHA 29 CFR 1910.151(c) (with ANSI Z358.1 as the referenced good-practice design/testing benchmark — descriptive)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Installed and verified before first use; weekly activation checks per ANSI practice; annual full inspection"
+          },
+          {
+            "requirement": "PPE hazard assessment and provision for battery handling (face shield/goggles, acid-resistant gloves and apron)",
+            "source": "OSHA 29 CFR 1910.132 (and 29 CFR 1910.133 eye/face)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Assessment certified at commissioning; annual review"
+          },
+          {
+            "requirement": "Hazard communication for sulfuric acid electrolyte (SDS, labeling, employee training)",
+            "source": "OSHA 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Before first battery servicing; annual HazCom audit"
+          },
+          {
+            "requirement": "Track total on-site sulfuric acid quantity: sulfuric acid is an EPCRA Extremely Hazardous Substance, so aggregate electrolyte across the fleet may trigger emergency-planning and Tier II inventory reporting thresholds",
+            "source": "EPCRA Sections 302/311/312; EPA 40 CFR parts 355 and 370 (applicability determination)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Quantity determination at fleet conversion; annual inventory reconciliation before the March 1 Tier II deadline"
+          }
+        ],
+        "graderNotes": "Must include 1910.178(g) (the specific battery-charging provision — generic 'forklift safety' is not enough), 1910.151(c) eyewash for corrosives, PPE, and HazCom. The differentiator is the environmental leg: aggregated sulfuric acid across a 40-charger fleet can cross EPCRA thresholds (EHS: TPQ 500 lb for emergency planning under Section 302; Tier II reporting threshold for EHSs is the lower of 500 lb or the TPQ) — the expected treatment is an applicability determination with a quantity count, not a flat assertion either way. Watch for: missing hydrogen ventilation; citing lithium-ion requirements (these are lead-acid); mapping everything to 45001 and missing the 14001 entry entirely."
+      }
+    },
+    {
+      "id": "legal-ledger-013",
+      "prompt": "Company profile: Aerospace coatings and surface-treatment shop in Savannah, Georgia; 70 employees. The shop has been a small quantity generator (SQG) of hazardous waste (spent solvents, paint waste), historically generating about 600 kg/month. Situation: A new defense contract will roughly triple throughput; projected hazardous waste generation is about 1,400 kg/month on a sustained basis starting next quarter. Georgia's EPD administers an authorized RCRA program. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Generator category changes from SQG to Large Quantity Generator (LQG) because sustained generation exceeds 1,000 kg/month; re-notify using the Site Identification Form (EPA Form 8700-12) before operating as an LQG",
+            "source": "EPA 40 CFR part 262 (generator categories and notification; LQG conditions at 40 CFR 262.17)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time re-notification before the category change; monthly generation-rate tracking to confirm category thereafter"
+          },
+          {
+            "requirement": "LQG accumulation conditions replace SQG conditions: 90-day accumulation limit (no 180-day allowance, no 6,000 kg cap alternative), container labeling with accumulation start dates and hazard indication, weekly inspections of central accumulation areas, satellite accumulation rules continue",
+            "source": "EPA 40 CFR 262.17 (and 40 CFR 262.15 for satellite accumulation)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Weekly documented inspections; monthly verification of accumulation-date compliance; annual comprehensive evaluation"
+          },
+          {
+            "requirement": "Full written contingency plan and emergency procedures (including submission of a quick reference guide to local emergency responders) and an emergency coordinator — the lighter SQG emergency-preparedness provisions no longer suffice",
+            "source": "EPA 40 CFR part 262 (LQG contingency plan provisions, subpart M)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Plan in place before LQG operations; review/amend on changes in operations, waste, or personnel; annual drill or plan review"
+          },
+          {
+            "requirement": "Hazardous waste personnel training program for facility personnel (classroom or on-the-job, annual review) — a formal LQG requirement",
+            "source": "EPA 40 CFR 262.17 (incorporating personnel training requirements)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Initial training within six months of assignment; annual refresher; records retained"
+          },
+          {
+            "requirement": "Biennial hazardous waste report (even-numbered years, due March 1) becomes mandatory as an LQG",
+            "source": "EPA 40 CFR 262.41",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Biennial filing cycle with Q4 data compilation in odd years"
+          },
+          {
+            "requirement": "Continue manifesting all off-site shipments and using registered transporters/designated facilities; note Georgia's authorized state program may impose additional or more stringent requirements",
+            "source": "EPA 40 CFR part 262 subpart B (manifest); state-authorized RCRA program (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Per-shipment manifest verification; annual review of state program changes"
+          }
+        ],
+        "graderNotes": "The crux is recognizing the category flip at >1,000 kg/month sustained, and enumerating what CHANGES at LQG: 90-day clock (vs 180-day), full contingency plan + quick reference guide, formal training, biennial report, weekly inspections. An answer that lists generic hazardous-waste duties without distinguishing SQG-vs-LQG deltas misses the point. Also expected: re-notification via Form 8700-12 BEFORE operating as LQG, and the monthly counting discipline as the ongoing 9.1.2 mechanism. Wrong answers: calling this 'episodic generation' (it is a sustained change, so episodic provisions do not preserve SQG status); using 2,200 lb/1,000 kg interchangeably without noting the regulatory threshold is 1,000 kg; forgetting state authorization. Mapping is ISO 14001 6.1.3 throughout (worker training on hazardous waste handling may also be cross-referenced to 45001 — acceptable, not required)."
+      }
+    },
+    {
+      "id": "legal-ledger-014",
+      "prompt": "Company profile: Regional trucking terminal outside Billings, Montana; 40 employees. Situation: The company is installing a 2,000-gallon aboveground diesel tank for fleet fueling. Existing oil storage: a 500-gallon used-oil tank, a 275-gallon heating-oil tote, and four 55-gallon drums of lube oil. A drainage ditch at the property line connects to a creek. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Prepare and implement an SPCC plan: aggregate aboveground oil storage capacity (counting only containers of 55 gallons or more: 2,000 + 500 + 275 + 220 = 2,995 gallons) now exceeds the 1,320-gallon threshold, and the ditch-to-creek pathway supports a reasonable expectation of discharge to navigable waters",
+            "source": "EPA 40 CFR part 112 (SPCC)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Plan prepared before the new tank enters service; plan review at least every five years; amend on facility changes"
+          },
+          {
+            "requirement": "The facility likely qualifies as a Tier I qualified facility (≤10,000 gallons aggregate and no single container above 5,000 gallons, absent disqualifying discharge history), allowing owner self-certification of the plan instead of a Professional Engineer certification",
+            "source": "EPA 40 CFR part 112 (qualified facility provisions)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Eligibility re-verified whenever storage capacity changes"
+          },
+          {
+            "requirement": "Implement the plan's operational controls: secondary containment/diversionary measures, tank and container inspections, security, loading/unloading procedures for fuel deliveries, and discharge response provisions",
+            "source": "EPA 40 CFR part 112 (as implemented in the facility SPCC plan)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Routine visual inspections on the schedule set by the plan (typically monthly); records retained"
+          },
+          {
+            "requirement": "Annual discharge prevention briefings/training for oil-handling personnel",
+            "source": "EPA 40 CFR part 112 (training/briefing provisions)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Annually, with records; verify in annual compliance evaluation"
+          },
+          {
+            "requirement": "Used-oil management standards continue to apply to the 500-gallon used-oil tank (labeling 'Used Oil', container condition, release response)",
+            "source": "EPA 40 CFR part 279",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Monthly area inspection; annual evaluation"
+          }
+        ],
+        "graderNotes": "Scoring hinges on the arithmetic and counting rules: only containers ≥55 gallons count; the four drums count (220 gal); total 2,995 gal exceeds 1,320 gal — the NEW tank is what crosses the threshold. The 'reasonable expectation of discharge to navigable waters' element must be addressed (the ditch/creek supplies it), not assumed silently. Tier I self-certification eligibility (≤10,000 aggregate, no container >5,000 gal) is the depth marker — requiring a PE certification without discussing qualified-facility status is a common wrong answer. Other errors: counting the drums out (they are exactly 55 gal, so they count); including containers under 55 gallons; claiming underground thresholds (42,000 gal) apply to ASTs. All mappings ISO 14001 6.1.3."
+      }
+    },
+    {
+      "id": "legal-ledger-015",
+      "prompt": "Company profile: Beverage bottling plant in Olathe, Kansas; 110 employees. Situation: After a fleet and equipment expansion, a year-end inventory shows: 14,000 pounds of propane on site for fleet fueling and heaters, and about 900 pounds of sulfuric acid contained in forklift and UPS batteries. Neither chemical previously exceeded any reporting threshold. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register — including any thresholds that are NOT crossed. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Annual Tier II hazardous chemical inventory report due March 1 covering propane (a hazardous chemical present above the 10,000-pound threshold) and sulfuric acid (an Extremely Hazardous Substance present above its Tier II threshold — the lower of 500 pounds or its TPQ)",
+            "source": "EPCRA Section 312; EPA 40 CFR part 370",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Annual inventory reconciliation in Q4; file by March 1; re-evaluate at any significant inventory change"
+          },
+          {
+            "requirement": "One-time submission of SDSs or a chemical list to the SERC/TERC, LEPC, and fire department within 90 days of first exceeding a threshold",
+            "source": "EPCRA Section 311; EPA 40 CFR part 370",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time, within 90 days of the threshold exceedance; update on new chemicals or significant changes"
+          },
+          {
+            "requirement": "EPCRA Section 302 emergency-planning notification is NOT triggered: sulfuric acid's Threshold Planning Quantity is 1,000 pounds and only about 900 pounds is present; register the obligation as evaluated-not-applicable with a re-check trigger tied to battery-fleet growth",
+            "source": "EPCRA Section 302; EPA 40 CFR part 355",
+            "isoMapping": "ISO 14001 6.1.3 (evaluated-not-applicable entry)",
+            "evaluationCadence": "Re-verify against the 1,000-pound TPQ at each inventory change and annually"
+          },
+          {
+            "requirement": "Hazard communication and PPE for employees handling battery electrolyte and propane (existing obligations affected by the larger quantities)",
+            "source": "OSHA 29 CFR 1910.1200 and 29 CFR 1910.132",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Annual HazCom audit; PPE assessment review at change"
+          }
+        ],
+        "graderNotes": "This is a three-threshold discrimination test: (1) propane at 14,000 lb exceeds the 10,000 lb Tier II threshold for ordinary hazardous chemicals — reportable; (2) sulfuric acid is an EHS, so its Tier II threshold is 500 lb (lower of 500 or TPQ) — 900 lb is reportable; (3) Section 302 emergency planning needs the full TPQ (1,000 lb for sulfuric acid) — 900 lb does NOT trigger it. An answer must get all three directions right; the most common failure is collapsing Tier II and 302 into one threshold. Also expected: the 311 one-time SDS/list submission with the 90-day clock — frequently forgotten. Credit answers that note state/local Tier II fees or portals descriptively. Watch for: 'batteries are exempt' claims (EPA's position is that sulfuric acid in batteries generally counts for EPCRA inventory purposes — the scenario is built on that premise); inventing a propane exemption."
+      }
+    },
+    {
+      "id": "legal-ledger-016",
+      "prompt": "Company profile: Scrap metal recycler in Pasadena, Texas; 35 employees. Situation: The company is opening a new 4-acre outdoor yard for receiving, sorting, shearing, and staging ferrous and nonferrous scrap. Rainfall runs off the yard to a municipal storm drain. Texas (TCEQ) administers the NPDES program (TPDES). Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-TX",
+        "expectedObligations": [
+          {
+            "requirement": "Obtain industrial stormwater discharge permit coverage before discharging: scrap recycling is a regulated industrial activity; in Texas this means coverage under the TCEQ Multi-Sector General Permit (file a Notice of Intent) or an individual permit",
+            "source": "Clean Water Act NPDES program; EPA 40 CFR 122.26 (industrial stormwater); TCEQ TPDES Multi-Sector General Permit (state-administered)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "NOI filed and coverage confirmed before yard operations begin; permit renewal per the general permit cycle"
+          },
+          {
+            "requirement": "Develop and implement a Stormwater Pollution Prevention Plan (SWPPP) with best management practices for scrap handling (fluid-bearing scrap acceptance procedures, containment, housekeeping)",
+            "source": "Multi-Sector General Permit conditions (scrap recycling sector) — descriptive",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "SWPPP complete before operations; update on facility or BMP changes; annual comprehensive review"
+          },
+          {
+            "requirement": "Conduct the permit's monitoring regime: routine facility inspections, quarterly visual assessments of stormwater discharges, and sector benchmark analytical monitoring (metals are typical benchmarks for scrap recycling)",
+            "source": "Multi-Sector General Permit monitoring conditions — descriptive",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Quarterly visual assessments and benchmark sampling per permit schedule; annual comprehensive site inspection; exceedance-triggered corrective action review"
+          },
+          {
+            "requirement": "The conditional 'no exposure' exclusion is NOT available: scrap processing and storage are outdoors and exposed to precipitation; register as evaluated-not-applicable with the basis documented",
+            "source": "EPA stormwater no-exposure exclusion provisions (40 CFR 122.26) — applicability determination",
+            "isoMapping": "ISO 14001 6.1.3 (evaluated-not-applicable entry)",
+            "evaluationCadence": "Re-evaluate only if operations are fully enclosed in the future"
+          }
+        ],
+        "graderNotes": "Required: permit coverage BEFORE discharge (NOI timing), SWPPP, and the monitoring cadence (quarterly visual + benchmark monitoring + routine inspections) — the cadence is exactly what feeds ISO 9.1.2, so a vague 'monitor stormwater' answer is weak. The state-administration point matters: Texas TPDES, not EPA, issues the permit here; an answer directing the company to EPA's federal MSGP misunderstands NPDES delegation. The no-exposure exclusion should be raised and correctly rejected. Watch for: confusing the construction general permit (for building the yard, if ≥1 acre is disturbed — actually a legitimate bonus obligation during construction; credit it) with the industrial MSGP for operations; inventing numeric effluent limits (benchmarks are not effluent limits)."
+      }
+    },
+    {
+      "id": "legal-ledger-017",
+      "prompt": "Company profile: Regional grocery chain headquartered in Ocala, Florida; 22 stores; in-house refrigeration technicians. Situation: The chain runs rack refrigeration systems with typical charges of 300-500 pounds of R-448A (an HFC blend) per store, and is planning remodels that will modify several systems. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Technicians who maintain, service, repair, or dispose of appliances must hold EPA Section 608 technician certification; refrigerant sales restrictions and required recovery/evacuation practices apply to service work",
+            "source": "Clean Air Act Section 608; EPA 40 CFR part 82, subpart F",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Certification verified at hire and tracked in the register; annual roster review"
+          },
+          {
+            "requirement": "Refrigerant leak-management duties for large appliances: calculate leak rates when refrigerant is added, repair leaks above the applicable threshold within the required period (30 days as the general rule), with follow-up verification, and retrofit/retirement planning when repairs fail; EPA's AIM Act emissions-reduction rulemaking extends appliance leak-repair obligations to HFC systems",
+            "source": "EPA 40 CFR part 82, subpart F, and EPA regulations under the AIM Act (40 CFR part 84) — describe; compliance dates and charge-size triggers per the current rules",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Leak-rate calculation at every refrigerant addition; monthly review of open leak repairs; annual program evaluation"
+          },
+          {
+            "requirement": "Service, leak-inspection, and refrigerant purchase/disposition recordkeeping for each system, retained per the applicable retention periods",
+            "source": "EPA 40 CFR part 82, subpart F (and AIM Act rules for HFC appliances) — descriptive",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Per-service-event records; quarterly completeness audit"
+          },
+          {
+            "requirement": "HFC phasedown planning: R-448A components are subject to the AIM Act HFC phasedown and technology-transition restrictions, affecting refrigerant availability/price and the remodel design choices",
+            "source": "AIM Act; EPA 40 CFR part 84 (phasedown and technology transitions) — descriptive",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Annual regulatory-change review feeding remodel/refrigerant strategy; register update on each EPA rule milestone"
+          }
+        ],
+        "graderNotes": "Historically, Section 608 leak-repair applied to ozone-depleting refrigerants, and EPA's application to HFC-only appliances has shifted across rulemakings (2016 extension, 2020 partial rollback, and AIM Act-based reinstatement with a lower charge threshold). The eval intentionally requires only the descriptive shape: certified techs, leak-rate calculation on every charge addition, threshold-triggered repair deadlines (30-day general rule), records, and AIM Act phasedown awareness. Grader should verify current charge-size triggers and leak-rate percentages independently and NOT penalize a model for reasonable, hedged statements of them — but SHOULD penalize confidently wrong specifics (e.g., claiming HFC systems are wholly unregulated, or inventing thresholds). Technician certification (608) and recovery requirements are firm and must appear. OH&S bonus: ammonia is absent here — a model adding PSM/RMP obligations for HFC racks is over-applying (neither lists R-448A)."
+      }
+    },
+    {
+      "id": "legal-ledger-018",
+      "prompt": "Company profile: Fleet maintenance garage in Springfield, Missouri; 25 employees; services a municipal-contract bus and truck fleet. Situation: A compliance review found: used motor oil stored in a 300-gallon tank, spent fluorescent lamps boxed in a corner for over a year, a shelf of used aerosol cans, drained oil filters in a drum, and a solvent parts washer whose spent solvent has never had a waste determination. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Manage used oil under the used-oil standards: containers/tanks in good condition, labeled 'Used Oil', releases cleaned up, and off-site shipment via a transporter with an EPA ID number (used oil destined for recycling is not managed as hazardous waste)",
+            "source": "EPA 40 CFR part 279",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Monthly storage-area inspection; per-shipment transporter verification"
+          },
+          {
+            "requirement": "Manage spent fluorescent lamps, batteries, and (in most states) aerosol cans as universal waste: labeled containers, closed/structurally sound, accumulation limited to one year, employee awareness training — the year-old lamp boxes are at/over the accumulation limit and must ship",
+            "source": "EPA 40 CFR part 273 (universal waste)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Accumulation-date tracking monthly; ship before the one-year limit; annual training refresh"
+          },
+          {
+            "requirement": "Complete a hazardous waste determination for the spent parts-washer solvent (potentially an F-listed spent solvent and/or ignitable D001) — an unconditional generator duty that has not been met",
+            "source": "EPA 40 CFR part 262 (waste determination duty; listings/characteristics at 40 CFR part 261)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Immediate determination; re-determine on solvent or process change; documentation retained"
+          },
+          {
+            "requirement": "Establish the facility's generator category by counting all hazardous waste generated per month (likely VSQG at this scale: up to 100 kg/month, with conditional exemptions but still requiring proper waste handling and delivery to an authorized facility)",
+            "source": "EPA 40 CFR part 262 (generator categories; VSQG conditions at 40 CFR 262.14)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Monthly generation counting; annual category confirmation"
+          },
+          {
+            "requirement": "Manage drained used oil filters per the applicable exclusion (properly gravity-drained filters are generally excluded from hazardous waste) and per any more-stringent state requirements",
+            "source": "EPA used oil filter exclusion (descriptive; state program may vary)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Practice verified in monthly inspections"
+          }
+        ],
+        "graderNotes": "The scenario plants a violation (lamps over the one-year universal-waste limit) and an unmet unconditional duty (no waste determination on the solvent) — a complete answer flags both as current non-compliances feeding the CAPA handoff, not just future obligations. The used-oil/hazardous-waste boundary (part 279 vs part 262) is the conceptual test: used oil recycled is NOT hazardous waste; spent solvent very likely IS regulated. Watch for: 'aerosols are trash' (they are universal waste federally since 2019, state adoption varies — descriptive treatment fine); ignoring generator-category counting; over-prescribing LQG-style requirements for a garage that is plausibly VSQG. Missouri specifics not required beyond 'authorized state program may be more stringent'."
+      }
+    },
+    {
+      "id": "legal-ledger-019",
+      "prompt": "Company profile: Regional homebuilder based in Marietta, Georgia; 60 employees. Situation: The company is about to clear and grade a 3.5-acre phase of a new subdivision (part of a larger 25-acre common plan of development). Georgia EPD administers the NPDES program and the state erosion and sedimentation law. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-GA",
+        "expectedObligations": [
+          {
+            "requirement": "Obtain construction stormwater general permit coverage before land disturbance: construction activity disturbing one acre or more (including smaller phases of a larger common plan of development) requires NPDES permit coverage — in Georgia, the EPD-issued construction general permit with a Notice of Intent",
+            "source": "Clean Water Act NPDES; EPA 40 CFR 122.26 (construction activity definitions); Georgia EPD construction stormwater general permit (state-administered)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "NOI filed and effective before clearing begins; coverage maintained until final stabilization and Notice of Termination"
+          },
+          {
+            "requirement": "Prepare and implement an erosion, sedimentation and pollution control plan / SWPPP with best management practices (perimeter controls, inlet protection, stabilized construction exit, concrete washout, dewatering controls)",
+            "source": "Georgia EPD general permit conditions and the Georgia Erosion and Sedimentation Act (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Plan approved before disturbance; BMPs maintained continuously; plan updated as construction phases change"
+          },
+          {
+            "requirement": "Conduct the permit's self-inspection and monitoring regime (routine inspections on the permit's schedule and after qualifying rain events; in Georgia, sampling/turbidity monitoring requirements per the permit) by qualified/certified personnel",
+            "source": "Georgia EPD construction general permit conditions (descriptive; Georgia also requires certified erosion-control personnel under state law — descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Per-permit inspection frequency plus post-rain-event inspections through final stabilization; records retained on site"
+          },
+          {
+            "requirement": "OH&S obligations of grading work travel with the project (e.g., construction training, equipment safety); if utility trenches exceed 5 feet, excavation protective systems and a competent person are required",
+            "source": "OSHA 29 CFR part 1926 (subpart P for excavations — protective systems generally required at 5 feet or more)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Daily competent-person inspections of excavations; per-phase safety verification"
+          }
+        ],
+        "graderNotes": "The applicability trap: 3.5 acres is over one acre on its own, but even a sub-acre phase would still need coverage because it is part of a larger common plan of development — a complete answer states the common-plan rule. Permit coverage must precede disturbance. Georgia specifics (EPD-issued permit, state E&S Act, certified personnel) should be present at least descriptively since the jurisdiction is given; federal-only answers are incomplete but not wrong on framework. The evaluation cadence is project-bounded: inspections until final stabilization, then NOT (register entry retires at Notice of Termination) — credit answers that model the obligation lifecycle. The excavation item tests whether the model remembers construction OH&S rides along; do not require it for a passing grade but weight it favorably."
+      }
+    },
+    {
+      "id": "legal-ledger-020",
+      "prompt": "Company profile: Data-services company in Ashburn, Virginia; 150 employees at an office/data-center campus. Situation: The company is installing a 750 kW diesel emergency standby generator with a 660-gallon belly tank. The campus already has an 800-gallon heating-oil tank. The generator will run only for outages and for periodic readiness testing/maintenance. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "New stationary compression-ignition engine must comply with the federal New Source Performance Standards: purchase an EPA-certified engine meeting the applicable emission tier, operate and maintain it per requirements, and use the required diesel fuel (ultra-low-sulfur)",
+            "source": "EPA 40 CFR part 60, subpart IIII (NSPS for stationary compression-ignition internal combustion engines)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Certification documentation verified at purchase/installation; fuel records per delivery; annual compliance evaluation"
+          },
+          {
+            "requirement": "Preserve 'emergency engine' status: non-emergency operation is limited (maintenance and readiness testing within the allowed annual hours — on the order of 100 hours/year); track run hours with a non-resettable hour meter",
+            "source": "EPA 40 CFR part 60, subpart IIII emergency-engine provisions (descriptive on exact hour allocations); NESHAP 40 CFR part 63, subpart ZZZZ is generally satisfied for new emergency engines by NSPS compliance (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Monthly run-hour log review; annual verification that testing hours stayed within limits"
+          },
+          {
+            "requirement": "State air permitting or registration for the new engine: Virginia DEQ minor new source requirements/permit exemptions must be checked before installation (a 750 kW emergency generator typically falls under state minor-source or permit-by-rule provisions, not Title V, absent other campus sources)",
+            "source": "Clean Air Act minor new source review as implemented by the Virginia DEQ (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time applicability determination and any registration before installation; re-evaluate if additional engines are added (aggregation)"
+          },
+          {
+            "requirement": "SPCC plan now required: aboveground oil storage becomes 660 + 800 = 1,460 gallons, crossing the 1,320-gallon threshold — the belly tank is what tips the facility in (assuming a reasonable expectation of discharge to navigable waters)",
+            "source": "EPA 40 CFR part 112",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Plan before the tank is filled; routine inspections per plan; five-year review"
+          },
+          {
+            "requirement": "Fuel-delivery transfer procedures and spill response for tank filling (an SPCC plan element; also good-practice fire code compliance — descriptive)",
+            "source": "EPA 40 CFR part 112 (loading/unloading provisions); state/local fire code (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Per-delivery procedures; annual training briefing"
+          }
+        ],
+        "graderNotes": "Two threshold catches drive scoring: (1) the SPCC aggregation — 660 + 800 = 1,460 > 1,320 gallons, so the generator project triggers SPCC even though neither tank alone would; (2) emergency-engine status depends on limiting non-emergency hours (run-hour tracking is the 9.1.2 mechanism). NSPS subpart IIII applies because the engine is new; a model citing only NESHAP ZZZZ for a new engine should note that compliance is generally achieved via IIII. Title V should NOT be asserted for this facility. Watch for: demand-response operation treated as allowed emergency use (risky/limited — hedged treatment is correct); forgetting the existing heating-oil tank; inventing Virginia permit numbers. Bonus (not required): diesel exhaust/CO hazards to nearby air intakes as an OH&S consideration."
+      }
+    },
+    {
+      "id": "legal-ledger-021",
+      "prompt": "Company profile: Industrial coatings applicator in Elkhart, Indiana; 18 full-time employees; NAICS 332812 (metal coating and allied services). Situation: Annual purchasing records show the facility used about 28,000 pounds of toluene in coatings last calendar year, most of which evaporates during application and curing. The company has never filed toxics release reporting. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Annual Toxics Release Inventory (TRI) reporting for toluene, due July 1: the facility is in a TRI-covered sector (fabricated metals/coating), has 10 or more full-time employee equivalents, and its toluene activity (28,000 lb) exceeds the applicable activity threshold whether classified as 'processed' (25,000 lb) or 'otherwise used' (10,000 lb)",
+            "source": "EPCRA Section 313; EPA 40 CFR part 372 (TRI)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Annual threshold determination from purchasing/usage records in Q1; Form R (or eligibility check for Form A) filed by July 1; release estimates re-derived each year"
+          },
+          {
+            "requirement": "Evaluate prior-year filing gaps: the threshold appears to have been exceeded without reporting, so past-year obligations and voluntary disclosure options should be assessed (non-compliance routed to corrective action)",
+            "source": "EPCRA Section 313 (descriptive; EPA audit policy considerations — descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time look-back determination; document in register with CAPA linkage"
+          },
+          {
+            "requirement": "VOC air emissions from 28,000 lb/yr of evaporating toluene require a state air permitting applicability determination (registration, minor source permit, or exemption per Indiana's air rules)",
+            "source": "Clean Air Act as implemented by Indiana's air permitting program (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time determination; ongoing usage tracking against any permit thresholds; monthly VOC purchase log"
+          },
+          {
+            "requirement": "Tier II inventory applicability check for toluene storage quantities on site (10,000 lb threshold at any one time — distinct from the annual-usage TRI thresholds)",
+            "source": "EPCRA Section 312; EPA 40 CFR part 370 (applicability determination)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Peak on-hand inventory reviewed annually before March 1"
+          },
+          {
+            "requirement": "Employee exposure obligations for toluene (HazCom; exposure assessment against the OSHA PEL)",
+            "source": "OSHA 29 CFR 1910.1200 and 29 CFR 1910.1000",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Exposure assessment on record; annual HazCom audit"
+          }
+        ],
+        "graderNotes": "The core discrimination is between three different threshold systems for the same chemical: TRI activity thresholds (25,000 lb processed / 10,000 lb otherwise used — ANNUAL activity), Tier II (10,000 lb PRESENT at any one time), and the OSHA PEL (airborne exposure). The scenario is engineered so TRI applies under either activity classification — an answer need not resolve processed-vs-otherwise-used, but must not confuse TRI with Tier II. Employee-count test: 18 full-time employees ≥ 10 FTE, covered NAICS — both prongs must be checked, not assumed. The look-back/non-filing point tests whether the model connects the register to compliance-evaluation findings and CAPA (per the LegalLedger handoff design). Watch for: 'toluene evaporates so nothing is released' (evaporative emissions ARE reportable releases); claiming TRI is quarterly; July 1 deadline wrong."
+      }
+    },
+    {
+      "id": "legal-ledger-022",
+      "prompt": "Company profile: Convenience store operator in Las Cruces, New Mexico; 15 employees across two stores. Situation: The company is replacing two aging 10,000-gallon gasoline underground storage tanks at one store with new double-walled tanks, and permanently closing the old ones. New Mexico administers a state UST program. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "medium",
+        "jurisdiction": "US-NM",
+        "expectedObligations": [
+          {
+            "requirement": "New tanks must meet UST performance standards: spill prevention (spill buckets), overfill prevention, corrosion protection, and release detection from day one; notify/register the new systems with the state program before or upon installation per state procedure",
+            "source": "EPA 40 CFR part 280 (as implemented by the New Mexico state UST program)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Installation verification and registration at commissioning; release-detection results reviewed monthly"
+          },
+          {
+            "requirement": "Permanent closure of the old tanks: empty and clean, close per required methods (removal or approved in-place closure), conduct a site assessment for contamination, and notify the implementing agency within the required advance window; report and address any discovered releases",
+            "source": "EPA 40 CFR part 280 (closure and release response subparts, state-administered)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time closure process with documented site assessment; contingent release-response obligations if contamination is found"
+          },
+          {
+            "requirement": "Ongoing operation and maintenance: designated Class A/B/C operators trained per requirements; periodic walkthrough inspections (30-day cycle) and periodic equipment testing (e.g., annual release-detection equipment test, spill bucket and overfill testing on the required multi-year cycles)",
+            "source": "EPA 40 CFR part 280 (operator training and 2015 O&M provisions — descriptive on exact test intervals)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "30-day walkthroughs; annual and multi-year test calendar tracked in the register; operator-training records reviewed annually"
+          },
+          {
+            "requirement": "Financial responsibility for taking corrective action and compensating third parties for UST releases (state fund participation and/or insurance per New Mexico program)",
+            "source": "EPA 40 CFR part 280 financial responsibility provisions (descriptive; state fund mechanics vary)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Coverage verified annually and at each renewal"
+          },
+          {
+            "requirement": "Worker safety during tank removal (contractor operation): excavation protection, flammable-atmosphere control, and contractor-management duties for the store operator",
+            "source": "OSHA 29 CFR part 1926 (excavation subpart P; contractor's obligations) and OSH Act 5(a)(1) for host duties — descriptive",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Pre-job contractor verification; project-duration site checks"
+          }
+        ],
+        "graderNotes": "Complete answers cover the full lifecycle: new-system standards + registration, closure with site assessment (the most-missed element — closure is not just pulling tanks), the O&M cadence (30-day walkthroughs, annual/multi-year testing — this maps directly onto 9.1.2), operator training A/B/C, and financial responsibility. State administration should be acknowledged (New Mexico program, possible state fund). The contractor-safety item is a ride-along; credit but do not require detail. Watch for: applying the 42,000-gallon SPCC underground threshold here (SPCC generally defers to part 280-regulated USTs — conflating SPCC and UST programs is an error); missing the release-response contingency if the site assessment finds contamination."
+      }
+    },
+    {
+      "id": "legal-ledger-023",
+      "prompt": "Company profile: Rural water utility near Cullman, Alabama; 20 employees. Situation: The treatment plant stores chlorine in 150-pound cylinders, typically 1,200 pounds total on site. Last night a valve failure released an estimated 25 pounds of chlorine gas over about an hour before operators isolated the cylinder; no injuries, but a nearby road was briefly closed. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register — including reporting duties already triggered and any thresholds NOT crossed. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "The release exceeded chlorine's 10-pound reportable quantity: immediate notification to the National Response Center was required under CERCLA",
+            "source": "CERCLA Section 103; EPA 40 CFR part 302 (chlorine RQ = 10 lb)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Event-triggered (immediate); post-incident verification that notification was made and documented"
+          },
+          {
+            "requirement": "EPCRA release notification: immediate notice to the State Emergency Response Commission and Local Emergency Planning Committee (chlorine is an EHS and the release left the facility), followed by a written follow-up emergency notice",
+            "source": "EPCRA Section 304; EPA 40 CFR part 355",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Event-triggered; follow-up report tracked to completion; notification procedure tested annually"
+          },
+          {
+            "requirement": "Ongoing emergency-planning status: chlorine's Threshold Planning Quantity is 100 pounds, and 1,200 pounds is routinely on site, so the facility is (and should already have been) subject to EPCRA 302 planning coordination with the LEPC and Tier II reporting (EHS threshold: lower of 500 lb or the TPQ, i.e., 100 lb)",
+            "source": "EPCRA Sections 302 and 312; EPA 40 CFR parts 355 and 370",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Verify the 302 designation and current Tier II filing now; annual March 1 Tier II cycle; re-notify on quantity changes"
+          },
+          {
+            "requirement": "OSHA Process Safety Management does NOT apply: PSM's threshold quantity for chlorine is 1,500 pounds and the site holds 1,200 pounds — register as evaluated-not-applicable with a re-check trigger on inventory increases",
+            "source": "OSHA 29 CFR 1910.119 (Appendix A threshold for chlorine: 1,500 lb)",
+            "isoMapping": "ISO 45001 6.1.3 (evaluated-not-applicable entry)",
+            "evaluationCadence": "Inventory-change-triggered re-evaluation; annual confirmation"
+          },
+          {
+            "requirement": "EPA Risk Management Program does NOT apply: the RMP threshold for chlorine is 2,500 pounds — but the Clean Air Act Section 112(r)(1) general duty to prevent and mitigate accidental releases applies regardless, as does the OSH Act General Duty Clause for employee exposure",
+            "source": "EPA 40 CFR part 68 (chlorine TQ 2,500 lb); CAA Section 112(r)(1); OSH Act Section 5(a)(1)",
+            "isoMapping": "ISO 14001 6.1.3 and ISO 45001 6.1.3",
+            "evaluationCadence": "Applicability re-checked on inventory change; general-duty prevention measures evaluated annually"
+          },
+          {
+            "requirement": "If the utility's own employees respond to chlorine releases, emergency-response training and procedures apply (HAZWOPER emergency response provisions), including respiratory protection for response",
+            "source": "OSHA 29 CFR 1910.120(q) and 29 CFR 1910.134",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Training currency verified annually; post-incident critique after each response"
+          }
+        ],
+        "graderNotes": "Four-threshold discrimination on one chemical: RQ 10 lb (crossed — CERCLA/NRC and EPCRA 304 both fire), TPQ 100 lb (long since crossed by storage — 302 planning and Tier II at the 100 lb EHS threshold), PSM TQ 1,500 lb (NOT crossed at 1,200 lb), RMP TQ 2,500 lb (NOT crossed). A passing answer gets the two 'applies' and two 'does not apply' calls right AND notes the general-duty backstops (CAA 112(r)(1), OSH Act 5(a)(1)). The most common failure: asserting PSM/RMP apply because chlorine is dangerous, or missing the immediate-notification duties already triggered. Also credit: register entries for not-applicable items retained with re-check triggers (LegalLedger register design); water-system-specific state notification duties (descriptive). The 1910.120(q) item distinguishes strong answers."
+      }
+    },
+    {
+      "id": "legal-ledger-024",
+      "prompt": "Company profile: Precision machine shop in Erie, Pennsylvania; 30 employees; a very small quantity generator (VSQG) normally generating about 40 kg/month of hazardous waste. Situation: The shop plans a one-time decommissioning and cleanout of an old vapor degreaser containing trichloroethylene (TCE); the cleanout will generate roughly 1,600 kg of TCE still bottoms and spent solvent in a single month, then generation returns to normal. Pennsylvania DEP administers an authorized RCRA program. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Hazardous waste determination: spent TCE from degreasing is a listed halogenated spent solvent (F001); still bottoms from its recovery are also regulated",
+            "source": "EPA 40 CFR part 261 (F001 spent solvent listing); determination duty under 40 CFR part 262",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time determination documented before the cleanout"
+          },
+          {
+            "requirement": "Without special provisions, generating 1,600 kg in one month would make the shop a Large Quantity Generator for that month (over 1,000 kg/month), with full LQG conditions; however, the episodic generation provisions allow a VSQG to maintain its category for a planned episodic event by notifying the state in advance (at least 30 days), obtaining an EPA ID number, managing the waste per the episodic conditions, and moving it off site within the allowed period",
+            "source": "EPA 40 CFR part 262, subpart L (episodic generation) — as adopted by the authorized state program",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Advance notification tracked; waste shipped within the episodic window (60 days); one planned event per calendar year — event calendar tracked in the register"
+          },
+          {
+            "requirement": "Confirm Pennsylvania has adopted the episodic generation provisions (authorized states must be checked; if not adopted, the shop must comply with the higher generator category for that month)",
+            "source": "State-authorized RCRA program status (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time verification with PA DEP before scheduling the event"
+          },
+          {
+            "requirement": "Manifest the shipment with a registered hazardous waste transporter to a designated facility; land disposal restriction notifications accompany the waste",
+            "source": "EPA 40 CFR part 262, subpart B (manifest); 40 CFR part 268 (land disposal restrictions) — descriptive",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Per-shipment; manifest copies reconciled on return"
+          },
+          {
+            "requirement": "Worker protection during the cleanout: TCE has a specific OSHA substance standard consideration (PEL under Z-tables), and tank entry may constitute permit-required confined space entry with LOTO",
+            "source": "OSHA 29 CFR 1910.1000 (TCE PEL); 29 CFR 1910.146 and 29 CFR 1910.147 if entry is required",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Pre-job hazard assessment and permits; post-job review"
+          }
+        ],
+        "graderNotes": "The center of gravity is the episodic-generation reasoning: (1) recognize that 1,600 kg in one month means LQG for that month by default (NOT SQG — over 1,000 kg is LQG; answers saying 'becomes an SQG' fail the threshold logic); (2) know that the Generator Improvements Rule's episodic provisions can preserve VSQG status for a planned event with 30-day advance notice, EPA ID, and timely shipment; (3) flag state adoption as a check, since authorized states adopt at different times. F001 identification matters (TCE degreasing is the canonical F001). The OH&S ride-along (confined space/LOTO for tank cleanout, TCE exposure) marks a strong answer. Grader note: verify the episodic-event details (30-day notice, 60-day removal, one planned event/year) against current 40 CFR part 262 subpart L text."
+      }
+    },
+    {
+      "id": "legal-ledger-025",
+      "prompt": "Company profile: Electronics hardware manufacturer in Warren, Michigan; 130 employees. Situation: The company is adding an in-house decorative chromium and nickel electroplating line, including acid pickling, plating tanks, rinse cascades, and an on-site wastewater pretreatment system that will discharge to the municipal sewer (POTW) and produce a filter-press sludge. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Wastewater treatment sludge from electroplating operations is listed hazardous waste F006; generating it changes the facility's hazardous waste profile and generator category must be re-determined (accumulation, manifesting, reporting per category)",
+            "source": "EPA 40 CFR part 261 (F006 listing) and 40 CFR part 262 (generator standards)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Waste determination before first sludge generation; monthly generation counting; category-driven inspection and reporting cadence"
+          },
+          {
+            "requirement": "Pretreatment obligations for discharge to the POTW: categorical effluent standards for metal finishing plus the POTW's local limits and an industrial user permit/authorization from the POTW, with self-monitoring and reporting per the permit",
+            "source": "Clean Water Act pretreatment program: EPA 40 CFR part 403 (general pretreatment) and 40 CFR part 433 (metal finishing categorical standards)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Permit obtained before discharge; self-monitoring/sampling and periodic compliance reports per permit schedule (commonly semiannual, permit-specific)"
+          },
+          {
+            "requirement": "Air toxics requirements for chromium electroplating: the NESHAP for chromium electroplating and anodizing applies (including decorative chromium), requiring emission limits or management practices such as fume suppressants/controls, initial notification and compliance demonstrations, and ongoing monitoring/recordkeeping; state air permitting applicability must also be determined",
+            "source": "EPA 40 CFR part 63, subpart N (chromium electroplating/anodizing NESHAP); state minor-source air permitting (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Initial notification and compliance demonstration at startup; ongoing surface-tension/parameter monitoring and records per the subpart; annual compliance certification per permit"
+          },
+          {
+            "requirement": "Hexavalent chromium worker-exposure obligations: initial exposure determination against the Cr(VI) action level (2.5 µg/m3) and PEL (5 µg/m3), engineering controls, regulated areas/hygiene as triggered, medical surveillance per the standard's triggers",
+            "source": "OSHA 29 CFR 1910.1026",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Baseline exposure determination at startup; periodic monitoring per the standard; annual program review"
+          },
+          {
+            "requirement": "Hazard communication and PPE for plating chemicals (chromic acid, nickel salts, acids): SDSs, labeling, training, certified PPE hazard assessment, eyewash/shower availability for corrosives",
+            "source": "OSHA 29 CFR 1910.1200, 29 CFR 1910.132/1910.133, and 29 CFR 1910.151(c)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Before startup; quarterly area inspections; annual HazCom/PPE review"
+          },
+          {
+            "requirement": "EPCRA inventory and release reporting applicability: plating-bath acids and metal compounds may trigger Tier II (including EHS thresholds for some acids) and TRI reporting for chromium/nickel compounds (which carry TRI reporting obligations; certain metal categories have specific threshold treatments)",
+            "source": "EPCRA Sections 311/312/313; EPA 40 CFR parts 370 and 372 (applicability determination)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Initial applicability determination at startup; annual Tier II (March 1) and TRI (July 1) threshold reviews"
+          }
+        ],
+        "graderNotes": "This is the flagship mixed scenario; a complete answer must span at least: F006 (the canonical plating listing — its absence is a major miss), pretreatment (part 403 + part 433 categorical standards + POTW permit), the chromium electroplating NESHAP (subpart N applies to decorative chrome too), and 1910.1026 with correct AL/PEL numbers. HazCom/PPE/eyewash and EPCRA applicability round it out. Both ISO 14001 6.1.3 AND 45001 6.1.3 mappings are required — an answer mapping everything to one standard fails the framing. Watch for: claiming discharge to sewer needs an NPDES permit (it needs pretreatment/industrial-user authorization, not a direct-discharge NPDES permit); missing the sludge entirely; PSM assertions (typical decorative plating chemicals are not PSM-listed at these scales — hedged treatment acceptable). Grader should verify subpart N's coverage details for decorative chromium and the current compliance-demonstration specifics."
+      }
+    },
+    {
+      "id": "legal-ledger-026",
+      "prompt": "Company profile: Custom woodworking shop in Durango, Colorado; 9 employees (peak 9 last year). Inventory audit: about 300 gallons total of finishes, stains, and oils (three 55-gallon drums, the rest in 1-5 gallon containers); maximum chemical on hand about 2,000 pounds of any one product; roughly 50 kg/month of hazardous waste (spent solvent, finish waste). Situation: A consultant's proposal claims the shop needs an SPCC plan, Tier II reports, a full LQG hazardous waste program, and complete OSHA 300 recordkeeping, quoting $30,000 to implement. Ask: Evaluate each claimed obligation and identify what actually applies. For each obligation: state the requirement, its source, its applicability to this company (including non-applicability with basis), the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "SPCC plan NOT required: aggregate aboveground OIL storage counting only containers of 55 gallons and larger is about 165 gallons (three drums) — far below the 1,320-gallon threshold; finishes/stains count only to the extent they are oils, and the small containers do not count",
+            "source": "EPA 40 CFR part 112 (applicability)",
+            "isoMapping": "ISO 14001 6.1.3 (evaluated-not-applicable entry)",
+            "evaluationCadence": "Annual re-verification of oil container inventory; re-evaluate on any bulk tank purchase"
+          },
+          {
+            "requirement": "Tier II reporting NOT required: no hazardous chemical reaches the 10,000-pound threshold (max ~2,000 lb) and no Extremely Hazardous Substance is present at or above its lower EHS threshold on the facts given",
+            "source": "EPCRA Section 312; EPA 40 CFR part 370 (applicability)",
+            "isoMapping": "ISO 14001 6.1.3 (evaluated-not-applicable entry)",
+            "evaluationCadence": "Annual peak-inventory review before March 1; re-evaluate on inventory growth or new EHS chemicals"
+          },
+          {
+            "requirement": "LQG program NOT required — the shop is a VSQG at ~50 kg/month (≤100 kg/month): conditions are waste identification, accumulation limits (no more than 1,000 kg on site to preserve VSQG status), and delivery to an authorized/permitted facility; no manifest, contingency plan, biennial report, or formal training program is federally required at VSQG",
+            "source": "EPA 40 CFR 262.14 (VSQG conditions); category thresholds at 40 CFR part 262 — Colorado's state program may be more stringent (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Monthly generation counting to confirm category; annual review; state-rule check once"
+          },
+          {
+            "requirement": "OSHA 300/301/300A recordkeeping NOT required: 9 employees peak in the prior calendar year is within the 10-or-fewer partial exemption — but severe-injury REPORTING (fatality 8 hours; hospitalization/amputation/eye loss 24 hours) still applies",
+            "source": "OSHA 29 CFR 1904.1 (exemption) and 29 CFR 1904.39 (reporting still applies)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Headcount re-verified each January; reporting procedure verified annually"
+          },
+          {
+            "requirement": "What DOES apply and should anchor the register: hazard communication (29 CFR 1910.1200), machine guarding (29 CFR 1910.212), PPE hazard assessment (29 CFR 1910.132), spray/flammable finishing controls if spraying (29 CFR 1910.107, 1910.106), portable fire extinguisher inspections (29 CFR 1910.157), wood dust housekeeping and combustible dust control via the General Duty Clause (OSH Act 5(a)(1))",
+            "source": "OSHA 29 CFR 1910 (as cited); OSH Act Section 5(a)(1)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Monthly extinguisher visual checks and annual maintenance; quarterly housekeeping/guarding inspections; annual HazCom and PPE review"
+          }
+        ],
+        "graderNotes": "Pure applicability-reasoning item; the correct verdict is that ALL FOUR consultant claims are wrong on the facts (SPCC no, Tier II no, LQG no — VSQG yes with light conditions, 300-log no — but 1904.39 reporting yes), while a real set of OH&S obligations does apply. Scoring: each of the four rejections requires the correct threshold and arithmetic (165 countable oil gallons vs 1,320; 2,000 lb vs 10,000; 50 kg vs 100/1,000 kg tiers; 9 employees vs 10). Register philosophy matters: not-applicable entries stay in the register with basis and re-check triggers (headcount, inventory, waste-rate changes). Watch for: models deferring to the consultant; counting the 1-5 gallon containers toward SPCC; conflating VSQG accumulation cap (1,000 kg) with the monthly rate; forgetting that severe-injury reporting survives the recordkeeping exemption."
+      }
+    },
+    {
+      "id": "legal-ledger-027",
+      "prompt": "Company profile: Specialty chemicals distributor headquartered in Houston, Texas, with warehouses in Texas and New Jersey; 220 employees; repackages and distributes industrial chemicals. Situation: OSHA published a final rule updating the Hazard Communication Standard (aligning 29 CFR 1910.1200 with a newer revision of the UN GHS), with phased compliance dates for substances and mixtures over the coming years. The regulatory-change feed flagged it. Ask: Identify the compliance obligations this regulatory change creates or affects for the compliance-obligations register, and how the register itself must respond. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "Register maintenance duty: ISO 45001 6.1.3 requires determining and keeping up to date the legal and other requirements — the amended HazCom rule must be entered as a change to the existing 1910.1200 register entries, with affected processes, sites, and roles identified and compliance-date milestones recorded",
+            "source": "OSHA 29 CFR 1910.1200 (as amended, 2024 final rule); ISO 45001 6.1.3 up-to-date requirement (framing, not verbatim)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Register updated within the organization's regulatory-change SLA; evaluation milestones set at each phased compliance date"
+          },
+          {
+            "requirement": "As a distributor/repackager: reclassify hazards and update labels and SDSs for shipped containers to the amended criteria and formats by the applicable substance and mixture compliance dates (distributor-specific shipping deadlines follow the manufacturer/importer dates in the rule)",
+            "source": "OSHA 29 CFR 1910.1200 (classification, labels, SDS duties of manufacturers/importers/distributors, as amended)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Milestone-based evaluation before each compliance date: sample-based label/SDS audits per product family; full conformance verification at each deadline"
+          },
+          {
+            "requirement": "As an employer: update the written HazCom program, workplace labeling, and employee training to cover new or changed label elements and SDS format changes at both warehouses",
+            "source": "OSHA 29 CFR 1910.1200 (employer duties, as amended)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Training on new elements completed by the applicable employer-facing dates; annual HazCom audit updated to the new criteria"
+          },
+          {
+            "requirement": "Small-container labeling provisions in the amended rule may relieve or change duties for repackaged small containers — an applicability determination for the repackaging lines is required",
+            "source": "OSHA 29 CFR 1910.1200 (amended small-container label provisions) — descriptive",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "One-time determination per packaging line; verify at first post-change label run"
+          },
+          {
+            "requirement": "State-plan check: the New Jersey warehouse is under federal OSHA for private employers, but any state right-to-know or labeling overlays should be re-verified as part of the change assessment (descriptive)",
+            "source": "State right-to-know laws (descriptive)",
+            "isoMapping": "ISO 45001 6.1.3 (other requirements)",
+            "evaluationCadence": "One-time verification during the change assessment"
+          }
+        ],
+        "graderNotes": "This item tests the regulatory-change WORKFLOW, not chemistry: the register entry for 1910.1200 must be versioned/updated, impacted obligations re-linked to processes and sites, and 9.1.2 evaluations scheduled against the rule's phased compliance dates (substances first, mixtures later — dates span roughly 2026-2028). Grader: verify the exact compliance dates from the 2024 final rule; a model should either state them correctly or hedge — confidently wrong dates are penalized. The distributor-vs-employer duality is the second axis: shipped-container/SDS duties vs workplace program/training duties — an answer covering only the employer side is half-complete. Watch for: models treating this as a brand-new obligation rather than a change to an existing register entry; inventing a GHS revision number without hedging; missing the milestone-based evaluation cadence."
+      }
+    },
+    {
+      "id": "legal-ledger-028",
+      "prompt": "Company profile: Furniture manufacturer in Hickory, North Carolina; 75 employees. Situation: The company is installing a new enclosed spray-finishing booth for solvent-borne lacquers and sealers; projected coating usage implies roughly 8 tons per year of VOC emissions potential. The change adds spray operations, flammable liquid storage, spent solvent and lacquer waste, and used booth filters. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "State air permitting applicability determination before construction: ~8 tons/yr VOC typically lands in state minor-source/registration territory (North Carolina DAQ), and wood-furniture surface-coating air toxics rules must be checked for applicability; permit or exemption documented before the booth operates",
+            "source": "Clean Air Act minor new source review as implemented by the state (descriptive); EPA wood furniture surface-coating NESHAP applicability check (descriptive — major-source-dependent)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time pre-construction determination; monthly coating/VOC usage log against any permit limits; annual emissions statement per state requirements"
+          },
+          {
+            "requirement": "Spray-finishing safety: booth construction, ventilation, ignition source control, residue management, and no-smoking provisions",
+            "source": "OSHA 29 CFR 1910.107",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Booth verification at commissioning; monthly filter/deposit inspections"
+          },
+          {
+            "requirement": "Flammable liquids storage and handling for lacquers/solvents (cabinets, quantity limits, bonding/grounding for transfers)",
+            "source": "OSHA 29 CFR 1910.106",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Storage verified at rollout; monthly fire-safety inspections"
+          },
+          {
+            "requirement": "Respiratory protection and PPE for sprayers pending exposure assessment; hazard communication updates for the new coatings",
+            "source": "OSHA 29 CFR 1910.134, 29 CFR 1910.132, 29 CFR 1910.1200",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Exposure assessment at startup; annual fit testing if respirators required; annual HazCom audit"
+          },
+          {
+            "requirement": "Hazardous waste determinations for spent solvents (F003/F005 listings are typical for lacquer solvents such as acetone/toluene/MEK blends, plus D001 ignitability), waste coatings, and booth filters; recount generator category with the new waste streams",
+            "source": "EPA 40 CFR parts 261 and 262",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Determinations before first disposal; monthly generation counting; category-driven cadence thereafter"
+          },
+          {
+            "requirement": "Solvent-contaminated wipes/rags may qualify for the conditional exclusions from hazardous waste (accumulation, container, labeling, and no-free-liquids conditions) — an applicability determination that reduces burden if the conditions are met",
+            "source": "EPA solvent-contaminated wipes conditional exclusion (40 CFR part 261 provisions) — descriptive",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time determination; monthly verification of exclusion conditions"
+          }
+        ],
+        "graderNotes": "Balanced mixed scenario: the answer must carry both chains — OH&S (1910.107 booth, 1910.106 flammables, respirators/HazCom) and environmental (air permitting determination BEFORE construction, waste determinations with F003/F005 + D001, wipes exclusion). Pre-construction timing on the air side is a key correctness point (permit-then-build, not build-then-permit). The wood-furniture NESHAP is major-source dependent — expected treatment is a hedged applicability check, not assertion. Watch for: Title V claims at 8 tpy (wrong absent other large sources); mapping the booth safety items to 14001; forgetting booth filters as a waste stream; asserting specific F-listings without knowing the actual solvent constituents (hedged listing logic is acceptable and preferred)."
+      }
+    },
+    {
+      "id": "legal-ledger-029",
+      "prompt": "Company profile: Packaging manufacturer headquartered in Dayton, Ohio; 400 employees company-wide. Situation: The company just closed the acquisition of a corrugated-packaging plant in Tacoma, Washington (180 employees). The Tacoma plant holds a state air operating permit (synthetic minor), is a Large Quantity Generator of hazardous waste, files Tier II annually, and has an industrial stormwater permit. Washington runs its own OSHA-approved state plan (DOSH) and its own authorized environmental programs. The corporate register was built for Ohio (federal OSHA) sites. Ask: Identify the compliance obligations the acquisition creates or affects and how the register must be restructured. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-WA",
+        "expectedObligations": [
+          {
+            "requirement": "OH&S register re-baseline: Washington is a state-plan state — the Tacoma plant is regulated by Washington DOSH under state rules (WAC), which can differ from and exceed federal OSHA; the register's OSHA citations must be swapped/verified for Washington equivalents",
+            "source": "Washington State Plan (DOSH; Washington Administrative Code) — descriptive",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "One-time re-baseline within the integration window; ongoing Washington regulatory-change monitoring"
+          },
+          {
+            "requirement": "Ownership-change notifications and permit updates: air operating permit (transfer/ownership-change notice to the state permitting authority), industrial stormwater permit (permittee/NOI update), and hazardous waste Site ID form update for the ownership change (EPA Form 8700-12)",
+            "source": "State air and water permit transfer provisions (descriptive); EPA 40 CFR part 262 (Site ID notification for LQG ownership/contact changes)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "One-time filings within each program's required window after closing; confirmation letters tracked in the register"
+          },
+          {
+            "requirement": "Continuity of the acquired plant's ongoing obligations without gap: LQG conditions (90-day accumulation, weekly inspections, contingency plan updated with new owner/emergency contacts, biennial report), Tier II (update facility ownership/contact information; next March 1 filing), synthetic-minor permit limits (emissions caps that keep the plant below major-source thresholds must keep being met and monitored)",
+            "source": "EPA 40 CFR part 262 (LQG); EPCRA Section 312 / 40 CFR part 370; state air operating permit conditions (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "No-gap verification at closing; then each obligation's native cadence (weekly inspections, annual Tier II, permit monitoring/reporting schedule)"
+          },
+          {
+            "requirement": "SPCC and stormwater plan updates: facility plans (SPCC plan if applicable, SWPPP) must be updated for the new owner/management structure and re-signed/re-certified as the plan provisions require",
+            "source": "EPA 40 CFR part 112 (plan amendments — descriptive on amendment type); stormwater general permit SWPPP conditions (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Plan updates during integration; then native review cycles (SPCC five-year review; SWPPP annual review)"
+          },
+          {
+            "requirement": "Baseline evaluation of compliance for the acquired site: a full initial 9.1.2 evaluation of the inherited register (permits, waste, reporting, OH&S programs) to establish compliance status under new ownership, with findings routed to corrective action",
+            "source": "ISO 14001 / ISO 45001 9.1.2 (evaluation process — framing); due-diligence follow-through (descriptive)",
+            "isoMapping": "ISO 14001 6.1.3 and ISO 45001 6.1.3 (register consolidation), evaluated via 9.1.2",
+            "evaluationCadence": "Baseline evaluation within a defined window post-closing (e.g., 90 days); then per-obligation cadences; first integrated management-review input at next cycle"
+          }
+        ],
+        "graderNotes": "Integration-architecture item. Four required moves: (1) state-plan recognition — Washington DOSH/WAC replaces federal OSHA citations (an answer applying 29 CFR to Tacoma as the operative source misses the point; federal references as 'at least as effective as' context is fine); (2) ownership-change notifications across programs (air permit transfer, stormwater permittee update, RCRA Site ID update); (3) no-gap continuity of LQG/Tier II/synthetic-minor obligations with their native cadences; (4) a baseline 9.1.2 evaluation of the acquired register with CAPA routing. Synthetic-minor status is a subtle test: the emissions caps are what keep the plant out of Title V, so exceeding them post-acquisition is a real risk worth naming. Watch for: treating the acquisition as creating brand-new permits (they transfer/update, not reissue from scratch — program-specific, hedged treatment fine); ignoring Washington's authorized/more-stringent environmental programs (e.g., state dangerous-waste rules are broader than federal RCRA — credit if mentioned)."
+      }
+    },
+    {
+      "id": "legal-ledger-030",
+      "prompt": "Company profile: Cold-storage and food logistics operator in Grand Island, Nebraska; 90 employees. Situation: The company is expanding its anhydrous ammonia refrigeration system from 8,000 pounds to approximately 14,000 pounds of ammonia charge to serve a new freezer wing. The company already files Tier II for the ammonia and coordinates with the LEPC. Ask: Identify the compliance obligations this expansion creates or affects for the compliance-obligations register. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+      "metadata": {
+        "difficulty": "hard",
+        "jurisdiction": "US-federal",
+        "expectedObligations": [
+          {
+            "requirement": "OSHA Process Safety Management now applies: anhydrous ammonia's PSM threshold quantity is 10,000 pounds, and the expansion crosses it — a full PSM program is required (process safety information, process hazard analysis, operating procedures, training, mechanical integrity, management of change, pre-startup safety review, incident investigation, emergency planning, compliance audits)",
+            "source": "OSHA 29 CFR 1910.119 (Appendix A: anhydrous ammonia TQ 10,000 lb)",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Program in place at/before crossing the threshold; PHA revalidated at least every five years; compliance audits at least every three years; MOC on every process change; mechanical-integrity inspections per program schedule"
+          },
+          {
+            "requirement": "EPA Risk Management Program now applies: ammonia's RMP threshold is also 10,000 pounds — develop and submit a Risk Management Plan (likely Program 3 given PSM coverage), including hazard assessment with worst-case release analysis, prevention program, and emergency response coordination",
+            "source": "EPA 40 CFR part 68 (anhydrous ammonia TQ 10,000 lb)",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "RMP submitted before exceeding the threshold quantity in the process; plan updated and resubmitted at least every five years and on qualifying changes; coordination with local responders per the rule's cadence"
+          },
+          {
+            "requirement": "Existing EPCRA obligations continue and must be updated for the new quantity: ammonia is an EHS (TPQ 500 lb — long since exceeded), so Section 302 planning coordination and Tier II reporting (EHS threshold 500 lb) continue with updated quantities and system details",
+            "source": "EPCRA Sections 302/312; EPA 40 CFR parts 355 and 370",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "LEPC notified of the significant change; Tier II updated at the next March 1 filing; re-verify at further inventory changes"
+          },
+          {
+            "requirement": "Release-reporting readiness: ammonia's reportable quantity is 100 pounds — CERCLA/NRC and EPCRA 304 notification procedures must be scaled to the larger system and drilled",
+            "source": "CERCLA Section 103 / EPA 40 CFR part 302 (ammonia RQ 100 lb); EPCRA Section 304 / 40 CFR part 355",
+            "isoMapping": "ISO 14001 6.1.3",
+            "evaluationCadence": "Procedure verified now; annual notification drill; event-triggered execution"
+          },
+          {
+            "requirement": "Emergency response posture for employees: decide response-vs-evacuate strategy; if employees will respond to ammonia releases, HAZWOPER emergency response training, an emergency response plan, and respiratory protection apply",
+            "source": "OSHA 29 CFR 1910.120(q); 29 CFR 1910.134; CAA Section 112(r)(1) general duty as backstop",
+            "isoMapping": "ISO 45001 6.1.3",
+            "evaluationCadence": "Training currency annually; drills per plan; post-incident critiques"
+          }
+        ],
+        "graderNotes": "The crux: 8,000 → 14,000 lb crosses BOTH the OSHA PSM and EPA RMP thresholds (both 10,000 lb for anhydrous ammonia) — a passing answer must catch both, and the strongest answers note the register previously (correctly) carried PSM/RMP as evaluated-not-applicable at 8,000 lb and now flips them. Program 3 RMP follows from PSM coverage. The layered cadences are the 9.1.2 payoff: PHA 5-year revalidation, PSM audit 3-year, RMP 5-year resubmission, Tier II annual, MOC continuous — credit answers that lay out this calendar. Existing EPCRA duties (302/Tier II at the 500-lb EHS threshold) were already active and must not be presented as new. Watch for: only citing one of PSM/RMP; wrong TQs; claiming ammonia refrigeration is exempt from PSM (industry petitions notwithstanding, covered processes over TQ are in scope — hedged discussion of enforcement policy acceptable); ignoring the response-vs-evacuate decision that determines 1910.120(q) applicability."
+      }
+    }
+  ]
+}

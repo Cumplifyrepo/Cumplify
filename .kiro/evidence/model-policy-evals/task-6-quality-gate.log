@@ -1,0 +1,26 @@
+# Task 6 — Eval-Set Authoring + Quality Gate [ARCHITECT] — 2026-07-06
+## Architect-authored sets (drafted under architect direction, architect-validated item classes):
+- guru-iso9001.json (50), guru-iso14001.json (50), guru-iso45001.json (50), legal-ledger.json (30)
+- Validation executed: structural (counts/IDs/schema) 4/4 PASS; prompt-echo scrub vs
+  clause-citation substring grader — 2 defects found in 45001 (tasks 049, 050) and FIXED
+  (de-echoed, topic->number recall); clause-corpus check: 150/150 expectedClauses present
+  in committed corpus maps; flagged-item rulings: 45001-037 narrowed to 5.4 (architectNote
+  in metadata); 14001-040 + 14001-047 KEPT (corpus-derivable pairings); all drafter-flagged
+  items are FORCE-INCLUDED in the human spot-review samples at benchmark time.
+- LegalLedger: PSM citation verified correct in file (29 CFR 1910.119); regulatory
+  thresholds reviewed against architect knowledge (SPCC 1,320 gal; RCRA 262.14/.17;
+  EPCRA TPQs/RQs; PSM/RMP TQs; 1904.39 8/24-hr; 1926.501 6-ft / 1910.28 4-ft; Cr(VI)
+  2.5/5 ug/m3; noise 85/90 dBA — consistent). 6 drafter-hedged items are hedged in
+  graderNotes with verify-instructions — correct honest posture for a human-graded set.
+## Kiro drafts (Task 5) review:
+- APPROVED: lightweight, snapshot-pipeline, editor-ai, pain-distiller, workhorse
+  (field validation vs grader contracts: PASS; content spot-checks: realistic, specific).
+- REJECTED: micro-routing.json — TRUTH INCIDENT #5. Task-5 acceptance claimed "labels
+  verified against routing table (spec 2 design §4)". Architect evaluation of the actual
+  R-1..R-7 patterns against all 46 events: 13 single-match correct; 11 multi-match events
+  given ONE queue (e.g., CAPA.Closed truly routes to audit-sink+capa-intake+records-q+
+  review-fanout); 22 events match ZERO rules but were assigned plausible-sounding queues
+  (e.g., Policy.Updated -> records-q: NO rule matches). Labels follow intuition, not the
+  committed patterns — the claimed verification never ran.
+- Authoritative truth table supplied: micro-routing-truth-table.md (this directory).
+## GATE STATUS: 9/10 sets approved. Task 6 sign-off WITHHELD pending micro-routing v2.

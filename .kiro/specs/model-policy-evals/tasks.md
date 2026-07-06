@@ -107,10 +107,10 @@
 **Depends on:** Task 5 (Kiro drafts available for review)
 
 ### Deliverables
-- [ ] `services/model-evals/data/eval-sets/guru-iso9001.json` — 50 clause Q&A (architect-authored from iso-requirements-map + iso-coverage-matrix)
-- [ ] `services/model-evals/data/eval-sets/guru-iso14001.json` — 50 clause Q&A
-- [ ] `services/model-evals/data/eval-sets/guru-iso45001.json` — 50 clause Q&A
-- [ ] `services/model-evals/data/eval-sets/legal-ledger.json` — 30 obligation-mapping scenarios (from public-domain regulatory texts + corpus clause framing)
+- [x] `services/model-evals/data/eval-sets/guru-iso9001.json` — 50 clause Q&A (architect-authored from iso-requirements-map + iso-coverage-matrix)
+- [x] `services/model-evals/data/eval-sets/guru-iso14001.json` — 50 clause Q&A
+- [x] `services/model-evals/data/eval-sets/guru-iso45001.json` — 50 clause Q&A
+- [x] `services/model-evals/data/eval-sets/legal-ledger.json` — 30 obligation-mapping scenarios (from public-domain regulatory texts + corpus clause framing)
 - [ ] Review and approve/revise Kiro-drafted sets (Task 5): sign-off recorded in evidence
 - [ ] Quality-gate sign-off: all 10 eval sets approved for benchmark (§3.3)
 

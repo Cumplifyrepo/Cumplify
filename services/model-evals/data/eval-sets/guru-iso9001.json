@@ -1,0 +1,509 @@
+{
+  "seat": "guru",
+  "version": "1.0",
+  "taskCount": 50,
+  "gradingMethod": "clause-citation",
+  "notes": "ISO 9001:2015. Ground truth = committed corpus maps (iso-requirements-map, iso-coverage-matrix), NOT official standard text. Architect-validated.",
+  "tasks": [
+    {
+      "id": "guru-9001-001",
+      "prompt": "I run QC at a small machine shop. Second shift found a tray of turned shafts that failed final inspection, and I'm worried they'll get mixed back in with good stock and shipped. Which ISO 9001 clause requires us to identify and control these parts so they don't reach the customer?",
+      "expectedClauses": ["ISO 9001 8.7"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Outputs that do not conform to requirements must be identified and controlled to prevent their unintended use or delivery, with appropriate action taken and records of the nonconformity and disposition retained."
+      }
+    },
+    {
+      "id": "guru-9001-002",
+      "prompt": "I'm putting together the agenda for our annual management review meeting. Which ISO 9001 clause tells me the specific input topics that have to be covered in the review?",
+      "expectedClauses": ["ISO 9001 9.3.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Management review must consider a defined set of inputs, such as status of prior actions, relevant changes, performance results, audit results, customer satisfaction, supplier performance, resource adequacy, effectiveness of risk actions, and improvement opportunities."
+      }
+    },
+    {
+      "id": "guru-9001-003",
+      "prompt": "Right now our work instructions sit on a shared drive where anyone can edit or delete them, and outdated printouts float around the shop floor. Which ISO 9001 clause requires us to control the availability, protection, distribution, storage and retention of our QMS documents?",
+      "expectedClauses": ["ISO 9001 7.5.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Documented information must be controlled so it is available and suitable where needed and adequately protected, covering distribution, access, storage, retention and disposition."
+      }
+    },
+    {
+      "id": "guru-9001-004",
+      "prompt": "We're a food processor and our auditor asked how the thermometers and scales we use for product checks tie back to a recognized reference. Which ISO 9001 clause requires calibration that is traceable to national or international measurement standards?",
+      "expectedClauses": ["ISO 9001 7.1.5"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Monitoring and measuring resources must be valid and reliable, and where measurement traceability is required (sub-clause 7.1.5.2), equipment must be calibrated against standards traceable to national or international measurement standards, with records retained."
+      }
+    },
+    {
+      "id": "guru-9001-005",
+      "prompt": "We're standing up a supplier qualification program for our castings vendors. Which ISO 9001 clause requires us to define criteria for evaluating, selecting, monitoring and re-evaluating external providers?",
+      "expectedClauses": ["ISO 9001 8.4.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "The organization must ensure externally provided items conform to requirements and must apply defined criteria for the evaluation, selection, monitoring of performance and re-evaluation of external providers, keeping records."
+      }
+    },
+    {
+      "id": "guru-9001-006",
+      "prompt": "Our quality objectives are vague statements like 'improve quality' with no numbers, owners or deadlines. Which ISO 9001 clause requires objectives to be measurable, established at relevant functions and levels, and backed by a plan to achieve them?",
+      "expectedClauses": ["ISO 9001 6.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Measurable quality objectives must be established at relevant functions and levels, with planning that covers what will be done, resources, responsibility, timing and how results are evaluated."
+      }
+    },
+    {
+      "id": "guru-9001-007",
+      "prompt": "An aerospace customer wants us to trace every machined part back to its raw-material heat lot from receiving through shipment. Which ISO 9001 clause covers identification and traceability of outputs?",
+      "expectedClauses": ["ISO 9001 8.5.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Outputs must be identified by suitable means, their status with respect to monitoring requirements tracked, and unique identification controlled and recorded where traceability is required (e.g., lot or serial)."
+      }
+    },
+    {
+      "id": "guru-9001-008",
+      "prompt": "A customer has loaned us inspection fixtures and consigned material to use on their job. Which ISO 9001 clause requires us to take care of property belonging to customers or external providers?",
+      "expectedClauses": ["ISO 9001 8.5.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Care must be exercised with property belonging to customers or external providers while under the organization's control, with the owner notified and records kept if it is lost, damaged or found unsuitable."
+      }
+    },
+    {
+      "id": "guru-9001-009",
+      "prompt": "Our sales team keeps accepting rush orders that production can't actually deliver to spec or on time. Which ISO 9001 clause requires us to review the requirements and confirm we can meet them before committing to supply an order?",
+      "expectedClauses": ["ISO 9001 8.2.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Before committing to supply, the organization must review its ability to meet the requirements for the products and services being offered, and retain records of the review."
+      }
+    },
+    {
+      "id": "guru-9001-010",
+      "prompt": "Pallets sometimes leave our dock before all the inspection paperwork is complete. Which ISO 9001 clause requires us to verify requirements are met before releasing product, keep evidence of conformity, and be able to trace who authorized the release?",
+      "expectedClauses": ["ISO 9001 8.6"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Products and services must not be released until planned verification confirms requirements are met, with retained evidence of conformity and traceability to the person authorizing release."
+      }
+    },
+    {
+      "id": "guru-9001-011",
+      "prompt": "We're a software company kicking off development of a new product module. Which ISO 9001 clause requires us to plan the design stages, reviews, verification and validation activities, and assign responsibilities up front?",
+      "expectedClauses": ["ISO 9001 8.3.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Design and development planning must determine the stages, the reviews, verification and validation activities required, and the responsibilities and resources involved."
+      }
+    },
+    {
+      "id": "guru-9001-012",
+      "prompt": "Our most experienced toolmaker retires in six months and most of his setup know-how exists only in his head. Which ISO 9001 clause requires us to determine and maintain the organizational knowledge our processes depend on?",
+      "expectedClauses": ["ISO 9001 7.1.6"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "The organization must determine and maintain the knowledge necessary for the operation of its processes and for achieving conformity, such as capturing lessons learned."
+      }
+    },
+    {
+      "id": "guru-9001-013",
+      "prompt": "We keep having disconnects about who tells whom when quality issues come up, internally and with customers. Which ISO 9001 clause requires us to determine what gets communicated about the QMS, when, to whom, how, and by whom?",
+      "expectedClauses": ["ISO 9001 7.4"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "The organization must determine the internal and external communications relevant to the QMS, including what to communicate, when, with whom, how, and who communicates."
+      }
+    },
+    {
+      "id": "guru-9001-014",
+      "prompt": "After a reorg, nobody at our plant is sure who has the authority to stop a shipment or approve a deviation. Which ISO 9001 clause requires that responsibilities and authorities for QMS-relevant roles be assigned, communicated and understood?",
+      "expectedClauses": ["ISO 9001 5.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "Top management must ensure that responsibilities and authorities for relevant roles are assigned, communicated and understood within the organization."
+      }
+    },
+    {
+      "id": "guru-9001-015",
+      "prompt": "We're an HVAC contractor offering a two-year warranty plus ongoing maintenance agreements after installation. Which ISO 9001 clause covers meeting our post-delivery obligations like warranty and maintenance?",
+      "expectedClauses": ["ISO 9001 8.5.5"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "clause-identification",
+        "paraphrasedRequirement": "The organization must meet the requirements for post-delivery activities associated with its products and services, such as warranty, maintenance, recycling or disposal obligations."
+      }
+    },
+    {
+      "id": "guru-9001-016",
+      "prompt": "We're preparing for certification at our injection-molding plant. What does ISO 9001 require of our internal audit program — what is it for and what must we keep?",
+      "expectedClauses": ["ISO 9001 9.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "Internal audits must be conducted at planned intervals to determine whether the QMS conforms to requirements and is effectively implemented and maintained, with results reported and records retained."
+      }
+    },
+    {
+      "id": "guru-9001-017",
+      "prompt": "We're drafting our first quality policy for our sheet-metal fabrication business. What does ISO 9001 require the policy to be, and what do we have to do with it once it's written?",
+      "expectedClauses": ["ISO 9001 5.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "Top management must establish a quality policy appropriate to the organization (5.2.1) and communicate it so it is understood and applied, and available to interested parties as documented information (5.2.2)."
+      }
+    },
+    {
+      "id": "guru-9001-018",
+      "prompt": "When we create a brand-new procedure or revise an existing one, what does ISO 9001 require us to do before it goes live?",
+      "expectedClauses": ["ISO 9001 7.5.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "When creating and updating documented information, the organization must ensure appropriate identification and description, suitable format and media, and review and approval for suitability and adequacy."
+      }
+    },
+    {
+      "id": "guru-9001-019",
+      "prompt": "What does ISO 9001 require of us regarding the competence of people whose work affects our quality performance?",
+      "expectedClauses": ["ISO 9001 7.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The organization must determine the necessary competence, ensure persons are competent, take actions to acquire missing competence where needed, and retain evidence of competence."
+      }
+    },
+    {
+      "id": "guru-9001-020",
+      "prompt": "We're a bakery supplying grocery chains, and customers reach us by phone, email and through sales reps. What does ISO 9001 require our customer communication process to cover?",
+      "expectedClauses": ["ISO 9001 8.2.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "Customer communication must cover product/service information, enquiries and contracts, customer feedback including complaints, handling of customer property, and contingency actions where relevant."
+      }
+    },
+    {
+      "id": "guru-9001-021",
+      "prompt": "What does ISO 9001 require us to do about risks and opportunities when we plan our quality management system?",
+      "expectedClauses": ["ISO 9001 6.1"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The organization must determine the risks and opportunities that need to be addressed to give assurance the QMS can achieve its intended results, and plan actions to address them and evaluate their effectiveness."
+      }
+    },
+    {
+      "id": "guru-9001-022",
+      "prompt": "We're reorganizing our production flow and shifting responsibilities between departments. What does ISO 9001 require when we need to make changes to the QMS?",
+      "expectedClauses": ["ISO 9001 6.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "Changes to the QMS must be carried out in a planned manner, considering their purpose and potential consequences, the integrity of the QMS, the availability of resources, and the allocation of responsibilities and authorities."
+      }
+    },
+    {
+      "id": "guru-9001-023",
+      "prompt": "Before our software team starts building a new feature set, what does ISO 9001 require us to nail down as design and development inputs?",
+      "expectedClauses": ["ISO 9001 8.3.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The essential requirements must be determined as design inputs, including functional/performance needs, statutory and regulatory requirements, information from previous similar designs, and potential consequences of failure."
+      }
+    },
+    {
+      "id": "guru-9001-024",
+      "prompt": "What does ISO 9001 require us to do about customer satisfaction — is sending an annual survey the whole obligation?",
+      "expectedClauses": ["ISO 9001 9.1.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The organization must monitor customers' perception of the degree to which their needs and expectations have been fulfilled, determining how that information is obtained and reviewed (surveys, feedback, complaints, trends)."
+      }
+    },
+    {
+      "id": "guru-9001-025",
+      "prompt": "Our quality data just piles up in spreadsheets. What does ISO 9001 require us to analyse and evaluate that data for?",
+      "expectedClauses": ["ISO 9001 9.1.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "Data must be analysed and evaluated to assess conformity of products and services, customer satisfaction, QMS performance, external provider performance, and the effectiveness of actions taken on risks and opportunities."
+      }
+    },
+    {
+      "id": "guru-9001-026",
+      "prompt": "We distribute chilled food products. What does ISO 9001 require about preserving product during production and through to delivery?",
+      "expectedClauses": ["ISO 9001 8.5.4"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "Outputs must be preserved during production and service provision to the extent necessary to maintain conformity, covering controls such as handling, storage and packaging."
+      }
+    },
+    {
+      "id": "guru-9001-027",
+      "prompt": "Before I send a purchase order to our new plating vendor, what does ISO 9001 require me to communicate to them?",
+      "expectedClauses": ["ISO 9001 8.4.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The organization must communicate its requirements to external providers — including what is being provided and any competence/qualification requirements — and ensure the requirements are adequate before they are communicated."
+      }
+    },
+    {
+      "id": "guru-9001-028",
+      "prompt": "What does ISO 9001 require regarding continual improvement — what exactly are we supposed to be improving?",
+      "expectedClauses": ["ISO 9001 10.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The organization must continually improve the suitability, adequacy and effectiveness of the QMS, drawing on analysis results, CAPA effectiveness and management review outputs."
+      }
+    },
+    {
+      "id": "guru-9001-029",
+      "prompt": "We're budgeting next year's capital expenditure at our machining plant. What does ISO 9001 require regarding infrastructure like buildings, machines and IT systems?",
+      "expectedClauses": ["ISO 9001 7.1.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The organization must determine, provide and maintain the infrastructure necessary for the operation of its processes and to achieve conformity of products and services."
+      }
+    },
+    {
+      "id": "guru-9001-030",
+      "prompt": "We don't do any design — customers hand us complete drawings. What does ISO 9001 require when we define the scope of our QMS and want to leave design out?",
+      "expectedClauses": ["ISO 9001 4.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "requirement-content",
+        "paraphrasedRequirement": "The organization must determine the boundaries and applicability of the QMS, document the scope including products/services covered, and justify any requirement it determines is not applicable."
+      }
+    },
+    {
+      "id": "guru-9001-031",
+      "prompt": "We're a machine shop. A customer just returned 200 shafts that are out of tolerance, and some suspect parts may already be at their assembly plant. I need to deal with the returned and suspect parts, and also make sure this stops happening. Which ISO 9001 clauses govern those two obligations?",
+      "expectedClauses": ["ISO 9001 8.7", "ISO 9001 10.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Nonconforming outputs must be identified, controlled and dispositioned to prevent unintended use or delivery (8.7); the nonconformity must also be reacted to with cause evaluation, corrective action and effectiveness review (10.2)."
+      }
+    },
+    {
+      "id": "guru-9001-032",
+      "prompt": "At our food plant, the weekly check found that the thermometer used for cooking-temperature verification is three weeks past its calibration due date and reads two degrees off. Which ISO 9001 clauses govern the instrument problem and what we must do about the product measured with it?",
+      "expectedClauses": ["ISO 9001 7.1.5", "ISO 9001 8.7"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Monitoring and measuring resources must be valid and calibrated with traceability, including a recall/assessment workflow when equipment is found out of calibration (7.1.5); product whose conformity is now in doubt must be controlled as potentially nonconforming output (8.7)."
+      }
+    },
+    {
+      "id": "guru-9001-033",
+      "prompt": "On our construction site, a foreman assigned a newly hired welder to structural welds and we can't produce any qualification or training evidence for him. Which ISO 9001 clause would an auditor write this finding against?",
+      "expectedClauses": ["ISO 9001 7.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Persons doing work under the organization's control must be competent on the basis of education, training or experience, with documented evidence of competence retained."
+      }
+    },
+    {
+      "id": "guru-9001-034",
+      "prompt": "Midway through a software project, our customer changed several agreed requirements by email. The spec was never updated and half the dev team kept building to the old version. Which ISO 9001 clause governs how changes to product or service requirements must be handled?",
+      "expectedClauses": ["ISO 9001 8.2.4"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "When requirements for products and services are changed, relevant documented information must be amended and relevant persons made aware of the changed requirements."
+      }
+    },
+    {
+      "id": "guru-9001-035",
+      "prompt": "We dropped and cracked a checking fixture that our customer loaned us for their job. What does ISO 9001 oblige us to do, and under which clause?",
+      "expectedClauses": ["ISO 9001 8.5.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Care must be exercised with customer property; when it is lost, damaged or found unsuitable for use, the customer must be notified and records of the condition/loss retained."
+      }
+    },
+    {
+      "id": "guru-9001-036",
+      "prompt": "Our food plant outsources nightly sanitation to a contract cleaning company, and their work directly affects our product conformity. Which ISO 9001 clause governs how we must control this externally provided process?",
+      "expectedClauses": ["ISO 9001 8.4"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Externally provided processes, products and services must be ensured to conform, with defined criteria for provider evaluation, selection and monitoring (8.4.1) and a defined type and extent of control over the provider and its outputs (8.4.2)."
+      }
+    },
+    {
+      "id": "guru-9001-037",
+      "prompt": "Our certification audit is next month and the auditor will ask for evidence that top management actually reviewed the QMS this year. Which ISO 9001 clause is she checking against?",
+      "expectedClauses": ["ISO 9001 9.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Top management must review the QMS at planned intervals, considering defined inputs and producing decisions and actions as outputs, with documented results such as minutes and action items."
+      }
+    },
+    {
+      "id": "guru-9001-038",
+      "prompt": "Customer complaints at our plastics plant have risen three quarters in a row. We log each complaint, but nothing else happens. Beyond the logging, which ISO 9001 clauses require us to track how customers perceive our performance and to act on the causes of the complaints?",
+      "expectedClauses": ["ISO 9001 9.1.2", "ISO 9001 10.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Customer perception of requirement fulfilment must be monitored and trended (9.1.2), and nonconformities such as complaints require evaluation of causes, corrective action and effectiveness review (10.2)."
+      }
+    },
+    {
+      "id": "guru-9001-039",
+      "prompt": "Night shift shipped two pallets before final inspection was completed or signed off. The parts might be fine, but nobody verified them and nobody authorized the release. Which ISO 9001 clause did we breach?",
+      "expectedClauses": ["ISO 9001 8.6"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Planned verification arrangements must be satisfactorily completed before release, with retained evidence of conformity and traceability to the person who authorized the release."
+      }
+    },
+    {
+      "id": "guru-9001-040",
+      "prompt": "Our general manager says quality is 'the quality manager's job' — he skips management reviews and rejected funding for QMS resources. Which ISO 9001 clause makes top management personally accountable for the QMS and its effectiveness?",
+      "expectedClauses": ["ISO 9001 5.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Top management must demonstrate leadership and commitment with respect to the QMS — including participating in reviews, allocating resources, and ensuring customer focus — rather than delegating accountability away."
+      }
+    },
+    {
+      "id": "guru-9001-041",
+      "prompt": "Two heats of 4140 bar stock got mixed together on the rack and we can no longer tell which bar came from which heat — our customer requires mill-cert traceability per lot. Which ISO 9001 clause covers this failure?",
+      "expectedClauses": ["ISO 9001 8.5.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "Where traceability is required, the unique identification of outputs must be controlled and recorded, and outputs identified by suitable means throughout production."
+      }
+    },
+    {
+      "id": "guru-9001-042",
+      "prompt": "Our company doubled in headcount and everything runs on tribal knowledge — no one has defined how our processes connect, who owns them, or what criteria and KPIs they run to. Which ISO 9001 clause requires us to determine our QMS processes, their sequence and interactions, owners and criteria?",
+      "expectedClauses": ["ISO 9001 4.4"],
+      "metadata": {
+        "difficulty": "medium",
+        "questionType": "scenario",
+        "paraphrasedRequirement": "The organization must establish, implement, maintain and continually improve the QMS, determining its processes with their inputs, outputs, sequence, interactions, criteria, KPIs, resources, owners and risks."
+      }
+    },
+    {
+      "id": "guru-9001-043",
+      "prompt": "Our supervisor scrapped a batch of defective brackets, logged it, and closed the record as 'corrective action complete.' The auditor disagreed with that closure. Which ISO 9001 clause actually covers scrapping and dispositioning the defective parts themselves, and which one covers eliminating the root cause so the problem can't recur?",
+      "expectedClauses": ["ISO 9001 8.7", "ISO 9001 10.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Disposition of the defective outputs themselves (correct, segregate, return, concession) belongs to control of nonconforming outputs (8.7); eliminating the cause via root-cause analysis, corrective action and effectiveness verification is 10.2 — scrapping alone is not corrective action."
+      }
+    },
+    {
+      "id": "guru-9001-044",
+      "prompt": "HR says our operators are covered because everyone signed an acknowledgement of the quality policy during onboarding. I don't think a signature proves someone can actually do the job. Which ISO 9001 clause governs evidence of competence, and which separate clause governs awareness of the policy and objectives?",
+      "expectedClauses": ["ISO 9001 7.2", "ISO 9001 7.3"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Competence (7.2) requires determining necessary competence, ensuring it via education/training/experience, and retaining evidence; awareness (7.3) requires persons to know the policy, relevant objectives, their contribution, and the implications of nonconformity — the two are distinct requirements."
+      }
+    },
+    {
+      "id": "guru-9001-045",
+      "prompt": "I'm building our context analysis. Rising steel prices and a tight labor market feel like one bucket, while our biggest customer's new expectation for digital certificates feels like a different one. Which ISO 9001 clause covers internal and external issues, and which covers the requirements of interested parties?",
+      "expectedClauses": ["ISO 9001 4.1", "ISO 9001 4.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Determining external and internal issues relevant to the QMS purpose and strategic direction is 4.1 (context register); identifying interested parties and their relevant requirements is 4.2 (interested-parties register) — related but distinct registers."
+      }
+    },
+    {
+      "id": "guru-9001-046",
+      "prompt": "We monitor process KPIs monthly and leadership sees the dashboards, so our operations director claims internal audits are redundant. Which ISO 9001 clause covers deciding what to monitor, measure and evaluate, and which separate clause requires planned internal audits to check that the QMS conforms and is effectively implemented?",
+      "expectedClauses": ["ISO 9001 9.1", "ISO 9001 9.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Determining what/how/when to monitor, measure, analyse and evaluate performance is 9.1 (9.1.1 general); conducting planned internal audits of QMS conformity and effective implementation is the separate requirement in 9.2 — KPI monitoring does not replace auditing."
+      }
+    },
+    {
+      "id": "guru-9001-047",
+      "prompt": "We send parts out for heat treating. A colleague insists outsourced processes are simply part of our operational planning clause and need nothing more. Which ISO 9001 clause specifically governs the evaluation, monitoring and controls we must apply to an external provider like our heat treater?",
+      "expectedClauses": ["ISO 9001 8.4"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Operational planning (8.1) notes that outsourced processes must be controlled, but the governing requirements for externally provided processes — conformity assurance, evaluation/selection/monitoring criteria, and the type and extent of control — sit in 8.4."
+      }
+    },
+    {
+      "id": "guru-9001-048",
+      "prompt": "We faithfully log and answer every customer complaint, and my boss says that means customer satisfaction is fully covered. Which ISO 9001 clause covers the complaint and feedback communication channel, and which separate clause requires us to monitor how customers perceive our performance?",
+      "expectedClauses": ["ISO 9001 8.2.1", "ISO 9001 9.1.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Handling customer feedback and complaints is part of customer communication (8.2.1); monitoring customers' perception of whether their needs and expectations are fulfilled is the distinct requirement in 9.1.2 — complaint intake alone does not satisfy it."
+      }
+    },
+    {
+      "id": "guru-9001-049",
+      "prompt": "We adjusted the curing-oven temperature profile on one product line. Our quality engineer opened a full QMS change plan under the planning-of-changes clause, but this feels like a production-level change. Which ISO 9001 clause actually governs reviewing and controlling changes within production and service provision?",
+      "expectedClauses": ["ISO 9001 8.5.6"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Changes affecting production or service provision must be reviewed and controlled to the extent needed for continuing conformity, with records retained, under 8.5.6 — distinct from 6.3, which governs planned changes to the QMS itself."
+      }
+    },
+    {
+      "id": "guru-9001-050",
+      "prompt": "An operator submitted a kaizen idea to cut setup time — there's no nonconformity or complaint behind it. My colleague wants to force it through our CAPA process under 10.2. Which ISO 9001 clause actually governs determining and selecting improvement opportunities like this one?",
+      "expectedClauses": ["ISO 9001 10.1"],
+      "metadata": {
+        "difficulty": "hard",
+        "questionType": "near-miss-distinction",
+        "paraphrasedRequirement": "Determining and selecting opportunities for improvement (to meet requirements and enhance customer satisfaction) is 10.1; the corrective-action machinery of 10.2 is triggered by nonconformities, not by standalone improvement ideas."
+      }
+    }
+  ]
+}

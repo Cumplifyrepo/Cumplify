@@ -1,0 +1,509 @@
+{
+  "seat": "guru",
+  "version": "1.0",
+  "taskCount": 50,
+  "gradingMethod": "clause-citation",
+  "notes": "ISO 14001:2015. Ground truth = committed corpus maps (iso-requirements-map, iso-coverage-matrix), NOT official standard text. Architect-validated.",
+  "tasks": [
+    {
+      "id": "guru-14001-001",
+      "prompt": "We're a 40-person metal plating shop just starting an EMS. Which ISO 14001 clause requires us to work out how our activities, products, and services interact with the environment, and to decide which of those interactions actually matter?",
+      "expectedClauses": ["ISO 14001 6.1.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "6.1.2 requires determining the environmental aspects of activities, products, and services and their impacts, and identifying significant aspects using defined criteria."
+      }
+    },
+    {
+      "id": "guru-14001-002",
+      "prompt": "I'm the EHS manager at a chemical distributor and need to build a legal register. Which ISO 14001 clause requires us to determine the compliance obligations (legal and other requirements) that apply to our environmental aspects and keep access to them?",
+      "expectedClauses": ["ISO 14001 6.1.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "6.1.3 requires determining and maintaining access to the compliance obligations connected to the organization's environmental aspects."
+      }
+    },
+    {
+      "id": "guru-14001-003",
+      "prompt": "Which ISO 14001 clause requires us to have processes in place for preparing for and responding to potential environmental emergencies like spills or fires?",
+      "expectedClauses": ["ISO 14001 8.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "8.2 requires establishing processes to prepare for and respond to potential environmental emergency situations."
+      }
+    },
+    {
+      "id": "guru-14001-004",
+      "prompt": "Beyond just tracking which regulations apply to us, which ISO 14001 clause requires us to periodically check whether we are actually meeting our compliance obligations?",
+      "expectedClauses": ["ISO 14001 9.1.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "9.1.2 requires a process to evaluate fulfilment of compliance obligations and to maintain knowledge and understanding of compliance status."
+      }
+    },
+    {
+      "id": "guru-14001-005",
+      "prompt": "Which ISO 14001 clause requires top management to establish an environmental policy containing specific mandatory commitments?",
+      "expectedClauses": ["ISO 14001 5.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "5.2 requires an environmental policy committing to protection of the environment (including pollution prevention), fulfilment of compliance obligations, and continual improvement."
+      }
+    },
+    {
+      "id": "guru-14001-006",
+      "prompt": "We operate three sites but only want to certify one of them. Which ISO 14001 clause requires us to define the boundaries and applicability of our EMS?",
+      "expectedClauses": ["ISO 14001 4.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "4.3 requires determining EMS boundaries and applicability, considering context, obligations, units and activities, and documenting the scope."
+      }
+    },
+    {
+      "id": "guru-14001-007",
+      "prompt": "Which ISO 14001 clause requires us to set environmental objectives at relevant functions and levels and to plan how we'll achieve them?",
+      "expectedClauses": ["ISO 14001 6.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "6.2 requires establishing environmental objectives consistent with the policy and planning the actions, resources, responsibilities, timeframes, and evaluation to achieve them."
+      }
+    },
+    {
+      "id": "guru-14001-008",
+      "prompt": "Which ISO 14001 clause requires us to run planned internal audits to check that the EMS conforms and is effectively implemented?",
+      "expectedClauses": ["ISO 14001 9.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "9.2 requires conducting internal audits per a planned audit programme to verify EMS conformity and effectiveness."
+      }
+    },
+    {
+      "id": "guru-14001-009",
+      "prompt": "Which ISO 14001 clause requires our top management to step back at planned intervals and review the whole EMS with defined inputs and outputs?",
+      "expectedClauses": ["ISO 14001 9.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "9.3 requires top management to review the EMS at planned intervals using defined inputs and producing defined outputs and decisions."
+      }
+    },
+    {
+      "id": "guru-14001-010",
+      "prompt": "A drum of waste coolant was shipped out without the proper paperwork. Which ISO 14001 clause governs how we react to a nonconformity like this and prevent it from recurring?",
+      "expectedClauses": ["ISO 14001 10.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "10.2 requires reacting to a nonconformity, evaluating and eliminating its causes, reviewing effectiveness of the corrective action, and retaining records."
+      }
+    },
+    {
+      "id": "guru-14001-011",
+      "prompt": "Which ISO 14001 clause requires that shop-floor employees actually know our significant environmental aspects and how their own work affects them?",
+      "expectedClauses": ["ISO 14001 7.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "7.3 requires persons to be aware of the environmental policy, significant aspects relevant to them, their contribution, and the implications of not conforming."
+      }
+    },
+    {
+      "id": "guru-14001-012",
+      "prompt": "Which ISO 14001 clause requires us to make sure the people whose work affects our environmental performance are competent, and to keep evidence of that competence?",
+      "expectedClauses": ["ISO 14001 7.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "7.2 requires determining and ensuring the competence of persons affecting environmental performance and compliance obligations, with retained evidence."
+      }
+    },
+    {
+      "id": "guru-14001-013",
+      "prompt": "Our EMS procedures live in shared folders with no version control and no approval trail. Which ISO 14001 clause covers how EMS documents and records must be created, updated, and controlled?",
+      "expectedClauses": ["ISO 14001 7.5"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "7.5 requires maintaining the documented information the EMS needs and controlling its creation, update, review/approval, distribution, retention, and disposition."
+      }
+    },
+    {
+      "id": "guru-14001-014",
+      "prompt": "Which ISO 14001 clause requires us to examine the external and internal issues relevant to our EMS, including environmental conditions like climate and resource availability that can affect us or be affected by us?",
+      "expectedClauses": ["ISO 14001 4.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "4.1 requires determining internal and external issues relevant to the EMS, including environmental conditions affected by or affecting the organization."
+      }
+    },
+    {
+      "id": "guru-14001-015",
+      "prompt": "A community group has asked for our emissions data. Within ISO 14001's communication requirements, which specific sub-clause covers how we decide what to communicate externally in line with our compliance obligations?",
+      "expectedClauses": ["ISO 14001 7.4.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "clause-identification",
+        "paraphrasedRequirement": "7.4.3 requires communicating externally as established by the organization's communication process and as required by its compliance obligations."
+      }
+    },
+    {
+      "id": "guru-14001-016",
+      "prompt": "In plain terms, what does ISO 14001 require us to do about compliance obligations at the planning stage, and which clause covers it?",
+      "expectedClauses": ["ISO 14001 6.1.3"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "6.1.3 requires determining the compliance obligations related to environmental aspects, having access to them, and taking them into account in the EMS."
+      }
+    },
+    {
+      "id": "guru-14001-017",
+      "prompt": "We're drafting our environmental policy. What commitments does ISO 14001 say the policy must contain, and which clause sets that requirement?",
+      "expectedClauses": ["ISO 14001 5.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "5.2 requires the policy to commit to protection of the environment including pollution prevention, fulfilment of compliance obligations, and continual improvement."
+      }
+    },
+    {
+      "id": "guru-14001-018",
+      "prompt": "Once we've listed all our environmental aspects, what does ISO 14001 require us to do to decide which ones are significant, and under which clause?",
+      "expectedClauses": ["ISO 14001 6.1.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "6.1.2 requires evaluating aspects against defined criteria to determine which are significant and flagging those significant aspects."
+      }
+    },
+    {
+      "id": "guru-14001-019",
+      "prompt": "What does ISO 14001's operational planning and control requirement demand beyond writing procedures — for example around outsourced processes, planned changes, and lifecycle stages? Cite the clause.",
+      "expectedClauses": ["ISO 14001 8.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "8.1 requires establishing and controlling the processes that address significant aspects, obligations, and risks, controlling planned changes and outsourced processes, and considering a lifecycle perspective."
+      }
+    },
+    {
+      "id": "guru-14001-020",
+      "prompt": "We have a written emergency response plan sitting in a binder. What else does ISO 14001's emergency preparedness requirement expect us to do with it, and which clause is that?",
+      "expectedClauses": ["ISO 14001 8.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "8.2 expects identified emergency scenarios, planned response procedures, periodic testing/drills, and review and revision after tests or actual incidents."
+      }
+    },
+    {
+      "id": "guru-14001-021",
+      "prompt": "What does ISO 14001 require of us when monitoring and measuring environmental performance — what kinds of metrics are expected and what about the equipment we measure with? Cite the clause.",
+      "expectedClauses": ["ISO 14001 9.1.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "9.1.1 requires monitoring, measuring, analysing, and evaluating environmental performance (e.g., waste, emissions, energy, water) against objectives, with calibrated monitoring equipment records."
+      }
+    },
+    {
+      "id": "guru-14001-022",
+      "prompt": "We're setting next year's EMS budget. What does ISO 14001 require of management regarding resources for the environmental management system, and which clause?",
+      "expectedClauses": ["ISO 14001 7.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "7.1 requires determining and providing the resources needed for the EMS."
+      }
+    },
+    {
+      "id": "guru-14001-023",
+      "prompt": "When we commit to an environmental objective like cutting waste by 10 percent, what planning details does ISO 14001 require us to pin down for it? Cite the clause.",
+      "expectedClauses": ["ISO 14001 6.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "6.2 requires objectives consistent with the policy plus a plan covering actions, resources, responsibility, timeframe, and how results will be evaluated."
+      }
+    },
+    {
+      "id": "guru-14001-024",
+      "prompt": "What does ISO 14001 require us to figure out about interested parties like regulators, neighbors, and customers, and which clause covers it?",
+      "expectedClauses": ["ISO 14001 4.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "4.2 requires determining relevant interested parties, their needs and expectations, and which of those become compliance obligations."
+      }
+    },
+    {
+      "id": "guru-14001-025",
+      "prompt": "What does ISO 14001 require regarding who does what in the EMS — how are responsibilities and authorities supposed to be handled, and under which clause?",
+      "expectedClauses": ["ISO 14001 5.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "5.3 requires top management to assign and communicate the responsibilities and authorities for relevant EMS roles."
+      }
+    },
+    {
+      "id": "guru-14001-026",
+      "prompt": "Our auditor mentioned ISO 14001 has a general improvement requirement that sits apart from both corrective action and continual improvement. Which clause is it, and what does it ask us to do?",
+      "expectedClauses": ["ISO 14001 10.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "10.1 requires determining opportunities for improvement and implementing actions to achieve the intended outcomes of the EMS."
+      }
+    },
+    {
+      "id": "guru-14001-027",
+      "prompt": "When writing our EMS scope statement, what does ISO 14001 require us to take into account and how must the scope be recorded? Cite the clause.",
+      "expectedClauses": ["ISO 14001 4.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "4.3 requires considering context issues, compliance obligations, organizational units/functions, activities/products/services, and authority, and documenting the resulting scope."
+      }
+    },
+    {
+      "id": "guru-14001-028",
+      "prompt": "After we've flagged our significant aspects and compliance obligations, ISO 14001 has a planning-action step. What does it require us to do with those items, and which sub-clause is it?",
+      "expectedClauses": ["ISO 14001 6.1.4"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "6.1.4 requires planning actions to address significant aspects, compliance obligations, and risks/opportunities, integrating them into EMS processes, and evaluating their effectiveness."
+      }
+    },
+    {
+      "id": "guru-14001-029",
+      "prompt": "When we create or update an EMS document, what controls does ISO 14001's documented-information requirement impose on it over its life? Cite the clause.",
+      "expectedClauses": ["ISO 14001 7.5"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "7.5 requires controlled creation and updating (identification, review, approval) plus control of distribution, access, protection, retention, and disposition."
+      }
+    },
+    {
+      "id": "guru-14001-030",
+      "prompt": "ISO 14001 treats continual improvement as its own requirement, separate from fixing individual problems. What exactly is supposed to continually improve, and under which clause?",
+      "expectedClauses": ["ISO 14001 10.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "requirement-content",
+        "paraphrasedRequirement": "10.3 requires continually improving the EMS in order to enhance environmental performance."
+      }
+    },
+    {
+      "id": "guru-14001-031",
+      "prompt": "A forklift punctured a tote of nitric acid at our plating shop and some of it reached a floor drain before we contained it. Which ISO 14001 clauses govern (a) the response process we should have had prepared and (b) the follow-up needed to stop this happening again? Cite both.",
+      "expectedClauses": ["ISO 14001 8.2", "ISO 14001 10.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "8.2 covers prepared response to environmental emergencies (including review after incidents); 10.2 covers reacting to the nonconformity, root cause, and corrective action."
+      }
+    },
+    {
+      "id": "guru-14001-032",
+      "prompt": "We're adding an anodizing line next quarter. Before startup, which ISO 14001 clauses require us to assess the new line's environmental aspects and then put operational controls in place for the significant ones? Cite both.",
+      "expectedClauses": ["ISO 14001 6.1.2", "ISO 14001 8.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "6.1.2 requires identifying the new line's aspects/impacts and determining significance; 8.1 requires establishing operational controls for the significant aspects and controlling the planned change."
+      }
+    },
+    {
+      "id": "guru-14001-033",
+      "prompt": "Our wastewater discharge permit is up for renewal and the new version has tighter zinc limits. Which ISO 14001 clauses cover updating our legal register with the new limits and then verifying we're actually meeting them? Cite both.",
+      "expectedClauses": ["ISO 14001 6.1.3", "ISO 14001 9.1.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "6.1.3 requires keeping the determined compliance obligations current and accessible; 9.1.2 requires evaluating fulfilment of those obligations and knowing compliance status."
+      }
+    },
+    {
+      "id": "guru-14001-034",
+      "prompt": "We just learned our waste hauler has been mixing our hazardous waste with general trash. Which ISO 14001 clauses cover (a) the control we should exercise over this outsourced process, (b) our own legal responsibilities for that waste, and (c) fixing the failure? Cite all three.",
+      "expectedClauses": ["ISO 14001 8.1", "ISO 14001 6.1.3", "ISO 14001 10.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "scenario",
+        "paraphrasedRequirement": "8.1 requires controlling outsourced processes; 6.1.3 requires knowing the compliance obligations tied to the waste aspect; 10.2 requires corrective action on the nonconformity."
+      }
+    },
+    {
+      "id": "guru-14001-035",
+      "prompt": "Production wants to swap our degreasing solvent for a cheaper alternative. From an EMS standpoint, which ISO 14001 clauses require us to reassess environmental aspects and update our operational controls before the change goes live? Cite both.",
+      "expectedClauses": ["ISO 14001 6.1.2", "ISO 14001 8.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "6.1.2 requires re-determining aspects/impacts and significance for the new solvent; 8.1 requires controlling the planned change and updating operational controls."
+      }
+    },
+    {
+      "id": "guru-14001-036",
+      "prompt": "Neighbors have complained twice this month about odor from our rendering plant. Which ISO 14001 clauses govern how we decide what to communicate back to them and how we investigate and correct the underlying problem? Cite both.",
+      "expectedClauses": ["ISO 14001 7.4", "ISO 14001 10.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "7.4 (external communication, 7.4.3) governs deciding and recording what is communicated externally; 10.2 governs reacting to the nonconformity and corrective action."
+      }
+    },
+    {
+      "id": "guru-14001-037",
+      "prompt": "A state inspector found our stormwater discharge exceeded permit limits — and our own internal checks never caught it. Which ISO 14001 clauses cover the compliance-evaluation process that failed and the corrective action we now owe? Cite both.",
+      "expectedClauses": ["ISO 14001 9.1.2", "ISO 14001 10.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "9.1.2 requires a working process for evaluating fulfilment of compliance obligations; 10.2 requires reacting to the non-compliance with root-cause-based corrective action."
+      }
+    },
+    {
+      "id": "guru-14001-038",
+      "prompt": "Leadership approved a target to cut hazardous waste generation 15 percent this year. Which ISO 14001 clauses cover setting that objective up properly and then monitoring performance against it? Cite both.",
+      "expectedClauses": ["ISO 14001 6.2", "ISO 14001 9.1.1"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "6.2 requires the objective with planned actions, resources, responsibility, timeframe, and evaluation method; 9.1.1 requires monitoring and measuring performance against it."
+      }
+    },
+    {
+      "id": "guru-14001-039",
+      "prompt": "We just hired an operator for our wastewater treatment system. Which ISO 14001 clauses require us to verify she is competent for the role and to make her aware of the significant environmental aspects tied to her work? Cite both.",
+      "expectedClauses": ["ISO 14001 7.2", "ISO 14001 7.3"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "7.2 requires ensuring competence (with evidence) for persons affecting environmental performance; 7.3 requires awareness of the policy, significant aspects, and her contribution."
+      }
+    },
+    {
+      "id": "guru-14001-040",
+      "prompt": "Our GM wants a yearly leadership sit-down on the EMS. Which ISO 14001 clause governs that review, and which clause produces the compliance-status results that must feed into it as an input? Cite both.",
+      "expectedClauses": ["ISO 14001 9.3", "ISO 14001 9.1.2"],
+      "metadata": {
+        "difficulty": "medium",
+        "category": "scenario",
+        "paraphrasedRequirement": "9.3 requires top management review of the EMS with defined inputs; 9.1.2 produces the compliance evaluation results that serve as an EMS-specific review input."
+      }
+    },
+    {
+      "id": "guru-14001-041",
+      "prompt": "We ran a spill drill at our chemical warehouse last week and found gaps in the procedure. Which ISO 14001 clause requires periodic drills like this and updating the response plan based on what we learned?",
+      "expectedClauses": ["ISO 14001 8.2"],
+      "metadata": {
+        "difficulty": "easy",
+        "category": "scenario",
+        "paraphrasedRequirement": "8.2 requires testing/drilling emergency response procedures and reviewing/revising them after tests and incidents."
+      }
+    },
+    {
+      "id": "guru-14001-042",
+      "prompt": "Our products ship in solvent-painted steel drums that customers eventually discard. Where does ISO 14001 make us consider what happens after our product leaves the plant — both when identifying environmental aspects and when setting operational controls? Cite both clauses.",
+      "expectedClauses": ["ISO 14001 6.1.2", "ISO 14001 8.1"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "scenario",
+        "paraphrasedRequirement": "6.1.2 requires identifying aspects across lifecycle stages including end-of-life; 8.1 requires applying the lifecycle perspective in operational controls, including downstream stages."
+      }
+    },
+    {
+      "id": "guru-14001-043",
+      "prompt": "An auditor said we conflated two different ISO 14001 planning requirements by keeping our aspects list and our legal requirements in one combined spreadsheet with one process. Which clause covers identifying environmental aspects, and which covers determining compliance obligations? Cite both.",
+      "expectedClauses": ["ISO 14001 6.1.2", "ISO 14001 6.1.3"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "6.1.2 governs determining aspects/impacts and significance; 6.1.3 separately governs determining and accessing the compliance obligations related to those aspects."
+      }
+    },
+    {
+      "id": "guru-14001-044",
+      "prompt": "Our consultant filed the chemical spill response procedure under operational planning and control alongside routine process controls. For potential emergency situations, which ISO 14001 clause actually owns preparedness and response?",
+      "expectedClauses": ["ISO 14001 8.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "8.2 (not 8.1) owns preparing for and responding to potential emergency situations; 8.1 addresses routine operational controls."
+      }
+    },
+    {
+      "id": "guru-14001-045",
+      "prompt": "We measure our stack emissions monthly and trend the data, but our auditor says that alone doesn't satisfy evaluation of compliance. Which ISO 14001 clause requires the distinct step of judging whether we're fulfilling our obligations and maintaining knowledge of our compliance status?",
+      "expectedClauses": ["ISO 14001 9.1.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "9.1.2 requires evaluating fulfilment of compliance obligations and maintaining knowledge of compliance status — distinct from 9.1.1 general performance monitoring."
+      }
+    },
+    {
+      "id": "guru-14001-046",
+      "prompt": "We documented regional drought risk as an external issue in our context analysis. Which ISO 14001 planning sub-clause then requires that context issue to feed into our determination of EMS risks and opportunities?",
+      "expectedClauses": ["ISO 14001 6.1.1"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "6.1.1 requires determining risks and opportunities considering the context issues from 4.1/4.2 along with aspects and obligations — context alone (4.1/4.2) is not the planning step."
+      }
+    },
+    {
+      "id": "guru-14001-047",
+      "prompt": "One colleague insists the lifecycle perspective in ISO 14001 only applies when identifying aspects; another says it only applies to operational control. Which clauses actually involve lifecycle thinking? Cite both.",
+      "expectedClauses": ["ISO 14001 6.1.2", "ISO 14001 8.1"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "Aspects are identified per lifecycle stage under 6.1.2, and 8.1 requires applying the lifecycle perspective when establishing operational controls — both, not either alone."
+      }
+    },
+    {
+      "id": "guru-14001-048",
+      "prompt": "In ISO 9001, the second sub-clause under monitoring and measurement covers customer satisfaction. In ISO 14001, what does the sub-clause in that same position require instead, and what is its clause number?",
+      "expectedClauses": ["ISO 14001 9.1.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "ISO 14001 9.1.2 is evaluation of compliance (fulfilment of compliance obligations) — the same clause number means customer satisfaction only in 9001."
+      }
+    },
+    {
+      "id": "guru-14001-049",
+      "prompt": "In ISO 9001, the clause immediately after operational planning and control (8.1) deals with requirements for products and services. Our new EHS coordinator assumed the numbering means the same thing in ISO 14001. What does the clause in that position actually cover in the environmental standard, and what is its number?",
+      "expectedClauses": ["ISO 14001 8.2"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "ISO 14001 8.2 is emergency preparedness and response — the same clause number covers product/service requirements only in 9001."
+      }
+    },
+    {
+      "id": "guru-14001-050",
+      "prompt": "We've already determined the risks and opportunities arising from our significant aspects under the general planning requirement. Which separate ISO 14001 sub-clause then requires us to plan concrete actions, integrate them into our EMS processes, and evaluate whether they worked?",
+      "expectedClauses": ["ISO 14001 6.1.4"],
+      "metadata": {
+        "difficulty": "hard",
+        "category": "near-miss",
+        "paraphrasedRequirement": "6.1.4 (not 6.1.1) requires planning actions to address significant aspects, obligations, and risks/opportunities, integrating them into EMS processes, and evaluating effectiveness."
+      }
+    }
+  ]
+}
