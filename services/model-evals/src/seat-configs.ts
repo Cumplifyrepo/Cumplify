@@ -54,7 +54,9 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     seat: 'micro',
     candidates: [
       'us.amazon.nova-micro-v1:0',
+      'us.amazon.nova-lite-v1:0',
       'zai.glm-4.7-flash',
+      'qwen.qwen3-32b-v1:0',
     ],
     temperature: 0,
     maxTokens: 256,
