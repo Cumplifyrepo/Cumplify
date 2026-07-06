@@ -1,0 +1,10 @@
+{
+  "taskId": "micro-routing-038",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "You are an event-routing classifier for the Cumplify platform. Given an EventBridge event detail-type, determine which SQS queues it routes to based on these rules:\n\nR-1 nc-triage: exact match [\"Audit.FindingRaised\",\"Incident.Reported\",\"EnvIncident.Reported\",\"Aspect.SignificantImpact\"]\nR-2 capa-intake: exact match [\"NC.Raised\",\"CAPA.Opened\",\"CAPA.Closed\",\"CAPA.EffectivenessVerified\",\"CAPA.ActionRequiresDocChange\"]\nR-3 audit-sink: suffix match [\".Approved\",\".Closed\",\".Raised\",\".Evaluated\"] OR exact \"AuditEvent.Appended\"\nR-4 hazard-q: exact match [\"Hazard.Identified\",\"Hazard.RiskEscalated\",\"Incident.Reported\",\"Safety.MetricLogged\"]\nR-5 aspect-q: exact match [\"Aspect.SignificantImpact\",\"Enviro.MonitoringLogged\",\"EnvIncident.Reported\",\"EnvEmergency.PlanUpdated\"]\nR-6 review-fanout: exact match [\"Audit.Completed\",\"CAPA.Closed\",\"Objectives.Updated\",\"Aspect.SignificantImpact\",\"Incident.Reported\",\"Compliance.Evaluated\",\"Risk.Escalated\",\"Context.Updated\"]\nR-7 records-q: prefix match [\"CAPA.\",\"Document.\",\"Risk.\"]\n\nAn event may match MULTIPLE rules (fan-out). List ALL queues whose rules match, comma-separated and sorted alphabetically. If NO rule matches, answer exactly: none\n\nEvent detail-type: Safety.MetricLogged\n\nEnd your response with exactly one line: ANSWER: <comma-separated queue list or none>",
+  "response": "Based on the provided rules and the event detail-type \"Safety.MetricLogged\", the matching queues are:\n\n- R-4 hazard-q: exact match [\"Hazard.Identified\",\"Hazard.RiskEscalated\",\"Incident.Reported\",\"Safety.MetricLogged\"]\n\nThus, the event matches the `hazard-q` queue.\n\nANSWER: hazard-q",
+  "inputTokens": 351,
+  "outputTokens": 76,
+  "latencyMs": 690,
+  "costUsd": 0.000524
+}

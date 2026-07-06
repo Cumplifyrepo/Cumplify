@@ -636,3 +636,186 @@ EXIT: 0
 #     +deepseek.v3.2 (7 total) — locating the true 0.95-capability tier. If NO model
 #     passes at any price, bar recalibration becomes an evidence-based owner-visible
 #     decision — not silent shaving.
+
+# ===== TASK 7 RUN 4 (micro x7 candidates; pain-distiller adjudicated truth) — started 2026-07-06T18:24:02Z, run-id run4-20260706 =====
+
+===== SEAT: micro — estimate =====
+[model-evals] Seat: micro
+[model-evals] Candidates: us.amazon.nova-micro-v1:0, us.amazon.nova-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0, us.amazon.nova-pro-v1:0, zai.glm-4.7, deepseek.v3.2
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 7 models
+  us.amazon.nova-micro-v1:0: live-api ($0.034999999999999996/$0.13999999999999999 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+  qwen.qwen3-32b-v1:0: live-api ($0.15/$0.6 per M tokens in/out)
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  zai.glm-4.7: live-api ($0.6/$2.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 7 | 350 | 70,000 | 17,500 | $0.1120 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: micro — RUN =====
+[model-evals] Seat: micro
+[model-evals] Candidates: us.amazon.nova-micro-v1:0, us.amazon.nova-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0, us.amazon.nova-pro-v1:0, zai.glm-4.7, deepseek.v3.2
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 7 models
+  us.amazon.nova-micro-v1:0: live-api ($0.034999999999999996/$0.13999999999999999 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+  qwen.qwen3-32b-v1:0: live-api ($0.15/$0.6 per M tokens in/out)
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  zai.glm-4.7: live-api ($0.6/$2.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 7 | 350 | 70,000 | 17,500 | $0.1120 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run4-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run4-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-micro-v1:0 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: us.amazon.nova-lite-v1:0 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: zai.glm-4.7-flash ---
+.................................................. (50 tasks complete)
+
+--- Candidate: qwen.qwen3-32b-v1:0 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: zai.glm-4.7 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+.................................................. (50 tasks complete)
+
+# Eval Report: micro — 2026-07-06T18:37:03.788Z
+
+## Summary
+| Candidate | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-micro-v1:0 | FAIL | $0.00001 | $0.00001 | 99.3% | N/A |
+| us.amazon.nova-lite-v1:0 | FAIL | $0.00002 | $0.00003 | 98.9% | N/A |
+| zai.glm-4.7-flash | FAIL | $0.00003 | $0.00003 | 98.7% | N/A |
+| qwen.qwen3-32b-v1:0 | FAIL | $0.00006 | $0.00016 | 96.9% | N/A |
+| us.amazon.nova-pro-v1:0 | PASS | $0.00049 | $0.00084 | 75.3% | 2 |
+| zai.glm-4.7 | PASS | $0.00021 | $0.00023 | 89.2% | 1 |
+| deepseek.v3.2 | PASS | $0.00059 | $0.00070 | 70.2% | 3 |
+
+## Winner: zai.glm-4.7
+
+## Budget Consumed: $0.0725
+
+## Pricing Sources
+- us.amazon.nova-micro-v1:0: live-api
+- us.amazon.nova-lite-v1:0: live-api
+- zai.glm-4.7-flash: live-api
+- qwen.qwen3-32b-v1:0: live-api
+- us.amazon.nova-pro-v1:0: live-api
+- zai.glm-4.7: live-api
+- deepseek.v3.2: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run4-20260706/report.md
+[model-evals] Budget consumed: $0.0725
+[model-evals] Winner: zai.glm-4.7
+EXIT: 0
+
+===== SEAT: pain-distiller — estimate =====
+[model-evals] Seat: pain-distiller
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, deepseek.v3.2, qwen.qwen3-next-80b-a3b
+[model-evals] Eval set loaded: data/eval-sets/pain-distiller.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 3 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| pain-distiller | 20 | 3 | 60 | 48,000 | 24,000 | $0.1152 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: pain-distiller — RUN =====
+[model-evals] Seat: pain-distiller
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, deepseek.v3.2, qwen.qwen3-next-80b-a3b
+[model-evals] Eval set loaded: data/eval-sets/pain-distiller.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 3 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| pain-distiller | 20 | 3 | 60 | 48,000 | 24,000 | $0.1152 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run4-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/pain-distiller-run4-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.................... (20 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+.................... (20 tasks complete)
+
+--- Candidate: qwen.qwen3-next-80b-a3b ---
+.................... (20 tasks complete)
+
+# Eval Report: pain-distiller — 2026-07-06T18:39:28.707Z
+
+## Summary
+| Candidate | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-pro-v1:0 | FAIL | $0.00033 | $0.00083 | 97.2% | N/A |
+| deepseek.v3.2 | FAIL | $0.00045 | $0.00063 | 96.3% | N/A |
+| qwen.qwen3-next-80b-a3b | FAIL | $0.00026 | $0.00048 | 97.8% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0232
+
+## Pricing Sources
+- us.amazon.nova-pro-v1:0: live-api
+- deepseek.v3.2: live-api
+- qwen.qwen3-next-80b-a3b: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/pain-distiller-run4-20260706/report.md
+[model-evals] Budget consumed: $0.0232
+[model-evals] Winner: NONE
+EXIT: 0
+# Run 4 completed 2026-07-06T18:39:28Z
+
+# ARCHITECT FINDING-H after run 4 (CRITICAL, scorer layer) — TRUTH INCIDENT #6:
+# scorer.ts applies a HARDCODED 0.7 threshold for ALL automated seats (design §2.3
+# bars: micro 0.95, lightweight 0.90, pain-distiller 0.85, snapshot schema+grounding)
+# and routes exact-match seats to BINARY scoreExactMatch (exact string equality);
+# scoreMultiLabel (set-F1) exists and is unit-tested but IS NEVER CALLED in the
+# production scoring path — Kiro's FIX-1 report claimed "reuses micro machinery via
+# scoreMultiLabel": FALSE. Consequently ALL PASS/FAIL verdicts in runs 2-4 are
+# unreliable. Winner declarations for lightweight (qwen3-32b), snapshot
+# (glm-4.7-flash), and micro (glm-4.7) are SUSPENDED pending re-score from raw
+# outputs. Architect's own miss recorded: run-2 validation spot-checked raw quality
+# but did not recompute aggregates against design bars.
+# Cost/margin columns and raw outputs remain VALID (token math verified separately).
+# NO new invocations required for remediation — rescore-from-raw suffices.

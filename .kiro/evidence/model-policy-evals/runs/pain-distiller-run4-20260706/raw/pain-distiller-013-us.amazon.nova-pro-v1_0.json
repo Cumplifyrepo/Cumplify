@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-013",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our internal audits find the same things every time — minor documentation gaps, training records not current. But we never find the real problems. Our auditors are too close to the processes they audit. We had a major customer escape that none of our audits caught. The audit program adds no value.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
+  "response": "ANSWER: audit-effectiveness, capa-effectiveness, resource-constraint",
+  "inputTokens": 317,
+  "outputTokens": 15,
+  "latencyMs": 553,
+  "costUsd": 0.00030160000000000007
+}
