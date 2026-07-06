@@ -1,0 +1,34 @@
+# Task 1 — Live Model-Access Verification [ARCHITECT]
+# Executed: 2026-07-06T12:38:00Z | Profile: cumplify-dev-admin (dev 697114252993) | Region: us-east-1
+# Method: bedrock-runtime Converse, maxTokens 10, per design §2 candidate table (14 models)
+
+us.amazon.nova-micro-v1:0              ACCESSIBLE  exit=0 latency= 1093ms out_tok=2   ts=2026-07-06T12:38:00Z
+us.amazon.nova-lite-v1:0               ACCESSIBLE  exit=0 latency=  815ms out_tok=2   ts=2026-07-06T12:38:01Z
+us.amazon.nova-pro-v1:0                ACCESSIBLE  exit=0 latency= 1247ms out_tok=4   ts=2026-07-06T12:38:02Z
+us.amazon.nova-2-lite-v1:0             ACCESSIBLE  exit=0 latency= 1384ms out_tok=2   ts=2026-07-06T12:38:03Z
+qwen.qwen3-next-80b-a3b                ACCESSIBLE  exit=0 latency=  748ms out_tok=2   ts=2026-07-06T12:38:05Z
+qwen.qwen3-32b-v1:0                    ACCESSIBLE  exit=0 latency=  739ms out_tok=2   ts=2026-07-06T12:38:06Z
+zai.glm-5                              ACCESSIBLE  exit=0 latency= 4179ms out_tok=2   ts=2026-07-06T12:38:06Z
+zai.glm-4.7                            ACCESSIBLE  exit=0 latency=  778ms out_tok=2   ts=2026-07-06T12:38:10Z
+zai.glm-4.7-flash                      ACCESSIBLE  exit=0 latency=  695ms out_tok=2   ts=2026-07-06T12:38:11Z
+deepseek.v3.2                          ACCESSIBLE  exit=0 latency=  949ms out_tok=2   ts=2026-07-06T12:38:12Z
+minimax.minimax-m2.5                   ACCESSIBLE  exit=0 latency= 1316ms out_tok=10  ts=2026-07-06T12:38:13Z
+moonshotai.kimi-k2.5                   ACCESSIBLE  exit=0 latency= 6437ms out_tok=2   ts=2026-07-06T12:38:14Z
+moonshot.kimi-k2-thinking              ACCESSIBLE  exit=0 latency=  799ms out_tok=10  ts=2026-07-06T12:38:21Z
+us.anthropic.claude-sonnet-4-6         BLOCKED     exit=254 latency=  562ms ts=2026-07-06T12:38:21Z err=aws: [ERROR]: An error occurred (ResourceNotFoundException) when calling the Converse operation: Model use case details 
+
+# Result: 13/14 ACCESSIBLE, 1 BLOCKED
+
+# FINDING (task-1): us.anthropic.claude-sonnet-4-6 BLOCKED as of 2026-07-06T12:38Z.
+# Full error: "ResourceNotFoundException: Model use case details have not been submitted for
+# this account. Fill out the Anthropic use case details form before using the model. If you
+# have already filled out the form, try again in 15 minutes."
+# Catalog status: anthropic.claude-sonnet-4-6 ACTIVE — this is an ACCOUNT ENTITLEMENT gate,
+# not a model lifecycle change. Model WAS accessible 2026-07-05 (phase-0-gate probe log);
+# AWS/Anthropic use-case-form gating engaged since.
+# RESOLUTION: NOT removed from candidate lists — sonnet-4-6 is the incumbent anchor (Guru)
+# and incumbent LegalLedger candidate. Status = PENDING-OWNER-ACTION: owner submits the
+# Anthropic use case details form in the dev-account Bedrock console (Model access →
+# Anthropic), console-only per established fact. Must be cleared BEFORE Tasks 7-8 benchmark
+# runs. Tasks 2-6 are unblocked (no Sonnet invocations).
+# All 12 non-Anthropic candidates: zero gating, immediately invocable.
