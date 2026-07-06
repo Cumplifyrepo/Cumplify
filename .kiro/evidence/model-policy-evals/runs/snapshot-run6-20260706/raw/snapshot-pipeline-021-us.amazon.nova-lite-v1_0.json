@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-021",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Shipbuilding, Company Size: 1100 employees, Pain Points: Confined space entry incidents, welding fume exposure, no integrated management system despite needing ISO 9001 + 14001 + 45001, project quality plans inconsistent across contracts\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"3.2\",\"gaps\":\"Confined space entry incidents, welding fume exposure, lack of integrated management system, inconsistent project quality plans\",\"recommendations\":\"Implement a comprehensive confined space entry program, improve ventilation and use of personal protective equipment for welding fume exposure, develop and integrate an ISO 9001, 14001, and 45001 management system, standardize project quality plans across all contracts\",\"standards\":\"ISO 9001, ISO 14001, ISO 45001\"}",
+  "inputTokens": 135,
+  "outputTokens": 126,
+  "latencyMs": 1048,
+  "costUsd": 0.00003834,
+  "truncated": false
+}

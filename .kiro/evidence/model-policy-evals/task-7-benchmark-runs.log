@@ -1249,3 +1249,312 @@ EXIT: 0
 # FINDING-K (runner resilience): one candidate's transient Bedrock error killed the
 #   whole micro run-5 seat (no retry, no isolation); reasoning models need larger
 #   maxTokens + truncation flagging (stopReason=max_tokens => TRUNCATED, not 0/wrong).
+
+# ===== TASK-7 CLOSING PASS (HEAD 26a8abb) — 2026-07-06T19:44:09Z =====
+===== SEAT: lightweight — RUN (contract prompts, run6) =====
+[model-evals] Seat: lightweight
+[model-evals] Candidates: us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0
+[model-evals] Eval set loaded: data/eval-sets/lightweight.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  us.amazon.nova-2-lite-v1:0: live-api ($0.33/$2.75 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+  qwen.qwen3-32b-v1:0: live-api ($0.15/$0.6 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| lightweight | 20 | 4 | 80 | 64,000 | 32,000 | $0.1091 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run6-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/lightweight-run6-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-lite-v1:0 ---
+.................... (20 tasks complete)
+
+--- Candidate: us.amazon.nova-2-lite-v1:0 ---
+.................... (20 tasks complete)
+
+--- Candidate: zai.glm-4.7-flash ---
+.................... (20 tasks complete)
+
+--- Candidate: qwen.qwen3-32b-v1:0 ---
+.................... (20 tasks complete)
+
+# Eval Report: lightweight — 2026-07-06T19:47:24.042Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-lite-v1:0 | 0.067 | FAIL | $0.00004 | $0.00006 | 99.0% | N/A |
+| us.amazon.nova-2-lite-v1:0 | 0.067 | FAIL | $0.00038 | $0.00049 | 90.5% | N/A |
+| zai.glm-4.7-flash | 0.067 | FAIL | $0.00011 | $0.00026 | 97.2% | N/A |
+| qwen.qwen3-32b-v1:0 | 0.067 | FAIL | $0.00016 | $0.00023 | 96.1% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0138
+
+## Pricing Sources
+- us.amazon.nova-lite-v1:0: live-api
+- us.amazon.nova-2-lite-v1:0: live-api
+- zai.glm-4.7-flash: live-api
+- qwen.qwen3-32b-v1:0: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/lightweight-run6-20260706/report.md
+[model-evals] Budget consumed: $0.0138
+[model-evals] Winner: NONE
+EXIT: 0
+===== SEAT: snapshot — RUN (contract prompts, run6) =====
+[model-evals] Seat: snapshot
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/snapshot-pipeline.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  us.amazon.nova-2-lite-v1:0: live-api ($0.33/$2.75 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| snapshot | 30 | 4 | 120 | 96,000 | 48,000 | $0.2304 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run6-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/snapshot-run6-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.............................. (30 tasks complete)
+
+--- Candidate: us.amazon.nova-lite-v1:0 ---
+.............................. (30 tasks complete)
+
+--- Candidate: us.amazon.nova-2-lite-v1:0 ---
+.............................. (30 tasks complete)
+
+--- Candidate: zai.glm-4.7-flash ---
+.............................. (30 tasks complete)
+
+# Eval Report: snapshot — 2026-07-06T19:54:00.773Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-pro-v1:0 | 0.000 | FAIL | $0.00046 | $0.00072 | 94.2% | N/A |
+| us.amazon.nova-lite-v1:0 | 0.000 | FAIL | $0.00003 | $0.00004 | 99.6% | N/A |
+| us.amazon.nova-2-lite-v1:0 | 0.000 | FAIL | $0.00053 | $0.00073 | 93.4% | N/A |
+| zai.glm-4.7-flash | 0.000 | FAIL | $0.00023 | $0.00031 | 97.1% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0387
+
+## Pricing Sources
+- us.amazon.nova-pro-v1:0: live-api
+- us.amazon.nova-lite-v1:0: live-api
+- us.amazon.nova-2-lite-v1:0: live-api
+- zai.glm-4.7-flash: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/snapshot-run6-20260706/report.md
+[model-evals] Budget consumed: $0.0387
+[model-evals] Winner: NONE
+EXIT: 0
+===== SEAT: micro — completion: kimi-k2.5 + minimax-m2.5 (run6) =====
+[model-evals] Seat: micro
+[model-evals] Candidates: moonshotai.kimi-k2.5
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 1 models
+  moonshotai.kimi-k2.5: live-api ($0.6/$3 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 1 | 50 | 10,000 | 2,500 | $0.0135 |
+
+[model-evals] Approved budget: $1.00
+[model-evals] Run ID: run6-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run6-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: moonshotai.kimi-k2.5 ---
+.................................................. (50 tasks complete)
+
+# Eval Report: micro — 2026-07-06T20:07:05.698Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| moonshotai.kimi-k2.5 | 0.993 | PASS | $0.00137 | $0.00154 | 30.8% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0683
+
+## Pricing Sources
+- moonshotai.kimi-k2.5: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run6-20260706/report.md
+[model-evals] Budget consumed: $0.0683
+[model-evals] Winner: NONE
+EXIT: 0
+[model-evals] Seat: micro
+[model-evals] Candidates: minimax.minimax-m2.5
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 1 models
+  minimax.minimax-m2.5: live-api ($0.3/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 1 | 50 | 10,000 | 2,500 | $0.0060 |
+
+[model-evals] Approved budget: $1.00
+[model-evals] Run ID: run6-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run6-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: minimax.minimax-m2.5 ---
+TT.TT.TTT..T.....TTT....T.T.TTTTT...............T. (50 tasks complete)
+
+# Eval Report: micro — 2026-07-06T20:27:03.667Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| minimax.minimax-m2.5 | 0.580 | FAIL | $0.00124 | $0.00134 | 37.6% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0597
+
+## Pricing Sources
+- minimax.minimax-m2.5: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run6-20260706/report.md
+[model-evals] Budget consumed: $0.0597
+[model-evals] Winner: NONE
+EXIT: 0
+# Closing pass completed 2026-07-06T20:27:03Z
+
+===== RESCORE post gate-hotfix (schema-validator required-array) — 2026-07-06T20:28:41Z =====
+[model-evals] Seat: lightweight
+[model-evals] Candidates: us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0
+[model-evals] Eval set loaded: data/eval-sets/lightweight.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  us.amazon.nova-2-lite-v1:0: live-api ($0.33/$2.75 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+  qwen.qwen3-32b-v1:0: live-api ($0.15/$0.6 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| lightweight | 20 | 4 | 80 | 64,000 | 32,000 | $0.1091 |
+
+[model-evals] Rescore mode: loading raw from /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/lightweight-run6-20260706/raw
+
+# Eval Report: lightweight — 2026-07-06T20:28:42.031Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| qwen.qwen3-32b-v1:0 | 0.800 | FAIL | $0.00016 | $0.00023 | 96.1% | N/A |
+| us.amazon.nova-2-lite-v1:0 | 1.000 | PASS | $0.00038 | $0.00049 | 90.5% | 3 |
+| us.amazon.nova-lite-v1:0 | 1.000 | PASS | $0.00004 | $0.00006 | 99.0% | 1 |
+| zai.glm-4.7-flash | 1.000 | PASS | $0.00011 | $0.00026 | 97.2% | 2 |
+
+## Winner: us.amazon.nova-lite-v1:0
+
+## Budget Consumed: $0.0000
+
+## Pricing Sources
+- us.amazon.nova-lite-v1:0: live-api
+- us.amazon.nova-2-lite-v1:0: live-api
+- zai.glm-4.7-flash: live-api
+- qwen.qwen3-32b-v1:0: live-api
+
+## Ground-Truth Limitation
+RESCORED from raw run run6-20260706 using scoring commit HEAD
+
+[model-evals] Rescored report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/lightweight-run6-20260706/report-rescored.md
+EXIT: 0
+[model-evals] Seat: snapshot
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/snapshot-pipeline.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  us.amazon.nova-2-lite-v1:0: live-api ($0.33/$2.75 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| snapshot | 30 | 4 | 120 | 96,000 | 48,000 | $0.2304 |
+
+[model-evals] Rescore mode: loading raw from /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/snapshot-run6-20260706/raw
+
+# Eval Report: snapshot — 2026-07-06T20:28:42.634Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-2-lite-v1:0 | 1.000 | PASS | $0.00053 | $0.00073 | 93.4% | 4 |
+| us.amazon.nova-lite-v1:0 | 1.000 | PASS | $0.00003 | $0.00004 | 99.6% | 1 |
+| us.amazon.nova-pro-v1:0 | 1.000 | PASS | $0.00046 | $0.00072 | 94.2% | 3 |
+| zai.glm-4.7-flash | 1.000 | PASS | $0.00023 | $0.00031 | 97.1% | 2 |
+
+## Winner: us.amazon.nova-lite-v1:0
+
+## Budget Consumed: $0.0000
+
+## Pricing Sources
+- us.amazon.nova-pro-v1:0: live-api
+- us.amazon.nova-lite-v1:0: live-api
+- us.amazon.nova-2-lite-v1:0: live-api
+- zai.glm-4.7-flash: live-api
+
+## Ground-Truth Limitation
+RESCORED from raw run run6-20260706 using scoring commit HEAD
+
+[model-evals] Rescored report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/snapshot-run6-20260706/report-rescored.md
+EXIT: 0
+
+# ===== TASK 7 CLOSURE — ARCHITECT FINAL VERDICTS (2026-07-06) =====
+# Gate hotfix (architect, this commit): schema-validator read the JSON-Schema ENVELOPE
+# keys (type/required/properties) as field names — models were graded on emitting a
+# field literally named "required". Fixed to read the required[] array; regression
+# tests added (real shape); 2 stale tests migrated from the old flat shape. 125/125.
+# Rescore of run-6 raws after hotfix + architect spot-reviews:
+#
+# SEAT VERDICTS (automated tier, FINAL):
+# - lightweight: WINNER us.amazon.nova-lite-v1:0 — 1.000 quality, $0.00004/task P50,
+#   99.0% margin. (glm-4.7-flash 1.000/$0.00011 second; qwen3-32b 0.800 failed the
+#   1.0-contract bar with the new explicit-contract prompts.) Spot-check: precise,
+#   correct structured records.
+# - snapshot: WINNER zai.glm-4.7-flash — 1.000 schema + PASSES architect grounding/
+#   specificity spot-review ($0.00023/task, 97.1% margin). nova-lite scored 1.000 on
+#   schema at $0.00003 BUT FAILS the spot-review (thin ~85-token input-restatement;
+#   corpus Part 2 requires "startlingly specific" — the Snapshot is the conversion
+#   moment). Review criterion applied uniformly: gaps must carry reasoning beyond
+#   input restatement; recommendations must be tailored. Verdict recorded per design
+#   §2.1 snapshot grounding component (architect-judged).
+# - pain-distiller: WINNER qwen.qwen3-next-80b-a3b (0.861 vs 0.85; $0.00026; 97.8%).
+# - micro: 11-model curve FINAL: kimi-k2.5 0.993 PASSES 0.95 but margin 30.8% < 50%
+#   mandate -> INELIGIBLE (C-2). No other model reaches 0.95 (plateau 0.935).
+#   ARCHITECT RULING for Register (owner ratifies at Task 10): quality >=0.95 exists
+#   on the market only at margin-breaking cost for this seat's credit pricing;
+#   recalibrate micro bar to 0.90 => winner us.amazon.nova-2-lite-v1:0 (0.913,
+#   $0.00014, 93.1% margin). Alternatives documented: kimi-k2.5 at re-priced credits,
+#   or glm-4.7 (0.935, $0.00021, 89.2%) if the owner prefers max-quality-under-bar.
+# Campaign spend to date: ~$0.75 of $15 cap. Task 7 CLOSED.

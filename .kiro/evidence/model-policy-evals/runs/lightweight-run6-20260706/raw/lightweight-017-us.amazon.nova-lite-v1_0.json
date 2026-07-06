@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-017",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "NCTriage: Prioritize and route these nonconformities — NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)\n\nReturn a single JSON object with EXACTLY these fields:\n- triageResults (string): results of the triage assessment\n- priorityOrder (string): prioritized order for addressing items\n- routingDecisions (string): routing decisions for each item\n- escalations (string): items requiring escalation\n- timestamp (string): timestamp of the triage\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"triageResults\":\"Nonconformities have been assessed and prioritized based on severity.\",\"priorityOrder\":\"NC-102, NC-103, NC-101, NC-104\",\"routingDecisions\":\"NC-102: Immediate action required, NC-103: Immediate action required, NC-101: Schedule for correction, NC-104: Schedule for correction\",\"escalations\":\"NC-102, NC-103\",\"timestamp\":\"2023-10-05T14:48:00Z\"}",
+  "inputTokens": 163,
+  "outputTokens": 130,
+  "latencyMs": 976,
+  "costUsd": 0.000040980000000000004,
+  "truncated": false
+}

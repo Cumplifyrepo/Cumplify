@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-025",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Contract Electronics Manufacturing, Company Size: 350 employees, Pain Points: Customer-furnished material traceability gaps, IPC workmanship standards not consistently applied, no process FMEA for new product introduction, test coverage below 80%\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Customer-furnished material traceability gaps, inconsistent application of IPC workmanship standards, lack of process FMEA for new product introduction, test coverage below 80%\",\"recommendations\":\"Implement a robust traceability system for customer-furnished materials, train employees on IPC workmanship standards and ensure consistent application, develop and implement process FMEA for new product introductions, increase test coverage to meet or exceed 80% threshold\",\"standards\":\"ISO 9001, ISO/IEC 27001, ISO 13485, IPC-A-610\"}",
+  "inputTokens": 121,
+  "outputTokens": 131,
+  "latencyMs": 1017,
+  "costUsd": 0.0005160000000000001,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-005",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 — Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- currentValue (string): current measurement or progress value\n- trend (string): direction of change (improving, declining, stable)\n- progressPercentage (string): percentage of progress toward the target\n- notes (string): additional notes or comments\n- riskFlag (string): risk level indicator\n- updatedAt (string): timestamp of the last update\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"objectiveId\": \"OBJ-2025-012\", \"currentValue\": \"41\", \"trend\": \"improving\", \"progressPercentage\": \"91.11%\", \"notes\": \"New inspection protocol showing early results\", \"riskFlag\": \"medium\", \"updatedAt\": \"2024-03-01T00:00:00Z\"}",
+  "inputTokens": 169,
+  "outputTokens": 89,
+  "latencyMs": 913,
+  "costUsd": 0.0000315,
+  "truncated": false
+}

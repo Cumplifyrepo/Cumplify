@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-020",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Cement Manufacturing, Company Size: 800 employees, Pain Points: Kiln dust emissions exceeding permit 2x/quarter, noise exposure in grinding area, no life-cycle perspective for environmental aspects, community relations strained\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Moderate\", \"gaps\": \"Current systems lack integrated environmental management, exposure control measures, life-cycle assessment protocols, and community engagement frameworks. Kiln dust management and noise control are reactive rather than preventive, with no formal environmental policy aligning operations to sustainability goals.\", \"recommendations\": \"Implement ISO 14001 for systematic environmental management focusing on kiln dust reduction through real-time monitoring and emission control upgrades. Introduce ISO 45001 to address noise exposure via engineering controls and worker rotation. Develop life-cycle assessment protocols aligned with ISO 14040/14044 for raw material sourcing to energy use. Establish a community relations program under ISO 26000 guidelines, including transparent reporting and stakeholder dialogue to rebuild trust.\", \"standards\": \"ISO 14001 (Environmental Management), ISO 45001 (Occupational Health & Safety), ISO 14040/14044 (Life Cycle Assessment), ISO 26000 (Social Responsibility Guidelines)\"}",
+  "inputTokens": 165,
+  "outputTokens": 196,
+  "latencyMs": 1663,
+  "costUsd": 0.00059345,
+  "truncated": false
+}

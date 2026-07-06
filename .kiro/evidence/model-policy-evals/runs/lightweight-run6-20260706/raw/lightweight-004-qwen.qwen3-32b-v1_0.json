@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-004",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ObjectiveTracker: Create a new quality objective — Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- description (string): detailed description of the item\n- owner (string): person responsible for the objective or item\n- baseline (string): baseline measurement value\n- target (string): target value to achieve\n- measurementMethod (string): method used to measure progress\n- clauseRef (string): ISO standard clause reference\n- status (string): current status of the item\n- dueDate (string): deadline date for completion\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\n  \"objectiveId\": \"OBJ-2025-Q3-001\",\n  \"description\": \"Reduce customer complaints by 20% in Q3 2025\",\n  \"owner\": \"Quality Director\",\n  \"baseline\": \"45 complaints/month\",\n  \"target\": \"36 complaints/month\",\n  \"measurementMethod\": \"Monthly complaint log\",\n  \"clauseRef\": \"ISO 9001 clause 6.2\",\n  \"status\": \"Planned\",\n  \"dueDate\": \"2025-09-30\"\n}",
+  "inputTokens": 210,
+  "outputTokens": 128,
+  "latencyMs": 1270,
+  "costUsd": 0.0001083,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-012",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Water Treatment Utility, Company Size: 340 employees, Pain Points: Effluent exceedances 3 times this year, chemical storage not compliant with SDS requirements, no environmental objectives tracking, community complaints about odor\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Effluent exceedances, non-compliant chemical storage, lack of environmental objectives tracking, community complaints\",\"recommendations\":\"Implement effluent monitoring and control systems, ensure chemical storage compliance with SDS, establish environmental objectives and tracking, address community odor complaints through improved processes or communication\",\"standards\":\"ISO 14001, ISO 45001\"}",
+  "inputTokens": 119,
+  "outputTokens": 88,
+  "latencyMs": 1150,
+  "costUsd": 0.000028260000000000004,
+  "truncated": false
+}

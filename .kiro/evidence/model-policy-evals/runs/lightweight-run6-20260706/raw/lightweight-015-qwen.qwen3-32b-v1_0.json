@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-015",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "WorkerVoice: Record worker feedback — Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nReturn a single JSON object with EXACTLY these fields:\n- feedbackId (string): unique identifier for the feedback\n- source (string): source of the feedback or nonconformity\n- date (string): date of the event\n- category (string): classification category\n- description (string): detailed description of the item\n- affectedWorkers (string): number or description of affected workers\n- suggestedSolution (string): proposed solution\n- priority (string): priority level for addressing this item\n- responseStatus (string): current response status\n- assignedTo (string): person or team assigned to handle this\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"feedbackId\": \"WV-20250312-ERG-001\",\n  \"source\": \"Anonymous suggestion box\",\n  \"date\": \"2025-03-12\",\n  \"category\": \"Ergonomics\",\n  \"description\": \"Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts\",\n  \"affectedWorkers\": \"~6 per shift\",\n  \"suggestedSolution\": \"Adjustable platform or tool balancer\",\n  \"priority\": \"High\",\n  \"responseStatus\": \"Pending\",\n  \"assignedTo\": \"Ergonomics Team\"\n}\n```",
+  "inputTokens": 226,
+  "outputTokens": 141,
+  "latencyMs": 1458,
+  "costUsd": 0.00011850000000000001,
+  "truncated": false
+}

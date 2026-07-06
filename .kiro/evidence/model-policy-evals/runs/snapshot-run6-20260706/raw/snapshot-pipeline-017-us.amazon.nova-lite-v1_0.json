@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-017",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Steel Fabrication, Company Size: 200 employees, Pain Points: Welder qualification records expired for 8 staff, no NDE procedure for critical joints, material traceability lost at cutting stage, heat treatment records incomplete\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Expired welder qualification records, no NDE procedure for critical joints, lost material traceability, incomplete heat treatment records\",\"recommendations\":\"Re-qualify welders, establish NDE procedures, implement material traceability system, complete heat treatment records\",\"standards\":\"ISO 9606, ISO 3834-2, ISO 1127, ISO 17637\"}",
+  "inputTokens": 120,
+  "outputTokens": 96,
+  "latencyMs": 991,
+  "costUsd": 0.000030240000000000002,
+  "truncated": false
+}

@@ -153,3 +153,19 @@ describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
     expect(() => parsePricingApiResponse(fixture.PriceList)).not.toThrow();
   });
 });
+
+// Gate hotfix regression (architect): schema-validator must read the JSON Schema's
+// `required` array, not the schema envelope keys. Uses the REAL eval-set shape.
+import { scoreSchemaValidation } from '../graders/schema-validator.js';
+describe('scoreSchemaValidation (real JSON Schema shape)', () => {
+  const schema = { type: 'object', required: ['recordId', 'status'], properties: { recordId: { type: 'string' }, status: { type: 'string' } } };
+  it('scores 1.0 when all required fields present', () => {
+    expect(scoreSchemaValidation('```json\n{"recordId":"R-1","status":"ok","extra":1}\n```', schema)).toBe(1.0);
+  });
+  it('scores partial when a required field is missing', () => {
+    expect(scoreSchemaValidation('{"recordId":"R-1"}', schema)).toBe(0.5);
+  });
+  it('does NOT grade against schema envelope keys', () => {
+    expect(scoreSchemaValidation('{"type":"x","required":"y","properties":"z"}', schema)).toBe(0.0);
+  });
+});

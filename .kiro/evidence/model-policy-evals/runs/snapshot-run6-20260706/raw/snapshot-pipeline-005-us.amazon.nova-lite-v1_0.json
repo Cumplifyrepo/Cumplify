@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-005",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Chemical Manufacturing, Company Size: 310 employees, Pain Points: Environmental permit violations last year, no aspect/impact register, emergency response plan not tested in 3 years, waste manifests incomplete\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"2/10\",\"gaps\":\"Environmental permit violations, no aspect/impact register, untested emergency response plan, incomplete waste manifests\",\"recommendations\":\"Develop and maintain an aspect/impact register, update and test emergency response plan, ensure complete and accurate waste manifests, address permit violations and improve compliance\",\"standards\":\"ISO 14001, ISO 45001, ISO 9001\"}",
+  "inputTokens": 116,
+  "outputTokens": 95,
+  "latencyMs": 1231,
+  "costUsd": 0.000029760000000000003,
+  "truncated": false
+}

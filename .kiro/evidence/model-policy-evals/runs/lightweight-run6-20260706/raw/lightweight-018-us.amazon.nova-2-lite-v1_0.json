@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-018",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "ObjectiveTracker: Flag objective as off-track — Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- status (string): current status of the item\n- currentProgress (string): current progress value\n- targetProgress (string): expected progress at this point\n- variance (string): variance between actual and target\n- rootCause (string): identified root cause of the issue\n- recommendation (string): recommended action or decision\n- escalationRequired (string): whether escalation is required (yes/no)\n- updatedAt (string): timestamp of the last update\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"objectiveId\": \"OBJ-2025-008\", \"status\": \"off-track\", \"currentProgress\": \"2% reduction achieved\", \"targetProgress\": \"5% reduction expected\", \"variance\": \"-3% vs target\", \"rootCause\": \"Production volume increased 15% unexpectedly\", \"recommendation\": \"Adjust target to per-unit consumption metric\", \"escalationRequired\": \"yes\", \"updatedAt\": \"2023-10-15T14:30:00Z\"}",
+  "inputTokens": 234,
+  "outputTokens": 107,
+  "latencyMs": 771,
+  "costUsd": 0.00037147000000000005,
+  "truncated": false
+}

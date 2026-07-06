@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-028",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Telecommunications (field services), Company Size: 600 employees, Pain Points: Working near power lines without proper risk assessment, vehicle fleet maintenance records in spreadsheets, competency records for fiber splicing outdated, no safety objectives set\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Lack of proper risk assessment for working near power lines, unorganized vehicle fleet maintenance records, outdated competency records for fiber splicing, absence of safety objectives\",\"recommendations\":\"Implement a formal risk assessment process for working near power lines, transition vehicle fleet maintenance records to a digital asset management system, update and maintain competency records for fiber splicing, establish and communicate safety objectives\",\"standards\":\"ISO 45001 (Occupational Health and Safety), ISO 19600 (Compliance Management), ISO 55001 (Asset Management)\"}",
+  "inputTokens": 121,
+  "outputTokens": 127,
+  "latencyMs": 1127,
+  "costUsd": 0.0005032,
+  "truncated": false
+}

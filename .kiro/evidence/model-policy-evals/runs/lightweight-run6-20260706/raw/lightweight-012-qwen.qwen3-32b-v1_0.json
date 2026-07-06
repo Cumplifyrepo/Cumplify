@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-012",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "EmergencyPlanner: Create emergency response plan — Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h\n\nReturn a single JSON object with EXACTLY these fields:\n- planId (string): unique identifier for the plan\n- scenario (string): emergency or risk scenario description\n- severity (string): severity level of the scenario\n- responseTeam (string): team responsible for response\n- evacuationZone (string): designated evacuation zone\n- containmentActions (string): actions to contain the incident\n- notifications (string): required notifications and their timelines\n- drillFrequency (string): how often drills should be conducted\n- lastDrillDate (string): date of the most recent drill\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"planId\": \"PLAN-00123\",\n  \"scenario\": \"Chemical spill in mixing area\",\n  \"severity\": \"High\",\n  \"responseTeam\": \"HazMat team + shift supervisor\",\n  \"evacuationZone\": \"Zone B (50m radius)\",\n  \"containmentActions\": \"Deploy spill kit SK-003 + activate sump pump\",\n  \"notifications\": \"Fire department within 5 min, EPA within 24h\",\n  \"drillFrequency\": \"Quarterly\",\n  \"lastDrillDate\": \"2024-03-15\",\n  \"status\": \"Active\"\n}\n```",
+  "inputTokens": 233,
+  "outputTokens": 145,
+  "latencyMs": 830,
+  "costUsd": 0.00012195,
+  "truncated": false
+}

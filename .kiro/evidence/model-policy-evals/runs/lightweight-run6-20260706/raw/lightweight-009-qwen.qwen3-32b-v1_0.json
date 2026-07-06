@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-009",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "SupplierScout: Evaluate supplier performance — Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved\n\nReturn a single JSON object with EXACTLY these fields:\n- evaluationId (string): unique identifier for the evaluation\n- supplierId (string): unique identifier for the supplier\n- period (string): evaluation period\n- qualityScore (string): quality performance score\n- deliveryScore (string): delivery performance score\n- responsivenessScore (string): responsiveness performance score\n- overallRating (string): overall rating or score\n- openActions (string): number or description of open action items\n- recommendation (string): recommended action or decision\n- evaluatedDate (string): date the evaluation was performed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"evaluationId\": \"EVAL-0087-Q12025\",\n  \"supplierId\": \"SUP-0087\",\n  \"period\": \"Q1 2025\",\n  \"qualityScore\": \"94%\",\n  \"deliveryScore\": \"97%\",\n  \"responsivenessScore\": \"4.2/5\",\n  \"overallRating\": \"Good\",\n  \"openActions\": \"0\",\n  \"recommendation\": \"Continue partnership with monitoring\",\n  \"evaluatedDate\": \"2025-04-05\"\n}\n```\n\nANSWER: {\"evaluationId\": \"EVAL-0087-Q12025\", \"supplierId\": \"SUP-0087\", \"period\": \"Q1 2025\", \"qualityScore\": \"94%\", \"deliveryScore\": \"97%\", \"responsivenessScore\": \"4.2/5\", \"overallRating\": \"Good\", \"openActions\": \"0\", \"recommendation\": \"Continue partnership with monitoring\", \"evaluatedDate\": \"2025-04-05\"}",
+  "inputTokens": 232,
+  "outputTokens": 245,
+  "latencyMs": 1334,
+  "costUsd": 0.0001818,
+  "truncated": false
+}

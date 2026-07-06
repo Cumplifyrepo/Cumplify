@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-006",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Logistics & Warehousing, Company Size: 650 employees, Pain Points: 12% order error rate, no root cause analysis for recurring issues, fleet maintenance records on paper only, driver competency assessments overdue\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"High order error rate, lack of root cause analysis, paper-based fleet maintenance records, overdue driver competency assessments\",\"recommendations\":\"Implement a root cause analysis process, digitize fleet maintenance records, schedule overdue driver competency assessments, consider ISO 9001 for quality management and ISO 39001 for road traffic safety\",\"standards\":\"ISO 9001, ISO 39001\"}",
+  "inputTokens": 120,
+  "outputTokens": 100,
+  "latencyMs": 1304,
+  "costUsd": 0.000031200000000000006,
+  "truncated": false
+}

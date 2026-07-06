@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-007",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ContextCartographer: Update organizational context — Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant\n\nReturn a single JSON object with EXACTLY these fields:\n- contextId (string): unique identifier for the context entry\n- factor (string): the contextual factor identified\n- type (string): type/category of the record\n- impactLevel (string): level of impact (high, medium, low)\n- affectedStandards (string): ISO standards affected by this factor\n- responseAction (string): action to be taken in response\n- identifiedDate (string): date when the factor was identified\n- reviewStatus (string): current review status\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"contextId\": \"CTX-00123\",\n  \"factor\": \"New competitor entered Latin American market with ISO-certified products\",\n  \"type\": \"External-Competitive\",\n  \"impactLevel\": \"High\",\n  \"affectedStandards\": \"ISO 9001\",\n  \"responseAction\": \"Accelerate certification timeline for Mexico plant\",\n  \"identifiedDate\": \"2023-10-05\",\n  \"reviewStatus\": \"Pending\"\n}\n```",
+  "inputTokens": 195,
+  "outputTokens": 109,
+  "latencyMs": 806,
+  "costUsd": 0.00009465,
+  "truncated": false
+}

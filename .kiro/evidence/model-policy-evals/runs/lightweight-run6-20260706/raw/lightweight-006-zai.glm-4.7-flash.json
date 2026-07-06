@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-006",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "ContextCartographer: Map this interested party — Party: Local Environmental Authority (EPA Region 4), Interest: Compliance with air emission permits, Influence: High (can issue stop-work orders), Communication: Quarterly emission reports, Requirements: EPA Form R annual submission\n\nReturn a single JSON object with EXACTLY these fields:\n- partyId (string): unique identifier for the interested party\n- name (string): name of the entity or party\n- interest (string): the party's interest or concern\n- influenceLevel (string): level of influence the party has\n- communicationMethod (string): how communication is conducted with this party\n- requirements (string): specific requirements from this party\n- category (string): classification category\n- lastReviewDate (string): date of the last review\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"partyId\": \"EPA-REGION-4-ENV-01\",\n  \"name\": \"Local Environmental Authority (EPA Region 4)\",\n  \"interest\": \"Compliance with air emission permits\",\n  \"influenceLevel\": \"High (can issue stop-work orders)\",\n  \"communicationMethod\": \"Quarterly emission reports\",\n  \"requirements\": \"EPA Form R annual submission\",\n  \"category\": \"Regulatory Authority\",\n  \"lastReviewDate\": \"2023-10-27\"\n}\n```\nANSWER: {\"partyId\": \"EPA-REGION-4-ENV-01\", \"name\": \"Local Environmental Authority (EPA Region 4)\", \"interest\": \"Compliance with air emission permits\", \"influenceLevel\": \"High (can issue stop-work orders)\", \"communicationMethod\": \"Quarterly emission reports\", \"requirements\": \"EPA Form R annual submission\", \"category\": \"Regulatory Authority\", \"lastReviewDate\": \"2023-10-27\"}",
+  "inputTokens": 182,
+  "outputTokens": 213,
+  "latencyMs": 3299,
+  "costUsd": 0.00009794000000000001,
+  "truncated": false
+}

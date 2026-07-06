@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-026",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Waste Management & Recycling, Company Size: 190 employees, Pain Points: Vehicle safety incidents monthly, hazardous waste classification errors, no legal compliance register, environmental aspect identification never done formally\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Frequent vehicle safety incidents, hazardous waste classification errors, lack of legal compliance register, no formal environmental aspect identification\",\"recommendations\":\"Implement a robust safety management system to reduce vehicle incidents, train staff on proper hazardous waste classification, establish a legal compliance register, conduct formal environmental aspect identification\",\"standards\":\"ISO 14001, ISO 45001, ISO 9001\"}",
+  "inputTokens": 114,
+  "outputTokens": 98,
+  "latencyMs": 828,
+  "costUsd": 0.00040480000000000003,
+  "truncated": false
+}

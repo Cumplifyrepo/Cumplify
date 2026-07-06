@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-003",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Construction (commercial), Company Size: 85 employees, Pain Points: Three recordable injuries this quarter, no hazard identification process, workers unaware of safety procedures, subcontractor management is informal\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"2/10\",\"gaps\":\"No hazard identification process, workers unaware of safety procedures, informal subcontractor management, three recordable injuries this quarter\",\"recommendations\":\"Implement a formal hazard identification process, conduct safety training for all workers, formalize subcontractor management, review and improve incident reporting and analysis\",\"standards\":\"ISO 45001\"}",
+  "inputTokens": 113,
+  "outputTokens": 79,
+  "latencyMs": 973,
+  "costUsd": 0.00002574,
+  "truncated": false
+}

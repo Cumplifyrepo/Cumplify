@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-027",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Packaging (corrugated), Company Size: 140 employees, Pain Points: Print quality defects 4% of orders, die-cutting waste above target, no customer feedback loop, machine guards removed for maintenance and not replaced, ink VOC monitoring absent\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Current system exhibits several critical gaps: recurring print quality defects (4% of orders) indicating process control issues, die-cutting waste above target reflecting inefficiency, absence of a formal customer feedback loop hindering continuous improvement, machine guards removed during maintenance and not replaced violating safety protocols, and lack of ink VOC monitoring failing environmental compliance requirements.\", \"recommendations\": \"Implement robust process control measures including statistical process control (SPC) for print quality, conduct root cause analysis and corrective actions for die-cutting waste reduction, establish a formal customer feedback mechanism (e.g., post-delivery surveys and complaint tracking), enforce strict lock-out/tag-out (LOTO) procedures and mandatory guard replacement after maintenance, and install real-time VOC monitoring systems with automated alerts and recording for regulatory compliance.\", \"standards\": \"Primary applicable standards: ISO 9001 (Quality Management), ISO 14001 (Environmental Management), and ISO 45001 (Occupational Health and Safety). Additional relevant standards include ISO 12100 (Safety of Machinery) and ISO 14229 (Pain Assessment).\" }",
+  "inputTokens": 171,
+  "outputTokens": 225,
+  "latencyMs": 1606,
+  "costUsd": 0.0006751799999999999,
+  "truncated": false
+}

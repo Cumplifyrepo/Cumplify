@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-015",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Textile Manufacturing, Company Size: 75 employees, Pain Points: Dye lot consistency issues, no incoming material inspection, worker ergonomic complaints ignored, no formal quality policy, customer rejects at 6%\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Dye lot consistency issues, no incoming material inspection, ignored worker ergonomic complaints, no formal quality policy, high customer rejects\",\"recommendations\":\"Implement incoming material inspection, establish a formal quality policy, address worker ergonomic complaints, improve dye lot consistency, reduce customer rejects\",\"standards\":\"ISO 9001, ISO 14001, ISO 45001\"}",
+  "inputTokens": 115,
+  "outputTokens": 93,
+  "latencyMs": 1105,
+  "costUsd": 0.00002922,
+  "truncated": false
+}

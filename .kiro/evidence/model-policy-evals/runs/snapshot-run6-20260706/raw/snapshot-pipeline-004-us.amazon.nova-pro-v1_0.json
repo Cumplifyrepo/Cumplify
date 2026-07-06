@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-004",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Healthcare (hospital network), Company Size: 2200 employees, Pain Points: Inconsistent sterilization records across 4 sites, medication error rate above benchmark, no centralized document control, staff competency records outdated\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Inconsistent sterilization records, high medication error rate, lack of centralized document control, outdated staff competency records\",\"recommendations\":\"Implement a centralized electronic health record system, conduct regular staff training and competency assessments, establish a document control system, review and update sterilization protocols, perform a gap analysis for ISO compliance\",\"standards\":\"ISO 9001, ISO 13485, ISO 15189, ISO 27001\"}",
+  "inputTokens": 118,
+  "outputTokens": 108,
+  "latencyMs": 925,
+  "costUsd": 0.00044,
+  "truncated": false
+}

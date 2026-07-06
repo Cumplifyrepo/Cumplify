@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-001",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Automotive Manufacturing, Company Size: 450 employees, Pain Points: High scrap rate (8%), customer complaints increasing, no formal CAPA process, tribal knowledge for work instructions, recent failed customer audit\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"High scrap rate, increasing customer complaints, lack of formal CAPA process, reliance on tribal knowledge for work instructions, recent failed customer audit\",\"recommendations\":\"Implement a formal CAPA process, document work instructions, conduct employee training, perform internal audits, engage an ISO consultant\",\"standards\":\"ISO 9001:2015, ISO/TS 16949:2016\"}",
+  "inputTokens": 117,
+  "outputTokens": 99,
+  "latencyMs": 906,
+  "costUsd": 0.0004104,
+  "truncated": false
+}

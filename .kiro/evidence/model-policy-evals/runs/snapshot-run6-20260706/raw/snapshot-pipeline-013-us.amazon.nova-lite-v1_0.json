@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-013",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Electronics Assembly (PCB), Company Size: 160 employees, Pain Points: ESD damage claims from customers, incoming inspection bypassed due to schedule pressure, no first-article inspection process, design outputs lack verification criteria\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"ESD damage claims, bypassing incoming inspection, no first-article inspection, lack of design output verification criteria\",\"recommendations\":\"Implement ESD control measures, enforce incoming inspection, establish first-article inspection, define verification criteria for design outputs\",\"standards\":\"ISO 9001, ISO 14001, ISO 45001\"}",
+  "inputTokens": 119,
+  "outputTokens": 88,
+  "latencyMs": 950,
+  "costUsd": 0.000028260000000000004,
+  "truncated": false
+}

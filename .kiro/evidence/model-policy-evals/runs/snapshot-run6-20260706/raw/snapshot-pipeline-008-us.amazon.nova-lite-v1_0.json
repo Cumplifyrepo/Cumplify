@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-008",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Pharmaceutical (generics), Company Size: 900 employees, Pain Points: Batch deviation rate exceeds 3%, out-of-spec investigations taking too long, change control backlog of 45 items, annual product reviews delayed\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"High batch deviation rate, lengthy out-of-spec investigations, significant change control backlog, delayed annual product reviews\",\"recommendations\":\"Implement robust training programs, streamline investigation processes, prioritize and manage change control backlog, establish a timeline for annual product reviews\",\"standards\":\"ISO 9001, ISO 13485\"}",
+  "inputTokens": 123,
+  "outputTokens": 83,
+  "latencyMs": 1301,
+  "costUsd": 0.000027300000000000003,
+  "truncated": false
+}

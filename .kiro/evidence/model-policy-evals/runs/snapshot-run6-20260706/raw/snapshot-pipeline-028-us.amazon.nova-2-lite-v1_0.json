@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-028",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Telecommunications (field services), Company Size: 600 employees, Pain Points: Working near power lines without proper risk assessment, vehicle fleet maintenance records in spreadsheets, competency records for fiber splicing outdated, no safety objectives set\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Lack of formal risk assessment for working near power lines, reliance on spreadsheets for vehicle fleet maintenance leading to data inconsistencies, outdated competency records for critical skills like fiber splicing, and absence of defined safety objectives.\", \"recommendations\": \"Implement ISO 45001 for occupational health and safety to establish risk assessment protocols for power line work and define safety objectives. Adopt ISO 9001 for quality management to systematize vehicle fleet maintenance records using digital asset management. Develop a competency management system aligned with ISO 9001 requirements for fiber splicing training and certification. Conduct regular internal audits and management reviews to monitor progress.\", \"standards\": \"ISO 9001 (Quality Management), ISO 45001 (Occupational Health & Safety), ISO 17024 (Certification of Persons)\"}",
+  "inputTokens": 166,
+  "outputTokens": 171,
+  "latencyMs": 1274,
+  "costUsd": 0.00052503,
+  "truncated": false
+}

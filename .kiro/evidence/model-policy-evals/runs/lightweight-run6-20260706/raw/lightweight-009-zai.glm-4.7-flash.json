@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-009",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "SupplierScout: Evaluate supplier performance — Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved\n\nReturn a single JSON object with EXACTLY these fields:\n- evaluationId (string): unique identifier for the evaluation\n- supplierId (string): unique identifier for the supplier\n- period (string): evaluation period\n- qualityScore (string): quality performance score\n- deliveryScore (string): delivery performance score\n- responsivenessScore (string): responsiveness performance score\n- overallRating (string): overall rating or score\n- openActions (string): number or description of open action items\n- recommendation (string): recommended action or decision\n- evaluatedDate (string): date the evaluation was performed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"evaluationId\": \"EVAL-2025-Q1-0087\",\n  \"supplierId\": \"SUP-0087\",\n  \"period\": \"Q1 2025\",\n  \"qualityScore\": \"94%\",\n  \"deliveryScore\": \"97%\",\n  \"responsivenessScore\": \"4.2/5\",\n  \"overallRating\": \"Excellent\",\n  \"openActions\": \"0\",\n  \"recommendation\": \"Continue current performance; maintain supplier relationship.\",\n  \"evaluatedDate\": \"2025-04-01\"\n}\n```\nANSWER: {\"evaluationId\": \"EVAL-2025-Q1-0087\", \"supplierId\": \"SUP-0087\", \"period\": \"Q1 2025\", \"qualityScore\": \"94%\", \"deliveryScore\": \"97%\", \"responsivenessScore\": \"4.2/5\", \"overallRating\": \"Excellent\", \"openActions\": \"0\", \"recommendation\": \"Continue current performance; maintain supplier relationship.\", \"evaluatedDate\": \"2025-04-01\"}",
+  "inputTokens": 219,
+  "outputTokens": 229,
+  "latencyMs": 3823,
+  "costUsd": 0.00010693000000000001,
+  "truncated": false
+}

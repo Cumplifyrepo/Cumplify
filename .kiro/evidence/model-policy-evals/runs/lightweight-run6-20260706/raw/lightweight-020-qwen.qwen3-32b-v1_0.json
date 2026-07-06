@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-020",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ContextCartographer: Assess change impact — Change: New EU CSRD sustainability reporting directive effective January 2026, Scope: Affects all EU operations and supply chain, Standards Impacted: ISO 14001 (environmental aspects), ISO 9001 (customer requirements), Actions Needed: Gap assessment, update context of organization, identify new interested party requirements\n\nReturn a single JSON object with EXACTLY these fields:\n- changeId (string): unique identifier for the change\n- description (string): detailed description of the item\n- effectiveDate (string): date when the document becomes effective\n- scope (string): scope of the change or audit\n- impactedStandards (string): standards impacted by this change\n- actionsRequired (string): actions required in response\n- priority (string): priority level for addressing this item\n- owner (string): person responsible for the objective or item\n- assessmentStatus (string): current status of the assessment\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\n  \"changeId\": \"CSRD-2026-001\",\n  \"description\": \"New EU Corporate Sustainability Reporting Directive (CSRD) becomes effective, requiring enhanced sustainability reporting for all EU-based operations and supply chain activities.\",\n  \"effectiveDate\": \"2026-01-01\",\n  \"scope\": \"Affects all EU operations and supply chain activities, including environmental and customer-related requirements.\",\n  \"impactedStandards\": \"ISO 14001 (environmental aspects), ISO 9001 (customer requirements)\",\n  \"actionsRequired\": \"Conduct a gap assessment, update the context of the organization, and identify new interested party requirements.\",\n  \"priority\": \"High\",\n  \"owner\": \"Sustainability Compliance Manager\",\n  \"assessmentStatus\": \"In Progress\"\n}",
+  "inputTokens": 228,
+  "outputTokens": 177,
+  "latencyMs": 1902,
+  "costUsd": 0.0001404,
+  "truncated": false
+}

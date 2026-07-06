@@ -32,8 +32,12 @@ export function scoreSchemaValidation(
 
   if (typeof parsed !== 'object' || parsed === null) return 0;
 
-  // Check required fields from schema
-  const requiredFields = Object.keys(expectedSchema);
+  // Check required fields from the JSON Schema's `required` array. The schema is a
+  // real JSON Schema object ({type, required, properties}) — its ENVELOPE keys are
+  // not field names. (Gate hotfix: Object.keys(expectedSchema) graded models on
+  // whether they emitted fields literally named "required"/"properties".)
+  const required = (expectedSchema as { required?: unknown }).required;
+  const requiredFields = Array.isArray(required) ? (required as string[]) : [];
   if (requiredFields.length === 0) return 1.0; // No schema requirements = pass
 
   let fieldsPresent = 0;

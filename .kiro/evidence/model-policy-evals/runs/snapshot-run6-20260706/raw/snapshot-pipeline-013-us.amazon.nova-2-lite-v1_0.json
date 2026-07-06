@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-013",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Electronics Assembly (PCB), Company Size: 160 employees, Pain Points: ESD damage claims from customers, incoming inspection bypassed due to schedule pressure, no first-article inspection process, design outputs lack verification criteria\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Key gaps include lack of formal ESD control procedures leading to customer claims, bypassed incoming inspections due to schedule pressures, absence of first-article inspection process, and design outputs without verification criteria. These issues indicate insufficient process control, inadequate risk management, and incomplete design validation.\", \"recommendations\": \"Implement a comprehensive ESD control program per ISO 14971 principles. Establish a formal first-article inspection process with documented acceptance criteria. Develop and enforce incoming inspection procedures that cannot be bypassed, even under schedule pressure. Integrate verification criteria into all design outputs using ISO 9001:2015 requirements for design and development verification. Conduct internal audits to ensure compliance and continuous improvement.\", \"standards\": \"Primary: ISO 9001:2015 (Quality Management Systems), ISO 14971 (Risk Management for Medical Devices if applicable), ISO 13485 (If medical devices are involved). Additional relevant standards: IEC 61340-5-1 (ESD Control), ASTM D3638 (ESD Test Methods)\"}",
+  "inputTokens": 163,
+  "outputTokens": 218,
+  "latencyMs": 1820,
+  "costUsd": 0.00065329,
+  "truncated": false
+}

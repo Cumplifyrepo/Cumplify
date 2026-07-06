@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-025",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Contract Electronics Manufacturing, Company Size: 350 employees, Pain Points: Customer-furnished material traceability gaps, IPC workmanship standards not consistently applied, no process FMEA for new product introduction, test coverage below 80%\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Moderate\", \"gaps\": \"Current system lacks robust material traceability for customer-furnished components, inconsistent application of IPC workmanship standards across production lines, absence of formal process FMEA for new product introductions, and test coverage below the recommended 80% threshold impacting product reliability and compliance.\", \"recommendations\": \"Implement serialized tracking for all customer-furnished materials using barcode/RFID technology, establish mandatory IPC training and certification programs for all assembly personnel, develop and deploy process FMEA templates for every new product introduction with risk prioritization, and invest in automated test coverage tools to increase testing to at least 90% through structured test planning and execution metrics.\", \"standards\": \"ISO 9001:2015 (Quality Management Systems), IPC-A-610 (Acceptability of Electronic Assemblies), ISO/IEC 17025 (Testing and Calibration Laboratories where applicable), ISO 13485:2016 (if medical devices are part of the portfolio)\"}",
+  "inputTokens": 165,
+  "outputTokens": 197,
+  "latencyMs": 1569,
+  "costUsd": 0.0005962000000000001,
+  "truncated": false
+}

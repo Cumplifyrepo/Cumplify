@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-023",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Renewable Energy (wind farm maintenance), Company Size: 90 employees, Pain Points: Working at height incidents, lone worker safety gaps, blade inspection records decentralized, no formal competency framework for turbine technicians\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"High-risk activity incidents, lone worker safety, decentralized records, lack of competency framework\",\"recommendations\":\"Implement safety protocols for working at height, establish lone worker safety procedures, centralize blade inspection records, develop a formal competency framework for technicians\",\"standards\":\"ISO 45001 (Occupational Health and Safety), ISO 19650 (Information Management using Building Information Modelling), ISO 9001 (Quality Management Systems)\"}",
+  "inputTokens": 116,
+  "outputTokens": 108,
+  "latencyMs": 1176,
+  "costUsd": 0.00043840000000000003,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-029",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Cosmetics Manufacturing, Company Size: 170 employees, Pain Points: Batch consistency complaints from retail partners, stability testing protocol outdated, raw material supplier COAs not verified, GMP deviations not tracked systematically\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Batch consistency complaints indicate issues with production control and quality assurance; outdated stability testing protocols suggest non-compliance with current good practices; lack of verification for raw material supplier Certificates of Analysis (COAs) exposes the company to raw material quality risks; absence of systematic tracking for GMP deviations prevents effective root cause analysis and corrective actions.\", \"recommendations\": \"Implement a robust batch record review and release process; update stability testing protocols to align with ICH Q1A(R2) and ISO 11930; establish a formal supplier qualification and COA verification program; develop a GMP deviation tracking and investigation system with root cause analysis and corrective/preventive actions (CAPA); conduct internal audits to ensure compliance with ISO 9001, ISO 14001, and ISO 22716:2014.\", \"standards\": \"ISO 9001:2015 (Quality Management Systems), ISO 22716:2014 (Cosmetics Good Manufacturing Practices), ISO 14001:2015 (Environmental Management Systems), ICH Q1A(R2) (Stability Testing of New Drug Substances and Products), ISO 11930 (Requirements for the Validation of Analytical Procedures)\"}",
+  "inputTokens": 161,
+  "outputTokens": 248,
+  "latencyMs": 1657,
+  "costUsd": 0.00073513,
+  "truncated": false
+}

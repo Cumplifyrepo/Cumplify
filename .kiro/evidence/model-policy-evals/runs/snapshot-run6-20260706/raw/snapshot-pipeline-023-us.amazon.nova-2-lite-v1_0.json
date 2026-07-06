@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-023",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Renewable Energy (wind farm maintenance), Company Size: 90 employees, Pain Points: Working at height incidents, lone worker safety gaps, blade inspection records decentralized, no formal competency framework for turbine technicians\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Current systems lack formal processes for working at height incidents, lone worker safety, centralized blade inspection records, and a structured competency framework for turbine technicians. These gaps increase risk exposure and compliance vulnerabilities in a high-risk renewable energy environment.\", \"recommendations\": \"Implement ISO 45001 for occupational health and safety to address working at height and lone worker risks. Adopt ISO 9001 for quality management to centralize blade inspection records and ensure traceability. Develop a competency framework aligned with ISO 10012 for measurement management and ISO 17024 for certification of turbine technicians. Integrate lone worker safety devices and real-time monitoring systems. Conduct regular internal audits and staff training programs focused on these standards.\", \"standards\": \"ISO 9001 (Quality Management), ISO 45001 (Occupational Health and Safety), ISO 17024 (Certification of Persons), ISO 10012 (Measurement Management), ISO 31000 (Risk Management)\"}",
+  "inputTokens": 162,
+  "outputTokens": 204,
+  "latencyMs": 1684,
+  "costUsd": 0.0006144599999999999,
+  "truncated": false
+}

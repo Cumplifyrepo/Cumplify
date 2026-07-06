@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-017",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "NCTriage: Prioritize and route these nonconformities — NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)\n\nReturn a single JSON object with EXACTLY these fields:\n- triageResults (string): results of the triage assessment\n- priorityOrder (string): prioritized order for addressing items\n- routingDecisions (string): routing decisions for each item\n- escalations (string): items requiring escalation\n- timestamp (string): timestamp of the triage\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"triageResults\": \"NC-102 is critical and requires immediate attention due to safety implications. NC-103 is major and needs prompt resolution to avoid production delays. NC-101 and NC-104 are minor and can be addressed after higher-priority items.\",\n  \"priorityOrder\": \"NC-102, NC-103, NC-101, NC-104\",\n  \"routingDecisions\": \"NC-102 to Quality Engineering and Safety for root cause analysis and corrective action. NC-103 to Procurement and Quality Control for supplier communication and material rework. NC-101 to Packaging for label correction. NC-104 to Document Control for system update.\",\n  \"escalations\": \"NC-102 requires escalation to Plant Management and Safety Committee due to its critical nature.\",\n  \"timestamp\": \"2023-10-05T14:30:00Z\"\n}\n```",
+  "inputTokens": 182,
+  "outputTokens": 217,
+  "latencyMs": 1928,
+  "costUsd": 0.00015749999999999998,
+  "truncated": false
+}

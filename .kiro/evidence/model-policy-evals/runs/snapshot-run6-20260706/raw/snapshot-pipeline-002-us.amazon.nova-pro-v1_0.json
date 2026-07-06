@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-002",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Food Processing (dairy), Company Size: 120 employees, Pain Points: FDA warning letter for documentation gaps, allergen cross-contact incidents, supplier certificates expired and not tracked, no management review process\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Documentation gaps leading to FDA warning, allergen cross-contact incidents, untracked expired supplier certificates, lack of management review process\",\"recommendations\":\"Implement a robust documentation management system, enhance allergen control measures, establish a supplier management system with tracking, develop and execute a management review process\",\"standards\":\"ISO 22000, ISO 9001, ISO/TS 22002-1, ISO 22005\"}",
+  "inputTokens": 117,
+  "outputTokens": 108,
+  "latencyMs": 965,
+  "costUsd": 0.0004392,
+  "truncated": false
+}

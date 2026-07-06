@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-030",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Precast Concrete, Company Size: 230 employees, Pain Points: Compressive strength test failures 3% of batches, rebar placement errors on-site, no design review process for custom molds, crane operation near-misses, silica dust monitoring not performed\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Compressive strength test failures, rebar placement errors, lack of design review for custom molds, crane operation safety, no silica dust monitoring\",\"recommendations\":\"Implement a robust quality control system for compressive strength tests, establish a rebar placement verification process, create a design review process for custom molds, enhance crane operation safety training, initiate silica dust monitoring and control measures\",\"standards\":\"ISO 9001, ISO 14001, ISO 45001\"}",
+  "inputTokens": 131,
+  "outputTokens": 114,
+  "latencyMs": 1332,
+  "costUsd": 0.000035220000000000005,
+  "truncated": false
+}

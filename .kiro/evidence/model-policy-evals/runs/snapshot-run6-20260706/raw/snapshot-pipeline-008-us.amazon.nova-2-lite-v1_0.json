@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-008",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Pharmaceutical (generics), Company Size: 900 employees, Pain Points: Batch deviation rate exceeds 3%, out-of-spec investigations taking too long, change control backlog of 45 items, annual product reviews delayed\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Moderate\", \"gaps\": \"Current systems show significant gaps in batch deviation management (exceeding 3% rate), prolonged out-of-spec investigations, a substantial change control backlog (45 items), and delayed annual product reviews. These issues indicate weaknesses in quality control processes, investigation efficiency, change management protocols, and scheduled review adherence.\", \"recommendations\": \"Implement automated deviation tracking and root cause analysis tools to reduce batch deviation rates. Establish a dedicated investigation team with standardized protocols to accelerate out-of-spec resolutions. Prioritize change control backlog by risk assessment and implement a digital change management system. Schedule quarterly product reviews with cross-functional teams and enforce strict timelines. Provide training on ISO requirements and invest in quality management system software integration.\", \"standards\": \"ISO 9001:2015 (Quality Management Systems), ISO 13485:2016 (for medical devices, applicable to pharmaceutical quality systems), ISO 17025:2017 (if conducting testing/laboratory activities), GMP (Good Manufacturing Practice) regulations, and ICH Q7 guidelines are applicable standards that should be fully integrated and audited.\"}",
+  "inputTokens": 165,
+  "outputTokens": 226,
+  "latencyMs": 1716,
+  "costUsd": 0.00067595,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-029",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Cosmetics Manufacturing, Company Size: 170 employees, Pain Points: Batch consistency complaints from retail partners, stability testing protocol outdated, raw material supplier COAs not verified, GMP deviations not tracked systematically\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Inconsistent batch quality, outdated stability testing, unverified COAs, untracked GMP deviations\",\"recommendations\":\"Implement a robust quality management system, update stability testing protocols, verify supplier COAs, establish a systematic GMP deviation tracking system\",\"standards\":\"ISO 9001, ISO 22716, ISO 17025\"}",
+  "inputTokens": 117,
+  "outputTokens": 90,
+  "latencyMs": 907,
+  "costUsd": 0.0003816,
+  "truncated": false
+}

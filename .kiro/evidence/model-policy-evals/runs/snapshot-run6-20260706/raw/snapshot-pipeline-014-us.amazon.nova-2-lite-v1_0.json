@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-014",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Oil & Gas (drilling services), Company Size: 500 employees, Pain Points: 2 significant spills in 12 months, permit-to-work system paper-based, JSA not completed for non-routine tasks, contractor HSE performance not tracked\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Significant gaps include reliance on paper-based permit-to-work systems, incomplete Job Safety Analyses (JSA) for non-routine tasks, lack of contractor HSE performance tracking, and inadequate response protocols following two significant spills in 12 months. These issues indicate weaknesses in risk management, documentation, and oversight.\", \"recommendations\": \"Implement a digital permit-to-work system with automated approvals and tracking. Develop and enforce completion of JSAs for all non-routine tasks. Establish a formal contractor HSE performance monitoring and management system. Enhance spill response protocols, conduct root cause analysis of past spills, and implement corrective actions. Introduce regular HSE audits and training programs.\", \"standards\": \"Applicable ISO standards include ISO 45001 (Occupational Health and Safety), ISO 14001 (Environmental Management), and ISO 9001 (Quality Management). These standards provide frameworks for improving safety management, environmental performance, and overall organizational efficiency.\"}",
+  "inputTokens": 172,
+  "outputTokens": 198,
+  "latencyMs": 1464,
+  "costUsd": 0.0006012599999999999,
+  "truncated": false
+}

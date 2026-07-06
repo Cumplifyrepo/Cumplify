@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-014",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "WorkerVoice: Log worker consultation — Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes\n\nReturn a single JSON object with EXACTLY these fields:\n- consultationId (string): unique identifier for the consultation\n- meetingType (string): type of meeting conducted\n- date (string): date of the event\n- attendeeCount (string): number of attendees\n- workerRepCount (string): number of worker representatives present\n- topics (string): topics discussed\n- actionsAgreed (string): actions agreed upon during the meeting\n- followUpDate (string): date for follow-up\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"consultationId\": \"WV-2025-03-05-001\",\n  \"meetingType\": \"Monthly Safety Committee\",\n  \"date\": \"2025-03-05\",\n  \"attendeeCount\": \"11\",\n  \"workerRepCount\": \"8\",\n  \"topics\": \"New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback\",\n  \"actionsAgreed\": \"Trial cooling vests by April, Update forklift routes\",\n  \"followUpDate\": \"2025-04-01\",\n  \"status\": \"Open\"\n}\n```\nANSWER: {\"consultationId\": \"WV-2025-03-05-001\", \"meetingType\": \"Monthly Safety Committee\", \"date\": \"2025-03-05\", \"attendeeCount\": \"11\", \"workerRepCount\": \"8\", \"topics\": \"New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback\", \"actionsAgreed\": \"Trial cooling vests by April, Update forklift routes\", \"followUpDate\": \"2025-04-01\", \"status\": \"Open\"}",
+  "inputTokens": 207,
+  "outputTokens": 254,
+  "latencyMs": 5180,
+  "costUsd": 0.00011609000000000001,
+  "truncated": false
+}

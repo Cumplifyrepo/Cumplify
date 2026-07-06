@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-014",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Oil & Gas (drilling services), Company Size: 500 employees, Pain Points: 2 significant spills in 12 months, permit-to-work system paper-based, JSA not completed for non-routine tasks, contractor HSE performance not tracked\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Frequent spills indicate inadequate safety protocols; paper-based permit-to-work system lacks traceability and efficiency; JSA not completed for non-routine tasks shows gaps in risk assessment; contractor HSE performance not tracked leads to potential safety and compliance issues.\",\"recommendations\":\"Implement a digital permit-to-work system to enhance traceability and efficiency; ensure JSA is completed for all tasks, including non-routine ones; establish a system to track and evaluate contractor HSE performance; conduct thorough incident investigations to prevent future spills and improve safety protocols.\",\"standards\":\"ISO 9001:2015 (Quality Management), ISO 14001:2015 (Environmental Management), ISO 45001:2018 (Occupational Health and Safety), ISO 31000:2018 (Risk Management)\"}",
+  "inputTokens": 131,
+  "outputTokens": 192,
+  "latencyMs": 1463,
+  "costUsd": 0.0007192000000000001,
+  "truncated": false
+}

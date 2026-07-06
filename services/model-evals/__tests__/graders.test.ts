@@ -97,23 +97,23 @@ describe('multi-label set F1 grader', () => {
 describe('schema-validator grader', () => {
   it('returns 1.0 for valid JSON with all required fields', () => {
     const response = JSON.stringify({ name: 'test', status: 'open', priority: 'high' });
-    const schema = { name: 'string', status: 'string', priority: 'string' };
+    const schema = { type: 'object', required: ['name', 'status', 'priority'], properties: { name: { type: 'string' }, status: { type: 'string' }, priority: { type: 'string' } } };
     expect(scoreSchemaValidation(response, schema)).toBe(1.0);
   });
 
   it('returns partial credit for missing fields', () => {
     const response = JSON.stringify({ name: 'test' });
-    const schema = { name: 'string', status: 'string', priority: 'string' };
+    const schema = { type: 'object', required: ['name', 'status', 'priority'], properties: { name: { type: 'string' }, status: { type: 'string' }, priority: { type: 'string' } } };
     expect(scoreSchemaValidation(response, schema)).toBeCloseTo(1 / 3);
   });
 
   it('returns 0.0 for invalid JSON', () => {
-    expect(scoreSchemaValidation('not json at all', { field: 'string' })).toBe(0);
+    expect(scoreSchemaValidation('not json at all', { type: 'object', required: ['field'], properties: { field: { type: 'string' } } })).toBe(0);
   });
 
   it('extracts JSON from markdown code blocks', () => {
     const response = '```json\n{"name": "test", "status": "done"}\n```';
-    const schema = { name: 'string', status: 'string' };
+    const schema = { type: 'object', required: ['name', 'status'], properties: { name: { type: 'string' }, status: { type: 'string' } } };
     expect(scoreSchemaValidation(response, schema)).toBe(1.0);
   });
 

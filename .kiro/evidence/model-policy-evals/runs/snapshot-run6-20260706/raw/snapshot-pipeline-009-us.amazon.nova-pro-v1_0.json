@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-009",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Mining (copper), Company Size: 1400 employees, Pain Points: Lost-time injury rate 4.2 per million hours, dust exposure above PELs in 2 areas, contractor safety inductions inconsistent, no near-miss reporting culture\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"High lost-time injury rate, dust exposure above PELs, inconsistent contractor safety inductions, lack of near-miss reporting culture\",\"recommendations\":\"Implement a comprehensive safety management system, conduct regular dust monitoring and control measures, standardize contractor safety inductions, establish a near-miss reporting and analysis process\",\"standards\":\"ISO 45001 (Occupational Health and Safety), ISO 14001 (Environmental Management), ISO 31000 (Risk Management)\"}",
+  "inputTokens": 129,
+  "outputTokens": 117,
+  "latencyMs": 904,
+  "costUsd": 0.0004776,
+  "truncated": false
+}

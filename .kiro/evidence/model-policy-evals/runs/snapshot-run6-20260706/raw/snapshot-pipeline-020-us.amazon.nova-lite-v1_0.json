@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-020",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Cement Manufacturing, Company Size: 800 employees, Pain Points: Kiln dust emissions exceeding permit 2x/quarter, noise exposure in grinding area, no life-cycle perspective for environmental aspects, community relations strained\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Kiln dust emissions exceeding permit, noise exposure, lack of life-cycle perspective, strained community relations\",\"recommendations\":\"Implement dust control measures, conduct noise exposure assessments, adopt a life-cycle perspective, improve community engagement\",\"standards\":\"ISO 14001, ISO 45001, ISO 26000\"}",
+  "inputTokens": 120,
+  "outputTokens": 87,
+  "latencyMs": 875,
+  "costUsd": 0.000028080000000000002,
+  "truncated": false
+}

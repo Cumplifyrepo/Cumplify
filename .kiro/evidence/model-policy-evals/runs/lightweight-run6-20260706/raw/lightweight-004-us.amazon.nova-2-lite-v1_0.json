@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-004",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "ObjectiveTracker: Create a new quality objective — Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- description (string): detailed description of the item\n- owner (string): person responsible for the objective or item\n- baseline (string): baseline measurement value\n- target (string): target value to achieve\n- measurementMethod (string): method used to measure progress\n- clauseRef (string): ISO standard clause reference\n- status (string): current status of the item\n- dueDate (string): deadline date for completion\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"objectiveId\": \"QT-2025-Q3-CC20\", \"description\": \"Reduce customer complaints by 20% in Q3 2025 through improved quality control processes and customer feedback mechanisms\", \"owner\": \"Quality Director\", \"baseline\": \"45 complaints/month\", \"target\": \"36 complaints/month\", \"measurementMethod\": \"Monthly complaint log\", \"clauseRef\": \"ISO 9001 clause 6.2\", \"status\": \"In Planning\", \"dueDate\": \"2025-09-30\"}",
+  "inputTokens": 234,
+  "outputTokens": 111,
+  "latencyMs": 881,
+  "costUsd": 0.00038247,
+  "truncated": false
+}

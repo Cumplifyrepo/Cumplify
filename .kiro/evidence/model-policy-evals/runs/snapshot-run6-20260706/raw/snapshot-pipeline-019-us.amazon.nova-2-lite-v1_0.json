@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-019",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: IT Services (managed hosting), Company Size: 55 employees, Pain Points: Change management causing outages, incident response time SLA breaches, no capacity planning process, customer satisfaction declining, knowledge transfer gaps when staff leave\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Lack of formal change management process leading to outages, insufficient incident response procedures causing SLA breaches, absence of capacity planning resulting in resource bottlenecks, declining customer satisfaction due to service inconsistencies, knowledge transfer gaps creating dependency on individual staff and risking loss of critical information upon employee departure\", \"recommendations\": \"Implement a robust change management process with risk assessment and approval workflows, establish clear incident response protocols and monitoring to meet SLA requirements, develop a capacity planning framework to anticipate and allocate resources effectively, enhance customer engagement through regular feedback loops and service level reviews, create a centralized knowledge management system and conduct structured onboarding/offboarding procedures to capture and transfer critical operational knowledge\", \"standards\": \"ISO/IEC 20000 (Information Technology Service Management), ISO 27001 (Information Security Management), ISO 9001 (Quality Management Systems)\"}",
+  "inputTokens": 165,
+  "outputTokens": 181,
+  "latencyMs": 1586,
+  "costUsd": 0.0005522000000000001,
+  "truncated": false
+}

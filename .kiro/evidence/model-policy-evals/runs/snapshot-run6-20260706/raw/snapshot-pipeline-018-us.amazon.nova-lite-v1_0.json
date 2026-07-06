@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-018",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Agricultural Chemicals (pesticides), Company Size: 130 employees, Pain Points: Label compliance issues in 2 markets, environmental monitoring not performed at boundary, transport documentation gaps, worker exposure monitoring lapsed\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Label compliance issues in 2 markets, environmental monitoring not performed at boundary, transport documentation gaps, worker exposure monitoring lapsed\",\"recommendations\":\"Implement a robust label management system, establish environmental monitoring at the boundary, ensure complete and accurate transport documentation, reinstate worker exposure monitoring\",\"standards\":\"ISO 14001, ISO 45001, ISO 9001\"}",
+  "inputTokens": 118,
+  "outputTokens": 94,
+  "latencyMs": 1178,
+  "costUsd": 0.00002964,
+  "truncated": false
+}

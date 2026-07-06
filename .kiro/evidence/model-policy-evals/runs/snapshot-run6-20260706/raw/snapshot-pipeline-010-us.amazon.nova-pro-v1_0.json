@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-010",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Aerospace (MRO services), Company Size: 220 employees, Pain Points: Tool calibration overdue for 15% of instruments, FOD incidents last quarter, no formal risk register, traceability gaps in component history\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Tool calibration overdue, FOD incidents, no formal risk register, traceability gaps\",\"recommendations\":\"Implement regular calibration schedule, enhance FOD prevention measures, establish a formal risk register, improve traceability systems\",\"standards\":\"ISO 9001, ISO 14001, ISO 45001, AS9100\"}",
+  "inputTokens": 120,
+  "outputTokens": 87,
+  "latencyMs": 924,
+  "costUsd": 0.0003744,
+  "truncated": false
+}

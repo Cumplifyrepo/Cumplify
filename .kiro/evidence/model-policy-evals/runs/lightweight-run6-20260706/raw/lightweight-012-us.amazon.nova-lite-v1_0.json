@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-012",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "EmergencyPlanner: Create emergency response plan — Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h\n\nReturn a single JSON object with EXACTLY these fields:\n- planId (string): unique identifier for the plan\n- scenario (string): emergency or risk scenario description\n- severity (string): severity level of the scenario\n- responseTeam (string): team responsible for response\n- evacuationZone (string): designated evacuation zone\n- containmentActions (string): actions to contain the incident\n- notifications (string): required notifications and their timelines\n- drillFrequency (string): how often drills should be conducted\n- lastDrillDate (string): date of the most recent drill\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"planId\":\"CHEM-SPILL-001\",\"scenario\":\"Chemical spill in mixing area\",\"severity\":\"High\",\"responseTeam\":\"HazMat team + shift supervisor\",\"evacuationZone\":\"Zone B (50m radius)\",\"containmentActions\":\"Deploy spill kit SK-003 + activate sump pump\",\"notifications\":\"Fire department within 5 min, EPA within 24h\",\"drillFrequency\":\"Quarterly\",\"lastDrillDate\":\"2023-03-15\",\"status\":\"Active\"}",
+  "inputTokens": 218,
+  "outputTokens": 115,
+  "latencyMs": 993,
+  "costUsd": 0.000040680000000000004,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-013",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "EmergencyPlanner: Log emergency drill result — Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01\n\nReturn a single JSON object with EXACTLY these fields:\n- drillId (string): unique identifier for the drill\n- planId (string): unique identifier for the plan\n- date (string): date of the event\n- participantCount (string): number of participants in the drill\n- evacuationTime (string): time taken for evacuation\n- targetMet (string): whether the target was met (yes/no)\n- issuesFound (string): issues identified during the drill\n- correctiveActions (string): corrective actions required\n- nextDrillDate (string): scheduled date for the next drill\n- effectiveness (string): effectiveness rating of the drill or action\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"drillId\":\"ERP-007-20250220\",\"planId\":\"ERP-007\",\"date\":\"2025-02-20\",\"participantCount\":\"18\",\"evacuationTime\":\"3 min 42 sec\",\"targetMet\":\"no\",\"issuesFound\":\"2 blocked exit signs in corridor B\",\"correctiveActions\":\"Replace signage by 2025-03-01\",\"nextDrillDate\":\"\",\"effectiveness\":\"\"}",
+  "inputTokens": 241,
+  "outputTokens": 106,
+  "latencyMs": 923,
+  "costUsd": 0.00003990000000000001,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-022",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Bakery (industrial scale), Company Size: 250 employees, Pain Points: Allergen management inconsistent across shifts, cleaning validation records missing, equipment maintenance reactive not preventive, high staff turnover losing competency\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"3/10\",\"gaps\":\"Inconsistent allergen management, missing cleaning validation records, reactive equipment maintenance, high staff turnover\",\"recommendations\":\"Implement standardized allergen management protocols, establish a cleaning validation schedule, shift to preventive equipment maintenance, invest in staff training and retention programs\",\"standards\":\"ISO 22000, ISO 9001, ISO 14001\"}",
+  "inputTokens": 117,
+  "outputTokens": 90,
+  "latencyMs": 1129,
+  "costUsd": 0.000028620000000000004,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-003",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "RecordsVault: Log this training completion — Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28\n\nReturn a single JSON object with EXACTLY these fields:\n- recordId (string): unique identifier for this record\n- type (string): type/category of the record\n- employeeId (string): unique identifier for the employee\n- courseName (string): name of the training course\n- completionDate (string): date when the training was completed\n- score (string): score or grade achieved\n- instructor (string): name of the instructor or trainer\n- expiryDate (string): date when the certification or training expires\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"recordId\": \"ISO45001-EMP-1042-20250228\",\n  \"type\": \"Training Completion\",\n  \"employeeId\": \"EMP-1042\",\n  \"courseName\": \"ISO 45001 Internal Auditor\",\n  \"completionDate\": \"2025-02-28\",\n  \"score\": \"92%\",\n  \"instructor\": \"Diane Foster\",\n  \"expiryDate\": \"2027-02-28\",\n  \"status\": \"Active\"\n}\n```\nANSWER: {\"recordId\": \"ISO45001-EMP-1042-20250228\", \"type\": \"Training Completion\", \"employeeId\": \"EMP-1042\", \"courseName\": \"ISO 45001 Internal Auditor\", \"completionDate\": \"2025-02-28\", \"score\": \"92%\", \"instructor\": \"Diane Foster\", \"expiryDate\": \"2027-02-28\", \"status\": \"Active\"}",
+  "inputTokens": 200,
+  "outputTokens": 206,
+  "latencyMs": 4687,
+  "costUsd": 0.0000964,
+  "truncated": false
+}

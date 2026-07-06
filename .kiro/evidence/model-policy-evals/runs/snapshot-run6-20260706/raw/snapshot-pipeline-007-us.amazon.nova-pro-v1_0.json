@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-007",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Energy (solar panel manufacturing), Company Size: 180 employees, Pain Points: Soldering defect rate 5%, no statistical process control, design changes not formally reviewed, customer returns increasing 30% YoY\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"High soldering defect rate, lack of statistical process control, informal design change reviews, increasing customer returns\",\"recommendations\":\"Implement statistical process control, reduce soldering defect rate, formalize design change review process, analyze and address causes of customer returns\",\"standards\":\"ISO 9001, ISO 14001, ISO 45001, ISO 50001\"}",
+  "inputTokens": 120,
+  "outputTokens": 95,
+  "latencyMs": 1189,
+  "costUsd": 0.0004,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-027",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Packaging (corrugated), Company Size: 140 employees, Pain Points: Print quality defects 4% of orders, die-cutting waste above target, no customer feedback loop, machine guards removed for maintenance and not replaced, ink VOC monitoring absent\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Moderate\",\"gaps\":\"Print quality defects, die-cutting waste, lack of customer feedback, safety issues with machine guards, absence of ink VOC monitoring\",\"recommendations\":\"Implement a quality control system, reduce die-cutting waste, establish a customer feedback loop, enforce safety protocols for machine guards, introduce ink VOC monitoring\",\"standards\":\"ISO 9001, ISO 14001, ISO 45001\"}",
+  "inputTokens": 129,
+  "outputTokens": 102,
+  "latencyMs": 1317,
+  "costUsd": 0.00003222,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-015",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Textile Manufacturing, Company Size: 75 employees, Pain Points: Dye lot consistency issues, no incoming material inspection, worker ergonomic complaints ignored, no formal quality policy, customer rejects at 6%\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Lack of incoming material inspection leads to dye lot inconsistencies, absence of formal quality policy results in undefined quality expectations, ignored worker ergonomic complaints indicates poor occupational health and safety practices, and high customer reject rate (6%) reflects ineffective quality control processes.\", \"recommendations\": \"Implement a formal quality policy and management system, establish incoming material inspection procedures, address worker ergonomic complaints to improve workplace safety and efficiency, conduct root cause analysis of customer rejections and implement corrective actions, train staff on quality procedures, and consider certification to ISO 9001 for quality management and ISO 45001 for occupational health and safety.\", \"standards\": \"ISO 9001 (Quality Management), ISO 45001 (Occupational Health and Safety)\"}",
+  "inputTokens": 161,
+  "outputTokens": 163,
+  "latencyMs": 1252,
+  "costUsd": 0.0005013800000000001,
+  "truncated": false
+}

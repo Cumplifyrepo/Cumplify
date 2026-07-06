@@ -128,12 +128,12 @@
 > Each run: `--estimate-only` → approve → `--run`.
 
 ### Deliverables
-- [ ] Run: Micro seat (2 candidates) — evidence + scored report
-- [ ] Run: Lightweight seat (4 candidates) — evidence + scored report
-- [ ] Run: Snapshot seat (4 candidates) — evidence + scored report
-- [ ] Run: Pain-distiller seat (3 candidates) — evidence + scored report
-- [ ] All scored reports committed to `.kiro/evidence/model-policy-evals/`
-- [ ] Each report states: pricing source (live-api / snapshot-priced), ground-truth limitation where applicable
+- [x] Run: Micro seat (2 candidates) — evidence + scored report
+- [x] Run: Lightweight seat (4 candidates) — evidence + scored report
+- [x] Run: Snapshot seat (4 candidates) — evidence + scored report
+- [x] Run: Pain-distiller seat (3 candidates) — evidence + scored report
+- [x] All scored reports committed to `.kiro/evidence/model-policy-evals/`
+- [x] Each report states: pricing source (live-api / snapshot-priced), ground-truth limitation where applicable
 
 ### Acceptance
 - Each seat has a committed scored report with winner + margin headroom

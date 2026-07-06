@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-018",
+  "modelId": "qwen.qwen3-32b-v1:0",
+  "prompt": "ObjectiveTracker: Flag objective as off-track — Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- status (string): current status of the item\n- currentProgress (string): current progress value\n- targetProgress (string): expected progress at this point\n- variance (string): variance between actual and target\n- rootCause (string): identified root cause of the issue\n- recommendation (string): recommended action or decision\n- escalationRequired (string): whether escalation is required (yes/no)\n- updatedAt (string): timestamp of the last update\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\n  \"objectiveId\": \"OBJ-2025-008\",\n  \"status\": \"Off-track\",\n  \"currentProgress\": \"2%\",\n  \"targetProgress\": \"5%\",\n  \"variance\": \"-3%\",\n  \"rootCause\": \"Production volume increased 15% unexpectedly\",\n  \"recommendation\": \"Adjust target to per-unit consumption metric\",\n  \"escalationRequired\": \"yes\",\n  \"updatedAt\": \"2025-04-05T14:30:00Z\"\n}",
+  "inputTokens": 207,
+  "outputTokens": 119,
+  "latencyMs": 1343,
+  "costUsd": 0.00010245,
+  "truncated": false
+}

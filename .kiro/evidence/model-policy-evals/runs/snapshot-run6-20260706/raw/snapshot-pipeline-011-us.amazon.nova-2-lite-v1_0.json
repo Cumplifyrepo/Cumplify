@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-011",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Plastics Injection Molding, Company Size: 95 employees, Pain Points: Mold changeover takes too long causing quality drift, no SPC on critical dimensions, operator training is buddy-system only, customer audits finding repeat issues\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Lack of standardized procedures for mold changeover leading to quality drift, absence of Statistical Process Control (SPC) on critical dimensions resulting in undetected variations, reliance on buddy-system training without formal documentation or competency assessments, and recurring customer audit findings indicating systemic non-conformities.\", \"recommendations\": \"Implement standardized mold changeover procedures with time tracking and verification checks, introduce SPC for all critical dimensions using control charts and real-time monitoring, develop a formal training program with documented curricula, competency evaluations, and training records, and conduct internal audits to identify and rectify repeat issues before customer audits.\", \"standards\": \"ISO 9001:2015 (Quality Management Systems), ISO 13485 (if medical devices are involved), ISO 19011 (Auditing Guidelines)\"}",
+  "inputTokens": 165,
+  "outputTokens": 171,
+  "latencyMs": 1242,
+  "costUsd": 0.0005247,
+  "truncated": false
+}

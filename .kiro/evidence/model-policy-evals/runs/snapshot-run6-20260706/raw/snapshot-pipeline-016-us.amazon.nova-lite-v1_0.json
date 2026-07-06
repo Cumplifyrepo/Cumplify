@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-016",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Medical Devices (Class II), Company Size: 280 employees, Pain Points: Design history files incomplete, post-market surveillance not systematic, supplier audits overdue, CAPA effectiveness verification skipped, complaint trending not performed\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"3/10\",\"gaps\":\"Design history files incomplete, post-market surveillance not systematic, supplier audits overdue, CAPA effectiveness verification skipped, complaint trending not performed\",\"recommendations\":\"Complete design history files, establish systematic post-market surveillance, conduct overdue supplier audits, verify CAPA effectiveness, implement complaint trending\",\"standards\":\"ISO 13485\"}",
+  "inputTokens": 120,
+  "outputTokens": 84,
+  "latencyMs": 1015,
+  "costUsd": 0.000027360000000000002,
+  "truncated": false
+}

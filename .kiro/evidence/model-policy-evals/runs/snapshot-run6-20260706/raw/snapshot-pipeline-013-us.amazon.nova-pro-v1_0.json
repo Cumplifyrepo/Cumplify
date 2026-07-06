@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-013",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Electronics Assembly (PCB), Company Size: 160 employees, Pain Points: ESD damage claims from customers, incoming inspection bypassed due to schedule pressure, no first-article inspection process, design outputs lack verification criteria\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"ESD damage claims indicate lack of effective ESD control program; incoming inspection is bypassed, suggesting insufficient quality control processes; absence of first-article inspection process leads to potential quality issues; design outputs lack verification criteria, indicating inadequate design and development controls.\",\"recommendations\":\"Implement a comprehensive ESD control program including training, equipment, and regular audits; establish a robust incoming inspection process with clear procedures and schedule management; develop and enforce a first-article inspection process to verify production readiness; define and document verification criteria for all design outputs to ensure they meet specified requirements.\",\"standards\":\"ISO 9001:2015 (Quality Management Systems), ISO/IEC 27001:2013 (Information Security Management), ISO/TS 16949 (Automotive Quality Management System), IEC 61340-5-1 (Electrostatic Discharge Protection)\"}",
+  "inputTokens": 119,
+  "outputTokens": 196,
+  "latencyMs": 1516,
+  "costUsd": 0.0007224000000000001,
+  "truncated": false
+}

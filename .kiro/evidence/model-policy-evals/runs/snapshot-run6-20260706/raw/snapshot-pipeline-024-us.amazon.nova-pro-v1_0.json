@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-024",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Paper & Pulp, Company Size: 420 employees, Pain Points: Water discharge exceeds BOD limits, chemical handling procedures outdated, no emergency drills conducted this year, waste segregation issues on production floor\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Exceeding BOD limits in water discharge, outdated chemical handling procedures, lack of emergency drills, waste segregation issues\",\"recommendations\":\"Implement advanced wastewater treatment to meet BOD limits, update chemical handling procedures and train employees, conduct regular emergency drills, improve waste segregation practices on the production floor\",\"standards\":\"ISO 14001, ISO 45001, ISO 9001\"}",
+  "inputTokens": 117,
+  "outputTokens": 100,
+  "latencyMs": 1095,
+  "costUsd": 0.0004136,
+  "truncated": false
+}

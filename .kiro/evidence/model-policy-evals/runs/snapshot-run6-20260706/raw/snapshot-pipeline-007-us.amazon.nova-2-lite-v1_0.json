@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-007",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Energy (solar panel manufacturing), Company Size: 180 employees, Pain Points: Soldering defect rate 5%, no statistical process control, design changes not formally reviewed, customer returns increasing 30% YoY\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"Key gaps include lack of Statistical Process Control (SPC) leading to uncontrolled soldering defects (5%), absence of formal design change review processes, and increasing customer returns (30% YoY) indicating potential quality and consistency issues. These gaps suggest insufficient quality management system structure and process control mechanisms.\", \"recommendations\": \"Implement Statistical Process Control (SPC) to monitor and reduce soldering defects. Establish formal design change review procedures to ensure all modifications are evaluated for impact. Develop a robust Quality Management System (QMS) aligned with ISO requirements, focusing on process control, documentation, and continuous improvement. Conduct root cause analysis on customer returns to address underlying issues. Provide training on quality procedures and empower employees to identify and report non-conformities.\", \"standards\": \"Applicable ISO standards include ISO 9001 (Quality Management Systems) for overall QMS framework, ISO 13485 (if medical devices are involved) for specific quality requirements in design and production, and ISO TS 16949 (now IATF 16949) for automotive-related suppliers (if applicable). ISO 14001 may also be relevant for environmental management in solar panel manufacturing.\"}",
+  "inputTokens": 165,
+  "outputTokens": 247,
+  "latencyMs": 1745,
+  "costUsd": 0.0007337,
+  "truncated": false
+}

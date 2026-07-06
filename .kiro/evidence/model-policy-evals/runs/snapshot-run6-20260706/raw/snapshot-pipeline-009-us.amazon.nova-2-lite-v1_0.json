@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-009",
+  "modelId": "us.amazon.nova-2-lite-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Mining (copper), Company Size: 1400 employees, Pain Points: Lost-time injury rate 4.2 per million hours, dust exposure above PELs in 2 areas, contractor safety inductions inconsistent, no near-miss reporting culture\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\": \"Low\", \"gaps\": \"The organization faces significant gaps including a high lost-time injury rate (4.2 per million hours), dust exposure levels exceeding permissible exposure limits (PELs) in two areas, inconsistent contractor safety inductions, and a lack of near-miss reporting culture. These issues indicate weaknesses in safety management systems, exposure control, contractor management, and proactive risk identification.\", \"recommendations\": \"Implement a comprehensive Occupational Health and Safety Management System (OHSMS) aligned with ISO 45001. Conduct thorough risk assessments focusing on dust control measures and exposure reduction in identified areas. Standardize and formalize contractor safety induction processes. Establish a near-miss reporting system with anonymous reporting options and regular analysis of reported incidents. Enhance worker training on hazard identification and reporting. Introduce periodic internal audits and management reviews to monitor performance and drive continuous improvement.\", \"standards\": \"ISO 45001 (Occupational health and safety management systems), ISO 14001 (Environmental management systems – relevant for dust control and emissions), ISO 9001 (Quality management systems – for process consistency and documentation)\"}",
+  "inputTokens": 172,
+  "outputTokens": 231,
+  "latencyMs": 1656,
+  "costUsd": 0.00069201,
+  "truncated": false
+}

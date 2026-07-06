@@ -1,0 +1,11 @@
+{
+  "taskId": "lightweight-001",
+  "modelId": "zai.glm-4.7-flash",
+  "prompt": "RecordsVault: Register this calibration record — Equipment: Torque Wrench TW-042, Calibration Date: 2025-03-15, Next Due: 2026-03-15, Technician: Maria Gonzalez, Result: Pass, Certificate: CAL-2025-0891\n\nReturn a single JSON object with EXACTLY these fields:\n- recordId (string): unique identifier for this record\n- type (string): type/category of the record\n- equipmentId (string): identifier for the equipment\n- calibrationDate (string): date of calibration in ISO format\n- nextDueDate (string): next calibration due date in ISO format\n- technician (string): name of the technician who performed the task\n- result (string): outcome of the calibration or assessment\n- certificateRef (string): reference number for the certificate\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"recordId\": \"REC-2025-03-15-001\",\n  \"type\": \"Calibration\",\n  \"equipmentId\": \"TW-042\",\n  \"calibrationDate\": \"2025-03-15\",\n  \"nextDueDate\": \"2026-03-15\",\n  \"technician\": \"Maria Gonzalez\",\n  \"result\": \"Pass\",\n  \"certificateRef\": \"CAL-2025-0891\",\n  \"status\": \"Calibrated\"\n}\n```\nANSWER: {\"recordId\": \"REC-2025-03-15-001\", \"type\": \"Calibration\", \"equipmentId\": \"TW-042\", \"calibrationDate\": \"2025-03-15\", \"nextDueDate\": \"2026-03-15\", \"technician\": \"Maria Gonzalez\", \"result\": \"Pass\", \"certificateRef\": \"CAL-2025-0891\", \"status\": \"Calibrated\"}",
+  "inputTokens": 205,
+  "outputTokens": 208,
+  "latencyMs": 4993,
+  "costUsd": 0.00009755,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "snapshot-pipeline-011",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess ISO readiness for: Industry: Plastics Injection Molding, Company Size: 95 employees, Pain Points: Mold changeover takes too long causing quality drift, no SPC on critical dimensions, operator training is buddy-system only, customer audits finding repeat issues\n\nReturn a single JSON object with EXACTLY these fields:\n- readinessScore (string): overall ISO readiness score\n- gaps (string): identified gaps in current system\n- recommendations (string): recommended actions to address gaps\n- standards (string): applicable ISO standards\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"readinessScore\":\"Low\",\"gaps\":\"Extended mold changeover times, lack of Statistical Process Control (SPC) on critical dimensions, insufficient formalized operator training, recurring issues identified during customer audits\",\"recommendations\":\"Implement a structured mold changeover process to reduce time and maintain quality, introduce SPC for monitoring critical dimensions, develop a formal training program for operators, establish a robust corrective and preventive action (CAPA) system to address recurring issues\",\"standards\":\"ISO 9001:2015, ISO/TS 16949 (for automotive sector if applicable), ISO 13053 (for Six Sigma and SPC)\"}",
+  "inputTokens": 121,
+  "outputTokens": 140,
+  "latencyMs": 1368,
+  "costUsd": 0.0005448,
+  "truncated": false
+}
