@@ -68,7 +68,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
       'moonshotai.kimi-k2.5',
     ],
     temperature: 0,
-    maxTokens: 256,
+    maxTokens: 1024, // FINDING-K: 256→1024, reasoning candidates need headroom
     gradingMethod: 'exact-match',
     evalSetPath: 'data/eval-sets/micro-routing.json',
     humanReviewPercent: 0,

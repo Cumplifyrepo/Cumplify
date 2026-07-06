@@ -6,7 +6,7 @@
   "tasks": [
     {
       "id": "lightweight-001",
-      "prompt": "RecordsVault: Register this calibration record — Equipment: Torque Wrench TW-042, Calibration Date: 2025-03-15, Next Due: 2026-03-15, Technician: Maria Gonzalez, Result: Pass, Certificate: CAL-2025-0891\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "RecordsVault: Register this calibration record \u2014 Equipment: Torque Wrench TW-042, Calibration Date: 2025-03-15, Next Due: 2026-03-15, Technician: Maria Gonzalez, Result: Pass, Certificate: CAL-2025-0891\n\nReturn a single JSON object with EXACTLY these fields:\n- recordId (string): unique identifier for this record\n- type (string): type/category of the record\n- equipmentId (string): identifier for the equipment\n- calibrationDate (string): date of calibration in ISO format\n- nextDueDate (string): next calibration due date in ISO format\n- technician (string): name of the technician who performed the task\n- result (string): outcome of the calibration or assessment\n- certificateRef (string): reference number for the certificate\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -53,7 +53,7 @@
     },
     {
       "id": "lightweight-002",
-      "prompt": "RecordsVault: Archive this controlled document — Title: Quality Policy QP-001 Rev 5, Approved by: VP Quality, Effective Date: 2025-04-01, Supersedes: QP-001 Rev 4, Retention: 7 years\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "RecordsVault: Archive this controlled document \u2014 Title: Quality Policy QP-001 Rev 5, Approved by: VP Quality, Effective Date: 2025-04-01, Supersedes: QP-001 Rev 4, Retention: 7 years\n\nReturn a single JSON object with EXACTLY these fields:\n- recordId (string): unique identifier for this record\n- type (string): type/category of the record\n- title (string): title of the document or record\n- revision (string): revision number or identifier\n- approvedBy (string): person who approved the document\n- effectiveDate (string): date when the document becomes effective\n- supersedes (string): reference to the previous version being replaced\n- retentionPeriod (string): how long the record must be retained\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -100,7 +100,7 @@
     },
     {
       "id": "lightweight-003",
-      "prompt": "RecordsVault: Log this training completion — Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "RecordsVault: Log this training completion \u2014 Employee: Carlos Mendez (EMP-1042), Course: ISO 45001 Internal Auditor, Completion Date: 2025-02-28, Score: 92%, Instructor: Diane Foster, Expiry: 2027-02-28\n\nReturn a single JSON object with EXACTLY these fields:\n- recordId (string): unique identifier for this record\n- type (string): type/category of the record\n- employeeId (string): unique identifier for the employee\n- courseName (string): name of the training course\n- completionDate (string): date when the training was completed\n- score (string): score or grade achieved\n- instructor (string): name of the instructor or trainer\n- expiryDate (string): date when the certification or training expires\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -147,7 +147,7 @@
     },
     {
       "id": "lightweight-004",
-      "prompt": "ObjectiveTracker: Create a new quality objective — Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "ObjectiveTracker: Create a new quality objective \u2014 Objective: Reduce customer complaints by 20% in Q3 2025, Owner: Quality Director, Baseline: 45 complaints/month, Target: 36 complaints/month, Measurement: Monthly complaint log, Standard: ISO 9001 clause 6.2\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- description (string): detailed description of the item\n- owner (string): person responsible for the objective or item\n- baseline (string): baseline measurement value\n- target (string): target value to achieve\n- measurementMethod (string): method used to measure progress\n- clauseRef (string): ISO standard clause reference\n- status (string): current status of the item\n- dueDate (string): deadline date for completion\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -194,7 +194,7 @@
     },
     {
       "id": "lightweight-005",
-      "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 — Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "ObjectiveTracker: Update progress on objective OBJ-2025-012 \u2014 Current value: 41 complaints in February (down from 45 baseline), Trend: Improving, Notes: New inspection protocol showing early results, Risk: Medium (seasonal demand spike approaching)\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- currentValue (string): current measurement or progress value\n- trend (string): direction of change (improving, declining, stable)\n- progressPercentage (string): percentage of progress toward the target\n- notes (string): additional notes or comments\n- riskFlag (string): risk level indicator\n- updatedAt (string): timestamp of the last update\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -233,7 +233,7 @@
     },
     {
       "id": "lightweight-006",
-      "prompt": "ContextCartographer: Map this interested party — Party: Local Environmental Authority (EPA Region 4), Interest: Compliance with air emission permits, Influence: High (can issue stop-work orders), Communication: Quarterly emission reports, Requirements: EPA Form R annual submission\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "ContextCartographer: Map this interested party \u2014 Party: Local Environmental Authority (EPA Region 4), Interest: Compliance with air emission permits, Influence: High (can issue stop-work orders), Communication: Quarterly emission reports, Requirements: EPA Form R annual submission\n\nReturn a single JSON object with EXACTLY these fields:\n- partyId (string): unique identifier for the interested party\n- name (string): name of the entity or party\n- interest (string): the party's interest or concern\n- influenceLevel (string): level of influence the party has\n- communicationMethod (string): how communication is conducted with this party\n- requirements (string): specific requirements from this party\n- category (string): classification category\n- lastReviewDate (string): date of the last review\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -276,7 +276,7 @@
     },
     {
       "id": "lightweight-007",
-      "prompt": "ContextCartographer: Update organizational context — Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "ContextCartographer: Update organizational context \u2014 Factor: New competitor entered Latin American market with ISO-certified products, Type: External-Competitive, Impact: High, Affected Standards: ISO 9001, Response Needed: Accelerate certification timeline for Mexico plant\n\nReturn a single JSON object with EXACTLY these fields:\n- contextId (string): unique identifier for the context entry\n- factor (string): the contextual factor identified\n- type (string): type/category of the record\n- impactLevel (string): level of impact (high, medium, low)\n- affectedStandards (string): ISO standards affected by this factor\n- responseAction (string): action to be taken in response\n- identifiedDate (string): date when the factor was identified\n- reviewStatus (string): current review status\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -319,7 +319,7 @@
     },
     {
       "id": "lightweight-008",
-      "prompt": "SupplierScout: Onboard new supplier — Company: Precision Metals Ltd, Category: Critical Raw Material, Location: Monterrey Mexico, Certifications: ISO 9001:2015 IATF 16949, Products: Aluminum extrusions and machined components, Annual Spend: $2.4M, Risk Tier: Tier 1\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "SupplierScout: Onboard new supplier \u2014 Company: Precision Metals Ltd, Category: Critical Raw Material, Location: Monterrey Mexico, Certifications: ISO 9001:2015 IATF 16949, Products: Aluminum extrusions and machined components, Annual Spend: $2.4M, Risk Tier: Tier 1\n\nReturn a single JSON object with EXACTLY these fields:\n- supplierId (string): unique identifier for the supplier\n- companyName (string): name of the supplier company\n- category (string): classification category\n- location (string): geographical location of the supplier\n- certifications (string): certifications held by the supplier\n- products (string): products or services provided\n- annualSpend (string): annual spending amount with the supplier\n- riskTier (string): risk tier classification for the supplier\n- onboardingStatus (string): current onboarding status\n- approvalDate (string): date of approval\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -370,7 +370,7 @@
     },
     {
       "id": "lightweight-009",
-      "prompt": "SupplierScout: Evaluate supplier performance — Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "SupplierScout: Evaluate supplier performance \u2014 Supplier: Precision Metals Ltd (SUP-0087), Period: Q1 2025, Quality Score: 94% (3 NCRs out of 48 deliveries), Delivery: 97% on-time, Responsiveness: 4.2/5, Corrective Actions: 2 open CAPAs from previous quarter resolved\n\nReturn a single JSON object with EXACTLY these fields:\n- evaluationId (string): unique identifier for the evaluation\n- supplierId (string): unique identifier for the supplier\n- period (string): evaluation period\n- qualityScore (string): quality performance score\n- deliveryScore (string): delivery performance score\n- responsivenessScore (string): responsiveness performance score\n- overallRating (string): overall rating or score\n- openActions (string): number or description of open action items\n- recommendation (string): recommended action or decision\n- evaluatedDate (string): date the evaluation was performed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -421,7 +421,7 @@
     },
     {
       "id": "lightweight-010",
-      "prompt": "CompetenceKeeper: Identify competence gap — Employee: Ana Torres (EMP-2011), Role: Environmental Compliance Specialist, Required: ISO 14001 Lead Auditor certification, Current: ISO 14001 Internal Auditor only, Gap: Lead Auditor qualification needed by June 2025 for upcoming surveillance audit\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "CompetenceKeeper: Identify competence gap \u2014 Employee: Ana Torres (EMP-2011), Role: Environmental Compliance Specialist, Required: ISO 14001 Lead Auditor certification, Current: ISO 14001 Internal Auditor only, Gap: Lead Auditor qualification needed by June 2025 for upcoming surveillance audit\n\nReturn a single JSON object with EXACTLY these fields:\n- gapId (string): unique identifier for the competence gap\n- employeeId (string): unique identifier for the employee\n- role (string): job role or position\n- requiredCompetence (string): competence required for the role\n- currentCompetence (string): current competence level\n- gapDescription (string): description of the competence gap\n- priority (string): priority level for addressing this item\n- targetDate (string): target date for closure or completion\n- trainingPlan (string): planned training to address the gap\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -468,7 +468,7 @@
     },
     {
       "id": "lightweight-011",
-      "prompt": "CompetenceKeeper: Record training event — Training: Lockout/Tagout Refresher, Date: 2025-03-10, Duration: 4 hours, Attendees: 12 maintenance technicians (Shift A), Trainer: External (SafetyFirst Inc), Assessment: Practical demonstration + written test, Pass Rate: 100%\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "CompetenceKeeper: Record training event \u2014 Training: Lockout/Tagout Refresher, Date: 2025-03-10, Duration: 4 hours, Attendees: 12 maintenance technicians (Shift A), Trainer: External (SafetyFirst Inc), Assessment: Practical demonstration + written test, Pass Rate: 100%\n\nReturn a single JSON object with EXACTLY these fields:\n- trainingId (string): unique identifier for the training event\n- title (string): title of the document or record\n- date (string): date of the event\n- duration (string): duration of the training or activity\n- attendeeCount (string): number of attendees\n- trainer (string): name of the trainer or training provider\n- assessmentMethod (string): method used for assessment\n- passRate (string): percentage of participants who passed\n- status (string): current status of the item\n- nextRefresherDate (string): date for next refresher training\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -519,7 +519,7 @@
     },
     {
       "id": "lightweight-012",
-      "prompt": "EmergencyPlanner: Create emergency response plan — Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "EmergencyPlanner: Create emergency response plan \u2014 Scenario: Chemical spill in mixing area, Severity: High, Response Team: HazMat team + shift supervisor, Evacuation: Zone B (50m radius), Containment: Deploy spill kit SK-003 + activate sump pump, Notification: Fire department within 5 min, EPA within 24h\n\nReturn a single JSON object with EXACTLY these fields:\n- planId (string): unique identifier for the plan\n- scenario (string): emergency or risk scenario description\n- severity (string): severity level of the scenario\n- responseTeam (string): team responsible for response\n- evacuationZone (string): designated evacuation zone\n- containmentActions (string): actions to contain the incident\n- notifications (string): required notifications and their timelines\n- drillFrequency (string): how often drills should be conducted\n- lastDrillDate (string): date of the most recent drill\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -570,7 +570,7 @@
     },
     {
       "id": "lightweight-013",
-      "prompt": "EmergencyPlanner: Log emergency drill result — Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "EmergencyPlanner: Log emergency drill result \u2014 Plan: Chemical Spill Response (ERP-007), Date: 2025-02-20, Participants: 18, Evacuation Time: 3 min 42 sec (target: under 4 min), Issues Found: 2 blocked exit signs in corridor B, Corrective Action Required: Replace signage by 2025-03-01\n\nReturn a single JSON object with EXACTLY these fields:\n- drillId (string): unique identifier for the drill\n- planId (string): unique identifier for the plan\n- date (string): date of the event\n- participantCount (string): number of participants in the drill\n- evacuationTime (string): time taken for evacuation\n- targetMet (string): whether the target was met (yes/no)\n- issuesFound (string): issues identified during the drill\n- correctiveActions (string): corrective actions required\n- nextDrillDate (string): scheduled date for the next drill\n- effectiveness (string): effectiveness rating of the drill or action\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -621,7 +621,7 @@
     },
     {
       "id": "lightweight-014",
-      "prompt": "WorkerVoice: Log worker consultation — Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "WorkerVoice: Log worker consultation \u2014 Meeting: Monthly Safety Committee, Date: 2025-03-05, Attendees: 8 worker reps + 3 management, Topics: New forklift traffic pattern concerns, PPE comfort in summer heat, Near-miss reporting app feedback, Actions: Trial cooling vests by April, Update forklift routes\n\nReturn a single JSON object with EXACTLY these fields:\n- consultationId (string): unique identifier for the consultation\n- meetingType (string): type of meeting conducted\n- date (string): date of the event\n- attendeeCount (string): number of attendees\n- workerRepCount (string): number of worker representatives present\n- topics (string): topics discussed\n- actionsAgreed (string): actions agreed upon during the meeting\n- followUpDate (string): date for follow-up\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -668,7 +668,7 @@
     },
     {
       "id": "lightweight-015",
-      "prompt": "WorkerVoice: Record worker feedback — Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "WorkerVoice: Record worker feedback \u2014 Source: Anonymous suggestion box, Date: 2025-03-12, Category: Ergonomics, Feedback: Assembly station 7 requires excessive reaching overhead causing shoulder strain after 4-hour shifts, Affected Workers: ~6 per shift, Suggested Solution: Adjustable platform or tool balancer\n\nReturn a single JSON object with EXACTLY these fields:\n- feedbackId (string): unique identifier for the feedback\n- source (string): source of the feedback or nonconformity\n- date (string): date of the event\n- category (string): classification category\n- description (string): detailed description of the item\n- affectedWorkers (string): number or description of affected workers\n- suggestedSolution (string): proposed solution\n- priority (string): priority level for addressing this item\n- responseStatus (string): current response status\n- assignedTo (string): person or team assigned to handle this\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -719,7 +719,7 @@
     },
     {
       "id": "lightweight-016",
-      "prompt": "NCTriage: Classify this nonconformity — Source: Customer complaint CC-2025-089, Description: Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0±0.1mm), Quantity Affected: 240 units, Customer: AutoParts GmbH, Severity: Major (production line stopped)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "NCTriage: Classify this nonconformity \u2014 Source: Customer complaint CC-2025-089, Description: Batch 4410 of stainless steel brackets have dimensions outside tolerance (12.3mm vs spec 12.0\u00b10.1mm), Quantity Affected: 240 units, Customer: AutoParts GmbH, Severity: Major (production line stopped)\n\nReturn a single JSON object with EXACTLY these fields:\n- ncId (string): unique identifier for the nonconformity\n- source (string): source of the feedback or nonconformity\n- description (string): detailed description of the item\n- severity (string): severity level of the scenario\n- category (string): classification category\n- affectedQuantity (string): quantity of affected items\n- customer (string): customer name or identifier\n- containmentAction (string): immediate containment action taken\n- priority (string): priority level for addressing this item\n- assignedTo (string): person or team assigned to handle this\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -774,7 +774,7 @@
     },
     {
       "id": "lightweight-017",
-      "prompt": "NCTriage: Prioritize and route these nonconformities — NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "NCTriage: Prioritize and route these nonconformities \u2014 NC-101: Minor labeling error on 5 boxes (Low), NC-102: Weld crack found during in-process inspection on safety-critical part (Critical), NC-103: Supplier delivered wrong grade of steel (Major), NC-104: Document revision not updated in system (Minor)\n\nReturn a single JSON object with EXACTLY these fields:\n- triageResults (string): results of the triage assessment\n- priorityOrder (string): prioritized order for addressing items\n- routingDecisions (string): routing decisions for each item\n- escalations (string): items requiring escalation\n- timestamp (string): timestamp of the triage\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -805,7 +805,7 @@
     },
     {
       "id": "lightweight-018",
-      "prompt": "ObjectiveTracker: Flag objective as off-track — Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "ObjectiveTracker: Flag objective as off-track \u2014 Objective: OBJ-2025-008 (Reduce energy consumption by 10%), Current: Only 2% reduction achieved at midpoint, Root Cause: Production volume increased 15% unexpectedly, Recommendation: Adjust target to per-unit consumption metric\n\nReturn a single JSON object with EXACTLY these fields:\n- objectiveId (string): unique identifier for the objective\n- status (string): current status of the item\n- currentProgress (string): current progress value\n- targetProgress (string): expected progress at this point\n- variance (string): variance between actual and target\n- rootCause (string): identified root cause of the issue\n- recommendation (string): recommended action or decision\n- escalationRequired (string): whether escalation is required (yes/no)\n- updatedAt (string): timestamp of the last update\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -852,7 +852,7 @@
     },
     {
       "id": "lightweight-019",
-      "prompt": "SupplierScout: Flag supplier nonconformance — Supplier: ChemFlow Solvents (SUP-0134), Issue: Certificate of Analysis missing for Batch SOL-8821, Impact: 500L of solvent quarantined cannot be used in production, Required Action: Supplier must provide CoA within 48h or batch is rejected\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "SupplierScout: Flag supplier nonconformance \u2014 Supplier: ChemFlow Solvents (SUP-0134), Issue: Certificate of Analysis missing for Batch SOL-8821, Impact: 500L of solvent quarantined cannot be used in production, Required Action: Supplier must provide CoA within 48h or batch is rejected\n\nReturn a single JSON object with EXACTLY these fields:\n- ncId (string): unique identifier for the nonconformity\n- supplierId (string): unique identifier for the supplier\n- issueDescription (string): description of the issue\n- impact (string): impact of the issue\n- quarantineStatus (string): current quarantine status\n- requiredAction (string): action required to resolve\n- deadline (string): deadline for resolution\n- escalationLevel (string): level of escalation applied\n- status (string): current status of the item\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [
@@ -899,7 +899,7 @@
     },
     {
       "id": "lightweight-020",
-      "prompt": "ContextCartographer: Assess change impact — Change: New EU CSRD sustainability reporting directive effective January 2026, Scope: Affects all EU operations and supply chain, Standards Impacted: ISO 14001 (environmental aspects), ISO 9001 (customer requirements), Actions Needed: Gap assessment, update context of organization, identify new interested party requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
+      "prompt": "ContextCartographer: Assess change impact \u2014 Change: New EU CSRD sustainability reporting directive effective January 2026, Scope: Affects all EU operations and supply chain, Standards Impacted: ISO 14001 (environmental aspects), ISO 9001 (customer requirements), Actions Needed: Gap assessment, update context of organization, identify new interested party requirements\n\nReturn a single JSON object with EXACTLY these fields:\n- changeId (string): unique identifier for the change\n- description (string): detailed description of the item\n- effectiveDate (string): date when the document becomes effective\n- scope (string): scope of the change or audit\n- impactedStandards (string): standards impacted by this change\n- actionsRequired (string): actions required in response\n- priority (string): priority level for addressing this item\n- owner (string): person responsible for the objective or item\n- assessmentStatus (string): current status of the assessment\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
         "required": [

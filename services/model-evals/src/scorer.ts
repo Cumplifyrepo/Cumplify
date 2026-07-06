@@ -41,8 +41,14 @@ export function scoreCandidate(
     let score = 0;
     let method = 'unknown';
 
-    // Route by ground-truth shape (priority order)
-    if (task.groundTruthLabels && task.groundTruthLabels.length > 0) {
+    // FINDING-K: truncated responses score 0, invocation errors score 0
+    if (result.truncated) {
+      method = 'truncated';
+      // score stays 0
+    } else if (result.invocationError) {
+      method = 'invocation-error';
+      // score stays 0
+    } else if (task.groundTruthLabels && task.groundTruthLabels.length > 0) {
       // Multi-label classification: use scoreMultiLabel (set-F1 via ANSWER: line)
       const expectedLabels = task.groundTruthLabels.sort().join(',');
       score = scoreMultiLabel(result.response, expectedLabels);

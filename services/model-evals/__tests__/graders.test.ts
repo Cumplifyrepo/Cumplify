@@ -186,3 +186,30 @@ describe('rubric grader', () => {
     expect(result.qualityPass).toBe(false);
   });
 });
+
+
+// FINDING-J / FINDING-K targeted tests
+
+describe('schema-validator with ANSWER: line (FINDING-J)', () => {
+  const schema = { completedSection: 'string', references: 'string', clauseAlignment: 'string' };
+
+  it('scores 1.0 when ANSWER: line contains valid JSON with all required fields', () => {
+    const response = 'Here is my analysis...\nANSWER: {"completedSection": "text", "references": "ISO 9001", "clauseAlignment": "aligned"}';
+    expect(scoreSchemaValidation(response, schema)).toBe(1.0);
+  });
+
+  it('scores 1.0 when response has JSON in ```json fences (falls back to full response)', () => {
+    const response = 'Analysis:\n```json\n{"completedSection": "x", "references": "y", "clauseAlignment": "z"}\n```';
+    expect(scoreSchemaValidation(response, schema)).toBe(1.0);
+  });
+
+  it('scores 0.0 when no ANSWER: line and no JSON in response', () => {
+    const response = 'I would recommend improving the document control process...';
+    expect(scoreSchemaValidation(response, schema)).toBe(0);
+  });
+
+  it('falls back to full response when no ANSWER: line but JSON is present', () => {
+    const response = '{"completedSection": "text", "references": "ref", "clauseAlignment": "ok"}';
+    expect(scoreSchemaValidation(response, schema)).toBe(1.0);
+  });
+});

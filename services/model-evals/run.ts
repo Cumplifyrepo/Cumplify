@@ -240,7 +240,7 @@ const candidateReports: CandidateReport[] = [];
 
 for (const modelId of candidates) {
   console.log(`\n--- Candidate: ${modelId} ---`);
-  const results = [];
+  const results: EvalResult[] = [];
 
   for (const task of evalSet.tasks) {
     try {
@@ -258,16 +258,29 @@ for (const modelId of candidates) {
         outputTokens: result.outputTokens,
         latencyMs: result.latencyMs,
         costUsd: result.costUsd,
+        truncated: result.truncated,
+        invocationError: result.invocationError,
       }, null, 2));
 
-      process.stdout.write('.');
+      process.stdout.write(result.invocationError ? 'E' : result.truncated ? 'T' : '.');
     } catch (err) {
-      console.error(`\nERROR during invocation: ${(err as Error).message}`);
       if ((err as Error).name === 'BudgetExceededError') {
-        console.error('Budget exceeded — halting run.');
+        console.error('\nBudget exceeded — halting run.');
         process.exit(1);
       }
-      throw err;
+      // FINDING-K: per-candidate isolation — log and continue
+      console.error(`\nUnexpected error for ${modelId}/${task.id}: ${(err as Error).message}`);
+      results.push({
+        taskId: task.id,
+        candidateModelId: modelId,
+        response: '',
+        inputTokens: 0,
+        outputTokens: 0,
+        latencyMs: 0,
+        costUsd: 0,
+        truncated: false,
+        invocationError: (err as Error).message,
+      });
     }
   }
   console.log(` (${results.length} tasks complete)`);

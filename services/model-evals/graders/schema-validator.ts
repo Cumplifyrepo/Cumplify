@@ -1,7 +1,10 @@
 /**
  * Schema-validation grader — structured output compliance.
  * Checks that the model response is valid JSON and contains required fields.
+ * FINDING-J: strips ANSWER: line prefix and ```json fences before parsing.
  */
+
+import { parseAnswerLine } from './answer-parser.js';
 
 /**
  * Score a response against an expected schema (required fields check).
@@ -12,8 +15,12 @@ export function scoreSchemaValidation(
   response: string,
   expectedSchema: Record<string, unknown>,
 ): number {
-  // Try to extract JSON from the response (may be wrapped in markdown code blocks)
-  const jsonStr = extractJson(response);
+  // Try ANSWER: line first, then fall back to full response
+  const answerParsed = parseAnswerLine(response);
+  const textToSearch = answerParsed.found ? answerParsed.answer : response;
+
+  // Try to extract JSON from the text (code blocks or raw)
+  const jsonStr = extractJson(textToSearch);
   if (!jsonStr) return 0;
 
   let parsed: Record<string, unknown>;

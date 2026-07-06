@@ -28,6 +28,22 @@ export function generateReport(report: ScoredReport): string {
   lines.push(`## Budget Consumed: $${report.budgetConsumed.toFixed(4)}`);
   lines.push('');
 
+  // FINDING-K: report invocation errors and truncations per candidate
+  const hasIssues = report.candidates.some(
+    (c) => (c as any).truncationCount > 0 || (c as any).invocationErrorCount > 0,
+  );
+  if (hasIssues) {
+    lines.push('## Invocation Notes');
+    for (const c of report.candidates) {
+      const trunc = (c as any).truncationCount ?? 0;
+      const errs = (c as any).invocationErrorCount ?? 0;
+      if (trunc > 0 || errs > 0) {
+        lines.push(`- ${c.modelId}: ${trunc > 0 ? `${trunc} TRUNCATED` : ''} ${errs > 0 ? `${errs} INVOCATION-ERROR` : ''}`);
+      }
+    }
+    lines.push('');
+  }
+
   // Pricing sources
   lines.push('## Pricing Sources');
   for (const [modelId, source] of Object.entries(report.pricingSource)) {

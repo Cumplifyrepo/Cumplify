@@ -31,6 +31,10 @@ export interface EvalResult {
   costUsd: number;
   qualityScore?: number; // 0-1 for automated; undefined for human-graded
   qualityPass?: boolean;
+  /** FINDING-K: true if stopReason was max_tokens */
+  truncated?: boolean;
+  /** FINDING-K: set if invocation failed after retries */
+  invocationError?: string;
 }
 
 export interface ScoredReport {
