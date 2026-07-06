@@ -1,0 +1,171 @@
+# Task 7 — Benchmark runs, automated-grading seats [ARCHITECT] — started 2026-07-06T15:31:14Z
+# Profile: cumplify-dev-admin | HEAD 809d88c | C-4 approval: task-6-quality-gate.log
+
+===== SEAT: micro — estimate =====
+[model-evals] Seat: micro
+[model-evals] Candidates: us.amazon.nova-micro-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 2 models
+  us.amazon.nova-micro-v1:0: live-api ($0.034999999999999996/$0.13999999999999999 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 2 | 100 | 20,000 | 5,000 | $0.0034 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: micro — RUN =====
+[model-evals] Seat: micro
+[model-evals] Candidates: us.amazon.nova-micro-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 2 models
+  us.amazon.nova-micro-v1:0: live-api ($0.034999999999999996/$0.13999999999999999 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 2 | 100 | 20,000 | 5,000 | $0.0034 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-micro-v1:0 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: zai.glm-4.7-flash ---
+.................................................. (50 tasks complete)
+
+# Eval Report: micro — 2026-07-06T15:31:59.367Z
+
+## Summary
+| Candidate | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-micro-v1:0 | FAIL | $0.00001 | $0.00002 | 99.4% | N/A |
+| zai.glm-4.7-flash | FAIL | $0.00002 | $0.00003 | 98.8% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0018
+
+## Pricing Sources
+- us.amazon.nova-micro-v1:0: live-api
+- zai.glm-4.7-flash: live-api
+
+[model-evals] Budget consumed: $0.0018
+[model-evals] Winner: NONE
+EXIT: 0
+
+===== SEAT: lightweight — estimate =====
+[model-evals] Seat: lightweight
+[model-evals] Candidates: us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0
+[model-evals] Eval set loaded: data/eval-sets/lightweight.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+ERROR: Pricing fetch failed: Ambiguous input pricing: found 2 different values (0.3000000000, 0.3300000000). Cannot determine correct price.
+===== SEAT: lightweight — RUN =====
+[model-evals] Seat: lightweight
+[model-evals] Candidates: us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0
+[model-evals] Eval set loaded: data/eval-sets/lightweight.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+ERROR: Pricing fetch failed: Ambiguous input pricing: found 2 different values (0.3000000000, 0.3300000000). Cannot determine correct price.
+EXIT: 1
+
+===== SEAT: snapshot — estimate =====
+[model-evals] Seat: snapshot
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/snapshot-pipeline.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+ERROR: Pricing fetch failed: Ambiguous input pricing: found 2 different values (0.3000000000, 0.3300000000). Cannot determine correct price.
+===== SEAT: snapshot — RUN =====
+[model-evals] Seat: snapshot
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/snapshot-pipeline.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+ERROR: Pricing fetch failed: Ambiguous input pricing: found 2 different values (0.3000000000, 0.3300000000). Cannot determine correct price.
+EXIT: 1
+
+===== SEAT: pain-distiller — estimate =====
+[model-evals] Seat: pain-distiller
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, deepseek.v3.2, qwen.qwen3-next-80b-a3b
+[model-evals] Eval set loaded: data/eval-sets/pain-distiller.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 3 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| pain-distiller | 20 | 3 | 60 | 48,000 | 24,000 | $0.1152 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: pain-distiller — RUN =====
+[model-evals] Seat: pain-distiller
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, deepseek.v3.2, qwen.qwen3-next-80b-a3b
+[model-evals] Eval set loaded: data/eval-sets/pain-distiller.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 3 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| pain-distiller | 20 | 3 | 60 | 48,000 | 24,000 | $0.1152 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.................... (20 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+.................... (20 tasks complete)
+
+--- Candidate: qwen.qwen3-next-80b-a3b ---
+.................... (20 tasks complete)
+
+# Eval Report: pain-distiller — 2026-07-06T15:35:51.023Z
+
+## Summary
+| Candidate | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-pro-v1:0 | FAIL | $0.00058 | $0.00088 | 95.1% | N/A |
+| deepseek.v3.2 | FAIL | $0.00063 | $0.00090 | 94.7% | N/A |
+| qwen.qwen3-next-80b-a3b | FAIL | $0.00034 | $0.00050 | 97.1% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0322
+
+## Pricing Sources
+- us.amazon.nova-pro-v1:0: live-api
+- deepseek.v3.2: live-api
+- qwen.qwen3-next-80b-a3b: live-api
+
+[model-evals] Budget consumed: $0.0322
+[model-evals] Winner: NONE
+EXIT: 0
+
+# Completed 2026-07-06T15:35:51Z
+
+# ARCHITECT VERDICT on run 1: HARNESS DEFECTS — results VOID, models not at fault.
+# FINDING-E (pricing): Nova 2.0 Lite has TWO exact-type input dims: plain in-region
+#   USE1-Nova2.0Lite-input-tokens (0.00033/1K = $0.33/M) and -cross-region-global
+#   (0.00030/1K = $0.30/M). Ambiguity guard fired correctly. We invoke via us.* geo
+#   profile -> correct rate = plain in-region. CORRECTION to task-3-4 reference table:
+#   nova-2-lite true for-our-usage = $0.33/$2.75 per M (earlier 0.30/2.50 was the
+#   global tier; fabrication verdict vs Kiro's 0.04/0.16 unchanged).
+# FINDING-F (grading): architect hand-reproduced micro-001 on nova-micro: model answer
+#   CORRECT ('audit-sink, records-q') but wrapped in reasoning prose that names queues;
+#   parser scrapes whole response -> inflated prediction set -> F1 fail. All-model
+#   quality FAILs on micro (and likely pain-distiller) are PARSER artifacts.
+# FINDING-G (harness gap): raw model outputs NOT persisted; per-seat report files not
+#   written. Design §2.2 requires committed raw outputs; Task 8 human grading needs them.
