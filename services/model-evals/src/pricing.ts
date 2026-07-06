@@ -191,42 +191,85 @@ async function fetchFromPricingApi(modelIds: string[]): Promise<Record<string, P
 
 /**
  * Parse Pricing API response: extract OnDemand Input/Output token prices.
- * Excludes batch and cache usagetypes.
+ * Exported for unit testing against architect-supplied fixtures.
+ *
+ * UNIT NORMALIZATION (FINDING-D bug #1): unit is "1K tokens" — pricePerUnit is
+ * per 1,000 tokens. Per-M = pricePerUnit × 1,000.
+ *
+ * DIMENSION SELECTION (FINDING-D bug #2): inferenceType must EXACTLY match
+ * "Input tokens" or "Output tokens" (case-sensitive). Exclude usagetypes
+ * containing: batch, flex, priority, cache, custom-model.
+ *
+ * If multiple surviving dims disagree on price → hard-fail (ambiguity).
+ * If they agree (duplicates) → take the value.
  */
-function parsePricingApiResponse(priceList: string[]): PriceEntry | null {
-  let inputPrice = 0;
-  let outputPrice = 0;
+export function parsePricingApiResponse(priceList: string[]): PriceEntry | null {
+  const SUPPORTED_UNITS = new Set(['1K tokens']);
+  const EXCLUDE_USAGETYPE_PATTERNS = ['batch', 'flex', 'priority', 'cache', 'custom-model'];
+
+  const inputPrices: number[] = [];
+  const outputPrices: number[] = [];
 
   for (const item of priceList) {
     const parsed = JSON.parse(item);
     const attributes = parsed.product?.attributes ?? {};
-    const usagetype = (attributes.usagetype ?? '').toLowerCase();
+    const inferenceType: string = attributes.inferenceType ?? '';
+    const usagetype: string = (attributes.usagetype ?? '').toLowerCase();
 
-    // Exclude batch and cache pricing dimensions
-    if (usagetype.includes('batch') || usagetype.includes('cache')) {
-      continue;
-    }
+    // Exact inferenceType match (case-sensitive)
+    const isInput = inferenceType === 'Input tokens';
+    const isOutput = inferenceType === 'Output tokens';
+    if (!isInput && !isOutput) continue;
+
+    // Exclude usagetypes containing excluded patterns
+    if (EXCLUDE_USAGETYPE_PATTERNS.some((p) => usagetype.includes(p))) continue;
 
     const terms = parsed.terms?.OnDemand;
     if (!terms) continue;
 
     for (const term of Object.values(terms) as any[]) {
       for (const dimension of Object.values(term.priceDimensions ?? {}) as any[]) {
-        const desc = (dimension.description ?? '').toLowerCase();
+        const unit: string = dimension.unit ?? '';
         const pricePerUnit = parseFloat(dimension.pricePerUnit?.USD ?? '0');
         if (pricePerUnit === 0) continue;
 
-        // Convert per-token to per-million-tokens
-        const perMToken = pricePerUnit * 1_000_000;
-
-        if (desc.includes('input') || desc.includes('prompt')) {
-          if (inputPrice === 0) inputPrice = perMToken; // take first non-zero
-        } else if (desc.includes('output') || desc.includes('completion')) {
-          if (outputPrice === 0) outputPrice = perMToken;
+        // Unit validation — HARD FAIL on unsupported units
+        if (!SUPPORTED_UNITS.has(unit)) {
+          throw new Error(
+            `Unsupported pricing unit '${unit}' for dimension. ` +
+              `Only supported: ${[...SUPPORTED_UNITS].join(', ')}. ` +
+              `Add support for this unit or investigate the API response.`,
+          );
         }
+
+        // Normalize: "1K tokens" → per-M = pricePerUnit × 1,000
+        const perMToken = pricePerUnit * 1_000;
+
+        if (isInput) inputPrices.push(perMToken);
+        if (isOutput) outputPrices.push(perMToken);
       }
     }
   }
+
+  // Validate: no ambiguity (all surviving values must agree)
+  const uniqueInputs = [...new Set(inputPrices.map((p) => p.toFixed(10)))];
+  const uniqueOutputs = [...new Set(outputPrices.map((p) => p.toFixed(10)))];
+
+  if (uniqueInputs.length > 1) {
+    throw new Error(
+      `Ambiguous input pricing: found ${uniqueInputs.length} different values ` +
+        `(${uniqueInputs.join(', ')}). Cannot determine correct price.`,
+    );
+  }
+  if (uniqueOutputs.length > 1) {
+    throw new Error(
+      `Ambiguous output pricing: found ${uniqueOutputs.length} different values ` +
+        `(${uniqueOutputs.join(', ')}). Cannot determine correct price.`,
+    );
+  }
+
+  const inputPrice = inputPrices[0] ?? 0;
+  const outputPrice = outputPrices[0] ?? 0;
 
   if (inputPrice > 0 || outputPrice > 0) {
     return {
