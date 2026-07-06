@@ -7,200 +7,460 @@
     {
       "id": "editor-ai-001",
       "prompt": "Complete this ISO 9001 Quality Policy section for a mid-size automotive parts manufacturer: 'Our organization is committed to...' The policy must address customer satisfaction, continual improvement, and compliance with requirements. Reference clause 5.2.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-002",
       "prompt": "Suggest improvements to this CAPA record: 'Problem: Parts rejected. Root Cause: Machine issue. Action: Fix machine. Verification: Check parts.' Industry: Aerospace fastener manufacturing. The record lacks detail for ISO 9001 clause 10.2 compliance.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-003",
       "prompt": "Complete this work instruction for a chemical plant's confined space entry procedure. Partial content: '1. Obtain permit from shift supervisor. 2. Test atmosphere for O2, LEL, and toxic gases.' Continue with remaining steps per ISO 45001 clause 8.1.2 and include emergency rescue provisions.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-004",
       "prompt": "Complete this Environmental Aspects and Impacts Register entry for a paint shop in a furniture factory: 'Aspect: VOC emissions from spray booths. Impact: ...' Include significance evaluation criteria per ISO 14001 clause 6.1.2. Add operational controls and monitoring requirements.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-005",
       "prompt": "Suggest improvements to this management review agenda for a food processing company: 'Agenda: 1. Review last minutes. 2. Quality data. 3. Any other business.' Align with ISO 9001 clause 9.3.2 required inputs and add missing items for an integrated QMS/EMS review.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-006",
       "prompt": "Complete this risk assessment procedure for a construction company: 'Purpose: To identify and evaluate OH&S risks... Scope: All construction activities...' Add methodology section (likelihood x severity matrix), roles and responsibilities, and review frequency per ISO 45001 clause 6.1.2.2.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-007",
       "prompt": "Suggest improvements to this supplier evaluation procedure for a medical device company: 'Suppliers are evaluated annually. Criteria: quality, delivery, price. Records kept in spreadsheet.' Align with ISO 9001 clause 8.4 and add risk-based classification, re-evaluation triggers, and documented outputs.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-008",
       "prompt": "Complete this internal audit procedure for a logistics company pursuing ISO 14001: 'Audit Program: Annual schedule covering all EMS processes...' Add auditor competency requirements, audit execution steps, nonconformity grading criteria, and follow-up requirements per clause 9.2.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-009",
       "prompt": "Complete this document control procedure for a pharmaceutical manufacturer: 'Purpose: To ensure controlled documents are current and available at point of use. Scope: All QMS documents including SOPs, forms, and specifications.' Add approval workflow, revision control, distribution, and obsolete document handling per ISO 9001 clause 7.5.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-010",
       "prompt": "Suggest improvements to this emergency preparedness procedure for a chemical storage facility: 'In case of spill, call supervisor. Wear PPE. Clean up spill.' Needs alignment with ISO 14001 clause 8.2 and ISO 45001 clause 8.2. Add scenario identification, response actions, communication plan, and drill requirements.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-011",
       "prompt": "Complete this calibration procedure for a precision machining shop: 'Equipment covered: CMMs, micrometers, gauge blocks, torque wrenches. Calibration intervals: ...' Add traceability requirements, out-of-tolerance actions, identification methods, and records per ISO 9001 clause 7.1.5.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-012",
       "prompt": "Complete this competency management procedure for a mining operation: 'Scope: All workers and contractors performing tasks with OH&S implications.' Add competency determination methodology, training needs analysis, effectiveness evaluation, and records retention per ISO 45001 clause 7.2.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-013",
       "prompt": "Suggest improvements to this nonconformance handling procedure for an electronics manufacturer: 'When defect found, operator marks part with red tag. Supervisor decides disposition. Parts scrapped or reworked.' Needs formal segregation, authority matrix, customer notification criteria, and trending per ISO 9001 clause 8.7.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-014",
       "prompt": "Complete this context of the organization section for a renewable energy company: 'External Issues: Regulatory environment for renewables...' Add internal issues, interested parties with their requirements, and scope determination per ISO 9001 clauses 4.1, 4.2, and 4.3.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-015",
       "prompt": "Complete this waste management procedure for a hospital network: 'Categories: General waste, clinical waste, pharmaceutical waste, sharps...' Add segregation requirements, container specifications, storage limits, disposal routes, training, and monitoring per ISO 14001 clause 8.1.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-016",
       "prompt": "Suggest improvements to this customer satisfaction monitoring procedure for a contract manufacturer: 'We send surveys once a year. Results reviewed in management meeting.' Add multiple data sources, analysis methodology, action triggers, frequency, trending, and communication of results per ISO 9001 clause 9.1.2.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-017",
       "prompt": "Complete this operational control procedure for noise management at a concrete batching plant: 'Significant Aspect: Noise from aggregate handling and truck movements. Boundary monitoring shows 62dB at nearest receptor (limit 55dB night).' Add controls, monitoring frequency, maintenance, communication, and emergency provisions per ISO 14001 clause 8.1.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-018",
       "prompt": "Complete this worker participation and consultation procedure for a manufacturing plant: 'The organization shall establish processes for worker participation in...' Add consultation mechanisms, feedback channels, committee structure, non-managerial worker involvement, and barrier removal per ISO 45001 clause 5.4.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-019",
       "prompt": "Suggest improvements to this design and development procedure for a medical device startup: 'Engineers design products. Testing is done before release. Changes are tracked in Git.' Needs formal design stages, inputs/outputs, reviews, verification, validation, and change control per ISO 9001 clause 8.3.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "editor-ai-020",
       "prompt": "Complete this legal and other requirements procedure for a chemical manufacturer: 'The organization shall determine and have access to applicable legal requirements...' Add identification sources, evaluation methodology, compliance calendar, communication to relevant functions, and update triggers per ISO 14001 clause 6.1.3.",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": ["completedSection", "references", "clauseAlignment"],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "completedSection",
+          "references",
+          "clauseAlignment"
+        ],
+        "properties": {
+          "completedSection": {
+            "type": "string"
+          },
+          "references": {
+            "type": "string"
+          },
+          "clauseAlignment": {
+            "type": "string"
+          }
         }
       }
     }

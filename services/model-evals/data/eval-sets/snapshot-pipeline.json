@@ -7,450 +7,810 @@
     {
       "id": "snapshot-pipeline-001",
       "prompt": "Assess ISO readiness for: Industry: Automotive Manufacturing, Company Size: 450 employees, Pain Points: High scrap rate (8%), customer complaints increasing, no formal CAPA process, tribal knowledge for work instructions, recent failed customer audit\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-002",
       "prompt": "Assess ISO readiness for: Industry: Food Processing (dairy), Company Size: 120 employees, Pain Points: FDA warning letter for documentation gaps, allergen cross-contact incidents, supplier certificates expired and not tracked, no management review process\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-003",
       "prompt": "Assess ISO readiness for: Industry: Construction (commercial), Company Size: 85 employees, Pain Points: Three recordable injuries this quarter, no hazard identification process, workers unaware of safety procedures, subcontractor management is informal\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-004",
       "prompt": "Assess ISO readiness for: Industry: Healthcare (hospital network), Company Size: 2200 employees, Pain Points: Inconsistent sterilization records across 4 sites, medication error rate above benchmark, no centralized document control, staff competency records outdated\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-005",
       "prompt": "Assess ISO readiness for: Industry: Chemical Manufacturing, Company Size: 310 employees, Pain Points: Environmental permit violations last year, no aspect/impact register, emergency response plan not tested in 3 years, waste manifests incomplete\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-006",
       "prompt": "Assess ISO readiness for: Industry: Logistics & Warehousing, Company Size: 650 employees, Pain Points: 12% order error rate, no root cause analysis for recurring issues, fleet maintenance records on paper only, driver competency assessments overdue\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-007",
       "prompt": "Assess ISO readiness for: Industry: Energy (solar panel manufacturing), Company Size: 180 employees, Pain Points: Soldering defect rate 5%, no statistical process control, design changes not formally reviewed, customer returns increasing 30% YoY\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-008",
       "prompt": "Assess ISO readiness for: Industry: Pharmaceutical (generics), Company Size: 900 employees, Pain Points: Batch deviation rate exceeds 3%, out-of-spec investigations taking too long, change control backlog of 45 items, annual product reviews delayed\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-009",
       "prompt": "Assess ISO readiness for: Industry: Mining (copper), Company Size: 1400 employees, Pain Points: Lost-time injury rate 4.2 per million hours, dust exposure above PELs in 2 areas, contractor safety inductions inconsistent, no near-miss reporting culture\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-010",
       "prompt": "Assess ISO readiness for: Industry: Aerospace (MRO services), Company Size: 220 employees, Pain Points: Tool calibration overdue for 15% of instruments, FOD incidents last quarter, no formal risk register, traceability gaps in component history\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-011",
       "prompt": "Assess ISO readiness for: Industry: Plastics Injection Molding, Company Size: 95 employees, Pain Points: Mold changeover takes too long causing quality drift, no SPC on critical dimensions, operator training is buddy-system only, customer audits finding repeat issues\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-012",
       "prompt": "Assess ISO readiness for: Industry: Water Treatment Utility, Company Size: 340 employees, Pain Points: Effluent exceedances 3 times this year, chemical storage not compliant with SDS requirements, no environmental objectives tracking, community complaints about odor\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-013",
       "prompt": "Assess ISO readiness for: Industry: Electronics Assembly (PCB), Company Size: 160 employees, Pain Points: ESD damage claims from customers, incoming inspection bypassed due to schedule pressure, no first-article inspection process, design outputs lack verification criteria\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-014",
       "prompt": "Assess ISO readiness for: Industry: Oil & Gas (drilling services), Company Size: 500 employees, Pain Points: 2 significant spills in 12 months, permit-to-work system paper-based, JSA not completed for non-routine tasks, contractor HSE performance not tracked\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-015",
       "prompt": "Assess ISO readiness for: Industry: Textile Manufacturing, Company Size: 75 employees, Pain Points: Dye lot consistency issues, no incoming material inspection, worker ergonomic complaints ignored, no formal quality policy, customer rejects at 6%\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-016",
       "prompt": "Assess ISO readiness for: Industry: Medical Devices (Class II), Company Size: 280 employees, Pain Points: Design history files incomplete, post-market surveillance not systematic, supplier audits overdue, CAPA effectiveness verification skipped, complaint trending not performed\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-017",
       "prompt": "Assess ISO readiness for: Industry: Steel Fabrication, Company Size: 200 employees, Pain Points: Welder qualification records expired for 8 staff, no NDE procedure for critical joints, material traceability lost at cutting stage, heat treatment records incomplete\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-018",
       "prompt": "Assess ISO readiness for: Industry: Agricultural Chemicals (pesticides), Company Size: 130 employees, Pain Points: Label compliance issues in 2 markets, environmental monitoring not performed at boundary, transport documentation gaps, worker exposure monitoring lapsed\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-019",
       "prompt": "Assess ISO readiness for: Industry: IT Services (managed hosting), Company Size: 55 employees, Pain Points: Change management causing outages, incident response time SLA breaches, no capacity planning process, customer satisfaction declining, knowledge transfer gaps when staff leave\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-020",
       "prompt": "Assess ISO readiness for: Industry: Cement Manufacturing, Company Size: 800 employees, Pain Points: Kiln dust emissions exceeding permit 2x/quarter, noise exposure in grinding area, no life-cycle perspective for environmental aspects, community relations strained\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-021",
       "prompt": "Assess ISO readiness for: Industry: Shipbuilding, Company Size: 1100 employees, Pain Points: Confined space entry incidents, welding fume exposure, no integrated management system despite needing ISO 9001 + 14001 + 45001, project quality plans inconsistent across contracts\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-022",
       "prompt": "Assess ISO readiness for: Industry: Bakery (industrial scale), Company Size: 250 employees, Pain Points: Allergen management inconsistent across shifts, cleaning validation records missing, equipment maintenance reactive not preventive, high staff turnover losing competency\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-023",
       "prompt": "Assess ISO readiness for: Industry: Renewable Energy (wind farm maintenance), Company Size: 90 employees, Pain Points: Working at height incidents, lone worker safety gaps, blade inspection records decentralized, no formal competency framework for turbine technicians\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-024",
       "prompt": "Assess ISO readiness for: Industry: Paper & Pulp, Company Size: 420 employees, Pain Points: Water discharge exceeds BOD limits, chemical handling procedures outdated, no emergency drills conducted this year, waste segregation issues on production floor\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-025",
       "prompt": "Assess ISO readiness for: Industry: Contract Electronics Manufacturing, Company Size: 350 employees, Pain Points: Customer-furnished material traceability gaps, IPC workmanship standards not consistently applied, no process FMEA for new product introduction, test coverage below 80%\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-026",
       "prompt": "Assess ISO readiness for: Industry: Waste Management & Recycling, Company Size: 190 employees, Pain Points: Vehicle safety incidents monthly, hazardous waste classification errors, no legal compliance register, environmental aspect identification never done formally\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-027",
       "prompt": "Assess ISO readiness for: Industry: Packaging (corrugated), Company Size: 140 employees, Pain Points: Print quality defects 4% of orders, die-cutting waste above target, no customer feedback loop, machine guards removed for maintenance and not replaced, ink VOC monitoring absent\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-028",
       "prompt": "Assess ISO readiness for: Industry: Telecommunications (field services), Company Size: 600 employees, Pain Points: Working near power lines without proper risk assessment, vehicle fleet maintenance records in spreadsheets, competency records for fiber splicing outdated, no safety objectives set\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-029",
       "prompt": "Assess ISO readiness for: Industry: Cosmetics Manufacturing, Company Size: 170 employees, Pain Points: Batch consistency complaints from retail partners, stability testing protocol outdated, raw material supplier COAs not verified, GMP deviations not tracked systematically\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     },
     {
       "id": "snapshot-pipeline-030",
       "prompt": "Assess ISO readiness for: Industry: Precast Concrete, Company Size: 230 employees, Pain Points: Compressive strength test failures 3% of batches, rebar placement errors on-site, no design review process for custom molds, crane operation near-misses, silica dust monitoring not performed\n\nEnd your response with exactly one line: ANSWER: <your JSON response>",
-      "expectedOutput": {
-        "expectedSchema": {
-          "required": [
-            "readinessScore",
-            "gaps",
-            "recommendations",
-            "standards"
-          ],
-          "type": "object"
+      "expectedSchema": {
+        "type": "object",
+        "required": [
+          "readinessScore",
+          "gaps",
+          "recommendations",
+          "standards"
+        ],
+        "properties": {
+          "readinessScore": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "string"
+          },
+          "standards": {
+            "type": "string"
+          }
         }
       }
     }

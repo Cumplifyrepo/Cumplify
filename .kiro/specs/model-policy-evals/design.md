@@ -61,7 +61,7 @@ services/model-evals/
 | **Workhorse** (§5.2) | JSON schema compliance, required-field presence, instruction-following checklist | Content quality assessment (CAPA root-cause depth, procedure accuracy) on 30% sample | Structured output is verifiable; reasoning quality is not |
 | **Lightweight** (§5.3) | Fully automated: schema validation, task-completion flag, expected-output match | None | Tasks are simple, structured, deterministic |
 | **Micro** (§5.4) | Fully automated: classification F1, exact-match labels | None | Ground-truth labels make this trivially automatable |
-| **Snapshot** (§5.5) | Fully automated: structured output schema, factual grounding check (key claims traceable to input) | None | High-volume, cost-sensitive; output is structured |
+| **Snapshot** (§5.5) | Automated: structured output schema validation | Factual grounding spot-review (20% sample by architect — same pattern as editor-ai) | High-volume, cost-sensitive; grounding check NOT automatable as drafted (design delta R3) |
 | **Editor-AI** (§5.5) | Schema compliance, required-section presence | Quality spot-review (20% sample) for ISO document drafting accuracy | Inline suggestions for policies/procedures need domain judgment |
 | **Pain-distiller** (§5.5) | Schema compliance, extraction completeness (key pain-points identified vs ground-truth) | None | Extraction tasks with ground-truth labels |
 | **LegalLedger** (§5.6) | NONE — fully human-graded | Every response reviewed by domain-qualified human (architect or legal counsel) | Highest-consequence seat: obligation-mapping errors = regulatory exposure. No automated grader can measure legal reasoning quality. |
@@ -106,7 +106,7 @@ With Anthropic removed, quality bars are ABSOLUTE per tier (not relative to an i
 | **Workhorse** | Schema compliance 100% AND task-correctness >= 85% | Structured output must be perfect; content quality threshold 85% |
 | **Lightweight** | Task correctness >= 90% | Simple structured tasks; high bar appropriate |
 | **Micro** | Multi-label set-F1 >= 0.95 | Classification must be near-perfect for routing |
-| **Snapshot** | Schema compliance 100% + factual grounding pass (all claims traceable to input) | Output structure must be valid; claims must not hallucinate |
+| **Snapshot** | Schema compliance 100% + architect spot-review (20% sample) for factual grounding | Output structure must be valid; grounding check is NOT automatable — requires human judgment on whether claims trace to input (design delta, truth incident #7 lesson) |
 | **Editor-AI** | Schema compliance 100% + architect spot-review confirms quality on 20% sample | Document drafting quality requires human judgment |
 | **Pain-distiller** | Label coverage >= 85% (ground-truth pain-points identified) | Extraction completeness is the key metric |
 | **LegalLedger** | Rubric mean >= 4.0, no criterion at 1 (unchanged — already anchor-free) | Human-graded; catastrophic failure = disqualification |
