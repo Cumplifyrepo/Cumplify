@@ -1,0 +1,23 @@
+{
+  "seat": "micro",
+  "version": "0.1-stub",
+  "taskCount": 3,
+  "gradingMethod": "exact-match",
+  "tasks": [
+    {
+      "id": "micro-001",
+      "prompt": "Classify the following event detail-type to its target queue: 'Hazard.Identified'",
+      "expectedOutput": "hazard-q"
+    },
+    {
+      "id": "micro-002",
+      "prompt": "Classify the following event detail-type to its target queue: 'CAPA.Opened'",
+      "expectedOutput": "capa-intake"
+    },
+    {
+      "id": "micro-003",
+      "prompt": "Classify the following event detail-type to its target queue: 'Document.Approved'",
+      "expectedOutput": "audit-sink"
+    }
+  ]
+}

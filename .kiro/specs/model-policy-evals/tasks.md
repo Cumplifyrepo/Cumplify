@@ -72,9 +72,9 @@
 **Depends on:** Tasks 2, 3
 
 ### Deliverables
-- [ ] A minimal stub eval set (3 tasks) for the Micro seat committed as `services/model-evals/data/eval-sets/micro-routing.json` (partial — just enough for pre-flight proof)
-- [ ] Execute `npx tsx services/model-evals/run.ts --seat micro --estimate-only` → capture output showing cost estimate table + no Bedrock invocations
-- [ ] Evidence log: `.kiro/evidence/model-policy-evals/task-4-estimate-gate.log`
+- [x] A minimal stub eval set (3 tasks) for the Micro seat committed as `services/model-evals/data/eval-sets/micro-routing.json` (partial — just enough for pre-flight proof)
+- [x] Execute `npx tsx services/model-evals/run.ts --seat micro --estimate-only` → capture output showing cost estimate table + no Bedrock invocations
+- [x] Evidence log: `.kiro/evidence/model-policy-evals/task-4-estimate-gate.log`
 
 ### Acceptance
 - `--estimate-only` exits 0 with a printed cost table

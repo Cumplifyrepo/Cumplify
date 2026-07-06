@@ -1,0 +1,24 @@
+# Model Policy Evals — Task 4 Evidence Log
+
+**Timestamp:** 2026-07-05T18:15:00Z
+**Spec:** model-policy-evals
+**Task:** 4 (--estimate-only gate proof)
+
+## Command
+npx tsx services/model-evals/run.ts --seat micro --estimate-only
+
+## Output
+[model-evals] Seat: micro
+[model-evals] Mode: estimate-only
+[model-evals] Pre-flight: loading eval set + pricing...
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+
+## Verification
+- Exit code: 0
+- Budget consumed: $0.00 (no Bedrock API calls)
+- Eval set loaded: micro-routing.json (3 tasks, stub)
+- Pre-flight staleness check: PASS (price-snapshot.json captured 2026-07-05, within 90-day limit)
+
+## Exit
+Exit code: 0
