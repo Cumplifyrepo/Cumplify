@@ -1,0 +1,27 @@
+# Model Policy Evals — Task 2 Evidence Log
+
+**Timestamp:** 2026-07-05T18:00:00Z
+**Spec:** model-policy-evals
+**Task:** 2 (Eval harness code + unit tests)
+
+## Test Results
+- services/model-evals/__tests__/pricing.test.ts: 4 passed
+- services/model-evals/__tests__/budget.test.ts: 10 passed
+- services/model-evals/__tests__/graders.test.ts: 18 passed
+- Total: 32/32 green
+
+## Typecheck
+- npx tsc --noEmit: 0 errors in model-evals
+
+## CLI
+- npx tsx services/model-evals/run.ts --help: exit 0, usage printed
+
+## Deliverables
+- Package: @cumplify/model-evals
+- Source: types, pricing, budget, runner, scorer, reporter
+- Graders: exact-match (F1), schema-validator, clause-citation, rubric
+- Tests: staleness failure, budget halt (per-seat + campaign), grader correctness
+- CLI: --help, --estimate-only, --run modes
+
+## Exit
+Exit code: 0

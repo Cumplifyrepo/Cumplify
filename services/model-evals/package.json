@@ -1,0 +1,11 @@
+{
+  "name": "@cumplify/model-evals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/types.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "eval": "tsx run.ts"
+  }
+}

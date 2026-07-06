@@ -28,22 +28,22 @@
 **Depends on:** Task 1 (access verified)
 
 ### Deliverables
-- [ ] `services/model-evals/package.json` — `@cumplify/model-evals` workspace package
-- [ ] `services/model-evals/tsconfig.json`
-- [ ] `services/model-evals/src/types.ts` — shared types (EvalTask, EvalResult, ScoredReport, SeatConfig, PriceEntry, MarginInput)
-- [ ] `services/model-evals/src/pricing.ts` — Pricing API fetch + snapshot fallback + staleness check
-- [ ] `services/model-evals/src/budget.ts` — cost estimator + per-seat/per-campaign budget guard (halt on cap)
-- [ ] `services/model-evals/src/runner.ts` — benchmark runner (Bedrock Converse, per-seat config, token recording)
-- [ ] `services/model-evals/src/scorer.ts` — scoring orchestrator (delegates to graders by tier)
-- [ ] `services/model-evals/src/reporter.ts` — scored report generator (markdown output per §10 format)
-- [ ] `services/model-evals/graders/exact-match.ts` — Micro: classification F1 / accuracy
-- [ ] `services/model-evals/graders/schema-validator.ts` — structured output JSON schema compliance
-- [ ] `services/model-evals/graders/clause-citation.ts` — Guru: clause-number extraction + exact match
-- [ ] `services/model-evals/graders/rubric.ts` — multi-dimension rubric scorer (for human-graded spot-review input)
-- [ ] `services/model-evals/run.ts` — CLI entry point (`npx tsx services/model-evals/run.ts --seat <seat>`)
-- [ ] `services/model-evals/__tests__/pricing.test.ts` — unit tests: Pricing API response parse, snapshot fallback when API has no entry, staleness failure (>90 days)
-- [ ] `services/model-evals/__tests__/budget.test.ts` — unit tests: estimate computation, halt on per-seat cap, halt on campaign cap
-- [ ] `services/model-evals/__tests__/graders.test.ts` — unit tests: exact-match scorer, schema-validator, clause-citation extraction
+- [x] `services/model-evals/package.json` — `@cumplify/model-evals` workspace package
+- [x] `services/model-evals/tsconfig.json`
+- [x] `services/model-evals/src/types.ts` — shared types (EvalTask, EvalResult, ScoredReport, SeatConfig, PriceEntry, MarginInput)
+- [x] `services/model-evals/src/pricing.ts` — Pricing API fetch + snapshot fallback + staleness check
+- [x] `services/model-evals/src/budget.ts` — cost estimator + per-seat/per-campaign budget guard (halt on cap)
+- [x] `services/model-evals/src/runner.ts` — benchmark runner (Bedrock Converse, per-seat config, token recording)
+- [x] `services/model-evals/src/scorer.ts` — scoring orchestrator (delegates to graders by tier)
+- [x] `services/model-evals/src/reporter.ts` — scored report generator (markdown output per §10 format)
+- [x] `services/model-evals/graders/exact-match.ts` — Micro: classification F1 / accuracy
+- [x] `services/model-evals/graders/schema-validator.ts` — structured output JSON schema compliance
+- [x] `services/model-evals/graders/clause-citation.ts` — Guru: clause-number extraction + exact match
+- [x] `services/model-evals/graders/rubric.ts` — multi-dimension rubric scorer (for human-graded spot-review input)
+- [x] `services/model-evals/run.ts` — CLI entry point (`npx tsx services/model-evals/run.ts --seat <seat>`)
+- [x] `services/model-evals/__tests__/pricing.test.ts` — unit tests: Pricing API response parse, snapshot fallback when API has no entry, staleness failure (>90 days)
+- [x] `services/model-evals/__tests__/budget.test.ts` — unit tests: estimate computation, halt on per-seat cap, halt on campaign cap
+- [x] `services/model-evals/__tests__/graders.test.ts` — unit tests: exact-match scorer, schema-validator, clause-citation extraction
 
 ### Acceptance
 - `npx tsc --noEmit` passes for the package

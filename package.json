@@ -31,9 +31,11 @@
   },
   "dependencies": {
     "@aws-lambda-powertools/logger": "^2.33.1",
+    "@aws-sdk/client-bedrock-runtime": "^3.1079.0",
     "@aws-sdk/client-cloudwatch": "^3.1079.0",
     "@aws-sdk/client-dynamodb": "^3.1079.0",
     "@aws-sdk/client-eventbridge": "^3.1079.0",
+    "@aws-sdk/client-pricing": "^3.1079.0",
     "@aws-sdk/client-s3": "^3.1079.0",
     "@aws-sdk/client-scheduler": "^3.1079.0",
     "@aws-sdk/client-sqs": "^3.1079.0",
