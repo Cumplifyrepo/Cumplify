@@ -18,6 +18,7 @@ describe('budget module', () => {
         gradingMethod: 'exact-match',
         evalSetPath: 'data/eval-sets/micro-routing.json',
         humanReviewPercent: 0,
+        qualityBar: 0.95,
       };
 
       const evalSet: EvalSet = {

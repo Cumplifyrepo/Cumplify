@@ -1,6 +1,6 @@
 /**
- * Per-seat configuration: candidates, temperature, maxTokens, grading method.
- * Per design §5 temperature policy + §9.4 maxTokens + requirements §5 candidates.
+ * Per-seat configuration: candidates, temperature, maxTokens, grading method, quality bar.
+ * Per design §5 temperature policy + §9.4 maxTokens + §2.3 quality bars.
  */
 
 import type { SeatConfig } from './types.js';
@@ -18,8 +18,9 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     temperature: 0,
     maxTokens: 2048,
     gradingMethod: 'clause-citation',
-    evalSetPath: 'data/eval-sets/guru-iso9001.json', // runner iterates all 3
+    evalSetPath: 'data/eval-sets/guru-iso9001.json',
     humanReviewPercent: 0.2,
+    qualityBar: 0.85, // §2.3: clause-citation mean >= 85%
   },
   workhorse: {
     seat: 'workhorse',
@@ -35,6 +36,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     gradingMethod: 'schema-validation',
     evalSetPath: 'data/eval-sets/workhorse.json',
     humanReviewPercent: 0.3,
+    qualityBar: 1.0, // §2.3: schema compliance 100% (correctness 85% checked separately in human review)
   },
   lightweight: {
     seat: 'lightweight',
@@ -49,6 +51,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     gradingMethod: 'schema-validation',
     evalSetPath: 'data/eval-sets/lightweight.json',
     humanReviewPercent: 0,
+    qualityBar: 0.90, // §2.3: task correctness >= 90%
   },
   micro: {
     seat: 'micro',
@@ -57,15 +60,13 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
       'us.amazon.nova-lite-v1:0',
       'zai.glm-4.7-flash',
       'qwen.qwen3-32b-v1:0',
-      'us.amazon.nova-pro-v1:0',
-      'zai.glm-4.7',
-      'deepseek.v3.2',
     ],
     temperature: 0,
     maxTokens: 256,
     gradingMethod: 'exact-match',
     evalSetPath: 'data/eval-sets/micro-routing.json',
     humanReviewPercent: 0,
+    qualityBar: 0.95, // §2.3: multi-label F1 >= 0.95
   },
   snapshot: {
     seat: 'snapshot',
@@ -80,6 +81,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     gradingMethod: 'schema-validation',
     evalSetPath: 'data/eval-sets/snapshot-pipeline.json',
     humanReviewPercent: 0,
+    qualityBar: 1.0, // §2.3: schema compliance 100% + grounding pass
   },
   'editor-ai': {
     seat: 'editor-ai',
@@ -94,6 +96,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     gradingMethod: 'schema-validation',
     evalSetPath: 'data/eval-sets/editor-ai.json',
     humanReviewPercent: 0.2,
+    qualityBar: 1.0, // §2.3: schema compliance 100% (quality spot-reviewed separately)
   },
   'pain-distiller': {
     seat: 'pain-distiller',
@@ -104,9 +107,10 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     ],
     temperature: 0,
     maxTokens: 2048,
-    gradingMethod: 'schema-validation',
+    gradingMethod: 'exact-match',
     evalSetPath: 'data/eval-sets/pain-distiller.json',
     humanReviewPercent: 0,
+    qualityBar: 0.85, // §2.3: label coverage >= 85%
   },
   'legal-ledger': {
     seat: 'legal-ledger',
@@ -120,5 +124,6 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     gradingMethod: 'human',
     evalSetPath: 'data/eval-sets/legal-ledger.json',
     humanReviewPercent: 1.0,
+    qualityBar: null, // §2.3: human-graded (rubric mean >= 4.0, no criterion at 1)
   },
 };

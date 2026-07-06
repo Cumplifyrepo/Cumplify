@@ -16,7 +16,7 @@ import { computeEstimate, createBudgetGuard } from './src/budget.js';
 import { invokeCandidate } from './src/runner.js';
 import { scoreCandidate } from './src/scorer.js';
 import { generateReport } from './src/reporter.js';
-import type { EvalSet, CandidateReport, ScoredReport, PriceEntry } from './src/types.js';
+import type { EvalSet, CandidateReport, ScoredReport, PriceEntry, EvalResult } from './src/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -28,6 +28,7 @@ const { values } = parseArgs({
     'approved-budget': { type: 'string' },
     candidate: { type: 'string' },
     'run-id': { type: 'string' },
+    rescore: { type: 'string' },
     help: { type: 'boolean', default: false },
   },
   strict: true,
@@ -117,9 +118,94 @@ if (values['estimate-only']) {
   process.exit(0);
 }
 
+// --rescore mode: reload raw outputs, re-score with current bars, regenerate report
+if (values.rescore) {
+  const rescoreRunId = values.rescore;
+  const rescoreDir = resolve('.kiro/evidence/model-policy-evals/runs', `${values.seat}-${rescoreRunId}`);
+  const rescoreRawDir = resolve(rescoreDir, 'raw');
+  console.log(`[model-evals] Rescore mode: loading raw from ${rescoreRawDir}`);
+
+  const { readdirSync } = await import('node:fs');
+  const rawFiles = readdirSync(rescoreRawDir).filter((f: string) => f.endsWith('.json'));
+  if (rawFiles.length === 0) {
+    console.error(`ERROR: No raw output files in ${rescoreRawDir}`);
+    process.exit(1);
+  }
+
+  // Group by model
+  const resultsByModel: Record<string, EvalResult[]> = {};
+  for (const file of rawFiles) {
+    const raw = JSON.parse(readFileSync(resolve(rescoreRawDir, file), 'utf-8'));
+    const modelId = raw.modelId as string;
+    if (!resultsByModel[modelId]) resultsByModel[modelId] = [];
+    resultsByModel[modelId].push({
+      taskId: raw.taskId,
+      candidateModelId: modelId,
+      response: raw.response,
+      inputTokens: raw.inputTokens,
+      outputTokens: raw.outputTokens,
+      latencyMs: raw.latencyMs,
+      costUsd: raw.costUsd,
+    });
+  }
+
+  const rescoreCandidateReports: CandidateReport[] = [];
+  for (const [modelId, results] of Object.entries(resultsByModel)) {
+    const scoring = scoreCandidate(results, evalSet, seatConfig);
+    const costs = results.map((r) => r.costUsd).sort((a, b) => a - b);
+    const p50Idx = Math.floor(costs.length * 0.5);
+    const p95Idx = Math.floor(costs.length * 0.95);
+    const costP50 = costs[p50Idx] ?? 0;
+
+    const marginInputsPath = resolve(__dirname, 'data/margin-inputs.json');
+    const marginInputs = JSON.parse(readFileSync(marginInputsPath, 'utf-8'));
+    const seatMargin = marginInputs.creditPricingPerTask[seatConfig.seat];
+    const margin = seatMargin ? 1 - (costP50 / seatMargin.effectivePricePerTask) : 0;
+
+    rescoreCandidateReports.push({
+      modelId,
+      qualityPass: scoring.qualityPass,
+      qualityScore: scoring.aggregateScore,
+      costPerTaskP50: costP50,
+      costPerTaskP95: costs[p95Idx] ?? 0,
+      marginAtCreditPricing: margin,
+      marginPass: margin >= 0.5,
+      tokenUsage: {
+        inputP50: results.sort((a, b) => a.inputTokens - b.inputTokens)[p50Idx]?.inputTokens ?? 0,
+        inputP95: results.sort((a, b) => a.inputTokens - b.inputTokens)[p95Idx]?.inputTokens ?? 0,
+        outputP50: results.sort((a, b) => a.outputTokens - b.outputTokens)[p50Idx]?.outputTokens ?? 0,
+        outputP95: results.sort((a, b) => a.outputTokens - b.outputTokens)[p95Idx]?.outputTokens ?? 0,
+      },
+      rank: null,
+    });
+  }
+
+  const passers = rescoreCandidateReports.filter((c) => c.qualityPass && c.marginPass);
+  passers.sort((a, b) => a.costPerTaskP50 - b.costPerTaskP50);
+  passers.forEach((c, i) => { c.rank = i + 1; });
+  const winner = passers[0]?.modelId ?? null;
+
+  const rescoreReport: ScoredReport = {
+    seat: seatConfig.seat,
+    timestamp: new Date().toISOString(),
+    candidates: rescoreCandidateReports,
+    winner,
+    budgetConsumed: 0,
+    pricingSource: Object.fromEntries(candidates.map((c) => [c, 'live-api' as const])),
+    groundTruthLimitation: `RESCORED from raw run ${rescoreRunId} using scoring commit ${process.env.GIT_COMMIT ?? 'HEAD'}`,
+  };
+
+  const rescoreReportMd = generateReport(rescoreReport);
+  const rescoreReportFile = resolve(rescoreDir, 'report-rescored.md');
+  writeFileSync(rescoreReportFile, rescoreReportMd);
+  console.log('\n' + rescoreReportMd);
+  console.log(`[model-evals] Rescored report written to: ${rescoreReportFile}`);
+  process.exit(0);
+}
+
 // --run mode
 if (!values.run) {
-  console.error('ERROR: specify --estimate-only or --run');
+  console.error('ERROR: specify --estimate-only, --rescore <runId>, or --run');
   process.exit(1);
 }
 

@@ -13,12 +13,12 @@ export function generateReport(report: ScoredReport): string {
   lines.push(`# Eval Report: ${report.seat} — ${report.timestamp}`);
   lines.push('');
   lines.push('## Summary');
-  lines.push('| Candidate | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |');
-  lines.push('|-----------|-------------|-----------|-----------|-----------------|------|');
+  lines.push('| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |');
+  lines.push('|-----------|--------------|-------------|-----------|-----------|-----------------|------|');
 
   for (const c of report.candidates) {
     lines.push(
-      `| ${c.modelId} | ${c.qualityPass ? 'PASS' : 'FAIL'} | $${c.costPerTaskP50.toFixed(5)} | $${c.costPerTaskP95.toFixed(5)} | ${(c.marginAtCreditPricing * 100).toFixed(1)}% | ${c.rank ?? 'N/A'} |`,
+      `| ${c.modelId} | ${c.qualityScore.toFixed(3)} | ${c.qualityPass ? 'PASS' : 'FAIL'} | $${c.costPerTaskP50.toFixed(5)} | $${c.costPerTaskP95.toFixed(5)} | ${(c.marginAtCreditPricing * 100).toFixed(1)}% | ${c.rank ?? 'N/A'} |`,
     );
   }
 

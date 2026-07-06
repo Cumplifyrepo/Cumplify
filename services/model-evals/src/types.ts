@@ -63,6 +63,8 @@ export interface SeatConfig {
   gradingMethod: EvalSet['gradingMethod'];
   evalSetPath: string;
   humanReviewPercent: number; // 0 for fully automated, 0.2 for 20%, 1.0 for 100%
+  /** Quality pass threshold (0-1). From design §2.3. 'human' seats set null. */
+  qualityBar: number | null;
 }
 
 export interface PriceEntry {
