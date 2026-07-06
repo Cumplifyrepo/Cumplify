@@ -819,3 +819,170 @@ EXIT: 0
 # but did not recompute aggregates against design bars.
 # Cost/margin columns and raw outputs remain VALID (token math verified separately).
 # NO new invocations required for remediation — rescore-from-raw suffices.
+
+# ===== RESCORE-FROM-RAW (post FINDING-H fix, HEAD 67fc48f) — 2026-07-06T18:58:13Z =====
+
+===== RESCORE: lightweight @ run2-20260706 =====
+[model-evals] Seat: lightweight
+[model-evals] Candidates: us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0
+[model-evals] Eval set loaded: data/eval-sets/lightweight.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  us.amazon.nova-2-lite-v1:0: live-api ($0.33/$2.75 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+  qwen.qwen3-32b-v1:0: live-api ($0.15/$0.6 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| lightweight | 20 | 4 | 80 | 64,000 | 32,000 | $0.1091 |
+
+[model-evals] Rescore mode: loading raw from /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/lightweight-run2-20260706/raw
+/home/julio-medrano/cumplify/services/model-evals/graders/exact-match.ts:18
+  const normalizedExpected = expected.trim().toLowerCase();
+                                      ^
+
+TypeError: expected.trim is not a function
+    at scoreExactMatch (/home/julio-medrano/cumplify/services/model-evals/graders/exact-match.ts:18:39)
+    at scoreCandidate (/home/julio-medrano/cumplify/services/model-evals/src/scorer.ts:60:15)
+    at <anonymous> (/home/julio-medrano/cumplify/services/model-evals/run.ts:154:21)
+
+Node.js v22.22.3
+EXIT: 1
+
+===== RESCORE: snapshot @ run2-20260706 =====
+[model-evals] Seat: snapshot
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, us.amazon.nova-2-lite-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/snapshot-pipeline.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  us.amazon.nova-2-lite-v1:0: live-api ($0.33/$2.75 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| snapshot | 30 | 4 | 120 | 96,000 | 48,000 | $0.2304 |
+
+[model-evals] Rescore mode: loading raw from /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/snapshot-run2-20260706/raw
+/home/julio-medrano/cumplify/services/model-evals/graders/exact-match.ts:18
+  const normalizedExpected = expected.trim().toLowerCase();
+                                      ^
+
+TypeError: expected.trim is not a function
+    at scoreExactMatch (/home/julio-medrano/cumplify/services/model-evals/graders/exact-match.ts:18:39)
+    at scoreCandidate (/home/julio-medrano/cumplify/services/model-evals/src/scorer.ts:60:15)
+    at <anonymous> (/home/julio-medrano/cumplify/services/model-evals/run.ts:154:21)
+
+Node.js v22.22.3
+EXIT: 1
+
+===== RESCORE: micro @ run4-20260706 =====
+[model-evals] Seat: micro
+[model-evals] Candidates: us.amazon.nova-micro-v1:0, us.amazon.nova-lite-v1:0, zai.glm-4.7-flash, qwen.qwen3-32b-v1:0
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-micro-v1:0: live-api ($0.034999999999999996/$0.13999999999999999 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+  qwen.qwen3-32b-v1:0: live-api ($0.15/$0.6 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 4 | 200 | 40,000 | 10,000 | $0.0120 |
+
+[model-evals] Rescore mode: loading raw from /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run4-20260706/raw
+
+# Eval Report: micro — 2026-07-06T18:58:15.090Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| deepseek.v3.2 | 0.847 | FAIL | $0.00059 | $0.00070 | 70.2% | N/A |
+| qwen.qwen3-32b-v1:0 | 0.779 | FAIL | $0.00006 | $0.00016 | 96.9% | N/A |
+| us.amazon.nova-lite-v1:0 | 0.882 | FAIL | $0.00002 | $0.00003 | 98.9% | N/A |
+| us.amazon.nova-micro-v1:0 | 0.810 | FAIL | $0.00001 | $0.00001 | 99.3% | N/A |
+| us.amazon.nova-pro-v1:0 | 0.910 | FAIL | $0.00049 | $0.00084 | 75.3% | N/A |
+| zai.glm-4.7-flash | 0.829 | FAIL | $0.00003 | $0.00003 | 98.7% | N/A |
+| zai.glm-4.7 | 0.939 | FAIL | $0.00021 | $0.00023 | 89.2% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0000
+
+## Pricing Sources
+- us.amazon.nova-micro-v1:0: live-api
+- us.amazon.nova-lite-v1:0: live-api
+- zai.glm-4.7-flash: live-api
+- qwen.qwen3-32b-v1:0: live-api
+
+## Ground-Truth Limitation
+RESCORED from raw run run4-20260706 using scoring commit HEAD
+
+[model-evals] Rescored report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/micro-run4-20260706/report-rescored.md
+EXIT: 0
+
+===== RESCORE: pain-distiller @ run4-20260706 =====
+[model-evals] Seat: pain-distiller
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, deepseek.v3.2, qwen.qwen3-next-80b-a3b
+[model-evals] Eval set loaded: data/eval-sets/pain-distiller.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 3 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| pain-distiller | 20 | 3 | 60 | 48,000 | 24,000 | $0.1152 |
+
+[model-evals] Rescore mode: loading raw from /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/pain-distiller-run4-20260706/raw
+
+# Eval Report: pain-distiller — 2026-07-06T18:58:15.580Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| deepseek.v3.2 | 0.820 | FAIL | $0.00045 | $0.00063 | 96.3% | N/A |
+| qwen.qwen3-next-80b-a3b | 0.861 | PASS | $0.00026 | $0.00048 | 97.8% | 1 |
+| us.amazon.nova-pro-v1:0 | 0.743 | FAIL | $0.00033 | $0.00083 | 97.2% | N/A |
+
+## Winner: qwen.qwen3-next-80b-a3b
+
+## Budget Consumed: $0.0000
+
+## Pricing Sources
+- us.amazon.nova-pro-v1:0: live-api
+- deepseek.v3.2: live-api
+- qwen.qwen3-next-80b-a3b: live-api
+
+## Ground-Truth Limitation
+RESCORED from raw run run4-20260706 using scoring commit HEAD
+
+[model-evals] Rescored report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/pain-distiller-run4-20260706/report-rescored.md
+EXIT: 0
+
+# ARCHITECT AUDIT post-rescore (FINDING-I, truth incident #7) — 2026-07-06:
+# Full 10-set shape audit: lightweight (20/20), snapshot-pipeline (30/30), editor-ai
+# (20/20), workhorse (30/30) ALL carry expectedSchema nested inside expectedOutput as an
+# object — EvalTask defines expectedOutput?: string. Task-5 acceptance claim "valid JSON
+# conforming to the EvalTask schema" was FALSE for 100/170 drafted tasks. Consequence:
+# old scorer validated schema seats against {} (empty schema) — run-2 lightweight/
+# snapshot quality columns measured little more than answer-line presence. Clean sets:
+# micro-routing, pain-distiller (post-fix), 3x guru, legal-ledger (architect-authored).
+# RESCORE VERDICTS SO FAR (post FINDING-H scorer, from raw):
+#   pain-distiller: WINNER qwen.qwen3-next-80b-a3b — 0.861 vs 0.85 bar, $0.00026/task,
+#     97.8% margin. Harness score matches architect-independent computation exactly. FINAL.
+#   micro: NO PASSER at F1>=0.95 across 7 models spanning 3 price tiers (best glm-4.7
+#     0.939, nova-pro 0.910). Curve completion escalation authorized: +zai.glm-5,
+#     +minimax.minimax-m2.5, +moonshotai.kimi-k2.5 — then the bar decision is made on
+#     full evidence, owner-visible in the Register. NO silent recalibration.
+#   lightweight/snapshot: rescore blocked by FINDING-I malformation — pending set
+#     restructure, then rescore from existing run-2 raws (no new invocations).
+# Gate hardening: the 10-set shape audit (this script) is now a standing gate step.
