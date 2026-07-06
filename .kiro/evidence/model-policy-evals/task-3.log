@@ -1,0 +1,25 @@
+# Model Policy Evals — Task 3 Evidence Log
+
+**Timestamp:** 2026-07-05T18:10:00Z
+**Spec:** model-policy-evals
+**Task:** 3 (Price-snapshot + margin-inputs data files)
+
+## Deliverables
+1. services/model-evals/data/price-snapshot.json
+   - Model: us.anthropic.claude-sonnet-4-6
+   - Input: $3.00/M tokens, Output: $15.00/M tokens
+   - Source: aws.amazon.com/bedrock/pricing/ (2026-07-05)
+   - Staleness limit: 90 days
+   - Note: PENDING-OWNER-ACTION (Anthropic use-case form gate)
+
+2. services/model-evals/data/margin-inputs.json
+   - Source: Parts 17/22 ($99/25,000 credits = $0.00396/credit)
+   - 8 task classes with credits-per-task + effective price
+   - Margin mandate: 0.50
+
+## Validation
+- Both files parse as valid JSON
+- Pricing staleness check: PASS (captured today)
+
+## Exit
+Exit code: 0

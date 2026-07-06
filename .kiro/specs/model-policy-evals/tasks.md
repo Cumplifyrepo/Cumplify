@@ -57,8 +57,8 @@
 **Depends on:** Task 2 (types exist)
 
 ### Deliverables
-- [ ] `services/model-evals/data/price-snapshot.json` — Claude sonnet-4-6 pricing with full provenance (capturedAt, sourceUrl, capturedBy, stalenessLimitDays: 90)
-- [ ] `services/model-evals/data/margin-inputs.json` — credit pricing per task class from Parts 17/22 with provenance (capturedAt, source, capturedBy)
+- [x] `services/model-evals/data/price-snapshot.json` — Claude sonnet-4-6 pricing with full provenance (capturedAt, sourceUrl, capturedBy, stalenessLimitDays: 90)
+- [x] `services/model-evals/data/margin-inputs.json` — credit pricing per task class from Parts 17/22 with provenance (capturedAt, source, capturedBy)
 
 ### Acceptance
 - Both files parse as valid JSON matching design schemas (§6, §12)

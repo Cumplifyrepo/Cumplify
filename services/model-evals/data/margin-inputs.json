@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-07-05T00:00:00Z",
+  "source": "cumplify-CONSOLIDATED-master-architecture-v7-full.md Parts 17/22 — $99/25,000 credits = $0.00396/credit",
+  "capturedBy": "architect",
+  "creditPricingPerTask": {
+    "guru": { "creditsPerTask": 5, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.0198 },
+    "workhorse": { "creditsPerTask": 3, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.01188 },
+    "lightweight": { "creditsPerTask": 1, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00396 },
+    "micro": { "creditsPerTask": 0.5, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00198 },
+    "snapshot": { "creditsPerTask": 2, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00792 },
+    "editor-ai": { "creditsPerTask": 2, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.00792 },
+    "pain-distiller": { "creditsPerTask": 3, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.01188 },
+    "legal-ledger": { "creditsPerTask": 10, "pricePerCredit": 0.00396, "effectivePricePerTask": 0.0396 }
+  },
+  "marginMandate": 0.50,
+  "notes": "Credit pricing from Part 22 (25,000 credits = $99 → $0.00396/credit). Credits per task are ESTIMATES pending product pricing finalization — the architect updates this file when pricing is confirmed."
+}
