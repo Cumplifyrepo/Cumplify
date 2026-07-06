@@ -8,12 +8,14 @@
 - `.kiro/steering/16-identity-boundaries.md` — four never-cross layers
 - `.kiro/steering/04-immutability.md` — every mutation names its audit event in design
 - `.kiro/steering/07-events.md` + `contracts/events.md` — event taxonomy, publisher
-- `docs/architecture/cumplify-architecture.md` — Sections A.2, A.4, D.2, D.6
+- `docs/architecture/cumplify-architecture.md` — Sections A.2, A.4, C.1, D.2, D.6
 - `docs/architecture/cumplify-CONSOLIDATED-master-architecture-v7-full.md` — v7 spec table row 3
+- `docs/architecture/module-spec.md` — M1–M5 domain models, RDS system-of-record rule
+- `.kiro/specs/platform-foundation/design.md` — §6 Aurora (RLS/schema deferred to spec 3)
 
 **Depends on:** Spec 1 (`platform-foundation`), Spec 2 (`eventing-backbone`), Spec 5 (`immutable-trail`)
 **P0-GATE CARRY-1:** This spec deploys the tenant-scoped runtime data role.
-**Revision:** R1 — initial draft for architect review
+**Revision:** R2 — 3 findings resolved (AUTH-1 pool inversion, RDS/RLS section added, sources corrected)
 
 ---
 
@@ -49,10 +51,10 @@
 
 | ID | Requirement (EARS) |
 |----|-------------------|
-| AUTH-1 | **The authorizer shall** accept JWTs issued by Pool A (`cumplify-internal`) or Pool B (`cumplify-tenant-admin`). Pool C tokens are rejected (tenant-users access through Pool B delegation, not direct API). |
+| AUTH-1 | **The authorizer shall** accept JWTs issued by Pool B (`cumplify-tenant-admin`) or Pool C (`cumplify-tenant-user`). Pool A tokens (`cumplify-internal`) are REJECTED — per 16-identity-boundaries Layer 1, the tenant-facing API rejects Pool-A tokens with 401 BEFORE any role logic. Pool C carries the operational ISO roles (InternalAuditor, ProcessOwner, Employee, etc.) that perform actual M1–M5 work. |
 | AUTH-2 | **The authorizer shall** verify: (a) token signature (JWKS), (b) issuer matches known pool(s), (c) expiry (reject expired tokens), (d) `custom:tenantId` is present and non-empty. |
 | AUTH-3 | **The authorizer shall** populate `resolverContext`: `tenantId` (from `custom:tenantId`), `role` (from `custom:role`), `poolClass` (from `custom:poolClass`), `sub` (user identity), `entitlement` (plan/seats/features — initially a static stamp until billing wires in P2). |
-| AUTH-4 | **The authorizer shall** REJECT (401) any token where `poolClass` does not match the expected surface (16-identity-boundaries Layer 1). |
+| AUTH-4 | **The authorizer shall** REJECT (401) any token where `poolClass` is `internal` (Pool A). Only `tenant-admin` (Pool B) and `tenant-user` (Pool C) are accepted on this surface (16-identity-boundaries Layer 1). |
 | AUTH-5 | **[REQUIRES-HUMAN]** The authorizer code and its IAM policies require owner review before merge. |
 | AUTH-6 | **A negative-proof readback test shall** confirm: a synthetic JWT with a mismatched tenant claim is REJECTED by the authorizer with a 401/403 response. |
 
@@ -69,7 +71,20 @@
 
 ---
 
-## 5. GraphQL Schema (M1–M5)
+## 5. RDS PostgreSQL — Schema, RLS, and Connectivity
+
+| ID | Requirement (EARS) |
+|----|-------------------|
+| RDS-1 | **This spec shall** own schema creation and migration for M1–M5 RDS tables per the module-spec C.1 schema domains: `quality`, `capa`, `audit`, and cross-domain tables (`document`, `risk_register`). Every table carries `tenant_id` + standard audit columns (`created_at`, `created_by`, `updated_at`, `version`). |
+| RDS-2 | **Row-Level Security (RLS) policies shall** be applied to every M1–M5 table, keyed to the session variable set from `resolverContext.tenantId`. A query from tenant-A's session MUST return zero rows from tenant-B's data — enforced at the database layer, not application logic. |
+| RDS-3 | **The session-variable wiring mechanism shall** set `app.tenant_id` (or equivalent) on every database session BEFORE any query executes. The resolver Lambda sets this from the authorizer's `resolverContext.tenantId`. |
+| RDS-4 | **Lambda-to-Aurora connectivity** method shall be decided in design. Candidates: (a) RDS Data API (serverless, no VPC attachment needed for Lambda, connection pooling built-in), (b) RDS Proxy (connection pooling, VPC-attached Lambdas), (c) direct VPC connection. Design must evaluate against: cold-start impact, connection-pool exhaustion at scale, RLS session-variable support, and cost. |
+| RDS-5 | **An RLS acceptance test (ACC-5) shall** prove: a resolver Lambda executing a query with tenant-A session context returns tenant-A rows; the same query with tenant-B context returns zero rows from tenant-A's data. Captured verbatim. |
+| RDS-6 | **Schema migrations shall** be managed by a committed migration tool (design decides: raw SQL files, or a migration framework). Migrations are versioned, idempotent, and run as part of the deploy pipeline (not ad-hoc). |
+
+---
+
+## 6. GraphQL Schema (M1–M5)
 
 | ID | Requirement (EARS) |
 |----|-------------------|
@@ -80,18 +95,18 @@
 
 ---
 
-## 6. Resolvers & Mutations
+## 7. Resolvers & Mutations
 
 | ID | Requirement (EARS) |
 |----|-------------------|
-| RES-1 | **Every mutation resolver shall**: (a) enforce tenant isolation via the tenant-scoped role (ROLE-1), (b) write to CumplifyCore under the caller's `TENANT#<tenantId>#<module>` partition, (c) publish the declared audit event via `services/eventing` publisher to `cumplify-events`. |
+| RES-1 | **Every mutation resolver shall**: (a) enforce tenant isolation via RLS on the RDS system-of-record (the primary write path for M1–M5 domain entities), (b) optionally write metadata/session items to CumplifyCore DynamoDB under the caller's `TENANT#<tenantId>#<module>` partition (via the tenant-scoped role from §4), (c) publish the declared audit event via `services/eventing` publisher to `cumplify-events`. RDS is the system-of-record; DynamoDB is metadata + audit-mirror only. |
 | RES-2 | **Every audit event published by a resolver shall** flow through the P0 spine: cumplify-events → R-3 audit-sink rule → FIFO queue → appender → chained DDB item → WORM sealed S3 object. This is the first real exercise of the immutable-trail end-to-end. |
 | RES-3 | **Design shall** declare the audit event for every mutation BEFORE implementation (C-3). The design table must list: mutation name → detailType → module → clauseRef. |
 | RES-4 | **New events required by M1–M5 mutations that are not already in `contracts/events.md` shall** be registered there (C-4, append-only) BEFORE implementation. |
 
 ---
 
-## 7. Non-Functional Requirements
+## 8. Non-Functional Requirements
 
 | ID | Requirement (EARS) |
 |----|-------------------|
@@ -102,7 +117,7 @@
 
 ---
 
-## 8. Acceptance Criteria
+## 9. Acceptance Criteria
 
 | # | Criterion |
 |---|-----------|
@@ -110,10 +125,11 @@
 | ACC-2 | **CARRY-1 MATRIX GREEN:** `simulate-principal-policy` against the tenant-scoped data role: cross-tenant GetItem → denied; same-tenant GetItem → allowed; cross-tenant PutItem → denied; same-tenant PutItem → allowed. All captured verbatim. |
 | ACC-3 | **AUTHORIZER NEGATIVE PROOF:** A synthetic JWT with mismatched tenant claim (or expired, or wrong pool) → AppSync returns 401/Unauthorized. |
 | ACC-4 | **The daily chain-verification job (spec 5) runs green** on the audit events generated by this spec's mutations (the trail is untampered). |
+| ACC-5 | **RLS TENANT ISOLATION:** A resolver query with tenant-A session context returns tenant-A rows; the same query with tenant-B context returns zero rows from tenant-A's data. Captured verbatim. |
 
 ---
 
-## 9. Out of Scope
+## 10. Out of Scope
 
 | Item | Reason |
 |------|--------|
