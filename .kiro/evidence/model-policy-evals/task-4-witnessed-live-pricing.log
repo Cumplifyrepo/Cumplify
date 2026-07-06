@@ -34,3 +34,23 @@ EXIT: 1
 # inferenceType is substring-matched, letting "Input tokens flex"/"batch"/"priority"
 # dims leak in. Guru run correctly hard-failed ENOENT (guru eval set is Task-6
 # architect work, not yet authored) — loud-failure behavior confirmed working.
+
+# RE-WITNESS after FINDING-D fix (bc99d0b) — 2026-07-06T14:39:48Z, profile cumplify-dev-readonly
+$ npx tsx services/model-evals/run.ts --seat micro --estimate-only
+[model-evals] Seat: micro
+[model-evals] Candidates: us.amazon.nova-micro-v1:0, zai.glm-4.7-flash
+[model-evals] Eval set loaded: data/eval-sets/micro-routing.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 2 models
+  us.amazon.nova-micro-v1:0: live-api ($0.034999999999999996/$0.13999999999999999 per M tokens in/out)
+  zai.glm-4.7-flash: live-api ($0.06999999999999999/$0.4 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| micro | 50 | 2 | 100 | 20,000 | 5,000 | $0.0034 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+EXIT: 0
+# 42/42 tests green incl. architect-fixture regressions. VERDICT: PASS — Task 4 CLOSED.
