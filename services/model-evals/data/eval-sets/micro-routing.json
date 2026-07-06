@@ -1,23 +1,258 @@
 {
-  "seat": "micro",
-  "version": "0.1-stub",
-  "taskCount": 3,
+  "seat": "micro-routing",
+  "version": "1.0",
+  "taskCount": 50,
   "gradingMethod": "exact-match",
   "tasks": [
     {
-      "id": "micro-001",
-      "prompt": "Classify the following event detail-type to its target queue: 'Hazard.Identified'",
-      "expectedOutput": "hazard-q"
+      "id": "micro-routing-001",
+      "prompt": "Classify this event to its target queue: 'Document.Approved'",
+      "expectedOutput": "audit-sink"
     },
     {
-      "id": "micro-002",
-      "prompt": "Classify the following event detail-type to its target queue: 'CAPA.Opened'",
+      "id": "micro-routing-002",
+      "prompt": "Classify this event to its target queue: 'Document.Published'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-003",
+      "prompt": "Classify this event to its target queue: 'Policy.Updated'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-004",
+      "prompt": "Classify this event to its target queue: 'Scope.Changed'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-005",
+      "prompt": "Classify this event to its target queue: 'NC.Raised'",
       "expectedOutput": "capa-intake"
     },
     {
-      "id": "micro-003",
-      "prompt": "Classify the following event detail-type to its target queue: 'Document.Approved'",
+      "id": "micro-routing-006",
+      "prompt": "Classify this event to its target queue: 'CAPA.Opened'",
+      "expectedOutput": "capa-intake"
+    },
+    {
+      "id": "micro-routing-007",
+      "prompt": "Classify this event to its target queue: 'CAPA.Closed'",
+      "expectedOutput": "capa-intake"
+    },
+    {
+      "id": "micro-routing-008",
+      "prompt": "Classify this event to its target queue: 'CAPA.EffectivenessVerified'",
+      "expectedOutput": "capa-intake"
+    },
+    {
+      "id": "micro-routing-009",
+      "prompt": "Classify this event to its target queue: 'CAPA.ActionRequiresDocChange'",
+      "expectedOutput": "capa-intake"
+    },
+    {
+      "id": "micro-routing-010",
+      "prompt": "Classify this event to its target queue: 'Audit.Scheduled'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-011",
+      "prompt": "Classify this event to its target queue: 'Audit.FindingRaised'",
+      "expectedOutput": "nc-triage"
+    },
+    {
+      "id": "micro-routing-012",
+      "prompt": "Classify this event to its target queue: 'Audit.Completed'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-013",
+      "prompt": "Classify this event to its target queue: 'Readiness.Scored'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-014",
+      "prompt": "Classify this event to its target queue: 'Record.Registered'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-015",
+      "prompt": "Classify this event to its target queue: 'Calibration.Due'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-016",
+      "prompt": "Classify this event to its target queue: 'Calibration.Recorded'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-017",
+      "prompt": "Classify this event to its target queue: 'AuditEvent.Appended'",
       "expectedOutput": "audit-sink"
+    },
+    {
+      "id": "micro-routing-018",
+      "prompt": "Classify this event to its target queue: 'Risk.Created'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-019",
+      "prompt": "Classify this event to its target queue: 'Risk.Escalated'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-020",
+      "prompt": "Classify this event to its target queue: 'Change.Planned'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-021",
+      "prompt": "Classify this event to its target queue: 'Context.Updated'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-022",
+      "prompt": "Classify this event to its target queue: 'InterestedParty.Identified'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-023",
+      "prompt": "Classify this event to its target queue: 'Communication.Planned'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-024",
+      "prompt": "Classify this event to its target queue: 'Objectives.Updated'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-025",
+      "prompt": "Classify this event to its target queue: 'Objectives.OffTrack'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-026",
+      "prompt": "Classify this event to its target queue: 'Obligation.Added'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-027",
+      "prompt": "Classify this event to its target queue: 'Compliance.Evaluated'",
+      "expectedOutput": "review-fanout"
+    },
+    {
+      "id": "micro-routing-028",
+      "prompt": "Classify this event to its target queue: 'Compliance.NonCompliance'",
+      "expectedOutput": "nc-triage"
+    },
+    {
+      "id": "micro-routing-029",
+      "prompt": "Classify this event to its target queue: 'Obligation.ReviewDue'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-030",
+      "prompt": "Classify this event to its target queue: 'Aspect.SignificantImpact'",
+      "expectedOutput": "nc-triage"
+    },
+    {
+      "id": "micro-routing-031",
+      "prompt": "Classify this event to its target queue: 'Enviro.MonitoringLogged'",
+      "expectedOutput": "aspect-q"
+    },
+    {
+      "id": "micro-routing-032",
+      "prompt": "Classify this event to its target queue: 'EnvIncident.Reported'",
+      "expectedOutput": "nc-triage"
+    },
+    {
+      "id": "micro-routing-033",
+      "prompt": "Classify this event to its target queue: 'EnvEmergency.PlanUpdated'",
+      "expectedOutput": "aspect-q"
+    },
+    {
+      "id": "micro-routing-034",
+      "prompt": "Classify this event to its target queue: 'Hazard.Identified'",
+      "expectedOutput": "hazard-q"
+    },
+    {
+      "id": "micro-routing-035",
+      "prompt": "Classify this event to its target queue: 'Hazard.RiskEscalated'",
+      "expectedOutput": "hazard-q"
+    },
+    {
+      "id": "micro-routing-036",
+      "prompt": "Classify this event to its target queue: 'Incident.Reported'",
+      "expectedOutput": "nc-triage"
+    },
+    {
+      "id": "micro-routing-037",
+      "prompt": "Classify this event to its target queue: 'Worker.ConsultationLogged'",
+      "expectedOutput": "hazard-q"
+    },
+    {
+      "id": "micro-routing-038",
+      "prompt": "Classify this event to its target queue: 'Safety.MetricLogged'",
+      "expectedOutput": "hazard-q"
+    },
+    {
+      "id": "micro-routing-039",
+      "prompt": "Classify this event to its target queue: 'OHSEmergency.PlanUpdated'",
+      "expectedOutput": "hazard-q"
+    },
+    {
+      "id": "micro-routing-040",
+      "prompt": "Classify this event to its target queue: 'Supplier.Onboarded'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-041",
+      "prompt": "Classify this event to its target queue: 'Supplier.Evaluated'",
+      "expectedOutput": "audit-sink"
+    },
+    {
+      "id": "micro-routing-042",
+      "prompt": "Classify this event to its target queue: 'Supplier.NonConformance'",
+      "expectedOutput": "nc-triage"
+    },
+    {
+      "id": "micro-routing-043",
+      "prompt": "Classify this event to its target queue: 'Training.Recorded'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-044",
+      "prompt": "Classify this event to its target queue: 'Training.Expiring'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-045",
+      "prompt": "Classify this event to its target queue: 'Competence.GapIdentified'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-046",
+      "prompt": "Classify this event to its target queue: 'Awareness.Delivered'",
+      "expectedOutput": "records-q"
+    },
+    {
+      "id": "micro-routing-047",
+      "prompt": "Classify this event to its target queue: 'Unknown.EventFired'",
+      "expectedOutput": "unroutable"
+    },
+    {
+      "id": "micro-routing-048",
+      "prompt": "Classify this event to its target queue: 'Widget.Manufactured'",
+      "expectedOutput": "unroutable"
+    },
+    {
+      "id": "micro-routing-049",
+      "prompt": "Classify this event to its target queue: 'Invoice.Sent'",
+      "expectedOutput": "unroutable"
+    },
+    {
+      "id": "micro-routing-050",
+      "prompt": "Classify this event to its target queue: 'Employee.Terminated'",
+      "expectedOutput": "unroutable"
     }
   ]
 }

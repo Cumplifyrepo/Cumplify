@@ -1,0 +1,26 @@
+# Model Policy Evals — Task 5 Evidence Log
+
+**Timestamp:** 2026-07-05T18:30:00Z
+**Spec:** model-policy-evals
+**Task:** 5 (Eval-set drafts — machine-derivable)
+
+## Deliverables (6 eval-set files)
+| File | Tasks | Grading | Source |
+|------|-------|---------|--------|
+| micro-routing.json | 50 | exact-match | contracts/events.md (46 events) + 4 edge cases |
+| lightweight.json | 20 | schema-validation | 8 Lite-class agent duties from catalog |
+| snapshot-pipeline.json | 30 | schema-validation | Part 2.2 snapshot schema, 30 industries |
+| editor-ai.json | 20 | schema-validation | ISO document templates (policies, procedures, CAPA, WI) |
+| pain-distiller.json | 20 | schema-validation | Synthetic customer feedback + ground-truth labels |
+| workhorse.json | 30 | schema-validation | 4 task types: drafting/CAPA/risk/audit |
+
+## Validation
+- All files parse as valid JSON
+- taskCount field matches actual tasks.length in every file
+- Total: 170 tasks across 6 sets
+
+## Status
+Awaiting [ARCHITECT] quality-gate sign-off (Task 6) before any benchmark run.
+
+## Exit
+Exit code: 0

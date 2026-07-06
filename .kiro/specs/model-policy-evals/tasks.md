@@ -88,12 +88,12 @@
 **Depends on:** Task 4 (harness proven)
 
 ### Deliverables
-- [ ] `services/model-evals/data/eval-sets/micro-routing.json` — 50 classification examples (46 from `contracts/events.md` registered events + 4 synthetic edge cases)
-- [ ] `services/model-evals/data/eval-sets/lightweight.json` — 20 structured tasks for 8 Lite-class agents (from catalog duty definitions)
-- [ ] `services/model-evals/data/eval-sets/snapshot-pipeline.json` — 30 snapshot-generation tasks (from Part 2.2 schema)
-- [ ] `services/model-evals/data/eval-sets/editor-ai.json` — 20 ISO document drafting/completion tasks (policies, procedures, CAPA records, work instructions)
-- [ ] `services/model-evals/data/eval-sets/pain-distiller.json` — 20 pain-point extraction tasks with ground-truth labels
-- [ ] `services/model-evals/data/eval-sets/workhorse.json` — 30 agent-task scenarios (document drafting, CAPA workflow, risk assessment, audit planning)
+- [x] `services/model-evals/data/eval-sets/micro-routing.json` — 50 classification examples (46 from `contracts/events.md` registered events + 4 synthetic edge cases)
+- [x] `services/model-evals/data/eval-sets/lightweight.json` — 20 structured tasks for 8 Lite-class agents (from catalog duty definitions)
+- [x] `services/model-evals/data/eval-sets/snapshot-pipeline.json` — 30 snapshot-generation tasks (from Part 2.2 schema)
+- [x] `services/model-evals/data/eval-sets/editor-ai.json` — 20 ISO document drafting/completion tasks (policies, procedures, CAPA records, work instructions)
+- [x] `services/model-evals/data/eval-sets/pain-distiller.json` — 20 pain-point extraction tasks with ground-truth labels
+- [x] `services/model-evals/data/eval-sets/workhorse.json` — 30 agent-task scenarios (document drafting, CAPA workflow, risk assessment, audit planning)
 
 ### Acceptance
 - Each eval-set file is valid JSON conforming to the EvalTask schema

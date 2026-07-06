@@ -1,0 +1,228 @@
+{
+  "seat": "pain-distiller",
+  "version": "1.0",
+  "taskCount": 20,
+  "gradingMethod": "schema-validation",
+  "tasks": [
+    {
+      "id": "pain-distiller-001",
+      "prompt": "Extract pain points from this customer feedback: 'We spent 3 months preparing for our ISO 9001 audit and still got 4 major nonconformities. Our consultant gave us templates but they didn't match our actual processes. The auditor said our document control was a mess — versions everywhere, nobody knew which was current. We're a 50-person machine shop, not Boeing, but the system feels like it was built for a corporation.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["audit-readiness-gap", "template-mismatch", "document-control-chaos", "system-complexity-vs-company-size"]
+      }
+    },
+    {
+      "id": "pain-distiller-002",
+      "prompt": "Extract pain points from this customer feedback: 'Every time we have a customer complaint, it takes us 2 weeks just to figure out which batch it came from. Our traceability is basically someone writing lot numbers in a notebook. We lost a $2M contract because we couldn't provide objective evidence of our process controls. The ERP system doesn't talk to quality.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["traceability-gaps", "manual-record-keeping", "lost-revenue-from-compliance-gaps", "system-integration-failure"]
+      }
+    },
+    {
+      "id": "pain-distiller-003",
+      "prompt": "Extract pain points from this customer feedback: 'Our CAPA process is a joke. We open corrective actions and they sit there for months. Nobody follows up. The same problems keep recurring — we had the same weld defect issue 3 times this year. Management just wants to close CAPAs quickly without actually fixing root causes.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["capa-aging", "no-follow-up-mechanism", "recurring-nonconformities", "superficial-root-cause-analysis", "management-pressure-to-close"]
+      }
+    },
+    {
+      "id": "pain-distiller-004",
+      "prompt": "Extract pain points from this customer feedback: 'I'm the quality manager AND the EHS manager AND the training coordinator. There are 200 people here and I'm supposed to track everyone's competency records, run the environmental program, and manage the QMS. I can't keep up with internal audits — we're 6 months behind schedule. I need automation, not another spreadsheet.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["resource-constraint", "role-overload", "competency-tracking-burden", "audit-schedule-slippage", "spreadsheet-fatigue"]
+      }
+    },
+    {
+      "id": "pain-distiller-005",
+      "prompt": "Extract pain points from this customer feedback: 'We operate 6 sites across 3 countries. Each site has its own quality system, own forms, own way of doing things. When corporate asks for a consolidated management review, it takes us 3 weeks to gather data. We can't benchmark sites against each other because nothing is standardized.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["multi-site-inconsistency", "data-consolidation-difficulty", "management-review-delays", "no-benchmarking-capability", "lack-of-standardization"]
+      }
+    },
+    {
+      "id": "pain-distiller-006",
+      "prompt": "Extract pain points from this customer feedback: 'Our environmental compliance is reactive. We only find out about permit exceedances when the regulator tells us. Monitoring data sits in operator logbooks and nobody analyzes trends. Last month we got fined $45K for a discharge that had been creeping up for weeks. We need real-time visibility.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["reactive-compliance", "delayed-exceedance-detection", "unanalyzed-monitoring-data", "regulatory-fines", "no-trend-visibility"]
+      }
+    },
+    {
+      "id": "pain-distiller-007",
+      "prompt": "Extract pain points from this customer feedback: 'We had a serious near-miss last week — forklift almost hit a pedestrian. When I investigated, I found out workers stopped reporting near-misses because nothing ever happens when they do. The forms are complicated, supervisors don't follow up, and there's a blame culture. We're sitting on a time bomb.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["under-reporting-culture", "complex-reporting-forms", "no-follow-up-on-reports", "blame-culture", "safety-risk-accumulation"]
+      }
+    },
+    {
+      "id": "pain-distiller-008",
+      "prompt": "Extract pain points from this customer feedback: 'We're trying to get ISO 14001 certified but we don't even know where to start with aspects and impacts. Our consultant quoted $80K for gap analysis and implementation support. We're a 100-person company — that's our entire training budget for the year. Everything online is generic checklists that don't help.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["implementation-knowledge-gap", "consultant-cost-barrier", "budget-constraint", "generic-resources-unhelpful", "aspects-identification-difficulty"]
+      }
+    },
+    {
+      "id": "pain-distiller-009",
+      "prompt": "Extract pain points from this customer feedback: 'Our supplier management is a nightmare. We have 200+ suppliers and most haven't been audited in 3 years. When we get bad material, it takes forever to trace it back and get corrective action from the supplier. Three of our key suppliers let their ISO certifications lapse and we didn't notice for 6 months.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["supplier-audit-backlog", "slow-supplier-corrective-action", "certification-monitoring-gap", "supplier-traceability-issues", "supplier-volume-overwhelming"]
+      }
+    },
+    {
+      "id": "pain-distiller-010",
+      "prompt": "Extract pain points from this customer feedback: 'Management review is a PowerPoint theater. We show nice graphs, everyone nods, actions are assigned, and nothing changes until next quarter. The same risks stay on the register year after year. Nobody challenges whether our objectives are actually being met. It's pure compliance theater.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["management-review-ineffective", "no-action-follow-through", "stale-risk-register", "objectives-not-challenged", "compliance-theater"]
+      }
+    },
+    {
+      "id": "pain-distiller-011",
+      "prompt": "Extract pain points from this customer feedback: 'Our workers speak 4 different languages on the shop floor. Safety procedures are only in English. Training sign-off sheets show everyone was trained but I guarantee half of them didn't understand the content. We've had incidents where workers didn't follow lockout/tagout because they couldn't read the procedure posted on the machine.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["language-barrier", "ineffective-training-delivery", "compliance-on-paper-only", "safety-procedure-accessibility", "incident-risk-from-comprehension-gaps"]
+      }
+    },
+    {
+      "id": "pain-distiller-012",
+      "prompt": "Extract pain points from this customer feedback: 'We just integrated an acquisition — 150 new employees with completely different quality practices. They were ISO certified too, but their procedures conflict with ours. Harmonizing two document control systems is killing us. Customers are confused about which entity they're dealing with. It's been 8 months and we still can't do a combined management review.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["post-acquisition-integration", "conflicting-procedures", "document-system-harmonization", "customer-confusion", "delayed-consolidation"]
+      }
+    },
+    {
+      "id": "pain-distiller-013",
+      "prompt": "Extract pain points from this customer feedback: 'Our internal audits find the same things every time — minor documentation gaps, training records not current. But we never find the real problems. Our auditors are too close to the processes they audit. We had a major customer escape that none of our audits caught. The audit program adds no value.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["audit-effectiveness-low", "superficial-findings", "auditor-independence-issue", "customer-escapes-not-detected", "audit-program-adds-no-value"]
+      }
+    },
+    {
+      "id": "pain-distiller-014",
+      "prompt": "Extract pain points from this customer feedback: 'We're a contract manufacturer and every customer wants something different — their own forms, their own audit schedule, their own corrective action format. We're running 12 different quality systems for 12 customers. The overhead is enormous. One person just manages customer-specific requirements full time.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["customer-specific-requirements-overload", "multiple-parallel-systems", "administrative-overhead", "dedicated-resource-for-requirements", "lack-of-standardization"]
+      }
+    },
+    {
+      "id": "pain-distiller-015",
+      "prompt": "Extract pain points from this customer feedback: 'Our risk register has 300 items and nobody looks at it. It was built during certification 5 years ago and never meaningfully updated. New risks from our expansion into battery manufacturing aren't captured. The risk methodology is too complex — a 5x5 matrix with 10 criteria that takes an hour per risk. People avoid updating it.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["risk-register-stale", "overcomplicated-methodology", "new-risks-not-captured", "user-avoidance", "no-living-document"]
+      }
+    },
+    {
+      "id": "pain-distiller-016",
+      "prompt": "Extract pain points from this customer feedback: 'Calibration is out of control. We have 800 instruments across the plant. Somehow 15% are overdue at any given time. When an instrument is found out of cal, we can't easily determine which products were affected — the link between instrument and product batch doesn't exist in our system. We've had two recalls traced back to out-of-cal gauges.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["calibration-schedule-failures", "instrument-to-product-traceability-gap", "recall-risk", "volume-management-difficulty", "impact-assessment-impossible"]
+      }
+    },
+    {
+      "id": "pain-distiller-017",
+      "prompt": "Extract pain points from this customer feedback: 'Getting certified was easy compared to keeping the system alive. After the auditor left, momentum died. People went back to old habits within 3 months. The management representative retired and nobody took over. We're coming up on our surveillance audit and I'd say we've regressed significantly. Recertification might fail.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["post-certification-regression", "no-sustainability-mechanism", "key-person-dependency", "loss-of-momentum", "recertification-risk"]
+      }
+    },
+    {
+      "id": "pain-distiller-018",
+      "prompt": "Extract pain points from this customer feedback: 'Our environmental monitoring generates 50,000 data points per month from sensors, but we only look at daily averages in a report that's 2 weeks old by the time management sees it. The trend that led to our permit breach was visible 3 weeks before the exceedance, but nobody was watching. We need predictive alerts, not backward-looking reports.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["data-volume-underutilized", "reporting-latency", "no-predictive-capability", "missed-trend-detection", "reactive-not-proactive"]
+      }
+    },
+    {
+      "id": "pain-distiller-019",
+      "prompt": "Extract pain points from this customer feedback: 'We tried 3 different QMS software packages and abandoned all of them. The first was too rigid — couldn't match our workflows. The second required a full-time admin. The third had no offline capability and our plant floor has poor connectivity. We're back to SharePoint and Access databases. At least people use it, even if it's chaotic.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["software-adoption-failures", "workflow-inflexibility", "admin-overhead", "connectivity-constraints", "settling-for-inadequate-tools"]
+      }
+    },
+    {
+      "id": "pain-distiller-020",
+      "prompt": "Extract pain points from this customer feedback: 'Our biggest issue is connecting the dots between standards. We're certified to ISO 9001, 14001, and 45001 but run them as three separate systems. Three sets of objectives, three audit programs, three management reviews. The overlap is enormous but integration seems impossible with our current tools. Consultants tell us to integrate but don't explain how practically.'",
+      "expectedOutput": {
+        "expectedSchema": {
+          "required": ["painPoints", "severity", "category"],
+          "type": "object"
+        },
+        "groundTruthLabels": ["ims-integration-failure", "duplicate-effort-across-standards", "practical-guidance-lacking", "tool-limitation", "consultant-advice-not-actionable"]
+      }
+    }
+  ]
+}
