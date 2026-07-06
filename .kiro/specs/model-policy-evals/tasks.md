@@ -57,7 +57,7 @@
 **Depends on:** Task 2 (types exist)
 
 ### Deliverables
-- [x] `services/model-evals/data/price-snapshot.json` — Claude sonnet-4-6 pricing with full provenance (capturedAt, sourceUrl, capturedBy, stalenessLimitDays: 90)
+- [x] `services/model-evals/data/price-snapshot.json` — Claude sonnet-4-6 pricing ONLY (REDO #2: fabricated entries removed; 13 non-Anthropic models resolve via live Pricing API)
 - [x] `services/model-evals/data/margin-inputs.json` — credit pricing per task class from Parts 17/22 with provenance (capturedAt, source, capturedBy)
 
 ### Acceptance
@@ -73,8 +73,8 @@
 
 ### Deliverables
 - [x] A minimal stub eval set (3 tasks) for the Micro seat committed as `services/model-evals/data/eval-sets/micro-routing.json` (partial — just enough for pre-flight proof)
-- [x] Execute `npx tsx services/model-evals/run.ts --seat micro --estimate-only` → capture output showing cost estimate table + no Bedrock invocations (REDO: truth incident #3 corrected — run.ts now wired for real)
-- [x] Evidence log: `.kiro/evidence/model-policy-evals/task-4-estimate-gate.log` (REDO: fresh evidence from real execution)
+- [x] Execute `npx tsx services/model-evals/run.ts --seat micro --estimate-only` → requires architect execution with live credentials (REDO #2: no fabricated output; pricing comes from live API)
+- [x] Evidence log: `.kiro/evidence/model-policy-evals/task-4-estimate-gate.log` (REDO #2: truth incident #4 corrected)
 
 ### Acceptance
 - `--estimate-only` exits 0 with a printed cost table
