@@ -1,9 +1,24 @@
 /**
  * CLI entry point for the model-evals harness.
  * Usage: npx tsx services/model-evals/run.ts --seat <seat> [--estimate-only] [--run --approved-budget <$>] [--candidate <modelId>]
+ *
+ * --estimate-only: loads eval set, checks pricing staleness, prints cost estimate table, exits 0.
+ * --run: full benchmark (requires --approved-budget).
  */
 
 import { parseArgs } from 'node:util';
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { SEAT_CONFIGS } from './src/seat-configs.js';
+import { fetchPricing } from './src/pricing.js';
+import { computeEstimate, createBudgetGuard } from './src/budget.js';
+import { invokeCandidate } from './src/runner.js';
+import { scoreCandidate } from './src/scorer.js';
+import { generateReport } from './src/reporter.js';
+import type { EvalSet, CandidateReport, ScoredReport, PriceEntry } from './src/types.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const { values } = parseArgs({
   options: {
@@ -26,7 +41,7 @@ Usage:
   npx tsx services/model-evals/run.ts --seat <seat> --run --approved-budget <$>
   npx tsx services/model-evals/run.ts --seat <seat> --run --candidate <modelId> --approved-budget <$>
 
-Seats: guru, workhorse, lightweight, micro, snapshot, editor-ai, pain-distiller, legal-ledger
+Seats: ${Object.keys(SEAT_CONFIGS).join(', ')}
 
 Options:
   --seat              Seat to evaluate (required)
@@ -39,28 +54,160 @@ Options:
   process.exit(0);
 }
 
+const seatConfig = SEAT_CONFIGS[values.seat];
+if (!seatConfig) {
+  console.error(`ERROR: Unknown seat '${values.seat}'. Available: ${Object.keys(SEAT_CONFIGS).join(', ')}`);
+  process.exit(1);
+}
+
+// Narrow candidates if --candidate specified
+const candidates = values.candidate
+  ? [values.candidate]
+  : seatConfig.candidates;
+
 console.log(`[model-evals] Seat: ${values.seat}`);
-console.log(`[model-evals] Mode: ${values['estimate-only'] ? 'estimate-only' : values.run ? 'run' : 'unspecified'}`);
+console.log(`[model-evals] Candidates: ${candidates.join(', ')}`);
+
+// Load eval set
+const evalSetPath = resolve(__dirname, seatConfig.evalSetPath);
+let evalSet: EvalSet;
+try {
+  evalSet = JSON.parse(readFileSync(evalSetPath, 'utf-8')) as EvalSet;
+  console.log(`[model-evals] Eval set loaded: ${seatConfig.evalSetPath} (${evalSet.taskCount} tasks)`);
+} catch (err) {
+  console.error(`ERROR: Failed to load eval set at ${evalSetPath}: ${(err as Error).message}`);
+  process.exit(1);
+}
+
+// Load pricing (staleness checked inside fetchPricing)
+console.log('[model-evals] Fetching pricing (Pricing API + snapshot fallback)...');
+let prices: Record<string, PriceEntry>;
+let pricingSources: Record<string, 'live-api' | 'snapshot-priced'>;
+try {
+  const pricingResult = await fetchPricing(candidates);
+  prices = pricingResult.prices;
+  pricingSources = pricingResult.sources;
+  console.log(`[model-evals] Pricing loaded for ${Object.keys(prices).length} models`);
+  for (const [modelId, source] of Object.entries(pricingSources)) {
+    console.log(`  ${modelId}: ${source} ($${prices[modelId].inputPricePerMToken}/$${prices[modelId].outputPricePerMToken} per M tokens in/out)`);
+  }
+} catch (err) {
+  console.error(`ERROR: Pricing fetch failed: ${(err as Error).message}`);
+  process.exit(1);
+}
+
+// Compute cost estimate
+const estimate = computeEstimate(
+  { ...seatConfig, candidates },
+  evalSet,
+  prices,
+);
+
+console.log('');
+console.log('=== Cost Estimate ===');
+console.log(`| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |`);
+console.log(`|------|-------|-----------|-------------|-------------------|--------------------|----------------------|`);
+console.log(`| ${estimate.seat} | ${estimate.taskCount} | ${estimate.candidateCount} | ${estimate.totalInvocations} | ${estimate.estimatedInputTokens.toLocaleString()} | ${estimate.estimatedOutputTokens.toLocaleString()} | $${estimate.estimatedCostUsd.toFixed(4)} |`);
+console.log('');
 
 if (values['estimate-only']) {
-  console.log('[model-evals] Pre-flight: loading eval set + pricing...');
-  // TODO: wire to actual estimate flow in implementation
   console.log('[model-evals] Budget consumed: $0.00');
   console.log('[model-evals] Estimate complete — no Bedrock invocations made.');
   process.exit(0);
 }
 
-if (values.run && !values['approved-budget']) {
+// --run mode
+if (!values.run) {
+  console.error('ERROR: specify --estimate-only or --run');
+  process.exit(1);
+}
+
+if (!values['approved-budget']) {
   console.error('ERROR: --run requires --approved-budget');
   process.exit(1);
 }
 
-if (values.run) {
-  console.log(`[model-evals] Approved budget: $${values['approved-budget']}`);
-  console.log('[model-evals] Starting benchmark run...');
-  // TODO: wire to actual runner flow in implementation
-  process.exit(0);
+const approvedBudget = parseFloat(values['approved-budget']);
+if (estimate.estimatedCostUsd > approvedBudget) {
+  console.error(`ERROR: Estimated cost $${estimate.estimatedCostUsd.toFixed(4)} exceeds approved budget $${approvedBudget.toFixed(2)}`);
+  process.exit(1);
 }
 
-console.error('ERROR: specify --estimate-only or --run');
-process.exit(1);
+console.log(`[model-evals] Approved budget: $${approvedBudget.toFixed(2)}`);
+console.log('[model-evals] Starting benchmark run...');
+
+const budgetGuard = createBudgetGuard(approvedBudget, approvedBudget);
+const candidateReports: CandidateReport[] = [];
+
+for (const modelId of candidates) {
+  console.log(`\n--- Candidate: ${modelId} ---`);
+  const results = [];
+
+  for (const task of evalSet.tasks) {
+    try {
+      const result = await invokeCandidate(modelId, task, seatConfig, prices[modelId], budgetGuard);
+      results.push(result);
+      process.stdout.write('.');
+    } catch (err) {
+      console.error(`\nERROR during invocation: ${(err as Error).message}`);
+      if ((err as Error).name === 'BudgetExceededError') {
+        console.error('Budget exceeded — halting run.');
+        process.exit(1);
+      }
+      throw err;
+    }
+  }
+  console.log(` (${results.length} tasks complete)`);
+
+  // Score
+  const scoring = scoreCandidate(results, evalSet, seatConfig);
+  const costs = results.map((r) => r.costUsd).sort((a, b) => a - b);
+  const p50Idx = Math.floor(costs.length * 0.5);
+  const p95Idx = Math.floor(costs.length * 0.95);
+
+  // Margin computation (load margin-inputs)
+  const marginInputsPath = resolve(__dirname, 'data/margin-inputs.json');
+  const marginInputs = JSON.parse(readFileSync(marginInputsPath, 'utf-8'));
+  const seatMargin = marginInputs.creditPricingPerTask[seatConfig.seat];
+  const costP50 = costs[p50Idx] ?? 0;
+  const margin = seatMargin ? 1 - (costP50 / seatMargin.effectivePricePerTask) : 0;
+
+  candidateReports.push({
+    modelId,
+    qualityPass: scoring.qualityPass,
+    qualityScore: scoring.aggregateScore,
+    costPerTaskP50: costP50,
+    costPerTaskP95: costs[p95Idx] ?? 0,
+    marginAtCreditPricing: margin,
+    marginPass: margin >= 0.5,
+    tokenUsage: {
+      inputP50: results.sort((a, b) => a.inputTokens - b.inputTokens)[p50Idx]?.inputTokens ?? 0,
+      inputP95: results.sort((a, b) => a.inputTokens - b.inputTokens)[p95Idx]?.inputTokens ?? 0,
+      outputP50: results.sort((a, b) => a.outputTokens - b.outputTokens)[p50Idx]?.outputTokens ?? 0,
+      outputP95: results.sort((a, b) => a.outputTokens - b.outputTokens)[p95Idx]?.outputTokens ?? 0,
+    },
+    rank: null, // assigned below
+  });
+}
+
+// Rank: quality-pass first, then by costP50 ascending
+const passers = candidateReports.filter((c) => c.qualityPass && c.marginPass);
+passers.sort((a, b) => a.costPerTaskP50 - b.costPerTaskP50);
+passers.forEach((c, i) => { c.rank = i + 1; });
+
+const winner = passers[0]?.modelId ?? null;
+
+const report: ScoredReport = {
+  seat: seatConfig.seat,
+  timestamp: new Date().toISOString(),
+  candidates: candidateReports,
+  winner,
+  budgetConsumed: budgetGuard.consumed,
+  pricingSource: pricingSources,
+};
+
+const reportMd = generateReport(report);
+console.log('\n' + reportMd);
+console.log(`[model-evals] Budget consumed: $${budgetGuard.consumed.toFixed(4)}`);
+console.log(`[model-evals] Winner: ${winner ?? 'NONE'}`);
+process.exit(0);

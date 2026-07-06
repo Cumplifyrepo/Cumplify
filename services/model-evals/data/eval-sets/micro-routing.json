@@ -237,22 +237,27 @@
     {
       "id": "micro-routing-047",
       "prompt": "Classify this event to its target queue: 'Unknown.EventFired'",
-      "expectedOutput": "unroutable"
+      "expectedOutput": "unroutable",
+      "source": "synthetic"
     },
     {
       "id": "micro-routing-048",
       "prompt": "Classify this event to its target queue: 'Widget.Manufactured'",
-      "expectedOutput": "unroutable"
+      "expectedOutput": "unroutable",
+      "source": "synthetic"
     },
     {
       "id": "micro-routing-049",
       "prompt": "Classify this event to its target queue: 'Invoice.Sent'",
-      "expectedOutput": "unroutable"
+      "expectedOutput": "unroutable",
+      "source": "synthetic"
     },
     {
       "id": "micro-routing-050",
       "prompt": "Classify this event to its target queue: 'Employee.Terminated'",
-      "expectedOutput": "unroutable"
+      "expectedOutput": "unroutable",
+      "source": "synthetic"
     }
-  ]
+  ],
+  "notes": "contracts/events.md contains 50 backticked Domain.Action entries at authoring time (2026-07-05). 46 tasks derived from mapped events (routing rules R-1..R-7); 4 tasks are synthetic edge cases (tagged source:synthetic)."
 }

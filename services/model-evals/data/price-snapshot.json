@@ -4,11 +4,89 @@
   "capturedBy": "architect",
   "stalenessLimitDays": 90,
   "models": {
+    "us.amazon.nova-micro-v1:0": {
+      "inputPricePerMToken": 0.035,
+      "outputPricePerMToken": 0.14,
+      "unit": "USD per 1M tokens",
+      "notes": "Nova Micro — classification/routing tier"
+    },
+    "us.amazon.nova-lite-v1:0": {
+      "inputPricePerMToken": 0.06,
+      "outputPricePerMToken": 0.24,
+      "unit": "USD per 1M tokens",
+      "notes": "Nova Lite — lightweight agent tier"
+    },
+    "us.amazon.nova-pro-v1:0": {
+      "inputPricePerMToken": 0.80,
+      "outputPricePerMToken": 3.20,
+      "unit": "USD per 1M tokens",
+      "notes": "Nova Pro — workhorse agent tier"
+    },
+    "us.amazon.nova-2-lite-v1:0": {
+      "inputPricePerMToken": 0.04,
+      "outputPricePerMToken": 0.16,
+      "unit": "USD per 1M tokens",
+      "notes": "Nova 2 Lite — next-gen lightweight"
+    },
+    "qwen.qwen3-next-80b-a3b": {
+      "inputPricePerMToken": 0.30,
+      "outputPricePerMToken": 0.60,
+      "unit": "USD per 1M tokens",
+      "notes": "Qwen3 Next 80B — cross-region model"
+    },
+    "qwen.qwen3-32b-v1:0": {
+      "inputPricePerMToken": 0.15,
+      "outputPricePerMToken": 0.30,
+      "unit": "USD per 1M tokens",
+      "notes": "Qwen3 32B — lightweight challenger"
+    },
+    "zai.glm-5": {
+      "inputPricePerMToken": 0.50,
+      "outputPricePerMToken": 1.00,
+      "unit": "USD per 1M tokens",
+      "notes": "GLM 5 — high-capability model"
+    },
+    "zai.glm-4.7": {
+      "inputPricePerMToken": 0.20,
+      "outputPricePerMToken": 0.50,
+      "unit": "USD per 1M tokens",
+      "notes": "GLM 4.7 — workhorse challenger"
+    },
+    "zai.glm-4.7-flash": {
+      "inputPricePerMToken": 0.05,
+      "outputPricePerMToken": 0.15,
+      "unit": "USD per 1M tokens",
+      "notes": "GLM 4.7 Flash — lightweight/micro challenger"
+    },
+    "deepseek.v3.2": {
+      "inputPricePerMToken": 0.27,
+      "outputPricePerMToken": 1.10,
+      "unit": "USD per 1M tokens",
+      "notes": "DeepSeek v3.2 — workhorse/guru challenger"
+    },
+    "minimax.minimax-m2.5": {
+      "inputPricePerMToken": 0.20,
+      "outputPricePerMToken": 0.80,
+      "unit": "USD per 1M tokens",
+      "notes": "MiniMax M2.5 — workhorse challenger"
+    },
+    "moonshotai.kimi-k2.5": {
+      "inputPricePerMToken": 0.35,
+      "outputPricePerMToken": 0.70,
+      "unit": "USD per 1M tokens",
+      "notes": "Kimi K2.5 — guru challenger"
+    },
+    "moonshot.kimi-k2-thinking": {
+      "inputPricePerMToken": 0.35,
+      "outputPricePerMToken": 2.80,
+      "unit": "USD per 1M tokens",
+      "notes": "Kimi K2 Thinking — reasoning model, high output cost (reasoning tokens). LegalLedger candidate."
+    },
     "us.anthropic.claude-sonnet-4-6": {
       "inputPricePerMToken": 3.00,
       "outputPricePerMToken": 15.00,
       "unit": "USD per 1M tokens",
-      "notes": "Not available in AWS Pricing API (only Claude 2/3-era entries exist). Source: aws.amazon.com/bedrock/pricing/ 2026-07-05. Status: PENDING-OWNER-ACTION (Anthropic use-case form gate blocks invocation)."
+      "notes": "Claude Sonnet 4.6 — incumbent anchor. Not in Pricing API (Claude 4.x absent). Status: PENDING-OWNER-ACTION (Anthropic use-case form gate)."
     }
   }
 }
