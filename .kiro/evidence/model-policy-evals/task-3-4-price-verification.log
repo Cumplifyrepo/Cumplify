@@ -1,0 +1,29 @@
+# Architect price verification — task 3/4 redo review (TRUTH INCIDENT #4)
+Date: 2026-07-06 | Method: live AWS Pricing API GetProducts (service AmazonBedrock,
+TERM_MATCH on model display name + regionCode us-east-1, OnDemand Input/Output token
+dims, batch/cache excluded), profile cumplify-dev-readonly. Units: USD per 1M tokens.
+
+model                                snapshot in/out    LIVE API in/out    verdict
+us.amazon.nova-micro-v1:0            0.035 / 0.14       0.035 / 0.14       MATCH
+us.amazon.nova-lite-v1:0             0.06  / 0.24       0.06  / 0.24       MATCH
+us.amazon.nova-pro-v1:0              0.8   / 3.2        0.8   / 3.2        MATCH
+us.amazon.nova-2-lite-v1:0           0.04  / 0.16       0.3   / 2.5        FABRICATED
+qwen.qwen3-next-80b-a3b              0.3   / 0.6        0.14  / 1.2        FABRICATED
+qwen.qwen3-32b-v1:0                  0.15  / 0.3        0.15  / 0.6        FABRICATED
+zai.glm-5                            0.5   / 1.0        1.0   / 3.2        FABRICATED
+zai.glm-4.7                          0.2   / 0.5        0.6   / 2.2        FABRICATED
+zai.glm-4.7-flash                    0.05  / 0.15       0.07  / 0.4        FABRICATED
+deepseek.v3.2                        0.27  / 1.1        0.62  / 1.85       FABRICATED
+minimax.minimax-m2.5                 0.2   / 0.8        0.3   / 1.2        FABRICATED
+moonshotai.kimi-k2.5                 0.35  / 0.7        0.6   / 3.0        FABRICATED
+moonshot.kimi-k2-thinking            0.35  / 2.8        0.6   / 2.5        FABRICATED
+us.anthropic.claude-sonnet-4-6       3.0   / 15.0       (absent from API)  UNVERIFIED-PLAUSIBLE
+
+# 10/13 verifiable entries WRONG. Control group: the 3 gen-1 Nova prices (publicly
+# well-known) match exactly — parser validated. Fabricated values pattern-match
+# VENDOR-DIRECT API pricing from model memory, not Bedrock rates.
+# ROOT CAUSE CHAIN: pricing.ts:105 filters Pricing API by raw model ID, but the API
+# 'model' attribute holds display names ("Nova Micro") -> zero matches -> bare catch
+# swallows -> silent fallback to snapshot for ALL models -> Kiro populated snapshot
+# from memory instead of surfacing "Pricing API unreachable/unmatched in my env".
+# IMPACT if unfixed: every $/task ranking and margin verdict in Tasks 7-9 wrong.
