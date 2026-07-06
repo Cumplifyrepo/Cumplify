@@ -8,130 +8,190 @@
     {
       "id": "pain-distiller-001",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'We spent 3 months preparing for our ISO 9001 audit and still got 4 major nonconformities. Our consultant gave us templates but they didn't match our actual processes. The auditor said our document control was a mess — versions everywhere, nobody knew which was current. We're a 50-person machine shop, not Boeing, but the system feels like it was built for a corporation.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["audit-effectiveness", "document-control", "implementation-cost"],
+      "groundTruthLabels": [
+        "audit-effectiveness",
+        "document-control",
+        "implementation-cost"
+      ],
       "expectedOutput": "audit-effectiveness,document-control,implementation-cost"
     },
     {
       "id": "pain-distiller-002",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Every time we have a customer complaint, it takes us 2 weeks just to figure out which batch it came from. Our traceability is basically someone writing lot numbers in a notebook. We lost a $2M contract because we couldn't provide objective evidence of our process controls. The ERP system doesn't talk to quality.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["system-integration", "traceability"],
+      "groundTruthLabels": [
+        "system-integration",
+        "traceability"
+      ],
       "expectedOutput": "system-integration,traceability"
     },
     {
       "id": "pain-distiller-003",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our CAPA process is a joke. We open corrective actions and they sit there for months. Nobody follows up. The same problems keep recurring — we had the same weld defect issue 3 times this year. Management just wants to close CAPAs quickly without actually fixing root causes.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["capa-effectiveness", "management-review"],
+      "groundTruthLabels": [
+        "capa-effectiveness",
+        "management-review"
+      ],
       "expectedOutput": "capa-effectiveness,management-review"
-    }
-,
+    },
     {
       "id": "pain-distiller-004",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'I'm the quality manager AND the EHS manager AND the training coordinator. There are 200 people here and I'm supposed to track everyone's competency records, run the environmental program, and manage the QMS. I can't keep up with internal audits — we're 6 months behind schedule. I need automation, not another spreadsheet.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["audit-effectiveness", "resource-constraint", "training-competence"],
+      "groundTruthLabels": [
+        "audit-effectiveness",
+        "resource-constraint",
+        "training-competence"
+      ],
       "expectedOutput": "audit-effectiveness,resource-constraint,training-competence"
     },
     {
       "id": "pain-distiller-005",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'We operate 6 sites across 3 countries. Each site has its own quality system, own forms, own way of doing things. When corporate asks for a consolidated management review, it takes us 3 weeks to gather data. We can't benchmark sites against each other because nothing is standardized.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["management-review", "multi-site-consistency"],
+      "groundTruthLabels": [
+        "management-review",
+        "multi-site-consistency"
+      ],
       "expectedOutput": "management-review,multi-site-consistency"
-    }
-,
+    },
     {
       "id": "pain-distiller-006",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our environmental compliance is reactive. We only find out about permit exceedances when the regulator tells us. Monitoring data sits in operator logbooks and nobody analyzes trends. Last month we got fined $45K for a discharge that had been creeping up for weeks. We need real-time visibility.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["environmental-compliance"],
+      "groundTruthLabels": [
+        "environmental-compliance"
+      ],
       "expectedOutput": "environmental-compliance"
     },
     {
       "id": "pain-distiller-007",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'We had a serious near-miss last week — forklift almost hit a pedestrian. When I investigated, I found out workers stopped reporting near-misses because nothing ever happens when they do. The forms are complicated, supervisors don't follow up, and there's a blame culture. We're sitting on a time bomb.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["safety-culture"],
-      "expectedOutput": "safety-culture"
-    }
-,
+      "groundTruthLabels": [
+        "capa-effectiveness",
+        "safety-culture"
+      ],
+      "expectedOutput": "capa-effectiveness,safety-culture",
+      "metadata": {
+        "architectNote": "Adjudicated 2026-07-06: 'nothing ever happens when they report / supervisors don't follow up' meets the set's own capa-effectiveness definition (corrective action aging). Label added."
+      }
+    },
     {
       "id": "pain-distiller-008",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'We're trying to get ISO 14001 certified but we don't even know where to start with aspects and impacts. Our consultant quoted $80K for gap analysis and implementation support. We're a 100-person company — that's our entire training budget for the year. Everything online is generic checklists that don't help.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["environmental-compliance", "implementation-cost"],
+      "groundTruthLabels": [
+        "environmental-compliance",
+        "implementation-cost"
+      ],
       "expectedOutput": "environmental-compliance,implementation-cost"
     },
     {
       "id": "pain-distiller-009",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our supplier management is a nightmare. We have 200+ suppliers and most haven't been audited in 3 years. When we get bad material, it takes forever to trace it back and get corrective action from the supplier. Three of our key suppliers let their ISO certifications lapse and we didn't notice for 6 months.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["supplier-management", "traceability"],
+      "groundTruthLabels": [
+        "supplier-management",
+        "traceability"
+      ],
       "expectedOutput": "supplier-management,traceability"
-    }
-,
+    },
     {
       "id": "pain-distiller-010",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Management review is a PowerPoint theater. We show nice graphs, everyone nods, actions are assigned, and nothing changes until next quarter. The same risks stay on the register year after year. Nobody challenges whether our objectives are actually being met. It's pure compliance theater.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["management-review", "risk-management"],
+      "groundTruthLabels": [
+        "management-review",
+        "risk-management"
+      ],
       "expectedOutput": "management-review,risk-management"
     },
     {
       "id": "pain-distiller-011",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our workers speak 4 different languages on the shop floor. Safety procedures are only in English. Training sign-off sheets show everyone was trained but I guarantee half of them didn't understand the content. We've had incidents where workers didn't follow lockout/tagout because they couldn't read the procedure posted on the machine.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["safety-culture", "training-competence"],
-      "expectedOutput": "safety-culture,training-competence"
-    }
-,
+      "groundTruthLabels": [
+        "training-competence"
+      ],
+      "expectedOutput": "training-competence",
+      "metadata": {
+        "architectNote": "Adjudicated 2026-07-06: scenario is language-barrier/comprehension — the set's training-competence definition covers it verbatim ('language barriers'); safety-culture's definition (reporting, blame, engagement) is not evidenced. Label removed."
+      }
+    },
     {
       "id": "pain-distiller-012",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'We just integrated an acquisition — 150 new employees with completely different quality practices. They were ISO certified too, but their procedures conflict with ours. Harmonizing two document control systems is killing us. Customers are confused about which entity they're dealing with. It's been 8 months and we still can't do a combined management review.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["document-control", "management-review", "multi-site-consistency", "system-integration"],
+      "groundTruthLabels": [
+        "document-control",
+        "management-review",
+        "multi-site-consistency",
+        "system-integration"
+      ],
       "expectedOutput": "document-control,management-review,multi-site-consistency,system-integration"
     },
     {
       "id": "pain-distiller-013",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our internal audits find the same things every time — minor documentation gaps, training records not current. But we never find the real problems. Our auditors are too close to the processes they audit. We had a major customer escape that none of our audits caught. The audit program adds no value.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["audit-effectiveness"],
+      "groundTruthLabels": [
+        "audit-effectiveness"
+      ],
       "expectedOutput": "audit-effectiveness"
-    }
-,
+    },
     {
       "id": "pain-distiller-014",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'We're a contract manufacturer and every customer wants something different — their own forms, their own audit schedule, their own corrective action format. We're running 12 different quality systems for 12 customers. The overhead is enormous. One person just manages customer-specific requirements full time.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["document-control", "resource-constraint", "system-integration"],
+      "groundTruthLabels": [
+        "document-control",
+        "resource-constraint",
+        "system-integration"
+      ],
       "expectedOutput": "document-control,resource-constraint,system-integration"
     },
     {
       "id": "pain-distiller-015",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our risk register has 300 items and nobody looks at it. It was built during certification 5 years ago and never meaningfully updated. New risks from our expansion into battery manufacturing aren't captured. The risk methodology is too complex — a 5x5 matrix with 10 criteria that takes an hour per risk. People avoid updating it.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["risk-management"],
+      "groundTruthLabels": [
+        "risk-management"
+      ],
       "expectedOutput": "risk-management"
-    }
-,
+    },
     {
       "id": "pain-distiller-016",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Calibration is out of control. We have 800 instruments across the plant. Somehow 15% are overdue at any given time. When an instrument is found out of cal, we can't easily determine which products were affected — the link between instrument and product batch doesn't exist in our system. We've had two recalls traced back to out-of-cal gauges.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["risk-management", "system-integration", "traceability"],
+      "groundTruthLabels": [
+        "risk-management",
+        "system-integration",
+        "traceability"
+      ],
       "expectedOutput": "risk-management,system-integration,traceability"
     },
     {
       "id": "pain-distiller-017",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Getting certified was easy compared to keeping the system alive. After the auditor left, momentum died. People went back to old habits within 3 months. The management representative retired and nobody took over. We're coming up on our surveillance audit and I'd say we've regressed significantly. Recertification might fail.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["management-review", "resource-constraint"],
+      "groundTruthLabels": [
+        "management-review",
+        "resource-constraint"
+      ],
       "expectedOutput": "management-review,resource-constraint"
-    }
-,
+    },
     {
       "id": "pain-distiller-018",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our environmental monitoring generates 50,000 data points per month from sensors, but we only look at daily averages in a report that's 2 weeks old by the time management sees it. The trend that led to our permit breach was visible 3 weeks before the exceedance, but nobody was watching. We need predictive alerts, not backward-looking reports.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["environmental-compliance", "management-review"],
+      "groundTruthLabels": [
+        "environmental-compliance",
+        "management-review"
+      ],
       "expectedOutput": "environmental-compliance,management-review"
     },
     {
       "id": "pain-distiller-019",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'We tried 3 different QMS software packages and abandoned all of them. The first was too rigid — couldn't match our workflows. The second required a full-time admin. The third had no offline capability and our plant floor has poor connectivity. We're back to SharePoint and Access databases. At least people use it, even if it's chaotic.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["implementation-cost", "system-integration"],
+      "groundTruthLabels": [
+        "implementation-cost",
+        "system-integration"
+      ],
       "expectedOutput": "implementation-cost,system-integration"
-    }
-,
+    },
     {
       "id": "pain-distiller-020",
       "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our biggest issue is connecting the dots between standards. We're certified to ISO 9001, 14001, and 45001 but run them as three separate systems. Three sets of objectives, three audit programs, three management reviews. The overlap is enormous but integration seems impossible with our current tools. Consultants tell us to integrate but don't explain how practically.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
-      "groundTruthLabels": ["implementation-cost", "management-review", "system-integration"],
+      "groundTruthLabels": [
+        "implementation-cost",
+        "management-review",
+        "system-integration"
+      ],
       "expectedOutput": "implementation-cost,management-review,system-integration"
     }
   ]

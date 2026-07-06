@@ -1,0 +1,10 @@
+{
+  "taskId": "pain-distiller-009",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Classify the following customer feedback into pain-point categories from the closed taxonomy below.\n\nFEEDBACK:\n'Our supplier management is a nightmare. We have 200+ suppliers and most haven't been audited in 3 years. When we get bad material, it takes forever to trace it back and get corrective action from the supplier. Three of our key suppliers let their ISO certifications lapse and we didn't notice for 6 months.'\n\nTAXONOMY:\n- document-control: versions, distribution, controlled docs\n- traceability: lot tracking, batch records, material traceability\n- capa-effectiveness: corrective action aging, recurrence, root cause\n- resource-constraint: role overload, staff shortage, single-person dependency\n- multi-site-consistency: cross-site standardization, data consolidation\n- environmental-compliance: permits, monitoring, emissions, waste\n- safety-culture: reporting, near-miss, blame culture, worker engagement\n- implementation-cost: consultant fees, software failures, budget constraints\n- supplier-management: audits, certifications, nonconformance, traceability\n- management-review: ineffective reviews, action follow-through, objectives\n- audit-effectiveness: superficial findings, auditor independence, escapes\n- training-competence: language barriers, competency gaps, awareness\n- risk-management: stale registers, overcomplicated methodology, new risks\n- system-integration: IMS integration, multiple standards, tool limitations\n\nIdentify ALL categories present in this feedback from the taxonomy above. End your response with exactly one line: ANSWER: <comma-separated categories, sorted alphabetically>",
+  "response": "ANSWER: capa-effectiveness, supplier-management, traceability",
+  "inputTokens": 328,
+  "outputTokens": 13,
+  "latencyMs": 499,
+  "costUsd": 0.000304
+}
