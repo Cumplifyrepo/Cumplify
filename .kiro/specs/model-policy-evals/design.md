@@ -297,7 +297,7 @@ Automation (Scheduler → Lambda → harness) is contingent on a standing-approv
 
 ## 9. Runner Implementation
 
-### 8.1 CLI Interface
+### 9.1 CLI Interface
 
 ```bash
 # Estimate cost (pre-flight, no invocations)
@@ -310,7 +310,7 @@ npx tsx services/model-evals/run.ts --seat guru --run --approved-budget 3.00
 npx tsx services/model-evals/run.ts --seat guru --run --candidate "zai.glm-5" --approved-budget 1.00
 ```
 
-### 8.2 Runner Flow
+### 9.2 Runner Flow
 
 ```
 1. Load eval set for seat
@@ -330,7 +330,7 @@ npx tsx services/model-evals/run.ts --seat guru --run --candidate "zai.glm-5" --
 9. Exit 0 (success) or exit 1 (budget exceeded / error)
 ```
 
-### 8.3 Bedrock Converse Call
+### 9.3 Bedrock Converse Call
 
 ```typescript
 import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
