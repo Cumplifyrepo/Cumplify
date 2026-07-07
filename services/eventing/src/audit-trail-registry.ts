@@ -1,0 +1,86 @@
+/**
+ * Audit-trail designation registry (OQ-5, ratified 2026-07-07).
+ *
+ * Maps every registered detailType to its auditTrail boolean.
+ * - true = domain state transition → routes to audit-sink (R-3).
+ * - false = advisory/notification → does NOT route to audit-sink.
+ *
+ * Publishing an unregistered detailType throws at runtime.
+ * A parity test asserts this map matches contracts/events.md.
+ */
+export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
+  // --- Seed Taxonomy (46 events) ---
+  // Document domain
+  'Document.Approved': true,
+  'Document.Published': true,
+  'Policy.Updated': true,
+  'Scope.Changed': true,
+  // CAPA domain
+  'NC.Raised': true,
+  'CAPA.Opened': true,
+  'CAPA.Closed': true,
+  'CAPA.EffectivenessVerified': true,
+  'CAPA.ActionRequiresDocChange': true,
+  // Audit domain
+  'Audit.Scheduled': true,
+  'Audit.FindingRaised': true,
+  'Audit.Completed': true,
+  'Readiness.Scored': false,
+  // Records domain
+  'Record.Registered': true,
+  'Calibration.Due': false,
+  'Calibration.Recorded': true,
+  'AuditEvent.Appended': true,
+  // Risk domain
+  'Risk.Created': true,
+  'Risk.Escalated': true,
+  'Change.Planned': true,
+  // Context domain
+  'Context.Updated': true,
+  'InterestedParty.Identified': true,
+  'Communication.Planned': true,
+  // Objectives domain
+  'Objectives.Updated': true,
+  'Objectives.OffTrack': false,
+  // Compliance domain
+  'Obligation.Added': true,
+  'Compliance.Evaluated': true,
+  'Compliance.NonCompliance': true,
+  'Obligation.ReviewDue': false,
+  // Enviro domain
+  'Aspect.SignificantImpact': true,
+  'Enviro.MonitoringLogged': true,
+  'EnvIncident.Reported': true,
+  'EnvEmergency.PlanUpdated': true,
+  // Safety domain
+  'Hazard.Identified': true,
+  'Hazard.RiskEscalated': true,
+  'Incident.Reported': true,
+  'Worker.ConsultationLogged': true,
+  'Safety.MetricLogged': true,
+  'OHSEmergency.PlanUpdated': true,
+  // Supplier domain
+  'Supplier.Onboarded': true,
+  'Supplier.Evaluated': true,
+  'Supplier.NonConformance': true,
+  // Competence domain
+  'Training.Recorded': true,
+  'Training.Expiring': false,
+  'Competence.GapIdentified': true,
+  'Awareness.Delivered': true,
+  // Management Review domain
+  'ManagementReview.ActionAudit': true,
+  'ManagementReview.ObjectivesSet': true,
+  'ManagementReview.ContextInput': true,
+  'Review.Completed': true,
+
+  // --- Spec 3 new registrations (8 events) ---
+  'Document.DraftCreated': true,
+  'Document.SubmittedForApproval': true,
+  'CAPA.RootCauseRecorded': true,
+  'CAPA.OutputDisposed': true,
+  'Audit.ProgrammeCreated': true,
+  'Audit.ChecklistGenerated': false,
+  'Risk.TreatmentAdded': true,
+  'Record.RetentionPolicySet': true,
+};

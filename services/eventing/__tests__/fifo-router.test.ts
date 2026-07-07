@@ -30,6 +30,7 @@ describe('fifo-router handler', () => {
         module: 'M2',
         clauseRef: 'ISO 9001 10.2',
         standard: 'ISO9001',
+        auditTrail: true,
         payload: {},
       },
     });
@@ -61,6 +62,7 @@ describe('fifo-router handler', () => {
         module: 'M1',
         clauseRef: 'ISO 9001 7.5',
         standard: 'ISO9001',
+        auditTrail: true,
         payload: {},
       },
     });

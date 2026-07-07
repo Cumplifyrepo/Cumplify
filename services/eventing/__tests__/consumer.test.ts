@@ -32,6 +32,7 @@ function makeValidBody(overrides?: Partial<CumplifyEvent>): string {
     module: 'M3',
     clauseRef: 'ISO 9001 9.2',
     standard: 'ISO9001',
+    auditTrail: true,
     payload: { findingId: 'f-1' },
     ...overrides,
   };

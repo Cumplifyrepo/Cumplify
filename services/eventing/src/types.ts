@@ -10,6 +10,7 @@ export interface CumplifyEvent<T = Record<string, unknown>> {
   module: string; // M1..M13
   clauseRef: string; // ISO clause string
   standard: 'ISO9001' | 'ISO14001' | 'ISO45001';
+  auditTrail: boolean; // true = routes to audit-sink (R-3)
   payload: T;
 }
 
