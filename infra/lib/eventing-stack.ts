@@ -27,6 +27,8 @@ export class EventingStack extends cdk.Stack {
   public readonly auditSinkQueueArn: string;
   public readonly auditSinkDlqUrl: string;
   public readonly auditSinkDlqArn: string;
+  public readonly busName: string;
+  public readonly busArn: string;
 
   constructor(scope: Construct, id: string, props: EventingStackProps) {
     super(scope, id, props);
@@ -35,6 +37,9 @@ export class EventingStack extends cdk.Stack {
     const bus = new events.EventBus(this, 'CumplifyEventsBus', {
       eventBusName: 'cumplify-events',
     });
+
+    this.busName = bus.eventBusName;
+    this.busArn = bus.eventBusArn;
 
     // ─── Delivery-failure DLQ (shared across all rule targets, REV-4) ───────
     const deliveryFailureDlq = this.createStdDlq('DeliveryFailureDlq');

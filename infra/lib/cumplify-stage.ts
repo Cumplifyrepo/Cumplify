@@ -16,6 +16,7 @@ import { IdentityStack } from './identity-stack.js';
 import { DrRegionStack } from './dr-region-stack.js';
 import { EventingStack } from './eventing-stack.js';
 import { AuditTrailStack } from './audit-trail-stack.js';
+import { ApiStack } from './api-stack.js';
 
 export interface CumplifyStageProps extends cdk.StageProps {
   readonly envConfig: EnvConfig;
@@ -96,6 +97,28 @@ export class CumplifyStage extends cdk.Stage {
     auditTrailStack.addDependency(dataStack);
     auditTrailStack.addDependency(securityStack);
     auditTrailStack.addDependency(eventingStack);
+
+    // ApiStack — AppSync GraphQL API for M1–M5 (spec 3: api-core)
+    const apiStack = new ApiStack(this, 'ApiStack', {
+      envConfig,
+      tableArn: dataStack.tableArn,
+      tableName: dataStack.tableName,
+      dynamodbKey: securityStack.outputs.dynamodbKey,
+      clusterArn: dataStack.clusterArn,
+      clusterEndpoint: dataStack.clusterEndpoint,
+      dbSecretArn: dataStack.dbSecretArn,
+      poolBId: identityStack.poolBId,
+      poolBArn: identityStack.poolBArn,
+      poolCId: identityStack.poolCId,
+      poolCArn: identityStack.poolCArn,
+      regionalWafArn: securityStack.outputs.regionalWaf.attrArn,
+      busName: eventingStack.busName,
+      busArn: eventingStack.busArn,
+    });
+    apiStack.addDependency(dataStack);
+    apiStack.addDependency(identityStack);
+    apiStack.addDependency(securityStack);
+    apiStack.addDependency(eventingStack);
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

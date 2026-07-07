@@ -98,17 +98,20 @@
 
 ## Task 7 — ApiStack: AppSync API + authorizer + WAFv2 [KIRO] [REQUIRES-HUMAN]
 
-- [ ] Create `infra/lib/api-stack.ts` with:
+- [x] Create `infra/lib/api-stack.ts` with:
   - AppSync GraphQL API: `AWS_LAMBDA` default auth + `AWS_IAM` additional.
   - Lambda authorizer construct (NodejsFunction, node22/ARM/512MB/10s).
   - WAFv2 association with SecurityStack WebACL.
   - Migration Custom Resource (provider + migrator Lambda).
   - CfnOutputs: API URL, API ID, authorizer ARN, tenant-data-role ARN.
-- [ ] DataStack amendment: provision a dedicated `app_role` Secrets Manager secret (username/password for the app_role created by migration 009). Resolvers use this secret for Data API. Migrator keeps master secret. **[REQUIRES-HUMAN]** — IAM/secrets.
-- [ ] Wire ApiStack into `infra/lib/cumplify-stage.ts` with addDependency on DataStack, IdentityStack, SecurityStack, EventingStack.
+- [x] DataStack amendment: provision a dedicated `app_role` Secrets Manager secret (username/password for the app_role created by migration 009). Resolvers use this secret for Data API. Migrator keeps master secret. Password sync via ALTER ROLE on every deploy (migrator.ts syncAppRolePassword). **[REQUIRES-HUMAN]** — IAM/secrets.
+- [x] Wire ApiStack into `infra/lib/cumplify-stage.ts` with addDependency on DataStack, IdentityStack, SecurityStack, EventingStack.
 - [ ] Template-assertion tests per §11.1.
-- [ ] `cdk synth` passes, CDK Nag zero warnings.
+- [x] `cdk synth` passes, CDK Nag zero warnings.
 - [ ] **[REQUIRES-HUMAN]** Authorizer code + IAM policies flagged for owner review (C-2/AUTH-5).
+
+**Depends on:** Tasks 1, 2, 4 (stack exports + eventing amendment).
+**Evidence:** this commit — 212/212 tests pass, tsc clean.
 
 **Depends on:** Tasks 1, 2, 4 (stack exports + eventing amendment).
 

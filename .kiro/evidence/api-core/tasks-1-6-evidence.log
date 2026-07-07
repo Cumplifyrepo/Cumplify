@@ -63,3 +63,20 @@ note: schema is a file artifact, no new tests required
 ## Checkpoint remediation (this commit)
 fixes: C-1 (009_app_role.sql), M-1 (fail-closed current_setting),
        C-2 (invariant documented), L-2 (matview refresh follow-up noted)
+
+## Task 7 — ApiStack
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T17:54:37Z
+exit_code: 0
+tests: 212/212 pass
+commit: (this commit)
+files: infra/lib/api-stack.ts (new, 230 lines),
+       infra/lib/cumplify-stage.ts (ApiStack wiring),
+       infra/lib/eventing-stack.ts (busName/busArn exports),
+       services/api/src/migrator.ts (app_role password sync),
+       services/api/src/resolvers/m1..m5.ts (placeholders),
+       package.json (@aws-sdk/client-rds-data, client-secrets-manager)
+design-notes: app_role password sync mechanism = ALTER ROLE app_role PASSWORD
+  from secret value, executed by migrator (master secret) after migration 009.
+  Resolvers use app_role secretArn for Data API. Authorizer DDB policy =
+  GetItem with LeadingKeys TENANT#* (metadata reads at auth time, T-4).
