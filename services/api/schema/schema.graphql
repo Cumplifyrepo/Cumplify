@@ -1,0 +1,606 @@
+# Cumplify API Core — GraphQL Schema (M1–M5)
+# Auth modes: @aws_lambda (user-facing, default), @aws_iam (agent/service)
+# Per design §2.2: every user-facing operation annotated @aws_lambda;
+# agent-path mutations annotated @aws_iam; subscriptions use None data source.
+# SCHEMA-5: no tenantId in mutation inputs — resolvers overwrite from resolverContext.
+
+# ─── Scalars & Enums ─────────────────────────────────────────────────────────
+
+scalar AWSDateTime
+scalar AWSJSON
+
+enum Standard {
+  ISO9001
+  ISO14001
+  ISO45001
+}
+
+enum DocumentStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  OBSOLETE
+}
+
+enum DocumentType {
+  MANUAL
+  PROCEDURE
+  WORK_INSTRUCTION
+  POLICY
+  SCOPE
+}
+
+enum NCType {
+  NONCONFORMING_OUTPUT
+  NC
+  INCIDENT
+}
+
+enum NCSource {
+  AUDIT
+  INCIDENT
+  COMPLAINT
+  PROCESS
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CAPAStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+  VERIFIED
+}
+
+enum FindingType {
+  MAJOR_NC
+  MINOR_NC
+  OBSERVATION
+  OFI
+}
+
+enum ApprovalDecision {
+  APPROVED
+  REJECTED
+  RETURNED
+}
+
+enum RiskCategory {
+  QUALITY
+  ENVIRONMENTAL
+  OHS
+  OPPORTUNITY
+}
+
+enum Disposition {
+  REWORK
+  SCRAP
+  CONCESSION
+  REGRADE
+}
+
+# ─── M1: Document Studio Types ────────────────────────────────────────────────
+
+type Document @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  docType: DocumentType!
+  title: String!
+  status: DocumentStatus!
+  ownerId: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type DocumentVersion @aws_lambda @aws_iam {
+  id: ID!
+  documentId: ID!
+  versionNo: Int!
+  contentRef: String!
+  changeSummary: String
+  authorId: String!
+  createdAt: AWSDateTime!
+}
+
+type DocumentApproval @aws_lambda @aws_iam {
+  id: ID!
+  documentVersionId: ID!
+  approverId: String!
+  decision: ApprovalDecision!
+  approvedAt: AWSDateTime
+  eSignatureRef: String
+}
+
+type Policy @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  policyText: String!
+  effectiveDate: AWSDateTime!
+  approvedVersionId: ID
+}
+
+type ImsScope @aws_lambda @aws_iam {
+  id: ID!
+  scopeStatement: String!
+  boundaries: String
+  exclusions9001: String
+  updatedAt: AWSDateTime!
+}
+
+type Diff @aws_lambda {
+  additions: Int!
+  deletions: Int!
+  content: String!
+}
+
+# ─── M2: CAPA Types ──────────────────────────────────────────────────────────
+
+type Nonconformity @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  source: NCSource!
+  ncType: NCType!
+  description: String!
+  clauseRef: String!
+  severity: Severity!
+  status: CAPAStatus!
+  raisedBy: String!
+  raisedAt: AWSDateTime!
+}
+
+type RootCauseAnalysis @aws_lambda @aws_iam {
+  id: ID!
+  ncId: ID!
+  method: String!
+  findings: String!
+  rootCauseSummary: String!
+}
+
+type CorrectiveAction @aws_lambda @aws_iam {
+  id: ID!
+  ncId: ID!
+  actionDesc: String!
+  ownerId: String!
+  dueDate: AWSDateTime!
+  status: CAPAStatus!
+  containmentFlag: Boolean!
+}
+
+type CapaEffectivenessCheck @aws_lambda @aws_iam {
+  id: ID!
+  correctiveActionId: ID!
+  verificationMethod: String!
+  verifiedBy: String!
+  verifiedAt: AWSDateTime!
+  effective: Boolean!
+}
+
+type NonconformingOutput @aws_lambda @aws_iam {
+  id: ID!
+  ncId: ID!
+  disposition: Disposition!
+  authorizedBy: String!
+}
+
+# ─── M3: Audit Studio Types ───────────────────────────────────────────────────
+
+type AuditProgramme @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  year: Int!
+  frequencyPlan: String
+  status: String!
+}
+
+type Audit @aws_lambda @aws_iam {
+  id: ID!
+  programmeId: ID!
+  standard: Standard!
+  scope: String!
+  leadAuditorId: String!
+  plannedDate: AWSDateTime!
+  actualDate: AWSDateTime
+  status: String!
+}
+
+type AuditChecklist @aws_lambda @aws_iam {
+  id: ID!
+  auditId: ID!
+  clauseRef: String!
+  question: String!
+  expectedEvidence: String
+}
+
+type AuditFinding @aws_lambda @aws_iam {
+  id: ID!
+  auditId: ID!
+  checklistId: ID
+  findingType: FindingType!
+  clauseRef: String!
+  description: String!
+  evidenceRef: String
+}
+
+type ReadinessScore @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  clauseRef: String!
+  score: Float!
+  assessedAt: AWSDateTime!
+}
+
+# ─── M4: Records Management Types ────────────────────────────────────────────
+
+type Record @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  recordType: String!
+  sourceModule: String!
+  retentionClass: String
+  retainUntil: AWSDateTime
+  s3ObjectRef: String
+}
+
+type RetentionPolicy @aws_lambda @aws_iam {
+  id: ID!
+  recordType: String!
+  retentionYears: Int!
+  dispositionRule: String!
+}
+
+type MeasuringResource @aws_lambda @aws_iam {
+  id: ID!
+  assetTag: String!
+  description: String!
+  status: String!
+}
+
+type CalibrationRecord @aws_lambda @aws_iam {
+  id: ID!
+  measuringResourceId: ID!
+  calibratedAt: AWSDateTime!
+  nextDue: AWSDateTime!
+  standardUsed: String!
+  traceabilityRef: String
+  result: String!
+}
+
+type AuditEvent @aws_lambda @aws_iam {
+  tenantId: ID!
+  eventId: ID!
+  eventType: String!
+  actor: String!
+  module: String!
+  clauseRef: String!
+  standard: Standard!
+  timestamp: AWSDateTime!
+  payloadHash: String!
+  prevHash: String
+}
+
+# ─── M5: Risk Management Types ───────────────────────────────────────────────
+
+type Risk @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  category: RiskCategory!
+  description: String!
+  likelihood: Int!
+  severity: Int!
+  riskRating: Int!
+  treatment: String
+  ownerId: String!
+  status: String!
+}
+
+type RiskTreatment @aws_lambda @aws_iam {
+  id: ID!
+  riskId: ID!
+  actionDesc: String!
+  ownerId: String!
+  dueDate: AWSDateTime!
+  status: String!
+}
+
+type ChangePlan @aws_lambda @aws_iam {
+  id: ID!
+  standard: Standard!
+  changeDesc: String!
+  impactAssessment: String
+  approvalStatus: String!
+}
+
+# ─── Input Types ──────────────────────────────────────────────────────────────
+
+input CreateDocumentDraftInput {
+  standard: Standard!
+  docType: DocumentType!
+  title: String!
+}
+
+input ApproveDocumentVersionInput {
+  versionId: ID!
+  decision: ApprovalDecision!
+}
+
+input UpdatePolicyInput {
+  id: ID!
+  standard: Standard!
+  policyText: String!
+}
+
+input UpdateImsScopeInput {
+  id: ID!
+  scopeStatement: String!
+  boundaries: String
+  exclusions9001: String
+}
+
+input RaiseNonconformityInput {
+  standard: Standard!
+  source: NCSource!
+  ncType: NCType!
+  description: String!
+  clauseRef: String!
+  severity: Severity!
+}
+
+input RecordRootCauseInput {
+  ncId: ID!
+  method: String!
+  findings: String!
+  rootCauseSummary: String!
+}
+
+input CreateCorrectiveActionInput {
+  ncId: ID!
+  actionDesc: String!
+  ownerId: String!
+  dueDate: AWSDateTime!
+  containmentFlag: Boolean
+}
+
+input CloseCapaInput {
+  id: ID!
+  closureNotes: String
+}
+
+input VerifyEffectivenessInput {
+  correctiveActionId: ID!
+  verificationMethod: String!
+  effective: Boolean!
+}
+
+input DisposeNonconformingOutputInput {
+  ncId: ID!
+  disposition: Disposition!
+}
+
+input CreateAuditProgrammeInput {
+  standard: Standard!
+  year: Int!
+  frequencyPlan: String
+}
+
+input ScheduleAuditInput {
+  programmeId: ID!
+  standard: Standard!
+  scope: String!
+  leadAuditorId: String!
+  plannedDate: AWSDateTime!
+}
+
+input RecordFindingInput {
+  auditId: ID!
+  checklistId: ID
+  findingType: FindingType!
+  clauseRef: String!
+  description: String!
+  evidenceRef: String
+}
+
+input RegisterRecordInput {
+  standard: Standard!
+  recordType: String!
+  sourceModule: String!
+  retentionClass: String
+  s3ObjectRef: String
+}
+
+input RecordCalibrationInput {
+  measuringResourceId: ID!
+  standardUsed: String!
+  traceabilityRef: String
+  result: String!
+  nextDue: AWSDateTime!
+}
+
+input CreateRetentionPolicyInput {
+  recordType: String!
+  retentionYears: Int!
+  dispositionRule: String!
+}
+
+input CreateRiskInput {
+  standard: Standard!
+  category: RiskCategory!
+  description: String!
+  likelihood: Int!
+  severity: Int!
+  treatment: String
+}
+
+input AddRiskTreatmentInput {
+  riskId: ID!
+  actionDesc: String!
+  ownerId: String!
+  dueDate: AWSDateTime!
+}
+
+input CreateChangePlanInput {
+  standard: Standard!
+  changeDesc: String!
+  impactAssessment: String
+}
+
+input AppendAuditEventInput {
+  eventType: String!
+  actor: String!
+  module: String!
+  clauseRef: String!
+  standard: Standard!
+  payload: AWSJSON!
+}
+
+input AgentDraftDocumentInput {
+  standard: Standard!
+  docType: DocumentType!
+  title: String!
+  contentRef: String!
+}
+
+input AgentTriageNCInput {
+  ncId: ID!
+  classification: String!
+}
+
+input AgentProposeCorrectiveActionInput {
+  ncId: ID!
+  actionDesc: String!
+  suggestedOwnerId: String!
+}
+
+input AgentAssessRiskInput {
+  riskId: ID!
+  likelihood: Int!
+  severity: Int!
+  rationale: String!
+}
+
+# Subscription trigger inputs (None data source)
+input DocumentEventInput {
+  documentId: ID!
+  status: DocumentStatus!
+}
+
+input CAPAEventInput {
+  capaId: ID!
+  status: CAPAStatus!
+}
+
+input AuditEventTriggerInput {
+  auditId: ID!
+  findingType: FindingType
+}
+
+input RiskEventInput {
+  riskId: ID!
+  riskRating: Int!
+}
+
+# ─── Queries ──────────────────────────────────────────────────────────────────
+
+type Query {
+  # M1 — Document Studio
+  getDocument(id: ID!): Document @aws_lambda
+  listDocuments(standard: Standard, status: DocumentStatus): [Document!]! @aws_lambda
+  getDocumentVersionDiff(v1: ID!, v2: ID!): Diff @aws_lambda
+
+  # M2 — CAPA
+  getNonconformity(id: ID!): Nonconformity @aws_lambda
+  listOpenCAPAs(standard: Standard, severity: Severity): [CorrectiveAction!]! @aws_lambda
+
+  # M3 — Audit Studio
+  getAudit(id: ID!): Audit @aws_lambda
+  getAuditReadiness(standard: Standard!): [ReadinessScore!]! @aws_lambda
+
+  # M4 — Records Management
+  getRecord(id: ID!): Record @aws_lambda
+  listCalibrationsDue(windowDays: Int!): [CalibrationRecord!]! @aws_lambda
+  getAuditTrail(entityId: ID!): [AuditEvent!]! @aws_lambda
+
+  # M5 — Risk Management
+  getRisk(id: ID!): Risk @aws_lambda
+  getCrossRegisterRiskView(standard: Standard, category: RiskCategory): [Risk!]! @aws_lambda
+}
+
+# ─── Mutations ────────────────────────────────────────────────────────────────
+
+type Mutation {
+  # M1 — Document Studio (user-facing)
+  createDocumentDraft(input: CreateDocumentDraftInput!): Document! @aws_lambda
+  submitDocumentForApproval(id: ID!): Document! @aws_lambda
+  approveDocumentVersion(input: ApproveDocumentVersionInput!): DocumentApproval! @aws_lambda
+  publishControlledDocument(versionId: ID!): Document! @aws_lambda
+  updatePolicy(input: UpdatePolicyInput!): Policy! @aws_lambda
+  updateImsScope(input: UpdateImsScopeInput!): ImsScope! @aws_lambda
+
+  # M2 — CAPA (user-facing)
+  raiseNonconformity(input: RaiseNonconformityInput!): Nonconformity! @aws_lambda
+  recordRootCause(input: RecordRootCauseInput!): RootCauseAnalysis! @aws_lambda
+  createCorrectiveAction(input: CreateCorrectiveActionInput!): CorrectiveAction! @aws_lambda
+  closeCapa(input: CloseCapaInput!): CorrectiveAction! @aws_lambda
+  verifyEffectiveness(input: VerifyEffectivenessInput!): CapaEffectivenessCheck! @aws_lambda
+  disposeNonconformingOutput(input: DisposeNonconformingOutputInput!): NonconformingOutput! @aws_lambda
+
+  # M3 — Audit Studio (user-facing)
+  createAuditProgramme(input: CreateAuditProgrammeInput!): AuditProgramme! @aws_lambda
+  scheduleAudit(input: ScheduleAuditInput!): Audit! @aws_lambda
+  recordFinding(input: RecordFindingInput!): AuditFinding! @aws_lambda
+  completeAudit(id: ID!): Audit! @aws_lambda
+
+  # M4 — Records Management (user-facing)
+  registerRecord(input: RegisterRecordInput!): Record! @aws_lambda
+  recordCalibration(input: RecordCalibrationInput!): CalibrationRecord! @aws_lambda
+  createRetentionPolicy(input: CreateRetentionPolicyInput!): RetentionPolicy! @aws_lambda
+
+  # M5 — Risk Management (user-facing)
+  createRisk(input: CreateRiskInput!): Risk! @aws_lambda
+  addRiskTreatment(input: AddRiskTreatmentInput!): RiskTreatment! @aws_lambda
+  createChangePlan(input: CreateChangePlanInput!): ChangePlan! @aws_lambda
+
+  # Agent-path mutations (@aws_iam)
+  agentDraftDocument(input: AgentDraftDocumentInput!): Document! @aws_iam
+  agentTriageNC(input: AgentTriageNCInput!): Nonconformity! @aws_iam
+  agentProposeCorrectiveAction(input: AgentProposeCorrectiveActionInput!): CorrectiveAction! @aws_iam
+  agentGenerateChecklist(auditId: ID!): [AuditChecklist!]! @aws_iam
+  agentScoreReadiness(standard: Standard!): [ReadinessScore!]! @aws_iam
+  agentAssessRisk(input: AgentAssessRiskInput!): Risk! @aws_iam
+  appendAuditEvent(input: AppendAuditEventInput!): AuditEvent! @aws_iam
+
+  # Subscription triggers (None data source, @aws_iam)
+  publishDocumentEvent(input: DocumentEventInput!): Document @aws_iam
+  publishCAPAEvent(input: CAPAEventInput!): CorrectiveAction @aws_iam
+  publishAuditEvent(input: AuditEventTriggerInput!): AuditFinding @aws_iam
+  publishRiskEvent(input: RiskEventInput!): Risk @aws_iam
+}
+
+# ─── Subscriptions ────────────────────────────────────────────────────────────
+# All use None data source. Subscription resolvers verify tenantId from
+# resolverContext matches the argument (C-6). Delivered via @aws_lambda auth.
+
+type Subscription {
+  onDocumentStatusChanged(tenantId: ID!): Document
+    @aws_subscribe(mutations: ["publishDocumentEvent"])
+    @aws_lambda
+
+  onCAPAStatusChanged(tenantId: ID!): CorrectiveAction
+    @aws_subscribe(mutations: ["publishCAPAEvent"])
+    @aws_lambda
+
+  onFindingRecorded(tenantId: ID!): AuditFinding
+    @aws_subscribe(mutations: ["publishAuditEvent"])
+    @aws_lambda
+
+  onCalibrationDue(tenantId: ID!): CalibrationRecord
+    @aws_lambda
+
+  onRiskEscalated(tenantId: ID!): Risk
+    @aws_subscribe(mutations: ["publishRiskEvent"])
+    @aws_lambda
+}
