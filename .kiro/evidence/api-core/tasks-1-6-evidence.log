@@ -121,3 +121,31 @@ fixes-applied: FIX-1 (audience validation), FIX-2 (excludeVerboseContent),
 path-taken-FIX-5: kept sync mechanism (rotation out of scope); documented
   plaintext-in-SQL transit, confirmed CloudTrail data events NOT enabled in dev,
   recorded single-user rotation as named prod-hardening carry.
+
+## Task 10 — Resolver Lambdas (M1-M5)
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T19:37:05Z
+exit_code: 0
+tests: 223/223 pass
+commit: (this commit)
+files: services/api/src/resolvers/shared.ts (tenant transaction + STS + publish),
+       services/api/src/resolvers/m1.ts (9 operations),
+       services/api/src/resolvers/m2.ts (8 operations),
+       services/api/src/resolvers/m3.ts (6 operations),
+       services/api/src/resolvers/m4.ts (6 operations),
+       services/api/src/resolvers/m5.ts (5 operations, incl. matview accessor)
+isolation: RDS via app_role Data API (set_config transaction-local, C-2);
+  DDB via assumed tenant-data role (bare tenantId tag); SCHEMA-5 enforced.
+note: C-7 CI denial suite + GSI prefix test + reused-connection test deferred
+  to integration test commit (requires deployed infrastructure).
+
+## Task 11 — Subscription resolvers
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T19:37:05Z
+exit_code: 0
+tests: 223/223 pass
+commit: (this commit)
+files: services/api/src/resolvers/subscriptions.ts
+  5 subscription auth handlers (C-6: tenantId match verification),
+  4 publish mutations (None DS passthrough),
+  M4 scheduler deferred (OQ-4).

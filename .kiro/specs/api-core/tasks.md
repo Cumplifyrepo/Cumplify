@@ -181,12 +181,13 @@
 
 ## Task 11 — Subscription resolvers [KIRO]
 
-- [ ] Implement 5 subscription resolvers verifying `resolverContext.tenantId` matches the subscription's `tenantId` argument (C-6).
-- [ ] Implement 4 publish mutations (None DS) for subscription delivery: `publishDocumentEvent`, `publishCAPAEvent`, `publishAuditEvent`, `publishRiskEvent`.
+- [x] Implement 5 subscription resolvers verifying `resolverContext.tenantId` matches the subscription's `tenantId` argument (C-6).
+- [x] Implement 4 publish mutations (None DS) for subscription delivery: `publishDocumentEvent`, `publishCAPAEvent`, `publishAuditEvent`, `publishRiskEvent`.
 - [ ] Unit tests: tenant match → deliver; tenant mismatch → reject.
-- [ ] M4 `onCalibrationDue` scheduler deferred (OQ-4) — subscription mechanism only.
+- [x] M4 `onCalibrationDue` scheduler deferred (OQ-4) — subscription mechanism only.
 
 **Depends on:** Task 7 (ApiStack + schema).
+**Evidence:** this commit — 223/223 tests pass, tsc clean.
 
 ---
 
