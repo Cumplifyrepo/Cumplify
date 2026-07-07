@@ -363,13 +363,8 @@ export class ApiStack extends cdk.Stack {
     const m4DS = api.addLambdaDataSource('M4DataSource', resolverFns[3]);
     const m5DS = api.addLambdaDataSource('M5DataSource', resolverFns[4]);
 
-    // None data source — for subscription publish mutations (passthrough)
+    // None data source — for subscription publish mutations AND subscription resolvers
     const noneDS = api.addNoneDataSource('NoneDataSource');
-
-    // Subscription Lambda data source (tenant-claim verification, C-6)
-    // Reuses the M1 Lambda for simplicity — subscriptions.ts is bundled separately
-    // but for now subscription auth is a VTL passthrough to the Lambda authorizer cache.
-    // The actual C-6 check is in the @aws_lambda auth on subscription fields.
 
     // ─── Query resolvers ─────────────────────────────────────────────────────
     // M1
@@ -452,6 +447,38 @@ export class ApiStack extends cdk.Stack {
       requestMappingTemplate: passthroughRequestMapping,
       responseMappingTemplate: passthroughResponseMapping,
     });
+
+    // ─── Subscription resolvers (C-6: tenant-claim enforcement) ──────────────
+    // The Lambda authorizer authorizes the CONNECTION but cannot compare field
+    // args to the caller's claim. These resolvers enforce C-6 at the field level:
+    // a subscriber whose resolverContext.tenantId != the subscription's tenantId
+    // argument is rejected with $util.unauthorized().
+    const subscriptionRequestTemplate = appsync.MappingTemplate.fromString(
+      `#if($ctx.identity.resolverContext.tenantId != $ctx.args.tenantId)
+  $util.unauthorized()
+#end
+{"version":"2017-02-28","payload":{}}`,
+    );
+    const subscriptionResponseTemplate = appsync.MappingTemplate.fromString(
+      '$util.toJson(null)',
+    );
+
+    const subscriptionFields = [
+      'onDocumentStatusChanged',
+      'onCAPAStatusChanged',
+      'onFindingRecorded',
+      'onCalibrationDue',
+      'onRiskEscalated',
+    ];
+
+    for (const field of subscriptionFields) {
+      noneDS.createResolver(`Sub${field}`, {
+        typeName: 'Subscription',
+        fieldName: field,
+        requestMappingTemplate: subscriptionRequestTemplate,
+        responseMappingTemplate: subscriptionResponseTemplate,
+      });
+    }
 
     // ─── CfnOutputs ─────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'GraphqlApiUrl', { value: this.graphqlApiUrl });

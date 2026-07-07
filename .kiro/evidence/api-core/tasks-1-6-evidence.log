@@ -166,3 +166,17 @@ files-modified:
   services/api/__tests__/c2-invariant.test.ts — ITEM-2b: 4 tests (set_config first,
     parameterized, true=transaction-local, ordering)
 paths-corrected (ITEM-4): subscriptions.ts at services/api/src/resolvers/subscriptions.ts
+
+## BLOCK-2 — Subscription resolver wiring (C-6 enforcement)
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T19:55:26Z
+exit_code: 0
+tests: 242/242 pass (+3 new: subscription field presence, total count 50, C-6 VTL check)
+commit: (this commit)
+files: infra/lib/api-stack.ts (5 Subscription resolvers with VTL tenant-claim check),
+       infra/lib/api-stack.unit.test.ts (+3 assertions),
+       .kiro/specs/api-core/tasks.md (C-7 suite expanded to 6 cases)
+security: VTL template rejects $ctx.identity.resolverContext.tenantId != $ctx.args.tenantId
+  with $util.unauthorized(). No Lambda invocation needed per subscribe.
+  Dead code comment removed. resolvers/subscriptions.ts handler retained for
+  publish mutations (None DS) but subscription auth is now VTL-enforced.

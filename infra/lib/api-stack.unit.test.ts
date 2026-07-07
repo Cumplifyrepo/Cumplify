@@ -82,4 +82,28 @@ describe('ApiStack template assertions (source-level)', () => {
     expect(API_STACK_CODE).toContain("'aws:RequestTag/tenantId': '*#*'");
     expect(API_STACK_CODE).toContain('Effect.DENY');
   });
+
+  it('has createResolver calls for all 5 Subscription fields (BLOCK-2)', () => {
+    // Subscription resolvers are created in a loop over subscriptionFields array
+    expect(API_STACK_CODE).toContain("'onDocumentStatusChanged'");
+    expect(API_STACK_CODE).toContain("'onCAPAStatusChanged'");
+    expect(API_STACK_CODE).toContain("'onFindingRecorded'");
+    expect(API_STACK_CODE).toContain("'onCalibrationDue'");
+    expect(API_STACK_CODE).toContain("'onRiskEscalated'");
+    expect(API_STACK_CODE).toContain("typeName: 'Subscription'");
+  });
+
+  it('total resolver count is 50 (12 Query + 33 Mutation + 5 Subscription)', () => {
+    const queryCount = (API_STACK_CODE.match(/typeName: 'Query'/g) ?? []).length;
+    const mutationCount = (API_STACK_CODE.match(/typeName: 'Mutation'/g) ?? []).length;
+    // Subscription count: 5 fields in subscriptionFields array (loop-generated)
+    const subscriptionFields = API_STACK_CODE.match(/subscriptionFields = \[([^\]]+)\]/s);
+    const subCount = subscriptionFields ? (subscriptionFields[1].match(/'/g) ?? []).length / 2 : 0;
+    expect(queryCount + mutationCount + subCount).toBe(50);
+  });
+
+  it('subscription resolvers enforce C-6 tenant-claim check via $util.unauthorized()', () => {
+    expect(API_STACK_CODE).toContain('$ctx.identity.resolverContext.tenantId != $ctx.args.tenantId');
+    expect(API_STACK_CODE).toContain('$util.unauthorized()');
+  });
 });

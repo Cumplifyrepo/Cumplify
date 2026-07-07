@@ -169,12 +169,13 @@
 - [x] Integration wiring: AppSync resolver mapping to Lambda functions (BLOCK-1: data sources + createResolver for all fields).
 - [ ] Unit tests per resolver (mock Data API + STS + EventBridge) — deferred to post-wiring.
 - [ ] Reused-connection test (live): simulates two requests on same pooled connection; second without set_config returns zero rows (C-2 live proof, post-deploy).
-- [ ] C-7 CI denial suite (5 integration tests from design §11.3, post-deploy):
+- [ ] C-7 CI denial suite (6 integration tests from design §11.3, post-deploy):
   1. Authorizer denial: Pool-A token → 401.
   2. DynamoDB denial: simulate-principal-policy cross-tenant → implicitDeny.
   3. RDS RLS denial: tenant-B session → empty result on tenant-A data.
   4. Materialized view denial: tenant-B → `get_risk_register_view()` → empty; direct SELECT → permission denied.
   5. Resolver overwrite: client-supplied tenantId in mutation input → resolverContext used (SCHEMA-5).
+  6. Subscription denial: valid tenant-B token subscribing with tenant-A's tenantId → unauthorized (C-6, BLOCK-2).
 
 **Depends on:** Tasks 5, 8, 9 (migrations + authorizer + role).
 **Evidence:** this commit — 239/239 tests pass (+16 new), tsc clean.
