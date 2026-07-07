@@ -1,0 +1,413 @@
+{
+  "B031": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 4,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 3,
+    "mean": 3.6,
+    "flags": [
+      "Asserts Title V major-source status and NESHAP MMMM MACT confidently where reference expects a minor-source/registration applicability determination",
+      "Threshold analysis mislabels 10,000 lb as the 'manufacturing/processing' TRI threshold (that is otherwise-used; process is 25,000 lb) though the applicability conclusion survives either way",
+      "Tier II (EPCRA 312) applicability check missing entirely; 10-FTE prong for TRI not checked",
+      "Calls toluene 200 ppm a 'ceiling' (it is the 8-hr TWA in Table Z-2) and invents an 'action level' for a Z-2 substance",
+      "Look-back/non-filing gap correctly flagged with immediate gap analysis; July 1 deadline and evaporative-release reportability correct"
+    ]
+  },
+  "B032": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 3,
+    "mean": 3.4,
+    "flags": [
+      "Missed the graded differentiator: EPCRA 302/311/312 sulfuric-acid EHS aggregation/Tier II applicability determination is absent",
+      "Fabricated GHG reporting trigger (no 10,000 MWh threshold; 40 CFR 98 does not cover Scope 2 electricity)",
+      "Overstates RCRA: spent lead-acid batteries routed to recycling are typically universal waste/exempt, not Subtitle C manifested generator waste",
+      "Misattributed cites: Maricopa Rule 310 (fugitive dust) for hydrogen, 40 CFR 265.173 for a generator charging area, 1-acre threshold applied to industrial stormwater",
+      "Core OSHA items all present and correct: 1910.178(g) with hydrogen ventilation, 1910.151(c)/ANSI Z358.1 eyewash, PPE, HazCom"
+    ]
+  },
+  "B033": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 4,
+    "riskClassification": 5,
+    "completeness": 5,
+    "accuracy": 4,
+    "mean": 4.6,
+    "flags": [
+      "Both planted violations flagged as immediate non-compliances (lamps >1 yr, missing solvent determination) with priority actions",
+      "Aerosol universal waste cited as 40 CFR 273.5 (lamps) instead of 273.6",
+      "Says used oil requires 'manifests' (used oil under part 279 is tracked via EPA-ID transporters, not hazardous waste manifests)",
+      "Used-oil/hazardous-waste boundary, filter exclusion 261.4(b)(13), generator-category counting, and hedged SPCC all handled well"
+    ]
+  },
+  "B034": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 5,
+    "riskClassification": 5,
+    "completeness": 4,
+    "accuracy": 5,
+    "mean": 4.8,
+    "flags": [
+      "All citations correct (1910.147, 1910.212, 1910.331-335, 1910.95); MOC correctly framed as 8.1.3 context feeding 6.1.3; all mappings 45001",
+      "Annual periodic LOTO inspection captured as annual audits/per-equipment procedure review rather than named as the 1910.147(c)(6) duty",
+      "Minor-servicing exception for routine jam clearing not raised (credit item only)"
+    ]
+  },
+  "B035": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 2,
+    "mean": 3.4,
+    "flags": [
+      "States 8-hour deadline for reporting in-patient hospitalization -- the exact trap flagged in grader notes; correct is 24 hours (8 hours is fatalities)",
+      "1904.41 electronic submission applicability determination missing",
+      "Cites 1904.5 as the source of an incident-investigation duty (it is recording criteria)",
+      "Triennial evaluation gap and post-accident refresher under 1910.178(l)(4)(iii) correctly flagged as current non-compliance"
+    ]
+  },
+  "B036": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 4,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 5,
+    "mean": 4.0,
+    "flags": [
+      "Ownership-change notifications missing: no air-permit transfer notice, stormwater permittee/NOI update, or RCRA Site ID (8700-12) update -- one of the four required integration moves",
+      "No explicit baseline 9.1.2 compliance evaluation of the acquired site with CAPA routing; SPCC/SWPPP re-certification for new owner only implied",
+      "State-plan re-baseline (WISHA/DOSH), synthetic-minor cap risk, LQG/Tier II continuity, and WA more-stringent dangerous-waste rules all correctly covered",
+      "No fabricated citations; accurate throughout what it covers"
+    ]
+  },
+  "B037": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 5,
+    "riskClassification": 5,
+    "completeness": 4,
+    "accuracy": 5,
+    "mean": 4.8,
+    "flags": [
+      "24-hour hospitalization deadline correct with 1904.39(a)(2); 1910.178(l)(4)(ii)-(iii) triggers and overdue evaluation flagged; workers' comp and investigation correctly categorized per grader notes",
+      "1904.41 electronic submission applicability missing; 300A posting window not mentioned"
+    ]
+  },
+  "B038": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 3,
+    "mean": 3.8,
+    "flags": [
+      "Misattributes 29 CFR 1910.1048 (formaldehyde) as an isocyanate standard; implies isocyanates broadly covered by Table Z-1",
+      "Medical-evaluation-before-fit-testing sequencing not explicit; voluntary-use (Appendix D) provisions absent",
+      "All five reference obligations present (1910.134, 1910.1000, 1910.132 with written certification, 1910.107, 1910.1200) plus sound RCRA bonus; no invented PEL numbers"
+    ]
+  },
+  "B039": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 4,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 5,
+    "mean": 4.4,
+    "flags": [
+      "RCRA determination present but F003/D001 codes not named (the adequate-vs-strong discriminator); secondary/workstation container labeling not explicit",
+      "Xylene PEL 100 ppm correct; training-before-exposure correct; annual refresher properly hedged as 'often' not asserted as OSHA law; dual 14001/45001 mapping carried"
+    ]
+  },
+  "B040": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 3,
+    "mean": 3.4,
+    "flags": [
+      "Claims an NPDES permit is required for discharge to the POTW -- the designated trap (needs pretreatment/industrial-user authorization); same item does correctly invoke 40 CFR 433 and industrial-user status",
+      "HazCom (1910.1200) and eyewash (1910.151(c)) missing entirely; EPCRA Tier II absent (only TRI covered)",
+      "F006 with generator re-determination, NESHAP subpart N for decorative chrome, and 1910.1026 PEL 5 ug/m3 correct; Cr(VI) action-level number (2.5) not given",
+      "Shaky Michigan-specific cites ('MI-TOX', 'Michigan Part 68 Rules', 'Rule 331'); PSM appropriately hedged"
+    ]
+  },
+  "B041": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 2,
+    "mean": 3.4,
+    "flags": [
+      "Fabricated Ohio obligation: mandatory safety committee with quarterly meetings and 24-hour BWC injury reporting attributed to ORC 4123.54 -- no such mandate exists",
+      "Misattributed subsections: 1910.147(c)(8) for contractors (that is (f)(2)), 1910.119(j) for PSSR (that is (i)), ORC 4923.01 as 'energy policy', RCRA 40 CFR 262 for non-hazardous packaging waste",
+      "Core LOTO content strong: machine-specific procedures, annual per-procedure inspections, authorized/affected/other training, 1910.212/219 guarding, ANSI/RIA R15.06 robot risk assessment"
+    ]
+  },
+  "B042": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 2,
+    "accuracy": 3,
+    "mean": 3.2,
+    "flags": [
+      "TRUNCATED -- response cuts off mid-table (row 3 of the register); completeness capped at visible evidence",
+      "Core threshold logic correct: 1,600 kg = LQG for that month (avoids the SQG trap); episodic-generation rule raised",
+      "Flat unhedged assertion that Pennsylvania has not adopted the Generator Improvements Rule (PA incorporates federal rules by reference; adoption status should be a verification step, not a conclusion)",
+      "Invented specifics: 30-day notification clock via 262.18(a); 'VSQGs must manifest >100 kg'; outdated 262.34(a) citation",
+      "F001 listing, LDR, and confined-space/LOTO worker-protection items absent from the visible portion"
+    ]
+  },
+  "B043": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 2,
+    "riskClassification": 4,
+    "completeness": 5,
+    "accuracy": 2,
+    "mean": 3.6,
+    "flags": [
+      "Systematically places a private-sector Wisconsin employer under a DSPS 'state plan' citing SPS 332.xx in every obligation -- Wisconsin private sector is federal OSHA; SPS 332 covers public employees only",
+      "Fabricated 'Wisconsin ALARA principle under SPS 332.10' requiring controls above 85 dBA; invented 'minimum 50% attenuation', annual HPD 'fit-testing', 'Wisconsin-certified audiometric facility', and 'NR 190' industrial noise code",
+      "Overstates HPD use as mandatory for all 25 employees at 88 dBA (must be made available; use mandatory only for STS/pending-baseline/>=90)",
+      "Audiometric retention stated as employment +30 years (1910.95(m) is duration of employment)",
+      "Federal numeric crux otherwise right: 85 AL vs 90 PEL correctly discriminated, press-bay-only scope, 6-month baseline, annual cycles"
+    ]
+  },
+  "B044": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 4,
+    "riskClassification": 5,
+    "completeness": 5,
+    "accuracy": 5,
+    "mean": 4.8,
+    "flags": [
+      "Load-bearing point nailed: agency's sole-responsibility claim called legally incorrect; temp injuries go on host 300 log under day-to-day supervision; TN state plan (TOSHA) correctly identified",
+      "1904.31 not cited by section number (part 1904 generally; 'TOSHA Rule 800' sloppy for 0800 chapter rules)",
+      "All four reference items plus EAP inclusion, statutory-employer workers' comp, and hedged environmental adds"
+    ]
+  },
+  "B045": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 4,
+    "mean": 3.6,
+    "flags": [
+      "LOTO (1910.147) for the submerged mixer missing entirely -- a reference obligation",
+      "Maps every confined-space entry obligation to ISO 14001 6.1.3 as well as 45001 with strained rationales -- the exact mapping error the grader notes flag",
+      "Host/contractor entry-coordination duties and danger signage absent",
+      "Rescue capability (1910.146(k)) handled well including retrieval from 12-ft depth; testing order and no-cost equipment correct; invented framing about a small-business exemption criterion that does not exist for 1910.146"
+    ]
+  },
+  "B046": {
+    "obligationIdentification": 3,
+    "regulatoryMapping": 3,
+    "riskClassification": 2,
+    "completeness": 3,
+    "accuracy": 1,
+    "mean": 2.4,
+    "flags": [
+      "CATASTROPHIC: clears sulfuric acid from Tier II using the 1,000-lb TPQ -- the EHS Tier II threshold is the lower of 500 lb or TPQ (500 lb), so 900 lb IS reportable; recites the 500-lb rule then misapplies it (the exact collapse failure in grader notes); creates real filing exposure",
+      "Asserts OSHA PSM applies ('No exemptions apply') despite 1910.119(a)(1)(ii)(B) exempting fuel-use flammables -- propane for fleet fueling/heating is the standard's own exemption example; labeled a Critical action item",
+      "Asserts full EPA RMP (Program 2/3) applies, ignoring the fuel-use exclusion for flammable substances under 40 CFR part 68",
+      "EPCRA 311 one-time SDS submission garbled into an invented 30-day initial-report clock (correct is 90 days)",
+      "Invented propane CERCLA RQ (propane is not a CERCLA hazardous substance); dubious Kansas AST registration for propane citing K.A.R. 28-44",
+      "Gets propane Tier II (crossed) and sulfuric 302 (not crossed) right"
+    ]
+  },
+  "B047": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 4,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 4,
+    "mean": 4.2,
+    "flags": [
+      "Common-plan-of-development rule stated correctly; coverage-before-disturbance correct; strong Georgia specifics (GESA, LIA/LDA permit, 25-ft buffers, GAR permit)",
+      "Obligation lifecycle not modeled: no final stabilization / Notice of Termination retirement; Georgia turbidity sampling and certified-inspector personnel not mentioned",
+      "Dual 14001/45001 mapping applied to purely environmental permit items (noise); GAR100001 cited where the common-development permit is a sibling permit (hedged with 'or current')"
+    ]
+  },
+  "B048": {
+    "obligationIdentification": 1,
+    "regulatoryMapping": 1,
+    "riskClassification": 1,
+    "completeness": 1,
+    "accuracy": 1,
+    "mean": 1.0,
+    "flags": [
+      "TRUNCATED -- response field is completely empty; no evidence to grade on any criterion",
+      "Scored 1 across the board as a seat failure; recommend re-run before treating as a model-quality signal"
+    ]
+  },
+  "B049": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 3,
+    "mean": 3.8,
+    "flags": [
+      "Category flip and LQG deltas enumerated (90-day clock, weekly inspections, contingency plan, training, biennial report with correct 2026/2025 arithmetic); episodic trap avoided",
+      "Wrong NESHAP: cites 40 CFR 63 Subpart TTTT for an aerospace coatings shop (aerospace is subpart GG; TTTT is leather finishing)",
+      "Invented 30-day notification clock via 40 CFR 262.18(a) where re-notification is required before operating as LQG; Form 8700-12 never named",
+      "Invented Georgia fee figures ($1,000-$5,000) and survey deadlines; outdated 262.34 citations; quarterly rather than monthly generation counting"
+    ]
+  },
+  "B050": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 5,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 5,
+    "mean": 4.2,
+    "flags": [
+      "90-day central accumulation limit, weekly central-area inspections, and container dating -- the headline LQG delta -- missing entirely (only satellite accumulation covered)",
+      "Otherwise unusually precise and correct: Form 8700-12 before the change, 262.261 contingency-plan content, 35/45-day exception-report rule, SAA 3-day rule, SQG-vs-LQG training delta, Georgia IBR of federal rules",
+      "Quick reference guide to emergency responders not mentioned"
+    ]
+  },
+  "B051": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 3,
+    "mean": 3.4,
+    "flags": [
+      "Air permit item says company 'likely becomes a major source for HAPs' at 8 tpy VOC -- wrong direction per grader notes; cites subpart HHHHHH (misc surface coating area rule) rather than a hedged wood-furniture NESHAP (subpart JJ) check",
+      "Pre-construction permit timing -- a key correctness point -- never stated",
+      "Solvent-contaminated wipes exclusion missing; HazCom only appears in recommended actions, not as a register entry",
+      "Overbroad claim that flammable liquids are 'oil' under SPCC (hedged as an evaluation)",
+      "F-listing hedged appropriately; booth filters included as waste; 1910.107/106/134 chain solid"
+    ]
+  },
+  "B052": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 3,
+    "riskClassification": 5,
+    "completeness": 5,
+    "accuracy": 4,
+    "mean": 4.4,
+    "flags": [
+      "Places the private Wisconsin plant under a DSPS state plan citing SPS 332.xx throughout -- Wisconsin private sector is federal OSHA (SPS 332 is public-sector only)",
+      "Federal substance is excellent and precise: AL/PEL discrimination exactly right, HPD availability-vs-mandatory-use conditions per (i), 6-month baseline (+12-month mobile van allowance), correct retention periods, press-bay-only scope",
+      "Hearing-loss recordability described as STS alone (1904.10 also requires 25 dB above audiometric zero)"
+    ]
+  },
+  "B053": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 3,
+    "riskClassification": 5,
+    "completeness": 5,
+    "accuracy": 3,
+    "mean": 4.2,
+    "flags": [
+      "Both planted violations flagged with immediate corrective actions; 273.35 one-year limit citation correct; generator counting conditional and sound",
+      "Wrong waste code: 'D018 (lead)' -- D018 is benzene, lead is D008; aerosols cited as 40 CFR 273.4 (mercury equipment) instead of 273.6; filter exclusion cited as 279.24 instead of 261.4(b)(13)",
+      "Says SQGs must file biennial reports (LQG-only); claims aerosol puncturing requires a permitted facility (273.13(e) allows handler puncturing under conditions); invented 1,000-gallon oil-to-water reporting figure"
+    ]
+  },
+  "B054": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 5,
+    "riskClassification": 5,
+    "completeness": 4,
+    "accuracy": 4,
+    "mean": 4.4,
+    "flags": [
+      "Cr(VI) chain precise: AL 2.5 / PEL 5 correct, subsection cites (d)(e)(f)(k)(l)(m) all correct, medical-surveillance 30-day/year AL trigger correct, D007 dust-collector bonus with TCLP 5 mg/L correctly raised, Oklahoma federal-OSHA status correct",
+      "Subpart Q general welding requirements and 1910.134 respirator program absent (reference items)",
+      "Minor embellishments: 12-month monitoring claim for below-AL results, chest X-ray/PFT listed as required exam content, 'will exceed PEL' asserted pre-data"
+    ]
+  },
+  "B055": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 4,
+    "mean": 3.8,
+    "flags": [
+      "Cites 40 CFR 60 Subpart GG (stationary gas turbines) and Subpart IIII (CI engines) for a furniture spray booth -- irrelevant filler citations",
+      "Pre-construction permit timing stated correctly ('permit application prior to construction'); Title V correctly ruled out at 8 tpy; SPCC correctly distinguished from lacquer storage",
+      "Solvent-contaminated wipes exclusion missing; outdated CESQG term; speculative LQG escalation; 'annual waste minimization report' not a federal requirement",
+      "F001-F005 hedged appropriately; booth filters included as a waste stream"
+    ]
+  },
+  "B056": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 4,
+    "riskClassification": 5,
+    "completeness": 4,
+    "accuracy": 4,
+    "mean": 4.2,
+    "flags": [
+      "Full lifecycle covered including the most-missed element (closure site assessment with sampling and corrective-action determination); 30-day closure notice, 25-gallon spill-report trigger, and 3-year closure records all correct; no SPCC conflation",
+      "Class A/B/C operator training missing; 30-day walkthrough inspections and annual/multi-year equipment testing calendar not specified (only monthly release-detection checks)",
+      "NMAC citations mix old and current numbering (20.5.2/.3/.4 vs 20.5.101); invented 4-ft depth criterion for confined-space applicability"
+    ]
+  },
+  "B057": {
+    "obligationIdentification": 3,
+    "regulatoryMapping": 2,
+    "riskClassification": 3,
+    "completeness": 2,
+    "accuracy": 1,
+    "mean": 2.2,
+    "flags": [
+      "CATASTROPHIC: fabricates a '100 lbs for storage in a single process' RMP threshold to conclude the site is subject to Program 2/3 RMP -- chlorine's TQ is 2,500 lb, period; wrong 'applies' call on a designated does-not-apply threshold, via an invented number",
+      "PSM 1,500-lb not-applicable call missing entirely; EPCRA 302/Tier II ongoing obligations (TPQ 100 lb long crossed) missing; CAA 112(r)(1) and OSH Act 5(a)(1) general-duty backstops missing; HAZWOPER 1910.120(q) missing",
+      "Invented 15-minute notification rule (standard is 'immediately'); NRC notification folded into EPCRA rather than CERCLA 103; Program 1/2 upgrade direction confused",
+      "Gets right: RQ 10 lb crossed, 25 lb triggers, written follow-up, 1904.39 not triggered"
+    ]
+  },
+  "B058": {
+    "obligationIdentification": 5,
+    "regulatoryMapping": 4,
+    "riskClassification": 5,
+    "completeness": 4,
+    "accuracy": 4,
+    "mean": 4.4,
+    "flags": [
+      "Applicability reasoning is the ask and it is handled correctly: forms exempt on prior-calendar-year peak <=10 (not current headcount), 1904.39 still applies with correct 8h/24h windows, substantive standards apply at any size, non-applicable items retained with basis",
+      "Claims Colorado operates an OSHA state plan -- Colorado is a federal-OSHA state (no practical effect on the obligations listed, but a confident jurisdictional error)",
+      "Cites 1910.269(g)(1)(vi) (electric power generation) for combustible dust -- misattributed",
+      "BLS/OSHA written-notice override of the exemption and explicit January re-check trigger not mentioned"
+    ]
+  },
+  "B059": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 3,
+    "riskClassification": 4,
+    "completeness": 3,
+    "accuracy": 2,
+    "mean": 3.2,
+    "flags": [
+      "Asserts PE certification is 'required for this tank size/capacity' without any qualified-facility discussion -- at 2,995 gal aggregate the facility is Tier I self-certification eligible; this is the designated common wrong answer",
+      "Cites the defunct 660-gallon single-container threshold (removed from 40 CFR 112 in 2002); '110% of largest tank' containment is a state/industry figure, not the federal rule",
+      "Dubious/fabricated Montana AST registration regime (1,100-gal threshold, universal secondary containment) citing ARM 17.50.10, which is solid waste",
+      "Aggregation arithmetic correct including the 55-gal drums; ditch-to-creek navigable-waters nexus explicitly addressed; used-oil standards covered; SPCC annual discharge-prevention briefings missing"
+    ]
+  },
+  "B060": {
+    "obligationIdentification": 4,
+    "regulatoryMapping": 2,
+    "riskClassification": 4,
+    "completeness": 4,
+    "accuracy": 2,
+    "mean": 3.2,
+    "flags": [
+      "Fabricated permit construct: 'Title V Minor operating permit' citing 40 CFR 70 with an invented 5-tpy NC Title V-minor threshold -- hits the Title-V-at-8-tpy trap in garbled form",
+      "Asserts wood-furniture NESHAP subpart JJ applies to area sources 'regardless of emission levels' via a fabricated GACT rationale -- subpart JJ is major-source MACT; reference requires a hedged applicability check",
+      "Wrong stormwater permit number (NCG010000 is NC construction stormwater, not industrial); TRI applicability derived from total VOC tonnage rather than per-chemical thresholds; Tier II framed as an aggregate flammable-liquids threshold",
+      "Otherwise broad and well-cadenced: F003/F005 named, 1910.107/NFPA 33 booth, 1910.106 with Class I electrical areas, HazCom, PPE/respirators, EAP/FPP; wipes exclusion and filters-as-waste missing"
+    ]
+  }
+}

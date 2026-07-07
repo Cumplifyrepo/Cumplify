@@ -1,0 +1,11 @@
+{
+  "taskId": "legal-ledger-023",
+  "modelId": "moonshot.kimi-k2-thinking",
+  "prompt": "Company profile: Rural water utility near Cullman, Alabama; 20 employees. Situation: The treatment plant stores chlorine in 150-pound cylinders, typically 1,200 pounds total on site. Last night a valve failure released an estimated 25 pounds of chlorine gas over about an hour before operators isolated the cylinder; no injuries, but a nearby road was briefly closed. Ask: Identify the compliance obligations this situation creates or affects for the compliance-obligations register — including reporting duties already triggered and any thresholds NOT crossed. For each obligation: state the requirement, its source, its applicability to this company, the ISO clause it maps to (ISO 14001 6.1.3 / ISO 45001 6.1.3), and how and when compliance should be evaluated (9.1.2).",
+  "response": "",
+  "inputTokens": 175,
+  "outputTokens": 8192,
+  "latencyMs": 57705,
+  "costUsd": 0.020585,
+  "truncated": true
+}

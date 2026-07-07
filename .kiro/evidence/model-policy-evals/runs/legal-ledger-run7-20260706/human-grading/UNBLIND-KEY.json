@@ -1,0 +1,452 @@
+{
+ "B001": {
+  "file": "legal-ledger-003-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-003"
+ },
+ "B002": {
+  "file": "legal-ledger-015-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-015"
+ },
+ "B003": {
+  "file": "legal-ledger-012-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-012"
+ },
+ "B004": {
+  "file": "legal-ledger-008-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-008"
+ },
+ "B005": {
+  "file": "legal-ledger-001-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-001"
+ },
+ "B006": {
+  "file": "legal-ledger-016-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-016"
+ },
+ "B007": {
+  "file": "legal-ledger-007-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-007"
+ },
+ "B008": {
+  "file": "legal-ledger-021-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-021"
+ },
+ "B009": {
+  "file": "legal-ledger-027-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-027"
+ },
+ "B010": {
+  "file": "legal-ledger-006-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-006"
+ },
+ "B011": {
+  "file": "legal-ledger-008-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-008"
+ },
+ "B012": {
+  "file": "legal-ledger-022-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-022"
+ },
+ "B013": {
+  "file": "legal-ledger-026-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-026"
+ },
+ "B014": {
+  "file": "legal-ledger-030-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-030"
+ },
+ "B015": {
+  "file": "legal-ledger-010-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-010"
+ },
+ "B016": {
+  "file": "legal-ledger-004-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-004"
+ },
+ "B017": {
+  "file": "legal-ledger-020-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-020"
+ },
+ "B018": {
+  "file": "legal-ledger-013-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-013"
+ },
+ "B019": {
+  "file": "legal-ledger-003-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-003"
+ },
+ "B020": {
+  "file": "legal-ledger-020-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-020"
+ },
+ "B021": {
+  "file": "legal-ledger-002-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-002"
+ },
+ "B022": {
+  "file": "legal-ledger-018-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-018"
+ },
+ "B023": {
+  "file": "legal-ledger-014-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-014"
+ },
+ "B024": {
+  "file": "legal-ledger-021-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-021"
+ },
+ "B025": {
+  "file": "legal-ledger-029-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-029"
+ },
+ "B026": {
+  "file": "legal-ledger-026-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-026"
+ },
+ "B027": {
+  "file": "legal-ledger-007-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-007"
+ },
+ "B028": {
+  "file": "legal-ledger-005-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-005"
+ },
+ "B029": {
+  "file": "legal-ledger-011-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-011"
+ },
+ "B030": {
+  "file": "legal-ledger-009-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-009"
+ },
+ "B031": {
+  "file": "legal-ledger-021-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-021"
+ },
+ "B032": {
+  "file": "legal-ledger-012-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-012"
+ },
+ "B033": {
+  "file": "legal-ledger-018-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-018"
+ },
+ "B034": {
+  "file": "legal-ledger-001-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-001"
+ },
+ "B035": {
+  "file": "legal-ledger-005-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-005"
+ },
+ "B036": {
+  "file": "legal-ledger-029-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-029"
+ },
+ "B037": {
+  "file": "legal-ledger-005-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-005"
+ },
+ "B038": {
+  "file": "legal-ledger-003-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-003"
+ },
+ "B039": {
+  "file": "legal-ledger-002-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-002"
+ },
+ "B040": {
+  "file": "legal-ledger-025-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-025"
+ },
+ "B041": {
+  "file": "legal-ledger-001-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-001"
+ },
+ "B042": {
+  "file": "legal-ledger-024-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-024"
+ },
+ "B043": {
+  "file": "legal-ledger-006-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-006"
+ },
+ "B044": {
+  "file": "legal-ledger-011-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-011"
+ },
+ "B045": {
+  "file": "legal-ledger-007-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-007"
+ },
+ "B046": {
+  "file": "legal-ledger-015-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-015"
+ },
+ "B047": {
+  "file": "legal-ledger-019-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-019"
+ },
+ "B048": {
+  "file": "legal-ledger-023-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-023"
+ },
+ "B049": {
+  "file": "legal-ledger-013-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-013"
+ },
+ "B050": {
+  "file": "legal-ledger-013-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-013"
+ },
+ "B051": {
+  "file": "legal-ledger-028-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-028"
+ },
+ "B052": {
+  "file": "legal-ledger-006-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-006"
+ },
+ "B053": {
+  "file": "legal-ledger-018-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-018"
+ },
+ "B054": {
+  "file": "legal-ledger-009-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-009"
+ },
+ "B055": {
+  "file": "legal-ledger-028-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-028"
+ },
+ "B056": {
+  "file": "legal-ledger-022-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-022"
+ },
+ "B057": {
+  "file": "legal-ledger-023-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-023"
+ },
+ "B058": {
+  "file": "legal-ledger-008-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-008"
+ },
+ "B059": {
+  "file": "legal-ledger-014-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-014"
+ },
+ "B060": {
+  "file": "legal-ledger-028-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-028"
+ },
+ "B061": {
+  "file": "legal-ledger-019-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-019"
+ },
+ "B062": {
+  "file": "legal-ledger-004-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-004"
+ },
+ "B063": {
+  "file": "legal-ledger-022-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-022"
+ },
+ "B064": {
+  "file": "legal-ledger-017-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-017"
+ },
+ "B065": {
+  "file": "legal-ledger-015-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-015"
+ },
+ "B066": {
+  "file": "legal-ledger-024-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-024"
+ },
+ "B067": {
+  "file": "legal-ledger-011-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-011"
+ },
+ "B068": {
+  "file": "legal-ledger-004-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-004"
+ },
+ "B069": {
+  "file": "legal-ledger-016-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-016"
+ },
+ "B070": {
+  "file": "legal-ledger-030-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-030"
+ },
+ "B071": {
+  "file": "legal-ledger-012-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-012"
+ },
+ "B072": {
+  "file": "legal-ledger-030-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-030"
+ },
+ "B073": {
+  "file": "legal-ledger-017-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-017"
+ },
+ "B074": {
+  "file": "legal-ledger-010-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-010"
+ },
+ "B075": {
+  "file": "legal-ledger-020-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-020"
+ },
+ "B076": {
+  "file": "legal-ledger-017-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-017"
+ },
+ "B077": {
+  "file": "legal-ledger-023-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-023"
+ },
+ "B078": {
+  "file": "legal-ledger-014-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-014"
+ },
+ "B079": {
+  "file": "legal-ledger-027-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-027"
+ },
+ "B080": {
+  "file": "legal-ledger-019-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-019"
+ },
+ "B081": {
+  "file": "legal-ledger-025-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-025"
+ },
+ "B082": {
+  "file": "legal-ledger-026-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-026"
+ },
+ "B083": {
+  "file": "legal-ledger-029-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-029"
+ },
+ "B084": {
+  "file": "legal-ledger-024-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-024"
+ },
+ "B085": {
+  "file": "legal-ledger-016-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-016"
+ },
+ "B086": {
+  "file": "legal-ledger-009-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-009"
+ },
+ "B087": {
+  "file": "legal-ledger-025-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-025"
+ },
+ "B088": {
+  "file": "legal-ledger-027-zai.glm-5.json",
+  "model": "zai.glm-5",
+  "taskId": "legal-ledger-027"
+ },
+ "B089": {
+  "file": "legal-ledger-002-moonshot.kimi-k2-thinking.json",
+  "model": "moonshot.kimi-k2-thinking",
+  "taskId": "legal-ledger-002"
+ },
+ "B090": {
+  "file": "legal-ledger-010-deepseek.v3.2.json",
+  "model": "deepseek.v3.2",
+  "taskId": "legal-ledger-010"
+ }
+}
