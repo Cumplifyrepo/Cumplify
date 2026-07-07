@@ -186,8 +186,8 @@
 **Depends on:** Task 9 (Register complete)
 
 ### Deliverables
-- [ ] `.kiro/steering/15-model-policy.md` — amended draft reflecting: (a) owner policy amendment (lowest-$/task that passes eval bar), (b) specific model assignments from evals, (c) Register as source of truth, (d) Nova Premier v1 removed (LEGACY)
-- [ ] Flagged REQUIRES-HUMAN for owner ratification
+- [x] `.kiro/steering/15-model-policy.md` — amended draft reflecting: (a) owner policy amendment (lowest-$/task that passes eval bar), (b) specific model assignments from evals, (c) Register as source of truth, (d) Nova Premier v1 removed (LEGACY)
+- [x] Flagged REQUIRES-HUMAN for owner ratification
 - [ ] **[OWNER]** ratifies the new model ladder (sign-off recorded)
 
 ### Acceptance
@@ -202,9 +202,9 @@
 **Depends on:** Task 9 (Register establishes the cadence)
 
 ### Deliverables
-- [ ] `services/model-evals/runbooks/quarterly-revalidation.md` — process for all 8 seats: check expiry → estimate → approve → run → grade → update Register
-- [ ] `services/model-evals/runbooks/legal-ledger-grading.md` — human-grading runbook per design §2.2
-- [ ] Both runbooks reference the CLI commands, evidence paths, and blind-grading protocol
+- [x] `services/model-evals/runbooks/quarterly-revalidation.md` — process for all 8 seats: check expiry → estimate → approve → run → grade → update Register
+- [x] `services/model-evals/runbooks/legal-ledger-grading.md` — human-grading runbook per design §2.2
+- [x] Both runbooks reference the CLI commands, evidence paths, and blind-grading protocol
 
 ### Acceptance
 - REVAL-1..4 satisfied

@@ -1,0 +1,37 @@
+# Model Policy Evals — Tasks 10 + 11 Evidence Log
+
+**Timestamp:** 2026-07-07T05:30:00Z
+**Spec:** model-policy-evals
+**Tasks:** 10 (Steering 15 amendment) + 11 (Runbooks)
+
+## Task 10: Steering 15 Amendment
+- .kiro/steering/15-model-policy.md rewritten
+- RATIFICATION BLOCK at top: lists what owner approves (ladder, micro bar, 3
+  provisionals, LegalLedger non-assignment, Anthropic removal)
+- Flagged REQUIRES-HUMAN: does not govern builds until sign-off recorded
+- Content: policy statement, Register as source of truth (no duplicated figures),
+  removed models (Nova Premier, Claude Sonnet), rules (1-6), quality bars table,
+  cost discipline (margin mandate)
+- One-door rule (12-token-metering) preserved unchanged
+- Owner ratification: PENDING (Task 10 checkbox #3 remains unchecked)
+
+## Task 11: Runbooks
+1. quarterly-revalidation.md:
+   - 9-step process: expiry check → new-model discovery → price refresh →
+     estimate+approve → run → score+verify → Register update → trace verify → commit
+   - Per-seat notes table (grading type, re-validation specifics)
+   - Register trace script step (truth incident #8 lesson)
+   - Explicitly runbook-initiated for ALL seats (no Scheduler per DREV-1)
+
+2. legal-ledger-grading.md:
+   - Blind protocol: deterministic shuffle (seed = commit hash), key sequestered
+     until scores locked
+   - 5-dimension scoring (1-5): obligation ID, regulatory mapping, risk class,
+     completeness, accuracy
+   - Pass threshold: mean >= 4.0, no dimension at 1
+   - Failure-mode checklist (5 modes from Task 8 verdict): fabricated thresholds,
+     jurisdiction misattribution, threshold collapse, phantom clauses, obligation omission
+   - Retrieval-grounded re-eval gate documented (spec-4 prerequisite)
+
+## Exit
+Exit code: 0
