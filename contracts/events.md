@@ -25,6 +25,7 @@ interface CumplifyEvent<T = Record<string, unknown>> {
   module: string;         // M1..M13
   clauseRef: string;      // ISO clause string (e.g., "ISO 9001 10.2")
   standard: 'ISO9001' | 'ISO14001' | 'ISO45001';
+  auditTrail: boolean;    // true = routes to audit-sink (R-3); stamped by publisher from registry
   payload: T;             // domain-specific
 }
 ```
@@ -89,3 +90,98 @@ API call (task 5, 2026-07-04). No fallback in effect — the primary pattern is 
 Any future event whose detail-type ends with one of the four suffixes will automatically route to
 the audit-sink FIFO queue. This is intentional: all state-transition events (approved, closed,
 raised, evaluated) belong in the immutable audit trail.
+
+---
+
+## New Event Registrations (spec 3: api-core)
+
+| Domain | Events |
+|--------|--------|
+| Document | `Document.DraftCreated`, `Document.SubmittedForApproval` |
+| CAPA | `CAPA.RootCauseRecorded`, `CAPA.OutputDisposed` |
+| Audit | `Audit.ProgrammeCreated`, `Audit.ChecklistGenerated` |
+| Risk | `Risk.TreatmentAdded` |
+| Records | `Record.RetentionPolicySet` |
+
+---
+
+## Trail Designation (OQ-5, ratified 2026-07-07)
+
+> **Rule:** `auditTrail: true` = domain state transition that MUST be sealed
+> in the immutable audit trail. `auditTrail: false` = advisory/operational
+> event that informs downstream consumers but is not independently sealed.
+> The publisher stamps this field from a compile-time registry map; publishing
+> an unregistered detailType throws. R-3 pattern: `{ "detail": { "auditTrail": [true] } }`.
+
+### Seed Taxonomy Trail Designations (46 events)
+
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `Document.Approved` | true | State transition: document enters approved state |
+| `Document.Published` | true | State transition: controlled distribution begins |
+| `Policy.Updated` | true | State transition: policy text changed |
+| `Scope.Changed` | true | State transition: IMS scope boundaries altered |
+| `NC.Raised` | true | State transition: nonconformity entered into system |
+| `CAPA.Opened` | true | State transition: corrective action initiated |
+| `CAPA.Closed` | true | State transition: corrective action completed |
+| `CAPA.EffectivenessVerified` | true | State transition: effectiveness confirmed |
+| `CAPA.ActionRequiresDocChange` | true | State transition: triggers document revision |
+| `Audit.Scheduled` | true | State transition: audit committed to calendar |
+| `Audit.FindingRaised` | true | State transition: finding entered |
+| `Audit.Completed` | true | State transition: audit concluded |
+| `Readiness.Scored` | false | Advisory: agent-computed score, not a controlled decision |
+| `Record.Registered` | true | State transition: record enters retention control |
+| `Calibration.Due` | false | Advisory: upcoming deadline notification |
+| `Calibration.Recorded` | true | State transition: calibration evidence captured |
+| `AuditEvent.Appended` | true | The audit event itself (self-referential; sealed by definition) |
+| `Risk.Created` | true | State transition: risk entered into register |
+| `Risk.Escalated` | true | State transition: risk rating elevated |
+| `Change.Planned` | true | State transition: change plan committed |
+| `Context.Updated` | true | State transition: organizational context changed |
+| `InterestedParty.Identified` | true | State transition: stakeholder registered |
+| `Communication.Planned` | true | State transition: communication plan committed |
+| `Objectives.Updated` | true | State transition: objectives changed |
+| `Objectives.OffTrack` | false | Advisory: triggers review, not itself a controlled decision |
+| `Obligation.Added` | true | State transition: legal requirement registered |
+| `Compliance.Evaluated` | true | State transition: compliance status assessed |
+| `Compliance.NonCompliance` | true | State transition: non-compliance finding |
+| `Obligation.ReviewDue` | false | Advisory: upcoming deadline notification |
+| `Aspect.SignificantImpact` | true | State transition: aspect significance determined |
+| `Enviro.MonitoringLogged` | true | State transition: environmental measurement recorded |
+| `EnvIncident.Reported` | true | State transition: environmental incident entered |
+| `EnvEmergency.PlanUpdated` | true | State transition: emergency plan revised |
+| `Hazard.Identified` | true | State transition: hazard entered into register |
+| `Hazard.RiskEscalated` | true | State transition: hazard risk elevated |
+| `Incident.Reported` | true | State transition: OH&S incident entered |
+| `Worker.ConsultationLogged` | true | State transition: worker participation recorded |
+| `Safety.MetricLogged` | true | State transition: safety measurement recorded |
+| `OHSEmergency.PlanUpdated` | true | State transition: OH&S emergency plan revised |
+| `Supplier.Onboarded` | true | State transition: supplier approved |
+| `Supplier.Evaluated` | true | State transition: supplier assessment completed |
+| `Supplier.NonConformance` | true | State transition: supplier NC raised |
+| `Training.Recorded` | true | State transition: training evidence captured |
+| `Training.Expiring` | false | Advisory: upcoming expiry notification |
+| `Competence.GapIdentified` | true | State transition: gap assessment result |
+| `Awareness.Delivered` | true | State transition: awareness campaign completed |
+
+### Spec 3 New Registrations Trail Designations
+
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `Document.DraftCreated` | true | State transition: draft entered into system (C-3 compliance) |
+| `Document.SubmittedForApproval` | true | State transition: document enters review workflow |
+| `CAPA.RootCauseRecorded` | true | State transition: root-cause analysis phase completed |
+| `CAPA.OutputDisposed` | true | State transition: nonconforming output disposition decided (8.7) |
+| `Audit.ProgrammeCreated` | true | State transition: audit programme established (9.2.2) |
+| `Audit.ChecklistGenerated` | false | Advisory: agent-generated checklist, not a controlled decision |
+| `Risk.TreatmentAdded` | true | State transition: risk treatment plan committed (6.1) |
+| `Record.RetentionPolicySet` | true | State transition: retention rules established (7.5.3) |
+
+### Management Review Events (M11, for completeness)
+
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `ManagementReview.ActionAudit` | true | State transition: review action assigned |
+| `ManagementReview.ObjectivesSet` | true | State transition: objectives committed from review |
+| `ManagementReview.ContextInput` | true | State transition: context input gathered |
+| `Review.Completed` | true | State transition: management review concluded |

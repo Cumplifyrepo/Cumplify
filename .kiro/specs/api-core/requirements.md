@@ -15,7 +15,7 @@
 
 **Depends on:** Spec 1 (`platform-foundation`), Spec 2 (`eventing-backbone`), Spec 5 (`immutable-trail`)
 **P0-GATE CARRY-1:** This spec deploys the tenant-scoped runtime data role.
-**Revision:** R3 — 7 findings resolved (F-1 API-2 stale pool ref, F-2 auth-mode mechanism-neutrality, F-3 ACC-1 RDS chain, F-4 RDS-1 M4 coverage, F-5 AUTH-6 reword, F-6 SCHEMA-5 trust rule, F-7 RDS-4 criteria)
+**Revision:** R4 — by ratification (OQ-1 AWS_LAMBDA resolved; API-1/API-2/SCHEMA-2 supersession notes removed; AUTH-7 option (a) is now unconditional)
 
 ---
 
@@ -27,7 +27,7 @@
 | C-2 | IAM + authorizer code = REQUIRES-HUMAN throughout. Every diff flagged for owner review before merge/deploy. |
 | C-3 | Every mutation MUST name its audit event in design BEFORE implementation (04-immutability build rule). |
 | C-4 | Events MUST be registered in `contracts/events.md` BEFORE publishing (append-only registry rule). |
-| C-5 | A resolver that reads/writes tenant data without asserting `tenantId` from the request's verified authorization context is a security defect (03-auth-modes anti-pattern). The mechanism delivering tenantId is resolved by AUTH-7. |
+| C-5 | A resolver that reads/writes tenant data without asserting `tenantId` from `resolverContext` is a security defect (03-auth-modes anti-pattern). |
 | C-6 | AppSync subscriptions MUST verify tenant claim before delivering (01-tenancy-rules, 16-identity-boundaries). |
 | C-7 | Cross-tenant denial integration test = mandatory for every data path (01-tenancy-rules). |
 | C-8 | The authorizer reads the ID token (not access token) — tenantId is in the ID token only (01-tenancy-rules, 16-identity-boundaries). |
@@ -38,8 +38,8 @@
 
 | ID | Requirement (EARS) |
 |----|-------------------|
-| API-1 | **The ApiStack shall** deploy an AppSync GraphQL API with two auth modes: `AMAZON_COGNITO_USER_POOLS` (user-facing, default) and `AWS_IAM` (agent/service). Note: the auth-mode list is non-normative pending AUTH-7 resolution — if option (a) `AWS_LAMBDA` is chosen, the user-facing mode becomes `AWS_LAMBDA` instead of `AMAZON_COGNITO_USER_POOLS`. |
-| API-2 | **The ApiStack shall** deploy a Lambda authorizer that: (a) validates JWT from Pool B or Pool C, (b) extracts `tenantId`, `role`, `poolClass` from the ID token claims, (c) returns `resolverContext` with tenantId, role, permissions, and entitlement stamp. Auth-mode mechanics resolved by AUTH-7; this requirement assumes the architect-recommended AWS_LAMBDA path but is superseded by AUTH-7 if option (b) is chosen. |
+| API-1 | **The ApiStack shall** deploy an AppSync GraphQL API with two auth modes: `AWS_LAMBDA` (user-facing, default) and `AWS_IAM` (agent/service). |
+| API-2 | **The ApiStack shall** deploy a Lambda authorizer that: (a) validates JWT from Pool B or Pool C, (b) extracts `tenantId`, `role`, `poolClass` from the ID token claims, (c) returns `resolverContext` with tenantId, role, permissions, and entitlement stamp. |
 | API-3 | **The entitlement stamp shall** include: plan tier (Launch/Pro/Enterprise), seat count, feature flags. Billing enforcement (blocking on exhausted credits) is P2 — this spec stamps the context; it does not enforce limits. |
 | API-4 | **The ApiStack shall** join CumplifyStage and declare cross-stack dependencies on DataStack, IdentityStack, SecurityStack, EventingStack. |
 | API-5 | **The ApiStack shall** associate the existing WAFv2 REGIONAL WebACL (SecurityStack) with the AppSync API endpoint. |
@@ -57,7 +57,7 @@
 | AUTH-4 | **The authorizer shall** REJECT (401) any token where `poolClass` is `internal` (Pool A). Only `tenant-admin` (Pool B) and `tenant-user` (Pool C) are accepted on this surface (16-identity-boundaries Layer 1). |
 | AUTH-5 | **[REQUIRES-HUMAN]** The authorizer code and its IAM policies require owner review before merge. |
 | AUTH-6 | **A negative-proof readback test shall** confirm: synthetic JWTs that are (a) issued by Pool A (`cumplify-internal`), (b) expired, or (c) missing/empty `custom:tenantId` are each REJECTED with a 401 response. Cross-tenant access with a valid token is proven separately by ACC-2 (IAM) and ACC-5 (RLS) — not duplicated here. |
-| AUTH-7 | **[REQUIRES-HUMAN — design decision]** The user-facing auth mechanism is resolved under REQUIRES-HUMAN: either (a) `AWS_LAMBDA` mode — a Lambda authorizer validates Pool B/C ID tokens via JWKS, performs ABAC, returns `resolverContext` including entitlement stamp [architect-recommended: satisfies v7 row 3 "authorizer + entitlement stamp", C.1, steering 01, and reuse for the Part 24.1 API Gateway surface], or (b) `AMAZON_COGNITO_USER_POOLS` mode with tenant context from ID-token claims and entitlement stamped via PreTokenGeneration. **Whichever is chosen:** Pool-A rejection happens before any role logic; `tenantId` + entitlement reach every resolver via ONE mechanism; the RLS session variable (RDS-3) is set from that same mechanism. |
+| AUTH-7 | **[RESOLVED — owner-ratified 2026-07-07]** The user-facing auth mechanism is `AWS_LAMBDA` mode: a Lambda authorizer validates Pool B/C ID tokens via JWKS, performs ABAC, returns `resolverContext` including entitlement stamp. Pool-A rejection happens before any role logic; `tenantId` + entitlement reach every resolver via `resolverContext`; the RLS session variable (RDS-3) is set from `resolverContext.tenantId`. |
 
 ---
 
@@ -78,7 +78,7 @@
 |----|-------------------|
 | RDS-1 | **This spec shall** own schema creation and migration for all M1–M5 RDS tables per the module-spec "Core data entities" lists: **M1** (documents, document_versions, document_approvals, document_distribution, policies, ims_scope), **M2** (nonconformities, root_cause_analyses, corrective_actions, capa_effectiveness_checks, nonconforming_outputs), **M3** (audit_programmes, audits, audit_checklists, audit_findings, audit_readiness_scores), **M4** (records, retention_policies, measuring_resources, calibration_records), **M5** (risks, risk_treatments, change_plans, risk_register_view). Every table carries `tenant_id` + standard audit columns (`created_at`, `created_by`, `updated_at`, `version`). |
 | RDS-2 | **Row-Level Security (RLS) policies shall** be applied to every M1–M5 base table (23 tables), keyed to the session variable set from the request's verified authorization context (AUTH-7 mechanism). A query from tenant-A's session MUST return zero rows from tenant-B's data — enforced at the database layer, not application logic. Note: `risk_register_view` (M5) is a PostgreSQL materialized view; RLS cannot be applied to materialized views. Design must specify its tenant-isolation mechanism explicitly (e.g., `security_invoker` view over RLS-protected base tables, or revoked direct access + tenant-filtered accessor function) with its own ACC-5-style proof. |
-| RDS-3 | **The session-variable wiring mechanism shall** set `app.tenant_id` (or equivalent) on every database session BEFORE any query executes. The resolver Lambda sets this from the request's verified authorization context (the mechanism delivering tenantId is resolved by AUTH-7). |
+| RDS-3 | **The session-variable wiring mechanism shall** set `app.tenant_id` (or equivalent) on every database session BEFORE any query executes. The resolver Lambda sets this from `resolverContext.tenantId` via parameterized `select set_config('app.tenant_id', :tenantId, true)` inside the Data API transaction. |
 | RDS-4 | **Lambda-to-Aurora connectivity** method shall be decided in design. Candidates: (a) RDS Data API (serverless, no VPC attachment needed for Lambda, connection pooling built-in), (b) RDS Proxy (connection pooling, VPC-attached Lambdas), (c) direct VPC connection. Design must evaluate against: cold-start impact, connection-pool exhaustion at scale, RLS session-variable support, cost, and specifically: (i) RDS Proxy is a standing cost → Part 27 estimate mandatory before selection; (ii) RLS session variables cause session pinning under RDS Proxy multiplexing and are transaction-scoped under Data API (`SET LOCAL` per transaction) — the chosen connectivity MUST demonstrably support per-request tenant context; (iii) Aurora 0-ACU resume (~15 s) → client/Lambda timeout budgets must accommodate. |
 | RDS-5 | **An RLS acceptance test (ACC-5) shall** prove: a resolver Lambda executing a query with tenant-A session context returns tenant-A rows; the same query with tenant-B context returns zero rows from tenant-A's data. Captured verbatim. |
 | RDS-6 | **Schema migrations shall** be managed by a committed migration tool (design decides: raw SQL files, or a migration framework). Migrations are versioned, idempotent, and run as part of the deploy pipeline (not ad-hoc). |
@@ -90,8 +90,8 @@
 | ID | Requirement (EARS) |
 |----|-------------------|
 | SCHEMA-1 | **The GraphQL schema shall** define types, queries, and mutations for M1 (Document Studio), M2 (CAPA), M3 (Audit Studio), M4 (Records Management), M5 (Risk Management) per the module-spec data models. |
-| SCHEMA-2 | **Every mutation shall** be annotated with the appropriate user-facing auth directive per AUTH-7: `@aws_lambda` if option (a) is chosen, `@aws_cognito_user_pools` if option (b) is chosen. Agent-path mutations (appendAuditEvent, publishAgentMessage) annotate `@aws_iam` regardless of AUTH-7 outcome. |
-| SCHEMA-3 | **Queries reading tenant data shall** include a resolver that asserts `tenantId` from the request's verified authorization context (per AUTH-7 mechanism) before accessing any data store. |
+| SCHEMA-2 | **Every user-facing mutation shall** be annotated with `@aws_lambda`. Agent-path mutations (appendAuditEvent, publish*Event) annotate `@aws_iam` regardless. |
+| SCHEMA-3 | **Queries reading tenant data shall** include a resolver that asserts `tenantId` from `$ctx.identity.resolverContext.tenantId` before accessing any data store. |
 | SCHEMA-4 | **Subscriptions (if any for M1–M5) shall** verify tenant claim in the subscription resolver before delivering events (C-6). Design must determine which M1–M5 operations require real-time subscriptions by consulting the module-spec — do not assume. |
 | SCHEMA-5 | **Client-supplied `tenantId` arguments shall** NEVER be trusted. Resolvers MUST overwrite or validate any client-provided tenantId against the verified claim from the authorization context. A resolver that uses a client-supplied tenantId without this check is a security defect (C-5 explicit corollary). |
 
@@ -125,7 +125,7 @@
 |---|-----------|
 | ACC-1 | **END-TO-END MUTATION-TO-SEALED-EVENT:** A real GraphQL mutation (via AppSync) → resolver writes domain entity to RDS (RLS enforced) → optionally writes metadata item to CumplifyCore DynamoDB → publishes event to cumplify-events → audit-sink consumer → chained DDB audit item → WORM sealed S3 object. Each hop evidenced. |
 | ACC-2 | **CARRY-1 MATRIX GREEN:** `simulate-principal-policy` against the tenant-scoped data role: cross-tenant GetItem → denied; same-tenant GetItem → allowed; cross-tenant PutItem → denied; same-tenant PutItem → allowed. All captured verbatim. |
-| ACC-3 | **AUTHORIZER NEGATIVE PROOF:** Synthetic JWTs — (a) Pool A issued, (b) expired, (c) missing/empty `custom:tenantId` — each result in AppSync returning 401/Unauthorized. Captured verbatim. |
+| ACC-3 | **AUTHORIZER NEGATIVE PROOF:** Four test tokens — (a) real Pool-A token (valid signature from Pool A JWKS, correct claims — tests Layer-1 pool rejection, not just signature checking), (b) expired token, (c) missing/empty `custom:tenantId`, (d) bad signature — each result in AppSync returning 401/Unauthorized. Captured verbatim. |
 | ACC-4 | **The daily chain-verification job (spec 5) runs green** on the audit events generated by this spec's mutations (the trail is untampered). |
 | ACC-5 | **RLS TENANT ISOLATION:** A resolver query with tenant-A session context returns tenant-A rows; the same query with tenant-B context returns zero rows from tenant-A's data. Captured verbatim. |
 
