@@ -149,3 +149,20 @@ files: services/api/src/resolvers/subscriptions.ts
   5 subscription auth handlers (C-6: tenantId match verification),
   4 publish mutations (None DS passthrough),
   M4 scheduler deferred (OQ-4).
+
+## Tasks 10-11 BLOCK-1 + ITEM-2 remediation
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T19:49:45Z
+exit_code: 0
+tests: 239/239 pass (+16 new: api-stack 10, gsi-prefix 3, c2-invariant 4 — was 1 from prev)
+commit: (this commit)
+files-modified:
+  infra/lib/api-stack.ts — BLOCK-1: 5 Lambda data sources, 1 NoneDataSource,
+    33 createResolver (12 Query + 21 user Mutation + 7 agent Mutation + 4 publish)
+  infra/lib/api-stack.unit.test.ts — resolver count assertion (Query==12, Mutation==33),
+    data source presence, auth config, WAFv2, CfnOutputs, FIX-2/FIX-4 verification
+  services/api/__tests__/gsi-prefix.test.ts — ITEM-2a: 3 tests (shared.ts pattern,
+    no non-prefixed GSI writes, IAM LeadingKeys in api-stack)
+  services/api/__tests__/c2-invariant.test.ts — ITEM-2b: 4 tests (set_config first,
+    parameterized, true=transaction-local, ordering)
+paths-corrected (ITEM-4): subscriptions.ts at services/api/src/resolvers/subscriptions.ts

@@ -354,6 +354,105 @@ export class ApiStack extends cdk.Stack {
       }));
     }
 
+    // ─── AppSync Data Sources & Resolver Attachments (BLOCK-1) ────────────────
+
+    // Lambda data sources — one per module
+    const m1DS = api.addLambdaDataSource('M1DataSource', resolverFns[0]);
+    const m2DS = api.addLambdaDataSource('M2DataSource', resolverFns[1]);
+    const m3DS = api.addLambdaDataSource('M3DataSource', resolverFns[2]);
+    const m4DS = api.addLambdaDataSource('M4DataSource', resolverFns[3]);
+    const m5DS = api.addLambdaDataSource('M5DataSource', resolverFns[4]);
+
+    // None data source — for subscription publish mutations (passthrough)
+    const noneDS = api.addNoneDataSource('NoneDataSource');
+
+    // Subscription Lambda data source (tenant-claim verification, C-6)
+    // Reuses the M1 Lambda for simplicity — subscriptions.ts is bundled separately
+    // but for now subscription auth is a VTL passthrough to the Lambda authorizer cache.
+    // The actual C-6 check is in the @aws_lambda auth on subscription fields.
+
+    // ─── Query resolvers ─────────────────────────────────────────────────────
+    // M1
+    m1DS.createResolver('GetDocument', { typeName: 'Query', fieldName: 'getDocument' });
+    m1DS.createResolver('ListDocuments', { typeName: 'Query', fieldName: 'listDocuments' });
+    m1DS.createResolver('GetDocumentVersionDiff', { typeName: 'Query', fieldName: 'getDocumentVersionDiff' });
+    // M2
+    m2DS.createResolver('GetNonconformity', { typeName: 'Query', fieldName: 'getNonconformity' });
+    m2DS.createResolver('ListOpenCAPAs', { typeName: 'Query', fieldName: 'listOpenCAPAs' });
+    // M3
+    m3DS.createResolver('GetAudit', { typeName: 'Query', fieldName: 'getAudit' });
+    m3DS.createResolver('GetAuditReadiness', { typeName: 'Query', fieldName: 'getAuditReadiness' });
+    // M4
+    m4DS.createResolver('GetRecord', { typeName: 'Query', fieldName: 'getRecord' });
+    m4DS.createResolver('ListCalibrationsDue', { typeName: 'Query', fieldName: 'listCalibrationsDue' });
+    m4DS.createResolver('GetAuditTrail', { typeName: 'Query', fieldName: 'getAuditTrail' });
+    // M5
+    m5DS.createResolver('GetRisk', { typeName: 'Query', fieldName: 'getRisk' });
+    m5DS.createResolver('GetCrossRegisterRiskView', { typeName: 'Query', fieldName: 'getCrossRegisterRiskView' });
+
+    // ─── Mutation resolvers (user-facing, @aws_lambda) ───────────────────────
+    // M1
+    m1DS.createResolver('CreateDocumentDraft', { typeName: 'Mutation', fieldName: 'createDocumentDraft' });
+    m1DS.createResolver('SubmitDocumentForApproval', { typeName: 'Mutation', fieldName: 'submitDocumentForApproval' });
+    m1DS.createResolver('ApproveDocumentVersion', { typeName: 'Mutation', fieldName: 'approveDocumentVersion' });
+    m1DS.createResolver('PublishControlledDocument', { typeName: 'Mutation', fieldName: 'publishControlledDocument' });
+    m1DS.createResolver('UpdatePolicy', { typeName: 'Mutation', fieldName: 'updatePolicy' });
+    m1DS.createResolver('UpdateImsScope', { typeName: 'Mutation', fieldName: 'updateImsScope' });
+    // M2
+    m2DS.createResolver('RaiseNonconformity', { typeName: 'Mutation', fieldName: 'raiseNonconformity' });
+    m2DS.createResolver('RecordRootCause', { typeName: 'Mutation', fieldName: 'recordRootCause' });
+    m2DS.createResolver('CreateCorrectiveAction', { typeName: 'Mutation', fieldName: 'createCorrectiveAction' });
+    m2DS.createResolver('CloseCapa', { typeName: 'Mutation', fieldName: 'closeCapa' });
+    m2DS.createResolver('VerifyEffectiveness', { typeName: 'Mutation', fieldName: 'verifyEffectiveness' });
+    m2DS.createResolver('DisposeNonconformingOutput', { typeName: 'Mutation', fieldName: 'disposeNonconformingOutput' });
+    // M3
+    m3DS.createResolver('CreateAuditProgramme', { typeName: 'Mutation', fieldName: 'createAuditProgramme' });
+    m3DS.createResolver('ScheduleAudit', { typeName: 'Mutation', fieldName: 'scheduleAudit' });
+    m3DS.createResolver('RecordFinding', { typeName: 'Mutation', fieldName: 'recordFinding' });
+    m3DS.createResolver('CompleteAudit', { typeName: 'Mutation', fieldName: 'completeAudit' });
+    // M4
+    m4DS.createResolver('RegisterRecord', { typeName: 'Mutation', fieldName: 'registerRecord' });
+    m4DS.createResolver('RecordCalibration', { typeName: 'Mutation', fieldName: 'recordCalibration' });
+    m4DS.createResolver('CreateRetentionPolicy', { typeName: 'Mutation', fieldName: 'createRetentionPolicy' });
+    // M5
+    m5DS.createResolver('CreateRisk', { typeName: 'Mutation', fieldName: 'createRisk' });
+    m5DS.createResolver('AddRiskTreatment', { typeName: 'Mutation', fieldName: 'addRiskTreatment' });
+    m5DS.createResolver('CreateChangePlan', { typeName: 'Mutation', fieldName: 'createChangePlan' });
+
+    // ─── Mutation resolvers (agent-path, @aws_iam) ───────────────────────────
+    m1DS.createResolver('AgentDraftDocument', { typeName: 'Mutation', fieldName: 'agentDraftDocument' });
+    m2DS.createResolver('AgentTriageNC', { typeName: 'Mutation', fieldName: 'agentTriageNC' });
+    m2DS.createResolver('AgentProposeCorrectiveAction', { typeName: 'Mutation', fieldName: 'agentProposeCorrectiveAction' });
+    m3DS.createResolver('AgentGenerateChecklist', { typeName: 'Mutation', fieldName: 'agentGenerateChecklist' });
+    m3DS.createResolver('AgentScoreReadiness', { typeName: 'Mutation', fieldName: 'agentScoreReadiness' });
+    m5DS.createResolver('AgentAssessRisk', { typeName: 'Mutation', fieldName: 'agentAssessRisk' });
+    m4DS.createResolver('AppendAuditEvent', { typeName: 'Mutation', fieldName: 'appendAuditEvent' });
+
+    // ─── Subscription publish mutations (None data source, passthrough) ──────
+    const passthroughRequestMapping = appsync.MappingTemplate.fromString('{"version":"2017-02-28","payload":$util.toJson($context.arguments.input)}');
+    const passthroughResponseMapping = appsync.MappingTemplate.fromString('$util.toJson($context.result)');
+
+    noneDS.createResolver('PublishDocumentEvent', {
+      typeName: 'Mutation', fieldName: 'publishDocumentEvent',
+      requestMappingTemplate: passthroughRequestMapping,
+      responseMappingTemplate: passthroughResponseMapping,
+    });
+    noneDS.createResolver('PublishCAPAEvent', {
+      typeName: 'Mutation', fieldName: 'publishCAPAEvent',
+      requestMappingTemplate: passthroughRequestMapping,
+      responseMappingTemplate: passthroughResponseMapping,
+    });
+    noneDS.createResolver('PublishAuditEventTrigger', {
+      typeName: 'Mutation', fieldName: 'publishAuditEvent',
+      requestMappingTemplate: passthroughRequestMapping,
+      responseMappingTemplate: passthroughResponseMapping,
+    });
+    noneDS.createResolver('PublishRiskEvent', {
+      typeName: 'Mutation', fieldName: 'publishRiskEvent',
+      requestMappingTemplate: passthroughRequestMapping,
+      responseMappingTemplate: passthroughResponseMapping,
+    });
+
     // ─── CfnOutputs ─────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'GraphqlApiUrl', { value: this.graphqlApiUrl });
     new cdk.CfnOutput(this, 'GraphqlApiId', { value: this.graphqlApiId });

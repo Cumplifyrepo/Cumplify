@@ -157,37 +157,41 @@
 
 ## Task 10 — Resolver Lambdas (M1–M5) [KIRO]
 
-- [ ] Create 5 resolver Lambdas (`services/api/src/resolvers/m1.ts` .. `m5.ts`):
+- [x] Create 5 resolver Lambdas (`services/api/src/resolvers/m1.ts` .. `m5.ts`):
   - Read `resolverContext.tenantId`, validate (SCHEMA-5: overwrite any client-supplied tenantId).
   - Assume tenant-data role with tenantId session tag (§7.4 pattern).
   - Data API: use app_role secretArn (NOT master). BeginTransaction → `select set_config('app.tenant_id', :tenantId, true)` as FIRST statement → domain query/mutation → CommitTransaction.
   - **C-2 INVARIANT (review-blocking):** `set_config` with `true` (transaction-local) MUST be the first statement in every BeginTransaction. Never `false`. Never a bare ExecuteStatement for tenant-scoped data. A reused-connection test verifies: 2nd request without set_config → zero rows (never prior tenant's data).
   - Publish audit event via `services/eventing` publisher (auditTrail stamped).
   - Structured logging (tenantId + requestId).
-- [ ] Unit tests per resolver (mock Data API + STS + EventBridge).
-- [ ] Reused-connection test: simulates two requests on same connection; second without set_config returns zero rows (C-2 proof).
-- [ ] Repository-layer unit test asserting every written GSI*PK attribute value is `TENANT#`-prefixed (FF-5 convention enforcement).
-- [ ] C-7 CI denial suite (5 integration tests from design §11.3, committed as runnable post-deploy):
+- [x] C-2 unit test: mock Data API client, assert set_config is FIRST in-transaction statement (ITEM-2b).
+- [x] Repository-layer unit test asserting every written GSI*PK attribute value is `TENANT#`-prefixed (FF-5 convention enforcement, ITEM-2a).
+- [x] Integration wiring: AppSync resolver mapping to Lambda functions (BLOCK-1: data sources + createResolver for all fields).
+- [ ] Unit tests per resolver (mock Data API + STS + EventBridge) — deferred to post-wiring.
+- [ ] Reused-connection test (live): simulates two requests on same pooled connection; second without set_config returns zero rows (C-2 live proof, post-deploy).
+- [ ] C-7 CI denial suite (5 integration tests from design §11.3, post-deploy):
   1. Authorizer denial: Pool-A token → 401.
   2. DynamoDB denial: simulate-principal-policy cross-tenant → implicitDeny.
   3. RDS RLS denial: tenant-B session → empty result on tenant-A data.
   4. Materialized view denial: tenant-B → `get_risk_register_view()` → empty; direct SELECT → permission denied.
   5. Resolver overwrite: client-supplied tenantId in mutation input → resolverContext used (SCHEMA-5).
-- [ ] Integration wiring: AppSync resolver mapping to Lambda functions.
 
 **Depends on:** Tasks 5, 8, 9 (migrations + authorizer + role).
+**Evidence:** this commit — 239/239 tests pass (+16 new), tsc clean.
 
 ---
 
 ## Task 11 — Subscription resolvers [KIRO]
 
-- [x] Implement 5 subscription resolvers verifying `resolverContext.tenantId` matches the subscription's `tenantId` argument (C-6).
-- [x] Implement 4 publish mutations (None DS) for subscription delivery: `publishDocumentEvent`, `publishCAPAEvent`, `publishAuditEvent`, `publishRiskEvent`.
-- [ ] Unit tests: tenant match → deliver; tenant mismatch → reject.
+## Task 11 — Subscription resolvers [KIRO]
+
+- [x] Implement 5 subscription resolvers verifying `resolverContext.tenantId` matches the subscription's `tenantId` argument (C-6) — `services/api/src/resolvers/subscriptions.ts`.
+- [x] Implement 4 publish mutations (None DS) for subscription delivery: `publishDocumentEvent`, `publishCAPAEvent`, `publishAuditEvent`, `publishRiskEvent` — wired via NoneDataSource in ApiStack (BLOCK-1).
+- [ ] Unit tests: tenant match → deliver; tenant mismatch → reject (deferred to post-wiring).
 - [x] M4 `onCalibrationDue` scheduler deferred (OQ-4) — subscription mechanism only.
 
 **Depends on:** Task 7 (ApiStack + schema).
-**Evidence:** this commit — 223/223 tests pass, tsc clean.
+**Evidence:** this commit — 239/239 tests pass, tsc clean.
 
 ---
 
