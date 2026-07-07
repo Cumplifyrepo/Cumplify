@@ -91,10 +91,12 @@ describe('EventingStack — InputTransformer assertions', () => {
     });
   });
 
-  it('audit-sink router rule has extended InputTemplate with audit targetQueue', () => {
+  it('audit-sink router rule matches on detail.auditTrail (OQ-5)', () => {
     template.hasResourceProperties('AWS::Events::Rule', {
       EventPattern: {
-        'detail-type': Match.arrayWith([{ suffix: '.Approved' }]),
+        detail: {
+          auditTrail: [true],
+        },
       },
       Targets: Match.arrayWith([
         Match.objectLike({

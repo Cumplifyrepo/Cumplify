@@ -191,17 +191,13 @@ export class EventingStack extends cdk.Stack {
     );
     this.applyInputTransformer(capaIntakeRule, capaRouterTransformer);
 
-    // R-3: audit-sink-rule → router (suffix matching + AuditEvent.Appended)
+    // R-3: audit-sink-rule → router (OQ-5: routes on detail.auditTrail = true)
     const auditSinkRule = new events.Rule(this, 'AuditSinkRule', {
       eventBus: bus,
       eventPattern: {
-        detailType: [
-          { suffix: '.Approved' },
-          { suffix: '.Closed' },
-          { suffix: '.Raised' },
-          { suffix: '.Evaluated' },
-          'AuditEvent.Appended',
-        ] as unknown as string[],
+        detail: {
+          auditTrail: [true],
+        },
       },
     });
     auditSinkRule.addTarget(
