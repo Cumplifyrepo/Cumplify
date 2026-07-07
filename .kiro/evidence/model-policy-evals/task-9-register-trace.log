@@ -10,3 +10,7 @@
 #                   cited path — cite the run5 report-rescored.md explicitly)
 # Verified exact (OK): lightweight, guru-9001, guru-14001, guru-45001, workhorse,
 # editor-ai. LegalLedger correctly UNASSIGNED.
+
+# RE-TRACE after e7e5751 (2026-07-07): ALL 10 entries verified field-for-field
+# (P50 + P95 + margin) against their cited evidence files by independent architect
+# script. LegalLedger unassigned-by-design confirmed. Task 9 APPROVED.
