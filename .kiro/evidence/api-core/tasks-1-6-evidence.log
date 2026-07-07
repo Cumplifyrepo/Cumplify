@@ -80,3 +80,17 @@ design-notes: app_role password sync mechanism = ALTER ROLE app_role PASSWORD
   from secret value, executed by migrator (master secret) after migration 009.
   Resolvers use app_role secretArn for Data API. Authorizer DDB policy =
   GetItem with LeadingKeys TENANT#* (metadata reads at auth time, T-4).
+
+## Task 8 — Lambda authorizer implementation
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T17:58:11Z
+exit_code: 0
+tests: 222/222 pass (+10 new authorizer tests)
+commit: (this commit)
+files: services/api/src/authorizer.ts (new, 170 lines),
+       services/api/__tests__/authorizer.test.ts (new, 10 tests),
+       package.json (jose dependency added)
+auth-logic: Pool B/C via jose jwtVerify + createRemoteJWKSet (cached);
+  Layer 1: issuer ≠ B/C → reject (covers Pool A, unknown issuers);
+  ID token only (token_use check); custom:tenantId required;
+  entitlement from CumplifyCore TENANT#<id>#META/PLAN (static P1).

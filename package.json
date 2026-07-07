@@ -44,6 +44,7 @@
     "@aws-sdk/client-ssm": "^3.1079.0",
     "@aws-sdk/util-dynamodb": "^3.996.5",
     "@types/aws-lambda": "^8.10.162",
+    "jose": "^6.2.3",
     "ulid": "^3.0.2"
   }
 }

@@ -119,18 +119,20 @@
 
 ## Task 8 — Lambda authorizer implementation [KIRO] [REQUIRES-HUMAN]
 
-- [ ] Create `services/api/src/authorizer.ts`:
-  - JWKS verification (Pool B + Pool C, cached).
-  - Pool-A rejection (Layer 1): if issuer = Pool A → deny before role logic.
+- [x] Create `services/api/src/authorizer.ts`:
+  - JWKS verification (Pool B + Pool C, cached via jose createRemoteJWKSet).
+  - Pool-A rejection (Layer 1): if issuer ≠ Pool B/C → deny before role logic.
   - Expiry check, `custom:tenantId` presence check.
+  - ID token only (token_use='id', never access token — C-8).
   - Read tenant metadata from CumplifyCore (`TENANT#<tenantId>#META` / `PLAN`) for static entitlement stamp.
   - Return `resolverContext`: {tenantId, role, poolClass, sub, entitlement}.
-- [ ] Authorizer execution role DDB policy: `dynamodb:GetItem` on CumplifyCore with LeadingKeys condition `StringLike 'TENANT#*'` (metadata reads at auth time — cannot use tenant-data role because no tenant context exists yet at authorization time; the authorizer IS the entity that establishes tenant context).
-- [ ] Unit tests: valid B token → allow; valid C token → allow; Pool A token → deny; expired → deny; missing tenantId → deny; bad signature → deny.
-- [ ] Structured logging via `@aws-lambda-powertools/logger` (tenantId + requestId).
+- [x] Authorizer execution role DDB policy: `dynamodb:GetItem` on CumplifyCore with LeadingKeys condition `StringLike 'TENANT#*'` (metadata reads at auth time — cannot use tenant-data role because no tenant context exists yet at authorization time; the authorizer IS the entity that establishes tenant context).
+- [x] Unit tests (10): valid B token → allow; valid C token → allow; Pool A token → deny; expired → deny; missing tenantId → deny; bad signature → deny; access token → deny; poolClass internal → deny; DDB failure → default entitlement; empty token → deny.
+- [x] Structured logging via `@aws-lambda-powertools/logger` (tenantId + requestId).
 - [ ] **[REQUIRES-HUMAN]** Owner reviews authorizer code + IAM policy before merge.
 
 **Depends on:** Task 7 (ApiStack wires the authorizer).
+**Evidence:** this commit — 222/222 tests pass (+10 new), tsc clean.
 
 ---
 
