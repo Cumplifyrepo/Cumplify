@@ -22,10 +22,10 @@ form declined + margin-fail at credit pricing).
 | **Assigned Model** | `us.amazon.nova-2-lite-v1:0` |
 | **Status** | PROVISIONAL (bar-0.90 recalibration, owner ratifies at Task 10) |
 | **Justification** | Highest F1 among candidates at 0.90 bar. Original bar 0.95 had zero passers across 10 models; architect recalibrated to 0.90 per routing-task difficulty. |
-| **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/micro-run6-20260706/report.md` |
+| **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/micro-run5-20260706/report-rescored.md` |
 | **$/task P50** | $0.00014 |
 | **$/task P95** | $0.00029 |
-| **Margin at credit pricing** | 92.9% (mandate: >50%) |
+| **Margin at credit pricing** | 93.1% (mandate: >50%) |
 | **Expiry** | 2026-10-06 (90 days) |
 
 ---
@@ -55,9 +55,9 @@ form declined + margin-fail at credit pricing).
 | **Status** | ASSIGNED |
 | **Justification** | Quality passer at lowest $/task. Cost-sensitive seat (~$0.03–0.08/run target). Schema compliance 1.00 with output contract. |
 | **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/snapshot-run6-20260706/report-rescored.md` |
-| **$/task P50** | $0.00008 |
-| **$/task P95** | $0.00013 |
-| **Margin at credit pricing** | 99.0% (mandate: >50%) |
+| **$/task P50** | $0.00023 |
+| **$/task P95** | $0.00031 |
+| **Margin at credit pricing** | 97.1% (mandate: >50%) |
 | **Expiry** | 2026-10-06 (90 days) |
 
 ---
@@ -71,9 +71,9 @@ form declined + margin-fail at credit pricing).
 | **Status** | ASSIGNED |
 | **Justification** | Quality 0.861 at bar 0.85. Lowest $/task among passers. Multi-label category classification (14-category taxonomy). |
 | **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/pain-distiller-run4-20260706/report-rescored.md` |
-| **$/task P50** | $0.00061 |
-| **$/task P95** | $0.00129 |
-| **Margin at credit pricing** | 94.9% (mandate: >50%) |
+| **$/task P50** | $0.00026 |
+| **$/task P95** | $0.00048 |
+| **Margin at credit pricing** | 97.8% (mandate: >50%) |
 | **Expiry** | 2026-10-06 (90 days) |
 
 ---

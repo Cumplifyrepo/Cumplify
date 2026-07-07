@@ -1,0 +1,34 @@
+# Model Policy Evals — Task 9 Re-Trace (truth incident #8 fix)
+
+**Timestamp:** 2026-07-07T05:00:00Z
+**Spec:** model-policy-evals
+**Task:** 9 (Register re-verification)
+
+## Truth Incident #8 Record
+Original Register (ae946ee) had 3 entries with figures not matching cited reports:
+- Snapshot: claimed $0.00008/$0.00013/99.0% — actual $0.00023/$0.00031/97.1%
+- Pain-distiller: claimed $0.00061/$0.00129/94.9% — actual $0.00026/$0.00048/97.8%
+- Micro: cited wrong file (run6 not run5); margin 92.9% vs actual 93.1%
+
+## Trace Verification (executed output)
+Command: grep winner-model-row from each cited report file
+
+| Seat | Cited Report | Model Row (from file) | P50 | P95 | Margin | Register Match |
+|------|-------------|----------------------|-----|-----|--------|---------------|
+| Micro | micro-run5-20260706/report-rescored.md | nova-2-lite: 0.913 FAIL $0.00014 $0.00029 93.1% | $0.00014 | $0.00029 | 93.1% | ✓ |
+| Lightweight | lightweight-run6-20260706/report-rescored.md | nova-lite: 1.000 PASS $0.00004 $0.00006 99.0% | $0.00004 | $0.00006 | 99.0% | ✓ |
+| Snapshot | snapshot-run6-20260706/report-rescored.md | glm-4.7-flash: 1.000 PASS $0.00023 $0.00031 97.1% | $0.00023 | $0.00031 | 97.1% | ✓ |
+| Pain-distiller | pain-distiller-run4-20260706/report-rescored.md | qwen3-next-80b: 0.861 PASS $0.00026 $0.00048 97.8% | $0.00026 | $0.00048 | 97.8% | ✓ |
+| Guru 9001 | guru-run7-20260706/report.md | qwen3-next-80b: 0.930 PASS $0.00068 $0.00151 96.6% | $0.00068 | $0.00151 | 96.6% | ✓ |
+| Guru 14001 | guru-run7-14001/report.md | qwen3-next-80b: 0.920 PASS $0.00050 $0.00092 97.5% | $0.00050 | $0.00092 | 97.5% | ✓ |
+| Guru 45001 | guru-run7-45001/report.md | kimi-k2.5: 0.843 FAIL $0.00101 $0.00184 94.9% | $0.00101 | $0.00184 | 94.9% | ✓ |
+| Workhorse | workhorse-run7-20260706/report.md | nova-pro: 0.833 FAIL $0.00062 $0.00295 94.8% | $0.00062 | $0.00295 | 94.8% | ✓ |
+| Editor-AI | editor-ai-run7-20260706/report.md | nova-pro: 0.867 FAIL $0.00116 $0.00213 85.4% | $0.00116 | $0.00213 | 85.4% | ✓ |
+| LegalLedger (glm-5) | legal-ledger-run7-20260706/report.md | glm-5: 0.000 PASS $0.00582 $0.00670 85.3% | $0.00582 | $0.00670 | 85.3% | ✓ |
+| LegalLedger (deepseek) | legal-ledger-run7-20260706/report.md | deepseek.v3.2: 0.000 PASS $0.00335 $0.00386 91.5% | $0.00335 | $0.00386 | 91.5% | ✓ |
+
+## Result
+11/11 entries verified — all numeric fields now match their cited report rows exactly.
+
+## Exit
+Exit code: 0
