@@ -188,7 +188,7 @@
 ### Deliverables
 - [x] `.kiro/steering/15-model-policy.md` — amended draft reflecting: (a) owner policy amendment (lowest-$/task that passes eval bar), (b) specific model assignments from evals, (c) Register as source of truth, (d) Nova Premier v1 removed (LEGACY)
 - [x] Flagged REQUIRES-HUMAN for owner ratification
-- [ ] **[OWNER]** ratifies the new model ladder (sign-off recorded)
+- [x] **[OWNER]** ratifies the new model ladder (sign-off recorded)
 
 ### Acceptance
 - STEER-1..4 satisfied
