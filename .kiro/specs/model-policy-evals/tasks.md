@@ -169,9 +169,9 @@
 **Depends on:** Tasks 7, 8 (all scored reports available)
 
 ### Deliverables
-- [ ] `contracts/model-register.md` — all seats populated from scored reports: model ID, seat/duty, justification, eval evidence link (commit + file path), $/task P50/P95, margin headroom, expiry date (90 days from eval run)
-- [ ] LegalLedger entry includes monthly budget cap + enforcement mechanism reference (ai-invoker credit pre-check)
-- [ ] Non-agent seats (Snapshot, editor-AI, pain-distiller) included with eval evidence
+- [x] `contracts/model-register.md` — all seats populated from scored reports: model ID, seat/duty, justification, eval evidence link (commit + file path), $/task P50/P95, margin headroom, expiry date (90 days from eval run)
+- [x] LegalLedger entry includes monthly budget cap + enforcement mechanism reference (ai-invoker credit pre-check)
+- [x] Non-agent seats (Snapshot, editor-AI, pain-distiller) included with eval evidence
 
 ### Acceptance
 - REG-1..5 satisfied

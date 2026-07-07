@@ -1,0 +1,26 @@
+# Model Policy Evals — Task 9 Evidence Log
+
+**Timestamp:** 2026-07-07T04:00:00Z
+**Spec:** model-policy-evals
+**Task:** 9 (Register assembly)
+
+## Deliverable
+contracts/model-register.md — all 10 seats populated:
+- 7 ASSIGNED (lightweight, snapshot, pain-distiller, guru-9001, guru-14001, editor-ai, workhorse)
+- 2 PROVISIONAL (micro: bar recalibration; guru-45001: retrieval-gated)
+- 1 UNASSIGNED (legal-ledger: retrieval-gated)
+
+## Data Sources (executed evidence only)
+- Task 7 final reports: lightweight-run6, snapshot-run6, micro-run6, pain-distiller-run4 (rescored)
+- Task 8 final reports: guru-run7-20260706, guru-run7-14001, guru-run7-45001,
+  workhorse-run7-20260706, editor-ai-run7-20260706, legal-ledger-run7-20260706
+- Architect verdicts: task-8-benchmark-runs.log FINAL VERDICTS section
+- Human grading: commit 645873e (LegalLedger 90/90 blind)
+
+## Flags Applied
+- PROVISIONAL: micro (COND-1), guru-45001 (COND-2), workhorse (COND-3)
+- UNASSIGNED: legal-ledger (COND-4)
+- CARRY: REG-5 invoke-time enforcement → ai-core
+
+## Exit
+Exit code: 0
