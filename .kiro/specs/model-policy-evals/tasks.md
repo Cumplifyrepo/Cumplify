@@ -217,10 +217,10 @@
 **Depends on:** All prior tasks complete
 
 ### Deliverables
-- [ ] All task checkboxes marked complete (rule 7)
-- [ ] Evidence directory `.kiro/evidence/model-policy-evals/` contains: access probe, estimate gate, scored reports (8 seats), Register
-- [ ] ACC-1..6 verified satisfied
-- [ ] Timestamp + evidence summary in closure log
+- [x] All task checkboxes marked complete (rule 7)
+- [x] Evidence directory `.kiro/evidence/model-policy-evals/` contains: access probe, estimate gate, scored reports (8 seats), Register
+- [x] ACC-1..6 verified satisfied
+- [x] Timestamp + evidence summary in closure log
 
 ### Acceptance
 - All acceptance criteria from requirements §9 met

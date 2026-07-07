@@ -1,0 +1,79 @@
+# Model Policy Evals — Task 12 Closure Log
+
+**Timestamp:** 2026-07-07T06:00:00Z
+**HEAD:** 9e578f9
+**Spec:** model-policy-evals
+
+---
+
+## Acceptance Criteria Verification
+
+| # | Criterion | Verdict | Citation |
+|---|-----------|---------|----------|
+| ACC-1 | Register live with every seat justified | PASS | `contracts/model-register.md` (commit e7e5751, trace-verified db21990) — 10 seats, all with model/justification/evidence/$/task/margin/expiry |
+| ACC-2 | Seat evals (a)-(e) executed with real invocations + committed scored reports | PASS | `.kiro/evidence/model-policy-evals/runs/` — 18 run directories, Task 7 (96fe704) + Task 8 (673de03) closure evidence |
+| ACC-3 | Steering 15 amended + owner-ratified | PASS | `.kiro/steering/15-model-policy.md` (commit f3185ea) + ratification at `.kiro/evidence/model-policy-evals/steering-15-ratification.md` (commit 9e578f9) |
+| ACC-4 | Re-validation mechanism in place | PASS | `services/model-evals/runbooks/quarterly-revalidation.md` + `legal-ledger-grading.md` (commit f3185ea) |
+| ACC-5 | LegalLedger monthly budget cap recorded | PASS | Register LegalLedger entry states "budget cap attaches on assignment — enforcement via ai-invoker credit pre-check" + CARRY documented (COND-4) |
+| ACC-6 | Every ASSIGNED seat model's $/task clears >50% margin | PASS | Traced at db21990: lightweight 99.0%, snapshot 97.1%, pain-distiller 97.8%, guru-9001 96.6%, guru-14001 97.5%, guru-45001 94.9%, workhorse 94.8%, editor-ai 85.4%, micro 93.1% — all above 50% |
+
+---
+
+## Evidence Directory Inventory
+
+```
+.kiro/evidence/model-policy-evals/
+├── task-1-access-probe.log         (architect, b99a645)
+├── task-2.log                      (d83bc34)
+├── task-3.log                      (3c27d71)
+├── task-3-4-price-verification.log (architect, 445032f)
+├── task-4-estimate-gate.log        (7b7e924, redo #2)
+├── task-4-witnessed-live-pricing.log (architect, 475b154)
+├── task-5.log                      (20d65f0)
+├── task-5-micro-redo.log           (302d341)
+├── task-6-quality-gate.log         (architect, 100fa3b)
+├── task-7-benchmark-runs.log       (architect, 5ae5490+)
+├── task-8-benchmark-runs.log       (architect, 673de03)
+├── task-9.log                      (ae946ee)
+├── task-9-retrace.log              (e7e5751)
+├── task-10-11.log                  (f3185ea)
+├── task-12-closure.log             (this file)
+├── micro-routing-truth-table.md    (architect, 100fa3b)
+├── requirements-review-r1-probes.log (architect, 0962ed5)
+├── steering-15-ratification.md     (owner, 9e578f9)
+└── runs/                           (18 run directories with raw/ + report.md)
+```
+
+---
+
+## Truth Incidents in This Spec (honest history)
+
+| # | Incident | Commit Introduced | Fix Commit | Root Cause |
+|---|----------|------------------|-----------|-----------|
+| #3 | Task 4: evidence claimed "eval set loaded" + "staleness PASS" from a stub that printed hardcoded strings | d102b90 | 7b7e924 | run.ts was TODOs; evidence described behavior the code did not have |
+| #4 | Task 3/4: 10/13 prices in price-snapshot.json fabricated from memory (1000× inflation from wrong unit normalization masked by bare-catch silent fallback) | 0cbd566 | 7b7e924 + bc99d0b | Pricing API queried by model ID (not display name) → zero matches → silent snapshot fallback → snapshot filled from memory |
+| #5 | Task 5: micro-routing labels fabricated (33/46 wrong; single-label assumption on fan-out routing; 22 events matched zero rules but got plausible queues) | 20d65f0 | 302d341 | Labels came from intuition, not from evaluating the committed R-1..R-7 patterns |
+| #6 | FINDING-H: scorer.ts hardcoded 0.7 threshold; scoreMultiLabel existed but was never called in production path; reports claimed behavior the call graph did not have | 39d20eb | 67fc48f | Unit tests passed on isolated functions while production path bypassed them |
+| #7 | FINDING-I: 4 schema sets (100 tasks) nested expectedSchema inside expectedOutput (object, not string); "valid JSON conforming to EvalTask schema" claim was false | f0a5c3f (pre-existing) | f0a5c3f | Type violation undetected because no shape-validation test existed |
+| #8 | Task 9: Register figures for 3 entries came from memory/cross-seat copy, not from cited reports | ae946ee | e7e5751 | Figures written without executing a trace grep against the cited files |
+
+**Standing lessons applied:**
+- Every numeric figure in a traceability artifact must come from an executed command's output (grep/cat the cited file)
+- The eval-set-shape.test.ts prevents incidents #5/#7 class from recurring
+- The scorer call-graph spy test prevents incident #6 class from recurring
+- The pricing fixture regression tests prevent incident #4 class from recurring
+
+---
+
+## Spec Status
+
+- **Tasks completed:** 12/12 (Tasks 1,6,7,8 [ARCHITECT]; Tasks 2-5,9-12 [KIRO]; Task 10 [OWNER ratified])
+- **Infra floor:** N/A (no deployed infrastructure — CLI eval harness + contracts only)
+- **Deliverables:** Register live, steering amended + ratified, runbooks committed, 125/125 tests green
+- **Open conditions:** 4 (micro bar owner-ratified ✓ at Task 10; guru-45001/workhorse/LegalLedger await spec-4/agent-specs)
+- **Campaign cost:** ~$2.60 of $15 cap
+
+---
+
+## Exit
+Exit code: 0
