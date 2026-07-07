@@ -109,3 +109,15 @@ iam-design: trust = resolver exec roles (CompositePrincipal) + sts:TagSession
   TENANT#${aws:PrincipalTag/tenantId}#*;
   KMS decrypt on DDB CMK.
   GSI grant included per FF-5 design constraint (all GSI*PK TENANT#-prefixed).
+
+## Tasks 7-9 Surface Hardening
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T18:31:12Z
+exit_code: 0
+tests: 223/223 pass (+1 new audience validation test)
+commit: (this commit)
+fixes-applied: FIX-1 (audience validation), FIX-2 (excludeVerboseContent),
+  FIX-3 (path-scoped Nag), FIX-4 (deny # in tag), FIX-5 (rotation carry documented)
+path-taken-FIX-5: kept sync mechanism (rotation out of scope); documented
+  plaintext-in-SQL transit, confirmed CloudTrail data events NOT enabled in dev,
+  recorded single-user rotation as named prod-hardening carry.

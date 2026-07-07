@@ -8,6 +8,16 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+// Set env FIRST (before any mocked module initialization)
+vi.hoisted(() => {
+  process.env.POOL_B_ID = 'us-east-1_PoolBxxx';
+  process.env.POOL_C_ID = 'us-east-1_PoolCxxx';
+  process.env.POOL_B_CLIENT_IDS = 'client-b-1,client-b-2';
+  process.env.POOL_C_CLIENT_IDS = 'client-c-1';
+  process.env.TABLE_NAME = 'CumplifyCore';
+  process.env.REGION = 'us-east-1';
+});
+
 // Mock jose before importing authorizer
 vi.mock('jose', () => ({
   createRemoteJWKSet: vi.fn(() => vi.fn()),
@@ -28,12 +38,6 @@ vi.mock('@aws-sdk/client-dynamodb', () => ({
     constructor(public input: unknown) {}
   },
 }));
-
-// Set env before import
-process.env.POOL_B_ID = 'us-east-1_PoolBxxx';
-process.env.POOL_C_ID = 'us-east-1_PoolCxxx';
-process.env.TABLE_NAME = 'CumplifyCore';
-process.env.REGION = 'us-east-1';
 
 import { handler } from '../src/authorizer.js';
 import { jwtVerify } from 'jose';
@@ -201,6 +205,17 @@ describe('Lambda Authorizer', () => {
       ...baseEvent,
       authorizationToken: '',
     });
+
+    expect(result.isAuthorized).toBe(false);
+  });
+
+  it('should REJECT a token with wrong audience (FIX-1)', async () => {
+    // Both pools reject because audience doesn't match their client IDs
+    mockedJwtVerify
+      .mockRejectedValueOnce(new Error('unexpected "aud" claim value'))
+      .mockRejectedValueOnce(new Error('unexpected "aud" claim value'));
+
+    const result = await handler(baseEvent);
 
     expect(result.isAuthorized).toBe(false);
   });

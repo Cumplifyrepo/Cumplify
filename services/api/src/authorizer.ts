@@ -22,6 +22,9 @@ const POOL_B_ID = process.env.POOL_B_ID!;
 const POOL_C_ID = process.env.POOL_C_ID!;
 const TABLE_NAME = process.env.TABLE_NAME!;
 const REGION = process.env.REGION!;
+// FIX-1: audience validation — comma-separated app-client IDs per pool
+const POOL_B_CLIENT_IDS = process.env.POOL_B_CLIENT_IDS!.split(',');
+const POOL_C_CLIENT_IDS = process.env.POOL_C_CLIENT_IDS!.split(',');
 
 // Construct JWKS URIs for Pool B and Pool C
 const poolBIssuer = `https://cognito-idp.${REGION}.amazonaws.com/${POOL_B_ID}`;
@@ -94,6 +97,9 @@ async function getEntitlementStamp(tenantId: string): Promise<string> {
   }
 
   // Default entitlement (new tenants without a PLAN item yet)
+  // TODO(P2): A-2 entitlement fail-open carry — when billing enforcement
+  // activates (ai-core EXPIRED-flag), a missing/failed entitlement read must
+  // block, not default to Launch. Tracked in P2 billing spec.
   return JSON.stringify({ plan: 'Launch', seats: 5, features: [] });
 }
 
@@ -118,6 +124,7 @@ export async function handler(event: AppSyncAuthEvent): Promise<AuthResponse> {
   try {
     const { payload } = await jwtVerify(rawToken, jwksB, {
       issuer: poolBIssuer,
+      audience: POOL_B_CLIENT_IDS,
     });
     claims = payload as TokenClaims;
     matchedPool = 'B';
@@ -126,6 +133,7 @@ export async function handler(event: AppSyncAuthEvent): Promise<AuthResponse> {
     try {
       const { payload } = await jwtVerify(rawToken, jwksC, {
         issuer: poolCIssuer,
+        audience: POOL_C_CLIENT_IDS,
       });
       claims = payload as TokenClaims;
       matchedPool = 'C';
@@ -134,7 +142,8 @@ export async function handler(event: AppSyncAuthEvent): Promise<AuthResponse> {
       // - Pool A tokens (wrong issuer → rejected BEFORE role logic, Layer 1)
       // - Expired tokens (jose throws JWTExpired)
       // - Bad signatures (jose throws JWSSignatureVerificationFailed)
-      logger.warn('Token rejected: not issued by Pool B or Pool C (Layer 1 rejection)', {
+      // - Wrong audience (token's aud not in allowed client IDs for pool)
+      logger.warn('Token rejected: not issued by Pool B or Pool C, or wrong audience (Layer 1 rejection)', {
         requestId,
       });
       return { isAuthorized: false };

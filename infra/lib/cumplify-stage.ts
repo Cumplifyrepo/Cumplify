@@ -111,6 +111,8 @@ export class CumplifyStage extends cdk.Stage {
       poolBArn: identityStack.poolBArn,
       poolCId: identityStack.poolCId,
       poolCArn: identityStack.poolCArn,
+      poolBClientId: identityStack.poolBClientId,
+      poolCClientId: identityStack.poolCClientId,
       regionalWafArn: securityStack.outputs.regionalWaf.attrArn,
       busName: eventingStack.busName,
       busArn: eventingStack.busArn,

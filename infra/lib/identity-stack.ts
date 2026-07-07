@@ -48,6 +48,8 @@ export class IdentityStack extends cdk.Stack {
   public readonly poolCId: string;
   public readonly poolBArn: string;
   public readonly poolCArn: string;
+  public readonly poolBClientId: string;
+  public readonly poolCClientId: string;
 
   constructor(scope: Construct, id: string, props: IdentityStackProps) {
     super(scope, id, props);
@@ -139,6 +141,8 @@ export class IdentityStack extends cdk.Stack {
 
     const createdPools: Record<string, cognito.UserPool> = {};
     let poolAClient: cognito.UserPoolClient | undefined;
+    let poolBClient: cognito.UserPoolClient | undefined;
+    let poolCClient: cognito.UserPoolClient | undefined;
 
     for (const poolConfig of pools) {
       const pool = new cognito.UserPool(this, poolConfig.id, {
@@ -213,6 +217,10 @@ export class IdentityStack extends cdk.Stack {
 
       if (poolConfig.id === 'PoolA') {
         poolAClient = client;
+      } else if (poolConfig.id === 'PoolB') {
+        poolBClient = client;
+      } else if (poolConfig.id === 'PoolC') {
+        poolCClient = client;
       }
 
       createdPools[poolConfig.id] = pool;
@@ -292,6 +300,8 @@ export class IdentityStack extends cdk.Stack {
     this.poolCId = createdPools['PoolC'].userPoolId;
     this.poolBArn = createdPools['PoolB'].userPoolArn;
     this.poolCArn = createdPools['PoolC'].userPoolArn;
+    this.poolBClientId = poolBClient!.userPoolClientId;
+    this.poolCClientId = poolCClient!.userPoolClientId;
 
     // -----------------------------------------------------------------------
     // CfnOutputs — per design §2 / F-9 (consumed by readback via cdk-outputs.json)
@@ -301,6 +311,8 @@ export class IdentityStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'PoolCId', { value: this.poolCId });
     new cdk.CfnOutput(this, 'PoolBArn', { value: this.poolBArn });
     new cdk.CfnOutput(this, 'PoolCArn', { value: this.poolCArn });
+    new cdk.CfnOutput(this, 'PoolBClientId', { value: this.poolBClientId });
+    new cdk.CfnOutput(this, 'PoolCClientId', { value: this.poolCClientId });
     new cdk.CfnOutput(this, 'PoolAClientId', {
       value: poolAClient!.userPoolClientId,
     });

@@ -41,6 +41,8 @@ export interface ApiStackProps extends cdk.StackProps {
   readonly poolBArn: string;
   readonly poolCId: string;
   readonly poolCArn: string;
+  readonly poolBClientId: string;
+  readonly poolCClientId: string;
   // SecurityStack
   readonly regionalWafArn: string;
   // EventingStack
@@ -64,6 +66,14 @@ export class ApiStack extends cdk.Stack {
     // Custom Resource runs ALTER ROLE app_role PASSWORD '<value>' using the
     // master secret (DDL-capable) after migration 009 creates the role.
     // Resolvers use this secret for Data API calls (not master).
+    //
+    // FIX-5 NOTE: The ALTER ROLE password value transits Data API SQL text
+    // (not parameterizable for DDL). This is acceptable because:
+    // (a) CloudTrail data events for rds-data are NOT enabled in dev.
+    // (b) The SQL is executed server-side; it does not appear in CloudWatch logs.
+    // CARRY: Enable Secrets Manager single-user rotation (VPC-attached rotation
+    // Lambda) to eliminate the plaintext-in-SQL path. Named follow-up for
+    // prod hardening (requires VPC Lambda + rotation configuration).
     const appRoleSecret = new secretsmanager.Secret(this, 'AppRoleSecret', {
       secretName: `cumplify/${envConfig.envName}/rds/app-role`,
       description: 'RDS app_role credentials for resolver Data API access',
@@ -88,6 +98,8 @@ export class ApiStack extends cdk.Stack {
       environment: {
         POOL_B_ID: props.poolBId,
         POOL_C_ID: props.poolCId,
+        POOL_B_CLIENT_IDS: props.poolBClientId, // FIX-1: audience validation
+        POOL_C_CLIENT_IDS: props.poolCClientId, // FIX-1: audience validation
         TABLE_NAME: props.tableName,
         REGION: cdk.Stack.of(this).region,
         POWERTOOLS_SERVICE_NAME: 'api-authorizer',
@@ -132,7 +144,7 @@ export class ApiStack extends cdk.Stack {
       xrayEnabled: true,
       logConfig: {
         fieldLogLevel: appsync.FieldLogLevel.ALL,
-        excludeVerboseContent: false,
+        excludeVerboseContent: true, // FIX-2: prevents JWTs/headers/resolverContext in CloudWatch
       },
     });
 
@@ -288,6 +300,20 @@ export class ApiStack extends cdk.Stack {
       },
     }));
 
+    // FIX-4: DENY any tag value containing '#' — prevents TENANT#-prefixed injection
+    // that would bypass LeadingKeys matching. A '#' in the tag value means the caller
+    // is trying to inject a key-prefix, which must be rejected loudly.
+    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
+      effect: iam.Effect.DENY,
+      actions: ['sts:TagSession'],
+      principals: resolverFns.map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
+      conditions: {
+        'StringLike': {
+          'aws:RequestTag/tenantId': '*#*',
+        },
+      },
+    }));
+
     // Inline policy: DDB actions with LeadingKeys condition
     tenantDataRole.addToPolicy(new iam.PolicyStatement({
       actions: [
@@ -298,7 +324,10 @@ export class ApiStack extends cdk.Stack {
       ],
       resources: [
         props.tableArn,
-        `${props.tableArn}/index/*`, // GSI grant — all 9 GSIs are TENANT#-prefixed (FF-5)
+        // GSI grant — all 9 GSIs are TENANT#-prefixed by design constraint (FF-5).
+        // Cross-tenant GSI query denial proven at ACC-2 Task 14 GSI probe.
+        // DO NOT sign CARRY-1 green until that probe shows cross-tenant = denied.
+        `${props.tableArn}/index/*`,
       ],
       conditions: {
         'ForAllValues:StringLike': {
@@ -333,6 +362,7 @@ export class ApiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'AppRoleSecretArn', { value: appRoleSecret.secretArn });
 
     // ─── CDK Nag Suppressions ────────────────────────────────────────────────
+    // FIX-3: path-scoped suppressions instead of stack-wide blanket
     NagSuppressions.addResourceSuppressions(
       this,
       [
@@ -343,12 +373,6 @@ export class ApiStack extends cdk.Stack {
             'Standard minimal policy for Lambda logging.',
         },
         {
-          id: 'AwsSolutions-IAM5',
-          reason:
-            'Lambda execution role has logs:* with wildcard on log stream name. ' +
-            'Standard CDK pattern for Lambda logging.',
-        },
-        {
           id: 'AwsSolutions-L1',
           reason:
             'Lambda uses NODEJS_22_X (latest LTS). CDK Nag may not recognize newer runtimes.',
@@ -356,5 +380,29 @@ export class ApiStack extends cdk.Stack {
       ],
       true,
     );
+
+    // FIX-3(a): IAM5 on Lambda log-group wildcards only (not the DDB grant)
+    const lambdaResources = [authorizerFn, migratorFn, ...resolverFns];
+    for (const fn of lambdaResources) {
+      NagSuppressions.addResourceSuppressions(fn, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'Lambda execution role has logs:CreateLogGroup/PutLogEvents with wildcard on ' +
+            'log stream name. Standard CDK pattern for Lambda logging.',
+        },
+      ], true);
+    }
+
+    // FIX-3(b): IAM5 on TenantDataRole — explicit justification for index/* wildcard
+    NagSuppressions.addResourceSuppressions(tenantDataRole, [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'GSI access uses ${tableArn}/index/* wildcard. Tenant isolation is enforced by ' +
+          'the dynamodb:LeadingKeys condition (TENANT#${aws:PrincipalTag/tenantId}#*). ' +
+          'Cross-tenant GSI query denial proven at ACC-2 GSI probe (Task 14).',
+      },
+    ], true);
   }
 }
