@@ -4,6 +4,14 @@
  * Each migration runs inside a transaction. Failed migrations abort the deploy.
  *
  * Per design §4: raw SQL + CDK Custom Resource; parameterized set_config (D-7).
+ *
+ * INVARIANT (C-2, review-blocking): Data API pools/reuses connections. Tenant
+ * context MUST be set via set_config('app.tenant_id', :tenantId, true) as the
+ * FIRST statement inside a BeginTransaction, EVERY request. The third argument
+ * MUST be `true` (transaction-local). Never `false` (session-scoped), never a
+ * bare ExecuteStatement for tenant-scoped data — either risks leaking the prior
+ * tenant's context on a reused connection. The migrator itself does NOT set
+ * tenant context (it operates as master/owner on DDL, not tenant data).
  */
 
 import {

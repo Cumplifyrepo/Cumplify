@@ -52,8 +52,8 @@ BEGIN
     EXECUTE format(
       'CREATE POLICY tenant_isolation ON %I.%I
        FOR ALL
-       USING (tenant_id = current_setting(''app.tenant_id''))
-       WITH CHECK (tenant_id = current_setting(''app.tenant_id''))',
+       USING (tenant_id = current_setting(''app.tenant_id'', true))
+       WITH CHECK (tenant_id = current_setting(''app.tenant_id'', true))',
       tbl.schemaname, tbl.tablename
     );
   END LOOP;

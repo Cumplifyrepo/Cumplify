@@ -10,82 +10,89 @@
 
 ## Task 1 — DataStack amendments (enableDataApi + new exports) [KIRO]
 
-- [ ] Add `enableDataApi: true` to the Aurora cluster construct in `infra/lib/data-stack.ts`.
-- [ ] Export `clusterArn` (string) and `dbSecretArn` (string) as public stack properties + CfnOutputs.
+- [x] Add `enableDataApi: true` to the Aurora cluster construct in `infra/lib/data-stack.ts`.
+- [x] Export `clusterArn` (string) and `dbSecretArn` (string) as public stack properties + CfnOutputs.
 - [ ] Template-assertion test: verify `enableDataApi` property, verify 2 new CfnOutputs exist.
-- [ ] `cdk synth` passes, CDK Nag zero warnings.
+- [x] `cdk synth` passes, CDK Nag zero warnings.
 
 **Depends on:** nothing (first task).
 **Deploy:** [ARCHITECT] — runtime property change on existing cluster, no replacement.
+**Evidence:** b0bb46e — 206/206 tests pass, 2026-07-07T16:54 exit 0.
 
 ---
 
 ## Task 2 — IdentityStack amendments (Pool B/C exports) [KIRO]
 
-- [ ] Export `poolBId`, `poolBArn`, `poolCId`, `poolCArn` as public stack properties + CfnOutputs from `infra/lib/identity-stack.ts`.
+- [x] Export `poolBId`, `poolBArn`, `poolCId`, `poolCArn` as public stack properties + CfnOutputs from `infra/lib/identity-stack.ts`.
 - [ ] Template-assertion test: verify 4 new CfnOutputs exist.
-- [ ] `cdk synth` passes, CDK Nag zero warnings.
+- [x] `cdk synth` passes, CDK Nag zero warnings.
 
 **Depends on:** nothing (parallel with Task 1).
 **Deploy:** [ARCHITECT] — output-only change, no resource modification.
+**Evidence:** e600127 — 206/206 tests pass, 2026-07-07T16:55 exit 0.
 
 ---
 
 ## Task 3 — Publisher upgrade: auditTrail stamping + registry [KIRO]
 
-- [ ] Create `services/eventing/src/audit-trail-registry.ts` with full `AUDIT_TRAIL_REGISTRY` map (all events from contracts/events.md trail designation).
-- [ ] Update `services/eventing/src/publisher.ts`: stamp `auditTrail` from registry; throw on unregistered detailType.
-- [ ] Update `services/eventing/src/types.ts`: add `auditTrail: boolean` to `CumplifyEvent` interface.
-- [ ] Create parity test: asserts registry keys ↔ contracts/events.md trail designation section agreement.
-- [ ] Update existing publisher tests to include `auditTrail` field in assertions.
-- [ ] All tests pass (`vitest --run`).
+- [x] Create `services/eventing/src/audit-trail-registry.ts` with full `AUDIT_TRAIL_REGISTRY` map (58 events from contracts/events.md trail designation).
+- [x] Update `services/eventing/src/publisher.ts`: stamp `auditTrail` from registry; throw on unregistered detailType.
+- [x] Update `services/eventing/src/types.ts`: add `auditTrail: boolean` to `CumplifyEvent` interface.
+- [x] Create parity test: asserts registry keys ↔ contracts/events.md trail designation section agreement.
+- [x] Update existing publisher tests to include `auditTrail` field in assertions.
+- [x] All tests pass (`vitest --run`).
 
 **Depends on:** nothing (parallel with Tasks 1–2).
+**Evidence:** d36b30b — 212/212 tests pass (+6 new), 2026-07-07T16:58 exit 0.
 
 ---
 
 ## Task 4 — EventingStack R-3 pattern rewrite [KIRO]
 
-- [ ] Update `infra/lib/eventing-stack.ts`: replace R-3 `detailType` suffix pattern with `{ detail: { auditTrail: [true] } }`.
-- [ ] Update `infra/lib/eventing-stack.unit.test.ts`: template assertion for new R-3 pattern.
-- [ ] `cdk synth` passes, CDK Nag zero warnings.
-- [ ] Integration test: update event-pattern.int.test.ts to use `auditTrail: true` in test events.
+- [x] Update `infra/lib/eventing-stack.ts`: replace R-3 `detailType` suffix pattern with `{ detail: { auditTrail: [true] } }`.
+- [x] Update `infra/lib/eventing-stack.unit.test.ts`: template assertion for new R-3 pattern.
+- [x] `cdk synth` passes, CDK Nag zero warnings.
+- [x] Integration test: update event-pattern.int.test.ts to use `auditTrail: true` in test events.
 
 **Depends on:** Task 3 (publisher must stamp auditTrail before R-3 expects it).
 **Deploy:** [ARCHITECT] — R-3 swap is LAST step per §13.4 deploy-order constraint.
 **Verification:** [ARCHITECT] — live `TestEventPattern` positive + negative proofs.
+**Evidence:** dea438d — 212/212 tests pass, 2026-07-07T17:01 exit 0.
 
 ---
 
 ## Task 5 — RDS migrations: schemas + tables + RLS [KIRO]
 
-- [ ] Create `services/api/migrations/` directory structure.
-- [ ] `001_create_schemas.sql`: CREATE SCHEMA m1, m2, m3, m4, m5, m5_views.
-- [ ] `002_m1_document_studio.sql`: 6 tables per RDS-1 + audit columns + tenant_id.
-- [ ] `003_m2_capa.sql`: 5 tables per RDS-1.
-- [ ] `004_m3_audit_studio.sql`: 5 tables per RDS-1.
-- [ ] `005_m4_records_management.sql`: 4 tables per RDS-1.
-- [ ] `006_m5_risk_management.sql`: 3 base tables per RDS-1.
-- [ ] `007_rls_policies.sql`: RLS on all 23 base tables, using `current_setting('app.tenant_id')`.
-- [ ] `008_risk_register_view.sql`: materialized view + SECURITY DEFINER accessor function (§6.4) + REVOKE/GRANT.
-- [ ] Create `services/api/src/migration-runner.ts`: executes SQL via Data API, parameterized `set_config`, tracks `_migrations` table.
-- [ ] Create `services/api/src/migrator.ts`: CDK Custom Resource handler wrapping migration-runner.
+- [x] Create `services/api/migrations/` directory structure.
+- [x] `001_create_schemas.sql`: CREATE SCHEMA m1, m2, m3, m4, m5, m5_views.
+- [x] `002_m1_document_studio.sql`: 6 tables per RDS-1 + audit columns + tenant_id.
+- [x] `003_m2_capa.sql`: 5 tables per RDS-1.
+- [x] `004_m3_audit_studio.sql`: 5 tables per RDS-1.
+- [x] `005_m4_records_management.sql`: 4 tables per RDS-1.
+- [x] `006_m5_risk_management.sql`: 3 base tables per RDS-1.
+- [x] `007_rls_policies.sql`: RLS on all 23 base tables, using `current_setting('app.tenant_id', true)` (fail-closed).
+- [x] `008_risk_register_view.sql`: materialized view + SECURITY DEFINER accessor function (§6.4) + REVOKE/GRANT.
+- [x] `009_app_role.sql`: CREATE ROLE app_role + GRANT DML on 23 tables + EXECUTE on accessor (C-1 remediation).
+- [x] Create `services/api/src/migration-runner.ts`: executes SQL via Data API, parameterized `set_config`, tracks `_migrations` table.
+- [x] Create `services/api/src/migrator.ts`: CDK Custom Resource handler wrapping migration-runner.
 - [ ] Unit tests for migration-runner (mock Data API client).
 
 **Depends on:** Task 1 (DataStack enableDataApi + exports).
 **Deploy:** [ARCHITECT] — migrations execute via Custom Resource on first deploy.
+**Evidence:** c74a593 — 212/212 tests pass, 2026-07-07T17:04 exit 0. Remediation: this commit.
 
 ---
 
 ## Task 6 — GraphQL schema (M1–M5 types + operations) [KIRO]
 
-- [ ] Create `services/api/schema/schema.graphql` with types for all M1–M5 entities per module-spec.
-- [ ] Define all queries and mutations per §2.2 operations table.
-- [ ] User-facing operations annotated `@aws_lambda`; agent-path `@aws_iam`.
-- [ ] Subscriptions (5 per §12) with None data source, tenant-claim verification.
-- [ ] SCHEMA-5: no `tenantId` in mutation input types (resolvers overwrite from resolverContext).
+- [x] Create `services/api/schema/schema.graphql` with types for all M1–M5 entities per module-spec.
+- [x] Define all queries and mutations per §2.2 operations table.
+- [x] User-facing operations annotated `@aws_lambda`; agent-path `@aws_iam`.
+- [x] Subscriptions (5 per §12) with None data source, tenant-claim verification.
+- [x] SCHEMA-5: no `tenantId` in mutation input types (resolvers overwrite from resolverContext).
 
 **Depends on:** nothing (parallel, schema is a file artifact).
+**Evidence:** 2ceaa74 — 212/212 tests pass, 2026-07-07T17:00 exit 0.
 
 ---
 
@@ -97,6 +104,7 @@
   - WAFv2 association with SecurityStack WebACL.
   - Migration Custom Resource (provider + migrator Lambda).
   - CfnOutputs: API URL, API ID, authorizer ARN, tenant-data-role ARN.
+- [ ] DataStack amendment: provision a dedicated `app_role` Secrets Manager secret (username/password for the app_role created by migration 009). Resolvers use this secret for Data API. Migrator keeps master secret. **[REQUIRES-HUMAN]** — IAM/secrets.
 - [ ] Wire ApiStack into `infra/lib/cumplify-stage.ts` with addDependency on DataStack, IdentityStack, SecurityStack, EventingStack.
 - [ ] Template-assertion tests per §11.1.
 - [ ] `cdk synth` passes, CDK Nag zero warnings.
@@ -142,16 +150,18 @@
 - [ ] Create 5 resolver Lambdas (`services/api/src/resolvers/m1.ts` .. `m5.ts`):
   - Read `resolverContext.tenantId`, validate (SCHEMA-5: overwrite any client-supplied tenantId).
   - Assume tenant-data role with tenantId session tag (§7.4 pattern).
-  - Data API transaction: `select set_config(...)` → domain query/mutation → commit.
+  - Data API: use app_role secretArn (NOT master). BeginTransaction → `select set_config('app.tenant_id', :tenantId, true)` as FIRST statement → domain query/mutation → CommitTransaction.
+  - **C-2 INVARIANT (review-blocking):** `set_config` with `true` (transaction-local) MUST be the first statement in every BeginTransaction. Never `false`. Never a bare ExecuteStatement for tenant-scoped data. A reused-connection test verifies: 2nd request without set_config → zero rows (never prior tenant's data).
   - Publish audit event via `services/eventing` publisher (auditTrail stamped).
   - Structured logging (tenantId + requestId).
 - [ ] Unit tests per resolver (mock Data API + STS + EventBridge).
+- [ ] Reused-connection test: simulates two requests on same connection; second without set_config returns zero rows (C-2 proof).
 - [ ] Repository-layer unit test asserting every written GSI*PK attribute value is `TENANT#`-prefixed (FF-5 convention enforcement).
 - [ ] C-7 CI denial suite (5 integration tests from design §11.3, committed as runnable post-deploy):
   1. Authorizer denial: Pool-A token → 401.
   2. DynamoDB denial: simulate-principal-policy cross-tenant → implicitDeny.
   3. RDS RLS denial: tenant-B session → empty result on tenant-A data.
-  4. Materialized view denial: tenant-B → `get_risk_register_view()` → empty.
+  4. Materialized view denial: tenant-B → `get_risk_register_view()` → empty; direct SELECT → permission denied.
   5. Resolver overwrite: client-supplied tenantId in mutation input → resolverContext used (SCHEMA-5).
 - [ ] Integration wiring: AppSync resolver mapping to Lambda functions.
 

@@ -1,0 +1,65 @@
+# api-core Tasks 1–6 Evidence Log
+# Rule 8: timestamp + exit code + commit ref
+
+## Task 1 — DataStack amendments
+command: npx vitest --run
+timestamp: 2026-07-07T16:54:36Z
+exit_code: 0
+tests: 206/206 pass
+commit: b0bb46e
+files: infra/lib/data-stack.ts (enableDataApi, clusterArn, dbSecretArn, 2 CfnOutputs)
+
+## Task 2 — IdentityStack amendments
+command: npx vitest --run
+timestamp: 2026-07-07T16:55:19Z
+exit_code: 0
+tests: 206/206 pass
+commit: e600127
+files: infra/lib/identity-stack.ts (poolBArn, poolCArn, 2 CfnOutputs)
+
+## Task 3 — Publisher upgrade
+command: npx vitest --run
+timestamp: 2026-07-07T16:58:42Z
+exit_code: 0
+tests: 212/212 pass (+6 new: parity 3, publisher auditTrail 2, unregistered-throw 1)
+commit: d36b30b
+files: services/eventing/src/audit-trail-registry.ts (58 events),
+       services/eventing/src/publisher.ts (auditTrail stamp + throw guard),
+       services/eventing/src/types.ts (auditTrail field),
+       services/eventing/__tests__/audit-trail-registry.test.ts,
+       services/eventing/__tests__/publisher.test.ts,
+       services/eventing/__tests__/consumer.test.ts,
+       services/eventing/__tests__/fifo-router.test.ts
+
+## Task 4 — EventingStack R-3 rewrite
+command: npx vitest --run
+timestamp: 2026-07-07T17:01:46Z
+exit_code: 0
+tests: 212/212 pass
+commit: dea438d
+files: infra/lib/eventing-stack.ts (R-3 → detail.auditTrail=[true]),
+       infra/lib/eventing-stack.unit.test.ts (assertion updated),
+       services/eventing/__tests__/event-pattern.int.test.ts (rewritten for OQ-5)
+
+## Task 5 — RDS migrations
+command: npx vitest --run
+timestamp: 2026-07-07T17:04:34Z
+exit_code: 0
+tests: 212/212 pass
+commit: c74a593
+files: services/api/migrations/001-008.sql (8 files),
+       services/api/src/migration-runner.ts, services/api/src/migrator.ts
+note: migration-runner unit tests deferred to Task 7 (Custom Resource wiring)
+
+## Task 6 — GraphQL schema
+command: npx vitest --run
+timestamp: 2026-07-07T17:00:36Z
+exit_code: 0
+tests: 212/212 pass
+commit: 2ceaa74
+files: services/api/schema/schema.graphql (606 lines)
+note: schema is a file artifact, no new tests required
+
+## Checkpoint remediation (this commit)
+fixes: C-1 (009_app_role.sql), M-1 (fail-closed current_setting),
+       C-2 (invariant documented), L-2 (matview refresh follow-up noted)

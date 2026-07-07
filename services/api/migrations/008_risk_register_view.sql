@@ -41,12 +41,12 @@ SECURITY DEFINER
 SET search_path = m5_views, m5, pg_temp
 AS $$
   SELECT * FROM m5_views.risk_register_view
-  WHERE tenant_id = current_setting('app.tenant_id');
+  WHERE tenant_id = current_setting('app.tenant_id', true);
 $$;
 
 -- Revoke direct access from app role; grant only EXECUTE on the function.
--- The app_role name is set during deployment (parameterized in migrator).
--- For now, use a DO block that gracefully handles the role not existing yet.
+-- app_role is created by migration 009; the REVOKE/GRANT there is authoritative.
+-- This block remains as a safety net for re-runs after 009 has applied.
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_role') THEN
@@ -54,3 +54,8 @@ BEGIN
     EXECUTE 'GRANT EXECUTE ON FUNCTION m5_views.get_risk_register_view() TO app_role';
   END IF;
 END $$;
+
+-- FOLLOW-UP (named): matview refresh is unwired. Wire event-driven REFRESH
+-- (triggered by Risk.Created / Risk.Escalated / Risk.TreatmentAdded events)
+-- or a scheduled REFRESH (EventBridge Scheduler, every 5 min) in Task 10 or
+-- a dedicated follow-up task. Dashboard will show stale data until wired.
