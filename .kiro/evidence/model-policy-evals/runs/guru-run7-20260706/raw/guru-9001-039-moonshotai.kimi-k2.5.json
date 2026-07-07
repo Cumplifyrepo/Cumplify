@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-039",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Night shift shipped two pallets before final inspection was completed or signed off. The parts might be fine, but nobody verified them and nobody authorized the release. Which ISO 9001 clause did we breach?",
+  "response": " Based on your description, this situation most directly breaches **ISO 9001:2015 Clause 8.6 — Release of products and services**.\n\n## Key requirements of 8.6 that were violated:\n\n- **Planned arrangements must be completed** before release (final inspection wasn't done)\n- **Evidence of conformity must be available** (no verification occurred)\n- **Release must be authorized** (nobody signed off)\n\n## Related clauses that may also apply:\n\n| Clause | Issue |\n|--------|-------|\n| **8.5.1** | Control of production/service provision — not following defined procedures |\n| **8.1** | Operational planning and control — process not executed as planned |\n| **7.5.3.2** | Control of documented information — records not created/retained |\n\n## Practical note for your CAPA:\n\nYou'll want to determine:\n- Was this a **procedural failure** (personnel didn't follow instructions) or a **systemic gap** (no controls preventing release before verification)?\n- How did the pallets physically leave without authorization? (System access, physical controls, shipping process?)\n\nClause 8.6 is your primary nonconformance, but the root cause analysis should examine whether your controls under 8.5.1 and 8.1 are sufficient to prevent recurrence.",
+  "inputTokens": 67,
+  "outputTokens": 271,
+  "latencyMs": 152421,
+  "costUsd": 0.0008531999999999999,
+  "truncated": false
+}

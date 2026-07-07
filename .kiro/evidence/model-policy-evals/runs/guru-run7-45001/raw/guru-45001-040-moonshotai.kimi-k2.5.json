@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-040",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Corporate wants proof each site can handle a fire: documented scenarios, response procedures that account for contractors and visitors, scheduled evacuation drills, and lessons-learned reviews afterward. Which ISO 45001 clause covers all of this?",
+  "response": " This is covered by **ISO 45001:2018 Clause 8.2 — Emergency preparedness and response**.\n\nHere's how the specific elements map:\n\n| Corporate Requirement | ISO 45001:2018 Clause 8.2 Requirement |\n|----------------------|--------------------------------------|\n| Documented scenarios | 8.2(a) — identify potential emergency situations |\n| Response procedures (including contractors/visitors) | 8.2(b) — respond to actual emergency situations; must account for **all persons** on site (implied through 8.1.3 on contractors and 8.2's scope) |\n| Scheduled evacuation drills | 8.2(c) — **periodically test** and exercise planned response capability |\n| Lessons-learned reviews | 8.2(d) — **evaluate performance** and revise as necessary after incidents or tests |\n\n**Key supporting clauses:**\n- **8.1.3** — Management of contractors (ensures their inclusion in emergency procedures)\n- **7.3** — Awareness (ensures visitors/contractors know emergency procedures)\n- **9.1.1** — Monitoring and measurement (supports drill evaluation)\n- **10.2** — Incident investigation (formalizes lessons-learned)\n\nThe standard explicitly requires that emergency planning address \"the needs of **relevant interested parties**\" (contractors, visitors, neighbors), and that testing be **periodic** with subsequent **review and revision** based on results.",
+  "inputTokens": 71,
+  "outputTokens": 300,
+  "latencyMs": 5285,
+  "costUsd": 0.0009425999999999999,
+  "truncated": false
+}

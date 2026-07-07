@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-006",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Before we rearrange the production line layout, which ISO 45001 clause requires us to plan and control changes that could affect OH&S performance?",
+  "response": "In the context of ISO 45001, the clause that specifically requires planning and controlling changes that could affect Occupational Health and Safety (OH&S) performance is Clause 8.1.2, which deals with \"Elimination of hazards and reduction of OH&S risks.\"\n\nMore specifically, within Clause 8.1.2, the standard requires the organization to plan and control changes, including modifications to the OH&S management system, to ensure that:\n1. The changes are evaluated to identify any new hazards or changes to existing risks.\n2. Necessary actions are taken to eliminate or control these hazards and risks.\n3. Changes are communicated to relevant workers and other interested parties.\n4. Competence and awareness are maintained.\n5. Operational control is maintained.\n\nAdditionally, Clause 6.1, which covers \"Actions to address risks and opportunities,\" also requires the organization to plan actions to address the risks and opportunities determined during the planning process. This includes changes that could affect OH&S performance.\n\nTherefore, before rearranging the production line layout, you should:\n1. Evaluate the potential impact on OH&S performance.\n2. Implement controls to mitigate any identified risks.\n3. Communicate the changes to all relevant personnel.\n4. Ensure that all necessary training and awareness activities are conducted.",
+  "inputTokens": 32,
+  "outputTokens": 264,
+  "latencyMs": 2196,
+  "costUsd": 0.0008704000000000001,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-018",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Analyze this CAPA: NC Description: 'Internal audit finding: 8 of 12 sampled employees in production could not explain the quality policy or their contribution to QMS effectiveness. Awareness training records show all employees completed annual refresher, but training content is a 45-minute video with no assessment. Supervisors unable to explain quality objectives relevant to their area.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"rootCause\": \"Inadequate training method and lack of assessment to ensure understanding of quality policy and objectives.\", \"actions\": \"Revise training program to include interactive elements and assessments. Conduct additional targeted training sessions for affected employees. Update supervisor training to ensure they can explain quality objectives. Implement a system for regular review of training effectiveness.\", \"evidence\": \"Updated training materials, assessment results, attendance records of additional training sessions, and documented understanding of quality policy and objectives by employees and supervisors.\"}",
+  "inputTokens": 132,
+  "outputTokens": 103,
+  "latencyMs": 970,
+  "costUsd": 0.0004352,
+  "truncated": false
+}

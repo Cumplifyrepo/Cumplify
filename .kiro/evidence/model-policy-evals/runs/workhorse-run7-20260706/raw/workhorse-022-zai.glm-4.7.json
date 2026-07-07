@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-022",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Analyze this CAPA: NC Description: 'Customer returned 500 units of electronic control modules with intermittent failure in temperature range -20°C to -40°C. Root cause investigation reveals: conformal coating applied at 18°C (spec requires minimum 22°C application temperature), production log shows HVAC system was under repair for 5 days, QC accepted units based on visual inspection only — no functional test at temperature extremes performed.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\n  \"rootCause\": \"Conformal coating applied at 18°C, below the 22°C specification minimum, due to HVAC system being under repair, combined with QC accepting units based solely on visual inspection without functional testing at temperature extremes.\",\n  \"actions\": \"Repair HVAC system to maintain minimum 22°C ambient temperature; implement process interlocks to halt production if temperature falls below specification; update QC protocol to require functional testing at temperature extremes (-40°C to -20°C) for all electronic control modules; retrain production and QC staff on new procedures.\",\n  \"evidence\": \"HVAC maintenance records confirming repair and temperature logs showing compliance with 22°C minimum; updated QC protocol documentation including functional test requirements at temperature extremes; training records for production and QC staff; functional test results for subsequent production lots demonstrating no failures at -40°C to -20°C.\"\n}",
+  "inputTokens": 152,
+  "outputTokens": 181,
+  "latencyMs": 3021,
+  "costUsd": 0.0004894000000000001,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-044",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Our hazard register lists over 200 hazards, but the auditor wrote a finding saying we never scored them for likelihood and severity using a defined methodology. Identification looks solid — which ISO 45001 sub-clause did we actually miss?",
+  "response": "The sub-clause you likely missed is **ISO 45001:2018 Clause 6.1.2.2**, which deals with the \"Hazard identification and assessment of risks and opportunities.\" Specifically, this clause requires organizations to:\n\n- Identify hazards.\n- Assess the risks and opportunities associated with these hazards.\n\nThe auditor's finding indicates that while you have successfully identified hazards, you have not assessed the risks associated with them by scoring them for likelihood and severity using a defined methodology. This is a critical part of the risk assessment process as it helps prioritize which hazards need immediate attention and resources.\n\nTo comply with ISO 45001, you should establish a clear methodology for assessing the likelihood and severity of each identified hazard. This often involves using a risk matrix or similar tool to evaluate and prioritize risks. Once assessed, these risks should be documented and reviewed regularly to ensure they remain current and relevant.",
+  "inputTokens": 51,
+  "outputTokens": 190,
+  "latencyMs": 1307,
+  "costUsd": 0.0006488,
+  "truncated": false
+}

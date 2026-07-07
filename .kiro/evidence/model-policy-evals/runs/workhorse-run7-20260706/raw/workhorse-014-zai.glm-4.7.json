@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-014",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Analyze this CAPA: NC Description: 'Worker suffered chemical burn to forearm when transfer pump fitting failed during sulfuric acid transfer. Investigation revealed: fitting was incorrect material (carbon steel instead of specified 316SS), spare parts inventory not controlled, last preventive maintenance skipped due to production pressure, worker not wearing required chemical PPE (acid-resistant sleeves).'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"rootCause\": \"Lack of control over spare parts inventory and maintenance procedures, compounded by inadequate PPE compliance and production pressure.\",\n  \"actions\": \"1. Implement a controlled spare parts inventory system with material verification. 2. Enforce preventive maintenance schedules regardless of production pressure. 3. Conduct mandatory PPE training and enforce compliance. 4. Replace all carbon steel fittings with specified 316SS.\",\n  \"evidence\": \"Updated spare parts inventory logs, completed preventive maintenance records, PPE training attendance sheets, and inspection reports confirming replacement of fittings.\"\n}\n```\nANSER: ```json\n{\n  \"rootCause\": \"Lack of control over spare parts inventory and maintenance procedures, compounded by inadequate PPE compliance and production pressure.\",\n  \"actions\": \"1. Implement a controlled spare parts inventory system with material verification. 2. Enforce preventive maintenance schedules regardless of production pressure. 3. Conduct mandatory PPE training and enforce compliance. 4. Replace all carbon steel fittings with specified 316SS.\",\n  \"evidence\": \"Updated spare parts inventory logs, completed preventive maintenance records, PPE training attendance sheets, and inspection reports confirming replacement of fittings.\"\n}\n```",
+  "inputTokens": 139,
+  "outputTokens": 251,
+  "latencyMs": 4307,
+  "costUsd": 0.0006355999999999999,
+  "truncated": false
+}

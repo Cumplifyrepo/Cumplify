@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-046",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Purchasing is buying a new bandsaw for the shop. No outside workers will be on our site and nothing is being outsourced — we just need the machine itself to arrive conforming to our OH&S requirements. Which ISO 45001 procurement sub-clause applies?",
+  "response": " Based on your scenario, **ISO 45001:2018 clause 8.1.4.2 — Procurement of goods** applies.\n\nThis sub-clause specifically covers purchasing **goods** (as opposed to 8.1.4.1 for contractors and 8.1.4.3 for outsourced processes). Since you're buying a bandsaw (a physical product/machine) with no external workers or outsourcing involved, this is a straightforward procurement of goods.\n\nKey requirements under 8.1.4.2 include establishing and applying criteria to evaluate conformity to OH&S requirements **before** introducing goods into the workplace. For your bandsaw purchase, this would typically involve:\n\n- Ensuring the machine meets applicable safety standards (guarding, emergency stops, noise levels, etc.)\n- Verifying supplier documentation (manuals, risk assessments, conformity certificates)\n- Confirming installation requirements are understood\n- Planning for any commissioning/training needs\n\nThe standard requires you to communicate these criteria to your suppliers and verify that the goods meet them before use.",
+  "inputTokens": 80,
+  "outputTokens": 212,
+  "latencyMs": 3889,
+  "costUsd": 0.000684,
+  "truncated": false
+}

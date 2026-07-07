@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-037",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "A state inspector found our stormwater discharge exceeded permit limits — and our own internal checks never caught it. Which ISO 14001 clauses cover the compliance-evaluation process that failed and the corrective action we now owe? Cite both.",
+  "response": "Certainly! The ISO 14001 standard provides a framework for an Environmental Management System (EMS), and it includes specific clauses that address both the evaluation of compliance and the need for corrective action. Here are the relevant clauses:\n\n### Compliance Evaluation:\n**Clause 6.1.3 - Compliance Obligations:**\nThis clause requires the organization to:\n- Identify and have access to applicable legal requirements and other requirements to which the organization subscribes related to environmental aspects.\n- Determine how these requirements apply to the organization and its environmental aspects.\n\n**Clause 9.1.1 - General:**\nThis clause requires the organization to determine:\n- What needs to be monitored and measured.\n- The methods for monitoring, measurement, analysis, and evaluation needed to ensure valid results.\n- When the monitoring and measuring shall be performed.\n- When the results from monitoring and measurement shall be analyzed and evaluated.\n\n### Corrective Action:\n**Clause 10.2 - Nonconformity and Corrective Action:**\nThis clause requires the organization to:\n- React to nonconformities and take action to control and correct it.\n- Evaluate the need for action to eliminate the causes of the nonconformity to prevent recurrence or occurrence.\n- Implement any action needed.\n- Review the effectiveness of the corrective action taken.\n\nIn your case, the failure to detect that the stormwater discharge exceeded permit limits indicates a gap in the compliance evaluation process under Clause 6.1.3 and Clause 9.1.1. The need for corrective action to address this nonconformity is covered under Clause 10.2.",
+  "inputTokens": 48,
+  "outputTokens": 322,
+  "latencyMs": 2770,
+  "costUsd": 0.0010688000000000002,
+  "truncated": false
+}

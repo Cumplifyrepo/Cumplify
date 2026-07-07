@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-037",
+  "modelId": "deepseek.v3.2",
+  "prompt": "A state inspector found our stormwater discharge exceeded permit limits — and our own internal checks never caught it. Which ISO 14001 clauses cover the compliance-evaluation process that failed and the corrective action we now owe? Cite both.",
+  "response": "Based on your situation, two specific **ISO 14001:2015 clauses** are directly relevant:\n\n### 1. **Clause 9.1.2: Evaluation of Compliance**\nThis clause requires your organization to **establish, implement, and maintain a process** for evaluating compliance with legal and other requirements (like your stormwater permit). The failure of your internal checks to detect the exceedance indicates a breakdown in this process. The standard mandates that you:\n*   Determine the frequency of evaluations.\n*   Keep documented evidence of the evaluation results.\n*   **Your internal checks that \"never caught it\" point directly to a failure in the process defined under 9.1.2.**\n\n### 2. **Clause 10.2: Nonconformity and Corrective Action**\nThis clause covers exactly what you now \"owe.\" When a nonconformity (like a permit violation) occurs, you must:\n*   **React** to the nonconformity and take action to control and correct it (immediate actions to address the discharge).\n*   **Evaluate** the need for action to eliminate the *cause(s)* of the nonconformity so it doesn't happen again.\n*   **Implement** any necessary corrective actions.\n*   Review the effectiveness of the corrective actions taken.\n*   **Update** risks and opportunities if needed.\n*   Make changes to the **environmental management system (EMS)** if necessary.\n\n**In summary:**\n*   The **failure of your compliance evaluation process** is addressed in **Clause 9.1.2**.\n*   The **corrective action you now owe** is governed by **Clause 10.2**.\n\nThe linkage is critical: the nonconformity (violation) discovered by the state likely originated from an inadequate process under 9.1.2, and your corrective action (10.2) must address both the immediate issue *and* the root cause of why your internal evaluation process failed.",
+  "inputTokens": 50,
+  "outputTokens": 409,
+  "latencyMs": 7844,
+  "costUsd": 0.0007876500000000001,
+  "truncated": false
+}

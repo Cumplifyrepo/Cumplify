@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-008",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We're about to hand our entire janitorial and facilities-upkeep function to an outside firm. Which ISO 45001 sub-clause requires us to make sure outsourced functions and processes stay controlled?",
+  "response": "The ISO 45001 sub-clause that requires you to ensure outsourced functions and processes remain controlled is:\n\n**Clause 8.1.4.2: Outsourcing**\n\n### Specifically:\n> **8.1.4.2 Outsourcing**  \n> *The organization shall ensure that outsourced functions and processes affecting occupational health and safety (OHS) are controlled. The organization shall ensure that outsourced work is performed in accordance with the organization’s OHS management system requirements.*\n\n### Key Requirements:\n- The organization must **identify** which outsourced functions and processes affect OHS (e.g., janitorial services, maintenance, security, waste removal, etc.).\n- It must **establish controls** to ensure these outsourced activities comply with the organization’s OHS policies, procedures, and legal requirements.\n- Controls may include:\n  - Selecting competent contractors\n  - Defining OHS expectations in contracts\n  - Providing information and training to contractors\n  - Monitoring contractor performance\n  - Reviewing contractor incidents or nonconformities\n\n### Why This Applies to Your Situation:\nSince you’re outsourcing janitorial and facilities upkeep — functions that involve exposure to chemicals, equipment use, slips/trips/falls, ergonomic risks, and potential exposure to hazardous materials — these are clearly OHS-impacting activities. ISO 45001 requires you to **not abdicate responsibility** just because the work is done by an external provider.\n\n> 💡 **Best Practice**: Include OHS requirements in your RFP and service contracts, conduct pre-qualification of vendors, and perform periodic audits or site observations of contractor performance.\n\nThis clause ensures that your OHS management system remains effective even when work is performed by others.",
+  "inputTokens": 52,
+  "outputTokens": 357,
+  "latencyMs": 4385,
+  "costUsd": 0.00043568000000000003,
+  "truncated": false
+}

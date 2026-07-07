@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-046",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Purchasing is buying a new bandsaw for the shop. No outside workers will be on our site and nothing is being outsourced — we just need the machine itself to arrive conforming to our OH&S requirements. Which ISO 45001 procurement sub-clause applies?",
+  "response": "Based on the scenario you’ve described, the relevant **ISO 45001:2018** procurement sub-clause is:\n\n**Clause 8.1.4 – Procurement**\n\nMore specifically, you should look at **8.1.4 b)**, which covers the procurement of **products** (which includes equipment like a bandsaw).\n\n---\n\n### Why 8.1.4 b) applies:\n\n1. **8.1.4** is titled “Procurement” and requires the organization to establish controls to ensure that:\n   - **a)** contractors and their activities are controlled (not your case, since no outside workers).\n   - **b)** **products** and **services** brought into the workplace conform to the organization’s OH&S management system requirements.\n\n2. You are purchasing a **product** (bandsaw) that will be used in your workplace, so you must ensure it meets your OH&S requirements (e.g., safety guards, emergency stop, noise/vibration limits, electrical safety, etc.) before it is put into use.\n\n---\n\n### Key actions implied by this clause:\n\n- Define your OH&S requirements for the bandsaw (safety features, compliance with relevant standards).\n- Communicate these requirements to the supplier.\n- Verify conformance before acceptance (inspection, documentation review, etc.).\n- Ensure it is installed and used in a way that maintains safety.\n\n---\n\n**In short:**  \nEven though you’re not outsourcing work or bringing in contractors, the purchase of equipment that can affect health and safety falls under **ISO 45001 Clause 8.1.4 b)**.",
+  "inputTokens": 58,
+  "outputTokens": 330,
+  "latencyMs": 5598,
+  "costUsd": 0.0006464600000000001,
+  "truncated": false
+}

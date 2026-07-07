@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-013",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We keep having disconnects about who tells whom when quality issues come up, internally and with customers. Which ISO 9001 clause requires us to determine what gets communicated about the QMS, when, to whom, how, and by whom?",
+  "response": " The clause you're looking for is **ISO 9001:2015, Clause 7.4 — Communication**.\n\nSpecifically, **7.4** requires the organization to determine:\n\n- **What** needs to be communicated\n- **When** to communicate\n- **To whom** to communicate\n- **How** to communicate\n- **Who** communicates\n\nThis applies to both **internal** and **external** communications relevant to the QMS.\n\n---\n\n**For your specific disconnects**, you'll want to ensure your procedures or documented information explicitly cover:\n\n| Aspect | Internal Considerations | External Considerations |\n|--------|------------------------|------------------------|\n| **What** | Quality issues, nonconformities, audit results, changes to QMS | Customer complaints, product recalls, regulatory requirements, quality failures affecting shipped product |\n| **When** | Immediate for critical issues; scheduled for routine matters | Per contractual requirements; without undue delay for safety/quality issues |\n| **To whom** | Relevant functions, top management, process owners | Affected customers, regulators, supply chain partners as appropriate |\n| **How** | Meetings, reports, dashboards, escalation protocols | Formal notifications, portals, contractual channels |\n| **Who** | Designated roles (e.g., quality manager, department heads) | Authorized personnel (e.g., customer service, regulatory affairs) |\n\n---\n\n**Related clauses** that often get tangled up with 7.4 in practice:\n- **8.2.1** (customer communication requirements)\n- **8.7** (nonconforming outputs — control and notification)\n- **9.1.1** (what monitoring/measuring data gets communicated)\n- **10.2** (nonconformity and corrective action — including reporting)\n\nWould you like guidance on documenting this to prevent the disconnects you're experiencing?",
+  "inputTokens": 76,
+  "outputTokens": 376,
+  "latencyMs": 49040,
+  "costUsd": 0.0011736,
+  "truncated": false
+}

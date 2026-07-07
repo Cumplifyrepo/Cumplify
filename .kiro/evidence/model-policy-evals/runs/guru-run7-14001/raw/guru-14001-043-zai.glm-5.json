@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-043",
+  "modelId": "zai.glm-5",
+  "prompt": "An auditor said we conflated two different ISO 14001 planning requirements by keeping our aspects list and our legal requirements in one combined spreadsheet with one process. Which clause covers identifying environmental aspects, and which covers determining compliance obligations? Cite both.",
+  "response": "The auditor is correct; these are distinct requirements with different methodologies. Here are the specific clauses from ISO 14001:2015 you are looking for:\n\n**1. Identifying Environmental Aspects**\nThis is covered in **Clause 6.1.2** (Environmental aspects).\n*   This clause requires the organization to identify the environmental aspects of its activities, products, and services within the defined scope of the environmental management system. It requires determining which aspects have or can have significant environmental impacts.\n\n**2. Determining Compliance Obligations**\nThis is covered in **Clause 6.1.3** (Compliance obligations).\n*   This clause requires the organization to determine and have access to the compliance obligations related to its environmental aspects. This includes legal requirements (laws and permits) as well as other requirements the organization subscribes to (like industry standards or customer contracts).\n\n**Why the Auditor flagged this:**\nWhile it is acceptable to use a single spreadsheet as a *register* or output document, the **processes** to fulfill these clauses are different:\n*   **Aspects (6.1.2)** require a process of evaluating activities and applying criteria to determine significance (risk-based approach).\n*   **Obligations (6.1.3)** require a process of legal monitoring, regulatory tracking, and accessing external documents.\n\nBy \"conflating\" them, organizations often miss the specific methodology required for each (e.g., they might assume a significant aspect is automatically a legal requirement, or vice versa).",
+  "inputTokens": 54,
+  "outputTokens": 310,
+  "latencyMs": 10497,
+  "costUsd": 0.001046,
+  "truncated": false
+}

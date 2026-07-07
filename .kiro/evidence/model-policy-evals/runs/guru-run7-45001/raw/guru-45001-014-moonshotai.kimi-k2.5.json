@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-014",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 45001 clause requires us to identify workers and other interested parties, understand their needs and expectations, and decide which of those become legal or other requirements we must meet?",
+  "response": " The clause you're describing is **Clause 4.2: Understanding the needs and expectations of workers and other interested parties**.\n\nThis clause requires organizations to:\n- Identify workers and other interested parties\n- Understand their relevant needs and expectations (requirements)\n- Determine which of these become **legal requirements** and **other requirements** that the organization must meet\n\nThe outputs from Clause 4.2 feed directly into **Clause 6.1.3: Determination of legal requirements and other requirements**, where these identified needs and expectations are evaluated and converted into specific compliance obligations for the OH&S management system.",
+  "inputTokens": 63,
+  "outputTokens": 120,
+  "latencyMs": 7792,
+  "costUsd": 0.0003978,
+  "truncated": false
+}

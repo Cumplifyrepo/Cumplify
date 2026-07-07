@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-018",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Once we've listed all our environmental aspects, what does ISO 14001 require us to do to decide which ones are significant, and under which clause?",
+  "response": " Under **ISO 14001:2015**, the determination of significant environmental aspects is addressed in **clause 6.1.2 Environmental aspects**.\n\n## What the Standard Requires\n\nThe standard requires your organization to **determine criteria** for evaluating significance. ISO 14001 does not prescribe specific criteria—you must establish your own. However, typical criteria often include:\n\n### Common Significance Criteria\n\n| Category | Examples |\n|----------|----------|\n| **Environmental impact severity** | Scale, duration, reversibility of environmental damage |\n| **Legal/regulatory requirements** | Non-compliance risks, permit conditions |\n| **Stakeholder concerns** | Community complaints, customer requirements |\n| **Business considerations** | Costs, risks to operations, reputational damage |\n| **Frequency/probability** | How often the aspect occurs |\n| **Control/influence** | Degree of organizational control |\n\n## Key Requirements in 6.1.2\n\n1. **Document the criteria** (explicitly or implicitly)\n2. **Apply the criteria consistently** to identify significant aspects\n3. **Consider**:\n   - Normal and abnormal operating conditions\n   - Emergency situations\n   - Planned or new developments\n   - Supply chain aspects (where applicable)\n\n## Important Linkages\n\n- **Clause 6.1.3** (Compliance obligations) — significant aspects often relate to legal requirements\n- **Clause 6.1.4** (Planning action) — significant aspects must be addressed through environmental objectives or operational controls\n\nThe standard emphasizes that significance is **context-dependent**—what matters to your organization based on its environmental policy, compliance obligations, and stakeholder expectations.\n\nWould you like guidance on developing specific significance criteria for your organization?",
+  "inputTokens": 57,
+  "outputTokens": 346,
+  "latencyMs": 7747,
+  "costUsd": 0.0010722000000000001,
+  "truncated": false
+}

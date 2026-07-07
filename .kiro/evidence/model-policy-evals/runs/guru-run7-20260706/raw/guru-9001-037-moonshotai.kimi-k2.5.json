@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-037",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our certification audit is next month and the auditor will ask for evidence that top management actually reviewed the QMS this year. Which ISO 9001 clause is she checking against?",
+  "response": " The auditor is checking against **ISO 9001:2015 Clause 9.3 — Management review**.\n\nSpecifically, she'll look for evidence that top management conducted a management review of the quality management system **at planned intervals** (typically annually, though the standard doesn't prescribe a specific frequency).\n\n## Key evidence she'll likely request:\n\n| Requirement (9.3) | Typical Evidence |\n|---------------------|------------------|\n| 9.3.1 — General | Management review meeting minutes, attendance records showing top management participation |\n| 9.3.2 — Inputs | Reports on audit results, customer feedback, process performance, product conformity, status of corrective actions, etc. |\n| 9.3.3 — Outputs | Decisions and actions regarding opportunities for improvement, resource needs, QMS changes |\n\n## Common gaps auditors find:\n- Review conducted but **not by top management** (e.g., delegated to quality manager alone)\n- Review done **only to \"check the box\"** without substantive discussion of inputs/outputs\n- **No documented evidence** of outputs or resulting actions\n\nIf your review hasn't happened yet, you still have time to conduct it properly and document it before the audit.",
+  "inputTokens": 62,
+  "outputTokens": 245,
+  "latencyMs": 22470,
+  "costUsd": 0.0007722,
+  "truncated": false
+}

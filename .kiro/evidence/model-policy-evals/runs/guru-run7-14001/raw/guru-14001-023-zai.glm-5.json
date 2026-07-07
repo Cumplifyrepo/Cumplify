@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-023",
+  "modelId": "zai.glm-5",
+  "prompt": "When we commit to an environmental objective like cutting waste by 10 percent, what planning details does ISO 14001 require us to pin down for it? Cite the clause.",
+  "response": "When committing to an environmental objective like \"cutting waste by 10 percent,\" ISO 14001:2015 requires you to define specific planning details to ensure the objective is actionable and measurable.\n\nThese requirements are found in **Clause 6.2.2 (Planning actions to achieve environmental objectives)**.\n\nSpecifically, the standard requires that when planning how to achieve your objectives, you must determine:\n\n1.  **What will be done** (e.g., implementing a recycling program, changing packaging materials).\n2.  **What resources will be required** (e.g., budget for new bins, staff training time, hiring a waste contractor).\n3.  **Who will be responsible** (e.g., the Facilities Manager or a specific \"Green Team\").\n4.  **When it will be completed** (e.g., \"by the end of Q4\").\n5.  **How the results will be evaluated**, including indicators for monitoring progress (e.g., monthly waste audits or weight reports showing the percentage reduction).\n\nThe standard also requires that these actions be integrated into the organization's business processes (Clause 6.2.2, paragraph 2).",
+  "inputTokens": 41,
+  "outputTokens": 235,
+  "latencyMs": 11346,
+  "costUsd": 0.0007930000000000001,
+  "truncated": false
+}

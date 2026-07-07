@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-025",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our quality data just piles up in spreadsheets. What does ISO 9001 require us to analyse and evaluate that data for?",
+  "response": " ISO 9001:2015 requires analysis and evaluation of data and information from several key sources, primarily in **clause 9.1.3 Analysis and evaluation**. Here's what you need to address:\n\n## Required Analysis Areas\n\n| Source | What to Analyze |\n|--------|---------------|\n| **Product/service conformity** | Trends in defects, returns, complaints, test results |\n| **Customer satisfaction** | Perception data, feedback, surveys |\n| **QMS performance & effectiveness** | Process metrics, audit results, objective achievement |\n| **Planning effectiveness** | Whether quality plans are working |\n| **Risks & opportunities** | Effectiveness of actions taken (clause 6.1) |\n| **Supplier performance** | External provider data, incoming quality |\n| **Improvement needs** | Where the system needs to get better |\n\n## The Purpose\n\nThe analysis must support **evidence-based decision making** and feed into:\n\n- **Management review** (clause 9.3)\n- **Improvement actions** (clause 10)\n- Resource allocation\n- Strategic direction\n\n## Practical Translation\n\nYour spreadsheet data likely needs to answer:\n- Are we getting better or worse over time?\n- Where are our biggest problem areas?\n- Are our improvement efforts working?\n- What should we prioritize?\n\n## What ISO 9001 Doesn't Dictate\n\n- *How* you analyze it (spreadsheets can work if they're active tools, not graveyards)\n- Specific statistical methods\n- Frequency (but \"appropriate\" timing is required)\n\n## The Spreadsheet Problem\n\nIf data \"piles up,\" you're likely missing the **evaluation** step—turning raw data into actionable insight. ISO 9001 requires *using* the information, not just collecting it.\n\nWould you like suggestions on moving from passive data storage to active analysis?",
+  "inputTokens": 52,
+  "outputTokens": 372,
+  "latencyMs": 248088,
+  "costUsd": 0.0011472000000000001,
+  "truncated": false
+}

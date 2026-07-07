@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-017",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Draft a procedure for continual improvement at an aerospace component manufacturer. Include data sources for improvement opportunities (audits, NCs, customer feedback, process data, benchmarking), prioritization methodology, project selection, resource allocation, implementation tracking, and effectiveness measurement. Align with ISO 9001 clause 10.3.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 161,
+  "outputTokens": 4096,
+  "latencyMs": 51041,
+  "costUsd": 0.0049635,
+  "truncated": true
+}

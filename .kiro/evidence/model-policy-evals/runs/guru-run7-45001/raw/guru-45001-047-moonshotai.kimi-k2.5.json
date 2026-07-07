@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-047",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A loaded pallet fell from the top rack yesterday and nobody was hurt. My colleague wants to just log it in the risk-and-opportunity planning register and move on. Since this is an event that already happened, which ISO 45001 clause actually governs our reaction to it?",
+  "response": " This situation is governed by **ISO 45001:2018 Clause 10.2: Incident, nonconformity and corrective action**, not the risk and opportunity register (which is Clause 6.1.1 for *potential* events).\n\n## Why Clause 10.2 applies\n\nThe falling pallet is an **incident** — an occurrence arising from work that could or did result in injury and ill health (even though no one was hurt this time). Clause 10.2 specifically requires you to:\n\n- **React immediately** to control/correct the situation\n- **Evaluate** what happened and why the pallet fell\n- **Determine root causes** (loading error? rack integrity? securing method? training gap?)\n- **Implement corrective actions** to prevent recurrence\n- **Assess effectiveness** of those actions\n\n## Why the risk register is wrong here\n\nYour colleague's approach conflates two distinct processes:\n\n| **Clause 6.1.1** (Risk & Opportunity) | **Clause 10.2** (Incident response) |\n|-------------------------------------|-------------------------------------|\n| Proactive — prevents *future* events | Reactive — responds to *actual* events |\n| \"What could go wrong?\" | \"What went wrong and why?\" |\n| Goes in risk register | Triggers investigation and corrective action |\n\n## What you should do\n\n1. **Report and investigate** under your incident management procedure\n2. **Document** findings and actions taken (required by 10.2)\n3. **Update** the risk register *only if* the investigation reveals new hazards or risks not previously identified\n\nThe near-miss with potential for serious injury deserves proper investigation — logging it prospectively as a \"risk\" would miss the systemic learning opportunity.",
+  "inputTokens": 83,
+  "outputTokens": 360,
+  "latencyMs": 14460,
+  "costUsd": 0.0011298,
+  "truncated": false
+}

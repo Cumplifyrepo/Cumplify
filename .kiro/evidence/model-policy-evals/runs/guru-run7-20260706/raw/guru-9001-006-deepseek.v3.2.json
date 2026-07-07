@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-006",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Our quality objectives are vague statements like 'improve quality' with no numbers, owners or deadlines. Which ISO 9001 clause requires objectives to be measurable, established at relevant functions and levels, and backed by a plan to achieve them?",
+  "response": "The requirement you're describing is covered by **ISO 9001:2015, Clause 6.2 *Quality objectives and planning to achieve them***.\n\nSpecifically, the key sub-clauses are:\n\n*   **6.2.1** – This clause states that quality objectives must be:\n    *   **Measurable** (consistent with the quality policy).\n    *   **Relevant** to conformity of products/services and customer satisfaction.\n    *   **Monitored**.\n    *   **Communicated**.\n    *   **Updated as appropriate**.\n    *   It also explicitly requires that objectives be **established at relevant functions and levels** within the organization.\n\n*   **6.2.2** – This clause directly addresses your point about being \"backed by a plan.\" It requires the organization to determine:\n    *   **What** will be done.\n    *   **What resources** will be required.\n    *   **Who** will be responsible.\n    *   **When** it will be completed (deadlines).\n    *   **How the results will be evaluated** (how you'll know you've achieved it).\n\nTherefore, your current \"improve quality\" statements fail to meet the specific, actionable requirements of **Clause 6.2**.\n\nTo fix this, you should transform vague objectives into **SMART** objectives (Specific, Measurable, Achievable, Relevant, Time-bound) and document the associated plans as required by 6.2.2.",
+  "inputTokens": 52,
+  "outputTokens": 307,
+  "latencyMs": 5751,
+  "costUsd": 0.00060019,
+  "truncated": false
+}

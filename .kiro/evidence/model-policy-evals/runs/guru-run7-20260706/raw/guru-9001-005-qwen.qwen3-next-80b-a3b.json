@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-005",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We're standing up a supplier qualification program for our castings vendors. Which ISO 9001 clause requires us to define criteria for evaluating, selecting, monitoring and re-evaluating external providers?",
+  "response": "The ISO 9001 clause that requires you to define criteria for evaluating, selecting, monitoring, and re-evaluating external providers (such as your castings vendors) is:\n\n**Clause 8.4 — Control of externally provided processes, products and services**\n\nSpecifically:\n\n- **8.4.1 General** — Requires the organization to ensure that externally provided processes, products, and services conform to requirements.\n- **8.4.2 Control of externally provided processes, products and services** — This sub-clause explicitly mandates that the organization must:\n  - **Establish criteria for evaluating, selecting, monitoring performance, and re-evaluating external providers** based on their ability to provide processes, products, or services in accordance with requirements.\n  - Apply appropriate controls based on the potential impact of the externally provided process, product, or service on the organization’s ability to conform to requirements.\n\n> ✅ **Key phrase from 8.4.2(a):**  \n> *“establish criteria for evaluating, selecting, monitoring the performance of, and re-evaluating external providers”*\n\nThis is the exact requirement your supplier qualification program must address. You’ll need documented criteria (e.g., quality history, certifications, delivery performance, audit results, capability assessments) and a process to apply them consistently across your castings vendors.\n\n**Bonus Tip:**  \nYou should also document the results of evaluations and re-evaluations (8.4.2(b)) and maintain records of external provider performance (8.4.2(c)) to demonstrate compliance during audits.\n\nSo, to answer your question directly:  \n> **ISO 9001 Clause 8.4.2** requires you to define criteria for evaluating, selecting, monitoring, and re-evaluating external providers.",
+  "inputTokens": 49,
+  "outputTokens": 365,
+  "latencyMs": 5050,
+  "costUsd": 0.00044485999999999994,
+  "truncated": false
+}

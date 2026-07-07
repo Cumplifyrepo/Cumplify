@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-034",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We just learned our waste hauler has been mixing our hazardous waste with general trash. Which ISO 14001 clauses cover (a) the control we should exercise over this outsourced process, (b) our own legal responsibilities for that waste, and (c) fixing the failure? Cite all three.",
+  "response": " I'll identify the relevant ISO 14001:2015 clauses for each aspect of this situation.\n\n## (a) Control over the outsourced process\n\n**Clause 8.1: Operational planning and control**\n\nThis clause requires organizations to establish, implement, and control processes needed to meet environmental management system requirements. Specifically, **clause 8.1(c)** states that the organization must control outsourced processes, determining the type and extent of control or influence to be applied to these processes.\n\nAdditionally, **clause 8.2: Emergency preparedness and response** may apply if this mixing creates environmental emergency risks.\n\n---\n\n## (b) Legal responsibilities for the waste\n\n**Clause 6.1.3: Compliance obligations**\n\nThis clause requires the organization to determine and have access to compliance obligations related to its environmental aspects, and determine how these apply to the organization. **Clause 6.1.3(b)** specifically requires the organization to determine how compliance obligations apply to the organization.\n\nAlso relevant is **clause 9.1.2: Evaluation of compliance**, which requires monitoring and evaluating compliance with legal requirements.\n\n---\n\n## (c) Fixing the failure (corrective action)\n\n**Clause 10.2: Nonconformity and corrective action**\n\nThis clause requires the organization to react to nonconformity and take action to control and correct it, deal with the consequences, evaluate the need for action to eliminate causes, implement needed actions, and review the effectiveness of corrective actions.\n\n---\n\n## Summary Table\n\n| Issue | Primary Clause |\n|-------|-------------|\n| Outsourced process control | **8.1** (Operational planning and control) |\n| Legal responsibilities | **6.1.3** (Compliance obligations) |\n| Correcting the failure | **10.2** (Nonconformity and corrective action) |",
+  "inputTokens": 88,
+  "outputTokens": 368,
+  "latencyMs": 4944,
+  "costUsd": 0.0011568,
+  "truncated": false
+}

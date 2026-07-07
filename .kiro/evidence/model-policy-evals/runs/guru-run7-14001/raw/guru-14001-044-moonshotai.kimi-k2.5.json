@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-044",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our consultant filed the chemical spill response procedure under operational planning and control alongside routine process controls. For potential emergency situations, which ISO 14001 clause actually owns preparedness and response?",
+  "response": " The consultant's placement is incorrect. **Clause 6.1.1 (Environmental aspects)** and **Clause 8.2 (Emergency preparedness and response)** own this, not 8.1.\n\nHere's the proper structure:\n\n| Element | ISO 14001 Clause | Purpose |\n|--------|------------------|---------|\n| **Routine operations** | 8.1 Operational planning and control | *Planned* conditions, standard processes |\n| **Emergency preparedness** | **8.2** | *Potential* emergency situations, **unplanned** events |\n| **Risk/opportunity integration** | 6.1.1 | Identifying environmental aspects including potential emergency situations |\n\n**Key distinction:**\n- **8.1** = \"planned\" conditions under normal operations\n- **8.2** = specifically addresses \"potential emergency situations\" requiring **preparedness and response**\n\n**6.1.1** requires organizations to identify environmental aspects that include \"potential emergency situations\" — this feeds into both risk/opportunity planning (6.1) and the dedicated emergency preparedness requirements of 8.2.\n\nThe consultant likely conflated \"operational control\" broadly with emergency response. While spills *during* routine operations might involve 8.1 controls, the **emergency response capability itself** (plans, drills, mitigation, communication) belongs to **8.2**, supported by aspect identification in **6.1.1**.\n\nWorth checking: Did they also miss **A.6.1.1** guidance explicitly mentioning emergency situations as aspects requiring consideration?",
+  "inputTokens": 62,
+  "outputTokens": 317,
+  "latencyMs": 5869,
+  "costUsd": 0.0009882,
+  "truncated": false
+}

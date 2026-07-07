@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-024",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "What does ISO 9001 require us to do about customer satisfaction — is sending an annual survey the whole obligation?",
+  "response": " No, an annual survey is **not** sufficient to meet ISO 9001's requirements for customer satisfaction. Here's what the standard actually requires:\n\n## ISO 9001:2015 Requirements (Clause 9.1.2)\n\nThe standard requires you to:\n\n- **Monitor** customer perceptions of the degree to which their needs and expectations have been fulfilled\n- **Obtain, monitor, and review** this information\n\n## Key Points\n\n**\"Monitor\" implies ongoing attention**, not a single annual snapshot. The standard doesn't prescribe methods, but expects:\n\n- **Multiple sources** of information (surveys, reviews, complaints, feedback forms, social media, direct communication, warranty claims, repeat business rates, etc.)\n- **Appropriate frequency** based on your business context\n- **Analysis and use** of the data to drive improvement\n\n## What an Annual Survey Alone Misses\n\n| Risk | Why It Matters |\n|------|---------------|\n| Delayed problem detection | Issues fester for months |\n| Low response rates | Unrepresentative data |\n| No real-time trends | Can't spot emerging patterns |\n| Passive approach | Misses unprompted feedback |\n\n## Better Practice\n\nCombine methods such as:\n- Post-transaction feedback\n- Complaint handling analysis\n- Net Promoter Score tracking\n- Customer interviews\n- Market share/win-loss analysis\n- Social media monitoring\n\n## The Core Obligation\n\n> *\"The organization shall monitor customers' perceptions of the degree to which their needs and expectations have been fulfilled.\"*\n\nThe focus is on **understanding satisfaction as input for improvement**, not merely documenting it.\n\nWould you like suggestions for a more robust monitoring approach for your specific industry?",
+  "inputTokens": 50,
+  "outputTokens": 343,
+  "latencyMs": 169943,
+  "costUsd": 0.001059,
+  "truncated": false
+}

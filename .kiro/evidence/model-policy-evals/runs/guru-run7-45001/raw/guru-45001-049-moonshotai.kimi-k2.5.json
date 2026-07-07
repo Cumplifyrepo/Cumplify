@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-049",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our quality manager saw 'evaluation of compliance' on the ISO 45001 audit plan and assumed it meant customer-satisfaction monitoring like in ISO 9001. Which ISO 45001 clause covers evaluation of compliance, and what does it actually require us to evaluate?",
+  "response": " Your quality manager's assumption is understandable given ISO 9001's customer focus, but ISO 45001's \"evaluation of compliance\" is quite different. Here's the clarification:\n\n## The Relevant Clause\n\n**Clause 9.1.2: Evaluation of compliance**\n\nThis sits under **9.1: Monitoring, measurement, analysis and evaluation of performance** — not customer satisfaction.\n\n## What It Actually Requires\n\nISO 45001 requires evaluation of compliance with:\n\n| Aspect | What to Evaluate |\n|--------|---------------|\n| **Legal requirements** | Applicable laws, regulations, statutory requirements |\n| **Other requirements** | Other requirements the organization subscribes to (e.g., collective agreements, contractual commitments, voluntary standards) |\n\n## Key Requirements of 9.1.2\n\n- **Establish, implement and maintain processes** for evaluating compliance\n- **Determine frequency** of compliance evaluations\n- **Evaluate compliance** and take action if needed\n- **Maintain knowledge and understanding** of compliance status\n- **Retain documented information** as evidence of the evaluation results\n\n## Contrast with ISO 9001\n\n| ISO 9001 | ISO 45001 |\n|----------|-----------|\n| 9.1.2: Customer satisfaction | 9.1.2: Evaluation of compliance |\n| Focus: customer perception | Focus: legal/regulatory/other compliance |\n| Monitors external customer views | Monitors internal adherence to obligations |\n\n## Practical Implications for Your Audit\n\nThe auditor will likely examine:\n- Your **legal register** and how you track changing requirements\n- **Compliance evaluation schedules** and records\n- **Evidence of follow-up actions** for non-compliance\n- How you **demonstrate knowledge** of compliance status to top management\n\nThis is fundamentally about **regulatory and legal compliance** in occupational health and safety — not customer satisfaction metrics.",
+  "inputTokens": 80,
+  "outputTokens": 377,
+  "latencyMs": 5810,
+  "costUsd": 0.0011790000000000001,
+  "truncated": false
+}

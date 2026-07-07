@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-049",
+  "modelId": "zai.glm-5",
+  "prompt": "In ISO 9001, the clause immediately after operational planning and control (8.1) deals with requirements for products and services. Our new EHS coordinator assumed the numbering means the same thing in ISO 14001. What does the clause in that position actually cover in the environmental standard, and what is its number?",
+  "response": "While your EHS coordinator’s assumption is logical given the similar structure of ISO management standards, they have misinterpreted the content due to the different focus of the two standards.\n\nIn **ISO 14001:2015**, the clause immediately following Operational planning and control (8.1) is **Clause 8.2**, titled **Emergency preparedness and response**.\n\nHere is the breakdown of the difference:\n\n### ISO 9001 (Quality Management)\n*   **Clause 8.1:** Operational planning and control.\n*   **Clause 8.2:** Requirements for products and services.\n*   **Context:** In the Quality standard, Clause 8.2 is critical because it defines how an organization determines exactly what the customer wants and ensures those specific requirements are met before product creation begins.\n\n### ISO 14001 (Environmental Management)\n*   **Clause 8.1:** Operational planning and control.\n*   **Clause 8.2:** Emergency preparedness and response.\n*   **Context:** In the Environmental standard, there is no \"product requirements\" clause because the output is environmental performance, not a physical product. Instead, Clause 8.2 requires the organization to plan for potential accidents and emergency situations that could cause environmental harm (e.g., chemical spills, fires, or natural disasters) and determine how to respond to them.\n\n**Summary for your Coordinator:**\nYou can explain to them that while ISO 9001 Clause 8.2 focuses on **customer needs**, ISO 14001 Clause 8.2 focuses on **accidental risks**.",
+  "inputTokens": 70,
+  "outputTokens": 320,
+  "latencyMs": 18108,
+  "costUsd": 0.0010940000000000001,
+  "truncated": false
+}

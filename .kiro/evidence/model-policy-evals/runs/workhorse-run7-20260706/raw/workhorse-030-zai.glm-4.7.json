@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-030",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Assess the risk: A chemicals manufacturer is expanding production capacity by 40% by adding a night shift. The expansion means: reduced supervisory coverage (1 supervisor per 20 workers vs 1:10 on day shift), maintenance performed during production rather than during downtime, new hires with less than 6 months experience comprising 50% of night crew, emergency response team reduced to 3 members at night vs 8 during day.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"riskLevel\": \"High\",\n  \"likelihood\": \"High\",\n  \"impact\": \"Severe\",\n  \"controls\": \"Increase supervisory coverage to 1:10 ratio, schedule maintenance during dedicated downtime, provide comprehensive training for new hires, and ensure emergency response team has adequate staffing (at least 8 members) at all times.\"\n}\n```\nANSWER: {\"riskLevel\": \"High\", \"likelihood\": \"High\", \"impact\": \"Severe\", \"controls\": \"Increase supervisory coverage to 1:10 ratio, schedule maintenance during dedicated downtime, provide comprehensive training for new hires, and ensure emergency response team has adequate staffing (at least 8 members) at all times.\"}",
+  "inputTokens": 164,
+  "outputTokens": 150,
+  "latencyMs": 2398,
+  "costUsd": 0.0004284,
+  "truncated": false
+}

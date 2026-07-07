@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-013",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We score risks from every hazard, but 45001 also asks about the upside. Which sub-clause requires assessing OH&S opportunities that could enhance safety performance?",
+  "response": "The sub-clause in **ISO 45001** that requires organizations to assess **OH&S opportunities** that could enhance safety performance is:\n\n> **Clause 6.1.2.3 — OH&S Opportunities**\n\n### Explanation:\nISO 45001:2018 explicitly moves beyond just identifying hazards and risks — it emphasizes **proactive improvement** by requiring organizations to identify and evaluate **opportunities** for improving occupational health and safety (OH&S) performance.\n\n**Clause 6.1.2.3** states:\n> *The organization shall identify OH&S opportunities and take action, as appropriate, to improve its OH&S performance. These opportunities may include, but are not limited to:*\n> - *Implementing new or improved technologies, processes, or procedures;*\n> - *Enhancing worker participation and consultation;*\n> - *Improving training and competence;*\n> - *Enhancing communication;*\n> - *Improving the work environment;*\n> - *Integrating OH&S into business processes.*\n\nThis is a key differentiator from older standards like OHSAS 18001 — ISO 45001 promotes a **positive, proactive approach** to safety, not just risk avoidance.\n\n### So, the answer is:\n> **6.1.2.3 — OH&S Opportunities**",
+  "inputTokens": 43,
+  "outputTokens": 281,
+  "latencyMs": 3685,
+  "costUsd": 0.00034322,
+  "truncated": false
+}

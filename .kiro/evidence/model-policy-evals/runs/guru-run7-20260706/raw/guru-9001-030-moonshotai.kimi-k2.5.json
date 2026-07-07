@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-030",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We don't do any design — customers hand us complete drawings. What does ISO 9001 require when we define the scope of our QMS and want to leave design out?",
+  "response": " When you exclude design from your ISO 9001 QMS scope, here's what you need to do:\n\n## Document the Exclusion Properly\n\n**Clause 4.3 (Determining the scope of the quality management system)** requires you to:\n\n- **State the exclusion** in your scope documentation\n- **Justify it** — explain that your customers provide complete drawings/specifications\n- **Ensure it doesn't affect your ability to provide conforming products**\n\n## Key Requirements\n\n| What to Address | How to Handle It |\n|-----------------|----------------|\n| **Scope statement** | Clearly state: \"Design and development is excluded because customers provide complete, verified specifications\" |\n| **Justification** | Document your process: customer drawings → verification → production |\n| **Clause 8.3** | This is the clause you'll exclude, but you must still meet all other applicable requirements |\n\n## Critical Points\n\n**You CANNOT exclude design if:**\n- You make any design decisions (even minor changes)\n- You interpret incomplete specifications\n- You select materials or processes not specified by the customer\n- You create manufacturing methods that affect product characteristics\n\n**You still need:**\n- **Clause 8.2.3** — Review of product requirements (verify customer drawings are complete/clear)\n- **Clause 8.5.1** — Control of production (ensure you follow customer specs exactly)\n- Process to **verify** customer drawings are adequate before production\n\n## Auditor Expectations\n\nBe prepared to show:\n- Contract reviews confirming drawings are complete\n- Records of customer drawing verification\n- Clear boundaries between your responsibilities and customer responsibilities\n\nWould you like help drafting the scope statement language?",
+  "inputTokens": 62,
+  "outputTokens": 338,
+  "latencyMs": 19958,
+  "costUsd": 0.0010512,
+  "truncated": false
+}

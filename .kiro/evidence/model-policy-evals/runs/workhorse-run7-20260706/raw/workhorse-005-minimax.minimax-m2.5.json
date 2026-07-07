@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-005",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Analyze this CAPA: NC Description: 'Recurring customer complaints about paint adhesion failure on outdoor furniture. Same defect found in 3 separate batches over 6 weeks. Previous CAPA (CA-2024-067) closed 4 months ago for same issue — surface preparation procedure updated but defect persists.' Perform 5-Why analysis and propose systemic corrective actions.\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 173,
+  "outputTokens": 4096,
+  "latencyMs": 63429,
+  "costUsd": 0.0049670999999999995,
+  "truncated": true
+}

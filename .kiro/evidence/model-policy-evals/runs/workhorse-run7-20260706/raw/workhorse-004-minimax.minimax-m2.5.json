@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-004",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Analyze this CAPA: NC Description: 'Incorrect torque values applied to wheel bolts on 23 vehicles during assembly on March 12. Torque wrench TW-009 found 15% out of calibration. Vehicles already shipped to dealers.' Determine root cause, immediate containment, corrective actions, and effectiveness verification plan.\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 161,
+  "outputTokens": 4096,
+  "latencyMs": 61505,
+  "costUsd": 0.0049635,
+  "truncated": true
+}

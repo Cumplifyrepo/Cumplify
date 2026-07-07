@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-002",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "I'm putting together the agenda for our annual management review meeting. Which ISO 9001 clause tells me the specific input topics that have to be covered in the review?",
+  "response": "The specific input topics that should be covered in the annual management review meeting are outlined in ISO 9001:2015 Clause 9.3, which is titled \"Management review.\" Here are the key input topics that should be addressed, as per Clause 9.3.2:\n\n1. **Minutes of Previous Management Reviews**:\n   - Status of actions from previous reviews.\n\n2. **Changes that Could Affect the Quality Management System**:\n   - Any internal or external changes that may impact the QMS.\n\n3. **Feedback from Interested Parties**:\n   - Input from customers, suppliers, employees, and other stakeholders.\n\n4. **Performance of the Quality Management System**:\n   - Customer satisfaction and feedback from customers.\n   - Conformance to product and process requirements.\n   - Process performance and trends.\n   - Nonconformities and corrective actions.\n\n5. **Extent to Which Quality Objectives Have Been Met**:\n   - Review of the achievement of established quality objectives.\n\n6. **Audit Results**:\n   - Internal and external audit results, including any findings and follow-up actions.\n\n7. **Process Performance and Product Conformity**:\n   - Performance of processes and conformity of products and services.\n\n8. **Status of Preventive and Corrective Actions**:\n   - Effectiveness of actions taken to address nonconformities and other issues.\n\n9. **Follow-up Actions from Previous Management Reviews**:\n   - Status and effectiveness of actions from prior reviews.\n\n10. **Changes in External and Internal Issues that are Relevant to the QMS**:\n    - Any changes in the organization’s context or stakeholder requirements.\n\n11. **Recommendations for Improvement**:\n    - Suggestions for enhancing the effectiveness of the QMS.\n\nIncorporating these topics into your agenda will ensure that your management review meeting aligns with the requirements of ISO 9001:2015.",
+  "inputTokens": 37,
+  "outputTokens": 388,
+  "latencyMs": 3706,
+  "costUsd": 0.0012712,
+  "truncated": false
+}

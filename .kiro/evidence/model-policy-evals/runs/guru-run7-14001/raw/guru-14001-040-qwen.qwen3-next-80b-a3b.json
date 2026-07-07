@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-040",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Our GM wants a yearly leadership sit-down on the EMS. Which ISO 14001 clause governs that review, and which clause produces the compliance-status results that must feed into it as an input? Cite both.",
+  "response": "The yearly leadership sit-down on the Environmental Management System (EMS) is governed by **ISO 14001:2015 Clause 9.3 — Management Review**.\n\nThis clause requires top management to review the EMS at planned intervals to ensure its continuing suitability, adequacy, and effectiveness. The review must include inputs such as the status of actions from previous reviews, changes in internal and external issues, compliance obligations, and — critically — **the results of compliance evaluations**.\n\nThe clause that produces the compliance-status results that must feed into the management review is **ISO 14001:2015 Clause 9.1.2 — Evaluation of Compliance**.\n\nThis clause mandates that the organization must:\n> “Establish, implement, and maintain a process to evaluate its compliance with its compliance obligations,”  \n> and  \n> “Determine the frequency of these evaluations.”\n\nThe results of these compliance evaluations are a required input to the management review (Clause 9.3).\n\n---\n\n**Answer Summary:**\n\n- **Governing clause for the leadership sit-down (management review):**  \n  **ISO 14001:2015 Clause 9.3 — Management Review**\n\n- **Clause producing the compliance-status results as an input:**  \n  **ISO 14001:2015 Clause 9.1.2 — Evaluation of Compliance**\n\nThese two clauses are directly linked: Clause 9.1.2 provides the compliance data that Clause 9.3 requires as an input for leadership decision-making.",
+  "inputTokens": 55,
+  "outputTokens": 323,
+  "latencyMs": 4737,
+  "costUsd": 0.0003953,
+  "truncated": false
+}

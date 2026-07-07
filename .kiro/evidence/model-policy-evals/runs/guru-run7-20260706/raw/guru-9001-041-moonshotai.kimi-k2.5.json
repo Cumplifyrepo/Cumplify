@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-041",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Two heats of 4140 bar stock got mixed together on the rack and we can no longer tell which bar came from which heat — our customer requires mill-cert traceability per lot. Which ISO 9001 clause covers this failure?",
+  "response": " This situation falls under **ISO 9001:2015 Clause 8.5.2 — Identification and Traceability**.\n\nSpecifically, the requirement states that when traceability is a requirement, the organization shall control the **unique identification of the outputs** and maintain documented information to enable traceability.\n\nYour customer's requirement for mill-cert traceability per lot makes traceability a **contractual requirement**, triggering this clause. The failure to maintain proper identification and segregation of the two heats means you can no longer fulfill that traceability requirement.\n\n**Related considerations:**\n\n- **Clause 8.5.4.1** (Preservation of product) may also be relevant if the mixing resulted from inadequate storage/handling controls\n- **Clause 8.5.1** (Control of production and service provision) — the production process wasn't adequately controlled to prevent this mix-up\n- **Clause 8.7** (Control of nonconforming outputs) — you'll need to address the nonconforming product (the mixed bars)\n\n**Immediate actions:** Quarantine the mixed bars, review your material receipt and storage procedures, and determine if any testing (chemical analysis, hardness) can differentiate the heats sufficiently to recover traceability.",
+  "inputTokens": 74,
+  "outputTokens": 246,
+  "latencyMs": 221674,
+  "costUsd": 0.0007824,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-003",
+  "modelId": "zai.glm-5",
+  "prompt": "Which ISO 14001 clause requires us to have processes in place for preparing for and responding to potential environmental emergencies like spills or fires?",
+  "response": "The specific clause in ISO 14001:2015 that requires processes for preparing for and responding to environmental emergencies is **Clause 8.2**.\n\nHere is a detailed breakdown of what this clause entails:\n\n### **Clause 8.2: Emergency preparedness and response**\n\nThis clause requires an organization to establish, implement, and maintain the necessary processes to:\n\n1.  **Anticipate:** Identify potential emergency situations (like chemical spills, fires, explosions, or natural disasters) that could have an environmental impact.\n2.  **Prepare:** Plan preventive and mitigative actions to reduce the likelihood of these events happening and to limit their severity if they do.\n3.  **Respond:** Have a documented plan or procedure to respond to actual emergency situations.\n\n### **Key Requirements of Clause 8.2**\n\n*   **Procedural Requirement:** You must have a documented process (often an Emergency Response Plan) detailing how to handle specific scenarios.\n*   **Mitigation:** The process must not only deal with the event but also mitigate any adverse environmental impacts associated with it (e.g., containing a spill before it reaches a drain).\n*   **Periodic Review:** You must periodically review and revise your emergency preparedness processes, particularly after an incident occurs or after tests.\n*   **Testing:** The organization must test these procedures periodically (through drills or simulations) to ensure they are effective.\n\n### **Connection to Other Clauses**\nWhile Clause 8.2 is the specific requirement for the *process* of emergency response, **Clause 6.1** (Actions to address risks and opportunities) is where you first identify these emergency scenarios as risks. Clause 8.2 is the operational execution of the planning done in Clause 6.1.",
+  "inputTokens": 32,
+  "outputTokens": 356,
+  "latencyMs": 5421,
+  "costUsd": 0.0011711999999999998,
+  "truncated": false
+}

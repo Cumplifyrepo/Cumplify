@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-012",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Which ISO 14001 clause requires us to make sure the people whose work affects our environmental performance are competent, and to keep evidence of that competence?",
+  "response": "The requirement to ensure competence and retain evidence is found in **ISO 14001:2015, Clause 7.2 – Competence**.\n\nHere’s a breakdown of the specific requirements within that clause:\n\n1.  **Determining Competence:** The organization must determine the necessary competence of person(s) doing work that, under its control, can affect its environmental performance and its ability to fulfill its compliance obligations.\n2.  **Ensuring Competence:** It must ensure these persons are competent on the basis of appropriate education, training, or experience.\n3.  **Retaining Evidence:** The organization is required to **retain documented information as evidence of competence**. This is explicitly stated in the clause.\n4.  **Addressing Gaps:** It must take actions to acquire the necessary competence and evaluate the effectiveness of the actions taken.\n\n**Key Points to Remember:**\n\n*   **Scope:** This applies to *anyone* whose work can affect your environmental performance, not just EMS-dedicated staff. This includes operators, maintenance personnel, designers, procurement staff, contractors, and top management.\n*   **Evidence (Documented Information):** This can include training records, certificates, qualifications, CVs/resumes, records of skills assessments, performance reviews, and records of on-the-job training.\n*   **Link to Other Clauses:** This competence requirement is directly linked to:\n    *   **Clause 7.3 – Awareness:** Ensuring people are *aware of* the EMS policy, their roles, impacts, etc.\n    *   **Clause 7.4 – Communication:** Both internal and external.\n    *   **Clause 8.1 – Operational Planning and Control:** Where the competent personnel perform their tasks.\n\n**In summary, the direct answer to your question is: Clause 7.2.** It is the clause that mandates you to **ensure competence** and to **keep documented evidence** of that competence for relevant personnel.",
+  "inputTokens": 34,
+  "outputTokens": 398,
+  "latencyMs": 9175,
+  "costUsd": 0.0007573800000000001,
+  "truncated": false
+}

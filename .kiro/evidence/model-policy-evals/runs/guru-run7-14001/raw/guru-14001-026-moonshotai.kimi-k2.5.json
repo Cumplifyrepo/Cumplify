@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-026",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our auditor mentioned ISO 14001 has a general improvement requirement that sits apart from both corrective action and continual improvement. Which clause is it, and what does it ask us to do?",
+  "response": " The clause your auditor is referring to is **ISO 14001:2015, Clause 10.3: Improvement**.\n\nThis clause sits apart from:\n- **10.2 Nonconformity and corrective action**\n- **10.1 Continual improvement**\n\n## What Clause 10.3 Specifically Requires\n\nThe standard states:\n\n> *\"The organization shall continually improve the suitability, adequacy and effectiveness of the environmental management system to enhance environmental performance.\"*\n\n## Key Distinctions\n\n| Aspect | 10.2 Corrective Action | 10.1 Continual Improvement | **10.3 Improvement** |\n|--------|------------------------|---------------------------|----------------------|\n| **Trigger** | Nonconformities | Opportunities | **General obligation** |\n| **Focus** | Fixing problems | Enhancing what works | **Broad, ongoing enhancement** |\n| **Scope** | Reactive | Proactive/strategic | **Foundational, ever-present** |\n\n## What It Asks You To Do\n\nClause 10.3 establishes a **standalone, perpetual duty** to improve your EMS that exists regardless of whether:\n- Nonconformities have occurred (unlike 10.2)\n- Specific improvement opportunities have been identified (unlike 10.1)\n\nIt requires you to demonstrate **ongoing, organic improvement** in how your EMS functions to deliver better environmental results—not as a project or response, but as **embedded organizational behavior**.\n\n## Evidence Auditors Typically Look For\n\n- Trends in environmental performance indicators over time\n- Evidence that improvement is routine, not event-driven\n- Integration of improvement into daily operations and culture\n- Progression beyond minimum compliance\n\nYour auditor likely highlighted this because organizations often conflate these three clauses or overlook 10.3 as a distinct, ever-active requirement.",
+  "inputTokens": 64,
+  "outputTokens": 361,
+  "latencyMs": 12262,
+  "costUsd": 0.0011214,
+  "truncated": false
+}

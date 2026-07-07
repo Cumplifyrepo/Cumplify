@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-036",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're outsourcing our entire forklift fleet maintenance to the equipment dealer — their people, their schedule, off our books. Which ISO 45001 sub-clause makes us responsible for keeping that outsourced function under control?",
+  "response": " The relevant ISO 45001 sub-clause is **8.1.4.3 — Outsourced functions and processes**.\n\nThis clause requires you to ensure that outsourced functions affecting your OH&S management system are controlled. Even though the dealer provides the personnel and scheduling, you remain accountable for the occupational health and safety outcomes.\n\nKey obligations under 8.1.4.3 include:\n\n- Establishing criteria for evaluating, selecting, and monitoring the contractor\n- Defining OH&S requirements in your contract\n- Verifying the dealer's competence and resources\n- Maintaining oversight through audits, inspections, or performance reviews\n- Ensuring their activities align with your hazard controls and legal obligations\n\nThe forklift maintenance directly impacts workplace safety (mechanical failures, improper repairs, unsafe operations in your facility), so this isn't a simple \"hands-off\" arrangement. You need documented evidence of ongoing control, not just a signed service agreement.\n\nRelated clauses to consider: **8.1.4.1 (General — contractors)** and **8.1.4.2 (Coordinating with contractors)** for interface arrangements when their people work on your site.",
+  "inputTokens": 68,
+  "outputTokens": 231,
+  "latencyMs": 11026,
+  "costUsd": 0.0007338000000000001,
+  "truncated": false
+}

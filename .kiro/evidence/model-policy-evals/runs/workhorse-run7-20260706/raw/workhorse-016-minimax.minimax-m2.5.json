@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-016",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Plan an internal audit: Scope: ISO 14001 clause 8.1 (Operational planning and control) at a paint manufacturing facility. Focus areas: VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment. The facility had a minor spill incident 2 months ago and an EPA inspection is expected this quarter.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "\n\nANSWER: {\"scope\":\"Internal audit of ISO 14001 clause 8.1 (Operational planning and control) at the paint manufacturing facility, focusing on VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment, with particular attention to the recent minor spill incident and preparation for upcoming EPA inspection.\",\"criteria\":\"ISO 14001:2015 clause 8.1, EPA regulations (e.g., NESHAP for paint manufacturing, RCRA, Clean Water Act), relevant state environmental regulations, internal environmental management system procedures, and industry best practices for paint manufacturing.\",\"schedule\":\"Audit to be conducted over a 3‑day period: Day 1 – Document review and evaluation of VOC emission controls; Day 2 – Assessment of hazardous waste management, chemical storage, and spill prevention measures; Day 3 – Inspection of wastewater treatment facilities, final observations, and exit meeting. Timeline: Week 1 – Audit planning and notification to relevant departments; Week 2 – On‑site audit execution; Week 3 – Draft audit report and preliminary findings; Week 4 – Final audit report and issuance of corrective action requests.\"}",
+  "inputTokens": 167,
+  "outputTokens": 2337,
+  "latencyMs": 20534,
+  "costUsd": 0.0028545,
+  "truncated": false
+}

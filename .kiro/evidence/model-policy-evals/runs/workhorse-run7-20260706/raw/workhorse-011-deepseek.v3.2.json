@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-011",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Assess the risk: A pharmaceutical company plans to outsource sterile fill-finish operations to a contract manufacturer in another country. The CDMO has FDA and EU GMP approval but has received 2 Form 483 observations in the past year related to environmental monitoring. Product is a high-value biologic with 18-month shelf life.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n    \"riskLevel\": \"Medium\",\n    \"likelihood\": \"Moderate\",\n    \"impact\": \"High\",\n    \"controls\": \"Enhanced audit with environmental monitoring focus, require CAPA review and approval before transfer, implement additional batch record review and testing, establish real-time data monitoring, and include specific performance metrics in the quality agreement.\"\n}\n```\nANSWER: {\"riskLevel\": \"Medium\", \"likelihood\": \"Moderate\", \"impact\": \"High\", \"controls\": \"Enhanced audit with environmental monitoring focus, require CAPA review and approval before transfer, implement additional batch record review and testing, establish real-time data monitoring, and include specific performance metrics in the quality agreement.\"}",
+  "inputTokens": 140,
+  "outputTokens": 144,
+  "latencyMs": 2799,
+  "costUsd": 0.0003532,
+  "truncated": false
+}

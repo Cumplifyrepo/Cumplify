@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-017",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're drafting our environmental policy. What commitments does ISO 14001 say the policy must contain, and which clause sets that requirement?",
+  "response": " ISO 14001:2015 requires specific commitments in the environmental policy under **Clause 5.2**.\n\nThe policy must include commitments to:\n\n1. **Protection of the environment** — including prevention of pollution and other specific commitments relevant to the organization's context\n\n2. **Continual improvement** — of the environmental management system to enhance environmental performance\n\n3. **Compliance obligations** — meeting applicable legal requirements and other requirements the organization subscribes to\n\nAdditionally, Clause 5.2 requires that the policy:\n- Be appropriate to the organization's purpose and context\n- Provide a framework for setting environmental objectives\n- Be documented, communicated, and available to interested parties\n\nThe three commitments (environmental protection, continual improvement, and compliance) are the mandatory elements your policy must explicitly contain.",
+  "inputTokens": 53,
+  "outputTokens": 159,
+  "latencyMs": 2968,
+  "costUsd": 0.0005088,
+  "truncated": false
+}

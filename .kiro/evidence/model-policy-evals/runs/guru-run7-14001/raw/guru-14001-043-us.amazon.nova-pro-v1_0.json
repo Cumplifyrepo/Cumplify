@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-043",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "An auditor said we conflated two different ISO 14001 planning requirements by keeping our aspects list and our legal requirements in one combined spreadsheet with one process. Which clause covers identifying environmental aspects, and which covers determining compliance obligations? Cite both.",
+  "response": "Certainly! In the ISO 14001 standard, the requirements for identifying environmental aspects and determining compliance obligations are covered under different clauses:\n\n1. **Identifying Environmental Aspects:**\n   - This is covered under **Clause 4.3.1** of ISO 14001:2015. The organization shall establish, implement, maintain and continually improve an environmental management system, including the processes needed and their interactions, in accordance with the requirements of this International Standard. One of the key requirements within this clause is the identification of environmental aspects.\n\n2. **Determining Compliance Obligations:**\n   - This is covered under **Clause 6.1.3** of ISO 14001:2015. The organization shall determine:\n     - Applicable legal requirements and\n     - Other requirements to which the organization subscribes related to its environmental aspects.\n   - These requirements need to be taken into account when establishing, implementing, and maintaining its environmental management system.\n\nCombining these two into one process or spreadsheet may lead to confusion and non-compliance with the distinct requirements specified by the standard. It’s important to maintain clear separation and documentation for each to ensure that all aspects and compliance obligations are adequately addressed.",
+  "inputTokens": 51,
+  "outputTokens": 258,
+  "latencyMs": 1720,
+  "costUsd": 0.0008664,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-005",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 14001 clause requires top management to establish an environmental policy containing specific mandatory commitments?",
+  "response": "The ISO 14001 standard, which specifies the requirements for an Environmental Management System (EMS), requires top management to establish an environmental policy as part of its framework. Specifically, Clause 5.2 of ISO 14001:2015 is dedicated to the establishment of the environmental policy.\n\n**Clause 5.2: Environmental Policy** contains the following mandatory commitments that top management must ensure are included:\n\n1. **Appropriateness to the Organization**:\n   - The environmental policy must be appropriate to the purpose and context of the organization, as well as its environmental aspects.\n\n2.**Commitment to Compliance**:\n   - A commitment to comply with applicable legal requirements and with other requirements to which the organization subscribes, which relate to its environmental aspects.\n\n3. **Pollution Prevention**:\n   - A commitment to the prevention of pollution.\n\n4. **Commitment to Continual Improvement**:\n   - A commitment to continual improvement of the environmental management system.\n\n5. **Framework for Setting Environmental Objectives**:\n   - The policy must provide a framework for setting the environmental objectives.\n\n6. **Availability and Communication**:\n   - The policy must be available and be communicated to all persons working under the control of the organization, and it must be available to interested parties.\n\nIn summary, **Clause 5.2** of ISO 14001:2015 specifically requires top management to establish an environmental policy that includes these mandatory commitments.",
+  "inputTokens": 22,
+  "outputTokens": 304,
+  "latencyMs": 1945,
+  "costUsd": 0.0009904000000000002,
+  "truncated": false
+}

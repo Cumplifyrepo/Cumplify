@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-039",
+  "modelId": "zai.glm-5",
+  "prompt": "We just hired an operator for our wastewater treatment system. Which ISO 14001 clauses require us to verify she is competent for the role and to make her aware of the significant environmental aspects tied to her work? Cite both.",
+  "response": "Based on ISO 14001:2015, the two clauses that specifically address these requirements are:\n\n**1. Verification of Competence: Clause 7.2 (Competence)**\nThis clause requires the organization to ensure that any person performing tasks that affect its environmental performance and the effectiveness of the environmental management system is competent. This competence must be determined based on appropriate education, training, or experience.\n\n*   **Relevant text:** \"The organization shall: a) determine the necessary competence of person(s) doing work under its control that affects its environmental performance and its ability to fulfil its compliance obligations; b) ensure that these persons are competent on the basis of appropriate education, training or experience...\"\n\n**2. Awareness of Significant Environmental Aspects: Clause 7.3 (Awareness)**\nThis clause requires the organization to ensure that people doing work under the organization's control are aware of the significant environmental aspects associated with their work.\n\n*   **Relevant text:** \"The organization shall ensure that persons doing work under the organization’s control are aware of: ... b) the significant environmental aspects and related actual or potential environmental impacts associated with their work...\"",
+  "inputTokens": 51,
+  "outputTokens": 234,
+  "latencyMs": 15202,
+  "costUsd": 0.0007998,
+  "truncated": false
+}

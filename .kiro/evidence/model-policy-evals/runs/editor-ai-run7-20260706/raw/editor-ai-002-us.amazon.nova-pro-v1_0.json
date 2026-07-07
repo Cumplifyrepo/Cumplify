@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-002",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Suggest improvements to this CAPA record: 'Problem: Parts rejected. Root Cause: Machine issue. Action: Fix machine. Verification: Check parts.' Industry: Aerospace fastener manufacturing. The record lacks detail for ISO 9001 clause 10.2 compliance.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"completedSection\": \"Problem: Multiple parts rejected due to dimensional non-conformance. Root Cause: Analysis revealed a misalignment in the CNC machining center, causing incorrect dimensions. Action: Performed a thorough inspection and realignment of the CNC machining center, followed by recalibration. Additionally, implemented a preventive maintenance schedule for the machine. Verification: Conducted a sampling inspection of 100 produced parts post-correction, with 100% conformance to dimensional specifications. Training sessions were held for operators on machine maintenance and early issue detection.\\n\\nReferences: ISO 9001:2015, Section 10.2; AS9100D (Aerospace supplement to ISO 9001)\\n\\nClause Alignment: This CAPA record now aligns with ISO 9001:2015 clause 10.2 by providing a detailed description of the problem, a thorough root cause analysis, specific corrective actions taken, and verification activities to ensure the effectiveness of the actions. The inclusion of preventive maintenance and operator training addresses the requirement for eliminating the causes of potential non-conformities to prevent occurrence.\"}",
+  "inputTokens": 124,
+  "outputTokens": 243,
+  "latencyMs": 2836,
+  "costUsd": 0.0008768000000000001,
+  "truncated": false
+}

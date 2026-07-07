@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-038",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Leadership approved a target to cut hazardous waste generation 15 percent this year. Which ISO 14001 clauses cover setting that objective up properly and then monitoring performance against it? Cite both.",
+  "response": " I'll identify the specific ISO 14001:2015 clauses for establishing and monitoring environmental objectives.\n\n## Setting the Objective Properly: **Clause 6.2.1 (Environmental objectives)**\n\nThis clause requires that when establishing environmental objectives, the organization shall ensure they are:\n- **Consistent** with the environmental policy\n- **Measurable** (if practicable)\n- **Monitored**\n- **Communicated**\n- **Updated** as appropriate\n\nIt also requires establishing objectives at relevant functions and levels, taking into account significant environmental aspects and compliance obligations.\n\n---\n\n## Monitoring Performance: **Clause 9.1.1 (Monitoring, measurement, analysis and evaluation)**\n\nThis clause requires the organization to determine:\n- **What** needs to be monitored and measured (the 15% reduction target)\n- **How** to monitor, measure, analyze and evaluate (methods, frequency, criteria)\n- **When** to perform monitoring and measuring\n- **When** to analyze and evaluate the results\n\nIt specifically requires evaluating environmental performance against environmental objectives.\n\n---\n\n## Supporting Connection\n\nThese clauses work together: **6.2.1** establishes the \"what\" (the 15% hazardous waste reduction target with proper characteristics), while **9.1.1** ensures you track \"how well\" you're progressing toward that target through systematic monitoring and measurement.",
+  "inputTokens": 66,
+  "outputTokens": 271,
+  "latencyMs": 4695,
+  "costUsd": 0.0008525999999999999,
+  "truncated": false
+}

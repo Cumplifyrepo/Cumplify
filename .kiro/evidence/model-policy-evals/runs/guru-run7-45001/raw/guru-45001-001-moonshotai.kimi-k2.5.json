@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-001",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our warehouse crew wants a formal say in how we run the safety program, not just a suggestion box. Which ISO 45001 clause requires us to establish processes for consulting workers and getting them to participate in the OH&S management system?",
+  "response": " The clause you're looking for is **ISO 45001:2018, Clause 5.4 — \"Consultation and participation of workers.\"**\n\nThis clause specifically requires your organization to establish, implement, and maintain processes for:\n\n- **Consultation** with workers (and their representatives, where they exist)\n- **Participation** of workers in the OH&S management system\n\nKey requirements under 5.4 include providing mechanisms for workers to contribute to:\n- Hazard identification and risk assessment\n- Incident investigation\n- Development of OH&S objectives and policies\n- Design and planning of the workplace\n- Any changes affecting OH&S\n- Evaluation of training needs\n- Audits and management review\n\nThe clause also specifies that you must remove obstacles or barriers to participation and ensure workers or their representatives have time and resources for these activities.\n\nThis goes well beyond a suggestion box — it requires structured, ongoing involvement with real influence over decisions, not just token input.",
+  "inputTokens": 74,
+  "outputTokens": 193,
+  "latencyMs": 10034,
+  "costUsd": 0.0006234,
+  "truncated": false
+}

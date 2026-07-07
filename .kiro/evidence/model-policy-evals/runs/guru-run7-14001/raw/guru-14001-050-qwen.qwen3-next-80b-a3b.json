@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-050",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We've already determined the risks and opportunities arising from our significant aspects under the general planning requirement. Which separate ISO 14001 sub-clause then requires us to plan concrete actions, integrate them into our EMS processes, and evaluate whether they worked?",
+  "response": "The ISO 14001 sub-clause that requires you to plan concrete actions, integrate them into your Environmental Management System (EMS) processes, and evaluate whether they worked is:\n\n**Clause 6.1.4 — Actions to address risks and opportunities**\n\n### Here’s why:\n\nWhile **Clause 6.1.1** (General) and **6.1.2** (Environmental aspects) require you to *identify* risks and opportunities arising from your significant environmental aspects, it is **Clause 6.1.4** that mandates you to:\n\n> **Plan actions** to address those risks and opportunities  \n> **Integrate and implement** those actions into your EMS processes  \n> **Evaluate the effectiveness** of those actions\n\n### Key requirements of Clause 6.1.4:\n- **Plan actions** to address the risks and opportunities identified in 6.1.1 and 6.1.2.\n- **Integrate and implement** these actions into the organization’s EMS processes (i.e., don’t treat them as standalone projects — embed them into operations, planning, etc.).\n- **Evaluate the effectiveness** of these actions — meaning you must monitor, measure, and review whether the actions achieved their intended outcomes.\n\nThis clause ensures that your risk and opportunity planning doesn’t remain theoretical — it drives actual improvement and is subject to review as part of continual improvement (Clause 10.3).\n\n### In summary:\n> ✅ **Clause 6.1.4** is the specific sub-clause requiring you to plan, integrate, and evaluate concrete actions to address risks and opportunities arising from your significant environmental aspects.\n\nThis is the operational bridge between identifying risks/opportunities and achieving continual improvement in your EMS.",
+  "inputTokens": 60,
+  "outputTokens": 356,
+  "latencyMs": 10976,
+  "costUsd": 0.00043559999999999996,
+  "truncated": false
+}

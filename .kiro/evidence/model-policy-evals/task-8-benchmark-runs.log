@@ -1,0 +1,477 @@
+# Task 8 — Benchmark runs, human-graded seats [ARCHITECT] — started 2026-07-06T21:00:34Z
+# Profile: cumplify-dev-admin | HEAD 96fe704 | C-4: estimates below, architect-approved at $3.00/seat
+
+===== SEAT: guru — estimate =====
+[model-evals] Seat: guru
+[model-evals] Candidates: zai.glm-5, deepseek.v3.2, qwen.qwen3-next-80b-a3b, moonshotai.kimi-k2.5, us.amazon.nova-pro-v1:0
+[model-evals] Eval set loaded: data/eval-sets/guru-iso9001.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 5 models
+  zai.glm-5: live-api ($1/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+  moonshotai.kimi-k2.5: live-api ($0.6/$3 per M tokens in/out)
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| guru | 50 | 5 | 250 | 300,000 | 150,000 | $0.7800 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: guru — RUN (run7) =====
+[model-evals] Seat: guru
+[model-evals] Candidates: zai.glm-5, deepseek.v3.2, qwen.qwen3-next-80b-a3b, moonshotai.kimi-k2.5, us.amazon.nova-pro-v1:0
+[model-evals] Eval set loaded: data/eval-sets/guru-iso9001.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 5 models
+  zai.glm-5: live-api ($1/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+  moonshotai.kimi-k2.5: live-api ($0.6/$3 per M tokens in/out)
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| guru | 50 | 5 | 250 | 300,000 | 150,000 | $0.7800 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run7-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/guru-run7-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: zai.glm-5 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: qwen.qwen3-next-80b-a3b ---
+.................................................. (50 tasks complete)
+
+--- Candidate: moonshotai.kimi-k2.5 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.................................................. (50 tasks complete)
+
+# Eval Report: guru — 2026-07-06T23:09:44.257Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| zai.glm-5 | 0.960 | PASS | $0.00217 | $0.00376 | 89.0% | 4 |
+| deepseek.v3.2 | 0.930 | PASS | $0.00154 | $0.00241 | 92.2% | 3 |
+| qwen.qwen3-next-80b-a3b | 0.930 | PASS | $0.00068 | $0.00151 | 96.6% | 1 |
+| moonshotai.kimi-k2.5 | 0.950 | PASS | $0.00097 | $0.00137 | 95.1% | 2 |
+| us.amazon.nova-pro-v1:0 | 0.560 | FAIL | $0.00162 | $0.00239 | 91.8% | N/A |
+
+## Winner: qwen.qwen3-next-80b-a3b
+
+## Budget Consumed: $0.3576
+
+## Pricing Sources
+- zai.glm-5: live-api
+- deepseek.v3.2: live-api
+- qwen.qwen3-next-80b-a3b: live-api
+- moonshotai.kimi-k2.5: live-api
+- us.amazon.nova-pro-v1:0: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/guru-run7-20260706/report.md
+[model-evals] Budget consumed: $0.3576
+[model-evals] Winner: qwen.qwen3-next-80b-a3b
+EXIT: 0
+
+===== SEAT: workhorse — estimate =====
+[model-evals] Seat: workhorse
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, deepseek.v3.2, qwen.qwen3-next-80b-a3b, zai.glm-4.7, minimax.minimax-m2.5
+[model-evals] Eval set loaded: data/eval-sets/workhorse.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 5 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+  zai.glm-4.7: live-api ($0.6/$2.2 per M tokens in/out)
+  minimax.minimax-m2.5: live-api ($0.3/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| workhorse | 30 | 5 | 150 | 120,000 | 60,000 | $0.2880 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: workhorse — RUN (run7) =====
+[model-evals] Seat: workhorse
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, deepseek.v3.2, qwen.qwen3-next-80b-a3b, zai.glm-4.7, minimax.minimax-m2.5
+[model-evals] Eval set loaded: data/eval-sets/workhorse.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 5 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+  zai.glm-4.7: live-api ($0.6/$2.2 per M tokens in/out)
+  minimax.minimax-m2.5: live-api ($0.3/$1.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| workhorse | 30 | 5 | 150 | 120,000 | 60,000 | $0.2880 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run7-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/workhorse-run7-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.............................. (30 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+............................T. (30 tasks complete)
+
+--- Candidate: qwen.qwen3-next-80b-a3b ---
+.............................. (30 tasks complete)
+
+--- Candidate: zai.glm-4.7 ---
+.............................. (30 tasks complete)
+
+--- Candidate: minimax.minimax-m2.5 ---
+TTTTTTTTT..TT...T..TT..TT...T. (30 tasks complete)
+
+# Eval Report: workhorse — 2026-07-06T23:48:44.602Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-pro-v1:0 | 0.833 | FAIL | $0.00062 | $0.00295 | 94.8% | N/A |
+| deepseek.v3.2 | 0.700 | FAIL | $0.00091 | $0.00474 | 92.3% | N/A |
+| qwen.qwen3-next-80b-a3b | 0.233 | FAIL | $0.00061 | $0.00306 | 94.8% | N/A |
+| zai.glm-4.7 | 0.800 | FAIL | $0.00077 | $0.00303 | 93.5% | N/A |
+| minimax.minimax-m2.5 | 0.433 | FAIL | $0.00496 | $0.00497 | 58.2% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.2530
+
+## Pricing Sources
+- us.amazon.nova-pro-v1:0: live-api
+- deepseek.v3.2: live-api
+- qwen.qwen3-next-80b-a3b: live-api
+- zai.glm-4.7: live-api
+- minimax.minimax-m2.5: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/workhorse-run7-20260706/report.md
+[model-evals] Budget consumed: $0.2530
+[model-evals] Winner: NONE
+EXIT: 0
+
+===== SEAT: editor-ai — estimate =====
+[model-evals] Seat: editor-ai
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, deepseek.v3.2, zai.glm-4.7
+[model-evals] Eval set loaded: data/eval-sets/editor-ai.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  zai.glm-4.7: live-api ($0.6/$2.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| editor-ai | 20 | 4 | 80 | 64,000 | 32,000 | $0.1536 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: editor-ai — RUN (run7) =====
+[model-evals] Seat: editor-ai
+[model-evals] Candidates: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, deepseek.v3.2, zai.glm-4.7
+[model-evals] Eval set loaded: data/eval-sets/editor-ai.json (20 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 4 models
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+  us.amazon.nova-lite-v1:0: live-api ($0.060000000000000005/$0.24000000000000002 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  zai.glm-4.7: live-api ($0.6/$2.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| editor-ai | 20 | 4 | 80 | 64,000 | 32,000 | $0.1536 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run7-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/editor-ai-run7-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.................... (20 tasks complete)
+
+--- Candidate: us.amazon.nova-lite-v1:0 ---
+.................... (20 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+.................... (20 tasks complete)
+
+--- Candidate: zai.glm-4.7 ---
+.................... (20 tasks complete)
+
+# Eval Report: editor-ai — 2026-07-06T23:57:48.794Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| us.amazon.nova-pro-v1:0 | 0.867 | FAIL | $0.00116 | $0.00213 | 85.4% | N/A |
+| us.amazon.nova-lite-v1:0 | 0.950 | FAIL | $0.00004 | $0.00006 | 99.5% | N/A |
+| deepseek.v3.2 | 0.650 | FAIL | $0.00168 | $0.00322 | 78.8% | N/A |
+| zai.glm-4.7 | 0.600 | FAIL | $0.00108 | $0.00160 | 86.4% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.0783
+
+## Pricing Sources
+- us.amazon.nova-pro-v1:0: live-api
+- us.amazon.nova-lite-v1:0: live-api
+- deepseek.v3.2: live-api
+- zai.glm-4.7: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/editor-ai-run7-20260706/report.md
+[model-evals] Budget consumed: $0.0783
+[model-evals] Winner: NONE
+EXIT: 0
+
+===== SEAT: legal-ledger — estimate =====
+[model-evals] Seat: legal-ledger
+[model-evals] Candidates: zai.glm-5, deepseek.v3.2, moonshot.kimi-k2-thinking
+[model-evals] Eval set loaded: data/eval-sets/legal-ledger.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 3 models
+  zai.glm-5: live-api ($1/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  moonshot.kimi-k2-thinking: live-api ($0.6/$2.5 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| legal-ledger | 30 | 3 | 90 | 135,000 | 72,000 | $0.3654 |
+
+[model-evals] Budget consumed: $0.00
+[model-evals] Estimate complete — no Bedrock invocations made.
+===== SEAT: legal-ledger — RUN (run7) =====
+[model-evals] Seat: legal-ledger
+[model-evals] Candidates: zai.glm-5, deepseek.v3.2, moonshot.kimi-k2-thinking
+[model-evals] Eval set loaded: data/eval-sets/legal-ledger.json (30 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 3 models
+  zai.glm-5: live-api ($1/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  moonshot.kimi-k2-thinking: live-api ($0.6/$2.5 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| legal-ledger | 30 | 3 | 90 | 135,000 | 72,000 | $0.3654 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run7-20260706
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/legal-ledger-run7-20260706
+[model-evals] Starting benchmark run...
+
+--- Candidate: zai.glm-5 ---
+.............................. (30 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+.............................. (30 tasks complete)
+
+--- Candidate: moonshot.kimi-k2-thinking ---
+......................TT.....T (30 tasks complete)
+
+# Eval Report: legal-ledger — 2026-07-07T00:58:57.669Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| zai.glm-5 | 0.000 | PASS | $0.00582 | $0.00670 | 85.3% | 2 |
+| deepseek.v3.2 | 0.000 | PASS | $0.00335 | $0.00386 | 91.5% | 1 |
+| moonshot.kimi-k2-thinking | 0.000 | PASS | $0.01183 | $0.02058 | 70.1% | 3 |
+
+## Winner: deepseek.v3.2
+
+## Budget Consumed: $0.6615
+
+## Pricing Sources
+- zai.glm-5: live-api
+- deepseek.v3.2: live-api
+- moonshot.kimi-k2-thinking: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/legal-ledger-run7-20260706/report.md
+[model-evals] Budget consumed: $0.6615
+[model-evals] Winner: deepseek.v3.2
+EXIT: 0
+
+# Task 8 runs completed 2026-07-07T00:58:57Z
+
+# ===== GURU COMPLETION: ISO 14001 + ISO 45001 sets (architect config swap per run; seat config wired only guru-iso9001.json — noted as config gap, no incident) — 2026-07-07T01:00:09Z =====
+===== SEAT: guru (ISO 14001) — RUN (run7-14001) =====
+[model-evals] Seat: guru
+[model-evals] Candidates: zai.glm-5, deepseek.v3.2, qwen.qwen3-next-80b-a3b, moonshotai.kimi-k2.5, us.amazon.nova-pro-v1:0
+[model-evals] Eval set loaded: data/eval-sets/guru-iso14001.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 5 models
+  zai.glm-5: live-api ($1/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+  moonshotai.kimi-k2.5: live-api ($0.6/$3 per M tokens in/out)
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| guru | 50 | 5 | 250 | 300,000 | 150,000 | $0.7800 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run7-14001
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/guru-run7-14001
+[model-evals] Starting benchmark run...
+
+--- Candidate: zai.glm-5 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: qwen.qwen3-next-80b-a3b ---
+.................................................. (50 tasks complete)
+
+--- Candidate: moonshotai.kimi-k2.5 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.................................................. (50 tasks complete)
+
+# Eval Report: guru — 2026-07-07T01:36:47.988Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| zai.glm-5 | 0.910 | PASS | $0.00164 | $0.00287 | 91.7% | 4 |
+| deepseek.v3.2 | 0.910 | PASS | $0.00110 | $0.00183 | 94.5% | 3 |
+| qwen.qwen3-next-80b-a3b | 0.920 | PASS | $0.00050 | $0.00092 | 97.5% | 1 |
+| moonshotai.kimi-k2.5 | 0.980 | PASS | $0.00077 | $0.00116 | 96.1% | 2 |
+| us.amazon.nova-pro-v1:0 | 0.770 | FAIL | $0.00136 | $0.00210 | 93.1% | N/A |
+
+## Winner: qwen.qwen3-next-80b-a3b
+
+## Budget Consumed: $0.2712
+
+## Pricing Sources
+- zai.glm-5: live-api
+- deepseek.v3.2: live-api
+- qwen.qwen3-next-80b-a3b: live-api
+- moonshotai.kimi-k2.5: live-api
+- us.amazon.nova-pro-v1:0: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/guru-run7-14001/report.md
+[model-evals] Budget consumed: $0.2712
+[model-evals] Winner: qwen.qwen3-next-80b-a3b
+EXIT: 0
+===== SEAT: guru (ISO 45001) — RUN (run7-45001) =====
+[model-evals] Seat: guru
+[model-evals] Candidates: zai.glm-5, deepseek.v3.2, qwen.qwen3-next-80b-a3b, moonshotai.kimi-k2.5, us.amazon.nova-pro-v1:0
+[model-evals] Eval set loaded: data/eval-sets/guru-iso45001.json (50 tasks)
+[model-evals] Fetching pricing (Pricing API + snapshot fallback)...
+[model-evals] Pricing loaded for 5 models
+  zai.glm-5: live-api ($1/$3.2 per M tokens in/out)
+  deepseek.v3.2: live-api ($0.62/$1.85 per M tokens in/out)
+  qwen.qwen3-next-80b-a3b: live-api ($0.13999999999999999/$1.2 per M tokens in/out)
+  moonshotai.kimi-k2.5: live-api ($0.6/$3 per M tokens in/out)
+  us.amazon.nova-pro-v1:0: live-api ($0.8/$3.2 per M tokens in/out)
+
+=== Cost Estimate ===
+| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |
+|------|-------|-----------|-------------|-------------------|--------------------|----------------------|
+| guru | 50 | 5 | 250 | 300,000 | 150,000 | $0.7800 |
+
+[model-evals] Approved budget: $3.00
+[model-evals] Run ID: run7-45001
+[model-evals] Output dir: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/guru-run7-45001
+[model-evals] Starting benchmark run...
+
+--- Candidate: zai.glm-5 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: deepseek.v3.2 ---
+............T..................................... (50 tasks complete)
+
+--- Candidate: qwen.qwen3-next-80b-a3b ---
+.................................................. (50 tasks complete)
+
+--- Candidate: moonshotai.kimi-k2.5 ---
+.................................................. (50 tasks complete)
+
+--- Candidate: us.amazon.nova-pro-v1:0 ---
+.................................................. (50 tasks complete)
+
+# Eval Report: guru — 2026-07-07T02:33:22.569Z
+
+## Summary
+| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |
+|-----------|--------------|-------------|-----------|-----------|-----------------|------|
+| zai.glm-5 | 0.803 | FAIL | $0.00235 | $0.00364 | 88.1% | N/A |
+| deepseek.v3.2 | 0.757 | FAIL | $0.00167 | $0.00240 | 91.6% | N/A |
+| qwen.qwen3-next-80b-a3b | 0.793 | FAIL | $0.00079 | $0.00154 | 96.0% | N/A |
+| moonshotai.kimi-k2.5 | 0.843 | FAIL | $0.00101 | $0.00184 | 94.9% | N/A |
+| us.amazon.nova-pro-v1:0 | 0.457 | FAIL | $0.00185 | $0.00268 | 90.7% | N/A |
+
+## Winner: NONE (no quality-passers)
+
+## Budget Consumed: $0.3745
+
+## Pricing Sources
+- zai.glm-5: live-api
+- deepseek.v3.2: live-api
+- qwen.qwen3-next-80b-a3b: live-api
+- moonshotai.kimi-k2.5: live-api
+- us.amazon.nova-pro-v1:0: live-api
+
+[model-evals] Report written to: /home/julio-medrano/cumplify/.kiro/evidence/model-policy-evals/runs/guru-run7-45001/report.md
+[model-evals] Budget consumed: $0.3745
+[model-evals] Winner: NONE
+EXIT: 0
+# Guru completion done, config restored — 2026-07-07T02:33:22Z
+
+# ===== TASK 8 CLOSURE — ARCHITECT FINAL VERDICTS (2026-07-07) =====
+# Human-grading components executed: LegalLedger 90/90 blind (committed 645873e);
+# Guru 45001 full miss-adjudication (9 items — parent-vs-subclause precision failures,
+# ground truth STANDS) + 9001/14001 flagged-item review at authoring gate; Workhorse
+# 9-task 30% content sample; Editor-AI 4-task 20% content sample x2 candidates.
+#
+# GURU (per-standard seats, clause-citation bar 0.85 + human component):
+#  ISO9001 Guru:  WINNER qwen.qwen3-next-80b-a3b (0.930, $0.00068, 96.6% margin).
+#                 glm-5 best quality (0.960) at 3x price — documented alternative.
+#  ISO14001 Guru: WINNER qwen.qwen3-next-80b-a3b (0.920, $0.00050, 97.5% margin).
+#                 kimi-k2.5 best quality (0.980) — documented alternative.
+#  ISO45001 Guru: NO BARE PASSER (best kimi-k2.5 0.843; sub-clause precision is the
+#                 failure mode). RULING: kimi-k2.5 PROVISIONAL — production Gurus run
+#                 retrieval-grounded on the KB (clause-tagged chunks target exactly
+#                 this gap); retrieval-grounded re-eval REQUIRED at spec-4 readback
+#                 before any user-facing GO. Margin 94.9% at $0.00101.
+#  nova-pro FAILED all three standards (0.560/0.770/0.457, mean 0.596) — the corpus's
+#  pre-eval Guru ladder is measurably refuted.
+# WORKHORSE: WINNER us.amazon.nova-pro-v1:0 PROVISIONAL — corrected schema compliance
+#  0.933 (28/30; harness extractJson under-counted 3 valid responses — extraction gap
+#  for Kiro cleanup; 2 genuinely malformed = production retry-guard case); content
+#  review mean 3.0 (long-form drafting fit; risk-assessment/audit-planning families
+#  thin). CONDITIONS: (a) schema-validate + one-retry production guard, (b) per-agent
+#  prompt scaffolding for the weak task families (agent specs own this), (c) re-eval
+#  at each agent spec's readback. glm-4.7 (0.800 schema) documented runner-up.
+# EDITOR-AI: WINNER us.amazon.nova-pro-v1:0 (content 3.5, 0 low scores, schema 0.867
+#  + retry guard). nova-lite REJECTED on human review despite 0.950 schema + lowest
+#  price: mean 1.25, thin restatement + FALSE self-claims of added content ("Added
+#  missing items" over verbatim copies) — model-fabrication pattern documented for
+#  the Register. Margin 85.4% at $0.00116.
+# LEGALLEDGER: UNASSIGNED (verdict committed 645873e).
+# Campaign totals: ~1,570 invocations task-8, lifetime spend ~$2.60 of $15 cap.

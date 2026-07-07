@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-036",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Neighbors have complained twice this month about odor from our rendering plant. Which ISO 14001 clauses govern how we decide what to communicate back to them and how we investigate and correct the underlying problem? Cite both.",
+  "response": "When dealing with complaints about odor from a rendering plant, particularly in the context of ISO 14001 (Environmental Management Systems), there are specific clauses that govern how you should communicate with complainants and investigate and correct environmental issues. Here are the relevant clauses:\n\n1. **Clause 4.3 - Determination of Interested Parties and Their Requirements**:\n   - This clause requires the organization to identify the interested parties that are relevant to its environmental management system. In this case, your neighbors are interested parties. The organization must also determine the relevant requirements of these interested parties.\n   - In the context of complaints, this means understanding the concerns and expectations of your neighbors regarding odor issues.\n\n2. **Clause 10 - Improvement**:\n   - **10.2 - Nonconformity and Corrective Action**: This clause requires the organization to react to nonconformities and take action to control and correct it, and to deal with the consequences. \n   - When neighbors complain about odor, it indicates a nonconformity with your environmental management expectations or regulations. You are required to investigate the root cause, take corrective action to prevent recurrence, and communicate the actions taken back to the complainants.\n\nIn summary, **Clause 4.3** guides the identification and understanding of the requirements of interested parties like your neighbors, while **Clause 10.2** outlines the process for investigating, correcting, and communicating about environmental nonconformities such as odor complaints.",
+  "inputTokens": 45,
+  "outputTokens": 297,
+  "latencyMs": 1735,
+  "costUsd": 0.0009864000000000001,
+  "truncated": false
+}

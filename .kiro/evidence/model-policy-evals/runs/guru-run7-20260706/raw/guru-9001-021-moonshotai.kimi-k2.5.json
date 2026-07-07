@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-021",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "What does ISO 9001 require us to do about risks and opportunities when we plan our quality management system?",
+  "response": " ISO 9001:2015 requires organizations to address risks and opportunities as an integral part of planning the quality management system. Here are the key requirements from **Clause 6.1**:\n\n## Core Requirements\n\n**Determine and address risks and opportunities** that:\n- Are relevant to the **purpose and context** of the organization\n- Affect the **ability to achieve intended results** of the QMS\n- Affect **conformity of products and services**\n- Enhance **customer satisfaction**\n\n## What You Must Do\n\n| Action | Details |\n|--------|---------|\n| **Plan actions** | To address identified risks and opportunities |\n| **Integrate and implement** | These actions into QMS processes |\n| **Evaluate effectiveness** | Of the actions taken |\n\n## Planning Considerations (Clause 6.1.1)\n\nYour approach to risks and opportunities must be **proportionate to the potential impact** on:\n- Conformity of products/services\n- Customer satisfaction\n\n## Documentation\n\nWhile ISO 9001 doesn't mandate a formal risk register, you need **documented information** on:\n- The risks and opportunities identified\n- The processes and actions to address them\n\n## Common Implementation Approaches\n\n- SWOT analysis\n- PESTLE analysis\n- FMEA (Failure Mode and Effects Analysis)\n- Risk matrices\n- Simple brainstorming sessions (for smaller organizations)\n\n## Key Principle\n\nThe standard adopts a **risk-based thinking** approach rather than requiring a full formal risk management process. The depth and formality should match your organization's context and complexity.\n\nWould you like guidance on specific methods for identifying or documenting risks and opportunities?",
+  "inputTokens": 49,
+  "outputTokens": 330,
+  "latencyMs": 49442,
+  "costUsd": 0.0010194,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-008",
+  "modelId": "zai.glm-5",
+  "prompt": "A customer has loaned us inspection fixtures and consigned material to use on their job. Which ISO 9001 clause requires us to take care of property belonging to customers or external providers?",
+  "response": "The ISO 9001 clause that requires you to take care of property belonging to customers or external providers is **Clause 8.5.3**.\n\nHere is a breakdown of what this clause covers:\n\n**ISO 9001:2015 Clause 8.5.3 – Property belonging to customers or external providers**\nThe standard states that the organization must exercise care with property belonging to the customer or external provider while it is under the organization’s control or being used by the organization.\n\nSpecifically, the organization must:\n1.  **Identify** the property.\n2.  **Verify** the property (ensure it is what was ordered/expected).\n3.  **Protect and safeguard** the property.\n\n**Applying this to your situation:**\n*   **Inspection fixtures:** These are customer-supplied equipment/tools used to verify the product. Under this clause, you are required to maintain them and ensure they are not damaged or lost while in your possession.\n*   **Consigned material:** This is customer-supplied product/raw material. You must ensure it is stored correctly and used only for the intended job.\n\n**What happens if the property is lost or damaged?**\nIf the fixtures or material are lost, damaged, or otherwise found to be unsuitable for use, Clause 8.5.3 requires you to **report this to the customer** (or the external provider) and keep records of that communication.\n\n*Note: While the property remains the property of the customer, the responsibility for its care shifts to you once it enters your control.*",
+  "inputTokens": 43,
+  "outputTokens": 317,
+  "latencyMs": 20460,
+  "costUsd": 0.0010574000000000002,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-020",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're a bakery supplying grocery chains, and customers reach us by phone, email and through sales reps. What does ISO 9001 require our customer communication process to cover?",
+  "response": " Based on ISO 9001:2015, your customer communication process needs to address the requirements in **clause 8.2.1** (Communication with customers). Here's what you must cover:\n\n## Required Communication Elements\n\n| Aspect | What You Need to Determine & Implement |\n|--------|----------------------------------------|\n| **Product/service information** | Menu, ingredients, allergens, shelf life, pricing, minimum orders, lead times |\n| **Inquiries, contracts, or orders** | How you handle quotes, order confirmation, contract terms, and changes |\n| **Customer feedback** | Complaints, compliments, and general feedback—including how you collect and act on it |\n| **Customer property** | Any equipment, packaging, or materials customers provide (e.g., branded packaging, display fixtures) |\n| **Contingency actions** | How you communicate when issues arise (supply shortages, quality problems, recalls) |\n\n## Practical Implementation for Your Bakery\n\nGiven your multi-channel setup (phone, email, sales reps), you'll also want to ensure:\n\n- **Consistency** — Same information and service level regardless of channel\n- **Responsiveness** — Defined timeframes for replies (especially for complaints)\n- **Record keeping** — Documented evidence of communications, particularly for orders and complaints\n- **Escalation paths** — Clear routes for complex issues (quality complaints, contract disputes)\n\n## Key Documentation to Consider\n\n- Procedures for handling each communication channel\n- Templates for order confirmations and complaint responses\n- Logs or tracking systems for inquiries and feedback\n- Training records for staff handling customer contact\n\nWould you like guidance on how this intersects with food safety requirements (e.g., FSSC 22000 or BRC) or specific documentation structures?",
+  "inputTokens": 61,
+  "outputTokens": 352,
+  "latencyMs": 27662,
+  "costUsd": 0.0010926,
+  "truncated": false
+}

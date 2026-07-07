@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-031",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A forklift punctured a tote of nitric acid at our plating shop and some of it reached a floor drain before we contained it. Which ISO 14001 clauses govern (a) the response process we should have had prepared and (b) the follow-up needed to stop this happening again? Cite both.",
+  "response": " I'll address both parts of your question with specific ISO 14001:2015 clause citations.\n\n## (a) Response Process — Clause **8.2: Emergency Preparedness and Response**\n\nThis clause requires your organization to:\n- Establish, implement, and maintain processes to prepare for and respond to **potential emergency situations** (such as chemical spills)\n- Provide information and training relevant to emergency preparedness and response\n- Maintain documented information to respond to actual emergency situations\n- Periodically test and review planned response actions\n\nYour procedure should have covered spill containment, PPE requirements, evacuation protocols, and specifically **preventing releases to the environment** (floor drains).\n\n---\n\n## (b) Follow-up/Prevention — Clause **10.2: Nonconformity and Corrective Action**\n\nThis clause governs your follow-up by requiring you to:\n- **React** to the nonconformity (the uncontrolled spill reaching the drain)\n- **Evaluate** actions needed to address consequences\n- **Implement** any needed actions\n- **Evaluate** the effectiveness of corrective actions\n- **Make changes** to the environmental management system if necessary\n\nAdditionally, **Clause 6.1.1** (General) and **6.1.2** (Environmental Aspects) require ongoing identification of environmental aspects and risks—including scenarios where stored chemicals could reach floor drains.\n\n---\n\n**Practical note:** Your corrective action should likely include physical controls (spill containment pallets, drain covers/seals) and procedural updates to your 8.2 emergency response plan, with effectiveness verified through drills.",
+  "inputTokens": 90,
+  "outputTokens": 320,
+  "latencyMs": 4814,
+  "costUsd": 0.0010140000000000001,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-014",
+  "modelId": "zai.glm-5",
+  "prompt": "After a reorg, nobody at our plant is sure who has the authority to stop a shipment or approve a deviation. Which ISO 9001 clause requires that responsibilities and authorities for QMS-relevant roles be assigned, communicated and understood?",
+  "response": "The ISO 9001 clause you are looking for is **Clause 5.3**.\n\nHere is the breakdown of how Clause 5.3 applies to your situation:\n\n**The Requirement**\nISO 9001:2015 Clause 5.3 (Roles, responsibilities and authorities) requires top management to ensure that **responsibilities and authorities for relevant roles are assigned, communicated, and understood** within the organization.\n\n**How it solves your specific problem**\nThe clause specifically mandates that top management must assign the responsibility and authority for:\n1.  Ensuring that the quality management system (QMS) conforms to the requirements of the standard.\n2.  Ensuring that processes are delivering their intended outputs.\n3.  **Reporting on the performance of the QMS** (or opportunities for improvement) to top management.\n4.  **Ensuring the integrity of the QMS** during changes (such as a reorganization).\n\n**Why it matters for your plant**\nIn the context of a reorg, \"ensuring the integrity of the QMS during changes\" is critical. If no one knows who can stop a shipment or approve a deviation, the integrity of the QMS is compromised because:\n*   **Stopping a shipment** relates to the control of nonconforming outputs (Clause 8.7).\n*   **Approving a deviation** relates to the control of changes and nonconforming product.\n\nUnder Clause 5.3, top management is responsible for clarifying these roles immediately so that the QMS continues to function effectively despite the organizational changes.",
+  "inputTokens": 53,
+  "outputTokens": 317,
+  "latencyMs": 6270,
+  "costUsd": 0.0010674000000000002,
+  "truncated": false
+}

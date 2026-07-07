@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-025",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "What does ISO 14001 require regarding who does what in the EMS — how are responsibilities and authorities supposed to be handled, and under which clause?",
+  "response": " ISO 14001:2015 addresses responsibilities and authorities in **Clause 5.3: Organizational roles, responsibilities and authorities**.\n\n## What the Standard Requires\n\nThe organization must ensure that:\n\n- **Responsibilities and authorities** for relevant roles are **assigned** and **communicated** within the organization\n- These assignments cover ensuring the EMS conforms to ISO 14001 requirements and that **environmental performance reporting** reaches top management\n\n## Key Points\n\n| Aspect | Requirement |\n|--------|-------------|\n| **Assignment** | Must be formally assigned, not assumed |\n| **Scope** | Must include EMS conformity and environmental performance reporting |\n| **Communication** | Must be communicated throughout the organization |\n| **Documentation** | Typically maintained as documented information (though not explicitly mandated as \"documented\") |\n\n## Practical Implementation\n\nOrganizations usually address this through:\n- Organizational charts\n- Job descriptions\n- EMS manual or procedure documents\n- Terms of reference for specific roles (e.g., management representative, if appointed)\n\n## Relationship to Other Clauses\n\n- **5.1 (Leadership and commitment)**: Top management retains ultimate accountability\n- **5.2 (Environmental policy)**: Roles support policy implementation\n- **9.3 (Management review)**: Performance data must reach top management per 5.3\n\nNote: Unlike the 2004 version, ISO 14001:2015 **no longer mandates a specific \"management representative\"** — though many organizations still designate one for practical purposes.",
+  "inputTokens": 57,
+  "outputTokens": 305,
+  "latencyMs": 6472,
+  "costUsd": 0.0009492,
+  "truncated": false
+}

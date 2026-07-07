@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-014",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "After a reorg, nobody at our plant is sure who has the authority to stop a shipment or approve a deviation. Which ISO 9001 clause requires that responsibilities and authorities for QMS-relevant roles be assigned, communicated and understood?",
+  "response": " The clause you're looking for is **ISO 9001:2015, Clause 5.3 — Organizational roles, responsibilities and authorities**.\n\nSpecifically, this clause requires that top management ensure:\n\n- **Responsibilities and authorities** are assigned\n- **Communicated** within the organization\n- **Understood** at all relevant levels\n\nThe clause explicitly mentions that this includes ensuring responsibility and authority for:\n- Ensuring the QMS conforms to ISO 9001 requirements\n- Reporting QMS performance to top management\n- **Ensuring the promotion of customer focus throughout the organization**\n\nYour situation — uncertainty about who can stop a shipment or approve a deviation — is a classic gap in meeting this requirement. These are critical quality decisions that need clear ownership, especially for production and service provision controls (Clause 8.5.1) and nonconforming outputs (Clause 8.7).\n\nWould you like guidance on how to document and communicate these authorities effectively?",
+  "inputTokens": 75,
+  "outputTokens": 195,
+  "latencyMs": 91343,
+  "costUsd": 0.00063,
+  "truncated": false
+}

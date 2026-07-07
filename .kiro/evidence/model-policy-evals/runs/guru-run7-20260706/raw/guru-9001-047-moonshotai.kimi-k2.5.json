@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-047",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We send parts out for heat treating. A colleague insists outsourced processes are simply part of our operational planning clause and need nothing more. Which ISO 9001 clause specifically governs the evaluation, monitoring and controls we must apply to an external provider like our heat treater?",
+  "response": " Your colleague is incorrect. Outsourced processes are specifically addressed in **ISO 9001:2015, Clause 8.4 (Control of externally provided processes, products and services)**.\n\nThis clause requires you to:\n\n- **8.4.1** — Establish criteria for evaluation, selection, monitoring of performance, and re-evaluation of external providers\n- **8.4.2** — Determine and apply controls (type and extent) based on the provider's performance and the potential impact on your ability to deliver conforming products\n- **8.4.3** — Communicate requirements to external providers, including process controls and verification activities\n\nHeat treating is particularly critical because it's a **special process** — you cannot fully verify the results by subsequent inspection or testing. This typically demands stricter controls, such as:\n\n- Qualification of the heat treater's processes and personnel\n- Review of their process parameters and records\n- Periodic audits or second-party assessments\n- Defined acceptance criteria and certificates of conformance\n\nWhile operational planning (Clause 8.1) does cover implementing processes, it explicitly references 8.4 for externally provided processes. The requirements are not optional — they are a distinct and mandatory part of the standard.",
+  "inputTokens": 81,
+  "outputTokens": 250,
+  "latencyMs": 381772,
+  "costUsd": 0.0007986,
+  "truncated": false
+}

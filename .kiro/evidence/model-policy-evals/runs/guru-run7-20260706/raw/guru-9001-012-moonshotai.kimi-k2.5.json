@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-012",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our most experienced toolmaker retires in six months and most of his setup know-how exists only in his head. Which ISO 9001 clause requires us to determine and maintain the organizational knowledge our processes depend on?",
+  "response": " The ISO 9001 clause you're looking for is **Clause 7.1.6 – Organizational Knowledge**.\n\nThis clause specifically requires organizations to:\n\n- **Determine** the knowledge necessary for the operation of processes and to achieve conformity of products and services\n- **Maintain** this knowledge\n- **Make it available** to the extent necessary\n- **Consider** how to acquire or access any necessary additional knowledge and updates\n\nYour retiring toolmaker situation is a textbook example of what this clause aims to address—**tacit knowledge** that isn't documented but is critical to process effectiveness. ISO 9001:2015 introduced this requirement specifically to help organizations prevent knowledge loss from staff turnover, outsourcing, or other changes.\n\n**Practical actions you might take:**\n- Structured interviews/documentation of his setup procedures\n- Video recording of critical setups\n- Mentoring/training programs with successors\n- Creating standardized work instructions based on his expertise\n\nWould you like guidance on knowledge capture methods or other related clauses (such as 7.2 Competence or 7.5 Documented Information) that could support this transition?",
+  "inputTokens": 70,
+  "outputTokens": 224,
+  "latencyMs": 154500,
+  "costUsd": 0.000714,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-015",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "A community group has asked for our emissions data. Within ISO 14001's communication requirements, which specific sub-clause covers how we decide what to communicate externally in line with our compliance obligations?",
+  "response": "Within the ISO 14001 standard, the specific sub-clause that covers how an organization decides what to communicate externally, including emissions data, in line with its compliance obligations is **Clause 4.2, \"Understanding the needs and expectations of interested parties.\"**\n\nAdditionally, **Clause 4.3, \"Determining the scope of the environmental management system,\"** and **Clause 4.4.3, \"Communication,\"** are relevant. \n\n- **Clause 4.3** requires the organization to establish the scope of its Environmental Management System (EMS), taking into account the environmental aspects it can control and influence, which would include emissions.\n  \n- **Clause 4.4.3** specifically addresses communication, stating that the organization must determine:\n  - What it will communicate\n  - When it will communicate\n  - With whom it will communicate\n  - How it will communicate\n\nIn practice, this means that when deciding what emissions data to communicate externally, the organization should consider:\n1. The needs and expectations of interested parties (such as the community group requesting the data).\n2. Its compliance obligations (legal and other requirements related to environmental aspects).\n3. The environmental aspects associated with its activities, products, and services that it can control and influence, particularly those that can cause significant environmental impacts.\n\nBy following these clauses, the organization ensures that its external communication is aligned with its compliance obligations and the expectations of its stakeholders.",
+  "inputTokens": 43,
+  "outputTokens": 298,
+  "latencyMs": 2027,
+  "costUsd": 0.000988,
+  "truncated": false
+}

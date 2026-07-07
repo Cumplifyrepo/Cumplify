@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-015",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our org chart changed after a merger and nobody knows who owns lockout-tagout program decisions anymore. Which ISO 45001 clause requires assigning and communicating OH&S roles, responsibilities, and authorities?",
+  "response": " The ISO 45001 clause you're looking for is **Clause 5.3: Organizational roles, responsibilities and authorities**.\n\nThis clause requires the organization to:\n\n- **Assign** OH&S roles, responsibilities, and authorities\n- **Ensure they are documented** (maintained as documented information)\n- **Communicate them** throughout the organization\n\nSpecifically, 5.3 requires that top management ensure responsibilities and authorities for relevant roles are both assigned and communicated, including for:\n- Ensuring the OH&S management system conforms to requirements\n- Reporting performance to top management\n\nFor your lockout-tagout program specifically, this would cover who has authority to:\n- Develop and approve LOTO procedures\n- Authorize equipment-specific procedures\n- Train and authorize affected/authorized employees\n- Procure and control LOTO devices\n- Audit the program\n\n**Practical tip for your merger situation:** Document the gap (unassigned LOTO ownership) as a nonconformity or opportunity for improvement, then use your management review or corrective action process to formally reassign these responsibilities under 5.3.\n\nWould you like guidance on mapping typical LOTO responsibilities to roles in a merged organizational structure?",
+  "inputTokens": 66,
+  "outputTokens": 239,
+  "latencyMs": 3536,
+  "costUsd": 0.0007566,
+  "truncated": false
+}

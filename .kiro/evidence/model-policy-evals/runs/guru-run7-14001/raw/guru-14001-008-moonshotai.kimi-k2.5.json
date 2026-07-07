@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-008",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 14001 clause requires us to run planned internal audits to check that the EMS conforms and is effectively implemented?",
+  "response": " The requirement for planned internal audits is found in **Clause 9.2: Internal audit** of ISO 14001:2015.\n\nSpecifically, clause 9.2.1 states that the organization shall conduct internal audits at planned intervals to:\n\na) Provide information on whether the environmental management system:\n- **Conforms to** the organization's own requirements for its EMS and the requirements of ISO 14001\n- **Is effectively implemented and maintained**\n\nClause 9.2.2 then outlines the audit programme requirements, including planning, establishing criteria and scope, selecting auditors, and ensuring objectivity and impartiality.\n\nThis clause is part of **Section 9: Performance evaluation**, which also includes monitoring, measurement, analysis, and evaluation (9.1) and management review (9.3).",
+  "inputTokens": 51,
+  "outputTokens": 163,
+  "latencyMs": 2457,
+  "costUsd": 0.0005196,
+  "truncated": false
+}

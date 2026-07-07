@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-029",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "When we create or update an EMS document, what controls does ISO 14001's documented-information requirement impose on it over its life? Cite the clause.",
+  "response": " According to ISO 14001:2015, the documented-information requirements for environmental management system (EMS) documents are specified in **Clause 7.5 Documented information**.\n\nThe controls imposed over the life of EMS documents include:\n\n**Clause 7.5.3.2: Control of documented information**\n\nWhere documented information is required by the EMS, it shall be controlled to ensure:\n\na) **Availability and suitability** for use where and when needed\nb) **Adequate protection** from loss of confidentiality, improper use, or loss of integrity\n\nFor control of documented information, the organization shall address:\n\n- **Distribution, access, retrieval and use**\n- **Storage and preservation**, including preservation of legibility\n- **Control of changes** (e.g., version control)\n- **Retention and disposition**\n\nAdditionally, **Clause 7.5.3.1** requires that documented information of external origin (relevant to the EMS) be identified and controlled.\n\nThese requirements ensure that EMS documents remain current, protected, accessible, and properly managed throughout their lifecycle.",
+  "inputTokens": 59,
+  "outputTokens": 219,
+  "latencyMs": 4517,
+  "costUsd": 0.0006924,
+  "truncated": false
+}

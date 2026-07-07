@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-015",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Our org chart changed after a merger and nobody knows who owns lockout-tagout program decisions anymore. Which ISO 45001 clause requires assigning and communicating OH&S roles, responsibilities, and authorities?",
+  "response": "The ISO 45001 clause that requires assigning and communicating occupational health and safety (OH&S) roles, responsibilities, and authorities is:\n\n**Clause 5.3 — Organizational roles, responsibilities and authorities**\n\n### Key Requirements of Clause 5.3:\n- Top management must ensure that the responsibilities and authorities for relevant OH&S management system roles are **assigned, communicated, and understood** within the organization.\n- This includes clearly defining who is responsible for:\n  - Implementing and maintaining the OH&S management system,\n  - Ensuring compliance with legal and other requirements,\n  - Managing OH&S risks and opportunities,\n  - And in your case — **owning and managing the lockout-tagout (LOTO) program**.\n\n### Why This Applies to Your Situation:\nAfter a merger, when ownership of critical safety programs like LOTO becomes unclear, it’s a direct violation of Clause 5.3. The standard mandates that **no ambiguity** should exist regarding who is accountable for OH&S functions — especially those critical to controlling hazardous energy, as LOTO does.\n\n### Action Step:\nYou should:\n1. Identify the appropriate person or function (e.g., EHS Manager, Operations Lead, or Safety Coordinator) to own the LOTO program.\n2. Document and formally assign this responsibility.\n3. Communicate the assignment to all affected personnel.\n4. Update your OH&S management system documentation to reflect this change.\n\n> ✅ **Bottom line**: Clause 5.3 is your anchor for resolving role ambiguity — it’s not optional. Clear assignment of authority is foundational to ISO 45001 compliance and effective safety management.",
+  "inputTokens": 50,
+  "outputTokens": 336,
+  "latencyMs": 6236,
+  "costUsd": 0.0004102,
+  "truncated": false
+}

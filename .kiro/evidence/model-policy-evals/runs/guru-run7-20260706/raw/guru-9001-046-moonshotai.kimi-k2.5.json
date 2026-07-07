@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-046",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We monitor process KPIs monthly and leadership sees the dashboards, so our operations director claims internal audits are redundant. Which ISO 9001 clause covers deciding what to monitor, measure and evaluate, and which separate clause requires planned internal audits to check that the QMS conforms and is effectively implemented?",
+  "response": " I'll identify the two specific ISO 9001:2015 clauses you're asking about.\n\n## Clause 9.1.1 — Monitoring and Measurement (General)\n\nThis clause requires the organization to determine **what** needs to be monitored and measured, **the methods** for monitoring, measurement, analysis and evaluation, **when** it should be done, and **when the results** should be analyzed and evaluated.\n\nThis covers your process KPIs and dashboard decisions.\n\n## Clause 9.2 — Internal Audit\n\nThis is a **separate, distinct requirement** that mandates the organization conduct internal audits at **planned intervals** to provide information on whether the QMS:\n\n- **Conforms** to the organization's own requirements and ISO 9001\n- Is **effectively implemented and maintained**\n\n---\n\n## Why Your Operations Director Is Wrong\n\nThese clauses serve **completely different purposes**:\n\n| **9.1.1 Monitoring** | **9.2 Internal Audit** |\n|------------------------|------------------------|\n| Measures process *performance* against planned criteria | Verifies *conformity and effectiveness* of the QMS itself |\n| Answers: \"Are we hitting targets?\" | Answers: \"Is our QMS actually working as designed and meeting standard requirements?\" |\n| Operational data | Systematic, independent verification |\n\n**Key point:** KPIs don't verify that your QMS conforms to ISO 9001 or that it's effectively implemented. They only show process results. You need internal audits to check that your quality management system itself is sound—procedures are followed, requirements are understood, documented information is controlled, etc.\n\nThe standard explicitly requires **both**, and one cannot substitute for the other.",
+  "inputTokens": 85,
+  "outputTokens": 338,
+  "latencyMs": 266446,
+  "costUsd": 0.001065,
+  "truncated": false
+}

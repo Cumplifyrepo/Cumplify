@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-008",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 14001 clause requires us to run planned internal audits to check that the EMS conforms and is effectively implemented?",
+  "response": "The requirement to conduct planned internal audits to check that the Environmental Management System (EMS) conforms to ISO 14001 and is effectively implemented is specified in Clause 9 of the standard, which is titled \"Performance evaluation.\"\n\nMore specifically, Clause 9.2 addresses the need for internal audits. Here’s a breakdown of the relevant section:\n\n**Clause 9.2 - Internal audit:**\n\n1. **General**: The organization must conduct internal audits at planned intervals to provide information on whether the EMS:\n   - Conforms to:\n     - The organization’s own requirements for its EMS, including its environmental policy and environmental objectives.\n     - The requirements of ISO 14001.\n   - Is effectively implemented and maintained.\n\n2. **Audit program**: The program for audits must be planned, established, implemented, and maintained by the organization, taking into consideration:\n   - The environmental importance of the organization’s activities.\n   - The results of previous audits.\n\n3. **Audit criteria, scope, frequency, and methods**: These must be defined.\n\n4. **Selection of auditors**: Auditors must ensure that objectivity and the impartiality of the audit process are maintained. Auditors should not audit their own work.\n\n5. **Audit records**: Records of the audits and their results must be maintained.\n\n6. **Follow-up actions**: Any identified nonconformities and corrective actions must be addressed in a timely manner.\n\n7. **Management review of audit results**: Top management must review the audit results.\n\nIn summary, Clause 9.2 of ISO 14001 mandates the conduction of planned internal audits to ensure the EMS conforms to the standard and is effectively implemented.",
+  "inputTokens": 28,
+  "outputTokens": 347,
+  "latencyMs": 2334,
+  "costUsd": 0.0011327999999999998,
+  "truncated": false
+}

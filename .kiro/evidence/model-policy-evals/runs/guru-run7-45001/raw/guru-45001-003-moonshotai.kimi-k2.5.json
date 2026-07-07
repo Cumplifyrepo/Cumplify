@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-003",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our auditor said our once-a-year hazard walkthrough isn't enough — we need something ongoing and proactive. Which ISO 45001 clause requires a continuous process for identifying workplace hazards?",
+  "response": " The auditor is likely referring to **Clause 6.1.2: Hazard identification and assessment of risks and opportunities**.\n\nThis clause requires organizations to establish, implement, and maintain a **proactive and ongoing** process for hazard identification, not a one-time or annual activity. Key requirements include:\n\n- **Continuous** identification of hazards (6.1.2.1)\n- **Active and ongoing** participation of workers and other interested parties (6.1.2.2)\n- Consideration of hazards from **routine and non-routine** activities and situations\n- Updates **before or during** changes that introduce new hazards\n\n**What \"ongoing\" typically means in practice:**\n- Regular workplace inspections (weekly/monthly by area)\n- Task-specific risk assessments for new processes/equipment\n- Incident/near-miss investigations feeding back into hazard identification\n- Worker reporting systems\n- Pre-start checks and dynamic risk assessment\n\n**Related supporting clauses:**\n- **9.1.1** (monitoring and measurement)\n- **9.3** (management review — must include changes in hazards)\n\nYour annual walkthrough alone would generally be insufficient to demonstrate conformity. The standard expects hazard identification to be embedded in operational controls and organizational culture, not treated as a periodic compliance exercise.\n\nWould you like suggestions on structuring a more continuous hazard identification program?",
+  "inputTokens": 62,
+  "outputTokens": 273,
+  "latencyMs": 8774,
+  "costUsd": 0.0008562000000000001,
+  "truncated": false
+}

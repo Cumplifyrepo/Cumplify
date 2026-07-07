@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-040",
+  "modelId": "zai.glm-5",
+  "prompt": "Our GM wants a yearly leadership sit-down on the EMS. Which ISO 14001 clause governs that review, and which clause produces the compliance-status results that must feed into it as an input? Cite both.",
+  "response": "Here are the specific ISO 14001:2015 clauses you are looking for:\n\n**The Review Clause:**\nThe yearly leadership sit-down is governed by **Clause 9.3**, \"Management review.\" This clause requires top management to review the environmental management system at planned intervals to ensure its continuing suitability, adequacy, and effectiveness.\n\n**The Input Clause:**\nThe compliance-status results are produced by **Clause 9.1.2**, \"Evaluation of compliance.\" This clause requires the organization to establish, implement, and maintain processes to evaluate compliance with its legal requirements and other requirements. The results of this evaluation are explicitly listed as a mandatory input for the management review in Clause 9.3.",
+  "inputTokens": 49,
+  "outputTokens": 143,
+  "latencyMs": 5932,
+  "costUsd": 0.0005066000000000001,
+  "truncated": false
+}

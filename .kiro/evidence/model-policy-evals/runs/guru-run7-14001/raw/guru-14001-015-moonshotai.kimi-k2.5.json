@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-015",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A community group has asked for our emissions data. Within ISO 14001's communication requirements, which specific sub-clause covers how we decide what to communicate externally in line with our compliance obligations?",
+  "response": " Based on ISO 14001:2015, the specific sub-clause you're looking for is **7.4.3 External communication**.\n\nThis sub-clause requires your organization to determine **what** to communicate externally, **when** to communicate, **with whom** to communicate, and **how** to communicate, in accordance with your compliance obligations and other requirements.\n\nKey points from 7.4.3:\n- The decision-making process must consider your **compliance obligations** (legal requirements and other requirements)\n- The organization must establish the **process** for external communication\n- The decision on what to communicate externally is **yours to make**, provided you meet your compliance obligations\n\nThis is distinct from 7.4.1 (General) and 7.4.2 (Internal communication), which cover broader communication requirements.\n\nIn your specific case, since a community group has requested emissions data, you would need to check whether:\n- There are **legal requirements** to disclose this information (e.g., mandatory emissions reporting schemes)\n- You have made **voluntary commitments** to disclose such information\n- The request relates to **legitimate concerns** that warrant response under your environmental policy commitments\n\nThe standard doesn't mandate that you disclose everything requested, but you must have a **documented process** for making these decisions consistently.",
+  "inputTokens": 66,
+  "outputTokens": 270,
+  "latencyMs": 4498,
+  "costUsd": 0.0008495999999999999,
+  "truncated": false
+}

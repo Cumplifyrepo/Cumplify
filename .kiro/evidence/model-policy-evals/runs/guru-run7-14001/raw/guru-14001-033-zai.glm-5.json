@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-033",
+  "modelId": "zai.glm-5",
+  "prompt": "Our wastewater discharge permit is up for renewal and the new version has tighter zinc limits. Which ISO 14001 clauses cover updating our legal register with the new limits and then verifying we're actually meeting them? Cite both.",
+  "response": "To address your permit renewal and the tighter zinc limits, you will need to reference two specific clauses within **ISO 14001:2015**.\n\nHere are the specific citations and how they apply to your situation:\n\n### 1. Updating the Legal Register\n**Clause 6.1.3: Compliance obligations**\n\nThis clause requires the organization to \"determine and have access to\" applicable legal requirements and to \"determine how these requirements apply to the organization.\"\n\n*   **How it applies:** When your new permit is issued with the tighter zinc limits, your legal register must be updated to reflect this change. Clause 6.1.3 mandates that you not only identify the law (the permit) but also understand the specific details (the new numeric limits) and update your documented information accordingly.\n\n### 2. Verifying You Are Meeting the Limits\n**Clause 9.1.2: Evaluation of compliance**\n\nThis clause requires the organization to \"establish, implement and maintain the processes needed to evaluate fulfillment of its compliance obligations.\" It further requires the organization to \"maintain knowledge and understanding of its compliance status.\"\n\n*   **How it applies:** Updating the register (Clause 6.1.3) is only the first step. You must now bridge the gap between the new limit and your actual discharge data. Clause 9.1.2 requires you to perform an evaluation—usually through sampling, monitoring data review, or internal audits—to verify that your current zinc discharge levels are below the new, tighter limits. This clause is about proving performance, not just knowing the rule.",
+  "inputTokens": 50,
+  "outputTokens": 323,
+  "latencyMs": 3895,
+  "costUsd": 0.0010835999999999999,
+  "truncated": false
+}

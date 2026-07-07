@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-003",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Which ISO 14001 clause requires us to have processes in place for preparing for and responding to potential environmental emergencies like spills or fires?",
+  "response": "The ISO 14001 clause that requires organizations to have processes in place for preparing for and responding to potential environmental emergencies—such as spills, fires, or other incidents—is:\n\n**Clause 8.2: Emergency preparedness and response**\n\n### Key Requirements of Clause 8.2:\n- The organization must **establish, implement, and maintain processes** to prepare for and respond to **potential emergency situations** that may have environmental impacts.\n- These processes must be **based on the environmental aspects** identified during the environmental aspect evaluation and the associated risks and opportunities.\n- The organization must **respond to actual emergencies** to prevent or mitigate adverse environmental impacts.\n- The organization must **review and revise** the emergency preparedness and response processes **periodically**, and **after an emergency or drill**, to ensure their effectiveness.\n- Where practicable, the organization should **test** its emergency response procedures (e.g., through drills or simulations).\n\nThis clause emphasizes **proactive planning** and **continuous improvement** to ensure the organization is ready to act swiftly and effectively when environmental emergencies occur.\n\n> **Note**: While ISO 14001:2015 does not require formal documented procedures (as in earlier versions), it does require documented information (records) to support the effectiveness of the emergency preparedness and response processes.\n\nSo, the correct answer is: **Clause 8.2 – Emergency preparedness and response**.",
+  "inputTokens": 38,
+  "outputTokens": 292,
+  "latencyMs": 2413,
+  "costUsd": 0.00035572,
+  "truncated": false
+}

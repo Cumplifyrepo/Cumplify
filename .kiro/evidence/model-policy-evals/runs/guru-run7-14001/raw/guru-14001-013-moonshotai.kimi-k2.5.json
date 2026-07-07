@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-013",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our EMS procedures live in shared folders with no version control and no approval trail. Which ISO 14001 clause covers how EMS documents and records must be created, updated, and controlled?",
+  "response": " The ISO 14001 clause that covers document and record control is **Clause 7.5: Documented information**.\n\nThis clause specifically addresses:\n\n- **7.5.1 General** – Requirements for creating, updating, and maintaining documented information (your EMS procedures)\n- **7.5.2 Creating and updating** – Requirements for identification, format, review, and approval\n- **7.5.3 Control of documented information** – Requirements for distribution, access, retrieval, use, storage, preservation, version control, and retention\n\nYour current situation—shared folders with no version control and no approval trail—would be non-conformities against 7.5.2 (no approval process) and 7.5.3 (no version control, no clear control over changes).\n\nTo comply, you'd need to implement:\n- Document approval before issue\n- Version control and revision history\n- Identification of changes\n- Access controls and distribution management\n- Retention and disposition requirements\n\nWould you like practical guidance on implementing document control for your EMS?",
+  "inputTokens": 64,
+  "outputTokens": 215,
+  "latencyMs": 5353,
+  "costUsd": 0.0006833999999999999,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-003",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Right now our work instructions sit on a shared drive where anyone can edit or delete them, and outdated printouts float around the shop floor. Which ISO 9001 clause requires us to control the availability, protection, distribution, storage and retention of our QMS documents?",
+  "response": "The ISO 9001 clause that requires you to control the **availability, protection, distribution, storage, and retention** of your Quality Management System (QMS) documents is:\n\n> **ISO 9001:2015 – Clause 7.5 – Documented Information**\n\nSpecifically, **Clause 7.5.2** outlines the requirements for controlling documented information, including:\n\n> **7.5.2 – Creating and updating**  \n> — The organization shall ensure that documented information is adequately protected (e.g., against loss of confidentiality, improper use, or loss of integrity).\n\n> **7.5.3 – Control of documented information**  \n> To the extent necessary, the organization shall:  \n> a) **Distribute, access, retrieve, and use** documented information;  \n> b) **Store and preserve**, including readability;  \n> c) **Change and control** (e.g., version control);  \n> d) **Retain and dispose** of documented information.\n\n### Why this applies to your situation:\n- **Shared drive with unrestricted edits** → Violates **control of changes** and **protection** (7.5.3 c, b).\n- **Outdated printouts on the shop floor** → Violates **availability of current versions** and **disposal of obsolete documents** (7.5.3 a, d).\n- Lack of controlled distribution → Violates **access and distribution** (7.5.3 a).\n\n### Recommended Action:\nImplement a **document control procedure** that:\n- Uses a centralized, access-controlled system (e.g., QMS software or SharePoint with permissions),\n- Ensures only authorized personnel can edit documents,\n- Automatically archives old versions,\n- Distributes only current, approved versions,\n- Removes or marks obsolete documents as “void” or “superseded”,\n- Maintains retention schedules per regulatory or operational needs.\n\nThis directly satisfies **Clause 7.5** and supports overall QMS effectiveness under ISO 9001:2015.",
+  "inputTokens": 64,
+  "outputTokens": 424,
+  "latencyMs": 6195,
+  "costUsd": 0.00051776,
+  "truncated": false
+}

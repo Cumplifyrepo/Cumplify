@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-022",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our plant manager's default answer to every risk is 'buy more PPE.' Per ISO 45001, in what order are we supposed to work through control options before PPE becomes acceptable?",
+  "response": " Under ISO 45001 (and the underlying OHSAS 18001 / hierarchy of controls principles it references), you're required to work through control options in this specific order before considering PPE:\n\n## The Hierarchy of Controls\n\n| Priority | Control | Description |\n|----------|---------|-------------|\n| **1** | **Elimination** | Remove the hazard entirely (most effective) |\n| **2** | **Substitution** | Replace with something less hazardous |\n| **3** | **Engineering controls** | Isolate people from the hazard (ventilation, guarding, automation) |\n| **4** | **Administrative controls** | Change how work is done (procedures, training, scheduling, signage) |\n| **5** | **PPE** | Protect the individual (last resort, least effective) |\n\n## Key ISO 45001 Requirements\n\n**Clause 6.1.2** (hazard identification and assessment of risks) and **Clause 8.1.3** (management of change) both implicitly require this hierarchy. The standard expects you to:\n\n- Apply controls in **order of reliability and effectiveness**\n- **Combine controls** where a single method isn't sufficient\n- **Not stop at PPE** when more effective options exist\n\n## The Problem with \"PPE First\"\n\nYour plant manager's approach violates the standard's intent because:\n\n- PPE **doesn't reduce the hazard**—it only shields the worker\n- It **fails if used incorrectly**, removed, or damaged\n- It places **burden on the worker** rather than fixing the system\n\n## Practical Pushback\n\nYou can cite **ISO 45001:2018, Clause 8.1.2** (eliminating hazards and reducing OHS risks) and note that auditors specifically look for evidence that organizations considered higher-level controls before defaulting to PPE.\n\nWould you like language to help frame this discussion with management?",
+  "inputTokens": 66,
+  "outputTokens": 392,
+  "latencyMs": 10347,
+  "costUsd": 0.0012156,
+  "truncated": false
+}

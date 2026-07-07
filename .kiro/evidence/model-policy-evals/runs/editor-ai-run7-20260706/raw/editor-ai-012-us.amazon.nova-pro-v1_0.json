@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-012",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Complete this competency management procedure for a mining operation: 'Scope: All workers and contractors performing tasks with OH&S implications.' Add competency determination methodology, training needs analysis, effectiveness evaluation, and records retention per ISO 45001 clause 7.2.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"completedSection\": \"Scope: All workers and contractors performing tasks with OH&S implications.\\n\\nCompetency Determination Methodology: Competency will be determined through a combination of job role analysis, skills assessment, and experience review. This will be conducted by the OH&S team in collaboration with department heads.\\n\\nTraining Needs Analysis: A training needs analysis will be performed annually to identify gaps in competency. This will involve reviewing incident reports, job performance data, and feedback from workers and contractors.\\n\\nEffectiveness Evaluation: The effectiveness of competency management will be evaluated through regular performance reviews, incident analysis, and audits. Feedback mechanisms will be established to capture input from workers and contractors.\\n\\nRecords Retention: Records of competency assessments, training programs, and evaluation results will be retained for a minimum of five years in accordance with ISO 45001 requirements. These records will be stored in a secure electronic database accessible to authorized personnel only.\", \"references\": \"ISO 45001:2018 Occupational health and safety management systems - Requirements with guidance for use\", \"clauseAlignment\": \"This section aligns with ISO 45001 clause 7.2 by establishing procedures for determining necessary competencies, providing training, evaluating the effectiveness of competency management, and retaining relevant records.\"}",
+  "inputTokens": 122,
+  "outputTokens": 278,
+  "latencyMs": 2139,
+  "costUsd": 0.0009872,
+  "truncated": false
+}

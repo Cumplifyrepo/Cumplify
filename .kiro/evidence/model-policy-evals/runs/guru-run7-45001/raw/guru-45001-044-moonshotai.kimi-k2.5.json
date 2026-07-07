@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-044",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our hazard register lists over 200 hazards, but the auditor wrote a finding saying we never scored them for likelihood and severity using a defined methodology. Identification looks solid — which ISO 45001 sub-clause did we actually miss?",
+  "response": " Based on your description, the auditor's finding most likely relates to **ISO 45001:2018, clause 6.1.2.2 — \"Assessment of OH&S risks and other risks to the OH&S management system.\"**\n\n## Why this sub-clause specifically:\n\n| Requirement in 6.1.2.2 | What your auditor found missing |\n|------------------------|--------------------------------|\n| *\"The organization's methodology... shall be defined with respect to... **likelihood** and **severity**\"* | No defined scoring methodology for likelihood/severity |\n| *\"The methodology shall also be defined... **criteria for determining when the risks are acceptable or unacceptable**\"* | No defined criteria for risk acceptability |\n\nClause 6.1.2.1 covers hazard **identification** (which you have), but 6.1.2.2 specifically requires the **assessment** methodology.\n\n## Key distinction:\n\n- **6.1.2.1** — *What* could harm people? (hazard identification) ✓ You have this\n- **6.1.2.2** — *How* do we evaluate and prioritize those hazards? (risk assessment) ✗ Missing methodology\n\n## What the auditor expects to see:\n\n- Documented risk matrix or scoring system (e.g., 1–5 scales, 3×3 or 5×5 matrix)\n- Defined thresholds for risk acceptability\n- Consistent application across all 200+ hazards\n\n## Quick check:\n\nDoes your register show **numerical scores** or **risk ratings** (e.g., \"High,\" \"Medium,\" \"Low,\" or \"3×4=12\") derived from explicit criteria? If not, that's the gap.\n\nWould you like guidance on what constitutes an acceptable methodology, or how to address this without rebuilding everything from scratch?",
+  "inputTokens": 73,
+  "outputTokens": 377,
+  "latencyMs": 7026,
+  "costUsd": 0.0011748000000000001,
+  "truncated": false
+}

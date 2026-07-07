@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-011",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess the risk: A pharmaceutical company plans to outsource sterile fill-finish operations to a contract manufacturer in another country. The CDMO has FDA and EU GMP approval but has received 2 Form 483 observations in the past year related to environmental monitoring. Product is a high-value biologic with 18-month shelf life.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"riskLevel\":\"medium\",\"likelihood\":\"moderate\",\"impact\":\"high\",\"controls\":\"implement additional environmental monitoring protocols, conduct regular audits, and establish a robust corrective action plan\"}",
+  "inputTokens": 138,
+  "outputTokens": 38,
+  "latencyMs": 539,
+  "costUsd": 0.000232,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-012",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Plan an internal audit: Scope: ISO 9001 clause 8.4 (Control of externally provided processes, products, and services) at a medical device company with 45 critical suppliers. The company had 3 supplier-related nonconformities in the last 6 months and one field safety corrective action traced to a supplier component.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"scope\": \"ISO 9001 clause 8.4 (Control of externally provided processes, products, and services) at a medical device company with 45 critical suppliers.\", \"criteria\": \"ISO 9001:2015 standards, company\\u2019s quality management system, and relevant regulatory requirements for medical devices.\", \"schedule\": \"The audit will be conducted over a 2-week period, with preliminary meetings in the first week, on-site audits and interviews in the second week, and a final report delivered within 2 weeks after the on-site activities.\"}",
+  "inputTokens": 129,
+  "outputTokens": 133,
+  "latencyMs": 959,
+  "costUsd": 0.0005288000000000001,
+  "truncated": false
+}

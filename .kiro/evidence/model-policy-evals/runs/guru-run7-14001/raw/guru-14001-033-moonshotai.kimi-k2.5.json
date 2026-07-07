@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-033",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our wastewater discharge permit is up for renewal and the new version has tighter zinc limits. Which ISO 14001 clauses cover updating our legal register with the new limits and then verifying we're actually meeting them? Cite both.",
+  "response": " Based on ISO 14001:2015, here are the two relevant clauses:\n\n**Clause 6.1.3 (Compliance obligations)** – This requires the organization to identify and have access to its compliance obligations (including permit conditions), and determine how these apply to its environmental aspects. Updating your legal register with the new zinc limits falls here.\n\n**Clause 9.1.2 (Evaluation of compliance)** – This requires the organization to evaluate compliance with its legal and other requirements at planned intervals. Verifying you're actually meeting the new zinc limits falls here.\n\nThese clauses work sequentially: 6.1.3 ensures you *know* what you need to comply with, and 9.1.2 ensures you *check* that you're actually complying.",
+  "inputTokens": 71,
+  "outputTokens": 154,
+  "latencyMs": 1762,
+  "costUsd": 0.0005046,
+  "truncated": false
+}

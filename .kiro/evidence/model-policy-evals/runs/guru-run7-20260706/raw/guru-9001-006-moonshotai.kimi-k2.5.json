@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-006",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our quality objectives are vague statements like 'improve quality' with no numbers, owners or deadlines. Which ISO 9001 clause requires objectives to be measurable, established at relevant functions and levels, and backed by a plan to achieve them?",
+  "response": " The clause you're looking for is **ISO 9001:2015 Clause 6.2 — Quality Objectives and planning to achieve them**.\n\nSpecifically, **6.2.1** states that quality objectives shall:\n\n- Be **established at relevant functions, levels and processes** needed for the quality management system\n- Be **measurable**\n- Take into account **applicable requirements**\n- Be **monitored**\n- Be **communicated**\n- Be **updated as appropriate**\n\nAnd **6.2.2** requires that when planning how to achieve quality objectives, you must determine:\n- What will be done\n- What resources will be required\n- Who will be responsible\n- When it will be completed\n- How the results will be evaluated\n\nThis directly addresses your gaps — your current objectives lack measurability, ownership, and implementation planning with deadlines.",
+  "inputTokens": 75,
+  "outputTokens": 177,
+  "latencyMs": 5742,
+  "costUsd": 0.000576,
+  "truncated": false
+}

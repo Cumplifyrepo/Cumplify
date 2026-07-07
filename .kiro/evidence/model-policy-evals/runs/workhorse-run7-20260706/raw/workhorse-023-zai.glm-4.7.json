@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-023",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Assess the risk: A hospital plans to consolidate sterilization services from 3 satellite locations to one central sterile processing department (CSPD). Risks include: transportation delays affecting surgical schedules, instrument contamination during transport, single point of failure, increased volume straining equipment capacity, staff reduction causing competency gaps in remaining team.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\n  \"riskLevel\": \"High\",\n  \"likelihood\": \"Medium\",\n  \"impact\": \"High\",\n  \"controls\": \"Implement redundant transportation routes and real-time tracking to minimize delays; use sealed, validated sterilization containers to prevent contamination; establish backup sterilization agreements with external facilities to mitigate single point of failure; conduct capacity planning and invest in scalable equipment to handle increased volume; provide cross-training and retention programs to address competency gaps from staff reduction.\"\n}",
+  "inputTokens": 141,
+  "outputTokens": 98,
+  "latencyMs": 1553,
+  "costUsd": 0.00030020000000000003,
+  "truncated": false
+}

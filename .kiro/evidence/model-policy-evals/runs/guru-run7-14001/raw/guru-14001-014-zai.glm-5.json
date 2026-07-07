@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-014",
+  "modelId": "zai.glm-5",
+  "prompt": "Which ISO 14001 clause requires us to examine the external and internal issues relevant to our EMS, including environmental conditions like climate and resource availability that can affect us or be affected by us?",
+  "response": "The clause you are looking for is **Clause 4.1**.\n\nHere is the specific breakdown of the requirement within ISO 14001:2015:\n\n*   **Clause 4.1 (Understanding the organization and its context):** This clause explicitly requires an organization to determine external and internal issues that are relevant to its purpose and that affect its ability to achieve the intended outcomes of its Environmental Management System (EMS).\n\n**Specific details regarding your question:**\n\nThe standard specifically mentions environmental conditions in **Clause 4.1, Note 1**. It states that issues can include \"environmental conditions\" and gives examples such as:\n*   **Climate** (e.g., changing weather patterns, rising sea levels).\n*   **Resource availability** (e.g., scarcity of water, depletion of raw materials).\n*   **Air quality**.\n*   **Biodiversity**.\n\nThe standard requires you to look at these conditions from two perspectives:\n1.  **Affecting the organization:** How these conditions impact your operations (e.g., water scarcity impacting your manufacturing process).\n2.  **Affected by the organization:** How your operations impact these conditions (e.g., your emissions affecting local air quality).\n\nThis analysis is critical because it forms the foundation for determining the scope of your EMS (Clause 4.3) and identifying your environmental aspects and impacts (Clause 6.1.2).",
+  "inputTokens": 43,
+  "outputTokens": 286,
+  "latencyMs": 26865,
+  "costUsd": 0.0009582000000000001,
+  "truncated": false
+}

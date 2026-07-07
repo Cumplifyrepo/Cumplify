@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-007",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "A subcontractor crew is coming to our plant next month to do electrical panel upgrades. Which specific ISO 45001 sub-clause requires us to coordinate hazards with contractors working on our site?",
+  "response": "ISO 45001, the international standard for occupational health and safety management systems, includes specific requirements for managing contractors. The coordination of hazards with contractors working on your site is primarily addressed in Clause 8, specifically in Sub-clause 8.1.2, which deals with \"Elimination of hazards and reduction of OH&S risks.\"\n\nWithin Sub-clause 8.1.2, the standard requires the organization to:\n1. Identify hazards and assess OH&S risks and opportunities for its OH&S management system.\n2. Plan actions to eliminate OH&S risks, or if this is not practicable, to control them.\n\nAdditionally, Clause 8.2, \"Planning and consultation,\" also plays a role. Sub-clause 8.2.2 specifically requires the organization to:\n- Determine the external and internal issues that are relevant to its purpose and that affect its ability to achieve the intended outcomes of its OH&S management system.\n- Consult and participate with workers (and, where they exist, workers' representatives) on these issues.\n\nWhen it comes to contractors, Sub-clause 8.2.3, \"Consultation and participation of workers,\" also emphasizes the need to ensure that workers (including contractors) are consulted and can participate in the processes that affect their occupational health and safety.\n\nTherefore, while the specific requirement to coordinate hazards with contractors is not isolated to a single sub-clause, it is a combination of the requirements under Clause 8, particularly Sub-clauses 8.1.2 and 8.2, that mandate the organization to effectively manage and communicate OH&S risks, including those associated with contractor activities on-site.",
+  "inputTokens": 40,
+  "outputTokens": 346,
+  "latencyMs": 3134,
+  "costUsd": 0.0011392,
+  "truncated": false
+}

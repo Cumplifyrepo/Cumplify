@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-033",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "On our construction site, a foreman assigned a newly hired welder to structural welds and we can't produce any qualification or training evidence for him. Which ISO 9001 clause would an auditor write this finding against?",
+  "response": "In the context of ISO 9001, the situation you described—where a newly hired welder is assigned to perform structural welds without any qualification or training evidence—would likely be found non-conformant under several clauses. The primary clause that an auditor would likely reference is:\n\n**ISO 9001:2015 Clause 7.2 - Competence:**\n\nThis clause requires the organization to:\n1. Determine the necessary competence of person(s) doing work under its control that affects quality.\n2. Ensure that these persons are competent on the basis of appropriate education, training, or experience.\n3. Where applicable, take actions to acquire the necessary competence and evaluate the effectiveness of the actions taken.\n\nAdditionally, the auditor might also reference:\n\n**ISO 9001:2015 Clause 8.2 - Determination of requirements related to the product:**\n\nSpecifically, 8.2.2 and 8.2.3 which cover:\n- Reviewing requirements related to the product.\n- Communicating with the customer regarding product requirements.\n\n**ISO 9001:2015 Clause 8.3 - Design and development of products and services:**\n\nAlthough this clause is more about the design and development process, it could be relevant if the structural welds are part of a product or service that your organization designs and develops.\n\n**ISO 9001:2015 Clause 7.5 - Documented information:**\n\nThis clause requires that documented information be retained as evidence of competence, which in this case would include training and qualification records for the welder.\n\nIn summary, the most direct clause an auditor would likely use to write this finding against is **Clause 7.2 - Competence**.",
+  "inputTokens": 46,
+  "outputTokens": 360,
+  "latencyMs": 4635,
+  "costUsd": 0.0011888,
+  "truncated": false
+}

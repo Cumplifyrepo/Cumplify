@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-036",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Our food plant outsources nightly sanitation to a contract cleaning company, and their work directly affects our product conformity. Which ISO 9001 clause governs how we must control this externally provided process?",
+  "response": "Based on ISO 9001:2015, the control of your outsourced nightly sanitation process is primarily governed by:\n\n**Clause 8.4: Control of externally provided processes, products and services.**\n\nMore specifically, you should focus on:\n- **8.4.1: General** - Requires you to ensure that externally provided processes conform to requirements.\n- **8.4.2: Type and extent of control** - Requires you to define the controls applied to the provider based on the potential impact on your product conformity. Since sanitation directly affects your product, this would require significant control.\n\n**Key reasons why 8.4 applies:**\n1. The sanitation is an **externally provided process** (not just a product/service).\n2. This process affects your **product conformity**.\n3. It is part of your operational process (Clause 8: Operation).\n\n**What this means for your organization:**\nYou must:\n- Define criteria for selection and evaluation of the cleaning company.\n- Establish clear performance requirements and specifications.\n- Implement verification or validation activities (e.g., inspection, testing, audits).\n- Maintain documented information about these controls.\n\nSince this is a process that affects your final product, you would typically need to apply **strict controls** such as on-site verification, audits of the provider, clear performance metrics, and possibly requiring the provider to have their own quality management system.\n\n**Important note:** While Clause 7.1.5 (Monitoring and measuring resources) might be relevant for any inspection equipment, and Clause 7.1.6 (Organizational knowledge) might apply, the primary governance comes from Clause 8.4 due to the external provision of a critical process.",
+  "inputTokens": 42,
+  "outputTokens": 347,
+  "latencyMs": 5888,
+  "costUsd": 0.0006679899999999999,
+  "truncated": false
+}

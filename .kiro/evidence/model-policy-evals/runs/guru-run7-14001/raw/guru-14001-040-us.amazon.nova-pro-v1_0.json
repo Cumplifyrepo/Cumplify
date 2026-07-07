@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-040",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Our GM wants a yearly leadership sit-down on the EMS. Which ISO 14001 clause governs that review, and which clause produces the compliance-status results that must feed into it as an input? Cite both.",
+  "response": "Certainly! In the context of ISO 14001, which is the international standard for Environmental Management Systems (EMS), the General Manager’s requirement for a yearly leadership sit-down review aligns with the following clauses:\n\n1. **Clause 9.3 - Management Review:**\n   This clause requires top management to review the EMS at planned intervals to ensure its continuing suitability, adequacy, and effectiveness. The review should include assessing opportunities for improvement and the need for changes to the EMS, including the environmental policy and environmental objectives.\n\n2. **Clause 9.1.1 - General:**\n   This clause requires the organization to monitor, measure, analyze, and evaluate its environmental performance, including changes in environmental conditions, compliance obligations, and the effectiveness of operational controls. The results of these evaluations are essential inputs for the management review process under Clause 9.3.\n\nIn summary:\n- **Clause 9.3 (Management Review)** governs the yearly leadership sit-down review.\n- **Clause 9.1.1 (General)** produces the compliance-status results that must feed into the management review as an input.",
+  "inputTokens": 47,
+  "outputTokens": 230,
+  "latencyMs": 1720,
+  "costUsd": 0.0007736000000000002,
+  "truncated": false
+}

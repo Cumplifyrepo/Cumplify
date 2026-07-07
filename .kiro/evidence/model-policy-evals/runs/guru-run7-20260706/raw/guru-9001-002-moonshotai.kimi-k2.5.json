@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-002",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I'm putting together the agenda for our annual management review meeting. Which ISO 9001 clause tells me the specific input topics that have to be covered in the review?",
+  "response": " The specific input requirements for management review are found in **ISO 9001:2015, Clause 9.3.2**.\n\nThis clause lists the following mandatory inputs that must be considered:\n\na) The status of actions from previous management reviews  \nb) Changes in external and internal issues relevant to the quality management system  \nc) Information on the performance and effectiveness of the quality management system, including trends in:\n- Customer satisfaction and feedback from relevant interested parties\n- The extent to which quality objectives have been met\n- Process performance\n- Conformity of products and services\n- The performance of external providers\n- The need for improvement\n\nd) The adequacy of resources  \ne) The effectiveness of actions taken to address risks and opportunities  \nf) Opportunities for improvement\n\nThese are the minimum required topics. Your organization can certainly include additional inputs relevant to your specific context and strategic direction.",
+  "inputTokens": 60,
+  "outputTokens": 181,
+  "latencyMs": 233236,
+  "costUsd": 0.0005790000000000001,
+  "truncated": false
+}

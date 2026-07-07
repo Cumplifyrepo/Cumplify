@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-013",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "We score risks from every hazard, but 45001 also asks about the upside. Which sub-clause requires assessing OH&S opportunities that could enhance safety performance?",
+  "response": "In ISO 45001, the standard that specifies requirements for an Occupational Health and Safety (OH&S) management system, the concept of identifying opportunities for improvement is integrated into several sub-clauses. However, the specific requirement to assess OH&S opportunities is primarily found in Clause 6, \"Planning.\"\n\nWithin Clause 6, Sub-clause 6.1.2, \"OH&S Objectives and Planning to Achieve Them,\" explicitly requires organizations to establish OH&S objectives at relevant functions and levels. Part of this process involves identifying opportunities to enhance OH&S performance. \n\nHere’s an excerpt from ISO 45001:2018 that highlights this requirement:\n\n**6.1.2 OH&S Objectives and Planning to Achieve Them:**\n- The organization shall establish OH&S objectives at relevant functions and levels.\n- The OH&S objectives shall:\n  - Be consistent with the OH&S policy\n  - Take into account applicable requirements\n  - Be related to the significant risks and opportunities (as determined in accordance with 6.1.1)\n  - Be documented\n\nIn this context, \"risks and opportunities\" include both potential adverse effects (risks) and potential beneficial effects (opportunities) that the organization can leverage to improve its OH&S performance. Therefore, while assessing risks is a critical component, identifying and acting on opportunities is equally important for continuous improvement in OH&S management.",
+  "inputTokens": 36,
+  "outputTokens": 304,
+  "latencyMs": 2089,
+  "costUsd": 0.0010016,
+  "truncated": false
+}

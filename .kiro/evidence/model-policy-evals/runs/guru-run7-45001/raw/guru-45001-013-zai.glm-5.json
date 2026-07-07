@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-013",
+  "modelId": "zai.glm-5",
+  "prompt": "We score risks from every hazard, but 45001 also asks about the upside. Which sub-clause requires assessing OH&S opportunities that could enhance safety performance?",
+  "response": "The specific sub-clause that requires the assessment of OH&S opportunities is **ISO 45001:2018 Sub-clause 6.1.2.2**.\n\nHere is the breakdown of that requirement:\n\n*   **Sub-clause 6.1.2.2** is titled **\"Identification of OH&S opportunities and other opportunities for the OH&S management system.\"**\n*   This clause explicitly requires the organization to determine the opportunities that can enhance safety performance. It categorizes these opportunities into two main areas:\n    1.  **Opportunities to adapt work to the worker:** Such as modifying work organization, work pace, or the design of workstations to improve safety and health.\n    2.  **Opportunities to eliminate hazards and reduce OH&S risks:** This aligns with the hierarchy of controls, looking for chances to proactively improve conditions rather than just managing existing risks.\n\nThis section is part of the broader **Clause 6.1 (Actions to address risks and opportunities)**, which mandates that organizations look at both the \"downside\" (risks) and the \"upside\" (opportunities) to drive continual improvement.",
+  "inputTokens": 37,
+  "outputTokens": 240,
+  "latencyMs": 14864,
+  "costUsd": 0.000805,
+  "truncated": false
+}

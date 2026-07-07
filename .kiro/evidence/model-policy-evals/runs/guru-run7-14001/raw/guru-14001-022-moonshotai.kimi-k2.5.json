@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-022",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're setting next year's EMS budget. What does ISO 14001 require of management regarding resources for the environmental management system, and which clause?",
+  "response": " Under **ISO 14001:2015**, the requirement for management to provide resources for the environmental management system is found in **Clause 5.3: Organizational roles, responsibilities and authorities** and more specifically in **Clause 7.1: Resources**.\n\n## Key Requirements\n\n**Clause 7.1 (Resources)** requires the organization to determine and provide the resources needed for:\n\n- Establishing, implementing, maintaining, and **continually improving** the EMS\n- Enhancing environmental performance\n\nThis includes:\n- **Human resources** (competent personnel)\n- **Natural resources** (materials, energy, water)\n- **Infrastructure** (buildings, equipment, technology)\n- **Financial resources**\n- **Technology and information**\n\n## Management's Role (Clause 5.3)\n\nTop management must ensure that:\n- Responsibilities and authorities are assigned and communicated\n- Personnel at all levels have the authority and resources needed to contribute to EMS effectiveness\n\n## Practical Budget Implications\n\nWhen setting your EMS budget, you'll need to demonstrate provision for:\n- Training and competency development\n- Monitoring and measurement equipment\n- Environmental controls and pollution prevention\n- Emergency preparedness resources\n- Technology upgrades for environmental performance\n\nWould you like guidance on specific resource categories or how to document this for certification purposes?",
+  "inputTokens": 55,
+  "outputTokens": 262,
+  "latencyMs": 4377,
+  "costUsd": 0.0008190000000000001,
+  "truncated": false
+}

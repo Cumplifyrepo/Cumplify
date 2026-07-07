@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-018",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Analyze this CAPA: NC Description: 'Internal audit finding: 8 of 12 sampled employees in production could not explain the quality policy or their contribution to QMS effectiveness. Awareness training records show all employees completed annual refresher, but training content is a 45-minute video with no assessment. Supervisors unable to explain quality objectives relevant to their area.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"rootCause\": \"The training process lacks an effective mechanism to verify employee understanding and retention of quality policy and objectives, as evidenced by the reliance on passive video content without assessments and the inability of supervisors to explain relevant objectives.\", \"actions\": \"Revise the annual awareness training to include interactive elements and a post-training assessment to verify understanding of the quality policy and individual contributions to the QMS. Conduct specific training sessions for supervisors on the quality objectives relevant to their areas, including methods to communicate and reinforce these objectives with their teams. Implement a periodic 'floor walk' verification process where management randomly interviews employees to ensure sustained awareness.\", \"evidence\": \"Updated training materials and assessment records showing employee scores, supervisor training attendance records and sign-off, and documented results from management floor walk interviews demonstrating employee understanding.\"}",
+  "inputTokens": 139,
+  "outputTokens": 165,
+  "latencyMs": 3764,
+  "costUsd": 0.0004464,
+  "truncated": false
+}

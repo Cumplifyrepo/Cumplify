@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-002",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Draft a procedure for management of change in a petrochemical refinery. Include trigger criteria, risk assessment requirements, approval workflow, implementation planning, communication, competency verification, and post-change review. Align with ISO 45001 clause 8.1.3.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 151,
+  "outputTokens": 4096,
+  "latencyMs": 45936,
+  "costUsd": 0.0049605,
+  "truncated": true
+}

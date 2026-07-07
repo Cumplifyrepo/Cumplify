@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-015",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're an HVAC contractor offering a two-year warranty plus ongoing maintenance agreements after installation. Which ISO 9001 clause covers meeting our post-delivery obligations like warranty and maintenance?",
+  "response": " For your HVAC business, the relevant ISO 9001 clause is **Clause 8.5.5 — Post-delivery activities**.\n\nThis clause specifically requires organizations to meet requirements for post-delivery activities, which include:\n\n- **Warranty provisions** (your 2-year warranty)\n- **Maintenance services** (your ongoing maintenance agreements)\n- Repair services\n- Technical support\n- Recalls (if applicable)\n\n## What the standard requires you to do:\n\n1. **Determine and document** your post-delivery requirements — your warranty terms and maintenance agreement scope should be clearly defined\n\n2. **Establish controls** to ensure these activities are performed — procedures for handling warranty claims, scheduling maintenance, etc.\n\n3. **Consider**:\n   - Legal and regulatory requirements\n   - Potential undesired consequences\n   - Nature, use, and intended lifetime of your products/services\n   - Customer requirements\n   - Customer feedback\n\n## Related clauses to also consider:\n\n| Clause | Application |\n|--------|-------------|\n| **8.2.1** | Customer communication — informing clients about warranty terms and maintenance options |\n| **8.4** | Control of externally provided processes — if you subcontract any warranty or maintenance work |\n| **9.1.2** | Customer satisfaction — monitoring satisfaction with post-delivery services |\n\n## Practical tip for HVAC contractors:\n\nYour maintenance agreements can actually strengthen your QMS by providing **ongoing customer feedback** (Clause 9.1.2) and **monitoring of installed system performance** — valuable data for improving your installation processes.\n\nWould you like guidance on documenting these activities for an audit?",
+  "inputTokens": 61,
+  "outputTokens": 329,
+  "latencyMs": 48922,
+  "costUsd": 0.0010236,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-023",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We have an evacuation map on the wall. What else does ISO 45001's emergency preparedness clause require our process to include?",
+  "response": " Based on ISO 45001:2018, Clause 8.2 (Emergency preparedness and response), your process needs to include several elements beyond just having an evacuation map posted.\n\n## Key Requirements Your Process Should Address\n\n**Planning and Documentation**\n- Identification of potential emergency situations (not just fires—think chemical spills, natural disasters, medical emergencies, security threats, etc.)\n- Assessment of risks associated with each identified emergency\n- Documented procedures for response to each type of emergency\n\n**Operational Elements**\n- Means of detection and alarm systems\n- Communication methods (who alerts whom, how)\n- Evacuation routes and assembly points (your map covers part of this)\n- Accounting for personnel after evacuation\n- First aid and medical response capabilities\n\n**Resources and Capabilities**\n- Necessary equipment and resources for response\n- Designated responsible persons/roles\n- Training for those with specific emergency responsibilities\n- Periodic testing of emergency procedures (drills)\n\n**Review and Improvement**\n- Evaluation of emergency response effectiveness after incidents or drills\n- Revision of procedures when gaps are found or circumstances change\n\n## Common Gaps I See\n\nOrganizations often miss: **planning for visitors/contractors**, **coordination with external services** (fire, medical, environmental), **post-emergency support** for affected workers, and **regular testing frequency** defined in the procedure.\n\nWould you like me to expand on any specific element, or discuss how to integrate this with your existing emergency response planning?",
+  "inputTokens": 53,
+  "outputTokens": 300,
+  "latencyMs": 16998,
+  "costUsd": 0.0009318,
+  "truncated": false
+}

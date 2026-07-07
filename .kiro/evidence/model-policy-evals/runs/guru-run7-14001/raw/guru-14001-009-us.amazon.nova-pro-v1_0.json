@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-009",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 14001 clause requires our top management to step back at planned intervals and review the whole EMS with defined inputs and outputs?",
+  "response": "The clause in ISO 14001 that requires top management to review the Environmental Management System (EMS) at planned intervals is Clause 9.3, titled \"Management review.\"\n\nHere’s a breakdown of what this clause entails:\n\n### Clause 9.3: Management Review\n\n**General:**\nTop management shall review the organization's EMS at planned intervals to ensure its continuing suitability, adequacy, effectiveness, and alignment with the strategic direction of the organization.\n\n**Review Inputs:**\nThe input shall include information on:\n1. The status of actions from previous management reviews.\n2. Changes in external and internal issues that are relevant to the EMS.\n3. The organization’s environmental performance, including trends in:\n   - Nonconformities and corrective actions.\n   - Monitoring and measurement results.\n   - The extent to which environmental objectives have been met.\n4. The extent to which audit findings have been addressed.\n5. The performance of external providers.\n6. Relevant communication(s) from interested parties, including complaints.\n7. The adequacy of resources.\n8. Relevant changes in legislation and other subscriptions.\n9. Opportunities for improvement.\n\n**Review Outputs:**\nThe outputs of the management review shall include any decisions and actions related to:\n1. Improvements of environmental performance.\n2. Improvements of the EMS, including its resources.\n3. Resource needs.\n4. Any implications as to the continued suitability of the environmental policy and environmental objectives.\n5. Any opportunities for preventive action.\n\nThis systematic review ensures that the EMS continues to meet the organization's needs and remains effective in achieving its environmental objectives.",
+  "inputTokens": 30,
+  "outputTokens": 326,
+  "latencyMs": 2407,
+  "costUsd": 0.0010672,
+  "truncated": false
+}

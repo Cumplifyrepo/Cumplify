@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-010",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Which ISO 45001 clause requires the organization to determine and provide the resources needed to establish, implement, and maintain the OH&S management system?",
+  "response": "The ISO 45001 clause that requires the organization to determine and provide the resources needed to establish, implement, and maintain the OH&S management system is:\n\n**Clause 7.1 — Resources**\n\n### Full Title:  \n**7.1 Resources**\n\n### Requirement:  \n> The organization shall determine and provide the resources needed to establish, implement, maintain and continually improve the OH&S management system.\n\nThis includes resources such as:\n- Human resources\n- Infrastructure\n- Organizational infrastructure\n- Technology\n- Financial resources\n- Information and communication systems\n\nThe clause emphasizes that adequate resources must be available to ensure the effectiveness of the OH&S management system and to support continual improvement.\n\nThis is a foundational requirement under **Section 7 — Support** of ISO 45001:2018.",
+  "inputTokens": 40,
+  "outputTokens": 167,
+  "latencyMs": 2362,
+  "costUsd": 0.000206,
+  "truncated": false
+}

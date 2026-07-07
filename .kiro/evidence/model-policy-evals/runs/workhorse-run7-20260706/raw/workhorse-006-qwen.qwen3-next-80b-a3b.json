@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-006",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Assess the risk: A food manufacturer plans to switch from a single-source supplier of a critical allergen-free ingredient to a dual-source strategy. The new supplier is located in a region with less stringent food safety regulations. The ingredient is used in 40% of products marketed as allergen-free.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "{\n  \"riskLevel\": \"High\",\n  \"likelihood\": \"Moderate\",\n  \"impact\": \"Severe\",\n  \"controls\": \"Implement rigorous supplier qualification and audit protocols, require third-party certification for allergen-free status, conduct batch-by-batch testing for allergen cross-contamination, establish clear contractual SLAs with penalties for non-compliance, and maintain dual-source inventory with strict segregation and labeling controls.\"\n}\nANSWER: {\n  \"riskLevel\": \"High\",\n  \"likelihood\": \"Moderate\",\n  \"impact\": \"Severe\",\n  \"controls\": \"Implement rigorous supplier qualification and audit protocols, require third-party certification for allergen-free status, conduct batch-by-batch testing for allergen cross-contamination, establish clear contractual SLAs with penalties for non-compliance, and maintain dual-source inventory with strict segregation and labeling controls.\"\n}",
+  "inputTokens": 140,
+  "outputTokens": 176,
+  "latencyMs": 2574,
+  "costUsd": 0.00023079999999999997,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-016",
+  "modelId": "zai.glm-5",
+  "prompt": "In plain terms, what does ISO 14001 require us to do about compliance obligations at the planning stage, and which clause covers it?",
+  "response": "The specific clause is **Clause 6.1.3** (Compliance obligations).\n\nIn plain terms, here is what ISO 14001 requires you to do during the planning stage:\n\n**1. Take Inventory (Identify)**\nYou must figure out exactly which rules apply to you. You need to sit down and list every environmental law, regulation, permit, or voluntary commitment your company has to follow.\n\n**2. Write It Down (Maintain)**\nYou can’t just keep this list in your head. You must document these obligations. This is usually a \"Legal Register\" or \"Compliance Matrix\" that lists the law, how it applies to you, and where the evidence is.\n\n**3. Keep It Current (Update)**\nLaws change all the time. You need a system to check for updates regularly so you aren't following an old law that no longer exists or missing a new requirement.\n\n**4. Factor It In (Determine Impact)**\nThis is the \"planning\" part. Once you know the rules, you have to look at how they affect your business. You must ask: *\"Do we have the right people, equipment, and training to actually meet these rules?\"* You then use this information to build your environmental objectives and action plans.\n\n**Summary:**\nYou have to find the rules, write them down, keep the list updated, and use that list to plan how you will run your business to avoid getting fined or shut down.",
+  "inputTokens": 33,
+  "outputTokens": 302,
+  "latencyMs": 9671,
+  "costUsd": 0.0009994000000000001,
+  "truncated": false
+}

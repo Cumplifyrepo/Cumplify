@@ -149,12 +149,12 @@
 > Same C-4 flow. Human-grading follows the blind protocol per §2.2.
 
 ### Deliverables
-- [ ] Run: Guru seat (6 candidates, 150 tasks) — raw outputs collected; 20% sample human-graded by architect; scored report
-- [ ] Run: Workhorse seat (5 candidates, 30 tasks) — raw outputs; 30% sample human-graded; scored report
-- [ ] Run: Editor-AI seat (4 candidates, 20 tasks) — raw outputs; 20% sample human-graded; scored report
-- [ ] Run: LegalLedger seat (4 candidates, 30 tasks) — raw outputs; 100% human-graded (blind); scored report
-- [ ] All scored reports committed to `.kiro/evidence/model-policy-evals/`
-- [ ] LegalLedger grading scores committed per runbook §2.2 (grader identity + timestamp)
+- [x] Run: Guru seat (6 candidates, 150 tasks) — raw outputs collected; 20% sample human-graded by architect; scored report
+- [x] Run: Workhorse seat (5 candidates, 30 tasks) — raw outputs; 30% sample human-graded; scored report
+- [x] Run: Editor-AI seat (4 candidates, 20 tasks) — raw outputs; 20% sample human-graded; scored report
+- [x] Run: LegalLedger seat (4 candidates, 30 tasks) — raw outputs; 100% human-graded (blind); scored report
+- [x] All scored reports committed to `.kiro/evidence/model-policy-evals/`
+- [x] LegalLedger grading scores committed per runbook §2.2 (grader identity + timestamp)
 
 ### Acceptance
 - Each seat has a committed scored report with winner + margin headroom

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-040",
+  "modelId": "zai.glm-5",
+  "prompt": "Corporate wants proof each site can handle a fire: documented scenarios, response procedures that account for contractors and visitors, scheduled evacuation drills, and lessons-learned reviews afterward. Which ISO 45001 clause covers all of this?",
+  "response": "The ISO 45001 clause that covers all of these requirements is **Clause 8.2: Emergency preparedness and response**.\n\nHere is how the specific requirements you listed map directly to the text of this clause:\n\n1.  **Documented scenarios and response procedures:**\n    The clause requires the organization to \"establish, implement and maintain a process... to prepare for and respond to potential emergency situations.\" This includes identifying the potential emergencies (scenarios) and creating a planned response.\n\n2.  **Accounting for contractors and visitors:**\n    Clause 8.2 explicitly states that the organization must take into account the needs of \"relevant interested parties,\" specifically naming **\"contractors, visitors and any other interested parties\"** when planning emergency preparedness.\n\n3.  **Scheduled evacuation drills:**\n    The clause requires the organization to \"periodically test the effectiveness of the planned response actions,\" which mandates the scheduling and execution of drills.\n\n4.  **Lessons-learned reviews afterward:**\n    The clause requires that after an emergency situation or test (drill), the organization must \"evaluate the effectiveness of the response\" and \"take action to improve,\" which covers the lessons-learned review process.",
+  "inputTokens": 50,
+  "outputTokens": 248,
+  "latencyMs": 26433,
+  "costUsd": 0.0008436000000000001,
+  "truncated": false
+}

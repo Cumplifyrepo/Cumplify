@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-024",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Plan an internal audit: Scope: ISO 45001 clause 5.4 (Consultation and participation of workers) at a manufacturing plant with 400 workers across 3 shifts, union representation, and a history of low engagement scores. Recent worker survey showed 60% feel their safety concerns are not addressed. Three near-miss reports in the last month cited 'management doesn't listen.'\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"scope\": \"ISO 45001 clause 5.4 (Consultation and participation of workers) at a manufacturing plant with 400 workers across 3 shifts, union representation, and a history of low engagement scores.\", \"criteria\": \"ISO 45001:2018 Occupational Health and Safety Management Systems - Requirements with guidance for use\", \"schedule\": \"Week 1: Pre-audit meeting and document review. Week 2: On-site audit - morning shift. Week 3: On-site audit - afternoon shift. Week 4: On-site audit - night shift. Week 5: Audit closing meeting and preliminary findings. Week 6: Final audit report delivery. Week 8: Management review and action plan development. Week 10: Follow-up on action plan implementation. Week 12: Final review and closure of audit findings.}",
+  "inputTokens": 144,
+  "outputTokens": 193,
+  "latencyMs": 1738,
+  "costUsd": 0.0007328,
+  "truncated": false
+}

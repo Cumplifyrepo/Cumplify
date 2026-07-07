@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-019",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "What does ISO 9001 require of us regarding the competence of people whose work affects our quality performance?",
+  "response": " ISO 9001:2015 has specific requirements regarding competence in **clause 7.2**. Here's what it requires:\n\n## Core Requirements\n\nYou must ensure that persons **whose work affects the quality performance of products and services** are competent, based on:\n\n1. **Appropriate education**\n2. **Training**\n3. **Experience**\n\n## Actions Required\n\nYou must also:\n\n- **Determine** the necessary competence for personnel performing work under your control\n- **Evaluate** the effectiveness of any training or actions taken\n- **Retain documented information** as evidence of competence (e.g., certificates, training records, qualifications)\n\n## When Competence is Lacking\n\nIf personnel are found not to meet required competence, you must take action to **acquire the necessary competence**, which may include:\n- Training\n- Mentoring\n- Reassignment\n- Hiring/contracting competent persons\n\n## Key Points\n\n- The requirement applies to anyone whose work affects quality performance—including **temporary and contract workers**, not just permanent employees\n- \"Quality performance\" is interpreted broadly: design, production, service delivery, handling, storage, packaging, delivery, post-delivery activities, etc.\n- You need to demonstrate that your approach is **systematic and effective**, not just that training occurred\n\n## Practical Implementation\n\nMost organizations address this through:\n- Job descriptions with defined competency requirements\n- Training needs analysis\n- Training plans and records\n- Competency assessments\n\nWould you like guidance on documented information typically maintained or how to evaluate training effectiveness?",
+  "inputTokens": 48,
+  "outputTokens": 309,
+  "latencyMs": 58875,
+  "costUsd": 0.0009557999999999999,
+  "truncated": false
+}

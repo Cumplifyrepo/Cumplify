@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-007",
+  "modelId": "zai.glm-5",
+  "prompt": "Which ISO 14001 clause requires us to set environmental objectives at relevant functions and levels and to plan how we'll achieve them?",
+  "response": "The specific clause you are looking for is **Clause 6.2** (Environmental objectives and planning to achieve them).\n\nHere is the breakdown of how the requirement is structured within ISO 14001:2015:\n\n*   **Clause 6.2.1 (Environmental objectives):** This clause explicitly states that the organization must establish environmental objectives at **relevant functions and levels**, taking into account significant environmental aspects and compliance obligations.\n*   **Clause 6.2.2 (Planning to achieve environmental objectives):** This clause requires the organization to determine **what will be done**, **what resources will be required**, **who will be responsible**, **when it will be completed**, and **how the results will be evaluated**.\n\nIn summary, Clause 6.2 covers both the setting of the objectives and the planning of actions to achieve them.",
+  "inputTokens": 31,
+  "outputTokens": 172,
+  "latencyMs": 20957,
+  "costUsd": 0.0005814,
+  "truncated": false
+}

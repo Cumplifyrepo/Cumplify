@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-039",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "We just hired an operator for our wastewater treatment system. Which ISO 14001 clauses require us to verify she is competent for the role and to make her aware of the significant environmental aspects tied to her work? Cite both.",
+  "response": "Certainly! The ISO 14001 standard includes specific clauses that address the requirements for verifying competence and ensuring awareness of significant environmental aspects. Here are the relevant clauses:\n\n1. **Clause 7.2 - Competence:**\n   This clause requires the organization to determine the necessary competence of person(s) doing work under its control that affects its environmental performance. It also mandates that the organization ensure that these persons are competent based on appropriate education, training, or experience. Additionally, the organization must evaluate the effectiveness of the actions taken to acquire the necessary competence.\n\n2. **Clause 7.3 - Awareness:**\n   This clause requires the organization to ensure that persons doing work under the organization’s control are aware of:\n   - The environmental policy.\n   - Their contribution to the effectiveness of the environmental management system, including the benefits of improved environmental performance.\n   - The implications of not conforming with the environmental management system requirements.\n   - The significant environmental aspects and related actual or potential environmental impacts, applicable to their work.\n   - Their roles and responsibilities in achieving conformity with the requirements of the environmental management system, and in preventing pollution in accordance with the organization’s policy.\n\nIn summary, **Clause 7.2** addresses the need to verify competence, and **Clause 7.3** ensures that the operator is aware of the significant environmental aspects related to her work.",
+  "inputTokens": 48,
+  "outputTokens": 283,
+  "latencyMs": 1855,
+  "costUsd": 0.000944,
+  "truncated": false
+}

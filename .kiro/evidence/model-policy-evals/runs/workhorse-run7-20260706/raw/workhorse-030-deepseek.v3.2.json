@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-030",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Assess the risk: A chemicals manufacturer is expanding production capacity by 40% by adding a night shift. The expansion means: reduced supervisory coverage (1 supervisor per 20 workers vs 1:10 on day shift), maintenance performed during production rather than during downtime, new hires with less than 6 months experience comprising 50% of night crew, emergency response team reduced to 3 members at night vs 8 during day.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n    \"riskLevel\": \"High\",\n    \"likelihood\": \"Probable\",\n    \"impact\": \"Major\",\n    \"controls\": \"Increase supervisory ratio to at least 1:15; schedule critical maintenance during day shift or planned shutdowns; implement extended training and probationary period for new hires with mandatory buddy system; maintain minimum emergency team of 5 members with clear escalation procedures; install additional automated safety monitoring and alarms.\"\n}\n```\nANSWER: {\"riskLevel\": \"High\", \"likelihood\": \"Probable\", \"impact\": \"Major\", \"controls\": \"Increase supervisory ratio to at least 1:15; schedule critical maintenance during day shift or planned shutdowns; implement extended training and probationary period for new hires with mandatory buddy system; maintain minimum emergency team of 5 members with clear escalation procedures; install additional automated safety monitoring and alarms.\"}",
+  "inputTokens": 161,
+  "outputTokens": 180,
+  "latencyMs": 3832,
+  "costUsd": 0.00043282,
+  "truncated": false
+}

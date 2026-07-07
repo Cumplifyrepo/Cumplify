@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-030",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Corporate handed us a goal of 'fewer injuries.' What does ISO 45001 require for an OH&S objective to be properly set and planned?",
+  "response": " ISO 45001 has specific requirements for OH&S objectives that go well beyond \"fewer injuries.\" Here's what your corporate goal needs to become a compliant objective:\n\n## The Requirements (Clause 6.2)\n\n**Must be:**\n- **Consistent with the OH&S policy**\n- **Measurable** (or capable of being evaluated)\n- **Monitored**\n- **Communicated**\n- **Updated as appropriate**\n\n**Must take into account:**\n- Applicable requirements (legal, other)\n- Results of hazard identification and risk assessment\n- Opportunities for improvement\n- Technological options\n- Financial, operational, and business requirements\n- Views of workers and worker representatives\n\n## What \"Fewer Injuries\" Is Missing\n\n| Issue | What's Needed |\n|-------|---------------|\n| Not measurable | Specific metric: \"Reduce recordable injuries from X to Y by [date]\" |\n| No timeframe | Establish deadlines and milestones |\n| No accountability | Assign responsibility and resources |\n| No method | Define *how* you'll achieve it |\n| No baseline | Know your starting point |\n\n## The Planning Requirement (6.2.2)\n\nFor each objective, you must determine:\n- What will be done\n- What resources are required\n- Who is responsible\n- When it will be completed\n- How results will be evaluated (indicators)\n- How results will be integrated into business processes\n\n## Practical Translation\n\n\"Fewer injuries\" might become: *\"Reduce total recordable injury rate from 4.2 to 2.5 per 200,000 hours by December 2025 through [specific controls], with quarterly reviews, $X budget, [named] accountability, and integration into operational planning.\"*\n\nWould you like help developing the specific planning elements for your situation?",
+  "inputTokens": 57,
+  "outputTokens": 359,
+  "latencyMs": 26369,
+  "costUsd": 0.0011112000000000001,
+  "truncated": false
+}

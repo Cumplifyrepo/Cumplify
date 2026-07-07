@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-017",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I'm rewriting our safety policy before recertification. What specific commitments does ISO 45001 require the OH&S policy to contain?",
+  "response": " ISO 45001:2018 clause 5.2 requires the OH&S policy to include **three specific commitments**:\n\n## Mandatory Commitments\n\n| Commitment | What It Means |\n|------------|---------------|\n| **1. Prevention of work-related injury and ill health** | Proactive measures to stop harm before it occurs |\n| **2. Elimination of hazards and reduction of OH&S risks** | Hierarchy of controls—aim to remove hazards entirely where feasible |\n| **3. Continual improvement of the OH&S management system** | Ongoing enhancement of performance, not just maintaining status quo |\n\n## Additional Required Content\n\nBeyond these commitments, the policy must also:\n\n- **Be appropriate to the purpose and size** of the organization\n- **Provide a framework for setting objectives**\n- **Fulfill legal requirements and other requirements**\n- **Be available as documented information**\n- **Be communicated, understood, and applied** within the organization\n- **Be accessible to relevant interested parties** (as appropriate)\n\n## Practical Tip for Recertification\n\nAuditors often look for evidence that these commitments are **operationalized**—not just stated. Consider cross-referencing your policy to:\n- Risk assessment procedures (commitment 2)\n- Incident investigation processes (commitment 1)\n- Management review and improvement records (commitment 3)\n\nWould you like guidance on drafting language that demonstrates these commitments without boilerplate phrasing?",
+  "inputTokens": 53,
+  "outputTokens": 289,
+  "latencyMs": 8960,
+  "costUsd": 0.0008988,
+  "truncated": false
+}

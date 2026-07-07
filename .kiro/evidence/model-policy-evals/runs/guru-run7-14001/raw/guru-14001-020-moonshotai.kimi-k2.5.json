@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-020",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We have a written emergency response plan sitting in a binder. What else does ISO 14001's emergency preparedness requirement expect us to do with it, and which clause is that?",
+  "response": " Based on ISO 14001:2015, the emergency preparedness and response requirements are found in **Clause 6.1.1** (planning) and **Clause 8.2** (emergency preparedness and response).\n\nHere's what the standard expects beyond simply having a written plan in a binder:\n\n## Clause 6.1.1 - Planning (Emergency Situations)\n\nYou must **identify** potential emergency situations and **assess** their environmental impacts as part of your environmental aspects evaluation.\n\n## Clause 8.2 - Emergency Preparedness and Response\n\nThe standard requires you to:\n\n| Requirement | What It Means |\n|-------------|---------------|\n| **Establish** | Documented procedures/plans (your binder content) |\n| **Respond to actual emergencies** | Not just theoretical—be ready to act |\n| **Prevent or mitigate environmental impacts** | The goal is environmental protection |\n| **Periodically test the plan** | Drills, simulations, or other exercises |\n| **Review and revise after incidents** | Learn from actual emergencies or near-misses |\n| **Provide relevant information and training** | Employees, contractors, and potentially external parties need to know their roles |\n\n## Key Gaps to Address\n\nIf your plan is only \"sitting in a binder,\" you likely need to verify:\n\n- **Testing**: When did you last run a drill or exercise?\n- **Training**: Who has been trained and how recently?\n- **Review**: Is the plan updated based on changes in operations, materials, or site conditions?\n- **Communication**: Do external responders (fire, hazmat) have access or awareness?\n- **Post-incident review**: Is there a process to evaluate and improve after any actual event?\n\nWould you like guidance on how to demonstrate compliance during an audit?",
+  "inputTokens": 63,
+  "outputTokens": 364,
+  "latencyMs": 6159,
+  "costUsd": 0.0011298,
+  "truncated": false
+}

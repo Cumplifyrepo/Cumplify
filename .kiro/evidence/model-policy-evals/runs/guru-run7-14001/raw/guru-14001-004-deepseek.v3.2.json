@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-004",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Beyond just tracking which regulations apply to us, which ISO 14001 clause requires us to periodically check whether we are actually meeting our compliance obligations?",
+  "response": "**Clause 9.1.2 of ISO 14001:2015** requires you to periodically check whether you are actually meeting your compliance obligations.\n\nSpecifically, **Clause 9.1.2 Evaluation of compliance** states:\n\n> 1. The organization shall establish, implement and maintain a process(es) for evaluating compliance with its compliance obligations.\n> 2. The organization shall determine the frequency of the evaluation.\n> 3. The organization shall evaluate compliance and take action if needed.\n> 4. The organization shall retain documented information as evidence of the evaluation results.\n\n**Key Points:**\n*   This clause moves beyond simply *tracking* regulations (which is part of **Clause 6.1.3 Compliance Obligations**) to actively *evaluating* performance against them.\n*   It requires a defined **process** and a determined **frequency** (e.g., quarterly, annually).\n*   The evaluation must be documented, and any necessary corrective actions must be taken.\n\nTherefore, while **Clause 6.1.3** is where you identify and access your compliance obligations, **Clause 9.1.2** is the core requirement that mandates the periodic check to confirm you are actually meeting them. This is a critical part of the \"Check\" phase of the Plan-Do-Check-Act (PDCA) cycle in ISO 14001.",
+  "inputTokens": 33,
+  "outputTokens": 288,
+  "latencyMs": 5735,
+  "costUsd": 0.0005532600000000001,
+  "truncated": false
+}

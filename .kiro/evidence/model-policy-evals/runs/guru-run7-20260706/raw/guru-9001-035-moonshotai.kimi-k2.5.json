@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-035",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We dropped and cracked a checking fixture that our customer loaned us for their job. What does ISO 9001 oblige us to do, and under which clause?",
+  "response": " Under ISO 9001:2015, this situation primarily involves **customer property** requirements.\n\n## Applicable Clause: **8.5.3 — Customer or External Provider's Property**\n\nThis clause requires you to:\n\n- **Exercise care** with customer property while it's under your control\n- **Identify, verify, protect, and safeguard** the property\n- **Report to the customer** any loss, damage, or unsuitability for use\n- **Maintain records** of such incidents\n\n## What you must do:\n\n| Requirement | Action |\n|-------------|--------|\n| **Report to customer** | Notify them immediately of the damage |\n| **Document the incident** | Record what happened, when, and extent of damage |\n| **Assess impact** | Determine if it affects your ability to meet contractual requirements |\n| **Preserve evidence** | Document condition (photos, inspection records) |\n| **Determine disposition** | Work with customer on repair, replacement, or alternative |\n\n## Additional considerations:\n\n- **Clause 8.7 (Nonconforming outputs)** — if this affects your ability to produce conforming product\n- **Clause 10.2 (Nonconformity and corrective action)** — determine root cause and prevent recurrence\n- **Contractual obligations** — review any specific terms in your agreement with the customer\n\n## Practical note:\n\nISO 9001 doesn't prescribe *how* you compensate the customer—that's typically a contractual/legal matter. The standard focuses on ensuring you **control, report, and document** the situation properly.\n\nWould you like guidance on the corrective action process or customer communication?",
+  "inputTokens": 61,
+  "outputTokens": 326,
+  "latencyMs": 165949,
+  "costUsd": 0.0010146,
+  "truncated": false
+}

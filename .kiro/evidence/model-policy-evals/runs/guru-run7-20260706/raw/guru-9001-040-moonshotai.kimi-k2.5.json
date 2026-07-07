@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-040",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our general manager says quality is 'the quality manager's job' — he skips management reviews and rejected funding for QMS resources. Which ISO 9001 clause makes top management personally accountable for the QMS and its effectiveness?",
+  "response": " The clause you're looking for is **ISO 9001:2015 Clause 5.1 — Leadership and commitment**.\n\nSpecifically, **clause 5.1.1** states that top management shall demonstrate leadership and commitment to the quality management system by:\n\n- **a)** Taking accountability for the effectiveness of the QMS\n- **b)** Ensuring quality policy and objectives are established\n- **c)** Ensuring integration of QMS requirements into business processes\n- **d)** Promoting process approach and risk-based thinking\n- **e)** Ensuring resources are available\n- **f)** Communicating importance of effective QMS and conforming to requirements\n- **g)** Ensuring intended results are achieved\n- **h)** Engaging, directing and supporting persons to contribute to QMS effectiveness\n- **i)** Promoting improvement\n- **j)** Supporting other relevant management roles\n\n**Clause 5.1.1 a)** explicitly makes top management **personally accountable** for QMS effectiveness — not delegable to the quality manager.\n\nAdditionally, **clause 9.3** requires **management review** by top management at planned intervals — skipping these is a direct nonconformity.\n\n**Clause 7.1** requires top management to determine and provide necessary resources — rejecting QMS funding violates this.\n\nYour GM's stance reflects a common misconception. The quality manager implements and maintains the QMS; **accountability rests with top management**. This is a fundamental shift from the 2008 standard's \"management representative\" concept, which allowed some delegation.",
+  "inputTokens": 72,
+  "outputTokens": 319,
+  "latencyMs": 127496,
+  "costUsd": 0.0010002,
+  "truncated": false
+}

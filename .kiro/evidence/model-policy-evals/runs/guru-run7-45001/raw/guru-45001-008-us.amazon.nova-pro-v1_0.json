@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-008",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "We're about to hand our entire janitorial and facilities-upkeep function to an outside firm. Which ISO 45001 sub-clause requires us to make sure outsourced functions and processes stay controlled?",
+  "response": "ISO 45001, which is the international standard for Occupational Health and Safety (OH&S) management systems, includes specific requirements for controlling outsourced functions and processes. The relevant sub-clause is **8.1**, which deals with \"Operational planning and control.\"\n\nWithin sub-clause 8.1, the organization must plan, implement, and control the processes needed to meet the requirements of the OH&S management system, and to implement the actions determined in clause 6 (Planning). This includes ensuring that outsourced processes are controlled.\n\nMore specifically, **sub-clause 8.1.2** addresses \"Outsourcing (including procurement).\" It requires the organization to ensure that outsourced processes are controlled and that the OH&S management system requirements are met by the external provider. This involves:\n- Establishing and applying criteria for the selection, monitoring, and review of external providers.\n- Ensuring that external providers are competent and have the necessary resources to meet the OH&S management system requirements.\n- Defining and applying the type and extent of control to be applied to these processes.\n- Ensuring the effectiveness of any controls applied to the outsourced processes.\n- Retaining control over the aspects of the outsourced processes that affect OH&S performance.\n\nTherefore, to ensure that your outsourced janitorial and facilities-upkeep functions remain controlled and meet the requirements of ISO 45001, you should focus on the requirements outlined in sub-clause 8.1, particularly 8.1.2.",
+  "inputTokens": 44,
+  "outputTokens": 306,
+  "latencyMs": 2462,
+  "costUsd": 0.0010144000000000002,
+  "truncated": false
+}

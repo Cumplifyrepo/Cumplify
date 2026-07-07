@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-039",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We just hired an operator for our wastewater treatment system. Which ISO 14001 clauses require us to verify she is competent for the role and to make her aware of the significant environmental aspects tied to her work? Cite both.",
+  "response": "Under ISO 14001:2015, the two clauses that require you to verify the operator’s competence and ensure she is aware of the significant environmental aspects tied to her work are:\n\n1. **Clause 7.2 – Competence**  \n   *Requirement:* The organization must determine the necessary competence of persons doing work under its control that affects its environmental performance, and ensure these persons are competent based on appropriate education, training, or experience.  \n   *Application:* You are required to verify that the newly hired operator has the necessary skills and knowledge to perform her duties in a way that ensures compliance with the environmental management system and prevents or mitigates adverse environmental impacts.\n\n2. **Clause 7.3 – Awareness**  \n   *Requirement:* The organization must ensure that persons doing work under its control are aware of:  \n   - The environmental policy,  \n   - The significant environmental aspects and their associated impacts,  \n   - Their contribution to the effectiveness of the EMS, including benefits of improved environmental performance, and  \n   - The implications of not conforming with the EMS requirements.  \n   *Application:* You must make the operator aware of the significant environmental aspects of the wastewater treatment system (e.g., effluent quality, chemical usage, energy consumption, sludge disposal) and how her daily actions directly affect these aspects.\n\n**In summary:**  \n- **Clause 7.2** ensures she is *competent* to perform the job.  \n- **Clause 7.3** ensures she *understands* the environmental significance of her work.\n\nThese clauses together form the foundation for ensuring that personnel are both capable and informed — critical for effective environmental management.",
+  "inputTokens": 57,
+  "outputTokens": 343,
+  "latencyMs": 3139,
+  "costUsd": 0.00041957999999999996,
+  "truncated": false
+}

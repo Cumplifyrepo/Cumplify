@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-042",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I'm building a site safety dashboard tracking near-miss reporting rates and safety-training completion as leading indicators, plus lost-time injury rates as a lagging indicator, all measured against our annual targets. Which ISO 45001 clause covers this monitoring and evaluation activity?",
+  "response": " The monitoring and evaluation activity you described is covered by **ISO 45001:2018 Clause 9.1 — Monitoring, measurement, analysis and evaluation of performance**.\n\nMore specifically, your dashboard aligns with:\n\n- **9.1.1 General** — Requires the organization to determine what needs to be monitored and measured, including criteria for evaluation\n- **9.1.2 Evaluation of compliance** — Tracking against legal and other requirements (your annual targets)\n\nYour mix of **leading indicators** (near-miss reporting, training completion) and **lagging indicators** (lost-time injury rates) directly supports the standard's expectation that monitoring should include both **proactive and reactive measures** of OH&S performance.\n\nAdditionally, your dashboard feeds into:\n- **9.3 Management review** — Providing data for top management to review\n- **6.1.2 Assessment of OH&S risks and opportunities** — Your leading indicators help assess effectiveness of risk controls\n\nThe standard emphasizes that monitoring should enable evaluation of **progress toward achieving OH&S objectives** — which your target-based tracking addresses directly.",
+  "inputTokens": 78,
+  "outputTokens": 221,
+  "latencyMs": 37747,
+  "costUsd": 0.0007098,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-006",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Before we rearrange the production line layout, which ISO 45001 clause requires us to plan and control changes that could affect OH&S performance?",
+  "response": "Under ISO 45001:2018, the requirement to **plan and control changes that could affect OH&S performance** is found in:\n\n**Clause 8.1.3 – Management of Change**\n\nThis clause specifically states that the organization must establish a process for the **management of change** to review and control planned changes (such as rearranging a production line layout) that can affect its OH&S performance.\n\n### Key points of Clause 8.1.3:\n1.  **Applies to planned changes** in the organization, its processes, materials, equipment, or the OH&S management system itself.\n2.  **Requires a review** of the potential consequences of the change *before* implementation.\n3.  **Mandates actions** to mitigate any adverse OH&S effects.\n4.  **Ensures that changes are controlled** and that the integrity of the OH&S management system is maintained.\n\nTherefore, before you rearrange the production line, you must follow your organization's **\"Management of Change\" (MOC)** process, which is mandated by Clause 8.1.3. This typically involves a risk assessment, consultation with workers, planning for necessary training, and updating relevant documentation and controls.",
+  "inputTokens": 32,
+  "outputTokens": 249,
+  "latencyMs": 5012,
+  "costUsd": 0.00048049,
+  "truncated": false
+}

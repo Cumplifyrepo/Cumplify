@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-048",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Fire is already in our hazard register with a high risk score, so my plant manager thinks we're covered. Is a register entry sufficient, or which ISO 45001 clause requires standing response plans, drills, and post-drill reviews for events like this?",
+  "response": " Your plant manager's assumption is incorrect. A hazard register entry alone does not satisfy ISO 45001 requirements for operational preparedness. Here's the specific clause structure:\n\n## Primary Requirement: Clause 8.2 (Emergency Preparedness and Response)\n\nThis clause **mandates** that organizations must:\n\n- **Establish** planned responses to potential emergency situations (8.2a)\n- **Provide** training for planned responses (8.2b)\n- **Periodically test and exercise** planned response capability (8.2c)\n- **Evaluate performance** and revise plans after testing (8.2d)\n\n## What This Means Practically\n\n| Register Entry Only | Full 8.2 Compliance |\n|---------------------|---------------------|\n| Identifies fire exists | Written fire response procedures |\n| Assigns risk score | Evacuation plans, assembly points, roll calls |\n| Static documentation | **Scheduled drills** (frequency based on risk) |\n| No action required | **Post-drill debriefs** with documented findings |\n| | **Corrective actions** from drill gaps |\n\n## Key Gap to Address\n\nClause 8.2 requires **demonstrable capability**, not just documentation. The standard explicitly expects you to:\n- Test effectiveness through drills\n- Learn from those tests\n- Improve based on results\n\n## Supporting References\n\n- **6.1.2** (hazard identification) feeds into 8.2, but doesn't replace it\n- **9.1.1** (monitoring/measurement) applies to emergency response performance\n- **10.2** (incident investigation) includes drill failures as \"nonconformities\"\n\n**Bottom line:** Your register satisfies identification requirements. Clause 8.2 requires you to prove you can actually respond effectively—and continuously improve that response.",
+  "inputTokens": 78,
+  "outputTokens": 364,
+  "latencyMs": 11884,
+  "costUsd": 0.0011388000000000001,
+  "truncated": false
+}

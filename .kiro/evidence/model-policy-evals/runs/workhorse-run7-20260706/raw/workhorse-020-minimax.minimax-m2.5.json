@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-020",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Plan an internal audit: Scope: Integrated audit of ISO 9001 clause 7.1.5 (Monitoring and measuring resources) and ISO 45001 clause 9.1 (Monitoring, measurement, analysis, and evaluation) at a chemical testing laboratory. The lab performs environmental and occupational hygiene analysis with 200+ calibrated instruments. Last external assessment noted 3 findings on calibration traceability.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 177,
+  "outputTokens": 4096,
+  "latencyMs": 65805,
+  "costUsd": 0.0049683,
+  "truncated": true
+}

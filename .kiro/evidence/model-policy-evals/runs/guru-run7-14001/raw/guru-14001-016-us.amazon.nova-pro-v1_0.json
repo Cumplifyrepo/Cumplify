@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-016",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "In plain terms, what does ISO 14001 require us to do about compliance obligations at the planning stage, and which clause covers it?",
+  "response": "Sure, let's break it down in simple terms.\n\n**What ISO 14001 Requires:**\nISO 14001 is a standard for environmental management systems. At the planning stage, it requires your organization to:\n\n1. **Identify Compliance Obligations:** Figure out all the legal and other requirements (like regulations, laws, agreements, etc.) that apply to your environmental aspects. These are the rules you need to follow.\n   \n2. **Access and Keep Them Up-to-Date:** Make sure you have access to these requirements and keep them current. This means regularly checking for any changes in the laws or regulations that affect your organization.\n\n3. **Consider Them in Your Planning:** When you’re planning your environmental management system, take these compliance obligations into account. This ensures that your plans and operations are in line with what the law requires.\n\n**Which Clause Covers It:**\nThe specific clause in ISO 14001 that covers compliance obligations is **Clause 6.1.3**. This clause is part of the \"Planning\" section and specifically addresses the need to determine and have access to the compliance obligations related to your environmental aspects.\n\nSo, in summary, ISO 14001 requires you to know what environmental laws and regulations apply to you, keep that information current, and make sure your plans consider these requirements. This is all detailed in Clause 6.1.3.",
+  "inputTokens": 31,
+  "outputTokens": 296,
+  "latencyMs": 2337,
+  "costUsd": 0.000972,
+  "truncated": false
+}

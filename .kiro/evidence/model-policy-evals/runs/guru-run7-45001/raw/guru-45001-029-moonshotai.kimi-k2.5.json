@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-029",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We've got our hazard register, risk scores, and legal register done. What does ISO 45001's planning-action clause require us to do next with all of that?",
+  "response": " Based on ISO 45001:2018, once you've established your hazard identification, risk assessment, and legal register, Clause 6.1 (Planning) requires you to move into **determining and evaluating your OH&S risks and opportunities** and then into **Clause 6.1.4 (Planning action)**.\n\nHere's what you need to do next:\n\n## 6.1.2: Evaluate Risks & Opportunities\n\n- **OH&S risks** from hazards identified (using your risk scores)\n- **OH&S opportunities** to enhance performance\n- **Other risks and opportunities** to the management system itself\n\n## 6.1.3: Determine Applicable Legal Requirements\n\nYou've started this with your legal register. Now ensure you:\n- Have access to **up-to-date** versions\n- Understand **how they apply** to your hazards and activities\n\n## 6.1.4: Planning Action — The Critical Next Step\n\nYou must now **plan to address** your risks and opportunities by:\n\n| Requirement | What This Means Practically |\n|-------------|----------------------------|\n| **Integrate and implement** into OH&S processes | Don't bolt on—embed actions into operations |\n| **Evaluate effectiveness** | How will you know actions worked? |\n| **Give priority** to significant risks | Use your risk scores to prioritize |\n| **Consider hierarchy of controls** | Elimination → Substitution → Engineering → Admin → PPE |\n\n## Documentation Outputs You'll Need\n\n- **Action plans** addressing significant risks (with timelines, responsibilities)\n- **How to integrate** into business processes\n- **Evaluation criteria** for effectiveness\n\n## Then Move to Clause 6.2: OH&S Objectives\n\nYour risk assessment outputs directly feed into setting **measurable objectives** with plans to achieve them.\n\n---\n\n**Key pitfall to avoid:** Many organizations stop at \"we have a register.\" ISO 45001 requires you to *act* on that information with integrated, prioritized, and evaluated plans.\n\nWould you like guidance on structuring those action plans or linking to objectives?",
+  "inputTokens": 61,
+  "outputTokens": 416,
+  "latencyMs": 13650,
+  "costUsd": 0.0012845999999999999,
+  "truncated": false
+}

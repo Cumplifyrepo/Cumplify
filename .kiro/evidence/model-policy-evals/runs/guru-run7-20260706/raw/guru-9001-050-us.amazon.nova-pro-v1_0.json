@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-050",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "An operator submitted a kaizen idea to cut setup time — there's no nonconformity or complaint behind it. My colleague wants to force it through our CAPA process under 10.2. Which ISO 9001 clause actually governs determining and selecting improvement opportunities like this one?",
+  "response": "In the context of ISO 9001, the clause that specifically addresses the determination and selection of improvement opportunities is Clause 10, which focuses on Improvement. Within this clause, there are two sub-clauses that are particularly relevant:\n\n1. **Clause 10.1: General**:\n   - This sub-clause requires the organization to determine and select opportunities for improvement and implement any necessary actions to meet customer requirements and enhance customer satisfaction. \n   - It emphasizes continuous improvement of the quality management system.\n\n2. **Clause 10.2: Nonconformity and Corrective Action**:\n   - While Clause 10.2 specifically deals with nonconformities and the actions to address them, it is not the primary clause for general improvement opportunities that do not stem from nonconformities or complaints.\n\nFor the kaizen idea submitted by the operator, which is aimed at cutting setup time and does not arise from a nonconformity or complaint, the appropriate clause to govern its determination and selection is **Clause 10.1: General**. This clause is designed to encourage and facilitate ongoing improvements within the quality management system.\n\nForcing such an improvement idea through the CAPA (Corrective and Preventive Actions) process under Clause 10.2 might not be the most appropriate approach, as CAPA is typically reserved for addressing nonconformities and their root causes. Instead, the organization should consider the improvement idea under its general continuous improvement initiatives, aligning with the requirements of Clause 10.1.",
+  "inputTokens": 61,
+  "outputTokens": 312,
+  "latencyMs": 2575,
+  "costUsd": 0.0010472,
+  "truncated": false
+}

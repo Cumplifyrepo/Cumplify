@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-026",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Analyze this CAPA: NC Description: 'Environmental incident: Approximately 200 liters of hydraulic oil released to storm drain during equipment maintenance. Maintenance team disconnected hydraulic line without isolating and depressurizing. Spill kit located 80 meters away. Drain valve was not closed per pre-maintenance checklist. Oil reached local waterway before containment. Regulatory notification required.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"rootCause\": \"Failure to follow pre-maintenance checklist and inadequate spill response preparedness.\", \"actions\": \"1. Retrain maintenance team on proper isolation and depressurization procedures. 2. Update pre-maintenance checklist to include mandatory drain valve closure. 3. Relocate spill kit to within 20 meters of maintenance area. 4. Implement regular drills for spill response. 5. Notify regulatory authorities as required.\", \"evidence\": \"1. Training attendance records. 2. Updated checklist with signatures. 3. Photos of relocated spill kit. 4. Drill participation logs. 5. Regulatory notification confirmation.\"}",
+  "inputTokens": 131,
+  "outputTokens": 134,
+  "latencyMs": 3693,
+  "costUsd": 0.0005336000000000001,
+  "truncated": false
+}

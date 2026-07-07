@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-010",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Pallets sometimes leave our dock before all the inspection paperwork is complete. Which ISO 9001 clause requires us to verify requirements are met before releasing product, keep evidence of conformity, and be able to trace who authorized the release?",
+  "response": " This requirement is found in **ISO 9001:2015, Clause 8.6 — Release of products and services**.\n\nSpecifically, this clause requires that:\n\n- **8.6(a)** — Product/service requirements are **not released until the planned arrangements for verification have been satisfactorily completed**, unless approved by a relevant authority and where applicable, by the customer\n\n- **8.6(b)** — **Documented information** is retained as evidence of conformity to acceptance criteria\n\n- **8.6(c)** — **Traceability** is maintained to the person(s) authorizing release\n\nYour situation describes a common nonconformity where product ships before verification is complete. To remain compliant, you would need either:\n- A documented procedure for early release with proper authority approval, or\n- Process controls that prevent release until inspection is complete\n\nThe standard does permit early release in 8.6(a), but only with **documented approval by a relevant authority** and **customer approval where applicable** — not simply as an operational workaround.",
+  "inputTokens": 73,
+  "outputTokens": 214,
+  "latencyMs": 28887,
+  "costUsd": 0.0006858,
+  "truncated": false
+}

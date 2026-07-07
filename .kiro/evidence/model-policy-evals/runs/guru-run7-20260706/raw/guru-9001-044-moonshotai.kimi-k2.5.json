@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-044",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "HR says our operators are covered because everyone signed an acknowledgement of the quality policy during onboarding. I don't think a signature proves someone can actually do the job. Which ISO 9001 clause governs evidence of competence, and which separate clause governs awareness of the policy and objectives?",
+  "response": " You're right to distinguish these two requirements. They're governed by separate clauses in ISO 9001:2015:\n\n## Evidence of Competence: **Clause 7.2**\n\nThis requires the organization to:\n- Determine necessary competence for personnel\n- Ensure competence is achieved (through education, training, or experience)\n- **Retain documented information as evidence of competence**\n\nA signature on a policy document does **not** satisfy this clause. You need evidence that people can actually perform their work—training records, certifications, skills assessments, on-the-job evaluations, etc.\n\n---\n\n## Awareness of Policy and Objectives: **Clause 7.3**\n\nThis requires personnel to be aware of:\n- The quality policy\n- Relevant quality objectives\n- Their contribution to effectiveness\n- The implications of not conforming\n\nThe signed acknowledgement likely addresses **this clause only**—awareness, not competence.\n\n---\n\n## The Gap\n\n| What HR Has | What's Actually Required |\n|-------------|-------------------------|\n| Signed policy acknowledgement (7.3) | Demonstrated ability to perform work (7.2) |\n\nYou may want to audit your training records against actual job requirements to identify where competence evidence is missing, even if awareness documentation is complete.",
+  "inputTokens": 83,
+  "outputTokens": 247,
+  "latencyMs": 27541,
+  "costUsd": 0.0007907999999999999,
+  "truncated": false
+}

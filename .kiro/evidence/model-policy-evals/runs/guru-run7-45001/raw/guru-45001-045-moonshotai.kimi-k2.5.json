@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-045",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We have documented operating criteria and procedures for every process, but the auditor says that general operational control alone doesn't demonstrate we tried to eliminate hazards before settling on PPE and rules. Which ISO 45001 sub-clause specifically requires working down from elimination?",
+  "response": " The auditor is referring to **ISO 45001:2018, sub-clause 8.1.2: Eliminating hazards and reducing OH&S risks**.\n\nThis sub-clause explicitly requires the hierarchy of controls:\n\n> \"When determining controls, or considering changes to existing controls, the organization shall reduce the risks according to the following hierarchy:\n> a) eliminate the hazard;\n> b) substitute with less hazardous processes, operations, materials or equipment;\n> c) use engineering controls and reorganization of work;\n> d) use administrative controls, including training;\n> e) use adequate personal protective equipment.\"\n\nThe key phrase is **\"reduce the risks according to the following hierarchy\"** — this is a mandatory sequence, not a menu of options. The standard requires you to work through the hierarchy in order, applying each level as far as is reasonably practicable before moving to the next.\n\nYour auditor's point is valid: documented procedures and PPE alone don't demonstrate compliance if you haven't first considered whether the hazard could be eliminated, substituted, or engineered out. You need evidence of that **decision-making process** — showing you considered elimination first and why it wasn't reasonably practicable, before defaulting to administrative controls and PPE.\n\nThis is also reinforced in **6.1.2 (Assessment of OH&S risks and other risks to the OH&S management system)**, which requires the methodology for assessing risks to be defined and applied, including the hierarchy of controls.",
+  "inputTokens": 77,
+  "outputTokens": 296,
+  "latencyMs": 7704,
+  "costUsd": 0.0009341999999999999,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-033",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "On our construction site, a foreman assigned a newly hired welder to structural welds and we can't produce any qualification or training evidence for him. Which ISO 9001 clause would an auditor write this finding against?",
+  "response": " This finding would typically be written against **ISO 9001:2015 Clause 7.2 - Competence**.\n\nSpecifically, the auditor would likely reference:\n\n- **Clause 7.2 a)** - determining the necessary competence of person(s) doing work under its control that affects the performance and effectiveness of the quality management system\n\nAnd/or:\n\n- **Clause 7.2 b)** - ensuring that these persons are competent on the basis of appropriate education, training, or experience\n\n## Why this clause applies:\n\nThe welder is performing **structural welds** — work that directly affects product conformity and safety. The standard requires that personnel performing such work be competent, and competence must be demonstrable through documented evidence (qualifications, training records, certifications, etc.).\n\n## Related clauses that might also be cited:\n\n- **Clause 7.1.5 (Monitoring and measuring resources)** — if welding equipment requires calibration/verification\n- **Clause 8.5.1 (Control of production and service provision)** — for controlling production processes where conformity cannot be verified later\n\n## Practical note:\n\nFor structural welding specifically, this would also likely trigger requirements under **ISO 3834** (welding quality standards) or **ISO 9606** (qualification testing of welders), which are commonly referenced in construction quality management systems.\n\nThe absence of a welding procedure specification (WPS) and welder qualification records (WPQR/WQTR) would be a significant nonconformity in this context.",
+  "inputTokens": 71,
+  "outputTokens": 309,
+  "latencyMs": 36181,
+  "costUsd": 0.0009695999999999998,
+  "truncated": false
+}

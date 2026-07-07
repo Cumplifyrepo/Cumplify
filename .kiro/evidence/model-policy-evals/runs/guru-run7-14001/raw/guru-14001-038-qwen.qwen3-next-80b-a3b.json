@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-038",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Leadership approved a target to cut hazardous waste generation 15 percent this year. Which ISO 14001 clauses cover setting that objective up properly and then monitoring performance against it? Cite both.",
+  "response": "The leadership-approved target to cut hazardous waste generation by 15 percent this year is an environmental objective, and its proper establishment and monitoring are covered by two key clauses of **ISO 14001:2015**:\n\n1. **Clause 6.2 – Environmental objectives and planning to achieve them**  \n   This clause requires the organization to establish environmental objectives at relevant functions and levels, consistent with the environmental policy. Objectives must be measurable (where practicable), take into account compliance obligations and significant environmental aspects (such as hazardous waste generation), and be monitored. Setting the 15% reduction target for hazardous waste directly falls under this clause, as it defines a specific, measurable objective tied to a significant environmental aspect.\n\n2. **Clause 9.1.1 – Monitoring, measurement, analysis and evaluation**  \n   This clause requires the organization to determine what needs to be monitored and measured (including environmental objectives), the methods for monitoring and measurement, and when and how to analyze and evaluate the results. To track progress toward the 15% hazardous waste reduction target, the organization must establish metrics (e.g., tons of hazardous waste generated per month), collect data, analyze trends, and report performance — all covered under this clause.\n\n**In summary:**  \n- **Clause 6.2** covers the *setting up* of the objective.  \n- **Clause 9.1.1** covers the *monitoring and evaluation* of performance against it.  \n\nThese two clauses work together to ensure the objective is not only established properly but also tracked and used for continual improvement.",
+  "inputTokens": 51,
+  "outputTokens": 328,
+  "latencyMs": 10528,
+  "costUsd": 0.00040073999999999996,
+  "truncated": false
+}

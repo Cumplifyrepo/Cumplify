@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-036",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Neighbors have complained twice this month about odor from our rendering plant. Which ISO 14001 clauses govern how we decide what to communicate back to them and how we investigate and correct the underlying problem? Cite both.",
+  "response": "The two ISO 14001:2015 clauses that govern how your organization decides what to communicate back to neighbors and how to investigate and correct the underlying odor problem are:\n\n1. **Clause 7.4 – Communication**  \n   This clause requires the organization to establish, implement, and maintain processes for internal and external communication relevant to the environmental management system (EMS). Specifically, it mandates that the organization determine:  \n   - *What* to communicate (e.g., the nature of the complaint, actions taken, corrective measures),  \n   - *When* to communicate,  \n   - *With whom* to communicate (e.g., affected neighbors), and  \n   - *How* to communicate.  \n   Since neighbors have raised complaints, Clause 7.4 obligates you to communicate transparently and appropriately with them regarding the issue and your response.\n\n2. **Clause 10.2 – Nonconformity and Corrective Action**  \n   This clause requires the organization to respond to nonconformities (such as odor emissions exceeding acceptable levels or violating community expectations), including:  \n   - Taking action to control and correct the nonconformity,  \n   - Evaluating the need for action to eliminate the root cause and prevent recurrence,  \n   - Reviewing the effectiveness of corrective actions taken.  \n   The odor complaints constitute environmental nonconformities under your EMS, and Clause 10.2 governs the systematic investigation, root cause analysis, and implementation of corrective actions to prevent recurrence.\n\n**In summary:**  \n- **Clause 7.4** governs *what and how you communicate* to neighbors.  \n- **Clause 10.2** governs *how you investigate and correct the underlying problem*.  \n\nTogether, these clauses ensure both transparency with stakeholders and effective environmental performance improvement.",
+  "inputTokens": 54,
+  "outputTokens": 376,
+  "latencyMs": 4914,
+  "costUsd": 0.00045875999999999995,
+  "truncated": false
+}

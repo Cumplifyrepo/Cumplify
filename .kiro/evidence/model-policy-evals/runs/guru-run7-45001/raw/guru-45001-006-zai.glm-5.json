@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-006",
+  "modelId": "zai.glm-5",
+  "prompt": "Before we rearrange the production line layout, which ISO 45001 clause requires us to plan and control changes that could affect OH&S performance?",
+  "response": "The specific clause you are looking for is **Clause 8.1.3**.\n\nHere are the details:\n\n*   **Clause Number:** 8.1.3\n*   **Clause Title:** Management of change\n*   **Standard:** ISO 45001:2018\n\n**What this means for your production line rearrangement:**\nUnder this clause, the organization must establish a process for managing changes (whether permanent or temporary) to ensure that OH&S risks are identified and controlled *before* the changes are implemented.\n\nSpecifically, when planning your new layout, you must address:\n\n1.  **New Hazards:** Does the new layout introduce new machinery, traffic patterns, or ergonomic risks?\n2.  **Risk Assessment:** Have the OH&S risks associated with the change been assessed?\n3.  **Controls:** Have new control measures been implemented?\n4.  **Communication:** Have workers and relevant stakeholders been informed and trained on the new layout and procedures?\n\nThis clause ensures that \"change\" doesn't inadvertently undo your safety systems or introduce new dangers.",
+  "inputTokens": 34,
+  "outputTokens": 218,
+  "latencyMs": 19473,
+  "costUsd": 0.0007316,
+  "truncated": false
+}

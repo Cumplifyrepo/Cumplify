@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-043",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We email a monthly safety bulletin to every employee and log read receipts, and our consultant says that satisfies communication but not consultation. Which ISO 45001 clause requires the two-way process where workers actually influence OH&S decisions before they're made?",
+  "response": " The clause you're looking for is **ISO 45001:2018, Clause 5.4: Consultation and participation of workers**.\n\nSpecifically, **5.4.2 Consultation** requires that the organization:\n\n- Provide mechanisms for **consultation with workers** on matters including:\n  - Determining the needs and expectations of interested parties (4.2)\n  - Establishing the OH&S policy (5.2)\n  - Assigning roles, responsibilities and authorities (5.3)\n  - Determining how to fulfill legal and other requirements (6.1.3)\n  - Establishing OH&S objectives and planning to achieve them (6.2)\n  - Determining applicable controls for outsourcing, procurement and contractors (8.1.4)\n  - Establishing, implementing and maintaining processes for incident investigation (10.2)\n\nThe key distinction your consultant is making: **consultation requires dialogue and opportunity to influence decisions *before* they are made**, whereas your email bulletin is one-way **communication** (covered under 7.4).\n\n**5.4.1 Participation** adds further requirements for workers to be involved in:\n- Hazard identification and risk assessment\n- Incident investigation\n- Development and review of OH&S policies and objectives\n- Any other matters affecting their OH&S\n\nYour monthly bulletin satisfies **7.4 Communication** but not **5.4 Consultation and participation**. To comply with 5.4, you need mechanisms like safety committees, toolbox talks with feedback loops, pre-implementation review of procedures, or worker representatives involved in decision-making processes.",
+  "inputTokens": 74,
+  "outputTokens": 325,
+  "latencyMs": 32036,
+  "costUsd": 0.0010194,
+  "truncated": false
+}

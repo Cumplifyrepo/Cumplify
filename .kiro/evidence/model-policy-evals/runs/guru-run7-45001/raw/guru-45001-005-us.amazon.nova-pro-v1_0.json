@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-005",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 45001 clause covers being ready for and responding to potential emergencies like fires, chemical spills, or medical events on site?",
+  "response": "The ISO 45001 clause that specifically addresses being prepared for and responding to potential emergencies such as fires, chemical spills, or medical events is Clause 8.2, \"Emergency preparedness and response.\"\n\n### Key Requirements of Clause 8.2:\n\n1. **Establishing Preparedness and Response Procedures:**\n   - The organization must establish, implement, and maintain procedures for responding to potential emergency situations.\n   - These procedures should be designed to mitigate the adverse OH&S (Occupational Health and Safety) impacts of such emergencies.\n\n2. **Identifying Potential Emergency Situations:**\n   - The organization needs to identify potential emergency situations that could arise in the workplace.\n   - This includes evaluating the likelihood and potential impact of these emergencies.\n\n3. **Planning and Implementing Response Actions:**\n   - Develop plans and procedures to address identified emergency situations.\n   - Ensure that these plans include clear roles and responsibilities for employees.\n\n4. **Communicating Emergency Procedures:**\n   - Make sure that all employees are aware of the emergency procedures.\n   - Provide training and drills to ensure that employees know how to respond effectively.\n\n5. **Testing and Reviewing Procedures:**\n   - Regularly test emergency response procedures through drills and simulations.\n   - Evaluate the effectiveness of the response and make necessary improvements.\n\n6. **Continual Improvement:**\n   - After an emergency occurs, conduct a review to identify lessons learned.\n   - Update emergency procedures based on the findings from the review to improve future responses.\n\nBy adhering to Clause 8.2, organizations can better prepare for and respond to emergencies, thereby protecting the health and safety of their workers and others who may be affected.",
+  "inputTokens": 30,
+  "outputTokens": 338,
+  "latencyMs": 1629,
+  "costUsd": 0.0011056,
+  "truncated": false
+}

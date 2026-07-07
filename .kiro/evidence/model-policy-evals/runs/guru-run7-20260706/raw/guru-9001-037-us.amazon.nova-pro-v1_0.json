@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-037",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Our certification audit is next month and the auditor will ask for evidence that top management actually reviewed the QMS this year. Which ISO 9001 clause is she checking against?",
+  "response": "The auditor is likely checking against ISO 9001:2015 Clause 9.3, which deals with the \"Management review\" of the Quality Management System (QMS). Specifically, Clause 9.3 outlines the requirements for top management to review the QMS at planned intervals to ensure its continuing suitability, adequacy, effectiveness, and alignment with the strategic direction of the organization.\n\nKey points from Clause 9.3 include:\n1. **Review intervals**: Top management shall review the QMS at planned intervals.\n2. **Inputs to the review**: The review shall include information on changes in external and internal issues that are relevant to the QMS, feedback on customer satisfaction, the performance and effectiveness of the QMS, the extent to which quality objectives have been met, and the process performance and product conformity.\n3. **Outputs from the review**: The review shall result in decisions and actions related to opportunities for improvement, any need for changes to the QMS, resource needs, and actions (if needed) in response to changes in external and internal issues.\n\nTherefore, the auditor will be looking for evidence that top management has conducted these reviews, including documented minutes, decisions made, actions taken, and any follow-up activities resulting from the management reviews.",
+  "inputTokens": 37,
+  "outputTokens": 260,
+  "latencyMs": 2383,
+  "costUsd": 0.0008615999999999999,
+  "truncated": false
+}

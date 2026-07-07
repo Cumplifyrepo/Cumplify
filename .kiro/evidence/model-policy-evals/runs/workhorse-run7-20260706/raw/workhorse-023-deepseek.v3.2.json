@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-023",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Assess the risk: A hospital plans to consolidate sterilization services from 3 satellite locations to one central sterile processing department (CSPD). Risks include: transportation delays affecting surgical schedules, instrument contamination during transport, single point of failure, increased volume straining equipment capacity, staff reduction causing competency gaps in remaining team.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n    \"riskLevel\": \"High\",\n    \"likelihood\": \"Moderate\",\n    \"impact\": \"High\",\n    \"controls\": \"Implement dedicated and tracked transport with validated containers; maintain backup sterilization equipment; cross-train staff and phase-in consolidation; use real-time tracking and surgical schedule buffers; retain some satellite redundancy for critical instruments.\"\n}\n```\nANSWER: {\"riskLevel\": \"High\", \"likelihood\": \"Moderate\", \"impact\": \"High\", \"controls\": \"Implement dedicated and tracked transport with validated containers; maintain backup sterilization equipment; cross-train staff and phase-in consolidation; use real-time tracking and surgical schedule buffers; retain some satellite redundancy for critical instruments.\"}",
+  "inputTokens": 136,
+  "outputTokens": 144,
+  "latencyMs": 3275,
+  "costUsd": 0.00035072,
+  "truncated": false
+}

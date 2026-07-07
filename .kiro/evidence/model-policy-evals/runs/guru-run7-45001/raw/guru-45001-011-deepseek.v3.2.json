@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-011",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Which ISO 45001 clause requires us to run planned internal audits to check that the OH&S management system conforms to requirements and is effectively implemented?",
+  "response": "The requirement for planned internal audits is found in **Clause 9.2 - Internal audit** of ISO 45001:2018.\n\nSpecifically, the key parts of this clause state:\n\n*   **9.2.1:** The organization shall conduct internal audits at planned intervals to provide information on whether the OH&S management system:\n    a) **conforms to:**\n        1) the organization’s own requirements for its OH&S management system;\n        2) **the requirements of this International Standard (ISO 45001).**\n    b) **is effectively implemented and maintained.**\n\n*   **9.2.2:** The organization must establish, implement, and maintain an internal audit program(s), including the frequency, methods, responsibilities, planning requirements and reporting.\n\nTherefore, **Clause 9.2** is the direct answer to your question. It mandates that you plan and conduct internal audits to verify both **conformity** (to the standard and your own system) and **effective implementation**.",
+  "inputTokens": 34,
+  "outputTokens": 207,
+  "latencyMs": 5070,
+  "costUsd": 0.00040403,
+  "truncated": false
+}

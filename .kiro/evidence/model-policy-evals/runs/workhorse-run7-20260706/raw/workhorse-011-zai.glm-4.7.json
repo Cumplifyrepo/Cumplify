@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-011",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Assess the risk: A pharmaceutical company plans to outsource sterile fill-finish operations to a contract manufacturer in another country. The CDMO has FDA and EU GMP approval but has received 2 Form 483 observations in the past year related to environmental monitoring. Product is a high-value biologic with 18-month shelf life.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"riskLevel\": \"Medium\",\n  \"likelihood\": \"Medium\",\n  \"impact\": \"High\",\n  \"controls\": \"Conduct a thorough audit of the CDMO's environmental monitoring program and corrective actions for the Form 483 observations; implement enhanced oversight and periodic testing of the outsourced product; ensure clear communication and escalation protocols for any deviations.\"\n}\n```\nANSWER: {\"riskLevel\":\"Medium\",\"likelihood\":\"Medium\",\"impact\":\"High\",\"controls\":\"Conduct a thorough audit of the CDMO's environmental monitoring program and corrective actions for the Form 483 observations; implement enhanced oversight and periodic testing of the outsourced product; ensure clear communication and escalation protocols for any deviations.\"}",
+  "inputTokens": 145,
+  "outputTokens": 149,
+  "latencyMs": 3081,
+  "costUsd": 0.0004148,
+  "truncated": false
+}

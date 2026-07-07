@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-014",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 14001 clause requires us to examine the external and internal issues relevant to our EMS, including environmental conditions like climate and resource availability that can affect us or be affected by us?",
+  "response": "The requirement to examine external and internal issues relevant to your Environmental Management System (EMS), including environmental conditions like climate and resource availability, is primarily addressed in **Clause 4: Context of the organization** of the ISO 14001 standard. Specifically:\n\n- **Clause 4.1: Understanding the organization and its context** requires the organization to determine external and internal issues that are relevant to its purpose and that affect its ability to achieve the intended outcomes of its environmental management system. This includes understanding the environmental conditions and other factors that can impact the organization or be impacted by it.\n\n- **Clause 4.2: Understanding the needs and expectations of interested parties** further elaborates on identifying and understanding the needs and expectations of interested parties (such as stakeholders, regulatory bodies, customers, employees, etc.) that are relevant to the EMS.\n\n- **Clause 4.3: Determining the scope of the environmental management system** involves considering the issues identified in Clauses 4.1 and 4.2 to define the boundaries and applicability of the EMS to ensure it addresses the organization’s environmental aspects, including those influenced by external and internal issues.\n\nIn summary, **Clause 4** of ISO 14001 is where the organization is required to examine both external and internal issues, including environmental conditions, that are relevant to its EMS.",
+  "inputTokens": 41,
+  "outputTokens": 277,
+  "latencyMs": 2594,
+  "costUsd": 0.0009192000000000001,
+  "truncated": false
+}

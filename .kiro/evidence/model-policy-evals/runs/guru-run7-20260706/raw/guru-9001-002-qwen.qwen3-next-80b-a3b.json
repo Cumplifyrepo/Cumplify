@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-002",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "I'm putting together the agenda for our annual management review meeting. Which ISO 9001 clause tells me the specific input topics that have to be covered in the review?",
+  "response": "The ISO 9001 clause that specifies the **required inputs** for the management review is:\n\n> **Clause 9.3.2 — Management review inputs**\n\n### Here’s what Clause 9.3.2 requires as inputs to the management review:\n\nThe organization must ensure that the following information is considered as input to the management review:\n\n1. **Status of actions from previous management reviews**  \n   (i.e., follow-up on decisions and actions from prior reviews)\n\n2. **Changes in internal and external issues relevant to the QMS**  \n   (e.g., market conditions, regulatory changes, organizational structure)\n\n3. **Information on the performance and effectiveness of the QMS**, including:  \n   - Customer satisfaction and related feedback  \n   - Achievement of quality objectives  \n   - Process performance and conformity of products/services  \n   - Nonconformities and corrective actions  \n   - Audit results (internal and external)  \n   - Supplier performance\n\n4. **Resources adequacy**  \n   (e.g., whether current resources are sufficient to support the QMS)\n\n5. **Effectiveness of actions taken to address risks and opportunities**  \n   (from Clause 6.1 — planning for risks and opportunities)\n\n6. **Opportunities for improvement**  \n   (e.g., suggestions from employees, process optimization ideas)\n\n---\n\n### Why this matters for your agenda:\nYou must ensure your management review agenda **explicitly addresses each of these 6 input areas** to comply with ISO 9001:2015. While the standard doesn’t prescribe format or depth, it does require that these topics are reviewed — and that records of the review (outputs) are maintained (Clause 9.3.3).\n\n💡 **Pro Tip**: Structure your agenda around these 6 inputs, and assign owners to provide data or reports for each. This ensures a comprehensive, compliant, and value-driven review.\n\nLet me know if you’d like a sample agenda template based on Clause 9.3.2!",
+  "inputTokens": 44,
+  "outputTokens": 413,
+  "latencyMs": 5568,
+  "costUsd": 0.00050176,
+  "truncated": false
+}

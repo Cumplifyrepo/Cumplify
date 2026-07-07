@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-019",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Once we've listed our hazards, what does ISO 45001 require about how we actually assess the OH&S risks that come from them?",
+  "response": " ISO 45001 has specific requirements for how you assess OH&S risks after identifying hazards. Here's what the standard requires:\n\n## Core Assessment Requirements (Clause 6.1.2)\n\n**You must assess risks using:**\n- **Likelihood** of occurrence\n- **Severity** of potential consequences\n\nThis must consider:\n- Existing controls (what's already in place)\n- Human factors (capabilities, limitations, behaviors)\n- Current incident/near-miss data\n- Opportunities for improvement\n\n## What the Assessment Must Address\n\n| Aspect | Requirement |\n|--------|-------------|\n| **Workers** | Those directly affected AND those whose work may affect others |\n| **Scope** | Routine and non-routine activities |\n| **Situations** | Normal operations, maintenance, emergencies |\n| **Change** | Planned changes to operations, processes, or activities |\n| **Access** | Contractor and visitor risks |\n\n## Documentation Requirements\n\nYou must **maintain documented information** of:\n- The methodology and criteria used\n- The results of the assessment\n\n## Key Principles\n\n- **Proactive** — not just incident-driven\n- **Participative** — workers must be involved (mandatory)\n- **Dynamic** — updated when changes occur\n- **Hierarchical** — consider elimination first, then substitution, engineering controls, etc.\n\n## Practical Output\n\nThe assessment feeds directly into:\n- Determining necessary controls (Clause 8.1.3)\n- Planning responses to emergencies (Clause 8.2)\n- Setting objectives and planning to achieve them (Clause 6.2)\n\nWould you like guidance on specific risk assessment methodologies that align with these requirements?",
+  "inputTokens": 54,
+  "outputTokens": 333,
+  "latencyMs": 16823,
+  "costUsd": 0.0010314,
+  "truncated": false
+}

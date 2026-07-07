@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-003",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Complete this work instruction for a chemical plant's confined space entry procedure. Partial content: '1. Obtain permit from shift supervisor. 2. Test atmosphere for O2, LEL, and toxic gases.' Continue with remaining steps per ISO 45001 clause 8.1.2 and include emergency rescue provisions.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"completedSection\": \"1. Obtain permit from shift supervisor. 2. Test atmosphere for O2, LEL, and toxic gases. 3. Verify isolation of energy sources (LOTO) and lockout/tagout of equipment. 4. Ensure adequate ventilation is in place and monitor continuously. 5. Provide appropriate PPE (e.g., respirator, harness) and ensure it is inspected and used correctly. 6. Maintain communication with the attendant outside the confined space. 7. Establish emergency rescue procedures, including retrieval equipment and trained rescue personnel. 8. Conduct a pre-entry briefing and review hazards and controls. 9. Monitor conditions throughout the entry and re-test atmosphere if conditions change. 10. Terminate entry if unsafe conditions arise or the permit expires.\",\n  \"references\": \"ISO 45001:2018 Clause 8.1.2 (Management of change, temporary works, and confined spaces), OSHA 29 CFR 1910.146 (Permit-required confined spaces), ANSI Z117.1 (Safety Requirements for Confined Spaces)\",\n  \"clauseAlignment\": \"The steps align with ISO 45001 Clause 8.1.2 by addressing hazard identification, risk assessment, control measures (e.g., LOTO, ventilation, PPE), communication, and emergency preparedness. The procedure ensures systematic management of confined space risks and compliance with regulatory requirements.\"\n}\n```\nANSER: <your JSON object>",
+  "inputTokens": 138,
+  "outputTokens": 305,
+  "latencyMs": 3775,
+  "costUsd": 0.0007538,
+  "truncated": false
+}

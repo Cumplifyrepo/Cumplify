@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-006",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Our quality objectives are vague statements like 'improve quality' with no numbers, owners or deadlines. Which ISO 9001 clause requires objectives to be measurable, established at relevant functions and levels, and backed by a plan to achieve them?",
+  "response": "The ISO 9001 clause that requires quality objectives to be **measurable**, **established at relevant functions and levels**, and **backed by a plan to achieve them** is:\n\n> **Clause 6.2: Quality objectives and planning to achieve them**\n\n### Specifically, ISO 9001:2015 Clause 6.2 states:\n\n- **6.2.1** – *The organization shall establish quality objectives at relevant functions, levels, and processes needed for the quality management system.*\n- **6.2.2** – *Quality objectives shall be:*\n  - **a)** Consistent with the quality policy;\n  - **b)** **Measurable**;\n  - **c)** Considered in relation to product and service conformity and the effectiveness of the QMS;\n  - **d)** **Communicated**;\n  - **e)** **Updated** as appropriate.\n\n> **Additionally, 6.2.2 requires the organization to plan how to achieve its quality objectives**, which includes:\n> - What will be done;\n> - What resources will be required;\n> - Who will be responsible;\n> - When it will be completed;\n> - How the results will be evaluated.\n\n### So, your vague statement like “improve quality” fails to meet 6.2.2 because it is:\n- Not **measurable** (no metric or target),\n- Lacks **owners** (no assigned responsibility),\n- Lacks **deadlines** (no timeline),\n- And has no **plan** for achievement.\n\n### ✅ Corrective Action:\nRevise objectives to be SMART:\n> *“Reduce customer returns due to manufacturing defects by 30% by December 31, 2024, led by the Production Manager, through implementation of enhanced inspection checkpoints and operator training.”*\n\nThis satisfies **Clause 6.2** and demonstrates compliance with ISO 9001:2015.\n\n> **Key takeaway**: Clause 6.2 is the heart of effective quality objective management in ISO 9001.",
+  "inputTokens": 58,
+  "outputTokens": 432,
+  "latencyMs": 5906,
+  "costUsd": 0.0005265199999999999,
+  "truncated": false
+}

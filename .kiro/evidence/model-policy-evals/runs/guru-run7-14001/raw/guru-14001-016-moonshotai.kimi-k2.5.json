@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-016",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "In plain terms, what does ISO 14001 require us to do about compliance obligations at the planning stage, and which clause covers it?",
+  "response": " In plain terms, ISO 14001 requires you to:\n\n1. **Identify** all the environmental laws, regulations, and other requirements that apply to your organization\n2. **Determine** how these requirements apply to your environmental aspects\n3. **Keep documented information** of these compliance obligations\n\nThis is covered in **Clause 6.1.3: Compliance obligations** (part of the Planning section).\n\nYou need to do this work *before* setting your environmental objectives and planning how to achieve them, because your compliance obligations become inputs to your environmental management system. The standard wants you to be clear on what you *must* do legally, plus any voluntary commitments you've made, so you can build them into your planning.",
+  "inputTokens": 55,
+  "outputTokens": 147,
+  "latencyMs": 3628,
+  "costUsd": 0.000474,
+  "truncated": false
+}

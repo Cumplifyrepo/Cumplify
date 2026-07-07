@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-004",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 45001 clause requires us to apply the hierarchy of controls when we work to eliminate hazards and reduce OH&S risks?",
+  "response": "The hierarchy of controls is specifically referenced in ISO 45001:2018 within **Clause 8: Operational Planning and Control**. More precisely, it is detailed in **Clause 8.1: Operational Planning and Control**.\n\nHere’s the relevant excerpt from Clause 8.1:\n\n\"The organization shall plan, implement and control the processes needed to meet the requirements of this document, and to implement the actions determined in Clause 6, by:\na) establishing criteria for the processes;\nb) implementing the processes in accordance with the criteria;\nc) maintaining and communicating pertinent information as determined by the organization to ensure the effectiveness of the processes;\nd) determining and applying the hierarchy of controls to eliminate OH&S risks, or if that is not practicable, to minimize OH&S risks.\"\n\nThe hierarchy of controls typically includes the following steps, in order of effectiveness:\n1. **Elimination**: Remove the hazard entirely.\n2. **Substitution**: Replace the hazard with something safer.\n3. **Engineering Controls**: Isolate people from the hazard.\n4. **Administrative Controls**: Change the way people work.\n5. **Personal Protective Equipment (PPE)**: Protect the worker with equipment.\n\nBy following this hierarchy, organizations can systematically approach hazard elimination and risk reduction in a manner that maximizes effectiveness.",
+  "inputTokens": 30,
+  "outputTokens": 272,
+  "latencyMs": 2343,
+  "costUsd": 0.0008944000000000001,
+  "truncated": false
+}

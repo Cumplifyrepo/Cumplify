@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-019",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Assess the risk: A steel fabrication company plans to begin operations with a new robotic welding cell. The cell will perform MIG welding on structural steel components that require certified weld procedures (WPS). Risks include: weld parameter drift, insufficient NDE coverage on robot welds, operator intervention in automated cycle, UV/fume exposure during manual loading, and qualification of robot welds under AWS D1.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"riskLevel\": \"High\",\n  \"likelihood\": \"Medium\",\n  \"impact\": \"High\",\n  \"controls\": \"Implement real-time weld monitoring and parameter drift alarms, ensure 100% NDE coverage for initial robot weld qualification and periodic audits, restrict operator intervention with safety interlocks and training, provide proper PPE and ventilation for manual loading, and follow AWS D1.1 for robot weld qualification and procedure testing.\"\n}\n```\nANSWER: {\"riskLevel\": \"High\", \"likelihood\": \"Medium\", \"impact\": \"High\", \"controls\": \"Implement real-time weld monitoring and parameter drift alarms, ensure 100% NDE coverage for initial robot weld qualification and periodic audits, restrict operator intervention with safety interlocks and training, provide proper PPE and ventilation for manual loading, and follow AWS D1.1 for robot weld qualification and procedure testing.\"}",
+  "inputTokens": 160,
+  "outputTokens": 184,
+  "latencyMs": 3352,
+  "costUsd": 0.0005008,
+  "truncated": false
+}

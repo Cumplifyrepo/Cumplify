@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-004",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Complete this Environmental Aspects and Impacts Register entry for a paint shop in a furniture factory: 'Aspect: VOC emissions from spray booths. Impact: ...' Include significance evaluation criteria per ISO 14001 clause 6.1.2. Add operational controls and monitoring requirements.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSER: {\n  \"completedSection\": \"Aspect: VOC emissions from spray booths. Impact: Air pollution leading to potential health risks for workers and environmental degradation, including contribution to ground-level ozone formation. Significance Evaluation Criteria (ISO 14001 clause 6.1.2): 1) Scale of emissions (high volume of VOCs used daily); 2) Severity of impact (potential for respiratory issues and environmental harm); 3) Frequency (continuous operation); 4) Legal requirements (compliance with local air quality regulations); 5) Stakeholder concerns (worker health and community impact). Operational Controls: Use of low-VOC paints, proper ventilation systems, regular maintenance of spray booths, and training for workers on safe handling and application. Monitoring Requirements: Regular measurement of VOC concentrations in the air, periodic inspection of ventilation systems, and documentation of paint usage and waste disposal.\",\n  \"references\": \"ISO 14001:2015, Clause 6.1.2; Local Air Quality Regulations; Occupational Health and Safety Standards\",\n  \"clauseAlignment\": \"The entry aligns with ISO 14001 clause 6.1.2 by identifying environmental aspects (VOC emissions), evaluating their significance based on defined criteria, and establishing operational controls and monitoring measures to mitigate impacts, ensuring compliance and continual improvement.\"\n}",
+  "inputTokens": 130,
+  "outputTokens": 270,
+  "latencyMs": 4152,
+  "costUsd": 0.000672,
+  "truncated": false
+}

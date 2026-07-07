@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-009",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Which ISO 14001 clause requires our top management to step back at planned intervals and review the whole EMS with defined inputs and outputs?",
+  "response": "The requirement you're describing is found in **ISO 14001:2015, Clause 9.3 - Management Review**.\n\nThis clause specifically mandates that **top management** must review the organization's Environmental Management System (EMS) at **planned intervals** to ensure its continuing suitability, adequacy, effectiveness, and alignment with the organization's strategic direction.\n\nHere’s a breakdown of why Clause 9.3 is the answer to your question:\n\n*   **\"Step back at planned intervals\":** The standard requires reviews to be conducted at intervals defined by the organization (e.g., quarterly, bi-annually, annually), ensuring it is a systematic and recurring process, not an ad-hoc one.\n*   **\"Review the whole EMS\":** The purpose is a comprehensive, high-level review of the entire system's performance.\n*   **\"With defined inputs and outputs\":** This is a key characteristic of Clause 9.3. It provides a prescribed list of **inputs** that must be considered (e.g., changes in external/internal issues, performance data, audit results, compliance status, opportunities for improvement) and requires documented **outputs** (decisions and actions related to opportunities for improvement, needed changes to the EMS, resource needs, etc.).\n\n**In summary:** While top management has responsibilities throughout the standard (such as demonstrating leadership in Clause 5.1), the specific, periodic, holistic review with formal inputs and outputs is the core requirement of **Clause 9.3 - Management Review**.",
+  "inputTokens": 31,
+  "outputTokens": 308,
+  "latencyMs": 6052,
+  "costUsd": 0.0005890200000000001,
+  "truncated": false
+}

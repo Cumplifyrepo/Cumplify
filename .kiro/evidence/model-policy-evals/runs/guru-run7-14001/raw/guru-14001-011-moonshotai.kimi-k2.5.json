@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-011",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 14001 clause requires that shop-floor employees actually know our significant environmental aspects and how their own work affects them?",
+  "response": " The requirement you're looking for is in **ISO 14001:2015, Clause 7.3 Awareness**.\n\nSpecifically, this clause requires that persons working under the organization's control be aware of:\n\n- **b)** the **significant environmental aspects** and related **actual or potential environmental impacts** associated with their work\n- **c)** their contribution to the **effectiveness of the environmental management system**, including the **benefits of improved environmental performance**\n\nThis means shop-floor employees must actually know:\n- What your significant environmental aspects are (e.g., energy use, waste generation, emissions)\n- How their specific job activities impact those aspects\n- What happens environmentally if they don't follow procedures\n\n**Related clauses:**\n- **7.2 Competence** – requires determining necessary competence and ensuring it's achieved\n- **7.4 Communication** – supports how this information is conveyed\n\nThe standard emphasizes that awareness must go beyond simply posting aspects on a notice board—employees need to understand the relevance to their own work activities.",
+  "inputTokens": 52,
+  "outputTokens": 206,
+  "latencyMs": 5497,
+  "costUsd": 0.0006492,
+  "truncated": false
+}

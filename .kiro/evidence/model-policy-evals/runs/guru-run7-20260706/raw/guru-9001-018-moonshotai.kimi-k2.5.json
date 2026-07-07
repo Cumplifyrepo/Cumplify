@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-018",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "When we create a brand-new procedure or revise an existing one, what does ISO 9001 require us to do before it goes live?",
+  "response": " Under ISO 9001:2015, before a new or revised procedure goes live, you need to address several requirements, primarily centered around **clause 7.5 (Documented information)** and **clause 8.5.1 (Control of production and service provision)**.\n\n## Key Requirements\n\n### Review and Approval\n- The procedure must be **reviewed** for adequacy and **approved** for suitability before issue (7.5.3b)\n- This ensures it's fit for purpose and aligned with your quality management system\n\n### Change Control\n- You must **identify changes** and **control their current revision status** (7.5.3c)\n- This prevents obsolete documents from being used unintentionally\n\n### Availability and Access\n- Ensure relevant personnel have **access** where and when needed (7.5.3.2a)\n- This includes training or communication about the new/revised procedure\n\n### Additional Considerations\n\n| Aspect | Typical Actions |\n|--------|---------------|\n| **Risk-based thinking** | Assess potential unintended consequences of the change (6.1) |\n| **Competence** | Determine if training is needed (7.2) |\n| **Communication** | Inform affected parties internally and externally (7.4) |\n| **Operational planning** | Verify resources and infrastructure are ready (8.1) |\n\n## Practical Implementation\n\nMany organizations use a **document control matrix** or **change request form** that captures:\n- Review/approval signatures\n- Version history\n- Training requirements\n- Effective date\n- Distribution list\n\nWould you like me to elaborate on how to structure the review process or integrate this with your document control system?",
+  "inputTokens": 55,
+  "outputTokens": 344,
+  "latencyMs": 64301,
+  "costUsd": 0.001065,
+  "truncated": false
+}

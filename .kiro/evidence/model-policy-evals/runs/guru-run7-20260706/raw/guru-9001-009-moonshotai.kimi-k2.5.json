@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-009",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our sales team keeps accepting rush orders that production can't actually deliver to spec or on time. Which ISO 9001 clause requires us to review the requirements and confirm we can meet them before committing to supply an order?",
+  "response": " The ISO 9001 clause you're looking for is **Clause 8.2.3.1 — Review of the requirements for products and services**.\n\nThis clause requires your organization to ensure that you have the ability to meet the requirements for the products and services **before** committing to supply them to the customer.\n\nSpecifically, the standard requires you to conduct a review that includes:\n- Requirements specified by the customer (including those for delivery and post-delivery activities)\n- Requirements not stated by the customer but necessary for intended use\n- Contract or order requirements differing from those previously expressed\n- Statutory and regulatory requirements\n\nThe review must result in **documented information** of the results and any new or changed requirements.\n\nAdditionally, **Clause 8.2.2 — Determining the requirements for products and services** supports this by requiring you to determine requirements including any necessary for delivery and post-delivery activities.\n\nIf your sales team is bypassing this review process, you have a nonconformity against 8.2.3.1. You may also want to look at **Clause 8.1 — Operational planning and control** regarding your process for managing operational changes, and **Clause 5.3 — Organizational roles, responsibilities and authorities** to ensure sales understands their authority limits.\n\nWould you like suggestions on how to strengthen your contract review process?",
+  "inputTokens": 70,
+  "outputTokens": 275,
+  "latencyMs": 264457,
+  "costUsd": 0.000867,
+  "truncated": false
+}

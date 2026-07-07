@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-012",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Which ISO 45001 clause requires the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system to enhance safety performance?",
+  "response": "According to ISO 45001:2018, the requirement for the organization to **continually improve the suitability, adequacy, and effectiveness of the OH&S management system** is found in **Clause 10.3: Continual improvement**.\n\n### Key Details:\n- **Clause 10.3** is titled **\"Continual improvement\"**.\n- It explicitly states that the organization **\"shall continually improve the suitability, adequacy and effectiveness of the OH&S management system\"** to enhance **OH&S performance**.\n\n### Context and Connection:\nWhile **Clause 10.3** is the direct source of this requirement, it is supported by the core **\"Plan-Do-Check-Act\" (PDCA)** model embedded throughout the standard. The requirement for continual improvement is also reinforced in:\n- **Clause 4.4:** The OH&S management system itself is required to include processes for continual improvement.\n- **Clause 6.1.2:** The organization must plan actions to address risks/opportunities, which includes achieving continual improvement.\n- **Clause 9.1.1:** Monitoring, measurement, analysis, and evaluation provide the necessary data to identify areas for improvement.\n- **Clause 9.3:** Management review outputs must include decisions related to opportunities for continual improvement.\n\n### Summary:\n**Direct Answer:** **Clause 10.3** is the specific clause that mandates the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system.\n\n**Broader Context:** This requirement is a fundamental outcome of the entire OH&S management system, driven by the PDCA cycle and supported by other clauses related to planning, performance evaluation, and management review.",
+  "inputTokens": 34,
+  "outputTokens": 349,
+  "latencyMs": 6412,
+  "costUsd": 0.0006667300000000001,
+  "truncated": false
+}

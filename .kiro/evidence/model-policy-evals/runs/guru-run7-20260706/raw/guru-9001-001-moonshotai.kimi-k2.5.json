@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-001",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I run QC at a small machine shop. Second shift found a tray of turned shafts that failed final inspection, and I'm worried they'll get mixed back in with good stock and shipped. Which ISO 9001 clause requires us to identify and control these parts so they don't reach the customer?",
+  "response": " The clause you're looking for is **ISO 9001:2015, Clause 8.7 — Control of nonconforming outputs**.\n\nThis clause specifically requires your organization to:\n\n- **Identify** nonconforming outputs (your failed shafts)\n- **Control** them to prevent unintended use or delivery\n- **Document** the nature of the nonconformity and subsequent actions\n\n**Practical measures for your situation:**\n\n| Requirement | Typical Shop Implementation |\n|-------------|----------------------------|\n| Identification | Physical tags, paint marks, segregated bins, or location in a locked cage |\n| Containment | Separate area for \"rework,\" \"scrap,\" or \"hold\" — not near good stock |\n| Traceability | Record part numbers, quantities, defect type, and who found them |\n| Authority | Defined who can disposition (use-as-is, rework, scrap, return) |\n\n**Why this matters for you:** Second shift's finding needs immediate physical segregation and clear labeling before shift change. Many small shops fail audits right here — good parts and questionable parts look identical at 6 AM.\n\n**Related clauses to check:**\n- **8.5.2** (Identification and traceability) — ensures you can track *which* shafts are affected\n- **8.5.4** (Preservation) — protection from mix-up during handling\n\nDo you currently have a defined \"red tag\" or hold area process, or is this gap what triggered your concern?",
+  "inputTokens": 84,
+  "outputTokens": 297,
+  "latencyMs": 48183,
+  "costUsd": 0.0009414000000000001,
+  "truncated": false
+}

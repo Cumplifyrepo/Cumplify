@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-010",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A drum of waste coolant was shipped out without the proper paperwork. Which ISO 14001 clause governs how we react to a nonconformity like this and prevent it from recurring?",
+  "response": " This situation is governed by **ISO 14001:2015 Clause 10.2: Nonconformity and corrective action**.\n\n## Key Requirements of Clause 10.2\n\nWhen a nonconformity occurs, the organization must:\n\n| Requirement | Application to Your Situation |\n|-------------|------------------------------|\n| **React to the nonconformity** | Contain the issue (locate the drum, ensure proper documentation is completed, verify proper disposal) |\n| **Evaluate actions needed** | Determine why paperwork was missed—training gap? Process failure? Communication issue? |\n| **Implement needed actions** | Correct the immediate problem and address root causes |\n| **Evaluate effectiveness** | Verify that corrective actions actually prevent recurrence |\n| **Make changes to EMS if necessary** | Update procedures, training, or controls if systemic gaps exist |\n\n## Additional Relevant Clauses\n\n- **Clause 9.1.1 (Monitoring and measurement)** – ensuring proper tracking of waste shipments\n- **Clause 8.1 (Operational planning and control)** – controls for waste management processes\n- **Clause 8.2 (Emergency preparedness)** – if this created a regulatory compliance emergency\n\n## Practical Next Steps\n\n1. **Immediate**: Locate the shipment, complete retroactive documentation, notify transporter/receiver\n2. **Investigation**: Was this human error, system failure, or resource issue?\n3. **Corrective action**: Revise shipping checklists, add verification steps, retrain staff\n4. **Records**: Document everything per Clause 10.2 for audit trail and management review\n\nWould you like guidance on root cause analysis methods or preventive action documentation?",
+  "inputTokens": 65,
+  "outputTokens": 338,
+  "latencyMs": 5566,
+  "costUsd": 0.001053,
+  "truncated": false
+}

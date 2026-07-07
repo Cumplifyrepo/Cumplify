@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-014",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Analyze this CAPA: NC Description: 'Worker suffered chemical burn to forearm when transfer pump fitting failed during sulfuric acid transfer. Investigation revealed: fitting was incorrect material (carbon steel instead of specified 316SS), spare parts inventory not controlled, last preventive maintenance skipped due to production pressure, worker not wearing required chemical PPE (acid-resistant sleeves).'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"rootCause\": \"Incorrect material used for fitting, uncontrolled spare parts inventory, skipped preventive maintenance, and lack of required PPE.\", \"actions\": \"Replace all fittings with specified 316SS, implement controlled spare parts inventory system, ensure preventive maintenance is not skipped, enforce use of required chemical PPE.\", \"evidence\": \"Documentation of fitting replacements, inventory control logs, maintenance schedules and completion records, PPE usage records and training certifications.\"}",
+  "inputTokens": 131,
+  "outputTokens": 93,
+  "latencyMs": 1021,
+  "costUsd": 0.0004024,
+  "truncated": false
+}

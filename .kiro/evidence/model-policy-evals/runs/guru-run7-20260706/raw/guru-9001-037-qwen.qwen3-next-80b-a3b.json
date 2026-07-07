@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-037",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Our certification audit is next month and the auditor will ask for evidence that top management actually reviewed the QMS this year. Which ISO 9001 clause is she checking against?",
+  "response": "The auditor will be checking against **ISO 9001:2015 Clause 9.3 — Management Review**.\n\n### Here’s why:\n**Clause 9.3** requires that **top management** shall review the organization’s quality management system (QMS) at planned intervals to ensure its continuing suitability, adequacy, and effectiveness. This includes reviewing:\n\n- The status of actions from previous management reviews  \n- Changes in internal and external issues relevant to the QMS  \n- Information on the performance and effectiveness of the QMS  \n- Resource adequacy  \n- Opportunities for improvement  \n- Any other relevant matters  \n\n### Evidence the auditor will look for:\n- **Minutes or records** of management review meetings held during the year  \n- **Attendance records** showing top management participated  \n- **Outputs** of the review (e.g., decisions, actions, resource allocations, changes to QMS)  \n- **Follow-up** on actions from previous reviews  \n- **Documentation** showing the review was conducted at least annually (or as planned)\n\n> ⚠️ **Note**: ISO 9001 does not specify *how often* the review must occur — only that it must be done “at planned intervals.” However, most organizations conduct it annually, and auditors expect evidence of at least one review per year.\n\nSo, make sure you have **clear, documented evidence** of a management review conducted this year — with top management’s active involvement — to satisfy Clause 9.3.",
+  "inputTokens": 45,
+  "outputTokens": 307,
+  "latencyMs": 6306,
+  "costUsd": 0.00037469999999999995,
+  "truncated": false
+}

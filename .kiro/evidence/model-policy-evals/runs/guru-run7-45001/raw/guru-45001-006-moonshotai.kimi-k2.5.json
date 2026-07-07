@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-006",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Before we rearrange the production line layout, which ISO 45001 clause requires us to plan and control changes that could affect OH&S performance?",
+  "response": " The ISO 45001 clause that requires planning and control of changes affecting OH&S performance is **Clause 8.1.3: Management of Change**.\n\nThis clause specifically requires organizations to:\n\n- Establish processes for the **planning, implementation and control** of temporary and permanent changes\n- Review the consequences of changes **prior to implementation**\n- Ensure changes (and their consequences) do not adversely affect OH&S performance\n\nChanges covered include those to:\n- Work processes, equipment, or materials\n- Work organization\n- Working conditions\n- Personnel\n- Contractor activities\n\nThis directly applies to your production line layout rearrangement, as physical workplace changes can significantly impact hazards, risks, and overall OH&S performance.",
+  "inputTokens": 56,
+  "outputTokens": 143,
+  "latencyMs": 9819,
+  "costUsd": 0.0004626,
+  "truncated": false
+}

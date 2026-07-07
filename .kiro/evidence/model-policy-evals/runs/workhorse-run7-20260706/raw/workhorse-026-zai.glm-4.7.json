@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-026",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Analyze this CAPA: NC Description: 'Environmental incident: Approximately 200 liters of hydraulic oil released to storm drain during equipment maintenance. Maintenance team disconnected hydraulic line without isolating and depressurizing. Spill kit located 80 meters away. Drain valve was not closed per pre-maintenance checklist. Oil reached local waterway before containment. Regulatory notification required.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"rootCause\": \"Failure to follow pre-maintenance checklist and inadequate isolation/depressurization procedures during equipment maintenance.\",\n  \"actions\": \"1. Retrain maintenance team on pre-maintenance checklists and isolation/depressurization procedures. 2. Relocate spill kits closer to high-risk areas (within 20 meters). 3. Install physical locks or tags on drain valves to ensure closure before maintenance. 4. Conduct a risk assessment of all storm drain connections and implement secondary containment measures. 5. Review and update maintenance protocols to include mandatory spill containment verification.\",\n  \"evidence\": \"1. Training attendance records and competency assessments. 2. Updated spill kit location map and inspection logs. 3. Photos of installed drain valve locks/tags. 4. Risk assessment report and secondary containment implementation records. 5. Revised maintenance protocols with sign-off from maintenance team.\"\n}\n```\nANSWER: <your JSON object>",
+  "inputTokens": 139,
+  "outputTokens": 197,
+  "latencyMs": 3414,
+  "costUsd": 0.0005168,
+  "truncated": false
+}

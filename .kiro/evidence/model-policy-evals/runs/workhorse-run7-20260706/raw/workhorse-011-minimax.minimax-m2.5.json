@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-011",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Assess the risk: A pharmaceutical company plans to outsource sterile fill-finish operations to a contract manufacturer in another country. The CDMO has FDA and EU GMP approval but has received 2 Form 483 observations in the past year related to environmental monitoring. Product is a high-value biologic with 18-month shelf life.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "\n\nANSWER: {\"riskLevel\":\"High\",\"likelihood\":\"Moderate\",\"impact\":\"High\",\"controls\":\"Conduct a detailed qualification and gap assessment of the CDMO's environmental monitoring program; perform an on-site GMP audit focusing on EM and aseptic processes; require a CAPA plan for the 483 observations with evidence of implementation; implement real-time EM data sharing and continuous monitoring; increase in-process testing (bioburden, endotoxin, sterility) and hold point controls; establish a risk‑based validation program including media fills and sterility assurance; define a contingency plan with an alternate qualified CDMO or in‑house capacity; include robust quality agreements, right to audit, and product release responsibilities; provide training for the sponsor's quality unit to independently review EM data; conduct periodic audits and follow‑up inspections after CAPA closure.\"}",
+  "inputTokens": 172,
+  "outputTokens": 1487,
+  "latencyMs": 14757,
+  "costUsd": 0.001836,
+  "truncated": false
+}

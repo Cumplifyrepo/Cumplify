@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-006",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We operate three sites but only want to certify one of them. Which ISO 14001 clause requires us to define the boundaries and applicability of our EMS?",
+  "response": " The clause you're looking for is **Clause 4.3: Determining the scope of the environmental management system**.\n\nThis clause explicitly requires your organization to:\n\n- **Determine the boundaries** of the EMS (which can include facilities, activities, products, and services)\n- **Determine the applicability** of the EMS requirements to the scope\n- **Document the scope** as documented information\n\nWhen certifying only one of your three sites, you'll need to clearly define in your scope statement which site is included, what activities/processes at that site are covered, and any applicable exclusions. The scope must also consider:\n- External and internal issues (Clause 4.1)\n- Compliance obligations (Clause 4.2)\n- The organization's unit, function, and physical boundaries\n- Its activities, products, and services\n\nYour certification body will verify that your scope is appropriate and that activities at your other two sites don't create environmental aspects/impacts that should reasonably be included.",
+  "inputTokens": 58,
+  "outputTokens": 196,
+  "latencyMs": 7733,
+  "costUsd": 0.0006228,
+  "truncated": false
+}

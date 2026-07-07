@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-042",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our company doubled in headcount and everything runs on tribal knowledge — no one has defined how our processes connect, who owns them, or what criteria and KPIs they run to. Which ISO 9001 clause requires us to determine our QMS processes, their sequence and interactions, owners and criteria?",
+  "response": " The clause you're looking for is **ISO 9001:2015, Clause 4.4 — Quality management system and its processes**.\n\nSpecifically, **4.4.1** requires your organization to:\n\n- Determine the processes needed for the QMS and their application throughout the organization\n- Determine the **sequence and interaction** of these processes\n- Determine and apply **criteria and methods** (including monitoring, measurements and related performance indicators) needed to ensure effective operation and control\n- Determine **resources** needed and ensure availability\n- Assign **responsibilities and authorities** for these processes\n\n**4.4.2** then requires you to maintain documented information to support process operation and retain it to demonstrate they were carried out as planned.\n\n---\n\nGiven your situation—rapid growth with tribal knowledge—this clause is particularly critical. The standard doesn't mandate a specific format, but you'll need to capture:\n\n| Element | What to document |\n|--------|----------------|\n| Process sequence | Flowcharts, process maps, turtle diagrams |\n| Interactions | Inputs/outputs between processes, interfaces |\n| Owners | RACI charts, process owners, responsibilities |\n| Criteria/KPIs | Performance indicators, control points, acceptance criteria |\n\nWithout this foundation, scaling further will compound your operational risks.",
+  "inputTokens": 87,
+  "outputTokens": 258,
+  "latencyMs": 47321,
+  "costUsd": 0.0008261999999999999,
+  "truncated": false
+}

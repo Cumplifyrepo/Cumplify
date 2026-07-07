@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-014",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Analyze this CAPA: NC Description: 'Worker suffered chemical burn to forearm when transfer pump fitting failed during sulfuric acid transfer. Investigation revealed: fitting was incorrect material (carbon steel instead of specified 316SS), spare parts inventory not controlled, last preventive maintenance skipped due to production pressure, worker not wearing required chemical PPE (acid-resistant sleeves).'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "\n\nANSWER: {\"rootCause\":\"Installation of a carbon steel fitting instead of the specified 316SS in the sulfuric acid transfer pump, caused by uncontrolled spare parts inventory and omitted preventive maintenance, leading to fitting failure and subsequent chemical burn.\",\"actions\":\"Corrective: Replace the carbon steel fitting with 316SS, verify material certificates for all spare parts, update inventory system to flag material compatibility, perform missed preventive maintenance, enforce use of acid‑resistant sleeves and other required PPE. Preventive: Conduct audit of all acid‑service fittings for material compliance, implement a spare‑parts verification and segregation process, add a control in the work‑order system to prevent PM skipping, provide refresher training on chemical hazards and PPE, establish a management review to ensure production pressure does not compromise safety maintenance.\",\"evidence\":\"Records of fitting replacement (material cert, installation log), updated spare‑parts inventory with material specifications, completed PM checklist, training records for PPE usage, audit report confirming no other incorrect fittings, post‑incident safety inspection showing PPE compliance, and a sign‑off by the safety committee.\"}",
+  "inputTokens": 168,
+  "outputTokens": 2345,
+  "latencyMs": 36750,
+  "costUsd": 0.0028643999999999996,
+  "truncated": false
+}

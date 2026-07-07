@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-003",
+  "modelId": "zai.glm-5",
+  "prompt": "Right now our work instructions sit on a shared drive where anyone can edit or delete them, and outdated printouts float around the shop floor. Which ISO 9001 clause requires us to control the availability, protection, distribution, storage and retention of our QMS documents?",
+  "response": "The specific ISO 9001 clause that addresses this problem is **Clause 7.5.3 - Control of documented information**.\n\nHere is how the clause breaks down to address your specific situation:\n\n**1. Availability and Distribution (Clause 7.5.3 a)**\nThe standard requires that documented information (your work instructions) is \"available and suitable for use, where and when it is needed.\"\n*   **Your issue:** Outdated printouts floating around the shop floor indicate that the correct versions are not available where needed, and the distribution of old versions is not controlled.\n\n**2. Protection and Control (Clause 7.5.3 b)**\nThe standard requires that documented information is \"adequately protected\" (e.g., from loss of confidentiality, improper use, or loss of integrity).\n*   **Your issue:** Having files on a shared drive where \"anyone can edit or delete\" is a direct violation of protection requirements. You must control access to prevent unauthorized changes or accidental deletion.\n\n**3. Control of Changes (Clause 7.5.3 b & 7.5.3.2)**\nSpecifically, Clause 7.5.3.2 requires you to control:\n*   **Distribution:** Ensuring only the correct version is available.\n*   **Access:** Ensuring only authorized people can view or edit documents.\n*   **Storage and Preservation:** Keeping the documents safe and readable.\n*   **Control of Changes:** Preventing the \"edit or delete\" free-for-all you currently have.\n\n**In summary:**\nYou are currently failing to meet the requirements of **ISO 9001:2015 Clause 7.5.3**. To fix this, you need to implement access controls on your shared drive (read-only for the shop floor) and establish a process to ensure paper copies on the floor are identified, collected, and replaced when updates occur.",
+  "inputTokens": 59,
+  "outputTokens": 392,
+  "latencyMs": 27897,
+  "costUsd": 0.0013134000000000002,
+  "truncated": false
+}

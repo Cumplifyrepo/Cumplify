@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-006",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We operate three sites but only want to certify one of them. Which ISO 14001 clause requires us to define the boundaries and applicability of our EMS?",
+  "response": "The ISO 14001 clause that requires you to define the **boundaries and applicability** of your Environmental Management System (EMS) is:\n\n> **Clause 4.3 — Scope of the Environmental Management System**\n\n### Key Points from Clause 4.3:\n- The organization must **determine the boundaries and applicability** of its EMS.\n- This includes defining the **physical locations, activities, products, and services** covered by the EMS.\n- The scope must be **maintained as documented information** and be **available to interested parties**.\n- The scope must be **justified** — for example, if you are certifying only one of your three sites, you must clearly explain why the other two are excluded and demonstrate that the scope is appropriate and comprehensive for the certified site.\n\n### Why This Matters for Your Situation:\nSince you operate three sites but only want to certify one, **Clause 4.3** is critical. You must explicitly define the scope of your EMS to include only the site(s) you intend to certify. This ensures:\n- Clarity for auditors,\n- Compliance with ISO 14001 requirements,\n- Avoidance of misleading claims about certification coverage.\n\n> ✅ **Best Practice**: Document the scope clearly — e.g., *“This EMS applies to all environmental aspects, activities, and operations at Site A, located at [address]. Operations at Sites B and C are not included in this certification.”*\n\nThis is a common and acceptable approach under ISO 14001, as long as the scope is well-defined and justified.",
+  "inputTokens": 43,
+  "outputTokens": 328,
+  "latencyMs": 4108,
+  "costUsd": 0.00039961999999999994,
+  "truncated": false
+}

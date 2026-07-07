@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-043",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "An auditor said we conflated two different ISO 14001 planning requirements by keeping our aspects list and our legal requirements in one combined spreadsheet with one process. Which clause covers identifying environmental aspects, and which covers determining compliance obligations? Cite both.",
+  "response": " The auditor is correct that these are two distinct requirements in ISO 14001:2015:\n\n**Environmental aspects** — **Clause 6.1.2**\n\n> \"The organization shall determine environmental aspects of its activities, products and services that it can control and those that it can influence, and their associated environmental impacts...\"\n\n**Compliance obligations** — **Clause 6.1.3**\n\n> \"The organization shall:\n> — a) determine and have access to the compliance obligations related to its environmental aspects...\"\n\nWhile both clauses fall under the broader planning section (6.1), they are separate sub-clauses with different purposes: 6.1.2 focuses on identifying what *can* impact the environment from your operations, while 6.1.3 focuses on what you *must* do to meet legal and other requirements. The standard treats these as sequential but distinct inputs to your environmental management system.",
+  "inputTokens": 77,
+  "outputTokens": 187,
+  "latencyMs": 2905,
+  "costUsd": 0.0006072,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-018",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Complete this worker participation and consultation procedure for a manufacturing plant: 'The organization shall establish processes for worker participation in...' Add consultation mechanisms, feedback channels, committee structure, non-managerial worker involvement, and barrier removal per ISO 45001 clause 5.4.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"completedSection\":\"The organization shall establish processes for worker participation in decision-making processes related to occupational health and safety. This includes consultation mechanisms, feedback channels, a committee structure, non-managerial worker involvement, and barrier removal.\",\"references\":\"ISO 45001 Clause 5.4\",\"clauseAlignment\":\"This section aligns with ISO 45001 Clause 5.4 by ensuring that the organization has established processes for worker participation in decision-making processes related to occupational health and safety, including consultation mechanisms, feedback channels, a committee structure, non-managerial worker involvement, and barrier removal.\"}",
+  "inputTokens": 124,
+  "outputTokens": 132,
+  "latencyMs": 807,
+  "costUsd": 0.000039120000000000005,
+  "truncated": false
+}

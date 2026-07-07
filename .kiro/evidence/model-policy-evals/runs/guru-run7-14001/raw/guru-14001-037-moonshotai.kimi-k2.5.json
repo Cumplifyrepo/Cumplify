@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-037",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A state inspector found our stormwater discharge exceeded permit limits — and our own internal checks never caught it. Which ISO 14001 clauses cover the compliance-evaluation process that failed and the corrective action we now owe? Cite both.",
+  "response": " Based on ISO 14001:2015, the two clauses that directly address your situation are:\n\n## **Clause 9.1.2 — Evaluation of Compliance**\n\nThis clause requires your organization to:\n- Establish, implement, and maintain a process for **evaluating compliance** with legal and other requirements\n- **Monitor and measure** compliance obligations at planned intervals\n- **Document** the results of the compliance evaluation\n\nYour internal checks failed here — the clause explicitly requires proactive evaluation to identify nonconformities *before* external parties do.\n\n---\n\n## **Clause 10.2 — Nonconformity and Corrective Action**\n\nThis clause governs your response now that the nonconformity has occurred. It requires you to:\n- **React** to the nonconformity and take action to control/correct it\n- **Evaluate** the need for action to eliminate root causes and prevent recurrence\n- **Implement** any needed corrective actions\n- **Review** the effectiveness of corrective actions taken\n- **Make changes** to the environmental management system if necessary\n\n---\n\n## Practical Note\n\nThese clauses work sequentially: **9.1.2** is your preventive monitoring (which failed), and **10.2** is your reactive/recovery process (which you must now execute). The inspector's finding demonstrates a breakdown in your 9.1.2 process, triggering mandatory 10.2 obligations.",
+  "inputTokens": 74,
+  "outputTokens": 287,
+  "latencyMs": 5301,
+  "costUsd": 0.0009054,
+  "truncated": false
+}

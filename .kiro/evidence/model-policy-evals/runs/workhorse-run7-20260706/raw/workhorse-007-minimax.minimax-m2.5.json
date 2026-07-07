@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-007",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Assess the risk: A construction company is introducing autonomous drone inspections to replace manual scaffolding-based inspections of high-rise building facades. Workers previously performed these inspections at heights over 30 meters. The new process eliminates fall risk but introduces battery failure, loss-of-control, and dropped-object hazards.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 166,
+  "outputTokens": 4096,
+  "latencyMs": 39991,
+  "costUsd": 0.004965,
+  "truncated": true
+}

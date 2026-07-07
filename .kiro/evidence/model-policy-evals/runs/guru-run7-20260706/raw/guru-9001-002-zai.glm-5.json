@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-002",
+  "modelId": "zai.glm-5",
+  "prompt": "I'm putting together the agenda for our annual management review meeting. Which ISO 9001 clause tells me the specific input topics that have to be covered in the review?",
+  "response": "The specific ISO 9001 clause that details the required inputs for the management review is **Clause 9.3.2**.\n\nHere is a breakdown of exactly what that clause requires you to include on your agenda:\n\n**ISO 9001:2015, Clause 9.3.2 – Management Review Inputs**\n\nThe standard states that the management review must be planned and carried out taking into consideration:\n\n1.  **The status of actions** from previous management reviews.\n2.  **Changes in external and internal issues** that are relevant to the quality management system (QMS).\n3.  **Information on the performance and effectiveness of the QMS**, including trends in:\n    *   Customer satisfaction and feedback from relevant interested parties.\n    *   The extent to which quality objectives have been met.\n    *   Process performance and product conformity.\n    *   Nonconformities and corrective actions.\n    *   Monitoring and measurement results.\n4.  **Audit results** (both internal and external).\n5.  **The performance of external providers** (suppliers).\n6.  **Adequacy of resources**.\n\n### Practical Tip for Your Agenda\nWhen drafting your agenda, it is helpful to map these inputs directly to specific reports or presenters. For example:\n\n*   *Input 1* → \"Review of Outstanding Actions from Last Meeting\"\n*   *Input 3a* → \"Customer Satisfaction Report & Complaints Summary\"\n*   *Input 4* → \"Internal Audit Findings Summary\"\n\n**Note:** Clause 9.3.3 covers the **outputs** of the meeting (decisions and actions), but Clause 9.3.2 is the one that dictates the specific topics you must discuss.",
+  "inputTokens": 39,
+  "outputTokens": 355,
+  "latencyMs": 5782,
+  "costUsd": 0.001175,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-005",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Analyze this CAPA: NC Description: 'Recurring customer complaints about paint adhesion failure on outdoor furniture. Same defect found in 3 separate batches over 6 weeks. Previous CAPA (CA-2024-067) closed 4 months ago for same issue — surface preparation procedure updated but defect persists.' Perform 5-Why analysis and propose systemic corrective actions.\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"rootCause\":\"Inadequate training and supervision of surface preparation staff leading to inconsistent application of updated procedure\",\"actions\":\"1. Conduct a training needs analysis for surface preparation staff. 2. Develop and deliver targeted training sessions on the updated procedure. 3. Implement regular supervision and audits of surface preparation processes. 4. Establish a feedback loop for staff to report challenges with the procedure. 5. Review and adjust the surface preparation procedure if necessary based on feedback and audit results.\",\"evidence\":\"1. Training attendance records and assessment results. 2. Audit reports and supervision logs. 3. Feedback collection and analysis reports. 4. Revised procedure documentation if changes are made. 5. Trend analysis of customer complaints showing a reduction in paint adhesion failures.\"}",
+  "inputTokens": 139,
+  "outputTokens": 158,
+  "latencyMs": 1413,
+  "costUsd": 0.0006168,
+  "truncated": false
+}

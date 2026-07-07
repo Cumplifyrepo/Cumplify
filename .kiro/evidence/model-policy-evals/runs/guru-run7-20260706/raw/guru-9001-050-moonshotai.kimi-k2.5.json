@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-050",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "An operator submitted a kaizen idea to cut setup time — there's no nonconformity or complaint behind it. My colleague wants to force it through our CAPA process under 10.2. Which ISO 9001 clause actually governs determining and selecting improvement opportunities like this one?",
+  "response": " Your colleague is incorrect to force this through the CAPA process. ISO 9001:2015 **Clause 10.2** specifically addresses **nonconformities and corrective action** — it requires reacting to nonconformities, evaluating their causes, and preventing recurrence. Since your operator's kaizen idea involves **no nonconformity or complaint**, 10.2 is not the appropriate clause.\n\nThe correct clause is **10.3 — Continual improvement**. This clause requires organizations to \"continually improve the suitability, adequacy and effectiveness of the quality management system,\" and explicitly mentions considering \"the results of analysis and evaluation\" and \"the outputs from management review\" to identify improvement opportunities.\n\nAdditionally, **Clause 6.1** (Actions to address risks and opportunities) and **Clause 9.3** (Management review) support this — the former for proactively identifying improvement possibilities, the latter for reviewing improvement needs.\n\nYour colleague may be conflating improvement with corrective action. CAPA processes are reactive; kaizen and continual improvement are proactive. Forcing proactive improvements into a reactive CAPA system creates unnecessary bureaucracy and misaligns with ISO 9001's intent.\n\nA proper approach would use your organization's **improvement process** (often under 10.3), not the CAPA process, to evaluate and implement this setup time reduction idea.",
+  "inputTokens": 85,
+  "outputTokens": 279,
+  "latencyMs": 31451,
+  "costUsd": 0.0008880000000000001,
+  "truncated": false
+}

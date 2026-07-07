@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-028",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "What does ISO 9001 require regarding continual improvement — what exactly are we supposed to be improving?",
+  "response": " ISO 9001:2015 addresses continual improvement in several interconnected ways. Here's what you're actually required to improve:\n\n## The Core Requirements\n\n**Clause 10.3 - Continual Improvement**\nThe standard requires you to \"continually improve the suitability, adequacy, and effectiveness\" of your **quality management system**.\n\n## What This Means in Practice\n\n| Aspect | What to Improve |\n|--------|-----------------|\n| **Suitability** | Is the QMS appropriate for your organization's context, size, and complexity? |\n| **Adequacy** | Does it cover all necessary processes and requirements? |\n| **Effectiveness** | Is it actually achieving intended results? |\n\n## Specific Areas Requiring Improvement Attention\n\n**Clause 6.1** — Address risks and opportunities (improvement of preventive action)\n\n**Clause 9.1.3** — Analysis and evaluation of data to identify improvement opportunities\n\n**Clause 9.3.3** — Management review outputs must include decisions on improvement opportunities\n\n**Clause 10.2** — Corrective action to eliminate causes of nonconformity and prevent recurrence\n\n## The Practical Scope\n\nYou're improving:\n- **Products and services** (to enhance customer satisfaction)\n- **Processes** (efficiency, effectiveness)\n- **The QMS itself** (how you organize quality activities)\n\n## Key Distinction\n\nISO 9001 doesn't require you to improve *everything* all the time. It requires a **systematic approach** to identifying and acting on improvement opportunities based on data, not arbitrary initiatives.\n\nThe standard essentially asks: *Are you getting better at meeting customer requirements and enhancing satisfaction?*",
+  "inputTokens": 47,
+  "outputTokens": 337,
+  "latencyMs": 24226,
+  "costUsd": 0.0010391999999999999,
+  "truncated": false
+}

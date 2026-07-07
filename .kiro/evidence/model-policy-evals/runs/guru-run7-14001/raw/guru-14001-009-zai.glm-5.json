@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-009",
+  "modelId": "zai.glm-5",
+  "prompt": "Which ISO 14001 clause requires our top management to step back at planned intervals and review the whole EMS with defined inputs and outputs?",
+  "response": "The clause you are looking for is **ISO 14001:2015 Clause 9.3 — Management Review**.\n\nHere is a breakdown of how that clause specifically addresses your requirements:\n\n*   **\"Step back at planned intervals\":** Clause 9.3.1 states that top management shall review the organization’s environmental management system, **\"at planned intervals,\"** to ensure its continuing suitability, adequacy, and effectiveness.\n*   **\"Review the whole EMS\":** The clause requires a comprehensive review of the system, not just specific metrics.\n*   **\"Defined Inputs\":** Clause 9.3.2 (\"Management Review Inputs\") specifically lists what must be considered, including:\n    *   The status of actions from previous management reviews.\n    *   Changes in external and internal issues relevant to the EMS.\n    *   The extent to which environmental objectives have been met.\n    *   Information on environmental performance and compliance obligations.\n    *   Adequacy of resources.\n    *   Relevant communication(s) from interested parties.\n*   **\"Defined Outputs\":** Clause 9.3.3 (\"Management Review Outputs\") mandates that the review yield specific results, including conclusions on:\n    *   The continuing suitability, adequacy, and effectiveness of the EMS.\n    *   Decisions related to continual improvement opportunities.\n    *   Decisions related to any need for changes to the EMS (including resources needed).\n    *   Actions to be taken when objectives are not achieved.\n\nIn summary, Clause 9.3 is the specific requirement for top management to pause, look at the \"big picture\" of the EMS using specific data (inputs), and make strategic decisions (outputs).",
+  "inputTokens": 32,
+  "outputTokens": 345,
+  "latencyMs": 3249,
+  "costUsd": 0.0011359999999999999,
+  "truncated": false
+}

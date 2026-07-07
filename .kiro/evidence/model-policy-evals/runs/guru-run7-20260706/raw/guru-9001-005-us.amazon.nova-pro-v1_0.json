@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-005",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "We're standing up a supplier qualification program for our castings vendors. Which ISO 9001 clause requires us to define criteria for evaluating, selecting, monitoring and re-evaluating external providers?",
+  "response": "The ISO 9001 standard provides a framework for a Quality Management System (QMS), and within this framework, the requirements for managing external providers are primarily found in Clause 8, specifically Clause 8.4. \n\n**Clause 8.4: Control of externally provided processes, products and services** outlines the requirements for ensuring that externally provided processes, products, and services conform to requirements. This clause includes the following key points relevant to your supplier qualification program:\n\n1. **Determine external provider requirements**:\n   - The organization shall determine the requirements for the external provider, including any applicable statutory and regulatory requirements.\n   - These requirements shall be consistent with the organization’s own quality management system.\n\n2. **Evaluation and selection of external providers**:\n   - The organization shall evaluate and select external providers based on their ability to supply conforming processes, products, and services.\n   - Criteria for evaluation, selection, monitoring, and re-evaluation shall be established and applied.\n\n3. **Monitoring and re-evaluation**:\n   - The organization shall monitor and review the performance of external providers.\n   - Re-evaluation of external providers shall be conducted as necessary to ensure they continue to meet requirements.\n\n4. **Control of externally provided processes, products, and services**:\n   - The organization shall ensure that externally provided processes, products, and services do not adversely affect the organization’s ability to consistently deliver conforming products and services to its customers.\n\nIn summary, **Clause 8.4 of ISO 9001** is the specific clause that requires you to define criteria for evaluating, selecting, monitoring, and re-evaluating external providers, including your castings vendors.",
+  "inputTokens": 41,
+  "outputTokens": 343,
+  "latencyMs": 2838,
+  "costUsd": 0.0011304,
+  "truncated": false
+}

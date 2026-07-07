@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-002",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Suggest improvements to this CAPA record: 'Problem: Parts rejected. Root Cause: Machine issue. Action: Fix machine. Verification: Check parts.' Industry: Aerospace fastener manufacturing. The record lacks detail for ISO 9001 clause 10.2 compliance.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"completedSection\": \"Problem: High rejection rate of aerospace fasteners (e.g., 15% in batch #12345) due to dimensional non-conformity. Root Cause: Machine calibration drift in the CNC lathe (verified via maintenance logs and operator interviews). Action: Recalibrate CNC lathe to specified tolerances, update maintenance schedule to include weekly calibration checks, and train operators on early detection of calibration issues. Verification: Inspect next production batch (e.g., batch #12346) for dimensional compliance, document results, and confirm rejection rate drops below 1%.\",\n  \"references\": \"ISO 9001:2015 Clause 10.2 (Nonconformity and corrective action), AS9100D (Quality Management Systems - Requirements for Aviation, Space and Defense Organizations)\",\n  \"clauseAlignment\": \"The improved record aligns with ISO 9001 clause 10.2 by providing a detailed problem description, root cause analysis, corrective actions, and verification of effectiveness. It ensures traceability, addresses the root cause to prevent recurrence, and documents evidence of corrective action, as required by the standard.\"\n}\n```\nANSER: <your JSON object>",
+  "inputTokens": 128,
+  "outputTokens": 248,
+  "latencyMs": 3607,
+  "costUsd": 0.0006224000000000001,
+  "truncated": false
+}

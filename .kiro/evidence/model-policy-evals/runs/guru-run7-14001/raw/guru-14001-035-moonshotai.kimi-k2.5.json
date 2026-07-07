@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-035",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Production wants to swap our degreasing solvent for a cheaper alternative. From an EMS standpoint, which ISO 14001 clauses require us to reassess environmental aspects and update our operational controls before the change goes live? Cite both.",
+  "response": " From an EMS standpoint, ISO 14001:2015 requires you to reassess environmental aspects and update operational controls under the following clauses:\n\n## **Clause 6.1.2 - Environmental aspects**\n\n> \"The organization shall determine and have available documented information of: a) the environmental aspects of its activities, products and services that it can control and those that it can influence...\"\n\nA solvent change constitutes a **new or modified activity**, requiring you to:\n- Identify new environmental aspects (different chemical composition, toxicity, volatility, biodegradability)\n- Evaluate associated environmental impacts (air emissions, wastewater, hazardous waste classification, energy consumption)\n- Update your aspects register with the new solvent's properties\n\n## **Clause 8.1 - Operational planning and control**\n\n> \"The organization shall establish, implement, control and maintain the processes needed to meet environmental management system requirements, and to implement the actions identified in 6.1 and 6.2...\"\n\nThis requires updated operational controls including:\n- Revised work instructions and safe handling procedures\n- Modified ventilation/emission controls\n- Updated spill response and waste disposal procedures\n- Revised training for affected personnel\n- Changes to procurement and supplier specifications\n\n## Additional Consideration\n\n**Clause 6.1.3 (Compliance obligations)** also applies, as you must verify the new solvent meets regulatory requirements (VOC limits, hazardous substance regulations, workplace exposure standards).\n\nProduction should not implement the change until these assessments are complete and documented.",
+  "inputTokens": 74,
+  "outputTokens": 299,
+  "latencyMs": 4446,
+  "costUsd": 0.0009414,
+  "truncated": false
+}

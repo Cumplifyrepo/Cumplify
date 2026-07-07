@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-001",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're a 40-person metal plating shop just starting an EMS. Which ISO 14001 clause requires us to work out how our activities, products, and services interact with the environment, and to decide which of those interactions actually matter?",
+  "response": " That's **Clause 6.1.2: Environmental aspects**.\n\nThis clause requires you to:\n\n- **Identify** environmental aspects of your activities, products, and services within your defined scope\n- **Determine** which of those aspects have or can have **significant environmental impacts**\n- **Assess** these from a lifecycle perspective (where applicable)\n\nFor a metal plating shop, this means systematically looking at things like:\n- Chemical usage and storage (acids, alkalis, plating solutions)\n- Emissions to air (vapors, particulates)\n- Discharges to water (rinse waters, process solutions)\n- Waste generation (spent baths, sludges, packaging)\n- Energy consumption\n- Potential for spills and emergency situations\n\nThe \"significant\" determination is where you decide what actually matters for your EMS—typically using criteria like legal requirements, frequency, severity of impact, and stakeholder concerns.\n\nYou'll document this in an **environmental aspects register** or similar, which becomes foundational for setting objectives, operational controls, and monitoring.\n\nWant guidance on typical significant aspects for plating operations, or how to structure the evaluation criteria?",
+  "inputTokens": 74,
+  "outputTokens": 230,
+  "latencyMs": 3806,
+  "costUsd": 0.0007344000000000001,
+  "truncated": false
+}

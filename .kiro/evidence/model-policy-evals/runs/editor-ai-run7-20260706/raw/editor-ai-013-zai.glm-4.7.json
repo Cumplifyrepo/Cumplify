@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-013",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Suggest improvements to this nonconformance handling procedure for an electronics manufacturer: 'When defect found, operator marks part with red tag. Supervisor decides disposition. Parts scrapped or reworked.' Needs formal segregation, authority matrix, customer notification criteria, and trending per ISO 9001 clause 8.7.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSER: {\n  \"completedSection\": \"Nonconformance Handling Procedure: 1. Upon detection of a defect, the operator must immediately tag the nonconforming part with a red tag and segregate it in a designated 'Nonconforming Material Area' to prevent unintended use. 2. The supervisor shall review the nonconformance and determine disposition based on the Authority Matrix (e.g., scrap, rework, return to supplier, or concession). 3. If the nonconformance affects product safety, regulatory compliance, or customer specifications, the Quality Manager must notify the customer per the Customer Notification Criteria. 4. All nonconformances shall be recorded in the Nonconformance Log, including root cause analysis and corrective actions. 5. Trending analysis of nonconformances shall be conducted monthly to identify recurring issues and drive continuous improvement.\",\n  \"references\": \"ISO 9001:2015, Clause 8.7 (Control of Nonconforming Outputs); IATF 16949:2016, Clause 8.7; IPC-A-610 (Acceptability of Electronic Assemblies).\",\n  \"clauseAlignment\": \"The procedure aligns with ISO 9001 Clause 8.7 by ensuring formal segregation of nonconforming outputs (8.7.1), defining authority for disposition (8.7.2), establishing customer notification criteria (8.7.3), and implementing trending analysis to prevent recurrence (8.7.4).\"\n}",
+  "inputTokens": 135,
+  "outputTokens": 306,
+  "latencyMs": 5861,
+  "costUsd": 0.0007542000000000001,
+  "truncated": false
+}

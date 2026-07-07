@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-016",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Plan an internal audit: Scope: ISO 14001 clause 8.1 (Operational planning and control) at a paint manufacturing facility. Focus areas: VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment. The facility had a minor spill incident 2 months ago and an EPA inspection is expected this quarter.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"scope\": \"ISO 14001 clause 8.1 (Operational planning and control) at a paint manufacturing facility, focusing on VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment.\",\n  \"criteria\": \"ISO 14001:2015 standard, specifically clause 8.1; facility environmental management procedures; local and national environmental regulations (EPA standards); corrective actions from the minor spill incident 2 months ago.\",\n  \"schedule\": \"Audit to be conducted over 3 days in the first week of next month, prior to the expected EPA inspection. Day 1: Document review and planning; Day 2: On-site inspection of focus areas; Day 3: Findings analysis and reporting.\"\n}\n```\nANSWER: {\"scope\": \"ISO 14001 clause 8.1 (Operational planning and control) at a paint manufacturing facility, focusing on VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment.\", \"criteria\": \"ISO 14001:2015 standard, specifically clause 8.1; facility environmental management procedures; local and national environmental regulations (EPA standards); corrective actions from the minor spill incident 2 months ago.\", \"schedule\": \"Audit to be conducted over 3 days in the first week of next month, prior to the expected EPA inspection. Day 1: Document review and planning; Day 2: On-site inspection of focus areas; Day 3: Findings analysis and reporting.\"}",
+  "inputTokens": 135,
+  "outputTokens": 315,
+  "latencyMs": 3491,
+  "costUsd": 0.0007740000000000001,
+  "truncated": false
+}

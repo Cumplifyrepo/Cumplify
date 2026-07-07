@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-012",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 45001 clause requires the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system to enhance safety performance?",
+  "response": "The clause in ISO 45001 that specifically requires the organization to continually improve the suitability, adequacy, and effectiveness of the Occupational Health and Safety (OH&S) management system is Clause 10, which is dedicated to \"Improvement.\"\n\nWithin Clause 10, the following sub-clauses are particularly relevant:\n\n1. **10.1 General**: This sub-clause requires the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system.\n\n2. **10.2 Nonconformity and corrective action**: This sub-clause requires the organization to react to nonconformities and take action to control and correct them, and to deal with the consequences. It also involves investigating the root cause of nonconformities and taking actions to prevent recurrence.\n\n3. **10.3 Continual improvement**: This sub-clause specifically requires the organization to continually improve its OH&S performance, including the OH&S management system’s suitability, adequacy, and effectiveness.\n\nTherefore, it is Clause 10, and more specifically Clause 10.3, that requires the organization to continually improve the OH&S management system.",
+  "inputTokens": 34,
+  "outputTokens": 241,
+  "latencyMs": 1587,
+  "costUsd": 0.0007984000000000001,
+  "truncated": false
+}

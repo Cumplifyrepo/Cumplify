@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-027",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Before I send a purchase order to our new plating vendor, what does ISO 9001 require me to communicate to them?",
+  "response": " ISO 9001:2015 doesn't prescribe specific purchase order content, but it does require you to communicate certain information to external providers (suppliers) to ensure they understand what you need. Here's what Clause 8.4.3 requires you to communicate:\n\n## Required Communications to External Providers\n\n**Requirements for:**\n- The **products and services** to be provided\n- The **processes** to be performed on your behalf\n- The **release** of products and services\n\n**Specific information to communicate:**\n- What you require (specifications, drawings, standards)\n- What **competence** is required for personnel\n- What **interactions** you need with their processes\n- **Controls** you intend to apply to their processes\n- **Verification or validation activities** you intend to perform (or require them to perform)\n\n## For Your Plating Vendor Specifically\n\nConsider communicating:\n- Plating specifications (thickness, adhesion, corrosion resistance, etc.)\n- Applicable standards (ASTM, AMS, MIL-SPEC, etc.)\n- Substrate preparation requirements\n- Required inspection/test reports or certificates of conformity\n- Packaging and labeling requirements\n- Any required process approvals or qualifications\n- Your right of access for verification activities\n\n## Practical Tip\n\nDocument this communication in your purchase order or reference controlled specifications. Many organizations use supplier manuals or quality agreements for plating vendors to cover ongoing requirements beyond individual POs.\n\nWould you like guidance on any specific plating requirements or supplier quality agreements?",
+  "inputTokens": 52,
+  "outputTokens": 301,
+  "latencyMs": 25130,
+  "costUsd": 0.0009341999999999999,
+  "truncated": false
+}

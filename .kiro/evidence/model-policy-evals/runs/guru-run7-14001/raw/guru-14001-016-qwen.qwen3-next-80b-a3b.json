@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-016",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "In plain terms, what does ISO 14001 require us to do about compliance obligations at the planning stage, and which clause covers it?",
+  "response": "In plain terms, **ISO 14001** requires you to **figure out all the environmental laws, regulations, and other commitments your organization must follow** — and then **plan how you’ll meet them** — before you even start setting your environmental goals or running your environmental management system.\n\nThis happens during the **planning stage**, and it’s covered in **Clause 6.1.1 — Compliance Obligations**.\n\n### Here’s what it means in simple steps:\n1. **Find out what you must comply with**:  \n   This includes laws (like waste disposal rules or air emission limits), permits, licenses, and even voluntary commitments you’ve made (like signing up to reduce plastic use or reporting emissions).\n\n2. **Keep track of them**:  \n   Don’t just look once — update your list regularly as laws change or new ones come out.\n\n3. **Plan how you’ll meet them**:  \n   Think about how your activities, products, or services might affect compliance. Then build that into your environmental management system — for example, by training staff, setting up monitoring, or changing processes.\n\n4. **Don’t ignore them**:  \n   These aren’t optional. You must integrate compliance obligations into your overall environmental planning — not treat them as a separate checklist.\n\n### Why it matters:\nIf you don’t plan for compliance upfront, you risk fines, legal trouble, or damage to your reputation. Clause 6.1.1 makes sure you’re not caught off guard — you’re proactively building compliance into your system from day one.\n\n> ✅ **In short**: *Before you do anything else in planning, find out what environmental rules apply to you — and plan how you’ll follow them.*  \n> 📌 **Clause**: **6.1.1 — Compliance obligations**",
+  "inputTokens": 39,
+  "outputTokens": 370,
+  "latencyMs": 8040,
+  "costUsd": 0.00044945999999999994,
+  "truncated": false
+}

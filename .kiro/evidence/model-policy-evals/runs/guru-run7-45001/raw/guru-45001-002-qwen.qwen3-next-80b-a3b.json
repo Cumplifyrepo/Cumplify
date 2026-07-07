@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-002",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "I'm the new safety manager at a metal fabrication shop and need to draft our top-level safety commitment document. Which ISO 45001 clause requires an OH&S policy and defines what it has to commit to?",
+  "response": "The ISO 45001 clause that requires an Occupational Health and Safety (OH&S) policy and defines its required commitments is:\n\n**Clause 5.2 — OH&S Policy**\n\n### Key Requirements from ISO 45001 Clause 5.2:\nThe OH&S policy must:\n1. **Be appropriate to the purpose and context** of the organization (including the nature and scale of its OH&S risks and opportunities).\n2. **Include a commitment to:**\n   - Provide safe and healthy workplaces;\n   - Prevent work-related injury and ill health;\n   - Continually improve the OH&S management system.\n3. **Provide a framework for setting OH&S objectives.**\n4. **Be communicated, implemented, and maintained** throughout the organization.\n5. **Be available to interested parties** (e.g., employees, regulators, contractors) as appropriate.\n6. **Be reviewed periodically** for continuing suitability.\n\n### Practical Tip for Your Document:\nAs the new safety manager, your top-level safety commitment document should clearly state these commitments in plain, actionable language. For example:\n\n> *\"At [Company Name], we are committed to providing a safe and healthy workplace for all employees, contractors, and visitors. We pledge to prevent work-related injury and ill health through proactive risk management, continuous improvement, and active employee involvement. This commitment is the foundation of our OH&S management system and guides all our decisions and actions.\"*\n\nThis aligns directly with Clause 5.2 and demonstrates leadership commitment — a cornerstone of ISO 45001.\n\n✅ **Remember**: The OH&S policy must be signed by top management to show accountability — this is a critical requirement under Clause 5.2.",
+  "inputTokens": 53,
+  "outputTokens": 348,
+  "latencyMs": 4710,
+  "costUsd": 0.00042502,
+  "truncated": false
+}

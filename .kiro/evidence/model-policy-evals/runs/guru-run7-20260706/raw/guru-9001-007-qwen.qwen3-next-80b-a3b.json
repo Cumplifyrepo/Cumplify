@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-007",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "An aerospace customer wants us to trace every machined part back to its raw-material heat lot from receiving through shipment. Which ISO 9001 clause covers identification and traceability of outputs?",
+  "response": "The ISO 9001 clause that covers the **identification and traceability of outputs** is:\n\n> **Clause 8.5.2 — Identification and traceability**\n\n### Explanation:\n**ISO 9001:2015 Clause 8.5.2** states:\n\n> *\"Where necessary, the organization shall maintain documented information to identify the output for the purpose of traceability.\"*\n\nThis clause requires organizations to establish and maintain identification and traceability systems **when traceability is required** — such as in regulated industries like aerospace, where it is critical to trace a machined part back to its raw material heat lot for quality, safety, and regulatory compliance (e.g., AS9100, which builds on ISO 9001).\n\n### Why this applies to your aerospace customer:\n- Aerospace standards (like AS9100) mandate strict traceability from raw material (heat lot) through every manufacturing step to final shipment.\n- Clause 8.5.2 requires the organization to control and document the identification of products (e.g., part numbers, serial numbers, heat lot numbers) throughout the production process.\n- This ensures that if a defect is found, the source (e.g., a specific heat lot of raw material) can be quickly identified and corrective actions taken.\n\n### Additional Context:\n- **AS9100** (the aerospace quality management standard) explicitly references and reinforces ISO 9001:2015 Clause 8.5.2, often requiring more rigorous traceability than general industry.\n- Traceability may involve labeling, barcodes, ERP/MES systems, and documented records linking raw material, process parameters, inspection results, and final product.\n\n✅ **Answer: Clause 8.5.2 — Identification and traceability**",
+  "inputTokens": 47,
+  "outputTokens": 370,
+  "latencyMs": 5152,
+  "costUsd": 0.00045057999999999996,
+  "truncated": false
+}

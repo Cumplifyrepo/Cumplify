@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-022",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We're setting next year's EMS budget. What does ISO 14001 require of management regarding resources for the environmental management system, and which clause?",
+  "response": "Under **ISO 14001:2015**, management is required to ensure that adequate resources are provided to establish, implement, maintain, and improve the Environmental Management System (EMS). This requirement is specified in:\n\n> **Clause 7.1 — Resources**\n\n### Exact Requirement (Clause 7.1):\n> **7.1 Resources**  \n> The organization shall determine and provide the resources needed to:  \n> a) establish, implement, maintain and continually improve the EMS;  \n> b) enhance environmental performance;  \n> c) satisfy the requirements of this International Standard.\n\n### Key Implications for EMS Budgeting:\n- **Resources** include human resources, infrastructure, technology, financial resources, and organizational capabilities.\n- Management must **actively determine and allocate** sufficient resources—not just assume they are available.\n- This is not a one-time activity; resources must be reviewed and adjusted as the EMS evolves (e.g., new regulations, expanded operations, or improved objectives).\n- Budgeting for EMS should explicitly account for training, monitoring equipment, audits, corrective actions, and personnel time dedicated to environmental activities.\n\n### Why This Matters for Your Next Year’s Budget:\nWhen setting your EMS budget, ensure it explicitly supports:\n- Staff time for EMS duties (not just “additional responsibilities”),\n- Training and competence development,\n- Monitoring and measurement equipment,\n- Internal audits and management reviews,\n- Corrective actions and continual improvement initiatives.\n\nFailure to provide adequate resources can lead to nonconformities during certification audits and undermine the effectiveness of your EMS.\n\n> ✅ **Best Practice**: Document your resource allocation decisions in your EMS management review records to demonstrate compliance with Clause 7.1.",
+  "inputTokens": 41,
+  "outputTokens": 344,
+  "latencyMs": 4566,
+  "costUsd": 0.00041854,
+  "truncated": false
+}

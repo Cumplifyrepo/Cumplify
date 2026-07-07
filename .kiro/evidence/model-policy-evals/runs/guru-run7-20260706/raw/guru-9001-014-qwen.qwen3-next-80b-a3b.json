@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-014",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "After a reorg, nobody at our plant is sure who has the authority to stop a shipment or approve a deviation. Which ISO 9001 clause requires that responsibilities and authorities for QMS-relevant roles be assigned, communicated and understood?",
+  "response": "The ISO 9001 clause that requires responsibilities and authorities for QMS-relevant roles to be **assigned, communicated, and understood** is:\n\n> **ISO 9001:2015 Clause 5.3 — Organizational roles, responsibilities and authorities**\n\n### Key Requirements of Clause 5.3:\nThe standard requires top management to:\n- **Assign** responsibilities and authorities for roles relevant to the quality management system (QMS);\n- **Communicate** those responsibilities and authorities within the organization;\n- Ensure that **personnel understand** their roles and how they contribute to the effectiveness of the QMS.\n\nThis directly addresses your situation: after a reorganization, if it’s unclear who can stop a shipment or approve a deviation, this is a failure to properly assign, communicate, and ensure understanding of QMS-related roles — a clear nonconformity with Clause 5.3.\n\n### Why This Matters:\n- Stopping a shipment or approving a deviation are **QMS-relevant decisions** (often tied to nonconforming product control — Clause 8.7).\n- Without clearly defined authorities, the organization risks releasing nonconforming products or delaying corrective actions, undermining QMS effectiveness.\n\n### Action Step:\nReview and document the roles and authorities for all QMS-critical functions (e.g., release, deviation approval, nonconformance control), communicate them formally (e.g., via job descriptions, charts, or procedures), and ensure all relevant personnel are trained and aware.\n\n✅ **Answer: Clause 5.3 — Organizational roles, responsibilities and authorities**",
+  "inputTokens": 58,
+  "outputTokens": 325,
+  "latencyMs": 2897,
+  "costUsd": 0.00039812,
+  "truncated": false
+}

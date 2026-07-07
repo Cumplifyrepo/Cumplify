@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-037",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our tower crews say the fall-arrest harnesses we issue are so uncomfortable that people loosen them mid-shift. We want the crews involved in selecting the replacements. Which ISO 45001 clauses are in play?",
+  "response": " This scenario touches on several ISO 45001:2018 clauses, with the most relevant being:\n\n## Primary Clauses\n\n**4.3 - Worker consultation and participation**\nThis is your central clause. It specifically requires organizations to establish processes for consulting workers and ensuring their participation in OH&S matters, including hazard identification, risk assessment, and decisions about personal protective equipment.\n\n**6.1.2 - Hazard identification**\nUncomfortable harnesses leading to unsafe use represent a hazard that needs identification and assessment.\n\n**8.1.4 - Management of change**\nReplacing equipment constitutes a change that needs proper planning and consideration of OH&S risks and opportunities.\n\n## Supporting Clauses\n\n**7.2 - Competence** and **7.3 - Awareness**\nEnsuring those selecting harnesses understand fit, comfort, and safety requirements.\n\n**8.1.3 - Management of contractors**\nIf tower crews include contractors, this applies to their inclusion in the process.\n\n**9.1.1 - Monitoring, measurement, analysis and evaluation**\nYour crews' feedback is already informal monitoring data about PPE effectiveness.\n\n## Practical Note\n\nInvolving crews directly addresses the root cause: PPE that isn't worn properly due to discomfort is ineffective regardless of its rated protection. ISO 45001's emphasis on worker participation (clause 4.3) specifically anticipates this type of situation where top-down decisions create workplace risks.\n\nWould you like guidance on structuring that worker participation process?",
+  "inputTokens": 69,
+  "outputTokens": 296,
+  "latencyMs": 8911,
+  "costUsd": 0.0009293999999999999,
+  "truncated": false
+}

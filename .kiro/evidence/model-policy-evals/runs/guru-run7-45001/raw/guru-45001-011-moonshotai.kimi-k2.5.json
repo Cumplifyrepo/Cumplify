@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-011",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 45001 clause requires us to run planned internal audits to check that the OH&S management system conforms to requirements and is effectively implemented?",
+  "response": " The clause you're referring to is **Clause 9.2: Internal audit**.\n\nSpecifically, **Clause 9.2.1** states that the organization shall conduct internal audits at planned intervals to provide information on whether the OH&S management system:\n\na) Conforms to:\n- The organization's own requirements for its OH&S management system, and\n- The requirements of ISO 45001\n\nb) Is effectively implemented and maintained",
+  "inputTokens": 56,
+  "outputTokens": 87,
+  "latencyMs": 15275,
+  "costUsd": 0.0002946,
+  "truncated": false
+}

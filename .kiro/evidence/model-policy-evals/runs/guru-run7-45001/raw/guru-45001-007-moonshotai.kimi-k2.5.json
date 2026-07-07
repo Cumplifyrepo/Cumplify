@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-007",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A subcontractor crew is coming to our plant next month to do electrical panel upgrades. Which specific ISO 45001 sub-clause requires us to coordinate hazards with contractors working on our site?",
+  "response": " The specific ISO 45001 sub-clause that addresses coordination with contractors regarding hazards is **8.1.4.2: Coordination with contractors**.\n\nThis sub-clause requires the organization to establish processes to coordinate with contractors on hazard identification, risk assessment, and the implementation of controls. Specifically, it requires that before contract commencement, the organization and contractor agree on:\n\n- The occupational health and safety management system of the organization\n- Any specific hazards related to the work being performed\n- The controls to be implemented\n- Emergency preparedness and response arrangements\n- Performance monitoring and auditing activities\n\nAdditionally, **8.1.4.1: General** establishes the broader requirement for managing procurement (including contractors) to ensure conformity with OH&S requirements.\n\nFor your electrical panel upgrade project, you'll need to ensure documented coordination covering lockout/tagout procedures, electrical safety, arc flash hazards, confined space entry (if applicable), and emergency procedures specific to your plant.",
+  "inputTokens": 65,
+  "outputTokens": 193,
+  "latencyMs": 4954,
+  "costUsd": 0.000618,
+  "truncated": false
+}

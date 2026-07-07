@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-018",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're rebuilding our hazard identification process from scratch at a distribution center. What kinds of activities, situations, and factors does ISO 45001 say the process has to take into account?",
+  "response": " ISO 45001:2018 provides specific requirements for hazard identification in clause 6.1.2. Here's what the standard says your process must take into account:\n\n## Activities, Situations, and Factors to Consider\n\n**Routine and non-routine activities**\n- Normal operations\n- Abnormal conditions (start-up, shutdown, maintenance, cleaning)\n- Emergency situations\n\n**Human factors**\n- Human capabilities and limitations\n- Behavior and competence of workers\n- Psychological factors (stress, fatigue, workload)\n- Human error\n\n**New or changed hazards**\n- Changes in knowledge or information about hazards\n- Changes in the organization, its operations, processes, activities, and the OH&S management system itself\n\n**Past incidents**\n- Internal incidents (including near-misses)\n- External incidents relevant to your context\n\n**Workplace design**\n- Infrastructure, equipment, materials, and substances used\n- Product and service design\n- Work organization\n- Working conditions\n\n**People in the workplace**\n- Workers (including contractors, visitors, and any others)\n\n## Additional Required Considerations\n\nYour process must also account for:\n- **Legal and other requirements** applicable to your operations\n- **Consultation and participation** of workers (required by clause 5.4)\n- **Your organization's context** (internal and external issues from clause 4.1)\n- **Needs and expectations of interested parties** (clause 4.2)\n\n## Practical Implications for a Distribution Center\n\nThis translates to examining: forklift operations, manual handling, racking systems, loading docks, conveyor systems, traffic management, shift patterns, temporary workers, seasonal volume spikes, and third-party logistics activities.\n\nWould you like me to expand on how any of these apply specifically to distribution center operations?",
+  "inputTokens": 63,
+  "outputTokens": 357,
+  "latencyMs": 6503,
+  "costUsd": 0.0011087999999999998,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-006",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Assess the risk: A food manufacturer plans to switch from a single-source supplier of a critical allergen-free ingredient to a dual-source strategy. The new supplier is located in a region with less stringent food safety regulations. The ingredient is used in 40% of products marketed as allergen-free.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 166,
+  "outputTokens": 4096,
+  "latencyMs": 33649,
+  "costUsd": 0.004965,
+  "truncated": true
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-007",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "An aerospace customer wants us to trace every machined part back to its raw-material heat lot from receiving through shipment. Which ISO 9001 clause covers identification and traceability of outputs?",
+  "response": " The ISO 9001 clause that covers identification and traceability of outputs is **Clause 8.5.2 – Identification and Traceability**.\n\nThis clause requires organizations to:\n\n- **Identify** outputs through the production and service provision process to the extent necessary to ensure conformity of products and services\n- **Maintain** the identification of the configuration of outputs in order to identify any differences between the intended configuration and the actual configuration\n- **Control** the unique identification of outputs when traceability is a requirement, and retain documented information to enable traceability\n\nFor your aerospace customer, this means you'll need documented procedures to:\n- Track raw material heat lots from receiving\n- Maintain that identification through machining operations (even if split into multiple parts)\n- Link finished parts back to their original heat lot in your records\n- Preserve this traceability data through final shipment\n\nNote: Aerospace customers often impose additional requirements through **AS9100** (the aerospace quality management standard), which amplifies ISO 9001 requirements. AS9100 specifically adds requirements for **configuration management** and **traceability of serialized parts**, which may be relevant to your implementation.",
+  "inputTokens": 63,
+  "outputTokens": 229,
+  "latencyMs": 56161,
+  "costUsd": 0.0007248,
+  "truncated": false
+}

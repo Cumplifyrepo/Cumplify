@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-025",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Draft a procedure for design and development of new products at a consumer electronics company. Include design inputs (market requirements, regulatory, standards), design stages with gate reviews, verification methods (simulation, prototype testing, HALT), validation with end users, design transfer to manufacturing, and design change control. Align with ISO 9001 clause 8.3.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 171,
+  "outputTokens": 4096,
+  "latencyMs": 88477,
+  "costUsd": 0.0049664999999999996,
+  "truncated": true
+}

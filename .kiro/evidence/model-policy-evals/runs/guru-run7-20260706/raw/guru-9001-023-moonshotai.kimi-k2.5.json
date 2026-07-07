@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-023",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Before our software team starts building a new feature set, what does ISO 9001 require us to nail down as design and development inputs?",
+  "response": " Under ISO 9001:2015, clause 8.3.3 (Design and Development Inputs), you're required to determine and document specific inputs before starting design and development. Here's what needs to be nailed down:\n\n## Required Inputs\n\n| Category | What to Document |\n|----------|---------------|\n| **Functional requirements** | What the feature must *do* — capabilities, behaviors, outputs |\n| **Performance requirements** | Speed, capacity, reliability, accuracy, security benchmarks |\n| **Regulatory/legal requirements** | Industry standards, data protection laws, accessibility requirements |\n| **Requirements from previous similar designs** | Lessons learned, proven architectures, reusable components |\n| **Other essential requirements** | Any critical constraints or needs not captured above |\n\n## Additional Considerations\n\n- **Conflicting requirements** must be identified and resolved\n- **Inputs must be adequate** for the intended purpose — complete, unambiguous, and not contradictory\n- **Records must be retained** of these inputs\n\n## Practical Application for Software Teams\n\nBefore coding starts, you'd typically want documented:\n\n- User stories / use cases with acceptance criteria\n- Technical specifications (APIs, data models, integrations)\n- Non-functional requirements (scalability, uptime targets)\n- Compliance needs (GDPR, SOX, etc. if applicable)\n- Reference to existing systems or patterns being reused\n\nThe standard doesn't prescribe *how* you capture these (user stories, PRDs, technical specs, etc.), but they must be determined, reviewed, and controlled.\n\nWant me to expand on how this interfaces with 8.3.4 (Design and Development Controls) or how agile teams typically demonstrate compliance?",
+  "inputTokens": 55,
+  "outputTokens": 335,
+  "latencyMs": 41806,
+  "costUsd": 0.001038,
+  "truncated": false
+}

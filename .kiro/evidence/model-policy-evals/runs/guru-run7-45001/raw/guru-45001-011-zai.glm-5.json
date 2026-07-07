@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-011",
+  "modelId": "zai.glm-5",
+  "prompt": "Which ISO 45001 clause requires us to run planned internal audits to check that the OH&S management system conforms to requirements and is effectively implemented?",
+  "response": "The specific clause you are looking for is **Clause 9.2**, which is titled **\"Internal audit\"**.\n\nHere is the breakdown of how this clause addresses your requirements:\n\n*   **Clause 9.2.1 (General):** This sub-clause explicitly states that the organization must conduct internal audits at planned intervals to provide information on whether the OH&S management system:\n    1.  **Conforms** to the organization's own requirements for its OH&S management system, the requirements of ISO 45001 itself, and applicable legal and other requirements.\n    2.  Is **effectively implemented and maintained**.\n\n*   **Clause 9.2.2 (Internal audit programme):** This sub-clause requires you to plan, establish, implement, and maintain an internal audit programme that takes into consideration the results of previous audits and the importance of the OH&S issues.\n\nIn short, Clause 9.2 is the requirement that drives the \"check\" phase of the PDCA (Plan-Do-Check-Act) cycle regarding conformity and effectiveness.",
+  "inputTokens": 34,
+  "outputTokens": 221,
+  "latencyMs": 14482,
+  "costUsd": 0.0007412,
+  "truncated": false
+}

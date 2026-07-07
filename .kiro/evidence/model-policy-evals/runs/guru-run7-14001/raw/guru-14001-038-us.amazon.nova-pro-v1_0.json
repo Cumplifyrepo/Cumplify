@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-038",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Leadership approved a target to cut hazardous waste generation 15 percent this year. Which ISO 14001 clauses cover setting that objective up properly and then monitoring performance against it? Cite both.",
+  "response": "Certainly! The ISO 14001 standard provides a framework for establishing, implementing, maintaining, and improving an Environmental Management System (EMS). When it comes to setting objectives like cutting hazardous waste generation by 15 percent and monitoring performance against that objective, the following clauses are particularly relevant:\n\n### Setting the Objective:\n**Clause 6.2 - Environmental Objectives and Planning to Achieve Them:**\nThis clause requires the organization to establish environmental objectives at relevant functions and levels. These objectives need to be:\n- Consistent with the environmental policy.\n- Measurable (if practicable).\n- Taking into account applicable legal requirements and other requirements.\n- Considering significant environmental aspects and associated impacts.\n- Monitored and updated as appropriate.\n\n### Monitoring Performance:\n**Clause 9.1.1 - Monitoring, Measurement, Analysis and Evaluation:**\nThis clause requires the organization to determine:\n- What needs to be monitored and measured.\n- The methods for monitoring, measurement, analysis, and evaluation needed to ensure valid results.\n- When the monitoring and measuring shall be performed.\n- When the results from monitoring and measurement shall be analyzed and evaluated.\n\nSpecifically, the organization must evaluate its performance against these environmental objectives. This involves collecting data on hazardous waste generation, analyzing trends, and assessing whether the 15 percent reduction target is being met.\n\nBy adhering to these clauses, an organization can systematically set, track, and achieve its environmental objectives in alignment with ISO 14001 requirements.",
+  "inputTokens": 41,
+  "outputTokens": 298,
+  "latencyMs": 1946,
+  "costUsd": 0.0009864,
+  "truncated": false
+}

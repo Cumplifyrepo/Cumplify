@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-037",
+  "modelId": "zai.glm-5",
+  "prompt": "Our certification audit is next month and the auditor will ask for evidence that top management actually reviewed the QMS this year. Which ISO 9001 clause is she checking against?",
+  "response": "The auditor is checking against **ISO 9001:2015 Clause 9.3 — Management Review**.\n\nSpecifically, she is verifying compliance with **Clause 9.3.1 (General)**, which states:\n\n> \"Top management shall review the organization’s quality management system, at planned intervals, to ensure its continuing suitability, adequacy, effectiveness and alignment with the strategic direction of the organization.\"\n\n### What this means for your audit\nThe standard doesn't just require top management to \"know about\" the QMS; it requires a formal evaluation. To satisfy this clause, you must be able to demonstrate three things:\n\n1.  **It happened:** There is evidence of a review taking place within the last 12 months (or according to your planned schedule).\n2.  **The right people were there:** \"Top management\" (those with top-level responsibility and authority) were actually present.\n3.  **It was comprehensive:** They didn't just look at one metric; they reviewed inputs like customer satisfaction, process performance, audit results, and risks (detailed in **Clause 9.3.2**).\n\n### Common forms of evidence\nTo prove this was done, be ready to show the auditor:\n*   **Meeting minutes or a signed report:** This is the most common evidence. It should document the date, attendees, and decisions made.\n*   **The Management Review Report:** A formal summary of the QMS performance.\n*   **Calendar invites or agendas:** Showing that the review was planned and executed.\n*   **Action logs:** Evidence that \"actions arising\" from the review are being tracked (as required by **Clause 9.3.3**).\n\n**Pro Tip:** If top management hasn't met yet this year, you still have time to schedule it before the audit. It does not need to be a single long meeting; the standard allows for the review to be a collection of several meetings (e.g., monthly operations reviews), provided the collective data covers all the required inputs.",
+  "inputTokens": 40,
+  "outputTokens": 412,
+  "latencyMs": 23515,
+  "costUsd": 0.0013584,
+  "truncated": false
+}

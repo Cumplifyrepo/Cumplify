@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-024",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "What does ISO 14001 require us to figure out about interested parties like regulators, neighbors, and customers, and which clause covers it?",
+  "response": "ISO 14001:2015 requires organizations to **determine the interested parties that are relevant to the environmental management system (EMS)** and **understand their needs and expectations** (often referred to as “requirements”).\n\n### Specifically, you must:\n- **Identify** which interested parties (e.g., regulators, neighbors, customers, employees, suppliers, NGOs, local communities) are relevant to your EMS.\n- **Determine** what their needs and expectations are — for example:\n  - Regulators may require compliance with environmental laws.\n  - Neighbors may expect minimal noise, odors, or emissions.\n  - Customers may demand sustainable products or transparent environmental reporting.\n\nThis information is then used to help define the **scope of the EMS** and to **plan actions** to address risks and opportunities related to these parties.\n\n### Clause that covers this:\n> **Clause 4.2 — “Understanding the needs and expectations of interested parties”**\n\nThis clause states:\n> *“The organization shall determine:*\n> *a) the interested parties that are relevant to the environmental management system; and*  \n> *b) the relevant needs and expectations of these interested parties.”*\n\nIt further requires that the organization **keep this information up to date** and use it as input for planning (Clause 6.1 — Actions to address risks and opportunities).\n\n### Why it matters:\nUnderstanding interested parties ensures the EMS is not just internally focused but also responsive to external stakeholders — enhancing credibility, compliance, and stakeholder trust.\n\n✅ So, in summary:  \n**ISO 14001 requires you to identify relevant interested parties and understand their needs and expectations — as required by Clause 4.2.**",
+  "inputTokens": 39,
+  "outputTokens": 353,
+  "latencyMs": 5091,
+  "costUsd": 0.00042906,
+  "truncated": false
+}

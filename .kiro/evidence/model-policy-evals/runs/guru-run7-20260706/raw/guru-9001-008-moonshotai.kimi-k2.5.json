@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-008",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A customer has loaned us inspection fixtures and consigned material to use on their job. Which ISO 9001 clause requires us to take care of property belonging to customers or external providers?",
+  "response": " The ISO 9001 clause that addresses this requirement is **Clause 8.5.3 — Property belonging to customers or external providers**.\n\nThis clause requires organizations to:\n\n- **Identify, verify, protect, and safeguard** property belonging to customers or external providers that is:\n  - Used in the provision of products and services\n  - Incorporated into products and services\n  - Maintained by the organization\n\nThis includes:\n- Materials\n- Components\n- Tools and equipment (such as your inspection fixtures)\n- Intellectual property\n- Personal data\n\n**Specific requirements include:**\n- Reporting to the customer or external provider if any property is lost, damaged, or found unsuitable for use\n- Maintaining records of such incidents\n\nIn your case, both the loaned inspection fixtures and consigned material would fall under this clause, requiring you to establish appropriate controls for handling, storage, and protection of these customer-supplied items.",
+  "inputTokens": 65,
+  "outputTokens": 187,
+  "latencyMs": 16119,
+  "costUsd": 0.0006,
+  "truncated": false
+}

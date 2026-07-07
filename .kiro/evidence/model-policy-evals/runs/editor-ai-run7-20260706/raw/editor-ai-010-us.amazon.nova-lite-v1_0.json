@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-010",
+  "modelId": "us.amazon.nova-lite-v1:0",
+  "prompt": "Suggest improvements to this emergency preparedness procedure for a chemical storage facility: 'In case of spill, call supervisor. Wear PPE. Clean up spill.' Needs alignment with ISO 14001 clause 8.2 and ISO 45001 clause 8.2. Add scenario identification, response actions, communication plan, and drill requirements.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"completedSection\":\"In case of a chemical spill, immediately identify the scenario and notify the supervisor. Ensure all personnel in the vicinity are alerted and evacuate if necessary. Wear appropriate PPE as per the facility's PPE policy. Isolate the spill area and follow the specific chemical spill response procedure. Use spill containment materials to prevent spread. Clean up the spill using appropriate neutralizing agents and dispose of waste according to regulatory requirements. Report the incident to the environmental and occupational health and safety management systems. Conduct regular emergency response drills to ensure preparedness.\",\"references\":\"ISO 14001:2015, ISO 45001:2018, Facility's Chemical Safety and Spill Response Manual\",\"clauseAlignment\":\"Aligned with ISO 14001 clause 8.2 (Emergency Preparedness and Response) and ISO 45001 clause 8.2 (Emergency Preparedness and Response) by including scenario identification, response actions, communication plan, and drill requirements.\"}",
+  "inputTokens": 140,
+  "outputTokens": 208,
+  "latencyMs": 2055,
+  "costUsd": 0.000058320000000000004,
+  "truncated": false
+}

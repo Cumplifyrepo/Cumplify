@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-049",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "In ISO 9001, the clause immediately after operational planning and control (8.1) deals with requirements for products and services. Our new EHS coordinator assumed the numbering means the same thing in ISO 14001. What does the clause in that position actually cover in the environmental standard, and what is its number?",
+  "response": "In **ISO 14001:2015**, the clause immediately after **Operational Planning and Control (Clause 8.1)** is:\n\n> **Clause 8.2: Emergency Preparedness and Response**\n\n### Clarification:\nYour EHS coordinator assumed that clause numbering in ISO 14001 mirrors ISO 9001, but **this is incorrect**. While both standards follow the same high-level structure (Annex SL), the content of corresponding clause numbers is **not identical**.\n\n- In **ISO 9001:2015**, Clause 8.2 is **“Requirements for products and services”** — dealing with customer requirements, design, and validation.\n- In **ISO 14001:2015**, Clause 8.2 is **“Emergency preparedness and response”** — focused on identifying potential environmental emergencies (e.g., chemical spills, fires, floods) and establishing plans to prevent or mitigate their environmental impacts.\n\n### Why the difference?\nISO 14001 is an **environmental management system** standard, so its operational clauses prioritize **environmental risk control**, including unplanned events with environmental consequences. ISO 9001, as a **quality management** standard, focuses on ensuring products/services meet customer and regulatory requirements.\n\n### Summary:\n- **ISO 14001 Clause 8.2** = **Emergency Preparedness and Response**\n- It does **not** cover product/service requirements — those are not a direct focus of ISO 14001 (though environmental aspects of products may be addressed in Clause 6.1.2).\n\n💡 **Tip for your EHS coordinator**: Always refer to the specific standard’s clause titles — numbering is aligned across Annex SL standards, but content is tailored to the domain (quality vs. environment vs. safety, etc.).",
+  "inputTokens": 78,
+  "outputTokens": 392,
+  "latencyMs": 12308,
+  "costUsd": 0.0004813199999999999,
+  "truncated": false
+}

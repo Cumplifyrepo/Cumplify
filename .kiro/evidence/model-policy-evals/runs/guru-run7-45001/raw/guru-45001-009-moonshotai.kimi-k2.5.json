@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-009",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We run construction crews across three states with different fall-protection and crane rules. Which ISO 45001 clause requires us to determine and have access to the legal and other requirements that apply to our hazards?",
+  "response": " The ISO 45001 clause you're looking for is **Clause 6.1.3: Determination of legal requirements and other requirements**.\n\nThis clause requires your organization to:\n\n- **Determine** the legal requirements and other requirements that apply to your hazards, OH&S risks, and OH&S management system\n- **Have access to** these requirements\n- **Determine how** these requirements apply to your organization\n- **Take these requirements into account** when establishing, implementing, maintaining, and continually improving your OH&S management system\n\nGiven your multi-state construction operation, this clause is particularly critical because you need to identify and maintain access to:\n- **Federal OSHA requirements** (29 CFR)\n- **State-plan state requirements** (if applicable in your three states)\n- **State-specific fall protection standards** (some states have stricter rules than federal)\n- **State crane operator certification and safety requirements**\n- **Local/municipal construction codes and ordinances**\n\nThe clause also covers \"other requirements,\" which would include client contract requirements, industry standards (e.g., ANSI/ASSE Z359 for fall protection, ASME B30 for cranes), and any collective bargaining agreements.\n\nYou'll need a systematic process to track changes across all three jurisdictions, as construction regulations frequently update.",
+  "inputTokens": 67,
+  "outputTokens": 257,
+  "latencyMs": 5410,
+  "costUsd": 0.0008112,
+  "truncated": false
+}

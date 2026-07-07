@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-019",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess the risk: A steel fabrication company plans to begin operations with a new robotic welding cell. The cell will perform MIG welding on structural steel components that require certified weld procedures (WPS). Risks include: weld parameter drift, insufficient NDE coverage on robot welds, operator intervention in automated cycle, UV/fume exposure during manual loading, and qualification of robot welds under AWS D1.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"riskLevel\":\"Moderate\",\"likelihood\":\"Moderate\",\"impact\":\"High\",\"controls\":\"Implement regular calibration checks for weld parameters, enhance NDE protocols specifically for robotic welds, limit operator intervention with clear procedural guidelines, provide UV/fume protection gear and training, and ensure robot welds are qualified under AWS D1.1 through rigorous testing and documentation.\"}",
+  "inputTokens": 151,
+  "outputTokens": 78,
+  "latencyMs": 1028,
+  "costUsd": 0.0003704,
+  "truncated": false
+}

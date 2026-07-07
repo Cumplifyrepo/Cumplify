@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-047",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "One colleague insists the lifecycle perspective in ISO 14001 only applies when identifying aspects; another says it only applies to operational control. Which clauses actually involve lifecycle thinking? Cite both.",
+  "response": "In ISO 14001, the lifecycle perspective is integrated into several clauses, but it is particularly emphasized in the following two:\n\n1. **Clause 4: Context of the Organization**\n   - While not explicitly mentioning \"lifecycle,\" this clause requires organizations to understand the external and internal issues that are relevant to their purpose and that affect their ability to achieve the intended outcomes of their environmental management system (EMS). This includes considering the environmental conditions and impacts associated with the organization’s activities, products, and services over their entire lifecycle.\n\n2. **Clause 6.1: Actions to Address Risks and Opportunities**\n   - This clause requires the organization to determine the environmental aspects of its activities, products, and services that it can control and those that it can influence, and to determine the associated environmental impacts, considering a lifecycle perspective. This means that when identifying aspects and impacts, the organization should consider all stages of the lifecycle of its products and services, from raw material extraction through end-of-life disposal.\n\nWhile the lifecycle perspective is most explicitly required in Clause 6.1 for identifying aspects and impacts, it also informs other parts of the standard, including operational control (Clause 8) where the organization must plan and implement the necessary controls and measures to manage significant environmental aspects. Therefore, although lifecycle thinking is crucial when identifying aspects, it also plays a role in ensuring effective operational control by informing the measures taken to manage environmental impacts throughout the lifecycle of products and services.",
+  "inputTokens": 39,
+  "outputTokens": 299,
+  "latencyMs": 4038,
+  "costUsd": 0.0009880000000000002,
+  "truncated": false
+}

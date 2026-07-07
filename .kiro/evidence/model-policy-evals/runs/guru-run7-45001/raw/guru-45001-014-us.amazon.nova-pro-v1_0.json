@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-014",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 45001 clause requires us to identify workers and other interested parties, understand their needs and expectations, and decide which of those become legal or other requirements we must meet?",
+  "response": "The ISO 45001 clause that requires you to identify workers and other interested parties, understand their needs and expectations, and decide which of those become legal or other requirements you must meet is Clause 4, specifically Clause 4.1 \"Understanding the organization and its context\" and Clause 4.2 \"Understanding the needs and expectations of workers and other interested parties.\"\n\nHere’s a breakdown:\n\n### Clause 4.1: Understanding the Organization and its Context\nThis clause requires the organization to understand the external and internal issues that are relevant to its purpose and that affect its ability to achieve the intended outcomes of its Occupational Health and Safety (OH&S) management system. This includes considering the needs and expectations of relevant interested parties.\n\n### Clause 4.2: Understanding the Needs and Expectations of Workers and Other Interested Parties\nThis clause requires the organization to:\n- Identify the interested parties that are relevant to the OH&S management system.\n- Determine the relevant needs and expectations of these interested parties.\n- Determine which of these needs and expectations become legal or other requirements.\n\n### Additional Relevant Clauses\nWhile Clauses 4.1 and 4.2 are primary, other clauses also play a role:\n- **Clause 6.1.2:** When planning to address risks and opportunities, the organization must take into account the requirements of interested parties.\n- **Clause 6.1.3:** When determining the scope of the OH&S management system, the organization must consider the issues identified in Clause 4.1 and the needs and expectations of interested parties identified in Clause 4.2.\n\nIn summary, Clauses 4.1 and 4.2 are central to identifying and understanding the needs and expectations of workers and other interested parties, and determining the requirements that the organization must meet.",
+  "inputTokens": 39,
+  "outputTokens": 370,
+  "latencyMs": 1594,
+  "costUsd": 0.0012152,
+  "truncated": false
+}

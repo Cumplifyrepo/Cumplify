@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-024",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "What does ISO 14001 require us to figure out about interested parties like regulators, neighbors, and customers, and which clause covers it?",
+  "response": " ISO 14001 requires organizations to identify and understand their **interested parties** and their **needs and expectations** that are relevant to the environmental management system.\n\n## What You Need to Figure Out\n\n| Aspect | What to Determine |\n|--------|-------------------|\n| **Who they are** | Regulators, neighbors, customers, employees, investors, suppliers, community groups, NGOs, etc. |\n| **Their needs & expectations** | What they require or expect regarding your environmental performance |\n| **Which are relevant** | Which needs/expectations become **compliance obligations** or otherwise affect your EMS |\n\nExamples:\n- **Regulators** → permit conditions, reporting requirements, legal standards\n- **Neighbors** → noise limits, odor control, dust, traffic concerns\n- **Customers** → environmental specifications, green procurement requirements, carbon disclosure\n\n## The Clause\n\n**Clause 4.2: Understanding the needs and expectations of interested parties**\n\nThis is part of **Context of the Organization (Clause 4)** and feeds into:\n- Clause 4.3 (determining scope of the EMS)\n- Clause 6.1.3 (compliance obligations)\n- Clause 9.1.2 (evaluation of compliance)\n\n## Key Point\n\nYou don't need to address *all* needs/expectations—only those **relevant to your EMS**. The standard distinguishes between general interested party concerns and those that translate into compliance obligations or other requirements your EMS must address.",
+  "inputTokens": 55,
+  "outputTokens": 298,
+  "latencyMs": 6084,
+  "costUsd": 0.000927,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-043",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our supervisor scrapped a batch of defective brackets, logged it, and closed the record as 'corrective action complete.' The auditor disagreed with that closure. Which ISO 9001 clause actually covers scrapping and dispositioning the defective parts themselves, and which one covers eliminating the root cause so the problem can't recur?",
+  "response": " I'll break this down by the two distinct activities your supervisor conflated into one closure.\n\n## Scrapping/Dispositioning Defective Product: **Clause 8.7 (Control of Nonconforming Outputs)**\n\nThis covers the immediate handling of nonconforming product:\n- Identifying and controlling nonconforming outputs\n- Deciding disposition (scrap, rework, concession, etc.)\n- Maintaining records of nonconformities and subsequent actions\n\n**Scrapping the brackets and logging it satisfies this clause.** The product is dealt with.\n\n---\n\n## Eliminating Root Cause to Prevent Recurrence: **Clause 10.2 (Nonconformity and Corrective Action)**\n\nThis requires:\n- Reacting to nonconformity (containment)\n- **Evaluating the need for action to eliminate *causes***\n- Implementing needed actions\n- Reviewing effectiveness of corrective action\n\n**This is where your supervisor fell short.** Scrapping parts reacts to the symptom; it doesn't address why the defect occurred (machine setup error? training gap? material issue?).\n\n---\n\n## The Auditor's Valid Objection\n\nThe supervisor treated product disposition as corrective action completion. Under 10.2, \"corrective action\" specifically means addressing root causes to prevent recurrence—not merely removing the defective items.\n\nThe record should show:\n- Root cause analysis\n- Actions taken on the cause\n- Verification that the fix worked\n\nWithout this, the 10.2 requirement is unfulfilled regardless of how well 8.7 was executed.",
+  "inputTokens": 91,
+  "outputTokens": 308,
+  "latencyMs": 250910,
+  "costUsd": 0.0009786,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-027",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "When writing our EMS scope statement, what does ISO 14001 require us to take into account and how must the scope be recorded? Cite the clause.",
+  "response": " According to ISO 14001:2015, the requirements for the scope of the environmental management system are found in **Clause 4.3 Determining the scope of the environmental management system**.\n\n## What ISO 14001 Requires You to Take Into Account\n\nThe organization must determine the scope of its EMS by considering:\n\n1. **Clause 4.3(a):** **External and internal issues** referred to in Clause 4.1 (the context of the organization)\n\n2. **Clause 4.3(b): ** **Compliance obligations** referred to in Clause 4.2 (needs and expectations of interested parties)\n\n3. **Clause 4.3(c): ** **Organizational units, functions, and physical boundaries**\n\n4. **Clause 4.3(d): ** **Activities, products, and services**\n\n5. **Clause 4.3(e): ** **Its authority and ability to exercise control and influence**\n\n## How the Scope Must Be Recorded\n\nThe scope must be **maintained as documented information** (Clause 4.3 final sentence). This means it must be formally documented and kept up to date.\n\n## Additional Requirement\n\nThe scope must be **available to interested parties** (Clause 4.3 final sentence).\n\n## Key Points\n\n- The scope should clearly define what is included within the EMS boundaries\n- It must be realistic and reflect actual organizational control and influence\n- It cannot be used to exclude activities, products, or services that have or can have significant environmental aspects, or to evade compliance obligations\n- The scope should be consistent with the organization's purpose and strategic direction",
+  "inputTokens": 59,
+  "outputTokens": 329,
+  "latencyMs": 10206,
+  "costUsd": 0.0010224000000000001,
+  "truncated": false
+}

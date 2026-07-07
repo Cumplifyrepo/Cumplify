@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-022",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Our plant manager's default answer to every risk is 'buy more PPE.' Per ISO 45001, in what order are we supposed to work through control options before PPE becomes acceptable?",
+  "response": "ISO 45001, the international standard for occupational health and safety management systems, outlines a hierarchy of controls to manage risks. This hierarchy is designed to help organizations systematically address hazards in the most effective manner. The hierarchy, in order of preference, is as follows:\n\n1. **Elimination**: Remove the hazard entirely. This is the most effective control measure as it completely removes the risk.\n   - Example: Changing a process to avoid the use of a hazardous chemical.\n\n2. **Substitution**: Replace the hazard with something less hazardous.\n   - Example: Using a less toxic chemical in place of a highly toxic one.\n\n3. **Engineering Controls**: Isolate people from the hazard using physical changes to the workplace.\n   - Example: Installing guards on machinery or ventilation systems to remove harmful fumes.\n\n4. **Administrative Controls**: Change the way people work to reduce their exposure to the hazard.\n   - Example: Implementing job rotation to limit exposure time, providing training, or establishing procedures and policies.\n\n5. **Personal Protective Equipment (PPE)**: Use equipment to protect the worker. This is the least preferred method because it relies on human behavior and doesn’t remove the hazard.\n   - Example: Gloves, safety glasses, hearing protection, etc.\n\nIn accordance with ISO 45001, PPE should only be considered after the other control measures have been evaluated and implemented where feasible. The standard emphasizes that PPE should be the last line of defense because it doesn’t eliminate or reduce the hazard at the source.",
+  "inputTokens": 42,
+  "outputTokens": 311,
+  "latencyMs": 2399,
+  "costUsd": 0.0010288,
+  "truncated": false
+}

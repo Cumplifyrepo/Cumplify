@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-004",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're a food processor and our auditor asked how the thermometers and scales we use for product checks tie back to a recognized reference. Which ISO 9001 clause requires calibration that is traceable to national or international measurement standards?",
+  "response": " The ISO 9001 clause you're looking for is **7.1.5.2 Measurement traceability**.\n\nThis clause requires that when measurement traceability is a requirement or is considered by the organization to provide confidence in the validity of measurement results, measuring equipment shall be:\n\n- **Calibrated or verified at specified intervals**, or prior to use, against **measurement standards traceable to international or national measurement standards**; where no such standards exist, the basis used for calibration or verification shall be retained as documented information\n\nFor your food processing context, this means your thermometers and scales used for product checks need calibration certificates showing traceability to recognized standards (such as NIST in the US, NPL in the UK, or equivalent national metrology institutes).\n\n**Related requirements to also consider:**\n- **7.1.5.1** - General requirements for monitoring and measuring resources\n- **7.1.5.2 a)** - Equipment identification to determine its calibration status\n- **7.1.5.2 b)** - Protection from damage/deterioration during handling, maintenance, storage\n\nYour auditor is likely verifying that you have documented calibration procedures, schedules, records, and evidence of traceability for equipment used to verify product conformity.",
+  "inputTokens": 72,
+  "outputTokens": 254,
+  "latencyMs": 106239,
+  "costUsd": 0.0008052,
+  "truncated": false
+}

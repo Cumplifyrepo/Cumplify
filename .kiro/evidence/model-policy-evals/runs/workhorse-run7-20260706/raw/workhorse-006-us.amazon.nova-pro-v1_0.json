@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-006",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Assess the risk: A food manufacturer plans to switch from a single-source supplier of a critical allergen-free ingredient to a dual-source strategy. The new supplier is located in a region with less stringent food safety regulations. The ingredient is used in 40% of products marketed as allergen-free.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"riskLevel\":\"high\",\"likelihood\":\"moderate\",\"impact\":\"severe\",\"controls\":\"implement rigorous third-party audits, enhance internal quality checks, establish clear communication channels with suppliers, and maintain an emergency response plan\"}",
+  "inputTokens": 131,
+  "outputTokens": 46,
+  "latencyMs": 793,
+  "costUsd": 0.000252,
+  "truncated": false
+}

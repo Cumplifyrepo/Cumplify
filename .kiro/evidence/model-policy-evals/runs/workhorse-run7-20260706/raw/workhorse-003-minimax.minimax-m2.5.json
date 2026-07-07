@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-003",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Draft a procedure for environmental monitoring and measurement at a wastewater treatment plant. Include parameters (BOD, COD, TSS, pH, flow), sampling methodology, frequency, calibration of monitoring equipment, data analysis, exceedance response, and regulatory reporting. Align with ISO 14001 clause 9.1.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 164,
+  "outputTokens": 4096,
+  "latencyMs": 33200,
+  "costUsd": 0.0049644,
+  "truncated": true
+}

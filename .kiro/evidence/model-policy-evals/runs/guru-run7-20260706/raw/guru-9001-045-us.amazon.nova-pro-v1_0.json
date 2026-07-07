@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-045",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "I'm building our context analysis. Rising steel prices and a tight labor market feel like one bucket, while our biggest customer's new expectation for digital certificates feels like a different one. Which ISO 9001 clause covers internal and external issues, and which covers the requirements of interested parties?",
+  "response": "Certainly! Let's break down the relevant ISO 9001 clauses for your context analysis:\n\n### Internal and External Issues\nThe clause that specifically addresses both internal and external issues is **Clause 4: Context of the organization**. This clause requires the organization to understand the context in which it operates. \n\n- **4.1 Understanding the organization and its context**: This requires identifying internal and external issues that are relevant to the purpose and strategic direction of the organization. Examples of internal issues might include rising steel prices and a tight labor market, which can impact your operations and strategic planning.\n\n### Requirements of Interested Parties\nThe requirements of interested parties are covered under **Clause 4** as well, but more specifically:\n\n- **4.2 Understanding the needs and expectations of interested parties**: This requires identifying and understanding the needs and expectations of various stakeholders (interested parties) that are relevant to the Quality Management System (QMS). \n\nFor example, your biggest customer’s new expectation for digital certificates would fall under this category. Interested parties can include customers, employees, suppliers, regulatory bodies, and other stakeholders.\n\n### Summary\n- **Clause 4.1**: Focuses on understanding the internal and external issues that can affect your organization.\n- **Clause 4.2**: Focuses on identifying the needs and expectations of interested parties, including customers, which in your case includes the requirement for digital certificates.\n\nBy addressing these clauses, you ensure that your Quality Management System is aligned with both your operational context and the requirements of your stakeholders.",
+  "inputTokens": 61,
+  "outputTokens": 310,
+  "latencyMs": 3107,
+  "costUsd": 0.0010408000000000001,
+  "truncated": false
+}

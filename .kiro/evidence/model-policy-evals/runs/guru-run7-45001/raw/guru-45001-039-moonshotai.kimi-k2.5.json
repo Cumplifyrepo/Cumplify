@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-039",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our state just enacted stricter fall-protection rules for residential construction, effective January. Which ISO 45001 clauses require us to capture this new rule and then verify we're actually meeting it?",
+  "response": " I'll help you identify the relevant ISO 45001 clauses for capturing new legal requirements and verifying compliance.\n\n## Clauses for Capturing the New Rule\n\n**Clause 6.1.3 — Determination of legal requirements and other requirements**\n- You must identify and have access to up-to-date legal requirements applicable to your hazards, risks, and OH&S management system\n- This includes the new fall-protection regulations\n\n**Clause 4.3 — Determining the scope of the OH&S management system**\n- Ensure your scope encompasses residential construction activities covered by the rule\n\n## Clauses for Verifying Compliance\n\n**Clause 9.1.2 — Evaluation of compliance**\n- **This is your primary verification clause**\n- Requires you to evaluate compliance with legal requirements at planned intervals\n- Must retain documented information as evidence of compliance evaluation results\n\n**Clause 6.1.3 (continued)** — Also requires you to determine how these legal requirements apply to your organization and must be considered\n\n## Supporting Clauses\n\n| Clause | Purpose |\n|--------|---------|\n| 7.5.3 | Control of documented information (maintain current regulatory references) |\n| 7.2 | Competence (ensure workers/supervisors understand new requirements) |\n| 8.1.3 | Management of change (if procedures/equipment need updating) |\n| 9.3 | Management review (review compliance status at top level) |\n\n## Practical Steps\n\n1. **Document** the new rule in your legal register\n2. **Assess gaps** between current practices and new requirements\n3. **Update procedures**, training, and controls\n4. **Schedule compliance evaluation** (9.1.2) specifically for the January effective date\n5. **Retain evidence** of verification (inspections, audits, records)\n\nWould you like guidance on structuring the compliance evaluation or integrating this into your management review?",
+  "inputTokens": 64,
+  "outputTokens": 389,
+  "latencyMs": 18903,
+  "costUsd": 0.0012054000000000001,
+  "truncated": false
+}

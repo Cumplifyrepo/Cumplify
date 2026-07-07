@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-009",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Which ISO 14001 clause requires our top management to step back at planned intervals and review the whole EMS with defined inputs and outputs?",
+  "response": "The ISO 14001 clause that requires top management to step back at planned intervals and review the entire Environmental Management System (EMS) with defined inputs and outputs is:\n\n**Clause 9.3 — Management Review**\n\n### Key Details from Clause 9.3:\n- **Purpose**: To ensure the continued suitability, adequacy, and effectiveness of the EMS.\n- **Responsibility**: Top management must conduct management reviews at planned intervals.\n- **Inputs** (required): Include:\n  - Status of actions from previous management reviews\n  - Changes in internal and external issues\n  - Information on compliance obligations\n  - Performance and effectiveness of the EMS\n  - Degree of achievement of environmental objectives\n  - Resource adequacy\n  - Communication with interested parties\n  - Audit results\n  - Opportunities for improvement\n- **Outputs** (required): Include:\n  - Decisions and actions related to opportunities for improvement\n  - Any need for changes to the EMS\n  - Resource needs\n  - Changes to environmental policy or objectives\n\nThis clause is central to the **Plan-Do-Check-Act (PDCA)** cycle, specifically the “Check” and “Act” phases, ensuring continual improvement and leadership accountability.\n\n✅ So, the correct answer is: **Clause 9.3 — Management Review**.",
+  "inputTokens": 38,
+  "outputTokens": 270,
+  "latencyMs": 8375,
+  "costUsd": 0.00032932,
+  "truncated": false
+}

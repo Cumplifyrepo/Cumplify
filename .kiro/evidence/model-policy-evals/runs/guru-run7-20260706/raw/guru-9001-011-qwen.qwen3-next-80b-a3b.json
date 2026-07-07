@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-011",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We're a software company kicking off development of a new product module. Which ISO 9001 clause requires us to plan the design stages, reviews, verification and validation activities, and assign responsibilities up front?",
+  "response": "The ISO 9001 clause that requires you to plan the design stages, reviews, verification and validation activities, and assign responsibilities up front is:\n\n**Clause 8.3.2 — Design and development planning**\n\n### Here’s why:\n**ISO 9001:2015 Clause 8.3.2** states:\n\n> *The organization shall plan and control the design and development of products and services.  \n> During planning, the organization shall consider:  \n> a) the nature, duration, and complexity of activities;  \n> b) the required stages of design and development;  \n> c) the required design and development reviews, verifications, and validations;  \n> d) the responsibilities and authorities for design and development;  \n> e) the internal and external resources required;  \n> f) the requirements for subsequent provision of products and services;  \n> g) the involvement of customers and users;  \n> h) the potential for undesirable outcomes due to design and development;  \n> i) the requirements for control of changes.*\n\n### Key points relevant to your question:\n- **b)** Requires planning the **stages** of design and development.\n- **c)** Mandates planning for **reviews, verification, and validation** activities.\n- **d)** Requires assigning **responsibilities and authorities**.\n\nThis clause ensures that design and development are systematically planned and controlled from the outset — exactly what your software company needs to do when kicking off a new product module.\n\n> ✅ **Answer: Clause 8.3.2 — Design and development planning**\n\nThis is the foundational clause for structuring your software development lifecycle in compliance with ISO 9001.",
+  "inputTokens": 51,
+  "outputTokens": 346,
+  "latencyMs": 4371,
+  "costUsd": 0.00042234,
+  "truncated": false
+}

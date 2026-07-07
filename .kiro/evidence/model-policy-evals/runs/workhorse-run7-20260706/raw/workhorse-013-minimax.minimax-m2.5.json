@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-013",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Draft a procedure for hazard identification and risk assessment at a multi-story warehouse with automated storage and retrieval systems (AS/RS), forklift traffic, manual picking areas, loading docks, and battery charging stations. Address routine, non-routine, and emergency scenarios. Align with ISO 45001 clause 6.1.2.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 164,
+  "outputTokens": 4096,
+  "latencyMs": 47803,
+  "costUsd": 0.0049644,
+  "truncated": true
+}

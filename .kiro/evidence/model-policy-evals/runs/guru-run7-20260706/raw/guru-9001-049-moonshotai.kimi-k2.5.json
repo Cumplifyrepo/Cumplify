@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-049",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We adjusted the curing-oven temperature profile on one product line. Our quality engineer opened a full QMS change plan under the planning-of-changes clause, but this feels like a production-level change. Which ISO 9001 clause actually governs reviewing and controlling changes within production and service provision?",
+  "response": " The clause you're looking for is **ISO 9001:2015, Clause 8.5.6 — Control of changes**.\n\nThis clause specifically addresses changes to **production and service provision**, requiring that changes be:\n\n- **Reviewed** for potential impacts\n- **Implemented** in a controlled manner\n- **Authorized** before execution\n\nIt covers changes to processes, personnel, equipment, materials, methods, environment, etc. — exactly the scenario you describe with a curing-oven temperature profile adjustment.\n\n---\n\n**Where your quality engineer's approach fits:**\n\n| Clause | Scope | Typical Application |\n|--------|-------|---------------------|\n| **6.3** Planning of changes | **QMS changes** (systemic/structural) | New software, reorganized departments, revised procedures affecting multiple areas |\n| **8.5.6** Control of changes | **Production/service provision** | Process parameters, equipment settings, line configurations, work instructions |\n\n---\n\n**Practical distinction:**\n\n- **8.5.6** governs the *operational* change itself — ensuring the new temperature profile is validated, documented, and doesn't compromise product quality\n- **6.3** would apply if this change triggered broader QMS restructuring (e.g., new organizational responsibilities, new documented information requirements across multiple sites)\n\nUnless this oven adjustment necessitates systemic QMS changes, **8.5.6 is the primary applicable clause**. A full 6.3 change plan is likely over-engineering for a single process parameter modification, though your organization may have internal procedures requiring it.\n\nDoes your procedure distinguish between these two pathways?",
+  "inputTokens": 86,
+  "outputTokens": 328,
+  "latencyMs": 78020,
+  "costUsd": 0.0010356,
+  "truncated": false
+}

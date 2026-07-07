@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-034",
+  "modelId": "deepseek.v3.2",
+  "prompt": "We just learned our waste hauler has been mixing our hazardous waste with general trash. Which ISO 14001 clauses cover (a) the control we should exercise over this outsourced process, (b) our own legal responsibilities for that waste, and (c) fixing the failure? Cite all three.",
+  "response": "Based on the scenario, the relevant ISO 14001:2015 clauses are:\n\n**(a) Control over the outsourced process:** **Clause 8.1 (Operational planning and control)**.\n- Specifically, sub-clause **8.1** requires the organization to establish controls for its processes, including those that are outsourced, to ensure they are carried out as planned and in accordance with the environmental management system (EMS) requirements. Control of outsourced processes is explicitly addressed here.\n\n**(b) Our own legal responsibilities for that waste:** **Clause 6.1.3 (Compliance obligations)**.\n- This clause requires the organization to determine and have access to the legal requirements (compliance obligations) that apply to its environmental aspects—in this case, the management and disposal of hazardous waste. The organization remains legally responsible for its waste \"cradle-to-grave,\" even when outsourced.\n\n**(c) Fixing the failure:** **Clause 10.2 (Nonconformity and corrective action)**.\n- This clause requires the organization to react to the nonconformity (the mixing of hazardous waste), take action to control and correct it, deal with the consequences, and determine and eliminate the root cause to prevent recurrence.\n\n**Summary of Citations:**\n- (a) **Clause 8.1**\n- (b) **Clause 6.1.3**\n- (c) **Clause 10.2**\n\n**Important Note:** This failure also implicates other clauses (e.g., **9.1.2** for evaluating compliance, **8.2** for emergency preparedness, and **7.4** for communication with the external provider). However, the three clauses cited above are the most direct and specific to your three questions. Immediate action should include stopping the practice, securing the waste, notifying authorities if required, and initiating a corrective action process.",
+  "inputTokens": 65,
+  "outputTokens": 393,
+  "latencyMs": 6520,
+  "costUsd": 0.00076735,
+  "truncated": false
+}

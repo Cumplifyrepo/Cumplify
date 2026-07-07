@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-025",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I'm building the agenda for our annual OH&S management review. What safety-specific inputs does ISO 45001 expect top management to consider in that review?",
+  "response": " ISO 45001:2018 clause 9.3 specifies the management review requirements. For an OH&S management review, top management must consider these **safety-specific inputs**:\n\n## Performance & Outcomes\n- **OH&S performance**, including trends in:\n  - Incident investigations (including near-misses)\n  - Nonconformities and corrective actions\n  - Results of monitoring and measurement\n  - Audit findings\n\n## Consultation & Participation\n- **Fulfilment of worker participation** and consultation commitments\n- **Effectiveness of mechanisms** for worker involvement\n\n## Objectives & Legal Compliance\n- **Achievement of OH&S objectives**\n- **Status of action plans** to address risks and opportunities\n- **Compliance obligations** — extent of fulfilment and any changes\n\n## Resources & Competence\n- **Adequacy of resources** for the OH&S management system\n- **Competence needs** and training effectiveness\n\n## External & Internal Issues\n- **Changes in external/internal issues** relevant to OH&S (e.g., new regulations, organizational changes, new hazards)\n\n## Interested Parties\n- **Relevant information from interested parties**, including workers and their representatives\n\n## Improvement Opportunities\n- **Opportunities for continual improvement**\n\n---\n\n## Practical tip for your agenda\n\nStructure your review to explicitly address each input above, with data presented clearly. ISO 45001 also requires you to consider **outputs**: decisions on continual improvement opportunities, needed changes to the OH&S MS, and required resources.\n\nWould you like suggestions on how to structure the meeting or what data sources to prepare?",
+  "inputTokens": 57,
+  "outputTokens": 326,
+  "latencyMs": 5237,
+  "costUsd": 0.0010122000000000002,
+  "truncated": false
+}

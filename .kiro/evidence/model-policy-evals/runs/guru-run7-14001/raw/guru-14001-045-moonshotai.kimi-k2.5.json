@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-045",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We measure our stack emissions monthly and trend the data, but our auditor says that alone doesn't satisfy evaluation of compliance. Which ISO 14001 clause requires the distinct step of judging whether we're fulfilling our obligations and maintaining knowledge of our compliance status?",
+  "response": " The clause you're looking for is **ISO 14001:2015, Clause 9.1.2: Evaluation of compliance**.\n\nThis clause specifically requires your organization to:\n\n1. **Evaluate compliance** with legal and other requirements (not just monitor/measure)\n2. **Maintain knowledge and understanding** of its compliance status\n\nThe key distinction your auditor is making is that **monitoring/measurement** (Clause 9.1.1) and **trending data** are different from **evaluating whether you are actually compliant**. Trending shows direction; evaluation makes a determination.\n\nClause 9.1.2 requires you to establish, implement, and maintain a process(es) for evaluating compliance, including:\n- Determining frequency of compliance evaluation\n- Evaluating compliance and taking action if needed\n- Maintaining knowledge of compliance status\n- Retaining documented information as evidence of compliance evaluation results\n\nMany organizations conflate measurement with evaluation. Your monthly stack testing provides data, but you need a distinct step where you compare those results against your permit limits/regulatory requirements and formally document whether you're compliant or not.\n\nDoes your current system have that explicit \"yes/no/margin\" determination step?",
+  "inputTokens": 75,
+  "outputTokens": 243,
+  "latencyMs": 3941,
+  "costUsd": 0.0007740000000000001,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-033",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Our wastewater discharge permit is up for renewal and the new version has tighter zinc limits. Which ISO 14001 clauses cover updating our legal register with the new limits and then verifying we're actually meeting them? Cite both.",
+  "response": "Certainly! When dealing with the renewal of a wastewater discharge permit with tighter zinc limits under ISO 14001, you would primarily be concerned with the following clauses:\n\n1. **Clause 6.1.3 - Determination of applicable legal requirements:**\n   - This clause requires the organization to identify and have access to the legal requirements and other requirements to which the organization subscribes related to its environmental aspects. Updating your legal register with the new zinc limits would fall under this clause. \n\n2. **Clause 9.1.1 - General:**\n   - This clause covers the organization's requirement to perform internal audits at planned intervals to provide information on whether the Environmental Management System (EMS), including any updated legal requirements like the new zinc limits, conforms to:\n     - The planned arrangements,\n     - The requirements of ISO 14001, and\n     - Whether it is effectively implemented and maintained.\n   - Verifying that you are actually meeting the new zinc limits would be part of this internal audit process.\n\nBy adhering to these clauses, you ensure that your EMS remains compliant with updated legal requirements and that you are effectively managing your environmental performance.",
+  "inputTokens": 48,
+  "outputTokens": 239,
+  "latencyMs": 2197,
+  "costUsd": 0.0008032,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-041",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "After a laceration injury on the packaging line, our safety committee insists that shop-floor workers sit on the investigation team, not just supervisors. Which ISO 45001 clauses back them up?",
+  "response": " Your safety committee is on solid ground. Several ISO 45001:2018 clauses support worker participation in incident investigations:\n\n## Core Requirements\n\n**Clause 5.4 - Consultation and participation of workers**\n- Requires *\"processes for consultation and participation of non-managerial workers\"* in specific activities, including **incident investigation**\n- This is mandatory, not optional—workers must be involved, not merely informed\n\n**Clause 10.2 - Incident investigation**\n- Requires the organization to *\"evaluate the need for corrective action\"* and *\"communicate the results of the investigation\"*\n- Clause 5.4's participation requirement applies directly here\n\n## Supporting Clauses\n\n| Clause | Relevance |\n|--------|-----------|\n| **5.1 (Leadership)** | Top management must ensure worker participation |\n| **7.4 (Communication)** | Internal communication must reach appropriate levels—shop-floor workers are essential for accurate information |\n| **9.1.1 (Monitoring)** | Workers contribute to understanding what actually happens versus what's documented |\n\n## Why This Matters Practically\n\n- Workers often know *how* tasks are actually performed (workarounds, time pressures, equipment quirks)\n- Supervisors may miss contextual factors workers experience daily\n- Excluding workers undermines both investigation quality and trust in the process\n\n## Documentation Tip\n\nYour investigation records should explicitly note worker participation to demonstrate conformity during audits.\n\nWould you like guidance on structuring balanced worker-supervisor investigation teams?",
+  "inputTokens": 66,
+  "outputTokens": 301,
+  "latencyMs": 12435,
+  "costUsd": 0.0009425999999999999,
+  "truncated": false
+}

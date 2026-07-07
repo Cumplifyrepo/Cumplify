@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-004",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Beyond just tracking which regulations apply to us, which ISO 14001 clause requires us to periodically check whether we are actually meeting our compliance obligations?",
+  "response": "In the ISO 14001 standard, the clause that specifically requires organizations to periodically check whether they are meeting their compliance obligations is Clause 9.1.2, \"Evaluation of compliance.\"\n\nHere’s a breakdown of what this clause entails:\n\n### Clause 9.1.2: Evaluation of Compliance\n- **General Requirement**: The organization shall establish, implement, and maintain a process(es) to evaluate compliance with the applicable legal requirements and other requirements to which the organization subscribes related to its environmental aspects.\n  \n- **Periodic Evaluation**: The organization shall evaluate compliance:\n  - At planned intervals.\n  - When changes occur that could affect compliance.\n  \n- **Record Keeping**: Records of the results of the evaluations shall be maintained.\n\n### Key Points:\n1. **Process Establishment**: You need to have a defined process for evaluating compliance.\n2. **Planned Intervals**: This evaluation should be done regularly according to a schedule.\n3. **Change Management**: If there are any changes that could impact compliance (e.g., new regulations, changes in operations), an evaluation should be triggered.\n4. **Record Maintenance**: Keep records of these evaluations to demonstrate that the process is being followed and to provide evidence of compliance.\n\nBy adhering to Clause 9.1.2, organizations ensure they are not only aware of their compliance obligations but are also actively monitoring and assessing their adherence to these requirements.",
+  "inputTokens": 32,
+  "outputTokens": 289,
+  "latencyMs": 2002,
+  "costUsd": 0.0009503999999999999,
+  "truncated": false
+}

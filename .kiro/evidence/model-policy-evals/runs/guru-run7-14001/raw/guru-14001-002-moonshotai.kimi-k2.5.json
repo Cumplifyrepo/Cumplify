@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-002",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I'm the EHS manager at a chemical distributor and need to build a legal register. Which ISO 14001 clause requires us to determine the compliance obligations (legal and other requirements) that apply to our environmental aspects and keep access to them?",
+  "response": " The ISO 14001 clause you're looking for is **Clause 6.1.3: Compliance obligations**.\n\nThis clause requires your organization to:\n\n- **Determine** and have access to the compliance obligations (legal requirements and other requirements) related to its environmental aspects\n- **Determine how these compliance obligations apply** to the organization\n- **Take these compliance obligations into account** when establishing, implementing, maintaining, and continually improving its environmental management system\n\nFor a chemical distributor, this would include regulations such as:\n- Environmental permits and licenses\n- Hazardous waste regulations\n- Chemical storage and handling requirements\n- Spill prevention and reporting obligations\n- Transportation regulations (DOT, ADR, etc.)\n- REACH, TSCA, or equivalent chemical regulations\n- Air/water discharge permits\n\nThe legal register you build should document these identified requirements, their applicability, and how your organization ensures ongoing compliance.",
+  "inputTokens": 75,
+  "outputTokens": 181,
+  "latencyMs": 2756,
+  "costUsd": 0.0005880000000000001,
+  "truncated": false
+}

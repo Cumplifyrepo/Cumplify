@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-049",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "In ISO 9001, the clause immediately after operational planning and control (8.1) deals with requirements for products and services. Our new EHS coordinator assumed the numbering means the same thing in ISO 14001. What does the clause in that position actually cover in the environmental standard, and what is its number?",
+  "response": " In ISO 14001:2015, the clause immediately after operational planning and control (8.1) is **8.2 Emergency preparedness and response**.\n\nThis is a significant difference from ISO 9001. While ISO 9001:2015 clause 8.2 covers \"Requirements for products and services,\" ISO 14001:2015 uses that position for emergency preparedness and response—a critical environmental management element.\n\nThe numbering alignment between the two standards is intentional for the high-level structure (HLS), but the specific content differs based on each standard's purpose. Your EHS coordinator's assumption is a common misconception; the HLS provides consistent *structure* (numbered clauses), not identical *content*.\n\nKey point for your coordinator: ISO 14001:2015 does not have a direct equivalent to ISO 9001's \"requirements for products and services\" clause. Environmental aspects and compliance obligations are addressed in different clauses (6.1.2 and 6.1.3), and customer-related requirements aren't a central focus in the same way they are in quality management.",
+  "inputTokens": 92,
+  "outputTokens": 221,
+  "latencyMs": 3948,
+  "costUsd": 0.0007182,
+  "truncated": false
+}

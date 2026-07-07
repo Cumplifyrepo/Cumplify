@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-028",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Plan an internal audit: Scope: ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site. The site closed 89 CAPAs last year but 22% were reopened due to recurrence. Average CAPA age is 95 days (target: 60). Three major NCs from last external audit related to root cause analysis quality.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "\n\nANSWER: {\"scope\":\"Internal audit of ISO 9001:2015 clause 10.2 (Nonconformity and corrective action) covering all departments at the multi-product manufacturing site, focusing on CAPA effectiveness, recurrence, aging, and root cause analysis quality.\",\"criteria\":\"ISO 9001:2015 clause 10.2; internal CAPA procedure (e.g., CAP-001); root cause analysis methodology (5 Whys, Fishbone, etc.); performance indicators (CAPA closure rate, recurrence rate, average CAPA age); previous external audit nonconformities related to RCA quality.\",\"schedule\":\"Week 1-2: Audit planning - define scope, develop audit checklist, assign audit team.\\nWeek 3: Issue audit notification to all departments.\\nWeek 4-5: Conduct fieldwork - interviews, review CAPA records, evaluate root cause analyses, sample CAPA files across all departments.\\nWeek 6: Draft audit report - present findings, discuss corrective actions.\\nWeek 7-8: Follow-up - verify corrective action plans, close audit.\\nTotal duration: approx. 8 weeks.\"}",
+  "inputTokens": 180,
+  "outputTokens": 2459,
+  "latencyMs": 19877,
+  "costUsd": 0.0030047999999999993,
+  "truncated": false
+}

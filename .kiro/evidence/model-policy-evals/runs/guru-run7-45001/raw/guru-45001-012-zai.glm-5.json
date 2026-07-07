@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-012",
+  "modelId": "zai.glm-5",
+  "prompt": "Which ISO 45001 clause requires the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system to enhance safety performance?",
+  "response": "The specific clause that requires an organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system is **Clause 10.3**.\n\nHere is the exact text from the standard:\n\n**ISO 45001:2018, Clause 10.3 Continual improvement**\n\"The organization shall continually improve the suitability, adequacy and effectiveness of the OH&S management system to enhance OH&S performance.\"\n\nThis clause is part of **Section 10 (Improvement)**, which follows the PDCA (Plan-Do-Check-Act) cycle, with Clause 10.3 representing the final \"Act\" phase aimed at elevating safety standards.",
+  "inputTokens": 36,
+  "outputTokens": 135,
+  "latencyMs": 1264,
+  "costUsd": 0.00046800000000000005,
+  "truncated": false
+}

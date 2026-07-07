@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-036",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our food plant outsources nightly sanitation to a contract cleaning company, and their work directly affects our product conformity. Which ISO 9001 clause governs how we must control this externally provided process?",
+  "response": " The relevant ISO 9001 clause is **8.4 Control of externally provided processes, products and services**.\n\nSpecifically, **8.4.1** requires you to ensure that externally provided processes remain within your control, and **8.4.2** details the type and extent of controls you must apply.\n\nSince sanitation directly affects product conformity, this would typically be classified as **Type 2** in the standard's framework—an externally provided process performed on your premises. This triggers specific requirements including:\n\n- Defining both your controls and the supplier's controls in your agreement\n- Verification activities (e.g., inspections, audits of their methods)\n- Monitoring their performance against criteria\n- Retaining documented information on their competence and any actions taken\n\nYou should also consider whether this arrangement requires the cleaning company to be included in your **8.5.1** controlled conditions, particularly regarding documented information that describes the characteristics of the services and the results to be achieved.\n\nWould you like guidance on specific controls or documentation typically expected for sanitation outsourcing in food manufacturing?",
+  "inputTokens": 66,
+  "outputTokens": 215,
+  "latencyMs": 44025,
+  "costUsd": 0.0006845999999999999,
+  "truncated": false
+}

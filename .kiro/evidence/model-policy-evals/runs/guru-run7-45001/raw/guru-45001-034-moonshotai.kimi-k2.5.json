@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-034",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "A new hire starts on our night shift next week operating a shrink-wrap machine she's never used. Which ISO 45001 clauses cover making sure she is ready to work safely before her first solo shift?",
+  "response": " I'll identify the ISO 45001 clauses most relevant to ensuring your new hire is ready to work safely on the shrink-wrap machine.\n\n## Primary Clauses\n\n**7.2 Competence** — Requires the organization to ensure workers are competent based on education, training, or experience. For your night shift hire, this means verifying she has the skills to operate the shrink-wrap machine safely before working alone.\n\n**7.3 Awareness** — Workers must be aware of the OH&S policy, hazards, emergency procedures, and their rights. She needs to know the specific risks of the machine and night shift conditions.\n\n**8.1.3 Management of Change** — Covers operational changes including new personnel. Starting a new hire on night shift (with reduced supervision) constitutes a change requiring planning to manage OH&S risks.\n\n## Supporting Clauses\n\n**6.1.2 Hazard Identification** — Must identify hazards associated with the machine and night shift work (fatigue, limited supervision, emergency response delays).\n\n**8.2 Emergency Preparedness and Response** — She needs to know how to respond if something goes wrong when fewer people are around.\n\n**9.1.1 Monitoring and Measurement** — You should verify her readiness through assessment before solo work begins.\n\n## Practical Application\n\n| Requirement | Night Shift Consideration |\n|-------------|--------------------------|\n| Supervised practice | Who trains her when dayshift trainers are gone? |\n| Competency verification | How do you assess her before she's alone? |\n| Emergency procedures | Does she know who to call at night? |\n\nWould you like guidance on specific controls for night shift new hire transitions?",
+  "inputTokens": 67,
+  "outputTokens": 327,
+  "latencyMs": 16576,
+  "costUsd": 0.0010211999999999999,
+  "truncated": false
+}

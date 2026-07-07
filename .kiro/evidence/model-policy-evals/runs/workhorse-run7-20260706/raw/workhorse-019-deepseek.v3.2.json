@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-019",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Assess the risk: A steel fabrication company plans to begin operations with a new robotic welding cell. The cell will perform MIG welding on structural steel components that require certified weld procedures (WPS). Risks include: weld parameter drift, insufficient NDE coverage on robot welds, operator intervention in automated cycle, UV/fume exposure during manual loading, and qualification of robot welds under AWS D1.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n    \"riskLevel\": \"High\",\n    \"likelihood\": \"Moderate\",\n    \"impact\": \"Severe\",\n    \"controls\": \"Implement real-time weld monitoring with alarms for parameter drift; require 100% NDE (UT/RT) on all robot welds until process is validated; use light curtains/interlocks to prevent unsafe operator intervention; enforce PPE (auto-darkening helmets, respirators) and local exhaust ventilation; conduct full AWS D1.1 procedure qualification and performance qualification (WPQ) for the robotic cell before production.\"\n}\n```\nANSWER: {\"riskLevel\": \"High\", \"likelihood\": \"Moderate\", \"impact\": \"Severe\", \"controls\": \"Implement real-time weld monitoring with alarms for parameter drift; require 100% NDE (UT/RT) on all robot welds until process is validated; use light curtains/interlocks to prevent unsafe operator intervention; enforce PPE (auto-darkening helmets, respirators) and local exhaust ventilation; conduct full AWS D1.1 procedure qualification and performance qualification (WPQ) for the robotic cell before production.\"}",
+  "inputTokens": 157,
+  "outputTokens": 232,
+  "latencyMs": 4755,
+  "costUsd": 0.00052654,
+  "truncated": false
+}

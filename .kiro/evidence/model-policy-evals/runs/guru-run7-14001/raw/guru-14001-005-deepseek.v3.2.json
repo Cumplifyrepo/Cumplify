@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-005",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Which ISO 14001 clause requires top management to establish an environmental policy containing specific mandatory commitments?",
+  "response": "According to ISO 14001:2015, the requirement for top management to establish an **environmental policy containing specific mandatory commitments** is found in **Clause 5.1: Leadership and commitment**, with the detailed requirements for the content of the policy specified in **Clause 5.2: Environmental policy**.\n\nHere’s the breakdown:\n\n1.  **Clause 5.1 (Leadership and commitment)** places the overall responsibility on top management to demonstrate leadership and commitment by **ensuring the environmental policy is established**. It states that top management must \"establish, implement and maintain\" the policy.\n\n2.  **Clause 5.2 (Environmental policy)** details **what specific mandatory commitments must be included** in that policy. According to 5.2, the environmental policy must include commitments to:\n    *   **Protection of the environment**, including prevention of pollution and other specific commitments (e.g., sustainable resource use, climate change mitigation, biodiversity protection).\n    *   **Fulfilment of compliance obligations**.\n    *   **Continual improvement** of the environmental management system to enhance environmental performance.\n\nTherefore, while the *responsibility* is assigned in **Clause 5.1**, the *specific content requirements* for the policy are mandated in **Clause 5.2**.\n\n**In summary, the direct answer to your question is Clause 5.2, but it is intrinsically linked to the leadership requirement in Clause 5.1.** For an organization to be conformant, top management (5.1) must ensure the policy is established and contains all the elements listed in 5.2.",
+  "inputTokens": 23,
+  "outputTokens": 337,
+  "latencyMs": 6505,
+  "costUsd": 0.00063771,
+  "truncated": false
+}

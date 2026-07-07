@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-027",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Assess the risk: A food manufacturer is transitioning from manual allergen cleaning verification (visual + ATP swabs) to an automated CIP (clean-in-place) validation system with inline sensors. The transition period requires running both systems in parallel. Risks: sensor calibration drift, false negatives during validation period, operator complacency relying on automated pass, changeover time pressure.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "\n\nANSWER: {\"riskLevel\":\"High\",\"likelihood\":\"Moderate\",\"impact\":\"Severe\",\"controls\":\"Implement regular sensor calibration and verification; use parallel manual verification during validation; set up automated alerts for sensor drift; provide operator training on new system and importance of manual checks; establish clear SOPs for changeover with time buffers; conduct periodic audits and data review; require manual sign-off before product release; use statistical process control to monitor sensor performance.\"}",
+  "inputTokens": 179,
+  "outputTokens": 2369,
+  "latencyMs": 38455,
+  "costUsd": 0.0028964999999999998,
+  "truncated": false
+}

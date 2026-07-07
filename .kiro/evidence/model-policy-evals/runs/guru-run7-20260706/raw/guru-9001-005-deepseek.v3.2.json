@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-005",
+  "modelId": "deepseek.v3.2",
+  "prompt": "We're standing up a supplier qualification program for our castings vendors. Which ISO 9001 clause requires us to define criteria for evaluating, selecting, monitoring and re-evaluating external providers?",
+  "response": "The requirement to define criteria for evaluating, selecting, monitoring, and re-evaluating external providers (which includes your castings vendors) is found in **ISO 9001:2015, Clause 8.4.1**.\n\nHere is the breakdown:\n\n**Clause 8.4: Control of externally provided processes, products and services**\n*   **Sub-clause 8.4.1: General** states:\n    > \"The organization shall ensure that externally provided processes, products and services conform to requirements.\n    > The organization shall:\n    > a) ensure that externally provided processes, products and services do not adversely affect the organization's ability to consistently deliver conforming products and services to its customers;\n    > b) **define and apply criteria for the evaluation, selection, monitoring of performance, and re-evaluation of external providers**, based on their ability to provide processes, products or services in accordance with requirements;\n    > c) determine and apply the necessary controls...\"\n\n**Key Points for Your Supplier Qualification Program:**\n\n1.  **Evaluation & Selection:** Your program must define *how* you will assess potential castings vendors before approving them (e.g., audits, questionnaires, sample reviews, past performance).\n2.  **Monitoring:** You need criteria for *how* you will track ongoing performance (e.g., on-time delivery, quality metrics, corrective action responsiveness).\n3.  **Re-evaluation:** The standard requires a defined process for *periodically re-assessing* approved vendors to ensure they continue to meet your criteria.\n\nTherefore, when building your supplier qualification program, you must create documented procedures and criteria that satisfy **Clause 8.4.1**, specifically part **b)**. This clause is the direct answer to your question.",
+  "inputTokens": 43,
+  "outputTokens": 358,
+  "latencyMs": 6114,
+  "costUsd": 0.00068896,
+  "truncated": false
+}

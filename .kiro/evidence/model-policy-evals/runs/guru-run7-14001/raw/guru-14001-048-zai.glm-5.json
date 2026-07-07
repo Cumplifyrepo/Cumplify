@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-048",
+  "modelId": "zai.glm-5",
+  "prompt": "In ISO 9001, the second sub-clause under monitoring and measurement covers customer satisfaction. In ISO 14001, what does the sub-clause in that same position require instead, and what is its clause number?",
+  "response": "In ISO 14001 (specifically the 2015 version), the sub-clause in that same position is **Clause 9.1.2**.\n\nInstead of customer satisfaction, this clause requires the organization to **evaluate compliance with its legal requirements and other requirements**.\n\nHere is the comparison of the structure:\n\n*   **ISO 9001:2015, Clause 9.1.2:** Customer Satisfaction\n*   **ISO 14001:2015, Clause 9.1.2:** Evaluation of Compliance\n\nWhile ISO 9001 focuses on monitoring the \"voice of the customer\" to gauge quality performance, ISO 14001 focuses on verifying that the organization is meeting its environmental obligations (legal compliance).",
+  "inputTokens": 50,
+  "outputTokens": 149,
+  "latencyMs": 1828,
+  "costUsd": 0.0005268,
+  "truncated": false
+}

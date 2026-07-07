@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-024",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Plan an internal audit: Scope: ISO 45001 clause 5.4 (Consultation and participation of workers) at a manufacturing plant with 400 workers across 3 shifts, union representation, and a history of low engagement scores. Recent worker survey showed 60% feel their safety concerns are not addressed. Three near-miss reports in the last month cited 'management doesn't listen.'\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 176,
+  "outputTokens": 4096,
+  "latencyMs": 40279,
+  "costUsd": 0.004968,
+  "truncated": true
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-005",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're standing up a supplier qualification program for our castings vendors. Which ISO 9001 clause requires us to define criteria for evaluating, selecting, monitoring and re-evaluating external providers?",
+  "response": " The clause you're looking for is **ISO 9001:2015, Clause 8.4.1 — General**.\n\nThis clause specifically requires your organization to:\n\n> *\"ensure that externally provided processes, products and services conform to requirements\"* and to *\"determine and apply criteria for the evaluation, selection, monitoring of performance, and re-evaluation of external providers, based on their ability to provide processes or products and services in accordance with requirements.\"*\n\nFor your castings supplier qualification program, this means you'll need documented criteria covering areas such as:\n\n- **Technical capability** (casting processes, material specifications, dimensional tolerances)\n- **Quality performance** (defect rates, PPAP/FAIR submission quality)\n- **Delivery performance**\n- **Financial stability**\n- **Certification status** (IATF 16949, NADCAP, etc., as applicable)\n\nThe standard also requires you to retain documented information of these activities and any necessary actions arising from the evaluations.\n\nRelated sub-clauses you should also review:\n- **8.4.2** — Type and extent of control\n- **8.4.3** — Information for external providers",
+  "inputTokens": 64,
+  "outputTokens": 238,
+  "latencyMs": 56386,
+  "costUsd": 0.0007524,
+  "truncated": false
+}

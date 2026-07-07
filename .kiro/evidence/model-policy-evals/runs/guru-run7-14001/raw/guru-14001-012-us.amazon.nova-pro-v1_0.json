@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-012",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 14001 clause requires us to make sure the people whose work affects our environmental performance are competent, and to keep evidence of that competence?",
+  "response": "The requirement to ensure that people whose work affects your environmental performance are competent, and to keep evidence of that competence, is primarily addressed in ISO 14001:2015 under Clause 7, which deals with \"Support.\" Specifically, it is detailed in Clause 7.2, \"Competence.\"\n\nHere’s a breakdown of the relevant parts:\n\n### Clause 7.2: Competence\n- **General Requirement**: The organization shall determine the necessary competence of person(s) doing work under its control that affects its environmental performance.\n- **Ensuring Competence**: When applicable, the organization shall:\n  - Ensure that these persons are competent on the basis of appropriate education, training, or experience.\n  - Where applicable, take actions to acquire the necessary competence, and evaluate the effectiveness of the actions taken.\n  - Retain appropriate documented information as evidence of competence.\n\n### Key Points:\n1. **Determining Competence**: Identify the competence needs for roles that impact environmental performance.\n2. **Ensuring Competence**: Make sure that employees have the required education, training, or experience.\n3. **Actions for Competence**: If gaps in competence are identified, take appropriate actions to address them.\n4. **Retention of Documented Information**: Keep records to demonstrate that the necessary competence has been achieved and maintained.\n\nBy adhering to these requirements, organizations can ensure that their personnel are capable of performing their roles in a manner that supports the organization’s environmental objectives and compliance with ISO 14001.",
+  "inputTokens": 33,
+  "outputTokens": 309,
+  "latencyMs": 2060,
+  "costUsd": 0.0010152,
+  "truncated": false
+}

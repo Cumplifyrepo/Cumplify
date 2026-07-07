@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-048",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "We faithfully log and answer every customer complaint, and my boss says that means customer satisfaction is fully covered. Which ISO 9001 clause covers the complaint and feedback communication channel, and which separate clause requires us to monitor how customers perceive our performance?",
+  "response": "In the ISO 9001:2015 standard, the requirements related to customer complaints and feedback, as well as monitoring customer perceptions, are covered under different clauses:\n\n1. **Complaint and Feedback Communication Channel:**\n   - **Clause 8.5.2: Corrective Actions** – This clause requires the organization to address the root causes of nonconformities, including customer complaints, and to implement actions to prevent their recurrence. It implies that there should be a process in place to receive, document, and address customer complaints.\n   - **Clause 9.1.2: Customer Satisfaction** – While this clause primarily focuses on monitoring and measuring customer satisfaction, it also implies that there should be mechanisms for receiving and handling customer feedback, including complaints.\n\n2. **Monitoring Customer Perceptions:**\n   - **Clause 9.1.2: Customer Satisfaction** – This clause specifically requires the organization to monitor information relating to customer perceptions as one of the measurements of customer satisfaction. It means you need to have processes in place to gather and analyze data on how customers perceive your products, services, and overall performance.\n   - **Clause 9.1.1: Monitoring and Measurement of Customer Satisfaction** – This clause requires the organization to determine the methods for obtaining, monitoring, and reviewing this information. It emphasizes the need for systematic approaches to understand and improve customer satisfaction.\n\nIn summary, while logging and addressing customer complaints is part of the corrective actions process under Clause 8.5.2, monitoring how customers perceive your performance falls under Clauses 9.1.1 and 9.1.2. These clauses together ensure a comprehensive approach to customer satisfaction and continuous improvement.",
+  "inputTokens": 51,
+  "outputTokens": 347,
+  "latencyMs": 2709,
+  "costUsd": 0.0011511999999999998,
+  "truncated": false
+}

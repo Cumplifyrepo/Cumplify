@@ -1,0 +1,11 @@
+{
+  "taskId": "editor-ai-005",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Suggest improvements to this management review agenda for a food processing company: 'Agenda: 1. Review last minutes. 2. Quality data. 3. Any other business.' Align with ISO 9001 clause 9.3.2 required inputs and add missing items for an integrated QMS/EMS review.\n\nReturn a single JSON object with EXACTLY these fields:\n- completedSection (string): the completed or improved document section\n- references (string): references to standards, regulations, or sources\n- clauseAlignment (string): explanation of alignment with ISO clause requirements\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"completedSection\": \"Agenda: 1. Review last minutes. 2. Review of internal and external issues. 3. Review of customer satisfaction and feedback. 4. Quality data and performance metrics. 5. Process performance and conformity of products and services. 6. Status of nonconformities and corrective actions. 7. Follow-up actions from previous management reviews. 8. Opportunities for improvement. 9. Any other business.\", \"references\": \"ISO 9001:2015, Clause 9.3; ISO 14001:2015, Clause 9.3\", \"clauseAlignment\": \"Alignment with ISO 9001:2015 Clause 9.3.2, which requires the review of internal and external issues, customer satisfaction, quality objectives, audit results, process performance, nonconformities, and opportunities for improvement. Integrated with ISO 14001:2015 for environmental management considerations.\"}",
+  "inputTokens": 134,
+  "outputTokens": 216,
+  "latencyMs": 2110,
+  "costUsd": 0.0007984,
+  "truncated": false
+}

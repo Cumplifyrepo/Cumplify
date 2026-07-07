@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-001",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Draft a procedure for control of nonconforming outputs at a CNC machining facility. Cover detection methods (in-process inspection, final inspection, customer returns), segregation requirements, disposition authority, rework/re-inspection, and concession process. Align with ISO 9001 clause 8.7.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 157,
+  "outputTokens": 4096,
+  "latencyMs": 70015,
+  "costUsd": 0.004962299999999999,
+  "truncated": true
+}

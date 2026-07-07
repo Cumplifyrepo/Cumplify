@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-008",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're about to hand our entire janitorial and facilities-upkeep function to an outside firm. Which ISO 45001 sub-clause requires us to make sure outsourced functions and processes stay controlled?",
+  "response": " The relevant ISO 45001 sub-clause is **8.1.4.2 Outsourcing**.\n\nThis clause requires your organization to ensure that outsourced functions and processes affecting your occupational health and safety management system are **controlled**. Specifically, you need to:\n\n- Establish and implement criteria for the evaluation, selection, and monitoring of external providers\n- Define and communicate the controls you expect them to apply\n- Ensure these outsourced activities conform to your OH&S requirements\n\nSince you're outsourcing your entire janitorial and facilities-upkeep function, this clause is particularly critical. You'll need documented arrangements covering hazards like chemical handling, working at heights, slip risks, and any other OH&S aspects relevant to that work.\n\nYou should also consider **8.1.4.1 General** (on procurement) and **8.1.4.3 Contractors**, as these often intersect with outsourcing arrangements in facilities management contexts.",
+  "inputTokens": 65,
+  "outputTokens": 181,
+  "latencyMs": 7816,
+  "costUsd": 0.000582,
+  "truncated": false
+}

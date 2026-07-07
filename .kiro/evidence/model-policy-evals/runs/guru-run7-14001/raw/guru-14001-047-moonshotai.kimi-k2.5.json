@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-047",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "One colleague insists the lifecycle perspective in ISO 14001 only applies when identifying aspects; another says it only applies to operational control. Which clauses actually involve lifecycle thinking? Cite both.",
+  "response": " Both colleagues are partially correct, but incomplete. Lifecycle thinking applies to **both** aspects identification **and** operational control, plus additional clauses.\n\n## Clauses explicitly requiring lifecycle perspective:\n\n### 1. **Clause 6.1.2 Environmental aspects**\n> \"The organization shall determine environmental aspects... **within the defined scope of the environmental management system**, taking into account a **life cycle perspective**\"\n\nThis is where your first colleague is correct. Lifecycle thinking applies when identifying aspects—considering inputs, outputs, and potential environmental impacts from raw material acquisition through production, use, and end-of-life.\n\n### 2. **Clause 8.1 Operational planning and control**\n> \"The organization shall... **control**... processes, **taking into account a life cycle perspective**\"\n\nThis is where your second colleague is correct. Lifecycle thinking applies to how you actually control operations.\n\n---\n\n## Additional relevant clauses:\n\n| Clause | Requirement |\n|--------|-------------|\n| **8.2 Emergency preparedness and response** | Consider lifecycle stages where emergencies could occur |\n| **9.3 Management review** | Review information on lifecycle perspective implementation |\n\n## Key distinction:\n\n| Aspect | Focus |\n|--------|-------|\n| **6.1.2** | *Identifying* what could impact the environment |\n| **8.1** | *Controlling* how you actually manage those impacts operationally |\n\nThe 2015 revision intentionally expanded lifecycle from a narrow \"purchasing\" focus (in the 2004 version) to these broader applications. Neither colleague has the complete picture.",
+  "inputTokens": 64,
+  "outputTokens": 320,
+  "latencyMs": 5910,
+  "costUsd": 0.0009984000000000002,
+  "truncated": false
+}

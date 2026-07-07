@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-019",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "What does ISO 14001's operational planning and control requirement demand beyond writing procedures — for example around outsourced processes, planned changes, and lifecycle stages? Cite the clause.",
+  "response": " ISO 14001:2015 Clause 8.1 \"Operational planning and control\" requires significantly more than just documenting procedures. Here are the key demands beyond written procedures:\n\n## Outsourced Processes (8.1)\n\nThe organization must **control or influence** outsourced processes, with the type and extent of control determined by factors such as:\n- Its ability to share in the control\n- Its influence over the outsourced process\n- Its technical competence to define controls\n\nThe standard explicitly requires that outsourced processes that **meet the criteria for significant environmental aspects** must be controlled or influenced (8.1, second paragraph).\n\n## Planned Changes (8.1)\n\nPlanned changes must be **implemented in a controlled manner**, with consideration of their **environmental consequences** and potential **unintended consequences** before execution. This includes reviewing changes to:\n- Processes\n- Products\n- Services\n\n## Lifecycle Stages (8.1)\n\nThe organization must consider **each life cycle stage** where it can influence environmental aspects, specifically requiring controls or influence over:\n- **Design** of products/services\n- **Delivery** of products/services\n- **Use** of products/services\n- **End-of-life treatment** and **final disposal** of products\n\nThis applies to the extent of the organization's control or influence, recognizing that different organizations in a value chain have varying degrees of influence.\n\n## Additional Requirements\n\n- Establishing **operational criteria** (not just procedures)\n- **Implementing** the controls (not just planning them)\n- Maintaining **documented information** to the extent necessary for confidence that processes are carried out as planned\n\nThe 2015 revision shifted from prescriptive documentation requirements to a performance-based approach where documented information is determined by what is needed for process confidence.",
+  "inputTokens": 62,
+  "outputTokens": 358,
+  "latencyMs": 4871,
+  "costUsd": 0.0011112,
+  "truncated": false
+}

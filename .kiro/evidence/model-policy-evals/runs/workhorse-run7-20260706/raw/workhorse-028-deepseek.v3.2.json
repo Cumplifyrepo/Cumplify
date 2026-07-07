@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-028",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Plan an internal audit: Scope: ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site. The site closed 89 CAPAs last year but 22% were reopened due to recurrence. Average CAPA age is 95 days (target: 60). Three major NCs from last external audit related to root cause analysis quality.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "{\n  \"scope\": \"Internal audit of ISO 9001:2015 clause 10.2 (Nonconformity and corrective action) processes across all departments (e.g., production, quality, engineering, logistics, maintenance) at the multi-product manufacturing site.\",\n  \"criteria\": \"ISO 9001:2015 clause 10.2 requirements; internal documented procedures for NC and CAPA management; effectiveness criteria including recurrence rates, timeliness (target: 60-day average CAPA age), and root cause analysis quality.\",\n  \"schedule\": \"Audit preparation: 1 week; fieldwork: 2 weeks; reporting and follow-up: 1 week. Total timeline: 4 weeks, scheduled to begin on [Start Date].\"\n}\nANSWER: {\"scope\": \"Internal audit of ISO 9001:2015 clause 10.2 (Nonconformity and corrective action) processes across all departments (e.g., production, quality, engineering, logistics, maintenance) at the multi-product manufacturing site.\", \"criteria\": \"ISO 9001:2015 clause 10.2 requirements; internal documented procedures for NC and CAPA management; effectiveness criteria including recurrence rates, timeliness (target: 60-day average CAPA age), and root cause analysis quality.\", \"schedule\": \"Audit preparation: 1 week; fieldwork: 2 weeks; reporting and follow-up: 1 week. Total timeline: 4 weeks, scheduled to begin on [Start Date].\"}",
+  "inputTokens": 146,
+  "outputTokens": 311,
+  "latencyMs": 6144,
+  "costUsd": 0.00066587,
+  "truncated": false
+}

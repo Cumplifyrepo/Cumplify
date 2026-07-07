@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-037",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "A state inspector found our stormwater discharge exceeded permit limits — and our own internal checks never caught it. Which ISO 14001 clauses cover the compliance-evaluation process that failed and the corrective action we now owe? Cite both.",
+  "response": "The failure to detect the stormwater discharge exceeding permit limits — despite your internal checks — points to deficiencies in two key ISO 14001:2015 clauses:\n\n1. **Clause 9.1.1 – Monitoring, measurement, analysis, and evaluation**  \n   This clause requires organizations to determine what needs to be monitored and measured (including compliance with legal requirements such as stormwater discharge permits), the methods for monitoring and measurement, and when and where to perform them.  \n   ➤ *Your internal checks failed to detect the exceedance, indicating a gap in the design, implementation, or frequency of monitoring activities required under this clause.*\n\n2. **Clause 10.2 – Nonconformity and corrective action**  \n   This clause mandates that when nonconformities occur (such as exceeding permit limits), the organization must respond by taking corrective action to control and correct the nonconformity, evaluate the need for action to eliminate causes, and prevent recurrence.  \n   ➤ *Since the exceedance was not caught internally, your corrective action process must now address not only the immediate discharge issue but also the systemic failure in monitoring and evaluation that allowed it to go undetected.*\n\n**In summary:**  \n- **Clause 9.1.1** covers the *failed compliance evaluation* (i.e., the lack of effective monitoring).  \n- **Clause 10.2** covers the *corrective action you now owe* to address the nonconformity and prevent recurrence.\n\nYou must now review and improve your monitoring procedures (9.1.1) and implement a robust corrective action process (10.2) to ensure future compliance.",
+  "inputTokens": 58,
+  "outputTokens": 345,
+  "latencyMs": 4561,
+  "costUsd": 0.00042212,
+  "truncated": false
+}

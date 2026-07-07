@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-004",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 45001 clause requires us to apply the hierarchy of controls when we work to eliminate hazards and reduce OH&S risks?",
+  "response": " The requirement to apply the **hierarchy of controls** when eliminating hazards and reducing OH&S risks is found in **Clause 8.1.2: Eliminating hazards and reducing OH&S risks** of ISO 45001:2018.\n\nThis clause specifically requires organizations to establish, implement, and maintain processes for eliminating hazards and reducing OH&S risks using the following hierarchy:\n\n1. **Elimination** – removing the hazard\n2. **Substitution** – replacing the hazard with something less hazardous\n3. **Engineering controls** – isolating people from the hazard\n4. **Administrative controls** – changing the way people work\n5. **Personal protective equipment (PPE)** – protecting the individual\n\nThe hierarchy must be applied in this order of priority, with elimination being the most preferred and PPE being the last resort.",
+  "inputTokens": 53,
+  "outputTokens": 170,
+  "latencyMs": 3802,
+  "costUsd": 0.0005418,
+  "truncated": false
+}

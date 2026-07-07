@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-030",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "ISO 14001 treats continual improvement as its own requirement, separate from fixing individual problems. What exactly is supposed to continually improve, and under which clause?",
+  "response": " In ISO 14001:2015, continual improvement is indeed a distinct requirement with specific scope.\n\n## What Must Continually Improve\n\n**Clause 10.3** requires continual improvement of the **environmental management system** itself — not just fixing individual nonconformities (which is addressed separately in 10.2).\n\nThe standard specifies improvement in:\n- **Suitability** — remains appropriate to context\n- **Adequacy** — has the right elements\n- **Effectiveness** — achieves intended results\n\n## The Distinction\n\n| Activity | Clause | Focus |\n|----------|--------|-------|\n| Correcting nonconformities | 10.2 | Specific problems, incidents, failures |\n| Continual improvement | 10.3 | The EMS as a whole, over time |\n\n## What This Looks Like in Practice\n\nContinual improvement under 10.3 involves:\n- Enhancing environmental performance (though note: **Clause 6.2.1** separately requires continual improvement *of* environmental performance)\n- Refining processes based on monitoring, audits, management review\n- Advancing maturity of the EMS — better integration, more proactive approaches, improved engagement\n\n## Key Relationship\n\nClause 6.2.1 (environmental objectives) and 10.3 work together: objectives drive performance improvement, while 10.3 ensures the *system* evolves to support ever-better performance.\n\nThe 2015 revision strengthened this by embedding improvement throughout (risk-based thinking, lifecycle perspective) rather than treating it as an add-on.",
+  "inputTokens": 58,
+  "outputTokens": 318,
+  "latencyMs": 6693,
+  "costUsd": 0.0009888,
+  "truncated": false
+}

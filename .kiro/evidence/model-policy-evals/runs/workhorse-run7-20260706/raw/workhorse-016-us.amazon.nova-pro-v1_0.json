@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-016",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Plan an internal audit: Scope: ISO 14001 clause 8.1 (Operational planning and control) at a paint manufacturing facility. Focus areas: VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment. The facility had a minor spill incident 2 months ago and an EPA inspection is expected this quarter.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"scope\": \"ISO 14001 clause 8.1 (Operational planning and control) at a paint manufacturing facility focusing on VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment.\", \"criteria\": \"ISO 14001:2015 Environmental Management System standards, EPA regulations on VOC emissions, hazardous waste management, chemical storage, spill prevention, and wastewater treatment.\", \"schedule\": \"Pre-audit meeting: Week 1, Day 1; Document review: Week 1, Day 2-3; On-site audit: Week 2, Day 1-3; Audit report drafting: Week 3, Day 1-3; Management review meeting: Week 3, Day 4; Final audit report distribution: Week 4, Day 1.\"}",
+  "inputTokens": 131,
+  "outputTokens": 178,
+  "latencyMs": 2037,
+  "costUsd": 0.0006744,
+  "truncated": false
+}

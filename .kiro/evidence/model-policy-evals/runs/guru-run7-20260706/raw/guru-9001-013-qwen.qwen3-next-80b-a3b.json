@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-013",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We keep having disconnects about who tells whom when quality issues come up, internally and with customers. Which ISO 9001 clause requires us to determine what gets communicated about the QMS, when, to whom, how, and by whom?",
+  "response": "The ISO 9001 clause that requires you to determine **what** gets communicated about the Quality Management System (QMS), **when**, **to whom**, **how**, and **by whom** is:\n\n> **ISO 9001:2015 – Clause 7.4 – Communication**\n\n### Specifically:\n**Clause 7.4.1** states:\n> *\"The organization shall determine the internal and external communications relevant to the quality management system, including:  \n> a) what to communicate;  \n> b) when to communicate;  \n> c) with whom to communicate;  \n> d) how to communicate; and  \n> e) who is to communicate.\"*\n\nThis clause directly addresses the disconnects you're experiencing — whether internal (between departments, teams, or levels of management) or external (with customers, suppliers, regulators, etc.). It mandates a deliberate, documented approach to communication planning within the QMS.\n\n### Why this matters for your situation:\n- You’re seeing confusion about **who reports** quality issues to **whom** — this is a classic gap in defining “who is to communicate” and “with whom to communicate.”\n- You need to document communication flows for quality issues (e.g., customer complaints → QA → Production → Customer Service), including timing and methods (email, meetings, CRM, etc.).\n- This clause supports proactive communication, not just reactive firefighting.\n\n### Action Step:\nReview and update your **communication procedure** (or equivalent documented information) to explicitly define:\n- Types of quality issues (internal/external)\n- Escalation paths\n- Responsible roles for reporting\n- Tools/methods (e.g., nonconformance reports, customer feedback forms, daily huddles)\n- Timelines (e.g., “All customer complaints must be logged within 24 hours”)\n\nThis will directly satisfy Clause 7.4 and help eliminate the disconnects you’re experiencing.\n\n✅ **Answer: Clause 7.4 – Communication**",
+  "inputTokens": 59,
+  "outputTokens": 411,
+  "latencyMs": 7439,
+  "costUsd": 0.0005014599999999999,
+  "truncated": false
+}

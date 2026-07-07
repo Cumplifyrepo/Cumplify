@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-046",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "We documented regional drought risk as an external issue in our context analysis. Which ISO 14001 planning sub-clause then requires that context issue to feed into our determination of EMS risks and opportunities?",
+  "response": "The ISO 14001:2015 sub-clause that requires external context issues — such as regional drought risk — to feed into the determination of environmental management system (EMS) risks and opportunities is:\n\n**Clause 6.1.1 — General**\n\n> **6.1.1 General**  \n> *When establishing, implementing, maintaining and improving an environmental management system, the organization shall determine the risks and opportunities that need to be addressed to:  \n> a) ensure that the environmental management system can achieve its intended outcomes;  \n> b) prevent or reduce undesired effects, including adverse environmental impacts;  \n> c) achieve continual improvement.*\n\nThis sub-clause explicitly requires the organization to consider **external and internal issues** (from Clause 4.1 — Understanding the organization and its context) when identifying risks and opportunities. Since you documented **regional drought risk** as an external issue under Clause 4.1, Clause 6.1.1 mandates that this issue be analyzed and incorporated into your risk and opportunity assessment for the EMS.\n\nAdditionally, **Clause 6.1.2 — Environmental aspects** and **6.1.3 — Compliance obligations** also contribute to the risk and opportunity determination, but **6.1.1** is the overarching requirement that directly links the context (Clause 4.1) to the risk/opportunity analysis.\n\n### Therefore, the correct answer is:  \n> **Clause 6.1.1 — General**\n\nThis is where the context issue (drought risk) must be formally fed into your EMS risk and opportunity planning.",
+  "inputTokens": 50,
+  "outputTokens": 328,
+  "latencyMs": 9137,
+  "costUsd": 0.0004006,
+  "truncated": false
+}

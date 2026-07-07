@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-012",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 45001 clause requires the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system to enhance safety performance?",
+  "response": " The clause you're referring to is **Clause 10.3: Continual improvement**.\n\nThis clause requires the organization to continually improve the **suitability, adequacy, and effectiveness** of the OH&S management system to enhance **OH&S performance** and achieve intended outcomes.\n\nIt's worth noting that while Clause 10.3 is the primary clause addressing continual improvement, the concept is also embedded throughout the standard, particularly in:\n- **Clause 6.1.2** (hazard identification and assessment of risks and opportunities)\n- **Clause 9.1.1** (monitoring, measurement, analysis and evaluation)\n- **Clause 9.3** (management review)\n- **Clause 10.2** (incident, nonconformity and corrective action)\n\nThese clauses collectively support the PDCA (Plan-Do-Check-Act) cycle and feed into the continual improvement process required by Clause 10.3.",
+  "inputTokens": 58,
+  "outputTokens": 191,
+  "latencyMs": 7619,
+  "costUsd": 0.0006078,
+  "truncated": false
+}

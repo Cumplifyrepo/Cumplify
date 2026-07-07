@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-028",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "After we've flagged our significant aspects and compliance obligations, ISO 14001 has a planning-action step. What does it require us to do with those items, and which sub-clause is it?",
+  "response": " Based on ISO 14001:2015, after identifying significant environmental aspects and compliance obligations, the planning-action step you're referring to is **Clause 6.1.3: Planning to take action**.\n\n## What it requires you to do:\n\n**Clause 6.1.3** requires your organization to **plan to take action** to address:\n\n1. **Significant environmental aspects** (from 6.1.2)\n2. **Compliance obligations** (from 6.1.1)\n3. **Risks and opportunities** (from 6.1.1)\n\n## Specifically, you must:\n\n- **Integrate and implement** these actions into your environmental management system processes, **or**\n- **Address them through other processes**\n\nThe actions planned must be **proportionate** to the significance of the environmental aspect, the compliance obligation, or the risk/opportunity.\n\n## How it connects:\n\n| Clause | Content |\n|--------|---------|\n| 6.1.1 | Identify risks/opportunities |\n| 6.1.2 | Identify aspects (significant ones) and compliance obligations |\n| **6.1.3** | **Plan to take action on the above** |\n| 6.2 | Environmental objectives and planning to achieve them |\n\nThis 6.1.3 step essentially bridges the gap between *knowing* what needs attention and *doing* something about it through your EMS or other business processes.",
+  "inputTokens": 66,
+  "outputTokens": 297,
+  "latencyMs": 6133,
+  "costUsd": 0.0009306000000000001,
+  "truncated": false
+}

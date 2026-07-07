@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-028",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Plan an internal audit: Scope: ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site. The site closed 89 CAPAs last year but 22% were reopened due to recurrence. Average CAPA age is 95 days (target: 60). Three major NCs from last external audit related to root cause analysis quality.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"scope\": \"ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site.\", \"criteria\": \"ISO 9001:2015 standards focusing on effectiveness of nonconformity and corrective action processes, including root cause analysis, CAPA management, and recurrence rates.\", \"schedule\": \"Phase 1: Planning and preparation - Week 1, Phase 2: Departmental audits - Weeks 2-5, Phase 3: Reporting and follow-up - Week 6\"}",
+  "inputTokens": 148,
+  "outputTokens": 124,
+  "latencyMs": 2232,
+  "costUsd": 0.0005152000000000001,
+  "truncated": false
+}

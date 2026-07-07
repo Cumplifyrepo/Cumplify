@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-050",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We've already determined the risks and opportunities arising from our significant aspects under the general planning requirement. Which separate ISO 14001 sub-clause then requires us to plan concrete actions, integrate them into our EMS processes, and evaluate whether they worked?",
+  "response": " Based on your description, this refers to **ISO 14001:2015 sub-clause 6.1.4 — Planning action**.\n\nThis clause specifically requires you to:\n\n1. **Plan actions** to address significant environmental aspects, compliance obligations, and risks/opportunities identified in 6.1.1–6.1.3\n2. **Integrate and implement** these actions into your EMS processes or other business processes\n3. **Evaluate the effectiveness** of these actions (taken together with how you evaluate environmental performance in clause 9.1)\n\nThe key distinction is that while **6.1.1** (General) covers the *identification* of risks and opportunities from significant aspects, **6.1.4** is where you move from *knowing* to *doing* — establishing concrete plans, embedding them operationally, and later checking if they achieved their intended outcomes.",
+  "inputTokens": 75,
+  "outputTokens": 188,
+  "latencyMs": 3322,
+  "costUsd": 0.000609,
+  "truncated": false
+}

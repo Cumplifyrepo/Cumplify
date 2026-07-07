@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-008",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Plan an internal audit: Scope: ISO 45001 clause 6.1 (Actions to address risks and opportunities) at a mining operation with underground and surface activities. The operation has 800 workers across 3 shifts, uses permit-to-work systems, and had 2 lost-time injuries in the past quarter. Plan the audit approach, criteria, schedule, and resource needs.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"scope\": \"ISO 45001 clause 6.1 (Actions to address risks and opportunities) at a mining operation with underground and surface activities.\", \"criteria\": \"ISO 45001:2018 Occupational health and safety management systems - Requirements with guidance for use\", \"schedule\": \"Preparation: Week 1, On-site audit: Week 2, Reporting: Week 3, Follow-up: Week 4\"}",
+  "inputTokens": 142,
+  "outputTokens": 102,
+  "latencyMs": 1705,
+  "costUsd": 0.00044,
+  "truncated": false
+}

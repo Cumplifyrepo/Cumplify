@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-028",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our executives think signing the safety policy once a year covers them. What does ISO 45001's leadership clause actually require from top management?",
+  "response": " ISO 45001:2018's leadership requirements (Clause 5) go far beyond annual policy signatures. Here's what top management is actually required to do:\n\n## Demonstrating Leadership and Commitment (5.1)\n\nTop management must **personally demonstrate** commitment through specific, ongoing actions:\n\n- **Taking accountability** for the OH&S management system's effectiveness\n- **Ensuring** the OH&S policy and objectives are established and compatible with strategic direction\n- **Integrating** OH&S requirements into business processes (not treating it as separate)\n- **Ensuring** resources are available\n- **Communicating** the importance of effective OH&S management\n- **Directing and supporting** personnel to contribute to effectiveness\n- **Promoting** continual improvement\n- **Supporting** other relevant management roles in demonstrating leadership\n\n## Specific Leadership Responsibilities (5.2 & 5.3)\n\n| Requirement | What It Means Practically |\n|-------------|--------------------------|\n| **5.2 OH&S Policy** | Develop, implement, and maintain it personally—not just sign it |\n| **5.3 Organizational roles** | Ensure responsibilities and authorities are assigned and communicated; establish that ultimate accountability rests with top management |\n\n## The \"Demonstrate\" Language\n\nThe standard uses \"demonstrate\" repeatedly—meaning **evidence is required**, not just intent. Auditors look for:\n\n- Visible participation in safety activities\n- Resource allocation decisions\n- Integration into business planning\n- Personal engagement in reviews and incident investigations\n\n## What This Exposes\n\nThe annual signature approach typically fails on:\n- **Integration** (5.1c): Safety remains siloed\n- **Accountability** (5.1a): No personal ownership shown\n- **Demonstration** (throughout): No evidence of ongoing involvement\n\nWould you like specific examples of evidence that demonstrates compliance, or guidance on engaging leadership with these requirements?",
+  "inputTokens": 55,
+  "outputTokens": 386,
+  "latencyMs": 14644,
+  "costUsd": 0.001191,
+  "truncated": false
+}

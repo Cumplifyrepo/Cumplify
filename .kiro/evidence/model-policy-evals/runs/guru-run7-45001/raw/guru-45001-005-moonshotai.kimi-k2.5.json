@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-005",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 45001 clause covers being ready for and responding to potential emergencies like fires, chemical spills, or medical events on site?",
+  "response": " The ISO 45001 clause that covers emergency preparedness and response is **Clause 8.1.3: Emergency Preparedness and Response**.\n\nThis clause requires organizations to:\n\n- **Establish, implement, and maintain processes** to prepare for and respond to potential emergency situations\n- **Identify potential emergency situations** (such as fires, chemical spills, explosions, or medical incidents)\n- **Plan and prepare responses** to these emergencies\n- **Provide training** for emergency response\n- **Periodically test and exercise** emergency response procedures\n- **Evaluate performance** and revise plans as necessary after incidents or tests\n\nThis is part of **Clause 8.1: Operational planning and control**, which falls under **Section 8: Operation** of the standard.",
+  "inputTokens": 54,
+  "outputTokens": 153,
+  "latencyMs": 3712,
+  "costUsd": 0.0004914,
+  "truncated": false
+}

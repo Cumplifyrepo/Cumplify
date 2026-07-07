@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-012",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Plan an internal audit: Scope: ISO 9001 clause 8.4 (Control of externally provided processes, products, and services) at a medical device company with 45 critical suppliers. The company had 3 supplier-related nonconformities in the last 6 months and one field safety corrective action traced to a supplier component.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "\n\nANSWER: {\"scope\": \"Audit the company's control of externally provided processes, products and services (ISO 9001:2015 clause 8.4) across the 45 critical suppliers, with particular focus on the three recent supplier-related nonconformities and the field safety corrective action traced to a supplier component. The audit will evaluate supplier selection, qualification, ongoing monitoring, performance metrics, risk management, traceability, and corrective action processes.\", \"criteria\": \"ISO 9001:2015 clause 8.4; ISO 13485:2016 clause 7.4 (Purchasing) and clause 8.4; 21 CFR Part 820 (Quality System Regulation) subpart B (Design Controls) and subpart D (Purchasing Controls); internal procedures (SOP-001 Supplier Qualification, SOP-002 Supplier Monitoring, SOP-003 CAPA).\", \"schedule\": \"Phase 1: Planning (Week 1-2) – define audit scope, select sample of 10-15 critical suppliers, prepare audit checklist. Phase 2: Document Review (Week 3) – review supplier qualification files, contracts, risk assessments, performance data. Phase 3: On-site Audits (Week 4-6) – conduct on-site audits of selected suppliers (or virtual if needed), interview personnel, verify processes. Phase 4:",
+  "inputTokens": 165,
+  "outputTokens": 4096,
+  "latencyMs": 27405,
+  "costUsd": 0.0049647,
+  "truncated": true
+}

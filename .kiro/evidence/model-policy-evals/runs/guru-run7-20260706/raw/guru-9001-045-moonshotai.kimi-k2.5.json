@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-045",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I'm building our context analysis. Rising steel prices and a tight labor market feel like one bucket, while our biggest customer's new expectation for digital certificates feels like a different one. Which ISO 9001 clause covers internal and external issues, and which covers the requirements of interested parties?",
+  "response": " I'll map these to the correct ISO 9001:2015 clauses for you.\n\n## Your Two Buckets\n\n| Your Situation | Clause | What It Covers |\n|-------------|--------|---------------|\n| Rising steel prices + tight labor market | **4.1** | Understanding the **organization and its context** — internal and external issues |\n| Customer's new expectation for digital certificates | **4.2** | Understanding the needs and expectations of **interested parties** |\n\n---\n\n## Quick Distinction\n\n**Clause 4.1 (Context)** — *Environmental scanning*\n- Broader conditions you operate within\n- Typically captured in PESTLE-style analysis (Political, Economic, Social, Technological, Legal, Environmental)\n- Your steel and labor examples fit here\n\n**Clause 4.2 (Interested Parties)** — *Stakeholder requirements*\n- Specific needs and expectations of those who affect or are affected by your QMS\n- Customers, suppliers, regulators, employees, shareholders, etc.\n- Your customer's digital certificate requirement fits here\n\n---\n\n## Practical Note\n\nThese clauses work together. The steel prices (4.1) may *also* become a customer concern (4.2) if they push for cost transparency. And your customer's digital expectation (4.2) may reveal a gap in your technological readiness that becomes an internal issue (4.1).\n\nBoth feed into **Clause 4.3** (scope) and **Clause 6.1** (risk-based thinking).",
+  "inputTokens": 82,
+  "outputTokens": 306,
+  "latencyMs": 30211,
+  "costUsd": 0.0009672,
+  "truncated": false
+}

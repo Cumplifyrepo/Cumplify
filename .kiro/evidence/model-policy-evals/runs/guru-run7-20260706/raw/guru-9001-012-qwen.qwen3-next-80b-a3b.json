@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-012",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Our most experienced toolmaker retires in six months and most of his setup know-how exists only in his head. Which ISO 9001 clause requires us to determine and maintain the organizational knowledge our processes depend on?",
+  "response": "The ISO 9001 clause that requires you to determine and maintain the organizational knowledge necessary for the effectiveness of your quality management system (QMS) is:\n\n**Clause 7.1.6 — Organizational Knowledge**\n\n### Here’s what it says (ISO 9001:2015):\n> **7.1.6 Organizational knowledge**  \n> The organization shall determine the knowledge necessary for the operation of its processes and to ensure conformity of products and services.  \n> This knowledge shall be maintained and made available to the extent necessary.  \n> In addressing changing needs and trends, the organization shall consider its current knowledge and determine how to acquire or access any additional necessary knowledge and updated knowledge.\n\n### Why this applies to your situation:\n- Your experienced toolmaker’s setup know-how is **organizational knowledge** critical to your processes.\n- Since this knowledge is **not documented** and resides only in his head, it is at risk of being lost upon his retirement.\n- Clause 7.1.6 requires you to **identify** this knowledge and **take action** to maintain it — for example, by:\n  - Documenting procedures,\n  - Conducting knowledge transfer sessions,\n  - Creating training materials or videos,\n  - Implementing mentoring programs.\n\n### Action Step:\nYou should initiate a **knowledge capture initiative** now — well before the retirement — to ensure continuity and compliance with ISO 9001:2015 Clause 7.1.6.\n\nFailure to do so could lead to nonconformities during audits, especially if the loss of knowledge impacts product quality or process consistency.",
+  "inputTokens": 53,
+  "outputTokens": 333,
+  "latencyMs": 4607,
+  "costUsd": 0.00040702,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-013",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Our EMS procedures live in shared folders with no version control and no approval trail. Which ISO 14001 clause covers how EMS documents and records must be created, updated, and controlled?",
+  "response": "Under **ISO 14001:2015**, the control of documents and records is primarily addressed in two clauses:\n\n1. **Clause 7.5 – Documented information**  \n   This is the main clause that specifies requirements for creating, updating, and controlling the organization’s documented information (both documents and records).\n\n2. **Clause 7.5.3 – Control of documented information**  \n   This sub-clause explicitly requires that documented information needed for the EMS be controlled to ensure it is:\n   - Available and suitable for use where and when it is needed.\n   - Adequately protected (e.g., from loss of confidentiality, improper use, or loss of integrity).\n\nSpecifically, **ISO 14001:2015 7.5.3** requires the organization to control the **creation and modification** of documents, including:\n- **Approval for adequacy** prior to issue.\n- **Review, update, and re-approval** as necessary.\n- **Identification of changes** and the current revision status.\n- **Availability** to those who need them.\n- **Protection** against unintended alterations.\n\nYour current situation — **shared folders with no version control and no approval trail** — would be **non-conforming** with clause **7.5.3**, because there’s no defined process to ensure proper versioning, approval, and protection of EMS documents.\n\n**Key takeaway:**  \nTo meet ISO 14001, you must establish a **document control procedure** that ensures versioning, approval, accessibility, and protection of EMS documents and records. This is a mandatory requirement for certification.",
+  "inputTokens": 41,
+  "outputTokens": 334,
+  "latencyMs": 6734,
+  "costUsd": 0.00064332,
+  "truncated": false
+}

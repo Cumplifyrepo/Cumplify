@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-034",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Midway through a software project, our customer changed several agreed requirements by email. The spec was never updated and half the dev team kept building to the old version. Which ISO 9001 clause governs how changes to product or service requirements must be handled?",
+  "response": " The relevant ISO 9001:2015 clause is **8.2.4 — Changes to requirements for products and services**.\n\nThis clause specifically requires that organizations:\n\n- **Ensure changes to requirements are documented** (your email-only change failed here)\n- **Ensure relevant personnel are made aware of changed requirements** (your dev team split indicates this didn't happen)\n- **Maintain documented information** on the changes\n\n## What went wrong in your situation\n\n| Requirement | What happened |\n|-------------|-------------|\n| Documented information | Email ≠ controlled documentation |\n| Communication to relevant personnel | Only partial team awareness |\n| Updated specifications | Never happened |\n\n## Related clauses also relevant\n\n- **7.5.3.2** — Control of documented information (changes must be controlled)\n- **8.1** — Operational planning and control (changes must be managed)\n- **8.2.1** — Customer communication (requirements should be established, not ad-hoc)\n\n## Practical fix\n\nYou'll need to formalize a **change control process** that captures customer changes in writing, updates controlled documents, and confirms stakeholder acknowledgment—before implementation begins.\n\nWant guidance on what that process should include?",
+  "inputTokens": 79,
+  "outputTokens": 240,
+  "latencyMs": 82976,
+  "costUsd": 0.0007674,
+  "truncated": false
+}

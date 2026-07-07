@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-004",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Analyze this CAPA: NC Description: 'Incorrect torque values applied to wheel bolts on 23 vehicles during assembly on March 12. Torque wrench TW-009 found 15% out of calibration. Vehicles already shipped to dealers.' Determine root cause, immediate containment, corrective actions, and effectiveness verification plan.\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"rootCause\":\"Torque wrench TW-009 was 15% out of calibration leading to incorrect torque values being applied to wheel bolts.\",\"actions\":\"1. Recall all affected vehicles from dealers for re-torquing of wheel bolts. 2. Recalibrate torque wrench TW-009 and all other torque wrenches in use. 3. Implement a more frequent calibration schedule for all torque wrenches. 4. Train assembly line workers on the importance of torque specifications and calibration checks.\",\"evidence\":\"1. Calibration reports for torque wrench TW-009 and other wrenches. 2. Records of re-torquing for all affected vehicles. 3. Training sign-off sheets for assembly line workers. 4. Updated calibration schedule documentation.\"}",
+  "inputTokens": 126,
+  "outputTokens": 166,
+  "latencyMs": 2950,
+  "costUsd": 0.000632,
+  "truncated": false
+}

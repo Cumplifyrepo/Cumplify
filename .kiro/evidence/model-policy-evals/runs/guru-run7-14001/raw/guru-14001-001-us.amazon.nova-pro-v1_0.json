@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-001",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "We're a 40-person metal plating shop just starting an EMS. Which ISO 14001 clause requires us to work out how our activities, products, and services interact with the environment, and to decide which of those interactions actually matter?",
+  "response": "In ISO 14001, the clause that requires you to understand how your activities, products, and services interact with the environment, and to determine which of those interactions are significant, is Clause 4.3.1, which is part of the \"Context of the organization\" section.\n\nMore specifically:\n\n- **Clause 4.3.1** requires you to determine the environmental aspects of your activities, products, and services that you can control or influence, and to determine those that have or can have significant environmental impacts. \n\nThis involves:\n1. **Identifying Environmental Aspects**: Listing all activities, products, and services of the organization.\n2. **Assessing Environmental Impacts**: Evaluating the environmental impact of each identified aspect.\n3. **Determining Significance**: Establishing criteria for determining the significance of the environmental impacts and applying these criteria to determine which environmental aspects are significant.\n\nBy doing this, you’ll be able to focus your environmental management efforts on the aspects that matter most.",
+  "inputTokens": 54,
+  "outputTokens": 204,
+  "latencyMs": 1637,
+  "costUsd": 0.000696,
+  "truncated": false
+}

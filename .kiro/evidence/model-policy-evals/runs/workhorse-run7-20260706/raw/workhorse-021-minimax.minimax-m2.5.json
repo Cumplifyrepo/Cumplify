@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-021",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Draft a procedure for operational control of significant environmental aspects at a concrete batching plant. Aspects include: dust emissions from aggregate handling, stormwater runoff with high pH, noise from batching operations, diesel fuel storage and dispensing, and concrete washout water management. Align with ISO 14001 clause 8.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "",
+  "inputTokens": 162,
+  "outputTokens": 4096,
+  "latencyMs": 87923,
+  "costUsd": 0.0049638,
+  "truncated": true
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-049",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "In ISO 9001, the clause immediately after operational planning and control (8.1) deals with requirements for products and services. Our new EHS coordinator assumed the numbering means the same thing in ISO 14001. What does the clause in that position actually cover in the environmental standard, and what is its number?",
+  "response": "In ISO 14001, the structure and numbering of clauses differ from ISO 9001. Specifically, the clause that follows \"Operational planning and control\" (clause 8.1 in ISO 14001) is clause 8.2, which covers \"Emergency preparedness and response.\"\n\nHere’s a brief overview:\n- **ISO 14001:2015 Clause 8.1**: Operational planning and control\n- **ISO 14001:2015 Clause 8.2**: Emergency preparedness and response\n\nIn contrast, ISO 9001:2015 follows operational planning and control (clause 8.1) with clause 8.2, which deals with \"Requirements for products and services.\"\n\nSo, the EHS coordinator’s assumption about the numbering meaning the same thing in both standards is incorrect. In ISO 14001, the next clause after operational planning and control focuses on preparing for and responding to emergency situations.",
+  "inputTokens": 70,
+  "outputTokens": 218,
+  "latencyMs": 1533,
+  "costUsd": 0.0007536,
+  "truncated": false
+}

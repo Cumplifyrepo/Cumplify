@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-017",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "We're drafting our environmental policy. What commitments does ISO 14001 say the policy must contain, and which clause sets that requirement?",
+  "response": "ISO 14001 is an internationally recognized standard that specifies the requirements for an effective Environmental Management System (EMS). When drafting your environmental policy as per ISO 14001, there are specific commitments that the policy must contain. These requirements are outlined in Clause 4.2 of the standard, which deals with \"Understanding the organization and its context,\" \"Understanding the needs and expectations of interested parties,\" and \"Determining the scope of the environmental management system.\"\n\nHere are the key commitments that your environmental policy must contain according to ISO 14001, Clause 4.2:\n\n1. **Compliance with Applicable Legal Requirements and Other Requirements:**\n   - The policy must include a commitment to comply with applicable legal requirements and with other requirements to which the organization subscribes related to its environmental aspects.\n\n2. **Prevention of Pollution:**\n   - A commitment to the prevention of pollution must be included. This can involve minimizing waste, reducing emissions, and preventing contamination of air, water, and soil.\n\n3. **Continual Improvement:**\n   - The policy should include a commitment to continual improvement of the EMS. This means regularly reviewing and enhancing the system to achieve better environmental performance over time.\n\n4. **Framework for Setting and Reviewing Environmental Objectives and Targets:**\n   - The policy must provide a framework for setting and reviewing environmental objectives and targets. These objectives and targets should be consistent with the organization's environmental policy and help in achieving its overall environmental goals.\n\nIn summary, Clause 4.2 of ISO 14001 sets the requirement for these commitments in your environmental policy. Ensuring that your policy addresses these points will help you meet the standard's requirements and demonstrate your organization's dedication to effective environmental management.",
+  "inputTokens": 31,
+  "outputTokens": 359,
+  "latencyMs": 2182,
+  "costUsd": 0.0011736,
+  "truncated": false
+}

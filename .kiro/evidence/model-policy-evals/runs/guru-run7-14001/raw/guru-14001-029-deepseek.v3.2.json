@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-029",
+  "modelId": "deepseek.v3.2",
+  "prompt": "When we create or update an EMS document, what controls does ISO 14001's documented-information requirement impose on it over its life? Cite the clause.",
+  "response": "Based on ISO 14001:2015, the primary controls for documented information (which includes EMS documents) are specified in **Clause 7.5.3: Control of documented information**.\n\nThis clause imposes the following controls over the **entire life cycle** of the document (creation, use, updating, and disposal):\n\n**1. Distribution, access, retrieval, and use:** The organization must ensure documented information is available and suitable for use, where and when it is needed.\n\n**2. Storage and preservation (including legibility):** The information must be stored and preserved in a way that prevents loss, damage, or deterioration, and remains legible.\n\n**3. Control of changes (version control):** Changes must be identified, and the current revision status of documents must be controlled.\n\n**4. Retention and disposal:** Documented information must be retained for as long as it is needed to demonstrate conformity to the standard and the organization's own EMS requirements. Disposal must be done in a controlled manner when it is no longer needed.\n\n**Important Distinction from older standards:**\n*   The term \"documented information\" (Clause 7.5) replaces the old distinction between \"documents\" and \"records.\"\n*   **Clause 7.5.2** covers **creating and updating** (ensuring identification, description, format, media, and review/approval for suitability and adequacy).\n*   **Clause 7.5.3** (cited above) covers the **control** throughout the document's life.\n\nTherefore, while creation/updating is guided by 7.5.2, the **ongoing lifecycle controls** are mandated by **Clause 7.5.3**. This ensures that from the moment a document is created until its disposal, it is subject to controls for accessibility, integrity, protection, and appropriate retention.",
+  "inputTokens": 36,
+  "outputTokens": 385,
+  "latencyMs": 8603,
+  "costUsd": 0.00073457,
+  "truncated": false
+}

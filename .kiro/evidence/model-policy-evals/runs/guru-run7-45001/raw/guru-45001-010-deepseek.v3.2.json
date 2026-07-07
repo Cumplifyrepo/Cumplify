@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-010",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Which ISO 45001 clause requires the organization to determine and provide the resources needed to establish, implement, and maintain the OH&S management system?",
+  "response": "According to ISO 45001:2018, the requirement for an organization to **determine and provide the resources** needed for its Occupational Health and Safety (OH&S) management system is found in:\n\n**Clause 7.1: Resources**\n\nMore specifically, the opening statement of **Clause 7.1** states:\n\n> *\"The organization shall determine and provide the resources needed for the establishment, implementation, maintenance and continual improvement of the OH&S management system.\"*\n\n### Breakdown of the Requirement:\nClause 7.1 is part of the **\"Support\"** section (Section 7) of the standard. It is the overarching clause for resources, which is then further detailed in sub-clauses:\n\n*   **7.2 Competence:** Resources related to people and their training/skills.\n*   **7.3 Awareness:** Ensuring personnel are aware of OH&S policies and their roles.\n*   **7.4 Communication:** Resources for internal and external communication.\n*   **7.5 Documented Information:** Resources for creating and maintaining the system's documentation.\n\n### What \"Resources\" Encompasses:\nThe resources an organization must determine and provide include:\n*   **Financial resources**\n*   **Human resources** (people with the right competencies)\n*   **Infrastructure** (buildings, workspace, utilities)\n*   **Equipment** (both for operations and for monitoring OH&S performance)\n*   **Technology and tools**\n*   **External resources** (e.g., consultants, contractors) when needed\n\n**In summary, the direct answer to your question is ISO 45001 Clause 7.1.** This is the fundamental clause that mandates top management to ensure the necessary resources are available for the OH&S management system to be effective.",
+  "inputTokens": 33,
+  "outputTokens": 362,
+  "latencyMs": 7040,
+  "costUsd": 0.0006901600000000001,
+  "truncated": false
+}

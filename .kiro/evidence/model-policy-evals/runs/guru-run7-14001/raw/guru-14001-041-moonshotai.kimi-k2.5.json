@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-041",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We ran a spill drill at our chemical warehouse last week and found gaps in the procedure. Which ISO 14001 clause requires periodic drills like this and updating the response plan based on what we learned?",
+  "response": " The ISO 14001 clause you're looking for is **Clause 8.2: Emergency preparedness and response**.\n\nThis clause specifically requires organizations to:\n\n- **Establish and maintain procedures** to identify potential emergency situations and respond to them\n- **Periodically test and exercise** emergency response procedures where practicable\n- **Review and revise** the procedures after the occurrence of accidents or emergency situations, **especially after tests and exercises**\n\nYour spill drill and subsequent plan updates based on lessons learned directly satisfy these requirements. The standard emphasizes that testing (like your drill) isn't just about going through the motions—it's about using that experience to improve the system.\n\nThe related documentation would typically be found in your **Emergency Preparedness and Response Procedure**, which should capture:\n- Drill schedules and scenarios\n- Evaluation methods\n- Corrective action tracking from drill findings\n- Plan revision history",
+  "inputTokens": 67,
+  "outputTokens": 174,
+  "latencyMs": 2541,
+  "costUsd": 0.0005622,
+  "truncated": false
+}

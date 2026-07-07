@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-026",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We distribute chilled food products. What does ISO 9001 require about preserving product during production and through to delivery?",
+  "response": " ISO 9001:2015 doesn't prescribe specific requirements for chilled food preservation. Instead, it requires you to **determine and implement** appropriate controls yourself based on your context and risks.\n\n## Relevant ISO 9001 Clauses\n\n**Clause 8.5.1 — Production and service provision**\n- You must implement controlled conditions, which *include* any necessary **environmental controls**\n\n**Clause 8.5.4 — Preservation**\n- Requires you to **preserve product** during internal processing and final delivery\n- Preservation includes **identification, handling, packaging, storage, and protection**\n- This explicitly covers **temperature control** where relevant to product conformity\n\n**Clause 8.5.5 — Post-delivery activities**\n- Requirements for handling, storage, and delivery that maintain product conformity\n\n## What This Means Practically\n\n| Aspect | Typical Implementation |\n|--------|------------------------|\n| **Temperature monitoring** | Defined limits, continuous or periodic checks with records |\n| **Equipment control** | Calibrated refrigeration, contingency plans for failures |\n| **Process validation** | Demonstrating your chilling methods work |\n| **Traceability** | Batch/lot tracking through cold chain |\n| **Training** | Competence requirements for staff handling chilled goods |\n| **Supplier/delivery control** | Specifications for transport refrigeration |\n\n## Important Distinction\n\nFor **food safety** specifics (HACCP, temperature limits, microbiological criteria), you'll need **ISO 22000** or sector-specific standards like **BRCGS** or **IFS**. ISO 9001 focuses on *quality management system effectiveness*, not food safety technical requirements—though your QMS should integrate with your food safety management.\n\nWould you like guidance on how these requirements interface with food safety standards?",
+  "inputTokens": 50,
+  "outputTokens": 357,
+  "latencyMs": 157320,
+  "costUsd": 0.001101,
+  "truncated": false
+}

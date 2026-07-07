@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-011",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "We're a software company kicking off development of a new product module. Which ISO 9001 clause requires us to plan the design stages, reviews, verification and validation activities, and assign responsibilities up front?",
+  "response": " The requirement you're describing is found in **ISO 9001:2015, Clause 8.3.2 — Design and Development Planning**.\n\nSpecifically, this clause requires your organization to plan, establish, document, and control:\n\n- **Design and development stages**\n- **Reviews** at appropriate stages\n- **Verification** activities\n- **Validation** activities\n- **Responsibilities and authorities** for these activities\n\nThe planning must also address:\n- Required resources\n- Interfaces between different parties involved\n- Need for involvement of customers and users\n- Control of design and development changes (though 8.3.6 covers this in more detail)\n\n**Practical tip for your kickoff:** Document this planning in a design and development plan or similar controlled document. This becomes important evidence for auditors and helps ensure your team has clear expectations from the start.\n\nWould you like guidance on how to structure this documentation or how it interfaces with other 8.3 sub-clauses?",
+  "inputTokens": 67,
+  "outputTokens": 199,
+  "latencyMs": 4963,
+  "costUsd": 0.0006372000000000001,
+  "truncated": false
+}

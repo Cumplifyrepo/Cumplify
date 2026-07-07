@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-036",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Neighbors have complained twice this month about odor from our rendering plant. Which ISO 14001 clauses govern how we decide what to communicate back to them and how we investigate and correct the underlying problem? Cite both.",
+  "response": " I'll identify the relevant ISO 14001:2015 clauses for this situation.\n\n## Communication with Neighbors (External Communication)\n\n**Clause 7.4.3 - External Communication**\n\nThis clause requires the organization to determine:\n- What needs to be communicated externally\n- When to communicate\n- How to communicate (including method)\n\nThe organization must establish processes for external communication relevant to its environmental management system, including responding to complaints from external interested parties.\n\n---\n\n## Investigation and Correction of the Problem\n\n**Clause 10.2 - Nonconformity and Corrective Action**\n\nThis clause governs how you:\n- React to nonconformities (including complaints)\n- Take action to control and correct them\n- Deal with consequences\n- Evaluate the need for corrective action to eliminate root causes\n- Implement any needed actions\n- review effectiveness of corrective actions\n\n---\n\n## Additional Relevant Clauses\n\nYou should also consider:\n- **Clause 6.1.2 (Environmental Aspects)** – odor emissions should be identified as a significant environmental aspect\n- **Clause 9.1.1 (Monitoring and Measurement)** – ensuring you have means to monitor odor emissions\n- **Clause 9.1.2 (Evaluation of Compliance)** – compliance with odor/ nuisance regulations\n\nThe complaint itself triggers your **Clause 9.1.1** monitoring process and feeds into **Clause 9.3 (Management Review)** as feedback from interested parties.",
+  "inputTokens": 70,
+  "outputTokens": 293,
+  "latencyMs": 5126,
+  "costUsd": 0.000921,
+  "truncated": false
+}

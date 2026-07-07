@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-020",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Beyond posting the safety policy in the break room, what does ISO 45001's awareness clause require our warehouse workers to actually be aware of?",
+  "response": " ISO 45001:2018 clause 7.3 (Awareness) requires workers to be aware of several specific elements beyond simply knowing where the policy is posted:\n\n**Required Awareness Areas:**\n\n1. **The OH&S policy and objectives** – not just their existence, but their actual content and what the organization is trying to achieve\n\n2. **Their contribution to OH&S performance** – how their specific work activities affect safety outcomes, both positively and negatively\n\n3. **The benefits of improved OH&S performance** – what's in it for them and the organization\n\n4. **The implications of not conforming** – actual consequences of deviating from requirements, including incidents, injuries, and disciplinary outcomes\n\n5. **Incidents and investigation outcomes** – relevant lessons from actual events\n\n6. **Hazards, risks, and controls** – specifically those associated with *their* work and workplace, and the established control measures\n\n**Practical Implications for Warehouse Workers:**\n\nThis means workers should understand, for example:\n- Specific hazards in their zone (forklift traffic, falling objects, ergonomic risks)\n- Why certain PPE is required for their task\n- How to report near-misses and why it matters\n- Emergency response procedures relevant to their location\n- How their actions (or inaction) could cause harm to themselves or others\n\n**Evidence of Awareness:**\n\nThe standard expects this to be verifiable through means like:\n- Competency assessments or quizzes\n- Toolbox talks with interactive discussion\n- Observed behavior demonstrating understanding\n- Worker interviews during audits\n\nSimply posting documents doesn't satisfy the requirement—workers must actually *understand* these elements in the context of their roles.",
+  "inputTokens": 56,
+  "outputTokens": 342,
+  "latencyMs": 13388,
+  "costUsd": 0.0010596,
+  "truncated": false
+}

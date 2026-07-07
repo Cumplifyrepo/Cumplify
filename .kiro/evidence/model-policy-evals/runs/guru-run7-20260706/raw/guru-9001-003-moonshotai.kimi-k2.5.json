@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-9001-003",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Right now our work instructions sit on a shared drive where anyone can edit or delete them, and outdated printouts float around the shop floor. Which ISO 9001 clause requires us to control the availability, protection, distribution, storage and retention of our QMS documents?",
+  "response": " The clause you're looking for is **ISO 9001:2015 Clause 7.5.3 — Control of documented information**.\n\nThis clause specifically requires you to address:\n\n- **Availability** — where and when needed\n- **Protection** — from loss of confidentiality, improper use, or loss of integrity\n- **Distribution, access, retrieval and use**\n- **Storage and preservation** — including preservation of legibility\n- **Control of changes** — such as version control\n- **Retention and disposition**\n\nYour current situation with uncontrolled shared drive access and outdated printouts on the shop floor would be non-conforming to this clause. You'd typically need to implement controls such as:\n\n- Read-only access for most users with controlled editing permissions\n- A document control procedure with approval workflows\n- Version control and revision history\n- Removal of obsolete documents from all points of use\n- Identification of external documents if applicable\n\nWould you like guidance on practical implementation steps?",
+  "inputTokens": 81,
+  "outputTokens": 197,
+  "latencyMs": 83907,
+  "costUsd": 0.0006395999999999999,
+  "truncated": false
+}

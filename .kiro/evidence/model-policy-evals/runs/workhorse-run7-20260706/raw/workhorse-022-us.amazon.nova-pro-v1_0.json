@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-022",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Analyze this CAPA: NC Description: 'Customer returned 500 units of electronic control modules with intermittent failure in temperature range -20°C to -40°C. Root cause investigation reveals: conformal coating applied at 18°C (spec requires minimum 22°C application temperature), production log shows HVAC system was under repair for 5 days, QC accepted units based on visual inspection only — no functional test at temperature extremes performed.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "ANSWER: {\"rootCause\": \"Conformal coating applied at 18\\u00b0C instead of the required minimum 22\\u00b0C due to HVAC system being under repair, compounded by QC acceptance based on visual inspection only without functional test at temperature extremes.\", \"actions\": \"1. Ensure HVAC system is repaired and maintained to meet required application temperature. 2. Retrain production and QC staff on the importance of adhering to specified application temperatures and performing functional tests at temperature extremes. 3. Implement additional checks to verify conformal coating application temperature before QC acceptance. 4. Conduct a 100% retest of the returned units and a sample from current production under specified temperature conditions.\", \"evidence\": \"1. Repair and maintenance logs for HVAC system. 2. Training records for production and QC staff. 3. Conformal coating application temperature logs. 4. Test results from retesting of returned and current production units.\"}",
+  "inputTokens": 153,
+  "outputTokens": 202,
+  "latencyMs": 2375,
+  "costUsd": 0.0007688000000000001,
+  "truncated": false
+}

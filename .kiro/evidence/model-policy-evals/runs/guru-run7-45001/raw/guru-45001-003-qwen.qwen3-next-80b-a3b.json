@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-003",
+  "modelId": "qwen.qwen3-next-80b-a3b",
+  "prompt": "Our auditor said our once-a-year hazard walkthrough isn't enough — we need something ongoing and proactive. Which ISO 45001 clause requires a continuous process for identifying workplace hazards?",
+  "response": "The ISO 45001 clause that requires a **continuous and proactive process** for identifying workplace hazards is:\n\n> **Clause 8.1.2.1 — Hazard identification and assessment of risks and opportunities**\n\n### Key Points from Clause 8.1.2.1:\n- Organizations must **establish, implement, and maintain a process** for **ongoing** hazard identification.\n- The process must be **proactive**, not just reactive or periodic (e.g., once-a-year).\n- It must consider:\n  - Changes in the organization, processes, or activities.\n  - New or modified equipment, materials, or technology.\n  - Work organization, human factors, and psychosocial risks.\n  - Hazards arising from the workplace, work-related activities, and external factors.\n- The process must be **documented** and **reviewed regularly** — and updated as necessary.\n\n### Why This Matters:\nYour auditor is correct — a once-a-year walkthrough is **reactive and insufficient** under ISO 45001. The standard demands **continuous** hazard identification as part of a dynamic risk management system. This includes:\n- Daily observations\n- Worker consultations\n- Incident and near-miss reporting analysis\n- Regular safety audits and inspections\n- Monitoring of changes in operations\n\n### Supporting Clause:\n- **Clause 8.1.2.2 — Assessment of OH&S risks and opportunities** also reinforces the need for ongoing evaluation based on the hazard identification process.\n\n### Recommendation:\nImplement a **continuous hazard identification system** such as:\n- Daily safety huddles\n- Employee reporting tools (apps or suggestion boxes)\n- Routine supervisor walkthroughs (not annual)\n- Integration with incident investigation and corrective action systems\n\nThis aligns with ISO 45001’s core principle: **proactive risk management to prevent work-related injury and ill health**.\n\n✅ So, the answer is: **Clause 8.1.2.1**.",
+  "inputTokens": 46,
+  "outputTokens": 403,
+  "latencyMs": 7785,
+  "costUsd": 0.00049004,
+  "truncated": false
+}

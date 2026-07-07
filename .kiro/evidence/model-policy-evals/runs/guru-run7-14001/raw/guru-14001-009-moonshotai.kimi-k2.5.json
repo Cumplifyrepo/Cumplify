@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-009",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Which ISO 14001 clause requires our top management to step back at planned intervals and review the whole EMS with defined inputs and outputs?",
+  "response": " The clause you're referring to is **Clause 9.3: Management Review**.\n\nThis clause requires top management to review the organization's environmental management system at **planned intervals** to ensure its continuing **suitability, adequacy, and effectiveness**.\n\n**Required inputs (9.3.2)** include:\n- Status of actions from previous management reviews\n- Changes in external and internal issues\n- Information on environmental performance, including trends in:\n  - Nonconformities and corrective actions\n  - Monitoring and measurement results\n  - Compliance obligations fulfillment\n  - Audit results\n- Adequacy of resources\n- Communications from interested parties\n- Opportunities for continual improvement\n\n**Required outputs (9.3.3)** must include decisions and actions related to:\n- Continual improvement opportunities\n- Any need for changes to the EMS\n- Resource needs\n\nThis is a critical clause for ensuring ongoing leadership engagement and strategic direction of the EMS.",
+  "inputTokens": 54,
+  "outputTokens": 189,
+  "latencyMs": 3270,
+  "costUsd": 0.0005994,
+  "truncated": false
+}

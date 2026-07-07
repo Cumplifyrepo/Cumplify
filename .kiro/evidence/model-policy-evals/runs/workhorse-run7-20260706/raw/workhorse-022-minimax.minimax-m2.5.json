@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-022",
+  "modelId": "minimax.minimax-m2.5",
+  "prompt": "Analyze this CAPA: NC Description: 'Customer returned 500 units of electronic control modules with intermittent failure in temperature range -20°C to -40°C. Root cause investigation reveals: conformal coating applied at 18°C (spec requires minimum 22°C application temperature), production log shows HVAC system was under repair for 5 days, QC accepted units based on visual inspection only — no functional test at temperature extremes performed.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "\n\nANSWER: {\"rootCause\":\"Conformal coating was applied at 18 °C, below the minimum specified 22 °C, causing incomplete curing and reduced coating integrity. This resulted in intermittent failures of the electronic control modules when operated in the -20 °C to -40 °C temperature range.\",\"actions\":\"Corrective: Rework/recoat the 500 returned units with conformal coating applied at ≥22 °C, ensure proper cure, and perform functional testing across the -20 °C to -40 °C range to verify performance. Preventive: Repair and maintain the HVAC system to keep ambient temperature ≥22 °C during coating; implement continuous temperature monitoring and logging; update QC procedures to include functional temperature‑cycling tests; train operators on the temperature requirements; revise the SOP to require temperature verification before coating.\",\"evidence\":\"Temperature logs of the coating process (ambient and coating temperature); HVAC repair and maintenance records; rework and recoating records showing compliance with ≥22 °C; functional test reports demonstrating pass at -20 °C to -40 °C for reworked units; updated QC inspection checklist with temperature‑cycling test; training records; revised SOP and temperature‑control plan.\"}",
+  "inputTokens": 183,
+  "outputTokens": 1038,
+  "latencyMs": 12316,
+  "costUsd": 0.0013005000000000002,
+  "truncated": false
+}

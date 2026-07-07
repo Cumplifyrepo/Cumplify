@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-011",
+  "modelId": "us.amazon.nova-pro-v1:0",
+  "prompt": "Which ISO 45001 clause requires us to run planned internal audits to check that the OH&S management system conforms to requirements and is effectively implemented?",
+  "response": " The generated text has been blocked by our content filters.",
+  "inputTokens": 34,
+  "outputTokens": 0,
+  "latencyMs": 2066,
+  "costUsd": 0.0000272,
+  "truncated": false
+}

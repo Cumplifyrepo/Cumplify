@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-042",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "Our products ship in solvent-painted steel drums that customers eventually discard. Where does ISO 14001 make us consider what happens after our product leaves the plant — both when identifying environmental aspects and when setting operational controls? Cite both clauses.",
+  "response": " I'll identify the specific ISO 14001:2015 clauses that address post-delivery environmental considerations for your steel drums.\n\n## Identifying Environmental Aspects — Clause 6.1.2\n\n**Clause 6.1.2, Environmental aspects**, requires you to consider aspects that you can **control or influence**, including those arising from:\n\n> *\"products and services\"* and *\"a life cycle perspective\"* (6.1.2 a))\n\nThe **life cycle perspective** explicitly extends your view beyond your facility to include:\n- **Distribution/use** (your drums in customers' hands)\n- **End-of-life treatment** (customer disposal)\n\nThe **Note to 6.1.2** clarifies this does not require a full LCA, but means thinking about where your organization can influence environmental impacts — your drum disposal problem clearly qualifies.\n\n---\n\n## Operational Controls — Clause 8.1\n\n**Clause 8.1, Operational planning and control**, requires you to establish controls that are:\n\n> *\"consistent with a life cycle perspective\"* (8.1)\n\nSpecifically, 8.1 requires addressing:\n- *\"Controls related to procurement\"* (8.1 d))\n- *\"Controls related to product and service design and development\"* (8.1 e)) — specifying requirements for **\"end-of-life collection and treatment\"**\n\nThis is where you'd implement practical measures: design-for-recycling specifications, take-back programs, customer disposal instructions, or switching to more recyclable materials.\n\n---\n\n## The Connection\n\nYour solvent-painted steel drums present a classic life cycle gap — your customer controls disposal, but **you can influence** it through design choices and post-delivery arrangements. Both clauses push you from simply noting \"drum waste exists\" to actively managing that downstream impact.",
+  "inputTokens": 74,
+  "outputTokens": 364,
+  "latencyMs": 5895,
+  "costUsd": 0.0011364,
+  "truncated": false
+}

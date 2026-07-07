@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-45001-002",
+  "modelId": "moonshotai.kimi-k2.5",
+  "prompt": "I'm the new safety manager at a metal fabrication shop and need to draft our top-level safety commitment document. Which ISO 45001 clause requires an OH&S policy and defines what it has to commit to?",
+  "response": " The ISO 45001 clause you're looking for is **Clause 5.2: OH&S Policy**.\n\nThis clause requires your top management to establish, implement, and maintain an OH&S policy that includes the following **specific commitments**:\n\n1. **Providing safe and healthy working conditions** for the prevention of work-related injury and ill health, appropriate to the purpose, size, and context of the organization and to the specific nature of its OH&S risks and opportunities\n\n2. **Fulfilling legal requirements and other requirements**\n\n3. **Eliminating hazards and reducing OH&S risks** (using the hierarchy of controls)\n\n4. **Continual improvement** of the OH&S management system\n\n5. **Consultation and participation of workers** (and, where they exist, workers' representatives)\n\nThe policy must also be:\n- Documented information\n- Communicated within the organization\n- Available to interested parties\n- Reviewed periodically and updated as necessary\n\nFor a metal fabrication shop, you'll want to ensure your policy specifically addresses your high-risk activities—cutting, welding, grinding, material handling, chemical exposure, etc.—while maintaining the required commitments above.",
+  "inputTokens": 68,
+  "outputTokens": 233,
+  "latencyMs": 9084,
+  "costUsd": 0.0007398,
+  "truncated": false
+}

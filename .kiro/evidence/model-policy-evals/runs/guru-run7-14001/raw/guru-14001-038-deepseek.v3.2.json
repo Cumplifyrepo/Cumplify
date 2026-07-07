@@ -1,0 +1,11 @@
+{
+  "taskId": "guru-14001-038",
+  "modelId": "deepseek.v3.2",
+  "prompt": "Leadership approved a target to cut hazardous waste generation 15 percent this year. Which ISO 14001 clauses cover setting that objective up properly and then monitoring performance against it? Cite both.",
+  "response": "Based on ISO 14001:2015, the target to cut hazardous waste generation by 15% is primarily covered by two key clauses:\n\n1.  **Clause 6.2: Environmental objectives and planning to achieve them**\n    *   This clause covers the **setting up** of the objective. It requires that environmental objectives, like the 15% reduction target, are:\n        *   Consistent with the environmental policy.\n        *   Measurable (15% is a measurable metric).\n        *   Monitored.\n        *   Communicated.\n        *   Updated as appropriate.\n        *   It also requires planning *how* to achieve the objective (actions, responsibilities, timelines, resources).\n\n2.  **Clause 9.1: Monitoring, measurement, analysis and evaluation**\n    *   This clause covers the **monitoring of performance** against the objective. It requires the organization to:\n        *   Monitor, measure, analyze, and evaluate its environmental performance.\n        *   Evaluate compliance with legal and other requirements.\n        *   Determine what needs to be monitored and measured (e.g., hazardous waste quantities).\n        *   Use the results to evaluate the achievement of environmental objectives (like the 15% target).\n\n**In summary:**\n*   **Setting the objective:** **Clause 6.2**\n*   **Monitoring performance against it:** **Clause 9.1**\n\nThe process flows from establishing the measurable target in **6.2** to tracking, analyzing, and evaluating progress through **9.1** as part of the Plan-Do-Check-Act (PDCA) cycle.",
+  "inputTokens": 41,
+  "outputTokens": 333,
+  "latencyMs": 5616,
+  "costUsd": 0.00064147,
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "taskId": "workhorse-028",
+  "modelId": "zai.glm-4.7",
+  "prompt": "Plan an internal audit: Scope: ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site. The site closed 89 CAPAs last year but 22% were reopened due to recurrence. Average CAPA age is 95 days (target: 60). Three major NCs from last external audit related to root cause analysis quality.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
+  "response": "```json\n{\n  \"scope\": \"ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site, focusing on CAPA effectiveness, timeliness, and root cause analysis quality.\",\n  \"criteria\": \"ISO 9001:2015 clause 10.2, internal CAPA procedures, and key performance indicators (target CAPA age: 60 days, recurrence rate: 0%).\",\n  \"schedule\": \"Audit to be conducted over 4 weeks, starting with document review in Week 1, followed by departmental interviews and CAPA file sampling in Weeks 2-3, and final reporting in Week 4.\"\n}\n```\nANSWER: {\"scope\": \"ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site, focusing on CAPA effectiveness, timeliness, and root cause analysis quality.\", \"criteria\": \"ISO 9001:2015 clause 10.2, internal CAPA procedures, and key performance indicators (target CAPA age: 60 days, recurrence rate: 0%).\", \"schedule\": \"Audit to be conducted over 4 weeks, starting with document review in Week 1, followed by departmental interviews and CAPA file sampling in Weeks 2-3, and final reporting in Week 4.\"}",
+  "inputTokens": 148,
+  "outputTokens": 289,
+  "latencyMs": 5171,
+  "costUsd": 0.0007245999999999999,
+  "truncated": false
+}
