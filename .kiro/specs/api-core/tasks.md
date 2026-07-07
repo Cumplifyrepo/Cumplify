@@ -1,0 +1,259 @@
+# API Core — Tasks
+
+**Spec:** `api-core`
+**Design approved:** R2 + FF-1..FF-6 (this commit)
+**Budget:** $0 standing-cost additions. Any deviation stops for architect.
+**Convention:** `[KIRO]` = Kiro executes. `[ARCHITECT]` = architect/owner executes (deploys, witnessed readbacks, live proofs). `[REQUIRES-HUMAN]` = owner reviews diff before merge (C-2).
+
+---
+
+## Task 1 — DataStack amendments (enableDataApi + new exports) [KIRO]
+
+- [ ] Add `enableDataApi: true` to the Aurora cluster construct in `infra/lib/data-stack.ts`.
+- [ ] Export `clusterArn` (string) and `dbSecretArn` (string) as public stack properties + CfnOutputs.
+- [ ] Template-assertion test: verify `enableDataApi` property, verify 2 new CfnOutputs exist.
+- [ ] `cdk synth` passes, CDK Nag zero warnings.
+
+**Depends on:** nothing (first task).
+**Deploy:** [ARCHITECT] — runtime property change on existing cluster, no replacement.
+
+---
+
+## Task 2 — IdentityStack amendments (Pool B/C exports) [KIRO]
+
+- [ ] Export `poolBId`, `poolBArn`, `poolCId`, `poolCArn` as public stack properties + CfnOutputs from `infra/lib/identity-stack.ts`.
+- [ ] Template-assertion test: verify 4 new CfnOutputs exist.
+- [ ] `cdk synth` passes, CDK Nag zero warnings.
+
+**Depends on:** nothing (parallel with Task 1).
+**Deploy:** [ARCHITECT] — output-only change, no resource modification.
+
+---
+
+## Task 3 — Publisher upgrade: auditTrail stamping + registry [KIRO]
+
+- [ ] Create `services/eventing/src/audit-trail-registry.ts` with full `AUDIT_TRAIL_REGISTRY` map (all events from contracts/events.md trail designation).
+- [ ] Update `services/eventing/src/publisher.ts`: stamp `auditTrail` from registry; throw on unregistered detailType.
+- [ ] Update `services/eventing/src/types.ts`: add `auditTrail: boolean` to `CumplifyEvent` interface.
+- [ ] Create parity test: asserts registry keys ↔ contracts/events.md trail designation section agreement.
+- [ ] Update existing publisher tests to include `auditTrail` field in assertions.
+- [ ] All tests pass (`vitest --run`).
+
+**Depends on:** nothing (parallel with Tasks 1–2).
+
+---
+
+## Task 4 — EventingStack R-3 pattern rewrite [KIRO]
+
+- [ ] Update `infra/lib/eventing-stack.ts`: replace R-3 `detailType` suffix pattern with `{ detail: { auditTrail: [true] } }`.
+- [ ] Update `infra/lib/eventing-stack.unit.test.ts`: template assertion for new R-3 pattern.
+- [ ] `cdk synth` passes, CDK Nag zero warnings.
+- [ ] Integration test: update event-pattern.int.test.ts to use `auditTrail: true` in test events.
+
+**Depends on:** Task 3 (publisher must stamp auditTrail before R-3 expects it).
+**Deploy:** [ARCHITECT] — R-3 swap is LAST step per §13.4 deploy-order constraint.
+**Verification:** [ARCHITECT] — live `TestEventPattern` positive + negative proofs.
+
+---
+
+## Task 5 — RDS migrations: schemas + tables + RLS [KIRO]
+
+- [ ] Create `services/api/migrations/` directory structure.
+- [ ] `001_create_schemas.sql`: CREATE SCHEMA m1, m2, m3, m4, m5, m5_views.
+- [ ] `002_m1_document_studio.sql`: 6 tables per RDS-1 + audit columns + tenant_id.
+- [ ] `003_m2_capa.sql`: 5 tables per RDS-1.
+- [ ] `004_m3_audit_studio.sql`: 5 tables per RDS-1.
+- [ ] `005_m4_records_management.sql`: 4 tables per RDS-1.
+- [ ] `006_m5_risk_management.sql`: 3 base tables per RDS-1.
+- [ ] `007_rls_policies.sql`: RLS on all 23 base tables, using `current_setting('app.tenant_id')`.
+- [ ] `008_risk_register_view.sql`: materialized view + SECURITY DEFINER accessor function (§6.4) + REVOKE/GRANT.
+- [ ] Create `services/api/src/migration-runner.ts`: executes SQL via Data API, parameterized `set_config`, tracks `_migrations` table.
+- [ ] Create `services/api/src/migrator.ts`: CDK Custom Resource handler wrapping migration-runner.
+- [ ] Unit tests for migration-runner (mock Data API client).
+
+**Depends on:** Task 1 (DataStack enableDataApi + exports).
+**Deploy:** [ARCHITECT] — migrations execute via Custom Resource on first deploy.
+
+---
+
+## Task 6 — GraphQL schema (M1–M5 types + operations) [KIRO]
+
+- [ ] Create `services/api/schema/schema.graphql` with types for all M1–M5 entities per module-spec.
+- [ ] Define all queries and mutations per §2.2 operations table.
+- [ ] User-facing operations annotated `@aws_lambda`; agent-path `@aws_iam`.
+- [ ] Subscriptions (5 per §12) with None data source, tenant-claim verification.
+- [ ] SCHEMA-5: no `tenantId` in mutation input types (resolvers overwrite from resolverContext).
+
+**Depends on:** nothing (parallel, schema is a file artifact).
+
+---
+
+## Task 7 — ApiStack: AppSync API + authorizer + WAFv2 [KIRO] [REQUIRES-HUMAN]
+
+- [ ] Create `infra/lib/api-stack.ts` with:
+  - AppSync GraphQL API: `AWS_LAMBDA` default auth + `AWS_IAM` additional.
+  - Lambda authorizer construct (NodejsFunction, node22/ARM/512MB/10s).
+  - WAFv2 association with SecurityStack WebACL.
+  - Migration Custom Resource (provider + migrator Lambda).
+  - CfnOutputs: API URL, API ID, authorizer ARN, tenant-data-role ARN.
+- [ ] Wire ApiStack into `infra/lib/cumplify-stage.ts` with addDependency on DataStack, IdentityStack, SecurityStack, EventingStack.
+- [ ] Template-assertion tests per §11.1.
+- [ ] `cdk synth` passes, CDK Nag zero warnings.
+- [ ] **[REQUIRES-HUMAN]** Authorizer code + IAM policies flagged for owner review (C-2/AUTH-5).
+
+**Depends on:** Tasks 1, 2, 4 (stack exports + eventing amendment).
+
+---
+
+## Task 8 — Lambda authorizer implementation [KIRO] [REQUIRES-HUMAN]
+
+- [ ] Create `services/api/src/authorizer.ts`:
+  - JWKS verification (Pool B + Pool C, cached).
+  - Pool-A rejection (Layer 1): if issuer = Pool A → deny before role logic.
+  - Expiry check, `custom:tenantId` presence check.
+  - Read tenant metadata from CumplifyCore (`TENANT#<tenantId>#META` / `PLAN`) for static entitlement stamp.
+  - Return `resolverContext`: {tenantId, role, poolClass, sub, entitlement}.
+- [ ] Unit tests: valid B token → allow; valid C token → allow; Pool A token → deny; expired → deny; missing tenantId → deny; bad signature → deny.
+- [ ] Structured logging via `@aws-lambda-powertools/logger` (tenantId + requestId).
+- [ ] **[REQUIRES-HUMAN]** Owner reviews authorizer code before merge.
+
+**Depends on:** Task 7 (ApiStack wires the authorizer).
+
+---
+
+## Task 9 — Tenant-data role (CARRY-1) [KIRO] [REQUIRES-HUMAN]
+
+- [ ] In ApiStack: create tenant-data IAM role per §7.2–7.3:
+  - Trust policy: resolver execution roles as principals + sts:TagSession.
+  - Tag condition: `aws:RequestTag/tenantId` matches bare UUID format.
+  - Inline policy: DDB actions on `${tableArn}` + `${tableArn}/index/*` with `dynamodb:LeadingKeys` condition `TENANT#${aws:PrincipalTag/tenantId}#*`.
+- [ ] Grant `sts:AssumeRole` + `sts:TagSession` on tenant-data role to each resolver execution role.
+- [ ] Template-assertion tests: trust policy, inline policy condition, grants.
+- [ ] **[REQUIRES-HUMAN]** IAM policy diff flagged for owner review (C-2).
+
+**Depends on:** Task 7 (ApiStack + resolver Lambdas).
+
+---
+
+## Task 10 — Resolver Lambdas (M1–M5) [KIRO]
+
+- [ ] Create 5 resolver Lambdas (`services/api/src/resolvers/m1.ts` .. `m5.ts`):
+  - Read `resolverContext.tenantId`, validate (SCHEMA-5: overwrite any client-supplied tenantId).
+  - Assume tenant-data role with tenantId session tag (§7.4 pattern).
+  - Data API transaction: `select set_config(...)` → domain query/mutation → commit.
+  - Publish audit event via `services/eventing` publisher (auditTrail stamped).
+  - Structured logging (tenantId + requestId).
+- [ ] Unit tests per resolver (mock Data API + STS + EventBridge).
+- [ ] Integration wiring: AppSync resolver mapping to Lambda functions.
+
+**Depends on:** Tasks 5, 8, 9 (migrations + authorizer + role).
+
+---
+
+## Task 11 — Subscription resolvers [KIRO]
+
+- [ ] Implement 5 subscription resolvers verifying `resolverContext.tenantId` matches the subscription's `tenantId` argument (C-6).
+- [ ] Implement 4 publish mutations (None DS) for subscription delivery: `publishDocumentEvent`, `publishCAPAEvent`, `publishAuditEvent`, `publishRiskEvent`.
+- [ ] Unit tests: tenant match → deliver; tenant mismatch → reject.
+- [ ] M4 `onCalibrationDue` scheduler deferred (OQ-4) — subscription mechanism only.
+
+**Depends on:** Task 7 (ApiStack + schema).
+
+---
+
+## Task 12 — Deploy + witnessed readback [ARCHITECT]
+
+- [ ] Deploy Tasks 1–2 (DataStack + IdentityStack amendments).
+- [ ] Deploy Task 4 (EventingStack R-3 rewrite) — LAST per FF-4.
+- [ ] Deploy Task 7 (ApiStack with authorizer + resolvers + migrations + role).
+- [ ] Readback: `cdk-outputs.json` captured, SHA recorded.
+- [ ] Live `TestEventPattern` proofs (positive + negative) for R-3.
+
+**Depends on:** Tasks 1–11 complete (all code merged).
+
+---
+
+## Task 13 — ACC-1: End-to-end mutation-to-sealed-event [ARCHITECT]
+
+- [ ] Execute a real GraphQL mutation via AppSync (e.g., `createRisk`).
+- [ ] Verify: RDS row written (RLS enforced) — query via Data API.
+- [ ] Verify: DDB metadata item written under `TENANT#<tenantId>#M5` (if applicable).
+- [ ] Verify: EventBridge event published (CloudWatch Logs / CloudTrail).
+- [ ] Verify: event arrives in `audit-sink.fifo` (poll queue).
+- [ ] Verify: chained DDB audit item written (scan AUDITLOG partition).
+- [ ] Verify: S3 WORM object created (list objects in audit-archive bucket).
+- [ ] Each hop evidenced with command + output + timestamp.
+
+**Depends on:** Task 12 (deploy complete).
+
+---
+
+## Task 14 — ACC-2: CARRY-1 denial matrix [ARCHITECT]
+
+- [ ] `aws iam simulate-principal-policy` against tenant-data role:
+  - Same-tenant `GetItem` (table) → allowed.
+  - Cross-tenant `GetItem` (table) → denied (implicitDeny).
+  - Same-tenant `PutItem` (table) → allowed.
+  - Cross-tenant `PutItem` (table) → denied.
+  - Same-tenant `Query` (GSI1, TENANT#-prefixed key) → allowed.
+  - Cross-tenant `Query` (GSI1, TENANT#-prefixed key) → denied.
+- [ ] All captured verbatim. Green = CARRY-1 closed.
+
+**Depends on:** Task 12 (role deployed).
+
+---
+
+## Task 15 — ACC-3: Authorizer negative proof [ARCHITECT]
+
+- [ ] Real Pool-A token (valid signature from Pool A JWKS, correct claims) → 401.
+- [ ] Expired Pool-B token → 401.
+- [ ] Pool-B token with missing `custom:tenantId` → 401.
+- [ ] Token with bad/forged signature → 401.
+- [ ] All captured verbatim.
+
+**Depends on:** Task 12 (authorizer deployed).
+
+---
+
+## Task 16 — ACC-4: Chain-verification job green [ARCHITECT]
+
+- [ ] Trigger the daily chain-verifier Lambda (spec 5) after ACC-1 events written.
+- [ ] CloudWatch log shows PASS for the tenant used in ACC-1.
+- [ ] Captured verbatim.
+
+**Depends on:** Task 13 (audit events exist).
+
+---
+
+## Task 17 — ACC-5: RLS tenant isolation proof [ARCHITECT]
+
+- [ ] Resolver Lambda with tenant-A session: query M5 `risks` table → returns tenant-A rows.
+- [ ] Same query with tenant-B session → returns zero rows from tenant-A data.
+- [ ] Materialized view accessor (`get_risk_register_view()`) with tenant-B → empty result.
+- [ ] All captured verbatim.
+
+**Depends on:** Task 13 (data written by ACC-1 mutation).
+
+---
+
+## Task 18 — Loop-guard test (FF-2) [ARCHITECT]
+
+- [ ] Publish one `AuditEvent.Appended` event to `cumplify-events`.
+- [ ] Assert exactly ONE chain item written to DDB (no duplication, no re-publish loop).
+- [ ] Captured verbatim.
+
+**Depends on:** Task 12 (R-3 + audit trail deployed).
+
+---
+
+## Completion Criteria
+
+All tasks green = spec acceptance met:
+- ACC-1 ✓ (Task 13)
+- ACC-2 ✓ (Task 14, CARRY-1 closed)
+- ACC-3 ✓ (Task 15)
+- ACC-4 ✓ (Task 16)
+- ACC-5 ✓ (Task 17)
+- Loop guard ✓ (Task 18)
+- CDK Nag zero warnings ✓ (all synth tasks)
+- $0 standing-cost additions ✓ (Data API, no Proxy)

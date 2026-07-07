@@ -3,7 +3,7 @@
 **Spec:** `api-core`
 **Requirements approved:** R4-by-ratification (ec8c2ee, 2026-07-07)
 **Steering rules exercised:** `00-stack-facts.md`, `01-tenancy-rules.md`, `03-auth-modes.md`, `04-immutability.md`, `06-cdk-conventions.md`, `07-events.md`, `14-simplicity.md`, `16-identity-boundaries.md`, `19-kiro-truth.md`
-**Revision:** R2 — D-1..D-10 resolved; OQ-1/OQ-2/OQ-5 ratified decisions applied unconditionally
+**Revision:** R2 — D-1..D-10 resolved; OQ-1/OQ-2/OQ-5 ratified decisions applied unconditionally; FF-1..FF-6 fix-forward corrections applied
 **Ratified decisions (ec8c2ee):** OQ-1 = AWS_LAMBDA; OQ-2 = Data API; OQ-5 = auditTrail envelope flag
 
 ---
@@ -55,7 +55,7 @@ Covers ALL queries AND mutations per module per module-spec.
 | `updatePolicy(input)` | Mutation | @aws_lambda | `Policy.Updated` | ISO 9001 5.2 | true | ✅ Yes |
 | `updateImsScope(input)` | Mutation | @aws_lambda | `Scope.Changed` | ISO 9001 4.3 | true | ✅ Yes |
 | `agentDraftDocument(input)` | Mutation | @aws_iam | ★ `Document.DraftCreated` | ISO 9001 7.5.2 | true | ★ NEW (shared) |
-| `publishDocumentEvent(input)` | Mutation | @aws_iam | — (None DS, subscription trigger) | — | false | — |
+| `publishDocumentEvent(input)` | Mutation | @aws_iam | — (None DS, subscription trigger) | — | — | — |
 | `onDocumentStatusChanged(tenantId)` | Subscription | @aws_lambda | — | — | — | — |
 
 #### M2 — CAPA
@@ -72,7 +72,7 @@ Covers ALL queries AND mutations per module per module-spec.
 | `disposeNonconformingOutput(input)` | Mutation | @aws_lambda | ★ `CAPA.OutputDisposed` | ISO 9001 8.7 | true | ★ NEW |
 | `agentTriageNC(input)` | Mutation | @aws_iam | `NC.Raised` | ISO 9001 10.2 | true | ✅ Yes (shared) |
 | `agentProposeCorrectiveAction(input)` | Mutation | @aws_iam | `CAPA.Opened` | ISO 9001 10.2 | true | ✅ Yes (shared) |
-| `publishCAPAEvent(input)` | Mutation | @aws_iam | — (None DS) | — | false | — |
+| `publishCAPAEvent(input)` | Mutation | @aws_iam | — (None DS) | — | — | — |
 | `onCAPAStatusChanged(tenantId)` | Subscription | @aws_lambda | — | — | — | — |
 
 #### M3 — Audit Studio
@@ -87,7 +87,7 @@ Covers ALL queries AND mutations per module per module-spec.
 | `completeAudit(id)` | Mutation | @aws_lambda | `Audit.Completed` | ISO 9001 9.2.1 | true | ✅ Yes |
 | `agentGenerateChecklist(auditId)` | Mutation | @aws_iam | ★ `Audit.ChecklistGenerated` | ISO 9001 9.2.1 | false | ★ NEW |
 | `agentScoreReadiness(standard)` | Mutation | @aws_iam | `Readiness.Scored` | ISO 9001 9.2.1 | false | ✅ Yes |
-| `publishAuditEvent(input)` | Mutation | @aws_iam | — (None DS) | — | false | — |
+| `publishAuditEvent(input)` | Mutation | @aws_iam | — (None DS) | — | — | — |
 | `onFindingRecorded(tenantId)` | Subscription | @aws_lambda | — | — | — | — |
 
 #### M4 — Records Management
@@ -103,9 +103,13 @@ Covers ALL queries AND mutations per module per module-spec.
 | `appendAuditEvent(input)` | Mutation | @aws_iam | `AuditEvent.Appended` | all | true | ✅ Yes |
 | `onCalibrationDue(tenantId)` | Subscription | @aws_lambda | — | — | — | — |
 
-> `appendAuditEvent` is the audit-sink's write path (spec 5). It IS the audit
-> event — it does not publish a separate domain event. The `AuditEvent.Appended`
-> detailType is emitted by the audit-sink consumer itself after writing.
+> `appendAuditEvent` is the `@aws_iam` mutation that PUBLISHES
+> `AuditEvent.Appended` (auditTrail:true) to `cumplify-events`. R-3 routes it
+> to audit-sink.fifo. The audit-sink appender writes the hash-chained DDB item
+> and NEVER re-emits — no PutEvents call exists in the appender code. This is
+> the **no-re-emit invariant**: one publish → exactly one chain item. A
+> loop-guard test asserts: publish one `AuditEvent.Appended` → verify exactly
+> ONE chain item written (no duplication, no re-publish loop).
 
 #### M5 — Risk Management
 
@@ -117,7 +121,7 @@ Covers ALL queries AND mutations per module per module-spec.
 | `addRiskTreatment(input)` | Mutation | @aws_lambda | ★ `Risk.TreatmentAdded` | ISO 9001 6.1 | true | ★ NEW |
 | `createChangePlan(input)` | Mutation | @aws_lambda | `Change.Planned` | ISO 9001 6.3 | true | ✅ Yes |
 | `agentAssessRisk(input)` | Mutation | @aws_iam | `Risk.Escalated` | ISO 9001 6.1 | true | ✅ Yes |
-| `publishRiskEvent(input)` | Mutation | @aws_iam | — (None DS) | — | false | — |
+| `publishRiskEvent(input)` | Mutation | @aws_iam | — (None DS) | — | — | — |
 | `onRiskEscalated(tenantId)` | Subscription | @aws_lambda | — | — | — | — |
 
 ### 2.3 New Event Registrations Required (C-4)
@@ -159,42 +163,59 @@ route to ZERO rules under the old pattern.
 5. **R-1, R-2, R-4..R-7 are UNCHANGED** (they route by detailType for
    domain-specific fan-out; the auditTrail flag is orthogonal).
 
-### 2.5 Per-Event Routing Table
+### 2.5 Per-Event Routing Table (FF-1: derived from infra/lib/eventing-stack.ts)
 
-Every mutation event, its auditTrail designation, and which rules it matches:
+Rules (deployed patterns from eventing-stack.ts):
+- **R-1 nc-triage:** exact `Audit.FindingRaised`, `Incident.Reported`, `EnvIncident.Reported`, `Aspect.SignificantImpact`
+- **R-2 capa-intake:** exact `NC.Raised`, `CAPA.Opened`, `CAPA.Closed`, `CAPA.EffectivenessVerified`, `CAPA.ActionRequiresDocChange`
+- **R-3 audit-sink (AFTER OQ-5):** `{ "detail": { "auditTrail": [true] } }`
+- **R-4 hazard:** exact `Hazard.Identified`, `Hazard.RiskEscalated`, `Incident.Reported`, `Safety.MetricLogged`
+- **R-5 aspect:** exact `Aspect.SignificantImpact`, `Enviro.MonitoringLogged`, `EnvIncident.Reported`, `EnvEmergency.PlanUpdated`
+- **R-6 review-fanout:** exact `Audit.Completed`, `CAPA.Closed`, `Objectives.Updated`, `Aspect.SignificantImpact`, `Incident.Reported`, `Compliance.Evaluated`, `Risk.Escalated`, `Context.Updated`
+- **R-7 records:** prefix `CAPA.`, `Document.`, `Risk.`
 
-| detailType | auditTrail | R-1 nc-triage | R-2 capa-intake | R-3 audit-sink (NEW: auditTrail=true) | R-4 hazard | R-5 aspect | R-6 review-fanout | R-7 records |
-|-----------|------------|---------------|-----------------|---------------------------------------|------------|------------|-------------------|-------------|
-| `Document.DraftCreated` | true | — | — | ✅ | — | — | — | — |
-| `Document.SubmittedForApproval` | true | — | — | ✅ | — | — | — | — |
-| `Document.Approved` | true | — | — | ✅ | — | — | — | ✅ (Document. prefix) |
-| `Document.Published` | true | — | — | ✅ | — | — | — | ✅ (Document. prefix) |
+Cross-checked against `.kiro/evidence/model-policy-evals/micro-routing-truth-table.md`.
+
+| detailType | auditTrail | R-1 nc-triage | R-2 capa-intake | R-3 audit-sink (NEW) | R-4 hazard | R-5 aspect | R-6 review-fanout | R-7 records |
+|-----------|------------|---------------|-----------------|----------------------|------------|------------|-------------------|-------------|
+| `Document.DraftCreated` | true | — | — | ✅ | — | — | — | ✅ (Document.) |
+| `Document.SubmittedForApproval` | true | — | — | ✅ | — | — | — | ✅ (Document.) |
+| `Document.Approved` | true | — | — | ✅ | — | — | — | ✅ (Document.) |
+| `Document.Published` | true | — | — | ✅ | — | — | — | ✅ (Document.) |
 | `Policy.Updated` | true | — | — | ✅ | — | — | — | — |
 | `Scope.Changed` | true | — | — | ✅ | — | — | — | — |
-| `NC.Raised` | true | ✅ | — | ✅ | — | — | — | — |
-| `CAPA.RootCauseRecorded` | true | — | ✅ (CAPA. prefix) | ✅ | — | — | — | ✅ (CAPA. prefix) |
-| `CAPA.Opened` | true | — | ✅ (CAPA. prefix) | ✅ | — | — | — | ✅ (CAPA. prefix) |
-| `CAPA.Closed` | true | — | ✅ (CAPA. prefix) | ✅ | — | — | — | ✅ (CAPA. prefix) |
-| `CAPA.EffectivenessVerified` | true | — | ✅ (CAPA. prefix) | ✅ | — | — | — | ✅ (CAPA. prefix) |
-| `CAPA.OutputDisposed` | true | — | ✅ (CAPA. prefix) | ✅ | — | — | — | ✅ (CAPA. prefix) |
+| `NC.Raised` | true | — | ✅ (exact) | ✅ | — | — | — | — |
+| `CAPA.RootCauseRecorded` | true | — | — | ✅ | — | — | — | ✅ (CAPA.) |
+| `CAPA.Opened` | true | — | ✅ (exact) | ✅ | — | — | — | ✅ (CAPA.) |
+| `CAPA.Closed` | true | — | ✅ (exact) | ✅ | — | — | ✅ (exact) | ✅ (CAPA.) |
+| `CAPA.EffectivenessVerified` | true | — | ✅ (exact) | ✅ | — | — | — | ✅ (CAPA.) |
+| `CAPA.OutputDisposed` | true | — | — | ✅ | — | — | — | ✅ (CAPA.) |
 | `Audit.ProgrammeCreated` | true | — | — | ✅ | — | — | — | — |
 | `Audit.Scheduled` | true | — | — | ✅ | — | — | — | — |
-| `Audit.FindingRaised` | true | ✅ | — | ✅ | — | — | — | — |
-| `Audit.Completed` | true | — | — | ✅ | — | — | ✅ | — |
+| `Audit.FindingRaised` | true | ✅ (exact) | — | ✅ | — | — | — | — |
+| `Audit.Completed` | true | — | — | ✅ | — | — | ✅ (exact) | — |
 | `Readiness.Scored` | false | — | — | — | — | — | — | — |
 | `Record.Registered` | true | — | — | ✅ | — | — | — | — |
 | `Calibration.Recorded` | true | — | — | ✅ | — | — | — | — |
 | `Record.RetentionPolicySet` | true | — | — | ✅ | — | — | — | — |
 | `AuditEvent.Appended` | true | — | — | ✅ | — | — | — | — |
-| `Risk.Created` | true | — | — | ✅ | — | — | — | ✅ (Risk. prefix) |
-| `Risk.TreatmentAdded` | true | — | — | ✅ | — | — | — | ✅ (Risk. prefix) |
-| `Risk.Escalated` | true | — | — | ✅ | — | — | — | ✅ (Risk. prefix) |
+| `Risk.Created` | true | — | — | ✅ | — | — | — | ✅ (Risk.) |
+| `Risk.TreatmentAdded` | true | — | — | ✅ | — | — | — | ✅ (Risk.) |
+| `Risk.Escalated` | true | — | — | ✅ | — | — | ✅ (exact) | ✅ (Risk.) |
 | `Change.Planned` | true | — | — | ✅ | — | — | — | — |
 | `Audit.ChecklistGenerated` | false | — | — | — | — | — | — | — |
 
-**Verification:** Every `auditTrail: true` event reaches R-3. No event with
-`auditTrail: false` reaches R-3. Domain fan-out rules (R-1..R-7) continue to
-use detailType-prefix/constant matching unchanged.
+**Notes on R-2 routing (vs R1 design error):**
+- `NC.Raised` routes to R-2 capa-intake (exact match), NOT R-1 nc-triage.
+  R-1 catches `Audit.FindingRaised` (which triggers NC triage downstream).
+- `CAPA.RootCauseRecorded` and `CAPA.OutputDisposed` are NEW events not in
+  R-2's exact list — they route to R-7 (CAPA. prefix) but NOT R-2.
+  R-2 only matches 5 exact strings deployed in eventing-stack.ts.
+- `CAPA.Closed` matches BOTH R-2 (exact) AND R-6 review-fanout (exact).
+- `Risk.Escalated` matches BOTH R-6 review-fanout (exact) AND R-7 (Risk. prefix).
+
+**Verification:** Every `auditTrail: true` event reaches R-3. No `auditTrail: false`
+event reaches R-3. Domain fan-out rules use exact/prefix matching unchanged.
 
 ---
 
@@ -454,8 +475,10 @@ tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
   actions: ['sts:TagSession'],
   principals: resolverLambdas.map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
   conditions: {
+    // Session tag value = BARE tenantId (UUID format, e.g. "abc-123-def")
+    // The LeadingKeys condition adds the TENANT#...# prefix wrapper
     'StringLike': {
-      'aws:RequestTag/tenantId': 'TENANT#*',
+      'aws:RequestTag/tenantId': '????????-????-????-????-????????????',
     },
   },
 }));
@@ -487,15 +510,29 @@ resolverLambdas.forEach(fn => {
 
 ```typescript
 // In resolver Lambda handler:
+import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+
 const sts = new STSClient({});
+
+// tenantId = BARE UUID from resolverContext (e.g. "abc-123-def")
 const assumed = await sts.send(new AssumeRoleCommand({
   RoleArn: TENANT_DATA_ROLE_ARN,
-  RoleSessionName: `resolver-${tenantId}-${Date.now()}`,
-  Tags: [{ Key: 'tenantId', Value: tenantId }],
-  DurationSeconds: 900, // 15 min max for session
+  RoleSessionName: `resolver-${tenantId.substring(0, 8)}-${Date.now()}`,
+  Tags: [{ Key: 'tenantId', Value: tenantId }],  // BARE tenantId
+  DurationSeconds: 900,
 }));
-// Use assumed.Credentials for DynamoDB calls
-const ddb = new DynamoDBClient({ credentials: fromTemporaryCredentials(assumed) });
+
+// LeadingKeys condition evaluates:
+//   dynamodb:LeadingKeys must match TENANT#${aws:PrincipalTag/tenantId}#*
+//   → TENANT#abc-123-def#* (the PK prefix pattern)
+const ddb = new DynamoDBClient({
+  credentials: {
+    accessKeyId: assumed.Credentials!.AccessKeyId!,
+    secretAccessKey: assumed.Credentials!.SecretAccessKey!,
+    sessionToken: assumed.Credentials!.SessionToken!,
+  },
+});
 ```
 
 **Credential caching:** Per-tenant credentials cached in Lambda memory for
@@ -503,9 +540,55 @@ the session duration (up to 15 min or container lifetime). A Map keyed by
 tenantId avoids redundant STS calls within a warm container serving multiple
 requests for the same tenant.
 
+### 7.5 Event Semantics Principles (FF-6)
+
+1. **detailType sharing:** allowed ONLY across user-path and agent-path
+   mutations for the IDENTICAL semantic transition (the `actor` field
+   distinguishes human vs agent). Example: `createCorrectiveAction` (user)
+   and `agentProposeCorrectiveAction` (agent) both emit `CAPA.Opened`
+   because both perform the same state transition.
+
+2. **auditTrail: false** is permitted ONLY for:
+   - Recomputable agent output (e.g., `Readiness.Scored`, `Audit.ChecklistGenerated`)
+   - Deadline/notification events (e.g., `Calibration.Due`, `Training.Expiring`)
+   - NEVER for human/controlled decisions or state transitions.
+
 ---
 
-## 8. Construct Choices
+## 8. GSI Partition Key Verification (FF-5)
+
+### 8.1 DataStack GSI Structure (verified from infra/lib/data-stack.ts)
+
+All 9 GSIs use generic attribute names: `GSI1PK`/`GSI1SK` through `GSI9PK`/`GSI9SK`.
+No items are written yet (no spec has populated CumplifyCore beyond the audit
+trail's `PK=TENANT#<tenantId>#AUDITLOG` items).
+
+### 8.2 Design Constraint
+
+**All GSI partition key values written by api-core resolvers MUST be
+`TENANT#<tenantId>#*` prefixed.** This ensures the `dynamodb:LeadingKeys`
+condition on the tenant-data role applies equally to table queries AND index
+queries (both use the same condition key).
+
+The grant `${tableArn}/index/*` in §7.3 is SAFE if and only if this constraint
+holds. If any future spec writes a GSI partition key that is NOT TENANT#-prefixed
+(e.g., a global lookup index), that index must be excluded from the tenant-data
+role grant and queried via a separate mechanism.
+
+### 8.3 ACC-2 Matrix Extension (GSI probe)
+
+Add to the CARRY-1 denial matrix:
+- **GSI query probe (same-tenant):** `simulate-principal-policy` with action
+  `dynamodb:Query` on `${tableArn}/index/GSI1`, context key
+  `dynamodb:LeadingKeys = ["TENANT#tenantA#META"]`,
+  `aws:PrincipalTag/tenantId = tenantA` → allowed.
+- **GSI query probe (cross-tenant):** same action/resource, context key
+  `dynamodb:LeadingKeys = ["TENANT#tenantB#META"]`,
+  `aws:PrincipalTag/tenantId = tenantA` → denied (implicitDeny).
+
+---
+
+## 9. Construct Choices
 
 | Component | CDK Construct | Key props |
 |-----------|--------------|-----------|
@@ -523,7 +606,7 @@ suppressions (if any) require documented reasoning in code.
 
 ---
 
-## 9. Cross-Stack Integration
+## 10. Cross-Stack Integration
 
 ### 9.1 Props Interface
 
@@ -562,7 +645,7 @@ interface ApiStackProps extends cdk.StackProps {
 
 ---
 
-## 10. Testing Strategy
+## 11. Testing Strategy
 
 ### 10.1 Template Assertion Unit Tests (C-1)
 
@@ -597,7 +680,7 @@ interface ApiStackProps extends cdk.StackProps {
 
 ---
 
-## 11. Subscription Analysis (SCHEMA-4)
+## 12. Subscription Analysis (SCHEMA-4)
 
 Per module-spec M1–M5, all five modules declare subscriptions:
 
@@ -614,16 +697,16 @@ subscription's `tenantId` argument before delivering (C-6).
 
 ---
 
-## 12. EventingStack R-3 Amendment (OQ-5)
+## 13. EventingStack R-3 Amendment (OQ-5)
 
-### 12.1 Current R-3 Pattern (spec 2, deployed)
+### 13.1 Current R-3 Pattern (spec 2, deployed)
 
 ```json
 { "detail-type": [{"suffix": ".Approved"}, {"suffix": ".Closed"},
   {"suffix": ".Raised"}, {"suffix": ".Evaluated"}, "AuditEvent.Appended"] }
 ```
 
-### 12.2 New R-3 Pattern (this spec delivers)
+### 13.2 New R-3 Pattern (this spec delivers)
 
 ```json
 { "detail": { "auditTrail": [true] } }
@@ -636,7 +719,7 @@ subscription's `tenantId` argument before delivering (C-6).
 - Template assertion in `eventing-stack.unit.test.ts` must be updated.
 - Live `TestEventPattern` verification: architect-executed at build.
 
-### 12.3 Publisher Registry Map
+### 13.3 Publisher Registry Map
 
 ```typescript
 // services/eventing/src/audit-trail-registry.ts
@@ -690,9 +773,41 @@ export async function publish(opts: PublishOptions): Promise<string> {
 **Parity test:** asserts `AUDIT_TRAIL_REGISTRY` keys ↔ `contracts/events.md`
 trail designation section are identical. Fails build on mismatch.
 
+### 13.4 Deploy-Order Constraint (FF-4)
+
+The R-3 pattern swap MUST be the LAST step in the eventing amendment deploy.
+Sequence:
+
+1. **Publisher upgrade:** `services/eventing/src/publisher.ts` gains
+   `auditTrail` stamping + `audit-trail-registry.ts`. Parity test passes.
+2. **All producer redeploys:** every Lambda currently publishing to
+   `cumplify-events` is redeployed with the new publisher code so that ALL
+   events carry the `auditTrail` field in `detail` BEFORE R-3 changes.
+3. **R-3 pattern swap (LAST):** EventingStack deploys with the new pattern
+   `{ "detail": { "auditTrail": [true] } }`.
+4. **Verification (architect-executed):**
+   - Positive: `TestEventPattern` with `detail.auditTrail=true` → matches.
+   - Negative: `TestEventPattern` with `detail.auditTrail=false` → no match.
+   - Live: publish a test event with `auditTrail: true` → arrives in
+     `audit-sink.fifo`; publish with `auditTrail: false` → does NOT arrive.
+
+**Current producers publishing to `cumplify-events` (inventory):**
+| Producer | Location | Notes |
+|----------|----------|-------|
+| Demo consumer (echo) | `services/eventing/handlers/demo-consumer.ts` | Does NOT publish (read-only consumer) |
+| Audit-trail appender | `services/audit-trail/src/appender.ts` | Does NOT publish (writes DDB only, no-re-emit invariant) |
+| Eventing integration test | `services/eventing/__tests__/event-pattern.int.test.ts` | Test-only; uses `publish()` |
+
+**At time of R-3 swap, the only live producer is the integration test.**
+No production Lambda currently publishes domain events (resolvers don't exist
+yet — this spec creates them). Therefore the deploy-order constraint is
+satisfied trivially for the initial deploy: publisher upgrade and R-3 swap can
+ship in the same stack deploy. The constraint becomes critical for FUTURE
+amendments when production resolvers are live.
+
 ---
 
-## 13. SOC 2 / Compliance Impact
+## 14. SOC 2 / Compliance Impact
 
 - **CC6:** Lambda authorizer (Layer-1 pool rejection); RLS (23 tables +
   SECURITY DEFINER matview); tenant-data role (LeadingKeys + session tag).
@@ -703,7 +818,7 @@ trail designation section are identical. Fails build on mismatch.
 
 ---
 
-## 14. Resolved Open Questions
+## 15. Resolved Open Questions
 
 | # | Resolution |
 |---|-----------|
