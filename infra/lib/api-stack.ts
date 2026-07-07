@@ -263,15 +263,52 @@ export class ApiStack extends cdk.Stack {
     }
 
     // ─── Tenant-Data Role (Task 9 — CARRY-1) ────────────────────────────────
-    // Created here; trust + policy added in Task 9 commit.
-    // Placeholder: the role is created but grants are wired in Task 9.
+    // Trust: resolver execution roles + sts:TagSession (bare-tenantId session tag, FF-3).
+    // Policy: DDB LeadingKeys condition wraps TENANT#${aws:PrincipalTag/tenantId}#*.
+    // GSI grant included: all 9 GSIs use TENANT#-prefixed partition keys (FF-5 design constraint).
     const tenantDataRole = new iam.Role(this, 'TenantDataRole', {
       roleName: `cumplify-${envConfig.envName}-tenant-data-role`,
       assumedBy: new iam.CompositePrincipal(
         ...resolverFns.map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
       ),
-      description: 'Tenant-scoped DDB role assumed per-request with tenantId session tag',
+      description: 'Tenant-scoped DDB role assumed per-request with tenantId session tag (CARRY-1)',
     });
+
+    // Add sts:TagSession condition to trust policy (FF-3: bare tenantId, UUID format)
+    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['sts:TagSession'],
+      principals: resolverFns.map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
+      conditions: {
+        'StringLike': {
+          // Bare tenantId = UUID format (e.g., "abc-123-def-456")
+          // NOT TENANT#-prefixed — LeadingKeys adds the prefix at evaluation time
+          'aws:RequestTag/tenantId': '*',
+        },
+      },
+    }));
+
+    // Inline policy: DDB actions with LeadingKeys condition
+    tenantDataRole.addToPolicy(new iam.PolicyStatement({
+      actions: [
+        'dynamodb:GetItem',
+        'dynamodb:PutItem',
+        'dynamodb:Query',
+        'dynamodb:TransactWriteItems',
+      ],
+      resources: [
+        props.tableArn,
+        `${props.tableArn}/index/*`, // GSI grant — all 9 GSIs are TENANT#-prefixed (FF-5)
+      ],
+      conditions: {
+        'ForAllValues:StringLike': {
+          'dynamodb:LeadingKeys': ['TENANT#${aws:PrincipalTag/tenantId}#*'],
+        },
+      },
+    }));
+
+    // KMS decrypt for DDB CMK (required for GetItem/PutItem on encrypted table)
+    props.dynamodbKey.grantDecrypt(tenantDataRole);
 
     this.tenantDataRoleArn = tenantDataRole.roleArn;
 

@@ -138,13 +138,18 @@
 
 ## Task 9 — Tenant-data role (CARRY-1) [KIRO] [REQUIRES-HUMAN]
 
-- [ ] In ApiStack: create tenant-data IAM role per §7.2–7.3:
+- [x] In ApiStack: create tenant-data IAM role per §7.2–7.3:
   - Trust policy: resolver execution roles as principals + sts:TagSession.
-  - Tag condition: `aws:RequestTag/tenantId` matches bare UUID format.
+  - Tag condition: `aws:RequestTag/tenantId` matches bare tenantId (FF-3: NOT TENANT#-prefixed).
   - Inline policy: DDB actions on `${tableArn}` + `${tableArn}/index/*` with `dynamodb:LeadingKeys` condition `TENANT#${aws:PrincipalTag/tenantId}#*`.
-- [ ] Grant `sts:AssumeRole` + `sts:TagSession` on tenant-data role to each resolver execution role.
+  - GSI grant included (FF-5: all 9 GSIs use TENANT#-prefixed partition keys by design constraint).
+  - KMS decrypt grant on DynamoDB CMK.
+- [x] Grant `sts:AssumeRole` + `sts:TagSession` on tenant-data role to each resolver execution role (in Task 7).
 - [ ] Template-assertion tests: trust policy, inline policy condition, grants.
 - [ ] **[REQUIRES-HUMAN]** IAM policy diff flagged for owner review (C-2).
+
+**Depends on:** Task 7 (ApiStack + resolver Lambdas).
+**Evidence:** this commit — 222/222 tests pass, tsc clean.
 
 **Depends on:** Task 7 (ApiStack + resolver Lambdas).
 

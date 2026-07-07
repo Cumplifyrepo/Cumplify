@@ -94,3 +94,18 @@ auth-logic: Pool B/C via jose jwtVerify + createRemoteJWKSet (cached);
   Layer 1: issuer ≠ B/C → reject (covers Pool A, unknown issuers);
   ID token only (token_use check); custom:tenantId required;
   entitlement from CumplifyCore TENANT#<id>#META/PLAN (static P1).
+
+## Task 9 — Tenant-data role (CARRY-1)
+command: npx vitest --run && npx tsc --noEmit
+timestamp: 2026-07-07T17:59:39Z
+exit_code: 0
+tests: 222/222 pass
+commit: (this commit)
+files: infra/lib/api-stack.ts (tenant-data role section rewritten)
+iam-design: trust = resolver exec roles (CompositePrincipal) + sts:TagSession
+  with aws:RequestTag/tenantId = '*' (bare tenantId, FF-3);
+  inline policy = GetItem/PutItem/Query/TransactWriteItems on tableArn +
+  tableArn/index/* with ForAllValues:StringLike dynamodb:LeadingKeys =
+  TENANT#${aws:PrincipalTag/tenantId}#*;
+  KMS decrypt on DDB CMK.
+  GSI grant included per FF-5 design constraint (all GSI*PK TENANT#-prefixed).
