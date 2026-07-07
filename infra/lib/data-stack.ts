@@ -44,6 +44,8 @@ export class DataStack extends cdk.Stack {
   public readonly tableArn: string;
   public readonly tableStreamArn: string;
   public readonly clusterEndpoint: string;
+  public readonly clusterArn: string;
+  public readonly dbSecretArn: string;
   public readonly evidenceBucketArn: string;
 
   constructor(scope: Construct, id: string, props: DataStackProps) {
@@ -174,6 +176,7 @@ export class DataStack extends cdk.Stack {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
         version: rds.AuroraPostgresEngineVersion.VER_16_4,
       }),
+      enableDataApi: true,
       serverlessV2MinCapacity: envConfig.auroraMinCapacity,
       serverlessV2MaxCapacity: envConfig.auroraMaxCapacity,
       writer: rds.ClusterInstance.serverlessV2('Writer', {
@@ -203,6 +206,8 @@ export class DataStack extends cdk.Stack {
     });
 
     this.clusterEndpoint = cluster.clusterEndpoint.hostname;
+    this.clusterArn = cluster.clusterArn;
+    this.dbSecretArn = rdsSecret.secretArn;
 
     // -----------------------------------------------------------------------
     // ElastiCache Redis (AC-4.3)
@@ -544,6 +549,8 @@ export class DataStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'TableArn', { value: this.tableArn });
     new cdk.CfnOutput(this, 'TableStreamArn', { value: this.tableStreamArn });
     new cdk.CfnOutput(this, 'ClusterEndpoint', { value: this.clusterEndpoint });
+    new cdk.CfnOutput(this, 'ClusterArn', { value: this.clusterArn });
+    new cdk.CfnOutput(this, 'DbSecretArn', { value: this.dbSecretArn });
     new cdk.CfnOutput(this, 'EvidenceBucketName', { value: evidenceBucket.bucketName });
     new cdk.CfnOutput(this, 'EvidenceBucketArn', { value: this.evidenceBucketArn });
     new cdk.CfnOutput(this, 'AccessLogsBucketName', { value: accessLogsBucket.bucketName });

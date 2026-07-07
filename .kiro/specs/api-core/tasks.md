@@ -1,9 +1,10 @@
 # API Core — Tasks
 
 **Spec:** `api-core`
-**Design approved:** R2 + FF-1..FF-6 (this commit)
+**Design approved:** R2 + FF-1..FF-6
 **Budget:** $0 standing-cost additions. Any deviation stops for architect.
 **Convention:** `[KIRO]` = Kiro executes. `[ARCHITECT]` = architect/owner executes (deploys, witnessed readbacks, live proofs). `[REQUIRES-HUMAN]` = owner reviews diff before merge (C-2).
+**Evidence contract:** Rule 7 — checkbox edits ONLY in the same commit as the evidence log. Rule 8 — readback rows carry timestamp + exit code + cdk-outputs.json blob SHA. Evidence path: `.kiro/evidence/api-core/`.
 
 ---
 
@@ -113,9 +114,10 @@
   - Expiry check, `custom:tenantId` presence check.
   - Read tenant metadata from CumplifyCore (`TENANT#<tenantId>#META` / `PLAN`) for static entitlement stamp.
   - Return `resolverContext`: {tenantId, role, poolClass, sub, entitlement}.
+- [ ] Authorizer execution role DDB policy: `dynamodb:GetItem` on CumplifyCore with LeadingKeys condition `StringLike 'TENANT#*'` (metadata reads at auth time — cannot use tenant-data role because no tenant context exists yet at authorization time; the authorizer IS the entity that establishes tenant context).
 - [ ] Unit tests: valid B token → allow; valid C token → allow; Pool A token → deny; expired → deny; missing tenantId → deny; bad signature → deny.
 - [ ] Structured logging via `@aws-lambda-powertools/logger` (tenantId + requestId).
-- [ ] **[REQUIRES-HUMAN]** Owner reviews authorizer code before merge.
+- [ ] **[REQUIRES-HUMAN]** Owner reviews authorizer code + IAM policy before merge.
 
 **Depends on:** Task 7 (ApiStack wires the authorizer).
 
@@ -144,6 +146,13 @@
   - Publish audit event via `services/eventing` publisher (auditTrail stamped).
   - Structured logging (tenantId + requestId).
 - [ ] Unit tests per resolver (mock Data API + STS + EventBridge).
+- [ ] Repository-layer unit test asserting every written GSI*PK attribute value is `TENANT#`-prefixed (FF-5 convention enforcement).
+- [ ] C-7 CI denial suite (5 integration tests from design §11.3, committed as runnable post-deploy):
+  1. Authorizer denial: Pool-A token → 401.
+  2. DynamoDB denial: simulate-principal-policy cross-tenant → implicitDeny.
+  3. RDS RLS denial: tenant-B session → empty result on tenant-A data.
+  4. Materialized view denial: tenant-B → `get_risk_register_view()` → empty.
+  5. Resolver overwrite: client-supplied tenantId in mutation input → resolverContext used (SCHEMA-5).
 - [ ] Integration wiring: AppSync resolver mapping to Lambda functions.
 
 **Depends on:** Tasks 5, 8, 9 (migrations + authorizer + role).
@@ -163,11 +172,17 @@
 
 ## Task 12 — Deploy + witnessed readback [ARCHITECT]
 
-- [ ] Deploy Tasks 1–2 (DataStack + IdentityStack amendments).
-- [ ] Deploy Task 4 (EventingStack R-3 rewrite) — LAST per FF-4.
-- [ ] Deploy Task 7 (ApiStack with authorizer + resolvers + migrations + role).
-- [ ] Readback: `cdk-outputs.json` captured, SHA recorded.
-- [ ] Live `TestEventPattern` proofs (positive + negative) for R-3.
+### Dev deploy (single-pass with documented waiver)
+
+- [ ] Single-pass `cdk deploy --all` deploys all stacks in dependency order.
+- [ ] **WAIVER (dev only):** R-3 pattern swap deploys in the same pass as ApiStack. Per §13.4 producer inventory: no live producers exist at initial deploy (only integration test publishes). The deploy-order constraint is trivially satisfied.
+- [ ] Readback: `cdk-outputs.json` captured, SHA recorded in `.kiro/evidence/api-core/`.
+- [ ] Live `TestEventPattern` proofs (positive + negative) for new R-3 pattern.
+
+### Two-pass protocol (MANDATORY for staging/prod and any future amendment once resolvers are live)
+
+1. **First deploy:** all stacks EXCEPT EventingStack R-3 change (publisher + resolvers go live stamping `auditTrail` field; old R-3 suffix pattern still active — no events lost because suffix pattern is a superset for the events it already matched; new events won't hit old R-3 but that's acceptable for the brief interim).
+2. **Second deploy:** EventingStack with R-3 pattern swap only. Verify: positive + negative `TestEventPattern`. From this moment, all `auditTrail: true` events route to audit-sink.
 
 **Depends on:** Tasks 1–11 complete (all code merged).
 
