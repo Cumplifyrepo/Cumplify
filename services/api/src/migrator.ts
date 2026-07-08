@@ -65,6 +65,34 @@ async function syncAppRolePassword(): Promise<void> {
   logger.info('app_role password synced from Secrets Manager');
 }
 
+/**
+ * Retry a DB operation while Aurora Serverless v2 resumes from 0-ACU auto-pause.
+ * Dev/staging run at min 0 ACU (RDS-4); the first connection after a pause returns
+ * "resuming after being auto-paused" (~15-30s). runMigrations is idempotent
+ * (per-file _migrations tracking), so retrying the whole run is safe.
+ */
+async function withResumeRetry<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  const maxAttempts = 10;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const e = err as Error;
+      const resuming =
+        (e.message ?? '').includes('resuming after being auto-paused') ||
+        (e.message ?? '').includes('DatabaseResuming') ||
+        e.name === 'DatabaseResumingException';
+      if (resuming && attempt < maxAttempts) {
+        logger.warn('Aurora resuming from auto-pause — retrying', { label, attempt });
+        await new Promise((resolve) => setTimeout(resolve, 15_000));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error(`withResumeRetry(${label}): exhausted retries`);
+}
+
 export async function handler(event: CdkCustomResourceEvent): Promise<{ Data: Record<string, string> }> {
   logger.info('Migration handler invoked', { requestType: event.RequestType });
 
@@ -88,14 +116,16 @@ export async function handler(event: CdkCustomResourceEvent): Promise<{ Data: Re
 
   logger.info('Found migration files', { count: migrations.length, files });
 
-  const result = await runMigrations(
-    { clusterArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DATABASE },
-    migrations,
+  const result = await withResumeRetry('runMigrations', () =>
+    runMigrations(
+      { clusterArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DATABASE },
+      migrations,
+    ),
   );
 
   // After migrations complete (including 009 that creates app_role),
   // sync the password so resolvers can connect as app_role.
-  await syncAppRolePassword();
+  await withResumeRetry('syncAppRolePassword', () => syncAppRolePassword());
 
   logger.info('Migrations complete', result);
 
