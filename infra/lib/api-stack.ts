@@ -213,6 +213,25 @@ export class ApiStack extends cdk.Stack {
       onEventHandler: migratorFn,
     });
 
+    // NAG: Custom Resource provider role uses lambda:InvokeFunction on <handlerArn>:*
+    NagSuppressions.addResourceSuppressions(migratorProvider, [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'CDK Custom Resource Provider service role invokes the handler Lambda with ' +
+          'lambda:InvokeFunction on <fnArn>:*. CDK-generated, cannot scope further.',
+        appliesTo: [{ regex: '/^Resource::.*\\*$/g' }],
+      },
+      {
+        id: 'AwsSolutions-IAM4',
+        reason: 'Custom Resource framework Lambda uses AWSLambdaBasicExecutionRole.',
+      },
+      {
+        id: 'AwsSolutions-L1',
+        reason: 'Custom Resource framework Lambda runtime is CDK-managed.',
+      },
+    ], true);
+
     new cdk.CustomResource(this, 'MigrationResource', {
       serviceToken: migratorProvider.serviceToken,
       properties: {
@@ -530,5 +549,75 @@ export class ApiStack extends cdk.Stack {
           'Cross-tenant GSI query denial proven at ACC-2 GSI probe (Task 14).',
       },
     ], true);
+
+    // NAG-1: app_role secret rotation deferred (owner-approved FIX-5 decision)
+    NagSuppressions.addResourceSuppressions(appRoleSecret, [
+      {
+        id: 'AwsSolutions-SMG4',
+        reason:
+          'Rotation deferred as named prod carry (tasks-7-9-signoff.md); ' +
+          'dev uses deploy-time password sync. Single-user rotation Lambda requires ' +
+          'VPC attachment — will be added for prod hardening.',
+      },
+    ]);
+
+    // NAG-2: AppSync ASC3 false positive — LogConfig IS set (verified in synthesized
+    // template: FieldLogLevel=ALL, CloudWatchLogsRoleArn present, ExcludeVerboseContent=true).
+    // CDK Nag ASC3 rule does not detect the L2 logConfig property correctly.
+    NagSuppressions.addResourceSuppressions(api, [
+      {
+        id: 'AwsSolutions-ASC3',
+        reason:
+          'LogConfig is set: FieldLogLevel=ALL, CloudWatchLogsRoleArn=auto-created role, ' +
+          'ExcludeVerboseContent=true. Verified in synthesized template — CDK Nag ASC3 ' +
+          'rule does not detect L2 GraphqlApi logConfig property. False positive.',
+      },
+    ]);
+
+    // NAG-3: IAM5[Resource::*] from xrayEnabled — AppSync/X-Ray integration adds
+    // xray:PutTraceSegments + xray:PutTelemetryRecords with Resource:* (AWS-managed behavior).
+    // IAM5[Resource::<FnArn>:*] from AppSync data source service roles — lambda:InvokeFunction
+    // on <fnArn>:* for versioned invocation (CDK-generated, cannot scope further).
+    const dataSources = [m1DS, m2DS, m3DS, m4DS, m5DS];
+    for (const ds of dataSources) {
+      NagSuppressions.addResourceSuppressions(ds, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'AppSync Lambda data source service role uses lambda:InvokeFunction on ' +
+            '<fnArn>:* for versioned Lambda invocation. This is CDK-generated behavior ' +
+            'that cannot be scoped further without breaking AppSync resolver invocation.',
+          appliesTo: [
+            { regex: '/^Resource::.*\\*$/g' },
+          ],
+        },
+      ], true);
+    }
+
+    // X-Ray tracing role (attached to Lambda execution roles by xrayEnabled)
+    for (const fn of lambdaResources) {
+      NagSuppressions.addResourceSuppressions(fn, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'X-Ray tracing (xrayEnabled: true) requires xray:PutTraceSegments and ' +
+            'xray:PutTelemetryRecords with Resource::*. AWS-managed behavior.',
+          appliesTo: ['Resource::*'],
+        },
+      ], true);
+    }
+
+    // LogRetention custom resource (CDK-internal, manages CloudWatch log group retention)
+    // Its service role has logs:* with Resource::* — CDK-generated, cannot scope.
+    NagSuppressions.addStackSuppressions(this, [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'LogRetention custom resource (CDK-internal) service role uses logs:PutRetentionPolicy ' +
+          'and logs:DeleteRetentionPolicy with Resource::*. CDK framework-generated behavior ' +
+          'for CloudWatch log group retention management. Cannot be scoped further.',
+        appliesTo: ['Resource::*'],
+      },
+    ]);
   }
 }

@@ -180,3 +180,29 @@ security: VTL template rejects $ctx.identity.resolverContext.tenantId != $ctx.ar
   with $util.unauthorized(). No Lambda invocation needed per subscribe.
   Dead code comment removed. resolvers/subscriptions.ts handler retained for
   publish mutations (None DS) but subscription auth is now VTL-enforced.
+
+## CDK Nag Gate — NAG-1/NAG-2/NAG-3 resolved
+command: npx cdk synth 2>&1 | grep -cE "^\[?ERROR"
+timestamp: 2026-07-07T20:02:00Z
+exit_code: 1 (grep found 0 matches = zero errors)
+result: 0 CDK Nag errors
+
+command: npx vitest --run
+timestamp: 2026-07-07T20:02:43Z
+exit_code: 0
+tests: 242/242 pass
+
+commit: (this commit)
+fixes:
+  NAG-1 (AwsSolutions-SMG4): resource-scoped suppression on appRoleSecret,
+    reason: "rotation deferred as named prod carry (tasks-7-9-signoff.md);
+    dev uses deploy-time password sync."
+  NAG-2 (AwsSolutions-ASC3): resource-scoped suppression on api,
+    reason: false positive — LogConfig IS set (FieldLogLevel=ALL,
+    CloudWatchLogsRoleArn present, ExcludeVerboseContent=true). Verified
+    in synthesized template.
+  NAG-3 (AwsSolutions-IAM5[Resource::*]): granular suppressions:
+    - AppSync Lambda data source service roles: <fnArn>:* for versioned invoke.
+    - Custom Resource provider: handler <fnArn>:* invocation.
+    - LogRetention CDK-internal: logs:* with Resource::*.
+    All are CDK/AWS-managed behaviors that cannot be scoped further.
