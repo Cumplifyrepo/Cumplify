@@ -74,7 +74,9 @@ export async function handler(event: CdkCustomResourceEvent): Promise<{ Data: Re
   }
 
   // Load migration files from the bundled directory
-  const migrationsDir = join(__dirname, '..', 'migrations');
+  // Bundling copies migrations to ${outputDir}/migrations, which unpacks to
+  // /var/task/migrations at runtime (__dirname === /var/task). NOT one level up.
+  const migrationsDir = join(__dirname, 'migrations');
   const files = readdirSync(migrationsDir)
     .filter((f) => f.endsWith('.sql'))
     .sort();
