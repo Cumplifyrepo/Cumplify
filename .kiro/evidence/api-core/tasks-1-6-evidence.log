@@ -220,3 +220,21 @@ bug: RDS Data API ExecuteStatement runs ONE statement per call; runner was
   sending whole files → "Multistatements aren't supported".
 fix: split each file into individual statements; execute one at a time within
   the file's BeginTransaction. Splitter handles: $$, $tag$, '', --, /* */.
+
+## Enum mapping fix — GraphQL UPPERCASE → DB lowercase
+command: npx vitest --run
+timestamp: 2026-07-08T08:32:22Z
+exit_code: 0
+tests: 271/271 pass (+12 enum mapping tests)
+commit: (this commit)
+bug: GraphQL enums are UPPERCASE (QUALITY, DRAFT); DB CHECKs are lowercase
+  (quality, draft). createRisk(category:QUALITY) → CHECK constraint violation.
+fix: per-enum mapping module (enum-mappings.ts) with mapEnum() helper.
+  Standard (ISO9001/14001/45001) passed verbatim — NOT lowercased.
+  ownerId/created_by sourced from input or actor (NOT NULL satisfied).
+files: services/api/src/resolvers/enum-mappings.ts (new),
+       services/api/src/resolvers/m1.ts (doc_type, decision mapped),
+       services/api/src/resolvers/m2.ts (source, nc_type, severity, disposition mapped),
+       services/api/src/resolvers/m3.ts (finding_type mapped),
+       services/api/src/resolvers/m5.ts (category mapped, ownerId sourced),
+       services/api/__tests__/enum-mappings.test.ts (12 tests)

@@ -7,6 +7,7 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { extractContext, beginTenantTransaction, publishAuditEvent } from './shared.js';
+import { mapEnum, FINDING_TYPE_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m3' });
 
@@ -94,19 +95,21 @@ async function scheduleAudit(event: AppSyncEvent, tenantId: string, actor: strin
 
 async function recordFinding(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as Record<string, unknown>;
+  const findingType = mapEnum(FINDING_TYPE_MAP, input.findingType as string, 'findingType');
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
-      `INSERT INTO m3.audit_findings (tenant_id, audit_id, finding_type, clause_ref, description, severity, status, raised_by, created_by)
-       VALUES (:tenantId, :auditId::uuid, :findingType, :clauseRef, :description, :severity, 'open', :actor, :actor)
+      `INSERT INTO m3.audit_findings (tenant_id, audit_id, checklist_id, finding_type, clause_ref, description, evidence_ref, created_by)
+       VALUES (:tenantId, :auditId::uuid, :checklistId, :findingType, :clauseRef, :description, :evidenceRef, :actor)
        RETURNING *`,
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
         { name: 'auditId', value: { stringValue: input.auditId as string } },
-        { name: 'findingType', value: { stringValue: (input.findingType as string) ?? 'nonconformity' } },
-        { name: 'clauseRef', value: { stringValue: (input.clauseRef as string) ?? '' } },
+        { name: 'checklistId', value: input.checklistId ? { stringValue: input.checklistId as string } : { isNull: true } },
+        { name: 'findingType', value: { stringValue: findingType } },
+        { name: 'clauseRef', value: { stringValue: input.clauseRef as string } },
         { name: 'description', value: { stringValue: input.description as string } },
-        { name: 'severity', value: { stringValue: (input.severity as string) ?? 'minor' } },
+        { name: 'evidenceRef', value: input.evidenceRef ? { stringValue: input.evidenceRef as string } : { isNull: true } },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );

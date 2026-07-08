@@ -7,6 +7,7 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { extractContext, beginTenantTransaction, publishAuditEvent } from './shared.js';
+import { mapEnum, DOC_TYPE_MAP, APPROVAL_DECISION_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m1' });
 
@@ -37,6 +38,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
 
 async function createDocumentDraft(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as Record<string, unknown>;
+  const docType = mapEnum(DOC_TYPE_MAP, input.docType as string, 'docType');
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
@@ -46,7 +48,7 @@ async function createDocumentDraft(event: AppSyncEvent, tenantId: string, actor:
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
         { name: 'standard', value: { stringValue: input.standard as string } },
-        { name: 'docType', value: { stringValue: input.docType as string } },
+        { name: 'docType', value: { stringValue: docType } },
         { name: 'title', value: { stringValue: input.title as string } },
         { name: 'actor', value: { stringValue: actor } },
       ],
@@ -81,6 +83,7 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
 
 async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as Record<string, unknown>;
+  const decision = mapEnum(APPROVAL_DECISION_MAP, input.decision as string, 'decision');
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
@@ -90,7 +93,7 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
         { name: 'tenantId', value: { stringValue: tenantId } },
         { name: 'versionId', value: { stringValue: input.versionId as string } },
         { name: 'actor', value: { stringValue: actor } },
-        { name: 'decision', value: { stringValue: input.decision as string } },
+        { name: 'decision', value: { stringValue: decision } },
       ],
     );
     await txn.commit();

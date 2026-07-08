@@ -7,6 +7,7 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { extractContext, beginTenantTransaction, publishAuditEvent } from './shared.js';
+import { mapEnum, NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m2' });
 
@@ -36,19 +37,23 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
 
 async function raiseNonconformity(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as Record<string, unknown>;
+  const source = mapEnum(NC_SOURCE_MAP, input.source as string, 'source');
+  const ncType = mapEnum(NC_TYPE_MAP, input.ncType as string, 'ncType');
+  const severity = mapEnum(SEVERITY_MAP, input.severity as string, 'severity');
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
-      `INSERT INTO m2.nonconformities (tenant_id, standard, title, description, source, severity, detected_by, status, created_by)
-       VALUES (:tenantId, :standard, :title, :description, :source, :severity, :actor, 'open', :actor)
+      `INSERT INTO m2.nonconformities (tenant_id, standard, source, nc_type, description, clause_ref, severity, status, raised_by, raised_at, created_by)
+       VALUES (:tenantId, :standard, :source, :ncType, :description, :clauseRef, :severity, 'open', :actor, NOW(), :actor)
        RETURNING *`,
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
         { name: 'standard', value: { stringValue: input.standard as string } },
-        { name: 'title', value: { stringValue: input.title as string } },
+        { name: 'source', value: { stringValue: source } },
+        { name: 'ncType', value: { stringValue: ncType } },
         { name: 'description', value: { stringValue: input.description as string } },
-        { name: 'source', value: { stringValue: (input.source as string) ?? 'manual' } },
-        { name: 'severity', value: { stringValue: (input.severity as string) ?? 'minor' } },
+        { name: 'clauseRef', value: { stringValue: input.clauseRef as string } },
+        { name: 'severity', value: { stringValue: severity } },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
@@ -166,17 +171,17 @@ async function verifyEffectiveness(event: AppSyncEvent, tenantId: string, actor:
 
 async function disposeNonconformingOutput(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as Record<string, unknown>;
+  const disposition = mapEnum(DISPOSITION_MAP, input.disposition as string, 'disposition');
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
-      `INSERT INTO m2.nonconforming_output_dispositions (tenant_id, nonconformity_id, disposition, justification, disposed_by, created_by)
-       VALUES (:tenantId, :ncId::uuid, :disposition, :justification, :actor, :actor)
+      `INSERT INTO m2.nonconforming_outputs (tenant_id, nc_id, disposition, authorized_by, created_by)
+       VALUES (:tenantId, :ncId::uuid, :disposition, :actor, :actor)
        RETURNING *`,
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'ncId', value: { stringValue: input.nonconformityId as string } },
-        { name: 'disposition', value: { stringValue: input.disposition as string } },
-        { name: 'justification', value: { stringValue: (input.justification as string) ?? '' } },
+        { name: 'ncId', value: { stringValue: input.ncId as string } },
+        { name: 'disposition', value: { stringValue: disposition } },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );

@@ -13,6 +13,7 @@ import {
   beginTenantTransaction,
   publishAuditEvent,
 } from './shared.js';
+import { mapEnum, RISK_CATEGORY_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m5' });
 
@@ -47,6 +48,8 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
 
 async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as Record<string, unknown>;
+  const category = mapEnum(RISK_CATEGORY_MAP, input.category as string, 'category');
+  const ownerId = (input.ownerId as string) ?? actor; // NOT NULL — fall back to actor
   const txn = await beginTenantTransaction(tenantId);
 
   try {
@@ -56,13 +59,13 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
        RETURNING id, tenant_id, standard, category, description, likelihood, severity, risk_rating, treatment, owner_id, status, created_at`,
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'standard', value: { stringValue: input.standard as string } },
-        { name: 'category', value: { stringValue: input.category as string } },
+        { name: 'standard', value: { stringValue: input.standard as string } }, // verbatim ISO9001/14001/45001
+        { name: 'category', value: { stringValue: category } }, // mapped to lowercase
         { name: 'description', value: { stringValue: input.description as string } },
         { name: 'likelihood', value: { longValue: input.likelihood as number } },
         { name: 'severity', value: { longValue: input.severity as number } },
         { name: 'treatment', value: { stringValue: (input.treatment as string) ?? '' } },
-        { name: 'ownerId', value: { stringValue: (input.ownerId as string) ?? actor } },
+        { name: 'ownerId', value: { stringValue: ownerId } },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
