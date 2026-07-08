@@ -6,7 +6,7 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { extractContext, beginTenantTransaction, publishAuditEvent } from './shared.js';
+import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
 import { mapEnum, DOC_TYPE_MAP, APPROVAL_DECISION_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m1' });
@@ -59,7 +59,7 @@ async function createDocumentDraft(event: AppSyncEvent, tenantId: string, actor:
       detailType: 'Document.DraftCreated', source: 'cumplify.m1.document-studio',
       payload: { input },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -77,7 +77,7 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
       detailType: 'Document.SubmittedForApproval', source: 'cumplify.m1.document-studio',
       payload: { documentId: id },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -102,7 +102,7 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
       detailType: 'Document.Approved', source: 'cumplify.m1.document-studio',
       payload: { versionId: input.versionId, decision: input.decision },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -122,7 +122,7 @@ async function publishControlledDocument(event: AppSyncEvent, tenantId: string, 
       detailType: 'Document.Published', source: 'cumplify.m1.document-studio',
       payload: { versionId },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -144,7 +144,7 @@ async function updatePolicy(event: AppSyncEvent, tenantId: string, actor: string
       detailType: 'Policy.Updated', source: 'cumplify.m1.document-studio',
       payload: { policyId: input.id },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -168,7 +168,7 @@ async function updateImsScope(event: AppSyncEvent, tenantId: string, actor: stri
       detailType: 'Scope.Changed', source: 'cumplify.m1.document-studio',
       payload: { scopeId: input.id },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -180,7 +180,7 @@ async function getDocument(event: AppSyncEvent, tenantId: string) {
       [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
     );
     await txn.commit();
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -189,7 +189,7 @@ async function listDocuments(_event: AppSyncEvent, tenantId: string) {
   try {
     const result = await txn.execute(`SELECT * FROM m1.documents ORDER BY created_at DESC`);
     await txn.commit();
-    return result;
+    return marshalMany(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -206,6 +206,6 @@ async function getDocumentVersionDiff(event: AppSyncEvent, tenantId: string) {
       ],
     );
     await txn.commit();
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }

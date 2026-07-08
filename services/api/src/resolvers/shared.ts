@@ -95,11 +95,41 @@ export async function getTenantDdbClient(tenantId: string): Promise<DynamoDBClie
   });
 }
 
+// ─── Aurora resume-retry (BUG-C) ─────────────────────────────────────────────
+// First call after 0-ACU auto-pause throws DatabaseResumingException.
+// Retry a few times with 15s waits (mirrors migrator's withResumeRetry).
+
+const MAX_RESUME_RETRIES = 3;
+const RESUME_DELAY_MS = 15_000;
+
+async function withResumeRetry<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; attempt <= MAX_RESUME_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (err: unknown) {
+      const msg = (err as Error).message ?? '';
+      const name = (err as { name?: string }).name ?? '';
+      const isDatabaseResuming =
+        msg.includes('Communications link failure') ||
+        msg.includes('DatabaseResumingException') ||
+        name === 'DatabaseResumingException' ||
+        msg.includes('Timed out');
+
+      if (isDatabaseResuming && attempt < MAX_RESUME_RETRIES) {
+        await new Promise(resolve => setTimeout(resolve, RESUME_DELAY_MS));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Unreachable');
+}
+
 // ─── RDS Data API tenant-scoped transaction ──────────────────────────────────
 
 export interface TenantTransaction {
   transactionId: string;
-  execute: (sql: string, parameters?: SqlParameter[]) => Promise<unknown>;
+  execute: (sql: string, parameters?: SqlParameter[]) => Promise<DataApiResult>;
   commit: () => Promise<void>;
   rollback: () => Promise<void>;
 }
@@ -110,11 +140,11 @@ export interface TenantTransaction {
  * Uses app_role secret (NEVER master) for Data API.
  */
 export async function beginTenantTransaction(tenantId: string): Promise<TenantTransaction> {
-  const { transactionId } = await rdsClient.send(new BeginTransactionCommand({
+  const { transactionId } = await withResumeRetry(() => rdsClient.send(new BeginTransactionCommand({
     resourceArn: CLUSTER_ARN,
     secretArn: APP_ROLE_SECRET_ARN,
     database: 'postgres',
-  }));
+  })));
 
   // C-2 INVARIANT: set_config is the FIRST statement in every transaction.
   // Third arg = true → transaction-local. Connection reuse is safe.
@@ -127,7 +157,7 @@ export async function beginTenantTransaction(tenantId: string): Promise<TenantTr
     parameters: [{ name: 'tenantId', value: { stringValue: tenantId } }],
   }));
 
-  const execute = async (sql: string, parameters?: SqlParameter[]) => {
+  const execute = async (sql: string, parameters?: SqlParameter[]): Promise<DataApiResult> => {
     const result = await rdsClient.send(new ExecuteStatementCommand({
       resourceArn: CLUSTER_ARN,
       secretArn: APP_ROLE_SECRET_ARN,
@@ -135,8 +165,9 @@ export async function beginTenantTransaction(tenantId: string): Promise<TenantTr
       transactionId: transactionId!,
       sql,
       parameters,
+      includeResultMetadata: true, // Required for columnMetadata in response
     }));
-    return result;
+    return result as DataApiResult;
   };
 
   const commit = async () => {
@@ -217,3 +248,100 @@ export function extractContext(event: { identity?: { resolverContext?: Record<st
 }
 
 export { TABLE_NAME, BUS_NAME, CLUSTER_ARN, Logger };
+
+// ─── Data API Response Marshalling (BUG-A fix) ───────────────────────────────
+import {
+  RISK_CATEGORY_MAP, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP,
+  NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP,
+  FINDING_TYPE_MAP,
+} from './enum-mappings.js';
+
+/** Reverse maps: DB lowercase → GraphQL UPPERCASE */
+function invertMap(map: Record<string, string>): Record<string, string> {
+  const inv: Record<string, string> = {};
+  for (const [k, v] of Object.entries(map)) { inv[v] = k; }
+  return inv;
+}
+
+const REVERSE_ENUMS: Record<string, Record<string, string>> = {
+  category: invertMap(RISK_CATEGORY_MAP),
+  doc_type: invertMap(DOC_TYPE_MAP),
+  status: invertMap(DOC_STATUS_MAP), // overloaded — works for docs; CAPA status needs separate
+  decision: invertMap(APPROVAL_DECISION_MAP),
+  source: invertMap(NC_SOURCE_MAP),
+  nc_type: invertMap(NC_TYPE_MAP),
+  severity: invertMap(SEVERITY_MAP),
+  disposition: invertMap(DISPOSITION_MAP),
+  finding_type: invertMap(FINDING_TYPE_MAP),
+};
+
+/** snake_case → camelCase */
+function snakeToCamel(s: string): string {
+  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+}
+
+/** Unwrap a Data API field value */
+function unwrapField(field: Record<string, unknown>): unknown {
+  if (field.stringValue !== undefined) return field.stringValue;
+  if (field.longValue !== undefined) return field.longValue;
+  if (field.doubleValue !== undefined) return field.doubleValue;
+  if (field.booleanValue !== undefined) return field.booleanValue;
+  if (field.isNull) return null;
+  if (field.arrayValue !== undefined) return field.arrayValue;
+  // Blob or other — return as-is
+  return Object.values(field)[0] ?? null;
+}
+
+export interface DataApiResult {
+  records?: Array<Array<Record<string, unknown>>>;
+  columnMetadata?: Array<{ name?: string; label?: string }>;
+  numberOfRecordsUpdated?: number;
+}
+
+/**
+ * Marshal a Data API response into a plain object (or array of objects)
+ * with camelCase keys and GraphQL enum casing.
+ */
+export function marshalRow(
+  row: Array<Record<string, unknown>>,
+  columns: Array<{ name?: string; label?: string }>,
+): Record<string, unknown> {
+  const obj: Record<string, unknown> = {};
+  for (let i = 0; i < columns.length; i++) {
+    const colName = columns[i].name ?? columns[i].label ?? `col${i}`;
+    let value = unwrapField(row[i]);
+
+    // Reverse-map enum columns: DB lowercase → GraphQL UPPERCASE
+    if (typeof value === 'string' && REVERSE_ENUMS[colName]?.[value]) {
+      value = REVERSE_ENUMS[colName][value];
+    }
+
+    obj[snakeToCamel(colName)] = value;
+  }
+  return obj;
+}
+
+/**
+ * Marshal a full Data API result into an array of objects.
+ * For mutations (RETURNING), typically returns one row.
+ */
+export function marshalResult(result: DataApiResult): Record<string, unknown>[] {
+  if (!result.records || !result.columnMetadata) return [];
+  return result.records.map(row => marshalRow(row, result.columnMetadata!));
+}
+
+/**
+ * Marshal and return a single object (for create/get mutations) or null.
+ */
+export function marshalOne(result: DataApiResult): Record<string, unknown> | null {
+  const rows = marshalResult(result);
+  return rows[0] ?? null;
+}
+
+/**
+ * Marshal and return an array (for list queries).
+ */
+export function marshalMany(result: DataApiResult): Record<string, unknown>[] {
+  return marshalResult(result);
+}
+

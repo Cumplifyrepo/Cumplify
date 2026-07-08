@@ -9,8 +9,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP,
-  NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, CAPA_STATUS_MAP,
-  RCA_METHOD_MAP, DISPOSITION_MAP, FINDING_TYPE_MAP, RISK_CATEGORY_MAP,
+  NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP,
+  DISPOSITION_MAP, FINDING_TYPE_MAP, RISK_CATEGORY_MAP,
   mapEnum,
 } from '../src/resolvers/enum-mappings.js';
 

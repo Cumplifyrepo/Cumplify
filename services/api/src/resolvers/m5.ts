@@ -12,6 +12,8 @@ import {
   extractContext,
   beginTenantTransaction,
   publishAuditEvent,
+  marshalOne,
+  marshalMany,
 } from './shared.js';
 import { mapEnum, RISK_CATEGORY_MAP } from './enum-mappings.js';
 
@@ -71,16 +73,18 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
     );
     await txn.commit();
 
-    // Publish audit event
+    const risk = marshalOne(result);
+
+    // Publish audit event with REAL id from INSERT result (BUG-B fix)
     await publishAuditEvent({
       tenantId, actor, module: 'M5',
       clauseRef: 'ISO 9001 6.1', standard: 'ISO9001',
       detailType: 'Risk.Created', source: 'cumplify.m5.risk',
-      payload: { riskId: 'created', input },
+      payload: { riskId: risk?.id, category, description: input.description },
     });
 
-    logger.info('Risk created', { tenantId });
-    return result;
+    logger.info('Risk created', { tenantId, riskId: risk?.id });
+    return risk;
   } catch (err) {
     await txn.rollback();
     throw err;
@@ -114,7 +118,7 @@ async function addRiskTreatment(event: AppSyncEvent, tenantId: string, actor: st
       payload: { riskId: input.riskId, input },
     });
 
-    return result;
+    return marshalOne(result);
   } catch (err) {
     await txn.rollback();
     throw err;
@@ -147,7 +151,7 @@ async function createChangePlan(event: AppSyncEvent, tenantId: string, actor: st
       payload: { input },
     });
 
-    return result;
+    return marshalOne(result);
   } catch (err) {
     await txn.rollback();
     throw err;
@@ -163,7 +167,7 @@ async function getRisk(event: AppSyncEvent, tenantId: string) {
       [{ name: 'id', value: { stringValue: id } }],
     );
     await txn.commit();
-    return result;
+    return marshalOne(result);
   } catch (err) {
     await txn.rollback();
     throw err;
@@ -179,7 +183,7 @@ async function getCrossRegisterRiskView(tenantId: string) {
       `SELECT * FROM m5_views.get_risk_register_view()`,
     );
     await txn.commit();
-    return result;
+    return marshalMany(result);
   } catch (err) {
     await txn.rollback();
     throw err;

@@ -6,7 +6,7 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { extractContext, beginTenantTransaction, publishAuditEvent } from './shared.js';
+import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
 
 const logger = new Logger({ serviceName: 'resolver-m4' });
 
@@ -59,7 +59,7 @@ async function registerRecord(event: AppSyncEvent, tenantId: string, actor: stri
       payload: { input },
     });
     logger.info('Record registered', { tenantId });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -89,7 +89,7 @@ async function recordCalibration(event: AppSyncEvent, tenantId: string, actor: s
       payload: { equipmentId: input.equipmentId, result: input.result },
     });
     logger.info('Calibration recorded', { tenantId });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -117,7 +117,7 @@ async function createRetentionPolicy(event: AppSyncEvent, tenantId: string, acto
       detailType: 'Record.RetentionPolicySet', source: 'cumplify.m4.records',
       payload: { recordType: input.recordType, retentionDays: input.retentionPeriodDays },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -129,7 +129,7 @@ async function getRecord(event: AppSyncEvent, tenantId: string) {
       [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
     );
     await txn.commit();
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -143,7 +143,7 @@ async function listCalibrationsDue(_event: AppSyncEvent, tenantId: string) {
        ORDER BY c.next_due_date ASC`,
     );
     await txn.commit();
-    return result;
+    return marshalMany(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -161,6 +161,6 @@ async function getAuditTrail(event: AppSyncEvent, tenantId: string) {
       ],
     );
     await txn.commit();
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }

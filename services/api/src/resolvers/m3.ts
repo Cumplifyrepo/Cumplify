@@ -6,7 +6,7 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { extractContext, beginTenantTransaction, publishAuditEvent } from './shared.js';
+import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
 import { mapEnum, FINDING_TYPE_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m3' });
@@ -59,7 +59,7 @@ async function createAuditProgramme(event: AppSyncEvent, tenantId: string, actor
       payload: { input },
     });
     logger.info('Audit programme created', { tenantId });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -89,7 +89,7 @@ async function scheduleAudit(event: AppSyncEvent, tenantId: string, actor: strin
       payload: { programmeId: input.programmeId, scheduledDate: input.scheduledDate },
     });
     logger.info('Audit scheduled', { tenantId });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -120,7 +120,7 @@ async function recordFinding(event: AppSyncEvent, tenantId: string, actor: strin
       detailType: 'Audit.FindingRaised', source: 'cumplify.m3.audit-studio',
       payload: { auditId: input.auditId, findingType: input.findingType, severity: input.severity },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -143,7 +143,7 @@ async function completeAudit(event: AppSyncEvent, tenantId: string, actor: strin
       detailType: 'Audit.Completed', source: 'cumplify.m3.audit-studio',
       payload: { auditId: input.auditId, conclusion: input.conclusion },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -155,7 +155,7 @@ async function getAudit(event: AppSyncEvent, tenantId: string) {
       [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
     );
     await txn.commit();
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -169,6 +169,6 @@ async function getAuditReadiness(_event: AppSyncEvent, tenantId: string) {
          (SELECT COUNT(*) FROM m3.audit_programmes WHERE status = 'active') AS active_programmes`,
     );
     await txn.commit();
-    return result;
+    return marshalMany(result);
   } catch (err) { await txn.rollback(); throw err; }
 }

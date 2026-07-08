@@ -1,14 +1,10 @@
 /**
  * C-2 INVARIANT unit test: set_config('app.tenant_id', :tenantId, true) is the
  * FIRST in-transaction statement issued by beginTenantTransaction.
- *
- * Mocks the RDS Data API client and asserts call ordering.
- * Runs without deployed infrastructure.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Track all RDS Data API calls in order
 const rdsCallLog: { command: string; sql?: string; transactionId?: string }[] = [];
 
 const { mockRdsSend } = vi.hoisted(() => {
@@ -59,19 +55,16 @@ beforeEach(() => {
     const sql = (cmd as { input?: { sql?: string } }).input?.sql;
     const transactionId = (cmd as { input?: { transactionId?: string } }).input?.transactionId;
     rdsCallLog.push({ command: cmdName, sql, transactionId });
-
     if (cmdName === 'BeginTransactionCommand') {
       return Promise.resolve({ transactionId: 'txn-001' });
     }
-    return Promise.resolve({ records: [] });
+    return Promise.resolve({ records: [], columnMetadata: [] });
   });
 });
 
 describe('C-2 Invariant: set_config is FIRST in-transaction statement', () => {
   it('beginTenantTransaction issues BeginTransaction then set_config as first ExecuteStatement', async () => {
-    const txn = await beginTenantTransaction('tenant-abc-123');
-
-    // Verify call order
+    await beginTenantTransaction('tenant-abc-123');
     expect(rdsCallLog).toHaveLength(2);
     expect(rdsCallLog[0].command).toBe('BeginTransactionCommand');
     expect(rdsCallLog[1].command).toBe('ExecuteStatementCommand');
@@ -81,30 +74,22 @@ describe('C-2 Invariant: set_config is FIRST in-transaction statement', () => {
 
   it('set_config uses parameterized tenantId (never string interpolation)', async () => {
     await beginTenantTransaction('tenant-xyz-789');
-
     const setConfigCall = rdsCallLog[1];
     expect(setConfigCall.sql).toBe("SELECT set_config('app.tenant_id', :tenantId, true)");
   });
 
   it('set_config third arg is true (transaction-local, not session-scoped)', async () => {
     await beginTenantTransaction('any-tenant');
-
     const setConfigCall = rdsCallLog[1];
-    // The SQL literal must end with ", true)" — transaction-local scope
     expect(setConfigCall.sql).toContain(', true)');
-    // Must NOT contain "false" for session-scoped
     expect(setConfigCall.sql).not.toContain('false');
   });
 
   it('subsequent execute calls happen AFTER set_config', async () => {
     const txn = await beginTenantTransaction('tenant-test');
-
-    // Execute a domain query
     await txn.execute('SELECT * FROM m5.risks WHERE id = :id', [
       { name: 'id', value: { stringValue: 'risk-001' } },
     ]);
-
-    // Call order: BeginTransaction → set_config → domain query
     expect(rdsCallLog).toHaveLength(3);
     expect(rdsCallLog[0].command).toBe('BeginTransactionCommand');
     expect(rdsCallLog[1].sql).toContain('set_config');

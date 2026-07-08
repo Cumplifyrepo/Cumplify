@@ -6,7 +6,7 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { extractContext, beginTenantTransaction, publishAuditEvent } from './shared.js';
+import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
 import { mapEnum, NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m2' });
@@ -65,7 +65,7 @@ async function raiseNonconformity(event: AppSyncEvent, tenantId: string, actor: 
       payload: { input },
     });
     logger.info('Nonconformity raised', { tenantId });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -89,7 +89,7 @@ async function recordRootCause(event: AppSyncEvent, tenantId: string, actor: str
       detailType: 'CAPA.RootCauseRecorded', source: 'cumplify.m2.capa',
       payload: { nonconformityId: input.nonconformityId, rootCause: input.rootCause },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -118,7 +118,7 @@ async function createCorrectiveAction(event: AppSyncEvent, tenantId: string, act
       payload: { nonconformityId: input.nonconformityId, input },
     });
     logger.info('Corrective action created', { tenantId });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -141,7 +141,7 @@ async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {
       detailType: 'CAPA.Closed', source: 'cumplify.m2.capa',
       payload: { capaId: input.capaId },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -165,7 +165,7 @@ async function verifyEffectiveness(event: AppSyncEvent, tenantId: string, actor:
       detailType: 'CAPA.EffectivenessVerified', source: 'cumplify.m2.capa',
       payload: { capaId: input.capaId, notes: input.notes },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -192,7 +192,7 @@ async function disposeNonconformingOutput(event: AppSyncEvent, tenantId: string,
       detailType: 'CAPA.OutputDisposed', source: 'cumplify.m2.capa',
       payload: { nonconformityId: input.nonconformityId, disposition: input.disposition },
     });
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -204,7 +204,7 @@ async function getNonconformity(event: AppSyncEvent, tenantId: string) {
       [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
     );
     await txn.commit();
-    return result;
+    return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -217,6 +217,6 @@ async function listOpenCAPAs(_event: AppSyncEvent, tenantId: string) {
        WHERE ca.status = 'open' ORDER BY ca.due_date ASC`,
     );
     await txn.commit();
-    return result;
+    return marshalMany(result);
   } catch (err) { await txn.rollback(); throw err; }
 }
