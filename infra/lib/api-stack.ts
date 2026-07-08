@@ -36,6 +36,7 @@ export interface ApiStackProps extends cdk.StackProps {
   readonly clusterArn: string;
   readonly clusterEndpoint: string;
   readonly dbSecretArn: string;
+  readonly dbSecretKey: kms.IKey; // CMK encrypting the RDS master secret (secretsKey)
   // IdentityStack
   readonly poolBId: string;
   readonly poolBArn: string;
@@ -206,8 +207,13 @@ export class ApiStack extends cdk.Stack {
       resources: [props.dbSecretArn, appRoleSecret.secretArn],
     }));
 
-    // KMS decrypt for secrets + DDB
+    // KMS decrypt for secrets + DDB.
+    // dynamodbKey encrypts the app_role secret; dbSecretKey (secretsKey) encrypts
+    // the RDS MASTER secret — the migrator reads BOTH (master for DDL, app_role for
+    // the password sync), so it needs decrypt on both keys. Data API fails with
+    // "Access to KMS is not allowed" without the master-secret key grant.
     props.dynamodbKey.grantDecrypt(migratorFn);
+    props.dbSecretKey.grantDecrypt(migratorFn);
 
     const migratorProvider = new cr.Provider(this, 'MigratorProvider', {
       onEventHandler: migratorFn,

@@ -104,6 +104,7 @@ export class CumplifyStage extends cdk.Stage {
       tableArn: dataStack.tableArn,
       tableName: dataStack.tableName,
       dynamodbKey: securityStack.outputs.dynamodbKey,
+      dbSecretKey: securityStack.outputs.secretsKey,
       clusterArn: dataStack.clusterArn,
       clusterEndpoint: dataStack.clusterEndpoint,
       dbSecretArn: dataStack.dbSecretArn,
