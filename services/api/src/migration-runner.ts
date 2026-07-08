@@ -23,6 +23,7 @@ import {
 } from '@aws-sdk/client-rds-data';
 import { createHash } from 'node:crypto';
 import { Logger } from '@aws-lambda-powertools/logger';
+import { splitStatements } from './sql-splitter.js';
 
 const logger = new Logger({ serviceName: 'migration-runner' });
 
@@ -61,6 +62,20 @@ async function executeStatement(
 
 async function getAppliedMigrations(config: MigrationConfig): Promise<Set<string>> {
   try {
+    // Ensure the _migrations table exists (idempotent for clean re-runs)
+    await client.send(
+      new ExecuteStatementCommand({
+        resourceArn: config.clusterArn,
+        secretArn: config.secretArn,
+        database: config.database,
+        sql: `CREATE TABLE IF NOT EXISTS public._migrations (
+          filename TEXT PRIMARY KEY,
+          applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          checksum TEXT NOT NULL
+        )`,
+      }),
+    );
+
     const result = await client.send(
       new ExecuteStatementCommand({
         resourceArn: config.clusterArn,
@@ -77,7 +92,7 @@ async function getAppliedMigrations(config: MigrationConfig): Promise<Set<string
     }
     return filenames;
   } catch (err: unknown) {
-    // Table might not exist on very first run
+    // Table might not exist on very first run (shouldn't happen now with CREATE IF NOT EXISTS)
     const message = (err as Error).message ?? '';
     if (message.includes('_migrations') && message.includes('does not exist')) {
       return new Set();
@@ -118,8 +133,17 @@ export async function runMigrations(
     ).transactionId!;
 
     try {
-      // Execute the migration SQL
-      await executeStatement(config, migration.sql, transactionId);
+      // RDS Data API: EXACTLY ONE statement per ExecuteStatement call.
+      // Split the migration file into individual statements (dollar-quote aware).
+      const statements = splitStatements(migration.sql);
+      logger.info('Executing migration statements', {
+        filename: migration.filename,
+        statementCount: statements.length,
+      });
+
+      for (const stmt of statements) {
+        await executeStatement(config, stmt, transactionId);
+      }
 
       // Record it in the _migrations table
       const checksum = computeChecksum(migration.sql);

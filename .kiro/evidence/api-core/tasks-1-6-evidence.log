@@ -206,3 +206,17 @@ fixes:
     - Custom Resource provider: handler <fnArn>:* invocation.
     - LogRetention CDK-internal: logs:* with Resource::*.
     All are CDK/AWS-managed behaviors that cannot be scoped further.
+
+## Migration runner fix — Data API single-statement splitter
+command: npx vitest --run
+timestamp: 2026-07-07T20:33:54Z
+exit_code: 0
+tests: 259/259 pass (+17 new splitter tests)
+commit: (this commit)
+files: services/api/src/sql-splitter.ts (new, dollar-quote-aware),
+       services/api/src/migration-runner.ts (uses splitStatements per file),
+       services/api/__tests__/sql-splitter.test.ts (17 tests against actual migration files)
+bug: RDS Data API ExecuteStatement runs ONE statement per call; runner was
+  sending whole files → "Multistatements aren't supported".
+fix: split each file into individual statements; execute one at a time within
+  the file's BeginTransaction. Splitter handles: $$, $tag$, '', --, /* */.
