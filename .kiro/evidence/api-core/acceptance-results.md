@@ -59,7 +59,39 @@ blocked on TWO deeper, systemic resolver gaps found live:
 Root cause class: resolvers were never run live (unit tests mock Data API), so response marshalling
 was never exercised. Back to Kiro as a resolver-correctness pass. ACC-1/ACC-4/loop-guard gated on it.
 
-### ACC-4 (chain verifier) + Task 18 (loop guard) — pending ACC-1 (needs marshalling fix first).
+### ACC-1 — RESOLVED ✅ (2026-07-08, after marshalling fix 019dea8 deployed)
+Full spine witnessed end-to-end. createRisk(category:QUALITY) → returned marshalled Risk
+{id:86477be6-a8ff-4935-9791-a785ba76a54c, category:QUALITY (reverse-mapped from db 'quality'),
+riskRating:20 (db-computed 4×5), status:open, ownerId populated}. Traced:
+1. RDS row (app_role tenant-AAA): id=86477be6, category='quality', risk_rating=20. ✓
+2. Event Risk.Created published (auditTrail:true) → R-3 → audit-sink FIFO → appender. ✓
+3. Hash-chained AUDITLOG item: PK=TENANT#tenant-AAA#AUDITLOG,
+   SK=EVENT#2026-07-08T14:07:27.903Z#01KX10W4F2N9AH7WCY5YKS5ZQ2, prevHash links to prior. ✓
+4. WORM S3 object: audit-trail/tenant-AAA/2026/07/08/01KX10W4F2N9AH7WCY5YKS5ZQ2.json,
+   Object Lock Mode=COMPLIANCE, RetainUntilDate=2026-07-09. ✓
+
+### ACC-4 — GREEN ✅
+Chain verifier (Dev-AuditTrailStack-ChainVerifierFn) invoked → 200,
+result: {tenantId:tenant-AAA, itemsChecked:3, chainValid:true, s3Mismatches:0, brokenLinks:[]}.
+Hash chain intact AND DDB↔S3 WORM copies consistent.
+
+### Task 18 (loop guard) — GREEN ✅
+Published ONE AuditEvent.Appended for fresh tenant-LOOP (FailedEntryCount:0) → exactly 1 AUDITLOG
+item (SK=...#01LOOPGUARDTEST0000000001). No re-emit loop (FF-2 no-re-emit invariant holds live).
+
+## ALL ACCEPTANCE CRITERIA GREEN — spec proven live
+ACC-1 ✅ | ACC-2 ✅ | ACC-3 ✅ | ACC-4 ✅ | ACC-5 ✅ | Loop guard ✅
+
+## Post-acceptance carries (non-blocking, for closure/follow-up)
+- Real-Pool-A LITERAL 401: Pool A enforces MFA=ON; issuer-pinning mechanism proven via
+  wrong-issuer JWT + valid-Pool-B-accepted. Enrol a Pool-A MFA user for the literal case if desired.
+- Subscriptions (5): C-6 VTL tenant check verified at SYNTH; NOT live-exercised (needs AppSync
+  realtime WebSocket + cross-tenant subscribe attempt). Carry: live subscription isolation test.
+- C-7 CI denial suite: committed but deferred to post-deploy execution — wire into CI.
+- L-2: matview refresh automation (event/schedule-driven REFRESH) — mechanism sound, not automated.
+- Dev test artifacts: Cognito Pool B user acc-aaa-admin@example.com; RDS rows (tenant-AAA/BBB risks);
+  AUDITLOG items + 3 WORM objects (COMPLIANCE-locked until 2026-07-09, cannot delete by design);
+  tenant-LOOP loop-guard item. Left in dev; clean RDS rows/user when acceptance run wraps.
 
 ## Dev test artifacts created (cleanup awareness)
 - Cognito Pool B user: acc-aaa-admin@example.com (custom:tenantId=tenant-AAA).
