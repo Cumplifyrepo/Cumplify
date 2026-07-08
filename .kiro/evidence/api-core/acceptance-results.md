@@ -41,7 +41,25 @@ per-enum GraphQL↔DB value mapping across all 5 resolvers (m1..m5: category, st
 nc_type, decision, disposition, finding_type, approval_status, etc.) + unit tests. Positive auth,
 context extraction, app_role Data API connection, and transaction all worked — the failure is
 purely enum value mapping.
-### ACC-4 (chain verifier) + Task 18 (loop guard) — pending ACC-1 data / spec-5 message contract.
+### ACC-1 UPDATE (2026-07-08, after enum fix 5a50a30 redeployed)
+Enum fix confirmed deployed (category QUALITY→quality no longer violates CHECK). But ACC-1 still
+blocked on TWO deeper, systemic resolver gaps found live:
+1. NO RESULT MARSHALLING (systemic, all 5 resolvers, 34 ops): every resolver does `return result`
+   where `result` is the RAW RDS Data API response ({records:[[typed]], numberOfRecordsUpdated}),
+   never mapped to the GraphQL type. AppSync → "Cannot return null for non-nullable type 'ID'/
+   'RiskCategory'/... within parent 'Risk'". Resolvers must parse result.records (+ columnMetadata)
+   into an object with camelCase field names (risk_rating→riskRating, owner_id→ownerId). Confirmed:
+   grep shows 0 resolvers parse .records; 34 `return result;`.
+2. AUDIT PAYLOAD PLACEHOLDER: m5 publishAuditEvent sends payload {riskId:'created'} — a literal
+   placeholder, not the real created id (must come from the marshalled INSERT result).
+3. RESOLVER RESUME-RETRY MISSING (robustness): resolver createRisk returned raw
+   DatabaseResumingException on the first call after Aurora 0-ACU auto-pause. Only the migrator got
+   withResumeRetry. A real user's first mutation after idle sees a raw 500. Resolvers should retry
+   (or the shared Data API helper should) on the resume transient.
+Root cause class: resolvers were never run live (unit tests mock Data API), so response marshalling
+was never exercised. Back to Kiro as a resolver-correctness pass. ACC-1/ACC-4/loop-guard gated on it.
+
+### ACC-4 (chain verifier) + Task 18 (loop guard) — pending ACC-1 (needs marshalling fix first).
 
 ## Dev test artifacts created (cleanup awareness)
 - Cognito Pool B user: acc-aaa-admin@example.com (custom:tenantId=tenant-AAA).
