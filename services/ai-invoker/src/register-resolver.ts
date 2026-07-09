@@ -8,27 +8,30 @@
  */
 
 import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import type { CompiledRegister, SeatId, SeatEntry } from './types.js';
 import { InvokeError } from './types.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const REGISTER_PATH = resolve(__dirname, '../data/register-compiled.json');
+// Task-10 hotfix (T3E-F2 defect class): static JSON import — esbuild inlines
+// the register at bundle time. The previous fileURLToPath(import.meta.url) +
+// readFileSync pattern threw at runtime in the deployed Lambda (import.meta.url
+// is undefined under CJS bundling); unit tests never caught it (unbundled).
+import registerRaw from '../data/register-compiled.json' with { type: 'json' };
 
 /** Cold-cached register (loaded once per Lambda cold start) */
 let cachedRegister: CompiledRegister | null = null;
 
 /**
  * Load the compiled register. Cold-cached in Lambda memory.
- * Exported for testing (allows injection).
+ * Exported for testing (explicit path = test injection via readFileSync).
  */
 export function loadRegister(path?: string): CompiledRegister {
-  if (cachedRegister && !path) return cachedRegister;
-  const content = readFileSync(path ?? REGISTER_PATH, 'utf-8');
-  const register = JSON.parse(content) as CompiledRegister;
-  if (!path) cachedRegister = register;
-  return register;
+  if (path) {
+    return JSON.parse(readFileSync(path, 'utf-8')) as CompiledRegister;
+  }
+  if (!cachedRegister) {
+    cachedRegister = registerRaw as unknown as CompiledRegister;
+  }
+  return cachedRegister;
 }
 
 /** Reset cached register (for testing) */
