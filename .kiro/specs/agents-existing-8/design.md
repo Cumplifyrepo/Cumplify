@@ -152,7 +152,7 @@ eventually assigned, the invoker verifies
 
 The target is **1,000 credits ≈ $1.00 raw Bedrock cost**. Weights are derived
 from live Bedrock prices (fetched via `services/model-evals/src/pricing.ts`
-`fetchFromPricingApi()` — the same Pricing API used in spec-30 evals):
+`fetchPricing()` — the same Pricing API module used in spec-30 evals):
 
 ```
 wIn(model)    = inputPricePerMToken(model) × 1,000
