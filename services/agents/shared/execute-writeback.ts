@@ -101,8 +101,11 @@ function mapFindingType(raw: string): string {
   return mapped;
 }
 
-export async function handler(event: { Payload: WritebackInput }): Promise<{ status: string; auditEventId?: string }> {
-  const input = event.Payload;
+export async function handler(event: WritebackInput | { Payload: WritebackInput }): Promise<{ status: string; auditEventId?: string }> {
+  // Task-11 hotfix: the SFN lambda:invoke integration with `'Payload.$': '$'`
+  // delivers the STATE as the event — there is no {Payload:...} wrapper on
+  // input (the wrapper exists only in state OUTPUT). Accept both shapes.
+  const input: WritebackInput = 'Payload' in event ? event.Payload : event;
   const { tenantId, agentName, proposedAction, approvalResult } = input;
 
   if (!approvalResult.approved) {
