@@ -17,6 +17,19 @@ import {
 import { Logger } from '@aws-lambda-powertools/logger';
 import type { ConversationMessage, ToolConfig, TokenUsage } from './types.js';
 
+
+/**
+ * Nova cannot emit hyphens inside tool-call names (live A/B proven 2026-07-09:
+ * 'test-tool' -> invalid-sequence error; 'test_tool' -> clean tool_use).
+ * Wire encoding is bijective for our domain names (hyphenated, no underscores).
+ */
+export function toWireToolName(name: string): string {
+  return name.replace(/-/g, '_');
+}
+export function fromWireToolName(wireName: string): string {
+  return wireName.replace(/_/g, '-');
+}
+
 const logger = new Logger({ serviceName: 'ai-invoker-converse' });
 
 const MAX_RETRIES = 3;
@@ -130,12 +143,16 @@ function buildConverseInput(params: ConverseParams): ConverseCommandInput {
   }
 
   // Tool configuration
+  // Task-11 fix (live A/B proven): Nova cannot emit HYPHENATED tool names —
+  // "Model produced invalid sequence as part of ToolUse" deterministically.
+  // The one-door wire-encodes names (hyphen->underscore) toward the model and
+  // decodes on extraction; domain code keeps its hyphenated names untouched.
   let toolConfig: ToolConfiguration | undefined;
   if (params.tools && params.tools.length > 0) {
     toolConfig = {
       tools: params.tools.map((t) => ({
         toolSpec: {
-          name: t.toolSpec.name,
+          name: toWireToolName(t.toolSpec.name),
           description: t.toolSpec.description,
           inputSchema: { json: t.toolSpec.inputSchema.json as Record<string, unknown> },
         },
@@ -178,7 +195,8 @@ function toBedrockMessage(msg: ConversationMessage): Message {
       return {
         toolUse: {
           toolUseId: block.toolUse.toolUseId,
-          name: block.toolUse.name,
+          // Wire-encode: model must see consistent (underscore) names in history
+          name: toWireToolName(block.toolUse.name),
           input: block.toolUse.input as Record<string, unknown>,
         },
       } as const;
@@ -215,7 +233,8 @@ function extractResult(response: ConverseCommandOutput): ConverseResult {
     if ('toolUse' in block && block.toolUse) {
       toolUseBlocks.push({
         toolUseId: block.toolUse.toolUseId ?? '',
-        name: block.toolUse.name ?? '',
+        // Decode wire name back to the domain (hyphenated) name
+        name: fromWireToolName(block.toolUse.name ?? ''),
         input: block.toolUse.input,
       });
     }

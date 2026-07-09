@@ -205,6 +205,20 @@ describe('Nova tool-use greedy decoding (Task 11 fix)', () => {
     expect(input.additionalModelRequestFields).toBeUndefined();
   });
 
+  it('wire-encodes hyphenated tool names (Nova A/B proven) and decodes extraction', async () => {
+    mockSend.mockResolvedValueOnce({
+      output: { message: { content: [{ toolUse: { toolUseId: 't1', name: 'capa_open', input: { ncId: 'x' } } }] } },
+      stopReason: 'tool_use',
+      usage: { inputTokens: 10, outputTokens: 5 },
+    });
+    const result = await converse({ ...baseParams(), tools: [{
+      toolSpec: { name: 'capa-open', description: 'd', inputSchema: { json: { type: 'object' } } },
+    }] });
+    const input = mockSend.mock.calls[0][0].input;
+    expect(input.toolConfig.tools[0].toolSpec.name).toBe('capa_open'); // wire
+    expect(result.toolUseBlocks[0].name).toBe('capa-open'); // domain
+  });
+
   it('keeps seat temperature for non-Nova WITH tools (qwen)', async () => {
     mockSend.mockResolvedValueOnce(okResponse());
     await converse({ ...baseParams(), modelId: 'qwen.qwen3-next-80b-a3b', tools: SAMPLE_TOOLS });
