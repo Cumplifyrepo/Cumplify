@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest';
 import * as cdk from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as kms from 'aws-cdk-lib/aws-kms';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { AiStack } from './ai-stack.js';
 import { ENV_CONFIGS } from './env-config.js';
 
@@ -42,6 +43,15 @@ function createTestStack(): Template {
     recordsQueueArn: 'arn:aws:sqs:us-east-1:123456789012:RecordsQueue',
     recordsDlqUrl: 'https://sqs.us-east-1.amazonaws.com/123456789012/RecordsDlq',
     aossVpcEndpointId: 'vpce-0123456789abcdef0',
+    vpc: ec2.Vpc.fromVpcAttributes(stack, 'MockVpc', {
+      vpcId: 'vpc-0123456789abcdef0',
+      availabilityZones: ['us-east-1b', 'us-east-1c'],
+      privateSubnetIds: ['subnet-aaa', 'subnet-bbb'],
+    }),
+    privateSubnets: [
+      ec2.Subnet.fromSubnetAttributes(stack, 'MockSubnetA', { subnetId: 'subnet-aaa', availabilityZone: 'us-east-1b' }),
+      ec2.Subnet.fromSubnetAttributes(stack, 'MockSubnetB', { subnetId: 'subnet-bbb', availabilityZone: 'us-east-1c' }),
+    ],
     bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
     appRoleSecretArn: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
     graphqlApiId: 'test-api-id-123',
@@ -492,5 +502,47 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
     const esms = template.findResources('AWS::Lambda::EventSourceMapping');
     // Should have ESMs for: capa-intake, doc-studio, lead-auditor, control-tower, records
     expect(Object.keys(esms).length).toBeGreaterThanOrEqual(5);
+  });
+});
+
+// ─── Task 9 (architect) — apply-template custom resource assertions ────────
+
+describe('AOSS Apply-Template CR (Task 9)', () => {
+  const template = createTestStack();
+
+  it('ApplyTemplateFn is VPC-attached with COLLECTIONS env', () => {
+    const lambdas = template.findResources('AWS::Lambda::Function');
+    const fn = Object.values(lambdas).find((r) => {
+      const env = (r as any).Properties?.Environment?.Variables ?? {};
+      return env.POWERTOOLS_SERVICE_NAME === 'aoss-apply-template';
+    }) as any;
+    expect(fn).toBeDefined();
+    expect(fn.Properties.VpcConfig?.SubnetIds?.length).toBeGreaterThanOrEqual(2);
+    expect(fn.Properties.Timeout).toBe(240);
+    // COLLECTIONS env contains all 3 collection names
+    const collectionsEnv = JSON.stringify(fn.Properties.Environment.Variables.COLLECTIONS);
+    for (const name of ['cumplify-iso-kb', 'cumplify-tenant-docs-kb', 'cumplify-nc-history']) {
+      expect(collectionsEnv).toContain(name);
+    }
+  });
+
+  it('T-9a: AOSS data-access WRITE block has exactly 2 principals (seeder + apply-template)', () => {
+    const policies = template.findResources('AWS::OpenSearchServerless::AccessPolicy');
+    const dataPolicy = Object.values(policies)[0] as any;
+    // Policy is a JSON string with CFN tokens — parse structure via the Fn::Join parts
+    const policyStr = JSON.stringify(dataPolicy.Properties.Policy);
+    // WRITE block: two role ARN references follow the CreateIndex permission set
+    expect(policyStr).toContain('aoss:CreateIndex');
+    // Both seeder and apply-template roles must appear as principals
+    expect(policyStr).toContain('WeightSeederFn');
+    expect(policyStr).toContain('ApplyTemplateFn');
+  });
+
+  it('ApplyTemplateTrigger CR exists and can invoke ONLY ApplyTemplateFn', () => {
+    const customs = template.findResources('Custom::AWS');
+    const trigger = Object.entries(customs).find(([id]) => id.includes('ApplyTemplateTrigger'));
+    expect(trigger).toBeDefined();
+    const create = JSON.parse((trigger![1] as any).Properties.Create['Fn::Join'][1].join(''));
+    expect(create.parameters.Payload).toContain('"action":"apply"');
   });
 });

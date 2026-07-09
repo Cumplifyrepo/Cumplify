@@ -142,6 +142,8 @@ export class CumplifyStage extends cdk.Stage {
       recordsQueueArn: eventingStack.recordsQueueArn,
       recordsDlqUrl: eventingStack.recordsDlqUrl,
       aossVpcEndpointId: networkStack.aossVpcEndpointId,
+      vpc: networkStack.vpc,
+      privateSubnets: networkStack.privateSubnets,
       bedrockKeyArn: securityStack.outputs.bedrockKey.keyArn,
       appRoleSecretArn: apiStack.appRoleSecretArn,
       graphqlApiId: apiStack.graphqlApiId,

@@ -15,6 +15,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -50,6 +51,9 @@ export interface AiStackProps extends cdk.StackProps {
   readonly recordsDlqUrl: string;
   // AOSS infra (from NetworkStack + SecurityStack)
   readonly aossVpcEndpointId: string;
+  // VPC placement for the apply-template Lambda (AOSS is VPC-endpoint-only)
+  readonly vpc: ec2.IVpc;
+  readonly privateSubnets: ec2.ISubnet[];
   readonly bedrockKeyArn: string;
   // App-role secret for RLS-safe writes (from ApiStack, T4-F1)
   readonly appRoleSecretArn: string;
@@ -699,9 +703,39 @@ export class AiStack extends cdk.Stack {
       ]),
     });
 
+    // ─── AOSS Apply-Template Lambda (Task 9, T3E-F1 part 2, architect) ─────
+    // VPC-attached (AOSS network policy = VPC endpoint only), SigV4-signing.
+    // PUTs services/agents/shared/aoss-index-template.json to each collection
+    // and GET-verifies (1024 dims + tenantId keyword) — fail-closed.
+    const applyTemplateFn = new NodejsFunction(this, 'ApplyTemplateFn', {
+      entry: 'services/agents/shared/aoss-apply-template.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(240), // in-Lambda retries cover policy propagation
+      bundling: { externalModules: [], target: 'node22' },
+      vpc: props.vpc,
+      vpcSubnets: { subnets: props.privateSubnets },
+      environment: {
+        COLLECTIONS: JSON.stringify(
+          collectionNames.map((n) => ({
+            name: n,
+            endpoint: aossCollections[n].attrCollectionEndpoint,
+          })),
+        ),
+        POWERTOOLS_SERVICE_NAME: 'aoss-apply-template',
+      },
+    });
+    applyTemplateFn.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['aoss:APIAccessAll'],
+      resources: collectionArns,
+    }));
+
     // ─── AOSS Data-Access Policy (assembled post-seeder to avoid forward ref) ──
     // H-2 (Task 8R): READ block amended with exact agent-handler role ARNs.
-    new opensearchserverless.CfnAccessPolicy(this, 'AiAossDataAccessPolicy', {
+    const aossDataAccessPolicy = new opensearchserverless.CfnAccessPolicy(this, 'AiAossDataAccessPolicy', {
       name: `cumplify-ai-access-${envConfig.envName}`,
       type: 'data',
       policy: JSON.stringify([
@@ -719,11 +753,49 @@ export class AiStack extends cdk.Stack {
             { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:CreateCollectionItems', 'aoss:UpdateCollectionItems', 'aoss:DescribeCollectionItems'] },
             { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:CreateIndex', 'aoss:UpdateIndex', 'aoss:DescribeIndex', 'aoss:ReadDocument', 'aoss:WriteDocument'] },
           ],
-          Principal: [weightSeeder.role!.roleArn],
-          // NOTE: apply-template principal AMENDED in Task 9 with exact role ARN.
+          // T-9a (Task 9): apply-template principal amended with exact role ARN.
+          Principal: [weightSeeder.role!.roleArn, applyTemplateFn.role!.roleArn],
         },
       ]),
     });
+
+    // Apply-template trigger — runs on create AND whenever the committed
+    // template artifact changes (fingerprint in physicalResourceId).
+    // Policy-propagation timing is additionally covered by in-Lambda retries.
+    const templateFileHash = cdk.FileSystem.fingerprint('services/agents/shared/aoss-index-template.json');
+    const applyTemplateTrigger = new cr.AwsCustomResource(this, 'ApplyTemplateTrigger', {
+      onCreate: {
+        service: 'Lambda',
+        action: 'invoke',
+        parameters: {
+          FunctionName: applyTemplateFn.functionName,
+          InvocationType: 'RequestResponse',
+          Payload: JSON.stringify({ action: 'apply', templateHash: templateFileHash }),
+        },
+        physicalResourceId: cr.PhysicalResourceId.of(`aoss-apply-template-${templateFileHash}`),
+      },
+      onUpdate: {
+        service: 'Lambda',
+        action: 'invoke',
+        parameters: {
+          FunctionName: applyTemplateFn.functionName,
+          InvocationType: 'RequestResponse',
+          Payload: JSON.stringify({ action: 'apply', templateHash: templateFileHash }),
+        },
+        physicalResourceId: cr.PhysicalResourceId.of(`aoss-apply-template-${templateFileHash}`),
+      },
+      timeout: cdk.Duration.minutes(5),
+      policy: cr.AwsCustomResourcePolicy.fromStatements([
+        new iam.PolicyStatement({
+          actions: ['lambda:InvokeFunction'],
+          resources: [applyTemplateFn.functionArn],
+        }),
+      ]),
+    });
+    applyTemplateTrigger.node.addDependency(aossDataAccessPolicy);
+    for (const name of collectionNames) {
+      applyTemplateTrigger.node.addDependency(aossCollections[name]);
+    }
 
     // T4-F3 FIX: aoss:APIAccessAll in IAM (data-plane access to AOSS collections)
     aiInvoker.addToRolePolicy(new iam.PolicyStatement({
@@ -738,6 +810,7 @@ export class AiStack extends cdk.Stack {
     }));
 
     // ─── CfnOutputs ────────────────────────────────────────────────────────
+    new cdk.CfnOutput(this, 'ApplyTemplateFnArn', { value: applyTemplateFn.functionArn });
     new cdk.CfnOutput(this, 'AiInvokerArn', { value: aiInvoker.functionArn });
     new cdk.CfnOutput(this, 'AiInvokerRoleArn', { value: aiInvoker.role!.roleArn });
     new cdk.CfnOutput(this, 'GuardrailId', { value: guardrail.attrGuardrailId });
