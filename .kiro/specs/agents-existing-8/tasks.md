@@ -36,9 +36,10 @@
 
 ---
 
-## Task 2: MODELWEIGHT# Pricing Seeding [ARCHITECT]
+## Task 2: MODELWEIGHT# Pricing Seed [ARCHITECT]
 
 > Depends on Task 1 (types exist). Live Pricing API call requires credentials.
+> This committed file is the SOLE source for weight seeding (T-2).
 
 ### Deliverables
 - [ ] Execute `fetchPricing()` (from `services/model-evals/src/pricing.ts`) for the 4 in-scope models: `us.amazon.nova-pro-v1:0`, `us.amazon.nova-lite-v1:0`, `qwen.qwen3-next-80b-a3b`, `moonshotai.kimi-k2.5`
@@ -56,17 +57,20 @@
 ## Task 3: AiStack CDK — Infrastructure Skeleton [KIRO]
 
 > Depends on Task 1. Creates the stack + queues/rules/Lambda shells.
+> NOTE: This task modifies EventingStack (new exports + ESM on existing
+> capa-intake/records queues) — touches spec-2's stack; flag in commit.
 
 ### Deliverables
 - [ ] `infra/lib/ai-stack.ts` — AiStack class per design §7 (queues, rules, Lambdas, guardrail, state machine, inference profiles)
 - [ ] AI Invoker Lambda (NodejsFunction: NODEJS_22_X, ARM_64, 512MB, 90s timeout, entry: services/ai-invoker)
+- [ ] MODELWEIGHT# seeding custom resource: reads `services/ai-invoker/data/model-weights-seed.json` (committed by Task 2, architect-witnessed) and writes DynamoDB MODELWEIGHT# items. Does NOT call live Pricing API at deploy time (T-2 correction).
 - [ ] CfnGuardrail (PII anonymize/block + PROMPT_ATTACK) — no Anthropic model IDs
 - [ ] 3 new SQS queues + DLQs (DocStudioQueue, LeadAuditorQueue, ControlTowerQueue) per §2.2
 - [ ] 3 EventBridge rules (R-8/R-9/R-10) with canonical input transformer + retry + delivery-failure DLQ
 - [ ] HITL State Machine (Step Functions Standard, waitForTaskToken) per §3.2
 - [ ] 3 DLQ alarms (depth > 0 for 15 min)
 - [ ] CfnOutputs for all ARNs/IDs/URLs
-- [ ] New exports from EventingStack: `deliveryFailureDlqArn`, `capaIntakeQueueArn`, `recordsQueueArn`
+- [ ] Modified `infra/lib/eventing-stack.ts`: new exports (`deliveryFailureDlqArn`, `capaIntakeQueueArn`, `recordsQueueArn`) + SQS event-source mappings (ESM) on existing capa-intake/records queues for agent handler Lambdas
 - [ ] `infra/lib/cumplify-stage.ts` modified — AiStack added with addDependency on DataStack, ApiStack, EventingStack, AuditTrailStack
 - [ ] `infra/lib/ai-stack.unit.test.ts` — template-assertion tests for: Lambda configs, SQS properties, EventBridge rule patterns, IAM policy statements, guardrail config, state machine definition
 
@@ -83,15 +87,17 @@
 
 ### Deliverables
 - [ ] AI Invoker execution role: `bedrock:InvokeModel` (Resource `*`), `bedrock:ApplyGuardrail`, DynamoDB (TENANT#*#METER read/write, MODELWEIGHT# read), EventBridge PutEvents, `lambda:InvokeFunction` NOT needed (invoker IS the Lambda)
-- [ ] Agent handler execution roles (×8): `lambda:InvokeFunction` on AI Invoker ARN, RDS Data API (execute-statement, begin/commit/rollback on cluster), DynamoDB (tenant-scoped TENANT#*#HITL, HITL_PENDING GSI), SQS (receive/delete on own queue), SFN (StartExecution on HITL state machine). NO `bedrock:InvokeModel`.
-- [ ] HITL Execute role: RDS Data API write, EventBridge PutEvents
+- [ ] Agent handler execution roles (×8): `lambda:InvokeFunction` on AI Invoker ARN, RDS Data API READ-ONLY (execute-statement SELECT for context — NO write/begin/commit/rollback), SQS (receive/delete on own queue), SFN (StartExecution on HITL state machine). NO `bedrock:InvokeModel`. NO RDS write. NO DynamoDB PutItem/UpdateItem on domain tables (TENANT#*#AUDITLOG, TENANT#*#HITL writes are NOT on agent handlers).
+- [ ] ExecuteWriteback role (invoked by Step Functions AFTER approval): RDS Data API write (begin/commit/rollback + execute-statement), EventBridge PutEvents (for publishAuditEvent). Reuses api-core's app_role/beginTenantTransaction path. This is the ONLY role that can write to domain tables post-HITL.
 - [ ] Resource-based policy on AI Invoker Lambda allowing agent handler roles
 - [ ] Template-assertion tests for all IAM statements in `ai-stack.unit.test.ts`
+- [ ] **Negative template assertion (T-1):** no agent handler role has `rds-data:ExecuteStatement` with write (INSERT/UPDATE/DELETE), `rds-data:BeginTransaction`, `rds-data:CommitTransaction`, `dynamodb:PutItem`, or `dynamodb:UpdateItem` on domain table resources. Enforces HITL gate at IAM layer.
 
 ### Acceptance
 - CDK Nag zero on IAM (no AwsSolutions-IAM4/IAM5 without justified suppression)
 - `bedrock:InvokeModel` appears ONLY on AI Invoker role (template assertion)
 - No agent handler role has `bedrock:InvokeModel` (negative assertion)
+- No agent handler role has RDS write or dynamodb:PutItem/UpdateItem on domain tables (negative assertion — T-1)
 - Architect review sign-off recorded
 
 ---
