@@ -2,7 +2,21 @@
 
 **Requirements baseline:** R2 (fd18e6f) — APPROVED
 **Paradigm decision:** Option B — Custom Converse loop (19303c9)
-**Revision:** D1
+**Revision:** D2
+
+**D1 findings resolved:**
+- D-1 (HIGH): §1.4 rewritten — wIn/wOut/wCache derivation formula defined from
+  live Bedrock prices; reconciled with margin-inputs.json (per-task = average
+  targets, not billing unit); per-token = variable credits flagged for owner.
+- D-2 (MEDIUM): §3.4 GSI re-keyed to `TENANT#<tenantId>#HITL_PENDING` (tenant-
+  isolated, LeadingKeys-compatible).
+- D-3 (MEDIUM): §1.6 caching verified per model — Nova Pro/Lite support explicit
+  caching (system+messages, 1K min, 5min TTL); qwen/kimi do NOT support prompt
+  caching. SERVE-11 + wCache conditional per model.
+- D-4 (LOW-MED): §1.3 states trade-off (build-time map = redeploy on reassign);
+  confirms expiry date-check is live at invoke.
+- D-5 (LOW): meter key corrected to `TENANT#<tenantId>#METER` / `MONTH#<yyyymm>`
+  throughout.
 
 ---
 
@@ -56,7 +70,8 @@ services/ai-invoker/
 │    - If status = UNASSIGNED → throw MODEL_SEAT_UNASSIGNED (SERVE-6)     │
 │                                                                         │
 │ 2. Credit pre-check (SERVE-9)                                           │
-│    - Read METER#<tenantId>#<yyyymm> from DynamoDB (Redis-cached hot)    │
+│    - Read TENANT#<tenantId>#METER / MONTH#<yyyymm> from DynamoDB         │
+│      (Redis-cached hot read)                                             │
 │    - If exhausted AND not incident/HITL → return PAUSED_FOR_CREDITS     │
 │    - Incident/HITL exemption: skip pre-check                            │
 │                                                                         │
@@ -84,7 +99,8 @@ services/ai-invoker/
 │ 7. Meter tokens → credits (SERVE-3 continued)                           │
 │    - credits = Σ(inputTokens × w_in + cacheRead × w_cache              │
 │                  + outputTokens × w_out) per model weights              │
-│    - Atomic DynamoDB UpdateItem ADD on METER#<tenantId>#<yyyymm>        │
+│    - Atomic DynamoDB UpdateItem ADD on                                  │
+│      TENANT#<tenantId>#METER / MONTH#<yyyymm>                          │
 │    - Emit telemetry.credits.consumed event                              │
 │                                                                         │
 │ 8. Return InvokeResponse { text, usage, credits, modelId }              │
@@ -113,43 +129,114 @@ interface CompiledRegister {
 At invoke time the resolver:
 1. Loads the compiled map (cold-cached in Lambda memory).
 2. Checks `status` — EXPIRED/UNASSIGNED → fail closed.
-3. Checks `expiry` against current date — past expiry → fail closed
-   (`MODEL_SEAT_EXPIRED`).
+3. Checks `expiry` against **current date (live, at invoke time)** — past
+   expiry → fail closed (`MODEL_SEAT_EXPIRED`).
 4. Returns `modelId`.
+
+**Trade-off (D-4):** The compiled map is build-time: a model REASSIGNMENT
+requires a CI deploy to propagate the new `modelId`. This is intentional —
+CI-gated is safer than runtime-loaded (prevents an accidental Register edit
+from immediately routing traffic to an untested model). The expiry date-check
+is LIVE (step 3 above), so an expired seat fails closed even without a deploy.
+Quarterly re-validations already require a code commit (Register update +
+evidence), so the deploy gate adds no friction.
 
 **LegalLedger special case (SERVE-6):** The compiled Register has LegalLedger
 as UNASSIGNED. The monthly budget cap is a second pre-check: even when
 eventually assigned, the invoker verifies
 `monthlySpend < monthlyBudgetCap` before proceeding.
 
-### 1.4 Token → Credit Metering (Part 22)
+### 1.4 Token → Credit Metering (Part 22) — Weight Derivation
 
-Per `services/model-evals/data/margin-inputs.json`:
+#### Calibration formula
 
-```typescript
-// Model weights table: DynamoDB items MODELWEIGHT#<modelId>
-interface ModelWeight {
-  modelId: string;
-  wIn: number;    // credits per 1M input tokens
-  wOut: number;   // credits per 1M output tokens
-  wCache: number; // credits per 1M cached-read tokens (discounted)
-}
+The target is **1,000 credits ≈ $1.00 raw Bedrock cost**. Weights are derived
+from live Bedrock prices (fetched via `services/model-evals/src/pricing.ts`
+`fetchFromPricingApi()` — the same Pricing API used in spec-30 evals):
 
-// Credits computation:
-creditsConsumed = (inputTokens * wIn + cacheReadTokens * wCache
-                   + outputTokens * wOut) / 1_000_000;
+```
+wIn(model)    = inputPricePerMToken(model) × 1,000
+wOut(model)   = outputPricePerMToken(model) × 1,000
+wCache(model) = cacheReadPricePerMToken(model) × 1,000   (if caching supported)
+              = N/A                                       (if caching not supported)
 ```
 
-Weights are calibrated so **1,000 credits ≈ $1.00 raw Bedrock cost**. Updated
-on quarterly re-validation (append-only pricing table, versioned).
+Where `inputPricePerMToken` is USD per 1M tokens from the Pricing API. The
+× 1,000 factor converts "USD per 1M tokens" to "credits per 1M tokens" under
+the 1,000-credits-≈-$1.00 calibration.
 
-The meter DynamoDB item:
+#### Current weights (derived from spec-30 Pricing API data, 2026-07-06)
+
+| Model | Seat | wIn (credits/1M) | wOut (credits/1M) | wCache (credits/1M) |
+|-------|------|-----------------|-------------------|---------------------|
+| `us.amazon.nova-pro-v1:0` | Workhorse | fetched × 1000 | fetched × 1000 | fetched × 1000 (supported) |
+| `us.amazon.nova-lite-v1:0` | Lightweight | fetched × 1000 | fetched × 1000 | fetched × 1000 (supported) |
+| `qwen.qwen3-next-80b-a3b` | Guru-9001/14001 | fetched × 1000 | fetched × 1000 | **N/A** (no caching) |
+| `moonshotai.kimi-k2.5` | Guru-45001 | fetched × 1000 | fetched × 1000 | **N/A** (no caching) |
+
+Actual numeric values are fetched at build time from the live Pricing API and
+seeded into DynamoDB `MODELWEIGHT#<modelId>` items via a CDK custom resource.
+They are NOT hardcoded (C-3 pricing rule from spec-30). The custom resource
+runs `fetchPricing([...modelIds])` at deploy and writes the weights.
+
+#### DynamoDB weight items
+
+```
+PK: MODELWEIGHT#<modelId>
+SK: VERSION#<yyyymmdd>
+wIn: number
+wOut: number
+wCache: number | null   (null = caching not supported for this model)
+effectiveFrom: string   (ISO 8601)
+sourceCommit: string
+```
+
+Append-only, versioned. The invoker reads the latest version per model
+(query SK descending, limit 1).
+
+#### Credits computation at invoke time
+
+```typescript
+creditsConsumed = (
+  inputTokens * wIn +
+  (cacheReadTokens ?? 0) * (wCache ?? wIn) +  // fallback to wIn if no cache support
+  outputTokens * wOut
+) / 1_000_000;
+```
+
+If `wCache` is null for the model (qwen, kimi), `cacheReadInputTokens` will
+always be 0 in the Converse response (no caching enabled), so the fallback is
+a safety guard that never triggers.
+
+#### Meter DynamoDB item (D-5 corrected)
+
 ```
 PK: TENANT#<tenantId>#METER
 SK: MONTH#<yyyymm>
 creditsUsed: number (atomic ADD)
 lastUpdated: string
 ```
+
+Tenant-isolated via PK prefix (LeadingKeys-compatible).
+
+#### Reconciliation with margin-inputs.json
+
+`services/model-evals/data/margin-inputs.json` defines `creditsPerTask` per
+seat (e.g., guru=5, workhorse=3). These are **expected-average targets for
+margin modeling** — they represent the anticipated average credits consumed per
+agent task at the modeled token distribution. They are NOT the billing unit.
+
+The actual billing unit is **per-token** (variable credits per call). A call
+that uses fewer tokens than average costs fewer credits; a call that uses more
+costs more. The per-task averages validate that the margin mandate (>50%) holds
+under typical usage patterns. The margin-bar check (SERVE-4) compares actual
+$/task (from eval runs) against credit pricing.
+
+**Owner flag:** per-token metering means tenants see variable credit
+consumption per AI action (not flat per-task). If the product promised flat
+per-task pricing, this requires owner confirmation. Per Part 22, the
+architecture has always been per-token with credits as the billing unit —
+no flat-task promise exists in the pricing design. Flagged for awareness.
 
 ### 1.5 Inference Profile (SERVE-8)
 
@@ -158,13 +245,31 @@ Enterprise) are created in the AiStack. Each profile carries cost-allocation
 tags `plan=<tier>`. Per-tenant attribution is via `requestMetadata.tenantId`
 (SERVE-7), NOT per-tenant profiles.
 
-### 1.6 Prompt Caching (SERVE-11)
+### 1.6 Prompt Caching (SERVE-11) — Conditional Per Model
 
-System prompts for each agent include a `cachePoint` marker at the end of the
-static preamble. Bedrock Converse `additionalModelRequestFields` carries
-`cacheConfig: { cachePoint: [...] }` (model-dependent; Nova Pro supports this
-via the `anthropic_beta` extension pattern — verified with Nova Pro docs).
-Cached-read tokens are billed at `wCache` (discounted weight).
+Prompt caching support verified against AWS documentation (2026-07-08):
+
+| Model | Caching Support | Min Tokens | Max Checkpoints | TTL | Fields | Source |
+|-------|----------------|------------|-----------------|-----|--------|--------|
+| `us.amazon.nova-pro-v1:0` | **YES** (explicit) | 1,000 | 4 | 5 min | `system`, `messages` | [Nova Pro model card](https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-amazon-nova-pro.html) |
+| `us.amazon.nova-lite-v1:0` | **YES** (explicit) | 1,000 | 4 | 5 min | `system`, `messages` | [Prompt caching docs](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html) |
+| `qwen.qwen3-next-80b-a3b` | **NO** | — | — | — | — | Not listed in supported models (prompt caching docs, GA announcement) |
+| `moonshotai.kimi-k2.5` | **NO** | — | — | — | — | Not listed in supported models (prompt caching docs, GA announcement) |
+
+**Implementation rules:**
+- For Nova Pro/Lite (Workhorse + Lightweight seats): the invoker adds a
+  `cachePoint` marker in the system prompt content block. Converse request
+  uses the documented format: `{ "cachePoint": { "type": "default" } }` after
+  the static preamble. Max 20K tokens cached per Nova models.
+- For qwen/kimi (Guru seats): NO `cachePoint` is added. `wCache` is null in
+  the weight table. `cacheReadInputTokens` will be 0 in responses.
+- SERVE-11 applies ONLY to Nova-class seats. It is a no-op for Guru seats.
+- The `w_cache` discounted weight applies ONLY when `cacheReadInputTokens > 0`
+  in the response (i.e., only for Nova models where caching is active).
+
+**Note:** The earlier D1 reference to "anthropic_beta extension" was incorrect.
+Nova uses native Bedrock prompt caching via the Converse API `cachePoint`
+object in content blocks — no model-specific extension needed.
 
 ---
 
@@ -390,8 +495,19 @@ sfnExecutionArn: string
 status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'TIMED_OUT'
 ```
 
-TTL: 30 days after resolution. GSI `GSI-HITL-PENDING` on
-`itemType=HITL_PENDING, SK begins_with PENDING#` for the frontend query.
+TTL: 30 days after resolution.
+
+**GSI (D-2 corrected):** `GSI-HITL-PENDING` keyed on:
+- GSI PK: `TENANT#<tenantId>#HITL_PENDING`
+- GSI SK: `createdAt` (ISO 8601, enables newest-first query)
+
+This ensures the frontend query is tenant-isolated and LeadingKeys-compatible
+(PK starts with `TENANT#<tenantId>#`). The GSI PK is written as an attribute
+on the base item (`gsiHitlPendingPk`) and projected only for items with
+`status = 'PENDING'`. Resolved items (APPROVED/REJECTED/TIMED_OUT) remove the
+GSI attribute via UpdateItem (sparse GSI pattern — only pending items appear).
+
+Added to the api-core GSI PK prefix test (`TENANT#`-prefix assertion).
 
 ---
 
@@ -657,7 +773,7 @@ export interface AiStackProps extends cdk.StackProps {
 
 | Role | Permissions | NOT Granted |
 |------|-------------|-------------|
-| AI Invoker Role | `bedrock:InvokeModel` (Resource `*`), `bedrock:ApplyGuardrail`, DynamoDB (METER# read/write, MODELWEIGHT# read), EventBridge PutEvents | RDS, S3, DynamoDB AUDITLOG |
+| AI Invoker Role | `bedrock:InvokeModel` (Resource `*`), `bedrock:ApplyGuardrail`, DynamoDB (TENANT#*#METER read/write, MODELWEIGHT# read), EventBridge PutEvents | RDS, S3, DynamoDB AUDITLOG |
 | Agent Handler Roles (per-agent) | RDS Data API (execute-statement, begin/commit/rollback), DynamoDB (tenant-scoped HITL# + TENANT#), SQS receive/delete on own queue, SFN StartExecution | `bedrock:InvokeModel` ← NOT granted |
 | HITL Execute Role | RDS Data API (write), DynamoDB (AUDITLOG append via shared.publishAuditEvent → EventBridge), EventBridge PutEvents | `bedrock:InvokeModel` |
 
