@@ -128,6 +128,29 @@ export async function toolLoop(
         // Non-HITL tool: dispatch directly
         const result = await opts.dispatchTool(toolUse.name, toolUse.input, opts.tenantId);
 
+        // R6-F1: if dispatched tool returns requiresHitl=true, route to gate
+        if (result.requiresHitl) {
+          logger.info('Dispatched tool returned requiresHitl=true, entering gate', {
+            tool: toolUse.name,
+            tenantId: opts.tenantId,
+            agent: opts.agent,
+          });
+
+          const hitlResult = await enterHitlGate({
+            tenantId: opts.tenantId,
+            agentName: opts.agent,
+            proposedAction: { tool: toolUse.name, args: toolUse.input },
+            conversationState: messages,
+          });
+
+          return {
+            finalResponse: `HITL gate entered for tool '${toolUse.name}' (dynamic). Execution pending approval.`,
+            turns: turn + 1,
+            hitlResult,
+            totalUsage,
+          };
+        }
+
         toolResultContent.push({
           toolResult: {
             toolUseId: toolUse.toolUseId,

@@ -28,7 +28,7 @@ function baseRequest(overrides: Partial<RetrievalRequest> = {}): RetrievalReques
 function mockClient(responses: Array<unknown | Error>): AossHttpClient {
   let callIndex = 0;
   return {
-    async search(_endpoint, _indexName, body) {
+    async search(_endpoint, _indexName, body, _timeoutMs) {
       const resp = responses[callIndex++];
       if (resp instanceof Error) throw resp;
       // Assert tenantId filter is always in the query body
@@ -143,5 +143,12 @@ describe('retrieval wrapper', () => {
     await retrieve(baseRequest({ topK: undefined }), client);
     expect(capturedBody.size).toBe(5);
     expect(capturedBody.query.knn.embedding.k).toBe(5);
+  });
+
+  it('throws on wrong vector dimensions (R5-n1: must be 1024)', async () => {
+    const client = mockClient([]);
+    await expect(
+      retrieve(baseRequest({ queryVector: Array(768).fill(0.01) }), client),
+    ).rejects.toThrow('queryVector must be 1024 dimensions');
   });
 });

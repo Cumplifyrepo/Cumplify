@@ -53,8 +53,9 @@ export async function enterHitlGate(input: HitlGateInput): Promise<HitlResult> {
     agentName: input.agentName,
     proposedAction: input.proposedAction,
     hitlItemId,
-    // Conversation state truncated to last 5 turns to stay within SFN input size (256KB)
-    conversationContext: input.conversationState.slice(-10),
+    // Conversation context truncated to stay within SFN input size (256KB).
+    // Keep last 10 messages; if still over 200KB, truncate further.
+    conversationContext: truncateConversation(input.conversationState, 200_000),
   };
 
   const startResult = await sfn.send(
@@ -142,4 +143,18 @@ export async function resolveHitlItem(
   );
 
   logger.info('HITL item resolved', { tenantId, hitlItemId, resolution, approver });
+}
+
+/**
+ * Truncate conversation state to fit within a byte budget (R6-n1).
+ * Takes the last N messages; if serialized size exceeds budget, drops oldest.
+ */
+function truncateConversation(messages: ConversationMessage[], maxBytes: number): ConversationMessage[] {
+  let slice = messages.slice(-10);
+  while (slice.length > 0) {
+    const size = Buffer.byteLength(JSON.stringify(slice), 'utf-8');
+    if (size <= maxBytes) return slice;
+    slice = slice.slice(1); // Drop oldest
+  }
+  return [];
 }

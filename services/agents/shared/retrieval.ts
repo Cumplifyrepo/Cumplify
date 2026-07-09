@@ -84,6 +84,13 @@ export async function retrieve(
     throw new TenantFilterMissingError();
   }
 
+  // R5-n1: fail-fast on wrong embedding dimensions (Titan Embed v2 = 1024)
+  if (request.queryVector.length !== 1024) {
+    throw new Error(
+      `queryVector must be 1024 dimensions (Titan Embed v2), got ${request.queryVector.length}`,
+    );
+  }
+
   const topK = request.topK ?? 5;
   const startTime = Date.now();
   let attempts = 0;
@@ -113,7 +120,10 @@ export async function retrieve(
 
     try {
       const body = buildKnnQuery(request.queryVector, request.tenantId, topK, request.scoreThreshold);
-      const response = await client.search(request.collectionEndpoint, request.indexName, body);
+      // R5-n3: derive socket timeout from remaining budget (not a fixed 50s)
+      const elapsed = Date.now() - startTime;
+      const remainingMs = Math.max(BACKOFF_CEILING_MS - elapsed + 5000, 10_000); // floor 10s
+      const response = await client.search(request.collectionEndpoint, request.indexName, body, remainingMs);
       const chunks = parseSearchResponse(response);
 
       const latencyMs = Date.now() - startTime;
@@ -215,20 +225,21 @@ function isAossRetryable(err: unknown): boolean {
 // ─── HTTP Client Interface (injectable for testing) ─────────────────────────
 
 export interface AossHttpClient {
-  search(endpoint: string, indexName: string, body: Record<string, unknown>): Promise<unknown>;
+  search(endpoint: string, indexName: string, body: Record<string, unknown>, timeoutMs?: number): Promise<unknown>;
 }
 
 /** Default AOSS client — placeholder for real OpenSearch client integration */
 const defaultAossClient: AossHttpClient = {
-  async search(endpoint: string, indexName: string, body: Record<string, unknown>): Promise<unknown> {
+  async search(endpoint: string, indexName: string, body: Record<string, unknown>, timeoutMs?: number): Promise<unknown> {
     // In production, this uses @opensearch-project/opensearch with SigV4 signing.
     // Injected via Lambda environment or imported from a shared AOSS client module.
     const url = `${endpoint}/${indexName}/_search`;
+    const socketTimeout = timeoutMs ?? 50_000;
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(50_000), // Socket timeout: 50s
+      signal: AbortSignal.timeout(socketTimeout),
     });
 
     if (!response.ok) {
