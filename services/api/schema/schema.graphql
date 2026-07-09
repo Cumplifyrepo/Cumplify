@@ -527,6 +527,12 @@ type Query {
   # M5 — Risk Management
   getRisk(id: ID!): Risk @aws_lambda
   getCrossRegisterRiskView(standard: Standard, category: RiskCategory): [Risk!]! @aws_lambda
+
+  # Guru advisory queries (user-facing, routed via ComplianceCopilot)
+  # Auth: @aws_lambda (Lambda authorizer — tenant claim + role verified)
+  askISO9001(question: String!, queryVector: AWSJSON): String! @aws_lambda
+  askISO14001(question: String!, queryVector: AWSJSON): String! @aws_lambda
+  askISO45001(question: String!, queryVector: AWSJSON): String! @aws_lambda
 }
 
 # ─── Mutations ────────────────────────────────────────────────────────────────

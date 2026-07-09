@@ -44,6 +44,8 @@ function createTestStack(): Template {
     aossVpcEndpointId: 'vpce-0123456789abcdef0',
     bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
     appRoleSecretArn: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
+    graphqlApiId: 'test-api-id-123',
+    graphqlApiUrl: 'https://test-api.appsync-api.us-east-1.amazonaws.com/graphql',
     env: { account: envConfig.account, region: envConfig.region },
   });
 

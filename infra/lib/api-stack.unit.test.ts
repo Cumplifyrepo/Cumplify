@@ -12,6 +12,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const API_STACK_CODE = readFileSync(resolve(__dirname, 'api-stack.ts'), 'utf-8');
+const AI_STACK_CODE = readFileSync(resolve(__dirname, 'ai-stack.ts'), 'utf-8');
 const SCHEMA_CODE = readFileSync(resolve(__dirname, '../../services/api/schema/schema.graphql'), 'utf-8');
 
 describe('ApiStack template assertions (source-level)', () => {
@@ -22,10 +23,11 @@ describe('ApiStack template assertions (source-level)', () => {
     const queryLines = querySection![1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/));
     const queryFieldCount = queryLines.length;
 
-    // Count Query resolver attachments in api-stack
-    const queryResolvers = API_STACK_CODE.match(/typeName: 'Query'/g) ?? [];
+    // Count Query resolver attachments in api-stack + ai-stack (guru resolvers live in AiStack)
+    const apiResolvers = (API_STACK_CODE.match(/typeName: 'Query'/g) ?? []).length;
+    const aiResolvers = (AI_STACK_CODE.match(/typeName: 'Query'/g) ?? []).length;
 
-    expect(queryResolvers.length).toBe(queryFieldCount);
+    expect(apiResolvers + aiResolvers).toBe(queryFieldCount);
   });
 
   it('has createResolver calls for all Mutation fields in schema', () => {

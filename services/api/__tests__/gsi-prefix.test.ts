@@ -58,12 +58,14 @@ describe('GSI*PK prefix convention (FF-5)', () => {
     expect(apiStackCode).toContain('dynamodb:LeadingKeys');
   });
 
-  it('GSI9 (HITL-PENDING) uses TENANT#<tenantId>#HITL_PENDING prefix (FF-5, Task 7)', () => {
-    // Verify hitl.ts writes the GSI9PK with TENANT# prefix
+  it('GSI9 (HITL-PENDING) uses TENANT#<tenantId>#HITL_PENDING prefix (FF-5, Task 7/8R-2)', () => {
+    // Task 8R-2: GSI9 write moved to store-token.ts (upsert creates item with GSI fields)
+    const storeTokenCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/store-token.ts'), 'utf-8');
+    expect(storeTokenCode).toContain('TENANT#${tenantId}#HITL_PENDING');
+    expect(storeTokenCode).toContain('GSI9PK');
+    expect(storeTokenCode).toContain('GSI9SK');
+    // Sparse GSI: resolved items REMOVE the GSI attributes (still in hitl.ts)
     const hitlCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/hitl.ts'), 'utf-8');
-    expect(hitlCode).toContain('GSI9PK: `TENANT#${input.tenantId}#HITL_PENDING`');
-    expect(hitlCode).toContain('GSI9SK: now');
-    // Sparse GSI: resolved items REMOVE the GSI attributes
     expect(hitlCode).toContain('REMOVE GSI9PK, GSI9SK');
   });
 
@@ -115,16 +117,13 @@ describe('GSI*PK prefix convention (FF-5)', () => {
     expect(hitlCode).toContain('REMOVE GSI9PK, GSI9SK');
 
     // The REMOVE must be in the UpdateExpression of resolveHitlItem
-    // (not in enterHitlGate which SETs them)
     const resolveSection = hitlCode.slice(hitlCode.indexOf('resolveHitlItem'));
     expect(resolveSection).toContain('REMOVE GSI9PK, GSI9SK');
 
-    // enterHitlGate must SET them (for sparse projection to work — items appear on write)
-    const enterSection = hitlCode.slice(
-      hitlCode.indexOf('enterHitlGate'),
-      hitlCode.indexOf('resolveHitlItem'),
-    );
-    expect(enterSection).toContain('GSI9PK');
-    expect(enterSection).toContain('GSI9SK');
+    // Task 8R-2: GSI9 SET moved to store-token.ts (first SFN state creates the item)
+    const storeTokenCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/store-token.ts'), 'utf-8');
+    expect(storeTokenCode).toContain('GSI9PK');
+    expect(storeTokenCode).toContain('GSI9SK');
+    expect(storeTokenCode).toContain('TENANT#${tenantId}#HITL_PENDING');
   });
 });

@@ -3,16 +3,18 @@
  * Design §3 — agents-existing-8.
  *
  * When a mutating tool is detected, this module:
- * 1. Starts a Step Functions execution with the proposed action.
- * 2. Writes a HITL_PENDING item to DynamoDB (GSI PK: TENANT#<tenantId>#HITL_PENDING).
- * 3. Returns the execution ARN for tracking.
+ * 1. Starts a Step Functions execution with the proposed action + full item payload.
+ * 2. Returns the execution ARN for tracking.
  *
- * The SFN execution enters WaitForApproval (waitForTaskToken).
+ * The DynamoDB HITL_PENDING item is written by store-token.ts (the first state
+ * in the SFN chain), NOT here. This avoids requiring DDB write permissions on
+ * AgentHandlerReadOnlyPolicy (T-1 owner-approved zero-write scope).
+ *
  * Approval comes via SendTaskSuccess from the frontend (spec 9).
  */
 
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
-import { DynamoDBClient, PutItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { ulid } from 'ulid';
@@ -40,21 +42,26 @@ export interface HitlResult {
 }
 
 /**
- * Enter the HITL gate: start a Step Functions execution and write a DynamoDB
- * tracking item for the frontend approval queue.
+ * Enter the HITL gate: start a Step Functions execution carrying the full
+ * HITL item payload. Store-token (first SFN state) creates the DDB item
+ * atomically with the task token — no separate PutItem here, no race.
+ *
+ * The handler Lambda only needs SFN:StartExecution (already in
+ * AgentHandlerReadOnlyPolicy). Zero DDB permissions required.
  */
 export async function enterHitlGate(input: HitlGateInput): Promise<HitlResult> {
   const hitlItemId = ulid();
   const executionName = `hitl-${input.agentName}-${hitlItemId}`;
+  const now = new Date().toISOString();
 
-  // 1. Start Step Functions execution (enters WaitForApproval state)
+  // Pass all item fields in the SFN input — store-token writes them on upsert.
   const sfnInput = {
     tenantId: input.tenantId,
     agentName: input.agentName,
     proposedAction: input.proposedAction,
     hitlItemId,
+    createdAt: now,
     // Conversation context truncated to stay within SFN input size (256KB).
-    // Keep last 10 messages; if still over 200KB, truncate further.
     conversationContext: truncateConversation(input.conversationState, 200_000),
   };
 
@@ -68,35 +75,7 @@ export async function enterHitlGate(input: HitlGateInput): Promise<HitlResult> {
 
   const executionArn = startResult.executionArn!;
 
-  // 2. Write HITL_PENDING item to DynamoDB
-  // Base item PK: TENANT#<tenantId>#HITL / SK: PENDING#<hitlItemId>
-  // GSI PK (D-2): TENANT#<tenantId>#HITL_PENDING (tenant-isolated, LeadingKeys-compatible)
-  const now = new Date().toISOString();
-  await ddb.send(
-    new PutItemCommand({
-      TableName: TABLE_NAME,
-      Item: marshall(
-        {
-          PK: `TENANT#${input.tenantId}#HITL`,
-          SK: `PENDING#${hitlItemId}`,
-          itemType: 'HITL_PENDING',
-          // GSI9 allocated for HITL-PENDING (D-2: tenant-isolated, LeadingKeys-compatible)
-          // PK = TENANT#<tenantId>#HITL_PENDING, SK = createdAt (newest-first query)
-          GSI9PK: `TENANT#${input.tenantId}#HITL_PENDING`,
-          GSI9SK: now,
-          agentName: input.agentName,
-          proposedAction: input.proposedAction,
-          createdAt: now,
-          sfnExecutionArn: executionArn,
-          status: 'PENDING',
-          // TTL: 30 days after resolution (set on status change, not creation)
-        },
-        { removeUndefinedValues: true },
-      ),
-    }),
-  );
-
-  logger.info('HITL gate entered', {
+  logger.info('HITL gate entered — SFN execution started', {
     tenantId: input.tenantId,
     agentName: input.agentName,
     tool: input.proposedAction.tool,

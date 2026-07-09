@@ -22,6 +22,7 @@ import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as bedrock from 'aws-cdk-lib/aws-bedrock';
+import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as opensearchserverless from 'aws-cdk-lib/aws-opensearchserverless';
 import * as cr from 'aws-cdk-lib/custom-resources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -52,6 +53,9 @@ export interface AiStackProps extends cdk.StackProps {
   readonly bedrockKeyArn: string;
   // App-role secret for RLS-safe writes (from ApiStack, T4-F1)
   readonly appRoleSecretArn: string;
+  // AppSync API (from ApiStack) — guru resolver wiring
+  readonly graphqlApiId: string;
+  readonly graphqlApiUrl: string;
 }
 
 export class AiStack extends cdk.Stack {
@@ -486,7 +490,6 @@ export class AiStack extends cdk.Stack {
         environment: { ...agentHandlerBaseEnv, ...env },
       });
       fn.role!.addManagedPolicy(agentHandlerPolicy);
-      props.dynamodbKey.grantDecrypt(fn); // For DDB reads through HITL gate (PutItem uses storeToken)
       return fn;
     };
 
@@ -581,6 +584,30 @@ export class AiStack extends cdk.Stack {
       guru14001Handler.role!.roleArn,
       guru45001Handler.role!.roleArn,
     ];
+
+    // ─── Guru AppSync Data Sources + Resolvers (Task 8R-2) ──────────────────
+    // Import the existing AppSync API (created by ApiStack — AiStack depends on it).
+    // Auth mode: @aws_lambda (user-facing, consistent with all other Query fields).
+    const importedApi = appsync.GraphqlApi.fromGraphqlApiAttributes(this, 'ImportedApi', {
+      graphqlApiId: props.graphqlApiId,
+    });
+
+    const guru9001DS = importedApi.addLambdaDataSource('Guru9001DataSource', guru9001Handler);
+    const guru14001DS = importedApi.addLambdaDataSource('Guru14001DataSource', guru14001Handler);
+    const guru45001DS = importedApi.addLambdaDataSource('Guru45001DataSource', guru45001Handler);
+
+    guru9001DS.createResolver('AskISO9001Resolver', {
+      typeName: 'Query',
+      fieldName: 'askISO9001',
+    });
+    guru14001DS.createResolver('AskISO14001Resolver', {
+      typeName: 'Query',
+      fieldName: 'askISO14001',
+    });
+    guru45001DS.createResolver('AskISO45001Resolver', {
+      typeName: 'Query',
+      fieldName: 'askISO45001',
+    });
 
     // ─── CfnOutputs for IAM roles ──────────────────────────────────────────
     new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackLambda.role!.roleArn });

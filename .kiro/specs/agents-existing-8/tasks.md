@@ -142,7 +142,7 @@
 ### Deliverables
 - [x] Add `GSI-HITL-PENDING` definition to AiStack (if not already in Task 3 — verify; if missing, add here)
 - [x] Extend existing api-core GSI PK prefix test to assert: `GSI-HITL-PENDING` PK starts with `TENANT#<tenantId>#` (FF-5 rule)
-- [ ] Unit test asserting the sparse GSI projection: only items with `status = 'PENDING'` have the GSI PK attribute
+- [x] Unit test asserting the sparse GSI projection: only items with `status = 'PENDING'` have the GSI PK attribute
 
 ### Acceptance
 - FF-5 prefix test passes with the new GSI included

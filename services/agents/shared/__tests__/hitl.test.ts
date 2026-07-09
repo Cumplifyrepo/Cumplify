@@ -1,7 +1,9 @@
 /**
  * Unit tests for HITL gate module.
- * Verifies: SFN startExecution called; DynamoDB HITL_PENDING item written with correct GSI PK;
- * resolved items remove GSI attribute.
+ *
+ * Task 8R-2: enterHitlGate NO LONGER writes DDB — only starts SFN execution.
+ * The DDB item is created by store-token.ts (first SFN state).
+ * GSI9 assertions are in store-token.test.ts.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -19,10 +21,6 @@ vi.mock('@aws-sdk/client-sfn', () => ({
 
 vi.mock('@aws-sdk/client-dynamodb', () => ({
   DynamoDBClient: class { send = mockDdbSend; },
-  PutItemCommand: class {
-    input: unknown;
-    constructor(input: unknown) { this.input = input; }
-  },
   UpdateItemCommand: class {
     input: unknown;
     constructor(input: unknown) { this.input = input; }
@@ -44,9 +42,8 @@ describe('enterHitlGate', () => {
     mockDdbSend.mockReset();
   });
 
-  it('starts SFN execution with correct input', async () => {
+  it('starts SFN execution with correct input including item payload fields', async () => {
     mockSfnSend.mockResolvedValueOnce({ executionArn: 'arn:aws:states:us-east-1:123:execution:hitl-test' });
-    mockDdbSend.mockResolvedValueOnce({});
 
     const result = await enterHitlGate({
       tenantId: 'tenant-1',
@@ -57,6 +54,7 @@ describe('enterHitlGate', () => {
 
     expect(result.status).toBe('HITL_PENDING');
     expect(result.executionArn).toContain('hitl-test');
+    expect(result.hitlItemId).toBeDefined();
 
     // Verify SFN was called
     const sfnCall = mockSfnSend.mock.calls[0][0];
@@ -65,11 +63,12 @@ describe('enterHitlGate', () => {
     expect(sfnInput.tenantId).toBe('tenant-1');
     expect(sfnInput.agentName).toBe('CAPAGuru');
     expect(sfnInput.proposedAction.tool).toBe('capa-open');
+    expect(sfnInput.hitlItemId).toBe(result.hitlItemId);
+    expect(sfnInput.createdAt).toBeDefined(); // ISO timestamp passed for store-token
   });
 
-  it('writes DynamoDB HITL_PENDING item with correct GSI PK (D-2)', async () => {
+  it('does NOT write to DynamoDB (zero DDB permissions on handler)', async () => {
     mockSfnSend.mockResolvedValueOnce({ executionArn: 'arn:exec:123' });
-    mockDdbSend.mockResolvedValueOnce({});
 
     await enterHitlGate({
       tenantId: 'tenant-abc',
@@ -78,22 +77,38 @@ describe('enterHitlGate', () => {
       conversationState: [],
     });
 
-    const ddbCall = mockDdbSend.mock.calls[0][0];
-    const item = ddbCall.input.Item;
+    // DDB should NOT be called at all from enterHitlGate
+    expect(mockDdbSend).not.toHaveBeenCalled();
+  });
 
-    // Base keys
-    expect(item.PK).toBe('TENANT#tenant-abc#HITL');
-    expect(item.SK).toMatch(/^PENDING#/);
-    expect(item.itemType).toBe('HITL_PENDING');
-    expect(item.status).toBe('PENDING');
+  it('passes createdAt in SFN input for store-token to use', async () => {
+    mockSfnSend.mockResolvedValueOnce({ executionArn: 'arn:exec:456' });
 
-    // GSI keys (D-2: TENANT#<tenantId>#HITL_PENDING — tenant-isolated, via GSI9)
-    expect(item.GSI9PK).toBe('TENANT#tenant-abc#HITL_PENDING');
-    expect(item.GSI9SK).toBeDefined(); // createdAt ISO string
+    await enterHitlGate({
+      tenantId: 'tenant-x',
+      agentName: 'LeadAuditor',
+      proposedAction: { tool: 'audit-finding-write', args: {} },
+      conversationState: [],
+    });
 
-    // Agent/action
-    expect(item.agentName).toBe('DocStudio');
-    expect(item.proposedAction.tool).toBe('doc-publish');
+    const sfnCall = mockSfnSend.mock.calls[0][0];
+    const sfnInput = JSON.parse(sfnCall.input.input);
+    // createdAt must be an ISO string
+    expect(sfnInput.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  });
+
+  it('generates a ULID hitlItemId', async () => {
+    mockSfnSend.mockResolvedValueOnce({ executionArn: 'arn:exec:789' });
+
+    const result = await enterHitlGate({
+      tenantId: 'tenant-1',
+      agentName: 'CAPAGuru',
+      proposedAction: { tool: 'capa-open', args: {} },
+      conversationState: [],
+    });
+
+    // ULID is 26 chars, uppercase alphanumeric
+    expect(result.hitlItemId).toMatch(/^[0-9A-Z]{26}$/);
   });
 });
 
@@ -126,7 +141,6 @@ describe('resolveHitlItem', () => {
     const ddbCall = mockDdbSend.mock.calls[0][0];
     const ttl = ddbCall.input.ExpressionAttributeValues[':ttl'];
     const thirtyDaysFromNow = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
-    // Allow 10s tolerance
     expect(ttl).toBeGreaterThan(thirtyDaysFromNow - 10);
     expect(ttl).toBeLessThan(thirtyDaysFromNow + 10);
   });
