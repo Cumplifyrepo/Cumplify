@@ -17,6 +17,7 @@ import { DrRegionStack } from './dr-region-stack.js';
 import { EventingStack } from './eventing-stack.js';
 import { AuditTrailStack } from './audit-trail-stack.js';
 import { ApiStack } from './api-stack.js';
+import { AiStack } from './ai-stack.js';
 
 export interface CumplifyStageProps extends cdk.StageProps {
   readonly envConfig: EnvConfig;
@@ -122,6 +123,27 @@ export class CumplifyStage extends cdk.Stage {
     apiStack.addDependency(identityStack);
     apiStack.addDependency(securityStack);
     apiStack.addDependency(eventingStack);
+
+    // AiStack — AI agents infrastructure (spec 4: agents-existing-8)
+    const aiStack = new AiStack(this, 'AiStack', {
+      envConfig,
+      tableArn: dataStack.tableArn,
+      tableName: dataStack.tableName,
+      dynamodbKey: securityStack.outputs.dynamodbKey,
+      clusterArn: dataStack.clusterArn,
+      dbSecretArn: dataStack.dbSecretArn,
+      dbSecretKey: securityStack.outputs.secretsKey,
+      busName: eventingStack.busName,
+      busArn: eventingStack.busArn,
+      deliveryFailureDlqArn: eventingStack.deliveryFailureDlqArn,
+      capaIntakeQueueArn: eventingStack.capaIntakeQueueArn,
+      auditSinkQueueArn: eventingStack.auditSinkQueueArn,
+      recordsQueueArn: eventingStack.recordsQueueArn,
+    });
+    aiStack.addDependency(dataStack);
+    aiStack.addDependency(apiStack);
+    aiStack.addDependency(eventingStack);
+    aiStack.addDependency(auditTrailStack);
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

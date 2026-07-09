@@ -7,7 +7,7 @@
  */
 
 import { invoke } from '../../ai-invoker/src/index.js';
-import type { InvokeRequest, InvokeResponse, ConversationMessage, ToolConfig, SeatId, ContentBlock } from '../../ai-invoker/src/types.js';
+import type { InvokeRequest, ConversationMessage, ToolConfig, SeatId, ContentBlock } from '../../ai-invoker/src/types.js';
 import { enterHitlGate, type HitlResult } from './hitl.js';
 import { Logger } from '@aws-lambda-powertools/logger';
 
