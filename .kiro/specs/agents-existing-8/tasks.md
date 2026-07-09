@@ -181,11 +181,11 @@
 > Depends on Tasks 3, 4, 8. First deploy of AiStack to dev.
 
 ### Deliverables
-- [ ] `cdk deploy Dev/AiStack` — successful (zero errors)
-- [ ] Readback: `cdk-outputs.json` → record all CfnOutput values (Lambda ARNs, queue URLs, state machine ARN, guardrail ID, AOSS collection endpoints)
-- [ ] **Apply-template custom resource (T3E-F1 part 2):** build + run a VPC-attached, SigV4-signing Lambda that PUTs `_index_template` (from `services/agents/shared/aoss-index-template.json`) to each AOSS collection endpoint. Requires Task-4 AOSS data-access grant. MUST complete BEFORE any document seeding.
-- [ ] Verify: each collection has the template applied (GET `_index_template` returns knn_vector 1024-dim + metadata.tenantId keyword)
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-9-deploy-readback.log` (timestamp, exit code, cdk-outputs SHA, template-apply confirmation per collection)
+- [x] `cdk deploy Dev/AiStack` — successful (zero errors)
+- [x] Readback: `cdk-outputs.json` → record all CfnOutput values (Lambda ARNs, queue URLs, state machine ARN, guardrail ID, AOSS collection endpoints)
+- [x] **Apply-template custom resource (T3E-F1 part 2):** build + run a VPC-attached, SigV4-signing Lambda that PUTs `_index_template` (from `services/agents/shared/aoss-index-template.json`) to each AOSS collection endpoint. Requires Task-4 AOSS data-access grant. MUST complete BEFORE any document seeding.
+- [x] Verify: each collection has the template applied (GET `_index_template` returns knn_vector 1024-dim + metadata.tenantId keyword)
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-9-deploy-readback.log` (timestamp, exit code, cdk-outputs SHA, template-apply confirmation per collection)
 
 ### Acceptance
 - Deploy succeeds with zero CDK Nag findings (ACC-6)

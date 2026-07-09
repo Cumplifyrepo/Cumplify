@@ -1,0 +1,106 @@
+# Task 9 — AiStack Deploy + Readback [ARCHITECT] — Evidence Log
+
+Executed: 2026-07-09 (architect, standing authorization; owner IAM sign-off recorded in
+iam-consolidated-signoff.md). Profile: cumplify-dev-admin (direct deploy, api-core Task-12
+precedent). Deployed commits: cfaff2e (8R-2) + b2d09a6 (guru entrypoints) + e20a099 (Task 9
+build) + 7b0dd3f (deploy corrections).
+
+## Deploy attempts (honest record)
+1. ATTEMPT 1 — stack selector 'Dev/AiStack' matched nothing; cdk EXITED 0 anyway
+   ("No stacks match"). Caught by reading output, not exit code. Lesson recorded: cdk deploy
+   exit code alone is not deploy evidence; construct paths are 'CumplifyPipeline/Dev/<Stack>'.
+2. ATTEMPT 2 — ApiStack UPDATE_COMPLETE ✅ (guru schema live). AiStack change-set FAILED early
+   validation with two REAL defects:
+   a) Guardrail PII type 'SSN' invalid (valid enum: US_SOCIAL_SECURITY_NUMBER) — Task-3 defect;
+      the unit test had PINNED the invalid value. Fixed + test corrected.
+   b) 'encryption|cumplify-iso-kb-enc' already exists — cumplify-iso-kb collection is OWNED BY
+      Dev-DataStack (spec 1, live since 2026-07-03; its data-access placeholder: "specs 4/5 add
+      real principals"). Spec-4 Task 3 had declared a DUPLICATE; architect Task-3 validation
+      missed it (validated vs corpus, not live inventory). FIX: DataStack exports
+      isoKbCollectionArn/Endpoint; AiStack imports and creates ONLY tenant-docs-kb + nc-history.
+      Existing iso-kb net policy verified live: SourceVPCEs=[vpce-089b26b4a26fc80f5] (ours).
+   Corrections committed 7b0dd3f; synth + Nag re-gated before redeploy.
+3. ATTEMPT 3 — SUCCESS. Dev-AiStack CREATE_COMPLETE (92/92 resources), exit 0.
+   ApplyTemplateTrigger Custom::AWS CREATE_COMPLETE 15:28:52 (CR Lambda is fail-closed:
+   success = template applied + verified on all 3 collections during deploy).
+
+## Acceptance
+- ACC-6 CDK Nag: AwsSolutions-Dev-Dev-AiStack-NagReport.csv = 96 rows, 0 Non-Compliant. PASS.
+- CfnOutputs: 37/37 populated (none empty). PASS.
+- Index template (witnessed, GET-only verify invoke — architect-executed, output verbatim below):
+  all 3 collections return dimension=1024 + metadata.tenantId=keyword. PASS + fail-closed
+  mapping check exercised (the same Lambda throws on any mismatch).
+- MODELWEIGHT# seed readback (DynamoDB query per model, verbatim below): 4/4 models at
+  VERSION#20260709 matching the committed Task-2 seed EXACTLY:
+  nova-pro 800/3200/200; nova-lite 60/240/15; qwen3-next 140/1200/null(absent);
+  kimi-k2.5 600/3000/null(absent). loadWeights() unblocked. PASS.
+- cdk-outputs.json (repo root) merged from CLOUD-sourced deploy outputs (never sibling files —
+  incident-#3 lesson). sha256 = 0d333473943281d7afde8b872864a39f767ba6b0085288e64981c6fc869736f0
+
+## T-9a (owner-approved carry)
+AOSS data-access WRITE Principal = [weightSeeder role, applyTemplateFn role] — exact ARNs,
+no globs. Template-asserted in ai-stack.unit.test.ts.
+
+## Verify invocation (verbatim)
+Command: aws lambda invoke --function-name <ApplyTemplateFnArn> --payload '{"action":"verify"}'
+{
+    "status": "success",
+    "applied": [],
+    "verified": [
+        {
+            "collection": "cumplify-iso-kb",
+            "dimension": 1024,
+            "tenantIdType": "keyword"
+        },
+        {
+            "collection": "cumplify-tenant-docs-kb",
+            "dimension": 1024,
+            "tenantIdType": "keyword"
+        },
+        {
+            "collection": "cumplify-nc-history",
+            "dimension": 1024,
+            "tenantIdType": "keyword"
+        }
+    ]
+}
+
+## MODELWEIGHT# readback (verbatim, aws dynamodb query per model)
+--- us.amazon.nova-pro-v1:0 ---
+[
+    {
+        "SK": "VERSION#20260709",
+        "wIn": "800",
+        "wOut": "3200",
+        "wCache": "200"
+    }
+]
+--- us.amazon.nova-lite-v1:0 ---
+[
+    {
+        "SK": "VERSION#20260709",
+        "wIn": "60",
+        "wOut": "240",
+        "wCache": "15"
+    }
+]
+--- qwen.qwen3-next-80b-a3b ---
+[
+    {
+        "SK": "VERSION#20260709",
+        "wIn": "140",
+        "wOut": "1200",
+        "wCache": null
+    }
+]
+--- moonshotai.kimi-k2.5 ---
+[
+    {
+        "SK": "VERSION#20260709",
+        "wIn": "600",
+        "wOut": "3000",
+        "wCache": null
+    }
+]
+
+Timestamp: 2026-07-09T19:31:28Z | deploy exit 0 | readback exit 0
