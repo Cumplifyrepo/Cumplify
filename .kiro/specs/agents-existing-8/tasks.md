@@ -218,12 +218,12 @@
 > Depends on Tasks 9, 10 (AiStack deployed + invoker proven).
 
 ### Deliverables
-- [ ] Trigger CAPAGuru with a synthetic `NC.Raised` event (via SQS message to CapaIntakeQueue)
-- [ ] Observe: agent proposes `agentProposeCorrectiveAction` → HITL gate pauses (Step Functions execution enters WaitForApproval)
-- [ ] Execute `SendTaskSuccess` with approval (human actor = architect cognito sub)
-- [ ] Observe: writeback commits to RDS → audit event published → sealed in DynamoDB AUDITLOG (hash-chained) → S3 WORM object
-- [ ] Verify audit event: actor = `agent:CAPAGuru+human:<sub>`, clauseRef present, payloadHash correct, prevHash links to previous event
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-11-writeback-e2e.log` (full execution trace with timestamps)
+- [x] Trigger CAPAGuru with a synthetic `NC.Raised` event (via SQS message to CapaIntakeQueue)
+- [x] Observe: agent proposes `agentProposeCorrectiveAction` → HITL gate pauses (Step Functions execution enters WaitForApproval)
+- [x] Execute `SendTaskSuccess` with approval (human actor = architect cognito sub)
+- [x] Observe: writeback commits to RDS → audit event published → sealed in DynamoDB AUDITLOG (hash-chained) → S3 WORM object
+- [x] Verify audit event: actor = `agent:CAPAGuru+human:<sub>`, clauseRef present, payloadHash correct, prevHash links to previous event
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-11-writeback-e2e.log` (full execution trace with timestamps)
 
 ### Acceptance
 - ACC-3: agent writeback E2E demonstrated end-to-end — witnessed

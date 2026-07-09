@@ -1,0 +1,65 @@
+# Task 11 — Agent Writeback E2E: HITL + Audit Trail [ARCHITECT] — Evidence Log
+
+Executed: 2026-07-09 (architect, standing authorization). Commits this task:
+0b7678a (writeback event shape), 394ec05 (Nova greedy decoding), 27cfb13 (Nova
+hyphenated tool-name wire encoding), 8f183f5 (spec-5 payloadHash canonicalization).
+
+## THREE REAL DEFECTS FOUND LIVE (never-run-live class, all fixed + test-pinned)
+
+1. PRE-FLIGHT (contract review, fixed before first run — 0b7678a): execute-writeback
+   expected event.Payload, but SFN lambda:invoke with 'Payload.$':'$' delivers the STATE
+   as the event (wrapper exists only in state OUTPUT). Would have TypeError'd on the
+   first approval. Handler now accepts both shapes.
+
+2. NOVA CANNOT EMIT HYPHENATED TOOL NAMES (27cfb13): CAPAGuru failed deterministically
+   at Bedrock — "Model produced invalid sequence as part of ToolUse" — across original +
+   retry + fresh-event runs, including after greedy decoding (394ec05, kept per the Nova
+   tool-use guide). WITNESSED A/B EXPERIMENT settled it: identical invoke with tool
+   'test-tool' → invalid-sequence error; 'test_tool' → clean tool_use with correct args.
+   Fix at the one door only: converse.ts wire-encodes names hyphen→underscore in
+   toolConfig + message history, decodes on extraction. Domain names untouched.
+   OPERATIONAL LESSON: FIFO poison messages BLOCK the tenant's message group for
+   3×360s visibility — purge capa-intake between failed E2E iterations.
+
+3. SPEC-5 LATENT: payloadHash NOT CANONICAL UNDER DDB ROUND-TRIP (8f183f5): the chain
+   verifier flagged the first successful writeback as TAMPERED. Byte-verified: appender
+   hashed insertion order {tool,result} (e816b771...); DynamoDB returned {result,tool};
+   verifier recomputed c49649fd... . computePayloadHash (shared, REV-10) now recursively
+   key-sorts. LIVE MIGRATION REALITY (corrected my own wrong prediction): ALL 8 pre-fix
+   dev items broke under the new form (old wrapper string was 'before'-first; canonical
+   sorts 'after'-first) — purged as synthetic test data per the spec-5 closure precedent
+   (admin role; Lambda-role IAM Deny untouched; WORM S3 copies expire on their own 1d).
+   Staging/prod unaffected — fix ships before any append there.
+
+## ACC-3 — clean full-loop proof (tenant-t11e2e, fresh GENESIS chain)
+1. Seeded m2.nonconformities 22222222-3333-4444-8555-666677778888 (app_role, RLS ctx).
+2. Published NC.Raised eventId 01KX4BF0XQC5JYBFE0D23RAZWR (auditTrail:true).
+3. Bus → R-2 → FIFO router (MessageGroupId=tenantId) → capa-intake → CAPAGuru →
+   one-door invoke (nova-pro, wire-named tools) → model called capa-open with the
+   CORRECT ncId + coherent actionDesc → HITL gate: SFN started, store-token upserted
+   item WITH taskToken (8R-2 single-writer path proven live).
+4. HUMAN APPROVAL: SendTaskSuccess, approver = architect's Pool-B sub
+   04184428-e0e1-7058-6cdb-21ff3e3e1f51 (21:10:49Z).
+5. SFN hitl-CAPAGuru-01KX4BF8WPT01M3R0Q9NRWHVDK: SUCCEEDED.
+6. RDS (as app_role, tenant ctx): m2.corrective_actions row status='open',
+   created_by='agent:CAPAGuru+human:04184428-e0e1-7058-6cdb-21ff3e3e1f51' (M-2 live).
+7. Sealed chain (TENANT#tenant-t11e2e#AUDITLOG):
+   - 01KX4BF0XQ... NC.Raised, actor human:task11-architect, prevHash GENESIS
+   - 01KX4BG4M6... Agent.WritebackCommitted, actor agent:CAPAGuru+human:<sub>,
+     prevHash a2338a3af53c8f38... (links to predecessor), clauseRef present.
+8. WORM: BOTH events sealed to S3 (798B + 723B), Object Lock COMPLIANCE,
+   RetainUntilDate 2026-07-10T21:10:52Z (1d dev retention).
+9. CHAIN VERIFIER (witnessed): tenant-t11e2e itemsChecked=2 chainValid=TRUE
+   s3Mismatches=0 brokenLinks=0. (tenant-AAA/LOOP: 0 items post-purge, valid.)
+
+## Acceptance
+- ACC-3 agent writeback E2E — WITNESSED, full spine. PASS.
+- Audit item retrievable, hash chain confirmed by verifier Lambda. PASS.
+- HITL SFN execution SUCCEEDED. PASS.
+
+## Observations (non-blocking, for Kiro backlog)
+- nova-pro hallucinated dueDate '2023-10-15' (past date) — CAPA prompt should instruct
+  computing dueDate relative to current date (prompt-quality item, not a code defect).
+- An earlier tenant-AAA run (pre-canonicalization) proved the same loop with identical
+  results (SFN SUCCEEDED 20:48; RDS row with dual actor; WORM sealed) — its chain items
+  were purged with the pre-fix batch; transcript retained in session record.
