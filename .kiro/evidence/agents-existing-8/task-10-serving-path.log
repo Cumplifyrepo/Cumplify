@@ -1,0 +1,74 @@
+# Task 10 — One-Door Serving Path Live Proof [ARCHITECT] — Evidence Log
+
+Executed: 2026-07-09 (architect, standing authorization). Profile cumplify-dev-admin.
+Function: Dev-AiStack-AiInvokerFnB11B59B3-qcKES9iF6ddc (direct lambda invoke = the door itself).
+
+## Rule-4 vindication — invoker deployed BROKEN, caught by first live call
+Attempt 1 (pre-hotfix): ALL invocations threw TypeError "path argument... Received undefined" —
+register-resolver used fileURLToPath(import.meta.url) + readFileSync, which is undefined under
+esbuild CJS bundling. Same defect class as weight-seeder T3E-F2; invisible to all 51 unit tests
+(they run unbundled). Architect hotfix c201227: static JSON import (register inlined at bundle
+time; proof: 'workhorse' 3x in bundle, import.meta 0x). AiStack UPDATE redeployed (173s), then:
+
+## ACC-1 — positive proofs (4/4 seats, witnessed responses verbatim in transcript below)
+| seat | modelId (Register-resolved) | in/out tokens | credits | formula check |
+|------|------------------------------|---------------|---------|---------------|
+| workhorse   | us.amazon.nova-pro-v1:0  | 9/7  | 0.0296  | (9×800+7×3200)/1M = 0.0296 EXACT |
+| lightweight | us.amazon.nova-lite-v1:0 | 9/7  | 0.00222 | (9×60+7×240)/1M = 0.00222 EXACT |
+| guru-9001   | qwen.qwen3-next-80b-a3b  | 17/6 | 0.00958 | (17×140+6×1200)/1M = 0.00958 EXACT |
+| guru-14001  | qwen.qwen3-next-80b-a3b  | 17/6 | 0.00958 | (17×140+6×1200)/1M = 0.00958 EXACT |
+
+METER item TENANT#tenant-AAA#METER / MONTH#202607: ABSENT before → creditsUsed = 0.05098 after
+= 0.0296+0.00222+0.00958+0.00958 EXACTLY (atomic ADD works; weights = the Task-2 seed via
+MODELWEIGHT# read). Credit pre-check passed on trial defaults (no ENTITLEMENT item — grant not
+exhausted; F-6 overage rules untouched). telemetry.credits.consumed emitted per call (invoker
+step 8; downstream billing consumer = pre-GA carry per owner 2026-07-08 decision).
+
+## ACC-2 — negative proofs (2/2, fail-closed, NO output produced)
+| seat | errorType | message (witnessed) | resolver branch |
+|------|-----------|---------------------|-----------------|
+| synthetic-expired-seat | InvokeError | "Seat 'synthetic-expired-seat' not found in register" | not-found → code MODEL_SEAT_EXPIRED (register-resolver.ts) |
+| legal-ledger | InvokeError | "Seat 'legal-ledger' is UNASSIGNED — no model assigned" | UNASSIGNED → code MODEL_SEAT_UNASSIGNED |
+
+Honest note: the synthetic-EXPIRED proof exercises the not-found branch (which throws code
+MODEL_SEAT_EXPIRED); the past-expiry date branch is unit-covered (Task 1: past-expiry fails
+closed) — no register seat carries a past expiry to exercise live without falsifying data.
+Lambda error payloads carry errorType/errorMessage; codes verified against resolver source.
+
+## Budget
+6 invocations, 68 total tokens ≈ $0.000051 raw Bedrock — far under the ~$0.01 estimate.
+
+## Run transcript (verbatim)
+=== Task 10 campaign 2026-07-09T20:09:47Z (post-hotfix c201227) ===
+=== METER before ===
+=== POSITIVE: seat=workhorse 20:09:47Z ===
+{"seat": "workhorse", "modelId": "us.amazon.nova-pro-v1:0", "usage": {"inputTokens": 9, "outputTokens": 7, "cacheReadInputTokens": 0, "cacheWriteInputTokens": 0}, "credits": 0.0296, "stopReason": "end_turn", "text": "Hello from the one door."}
+=== POSITIVE: seat=lightweight 20:09:50Z ===
+{"seat": "lightweight", "modelId": "us.amazon.nova-lite-v1:0", "usage": {"inputTokens": 9, "outputTokens": 7, "cacheReadInputTokens": 0, "cacheWriteInputTokens": 0}, "credits": 0.00222, "stopReason": "end_turn", "text": "Hello from the one door."}
+=== POSITIVE: seat=guru-9001 20:09:51Z ===
+{"seat": "guru-9001", "modelId": "qwen.qwen3-next-80b-a3b", "usage": {"inputTokens": 17, "outputTokens": 6, "cacheReadInputTokens": 0, "cacheWriteInputTokens": 0}, "credits": 0.00958, "stopReason": "end_turn", "text": "hello from the one door"}
+=== POSITIVE: seat=guru-14001 20:09:53Z ===
+{"seat": "guru-14001", "modelId": "qwen.qwen3-next-80b-a3b", "usage": {"inputTokens": 17, "outputTokens": 6, "cacheReadInputTokens": 0, "cacheWriteInputTokens": 0}, "credits": 0.00958, "stopReason": "end_turn", "text": "hello from the one door"}
+=== NEGATIVE: seat=synthetic-expired-seat 20:09:54Z ===
+errorType: InvokeError | errorMessage: Seat 'synthetic-expired-seat' not found in register | got output?: False
+=== NEGATIVE: seat=legal-ledger 20:09:55Z ===
+errorType: InvokeError | errorMessage: Seat 'legal-ledger' is UNASSIGNED — no model assigned | got output?: False
+=== METER after ===
+{
+    "Item": {
+        "PK": {
+            "S": "TENANT#tenant-AAA#METER"
+        },
+        "creditsUsed": {
+            "N": "0.05098"
+        },
+        "lastUpdated": {
+            "S": "2026-07-09T20:09:54.513Z"
+        },
+        "SK": {
+            "S": "MONTH#202607"
+        }
+    }
+}
+
+Timestamp: 2026-07-09T20:10:46Z | all invoke exits 0 | evidence exit 0

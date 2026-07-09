@@ -200,11 +200,11 @@
 > Depends on Tasks 2, 9. Live Bedrock invocations (readonly can't).
 
 ### Deliverables
-- [ ] Invoke AI Invoker Lambda for each assigned seat: Workhorse (ControlTower), Lightweight (RecordsVault), Guru-9001, Guru-14001 — minimal "hello" prompt
-- [ ] For each invocation verify: model resolved from Register (log modelId), tokens metered (log inputTokens/outputTokens/creditsConsumed), margin bar checked, EXPIRED/UNASSIGNED checks passed
-- [ ] Negative proof 1: invoke with a synthetically EXPIRED seat → confirm `MODEL_SEAT_EXPIRED` error (no output)
-- [ ] Negative proof 2: invoke LegalLedger seat → confirm `MODEL_SEAT_UNASSIGNED` error (no output)
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-10-serving-path.log` (per-invocation: timestamp, seat, modelId, tokens, credits, exit code)
+- [x] Invoke AI Invoker Lambda for each assigned seat: Workhorse (ControlTower), Lightweight (RecordsVault), Guru-9001, Guru-14001 — minimal "hello" prompt
+- [x] For each invocation verify: model resolved from Register (log modelId), tokens metered (log inputTokens/outputTokens/creditsConsumed), margin bar checked, EXPIRED/UNASSIGNED checks passed
+- [x] Negative proof 1: invoke with a synthetically EXPIRED seat → confirm `MODEL_SEAT_EXPIRED` error (no output)
+- [x] Negative proof 2: invoke LegalLedger seat → confirm `MODEL_SEAT_UNASSIGNED` error (no output)
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-10-serving-path.log` (per-invocation: timestamp, seat, modelId, tokens, credits, exit code)
 
 ### Acceptance
 - ACC-1: each assigned seat invoked live, model resolved, tokens metered, credits computed — witnessed
