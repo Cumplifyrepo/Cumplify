@@ -280,7 +280,7 @@ export class AiStack extends cdk.Stack {
         }),
       });
 
-      // Network policy — VPC endpoint only + Bedrock service access
+      // Network policy — VPC endpoint only (Option B: no Bedrock→AOSS managed path)
       const netPolicy = new opensearchserverless.CfnSecurityPolicy(this, `${name}-net`, {
         name: `${name}-net`,
         type: 'network',
@@ -292,7 +292,6 @@ export class AiStack extends cdk.Stack {
           AllowFromPublic: false,
           // SourceVPCEs: AWS::OpenSearchServerless::VpcEndpoint ID (NOT EC2 interface endpoint)
           SourceVPCEs: [props.aossVpcEndpointId],
-          SourceServices: ['bedrock.amazonaws.com'],
         }]),
       });
 
@@ -313,31 +312,17 @@ export class AiStack extends cdk.Stack {
     // is DEFERRED to Task 4 (IAM, REQUIRES-HUMAN). Collection provisioning is
     // separate from access grants per owner decision.
 
-    // ─── Index Mapping Definition (metadata.tenantId as keyword) ────────────
-    // The index template with knn_vector (1024 dims) + metadata.tenantId keyword
-    // is applied via a custom resource that calls the AOSS _index_template API.
-    // This ensures the term filter in retrieval.ts isolates tenants correctly.
+    // ─── Index Mapping (R5 carry — metadata.tenantId as keyword) ──────────
+    // Committed artifact: services/agents/shared/aoss-index-template.json
+    // Defines: knn_vector 1024-dim (faiss/hnsw), metadata.tenantId/standard/clauseRef
+    // as keyword (filterable). The term filter in retrieval.ts only isolates tenants
+    // if tenantId is keyword (non-analyzed).
     //
-    // Index mapping schema (applied per collection):
-    // {
-    //   "settings": { "index.knn": true },
-    //   "mappings": {
-    //     "properties": {
-    //       "embedding": { "type": "knn_vector", "dimension": 1024, "method": { "engine": "faiss", "name": "hnsw" } },
-    //       "text": { "type": "text" },
-    //       "metadata": {
-    //         "properties": {
-    //           "tenantId": { "type": "keyword" },  <-- CRITICAL: keyword = filterable
-    //           "standard": { "type": "keyword" },
-    //           "clauseRef": { "type": "keyword" }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-    //
-    // Custom resource to apply mapping deferred to Task 9 deploy (requires live AOSS).
-    // The mapping definition is committed here as the source of truth.
+    // The apply-template custom resource (Task 9 deliverable):
+    // A VPC-attached, SigV4-signing Lambda PUTs _index_template to each collection
+    // endpoint BEFORE any document seeding. Requires Task-4 AOSS data-access grant.
+    // Task 12 seeding must fail-closed if the template is absent (GET _index_template
+    // first — never index against an auto-mapped field).
 
     // ─── MODELWEIGHT# Seeding Custom Resource (T-2/T3-F3) ──────────────────
     // Reads services/ai-invoker/data/model-weights-seed.json (committed by Task 2,
@@ -369,6 +354,9 @@ export class AiStack extends cdk.Stack {
     props.dynamodbKey.grantEncryptDecrypt(weightSeeder);
 
     // Custom resource trigger (runs on deploy)
+    // T3E-F4: incorporate hash of seed file into physicalResourceId so a changed
+    // seed file triggers re-seeding. ConditionalCheckFailed is handled (F3).
+    const seedFileHash = cdk.FileSystem.fingerprint('services/ai-invoker/data/model-weights-seed.json');
     new cr.AwsCustomResource(this, 'WeightSeederTrigger', {
       onCreate: {
         service: 'Lambda',
@@ -376,9 +364,9 @@ export class AiStack extends cdk.Stack {
         parameters: {
           FunctionName: weightSeeder.functionName,
           InvocationType: 'RequestResponse',
-          Payload: JSON.stringify({ action: 'seed' }),
+          Payload: JSON.stringify({ action: 'seed', seedHash: seedFileHash }),
         },
-        physicalResourceId: cr.PhysicalResourceId.of('weight-seeder-v1'),
+        physicalResourceId: cr.PhysicalResourceId.of(`weight-seeder-${seedFileHash}`),
       },
       onUpdate: {
         service: 'Lambda',
@@ -386,9 +374,9 @@ export class AiStack extends cdk.Stack {
         parameters: {
           FunctionName: weightSeeder.functionName,
           InvocationType: 'RequestResponse',
-          Payload: JSON.stringify({ action: 'seed' }),
+          Payload: JSON.stringify({ action: 'seed', seedHash: seedFileHash }),
         },
-        physicalResourceId: cr.PhysicalResourceId.of('weight-seeder-v1'),
+        physicalResourceId: cr.PhysicalResourceId.of(`weight-seeder-${seedFileHash}`),
       },
       policy: cr.AwsCustomResourcePolicy.fromStatements([
         new iam.PolicyStatement({

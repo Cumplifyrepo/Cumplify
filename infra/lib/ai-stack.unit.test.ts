@@ -227,9 +227,34 @@ describe('AiStack', () => {
 
   describe('MODELWEIGHT# Seeding', () => {
     it('creates a weight seeder Lambda', () => {
-      // The seeder Lambda should exist with TABLE_NAME env
       const templateJson = JSON.stringify(template.toJSON());
       expect(templateJson).toContain('weight-seeder');
+    });
+
+    it('seeder physicalResourceId incorporates seed file hash (T3E-F4)', () => {
+      // The custom resource should have a dynamic physical ID (not static)
+      const templateJson = JSON.stringify(template.toJSON());
+      expect(templateJson).toContain('weight-seeder-');
+      expect(templateJson).not.toContain('weight-seeder-v1'); // Old static ID removed
+    });
+  });
+
+  describe('AOSS Index Template (R5 carry)', () => {
+    it('index-template artifact exists with tenantId as keyword', () => {
+      // Verify the committed artifact is parseable and correct
+      const { readFileSync } = require('node:fs');
+      const { resolve } = require('node:path');
+      const templatePath = resolve(__dirname, '../../services/agents/shared/aoss-index-template.json');
+      const content = JSON.parse(readFileSync(templatePath, 'utf-8'));
+
+      // knn_vector dimension = 1024 (Titan Embed v2)
+      expect(content.template.mappings.properties.embedding.dimension).toBe(1024);
+      expect(content.template.mappings.properties.embedding.type).toBe('knn_vector');
+
+      // metadata.tenantId MUST be keyword (R5 carry — term filter isolation)
+      expect(content.template.mappings.properties.metadata.properties.tenantId.type).toBe('keyword');
+      expect(content.template.mappings.properties.metadata.properties.standard.type).toBe('keyword');
+      expect(content.template.mappings.properties.metadata.properties.clauseRef.type).toBe('keyword');
     });
   });
 });

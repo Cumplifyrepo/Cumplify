@@ -1,0 +1,46 @@
+{
+  "index_patterns": ["*"],
+  "template": {
+    "settings": {
+      "index.knn": true
+    },
+    "mappings": {
+      "properties": {
+        "embedding": {
+          "type": "knn_vector",
+          "dimension": 1024,
+          "method": {
+            "engine": "faiss",
+            "name": "hnsw",
+            "parameters": {
+              "m": 16,
+              "ef_construction": 512
+            }
+          }
+        },
+        "text": {
+          "type": "text"
+        },
+        "metadata": {
+          "properties": {
+            "tenantId": {
+              "type": "keyword"
+            },
+            "standard": {
+              "type": "keyword"
+            },
+            "clauseRef": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  },
+  "priority": 100,
+  "_meta": {
+    "description": "Cumplify AOSS index template — Titan Embed v2 (1024 dims), metadata.tenantId as keyword for tenant-isolation term filter (R5 carry). Applied to all 3 collections: cumplify-iso-kb, cumplify-tenant-docs-kb, cumplify-nc-history.",
+    "spec": "agents-existing-8",
+    "dimension_source": "D-4 corpus-corrected: Titan Embed v2 = 1024 (NOT 1536)"
+  }
+}
