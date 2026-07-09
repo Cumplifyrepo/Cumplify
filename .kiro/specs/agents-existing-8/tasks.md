@@ -182,12 +182,15 @@
 
 ### Deliverables
 - [ ] `cdk deploy Dev/AiStack` — successful (zero errors)
-- [ ] Readback: `cdk-outputs.json` → record all CfnOutput values (Lambda ARNs, queue URLs, state machine ARN, guardrail ID)
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-9-deploy-readback.log` (timestamp, exit code, cdk-outputs SHA)
+- [ ] Readback: `cdk-outputs.json` → record all CfnOutput values (Lambda ARNs, queue URLs, state machine ARN, guardrail ID, AOSS collection endpoints)
+- [ ] **Apply-template custom resource (T3E-F1 part 2):** build + run a VPC-attached, SigV4-signing Lambda that PUTs `_index_template` (from `services/agents/shared/aoss-index-template.json`) to each AOSS collection endpoint. Requires Task-4 AOSS data-access grant. MUST complete BEFORE any document seeding.
+- [ ] Verify: each collection has the template applied (GET `_index_template` returns knn_vector 1024-dim + metadata.tenantId keyword)
+- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-9-deploy-readback.log` (timestamp, exit code, cdk-outputs SHA, template-apply confirmation per collection)
 
 ### Acceptance
 - Deploy succeeds with zero CDK Nag findings (ACC-6)
 - All CfnOutputs populated (non-empty)
+- Index template applied: GET _index_template confirms dimension=1024 + tenantId=keyword per collection
 - Truth rule 8: timestamp + exit code + SHA recorded
 
 ---
@@ -234,15 +237,17 @@
 > Depends on Tasks 5, 9 (retrieval wrapper deployed + AOSS collections accessible).
 
 ### Deliverables
+- [ ] **Fail-closed template check (T3E-F1 part 3):** BEFORE seeding any documents, GET `_index_template` from the TENANT-DOCS-KB collection endpoint. If the template is absent or `metadata.tenantId` is not `keyword`, ABORT seeding — never index a document against an auto-mapped field.
 - [ ] Seed AOSS TENANT-DOCS-KB collection with test documents for Tenant-A and Tenant-B (Titan Embed v2, 1024 dimensions)
 - [ ] Execute retrieval query as Tenant-A → verify results contain ONLY Tenant-A documents
 - [ ] Execute retrieval query as Tenant-B → verify zero Tenant-A results (cross-tenant negative proof)
 - [ ] Force AOSS cold start (wait for scale-to-zero, then query) → verify completes within 45s budget with retries logged
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-12-aoss-retrieval.log` (timestamps, retry count, latencies, tenant isolation assertion results)
+- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-12-aoss-retrieval.log` (timestamps, retry count, latencies, tenant isolation assertion results, template-check confirmation)
 
 ### Acceptance
 - ACC-4: tenant-filtered results confirmed; cross-tenant negative proof passes; 45s cold-start budget demonstrated — witnessed
 - Titan Embed v2 dimension = 1024 confirmed in collection metadata
+- Index template present with metadata.tenantId = keyword (fail-closed check passed)
 
 ---
 

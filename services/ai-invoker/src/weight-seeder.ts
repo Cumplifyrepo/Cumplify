@@ -12,7 +12,6 @@
 
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
-import { createRequire } from 'node:module';
 import { Logger } from '@aws-lambda-powertools/logger';
 
 const logger = new Logger({ serviceName: 'weight-seeder' });
@@ -29,10 +28,12 @@ interface WeightSeed {
   }>;
 }
 
-// T3E-F2 FIX: createRequire + require() — esbuild resolves and inlines JSON
-// at bundle time. No readFileSync ENOENT at runtime.
-const require = createRequire(import.meta.url);
-const seed: WeightSeed = require('../data/model-weights-seed.json');
+// T3E-F2 FIX: static default import — esbuild's json loader inlines the content
+// at bundle time. createRequire does NOT inline (leaves a runtime require call).
+// The placeholder file is committed; Task 2 overwrites with real data; Task 9
+// re-bundles and picks up the real weights via the F4 fingerprint trigger.
+import seedRaw from '../data/model-weights-seed.json' with { type: 'json' };
+const seed = seedRaw as unknown as WeightSeed;
 
 export async function handler(event: { action: string; seedHash?: string }): Promise<{ status: string; seeded: number; skipped: number }> {
   if (event.action !== 'seed') {
