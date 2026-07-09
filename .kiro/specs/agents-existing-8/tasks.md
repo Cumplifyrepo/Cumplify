@@ -156,17 +156,17 @@
 > Depends on Tasks 1, 5, 6. Per-agent prompts, tools, handlers.
 
 ### Deliverables
-- [ ] `services/agents/control-tower/{prompt,tools,handler}.ts` — governance routing, ct-governance-write tool (HITL-gated)
-- [ ] `services/agents/doc-studio/{prompt,tools,handler}.ts` — doc-draft, doc-version-control, doc-publish tools (HITL on publish)
-- [ ] `services/agents/lead-auditor/{prompt,tools,handler}.ts` — audit-checklist-gen, audit-finding-write tools (HITL on finding write)
-- [ ] `services/agents/capa-guru/{prompt,tools,handler}.ts` — capa-open, capa-rootcause, capa-verify tools (HITL on CAPA lifecycle); retrieval integration for similar-NC search (§4.4)
-- [ ] `services/agents/records-vault/{prompt,tools,handler}.ts` — records-retain, records-audit-append tools (NO HITL on append-only sealing; HITL on retention-schedule changes)
-- [ ] `services/agents/guru-9001/{prompt,handler}.ts` — advisory, retrieval-grounded from ISO-KB (§4.3); AppSync resolver (user-facing)
-- [ ] `services/agents/guru-14001/{prompt,handler}.ts` — same pattern as guru-9001
-- [ ] `services/agents/guru-45001/{prompt,handler}.ts` — same pattern; uses kimi-k2.5 seat
-- [ ] All handlers: reuse `createHandler`/`createFifoHandler` from `services/eventing/src/consumer.ts` for SQS consumption (where applicable)
-- [ ] All mutating tools: call `publishAuditEvent` (from `services/eventing/src/publisher.ts`) after HITL-approved writeback per §5.1 actor convention (`agent:<name>+human:<sub>`)
-- [ ] Unit tests per agent: prompt structure, tool dispatch, HITL detection, retrieval call (mocked)
+- [x] `services/agents/control-tower/{prompt,tools,handler}.ts` — governance routing, ct-governance-write tool (HITL-gated)
+- [x] `services/agents/doc-studio/{prompt,tools,handler}.ts` — doc-draft, doc-version-control, doc-publish tools (HITL on publish)
+- [x] `services/agents/lead-auditor/{prompt,tools,handler}.ts` — audit-checklist-gen, audit-finding-write tools (HITL on finding write)
+- [x] `services/agents/capa-guru/{prompt,tools,handler}.ts` — capa-open, capa-rootcause, capa-verify tools (HITL on CAPA lifecycle); retrieval integration for similar-NC search (§4.4)
+- [x] `services/agents/records-vault/{prompt,tools,handler}.ts` — records-retain, records-audit-append tools (NO HITL on append-only sealing; HITL on retention-schedule changes)
+- [x] `services/agents/guru-9001/{prompt,handler}.ts` — advisory, retrieval-grounded from ISO-KB (§4.3); AppSync resolver (user-facing)
+- [x] `services/agents/guru-14001/{prompt,handler}.ts` — same pattern as guru-9001
+- [x] `services/agents/guru-45001/{prompt,handler}.ts` — same pattern; uses kimi-k2.5 seat
+- [x] All handlers: reuse `createHandler`/`createFifoHandler` from `services/eventing/src/consumer.ts` for SQS consumption (where applicable)
+- [x] All mutating tools: call `publishAuditEvent` (from `services/eventing/src/publisher.ts`) after HITL-approved writeback per §5.1 actor convention (`agent:<name>+human:<sub>`)
+- [x] Unit tests per agent: prompt structure, tool dispatch, HITL detection, retrieval call (mocked)
 
 ### Acceptance
 - `npx tsc --noEmit` passes for all agent modules

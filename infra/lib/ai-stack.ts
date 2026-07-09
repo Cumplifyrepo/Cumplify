@@ -132,6 +132,46 @@ export class AiStack extends cdk.Stack {
       resources: [props.busArn],
     }));
 
+    // ─── Store-Token Lambda (T-8d: persists taskToken into DDB HITL item) ──
+    const storeTokenLambda = new NodejsFunction(this, 'StoreTokenFn', {
+      entry: 'services/agents/shared/store-token.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        TABLE_NAME: props.tableName,
+        POWERTOOLS_SERVICE_NAME: 'store-token',
+      },
+    });
+
+    // ─── ExecuteWriteback Lambda (T-8a/T-8b) ───────────────────────────────
+    const executeWritebackLambda = new NodejsFunction(this, 'ExecuteWritebackFn', {
+      entry: 'services/agents/shared/execute-writeback.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(60),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        CLUSTER_ARN: props.clusterArn,
+        APP_ROLE_SECRET_ARN: props.appRoleSecretArn,
+        BUS_NAME: props.busName,
+        POWERTOOLS_SERVICE_NAME: 'execute-writeback',
+      },
+    });
+
+    // T-8b (BINDING): ExecuteWriteback invoke-permission = HITL state-machine role ONLY.
+    // No agent handler can invoke this Lambda — only SFN after approval.
+    executeWritebackLambda.addPermission('AllowSfnInvokeOnly', {
+      principal: new iam.ServicePrincipal('states.amazonaws.com'),
+      sourceArn: 'arn:aws:states:*:*:stateMachine:*', // Refined after SFN creation below
+      action: 'lambda:InvokeFunction',
+    });
+
     // ─── HITL State Machine (Step Functions Standard, waitForTaskToken) ─────
     const recordProposal = new sfn.Pass(this, 'RecordProposal', {
       comment: 'Record the proposed action metadata',
@@ -142,10 +182,8 @@ export class AiStack extends cdk.Stack {
         Type: 'Task',
         Resource: 'arn:aws:states:::lambda:invoke.waitForTaskToken',
         Parameters: {
-          // TODO-Task-8: Replace with the store-token Lambda that writes
-          // $$.Task.Token into the DDB HITL item keyed by hitlItemId.
-          // This Lambda is defined in Task 8 (agent code modules) and wired here.
-          'FunctionName': 'PLACEHOLDER_STORE_TOKEN_LAMBDA',
+          // T-8d: StoreToken Lambda persists $$.Task.Token into DDB HITL item.
+          'FunctionName': storeTokenLambda.functionArn,
           'Payload': {
             'taskToken.$': '$$.Task.Token',
             'input.$': '$',
@@ -357,12 +395,8 @@ export class AiStack extends cdk.Stack {
     // ─── ExecuteWriteback Role (post-HITL, the ONLY write path) ────────────
     // T4-F1 FIX: uses app_role secret (NOT master) → RLS enforced.
     // T4-F5 carry: invoke-permission restricted to HITL state-machine role in Task 8.
-    const executeWritebackRole = new iam.Role(this, 'ExecuteWritebackRole', {
-      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
-      description: 'Post-HITL writeback role — the ONLY role with RDS write. Uses app_role (RLS). Invoked ONLY by SFN after approval.',
-    });
-    // RDS Data API write via app_role (RLS-safe, T4-F1)
-    executeWritebackRole.addToPolicy(new iam.PolicyStatement({
+    // Role policies attached to the CDK-generated Lambda execution role.
+    executeWritebackLambda.addToRolePolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: [
         'rds-data:ExecuteStatement',
@@ -373,31 +407,21 @@ export class AiStack extends cdk.Stack {
       ],
       resources: [props.clusterArn],
     }));
-    // Secrets Manager: app_role secret ONLY (NOT master — T4-F1)
-    executeWritebackRole.addToPolicy(new iam.PolicyStatement({
+    executeWritebackLambda.addToRolePolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ['secretsmanager:GetSecretValue'],
       resources: [props.appRoleSecretArn],
     }));
-    // dynamodbKey encrypts the app_role secret (api-stack.ts:88)
-    props.dynamodbKey.grantDecrypt(executeWritebackRole);
-    // EventBridge PutEvents (for publishAuditEvent post-writeback)
-    executeWritebackRole.addToPolicy(new iam.PolicyStatement({
+    props.dynamodbKey.grantDecrypt(executeWritebackLambda);
+    executeWritebackLambda.addToRolePolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ['events:PutEvents'],
       resources: [props.busArn],
     }));
-    executeWritebackRole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
-    );
 
     // ─── Store-Token Lambda Role (gate c) ──────────────────────────────────
     // Writes ONLY the taskToken field into the DDB HITL item, tenant-scoped.
-    const storeTokenRole = new iam.Role(this, 'StoreTokenRole', {
-      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
-      description: 'Store-token Lambda — writes taskToken into DDB HITL item only.',
-    });
-    storeTokenRole.addToPolicy(new iam.PolicyStatement({
+    storeTokenLambda.addToRolePolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ['dynamodb:UpdateItem'],
       resources: [props.tableArn],
@@ -407,15 +431,14 @@ export class AiStack extends cdk.Stack {
         },
       },
     }));
-    props.dynamodbKey.grantEncryptDecrypt(storeTokenRole);
-    storeTokenRole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
-    );
+    props.dynamodbKey.grantEncryptDecrypt(storeTokenLambda);
 
     // ─── CfnOutputs for IAM roles ──────────────────────────────────────────
-    new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackRole.roleArn });
-    new cdk.CfnOutput(this, 'StoreTokenRoleArn', { value: storeTokenRole.roleArn });
+    new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackLambda.role!.roleArn });
+    new cdk.CfnOutput(this, 'StoreTokenRoleArn', { value: storeTokenLambda.role!.roleArn });
     new cdk.CfnOutput(this, 'AgentHandlerPolicyArn', { value: agentHandlerPolicy.managedPolicyArn });
+    new cdk.CfnOutput(this, 'ExecuteWritebackLambdaArn', { value: executeWritebackLambda.functionArn });
+    new cdk.CfnOutput(this, 'StoreTokenLambdaArn', { value: storeTokenLambda.functionArn });
 
     // ─── Index Mapping (R5 carry — metadata.tenantId as keyword) ──────────
     // Committed artifact: services/agents/shared/aoss-index-template.json
