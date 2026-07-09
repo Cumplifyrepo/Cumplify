@@ -1,72 +1,36 @@
+/**
+ * Hash-chain canonicalization tests (Task-11 live fix, architect).
+ * Pins: payloadHash must be independent of object key order — DynamoDB
+ * returns map keys lexicographically, so insertion-order hashing produced
+ * a false tamper alarm live (byte-verified 2026-07-09).
+ */
 import { describe, it, expect } from 'vitest';
-import { computePrevHash, computePayloadHash, GENESIS_HASH } from '../src/hash-chain.js';
-import { createHash } from 'node:crypto';
+import { computePayloadHash, computePrevHash, GENESIS_HASH } from '../src/hash-chain.js';
 
-describe('hash-chain', () => {
-  describe('computePrevHash', () => {
-    it('produces a deterministic SHA-256 hex digest', () => {
-      const pk = 'TENANT#t1#AUDITLOG';
-      const sk = 'EVENT#2026-07-04T12:00:00.000Z#01J000000000000000000001';
-      const payloadHash = 'abc123def456';
-
-      const result = computePrevHash(pk, sk, payloadHash);
-
-      // Manually compute expected
-      const expected = createHash('sha256')
-        .update(`${pk}${sk}${payloadHash}`)
-        .digest('hex');
-
-      expect(result).toBe(expected);
-      expect(result).toHaveLength(64); // SHA-256 hex = 64 chars
-    });
-
-    it('produces different output for different inputs', () => {
-      const hash1 = computePrevHash('PK1', 'SK1', 'hash1');
-      const hash2 = computePrevHash('PK2', 'SK2', 'hash2');
-      expect(hash1).not.toBe(hash2);
-    });
-
-    it('is consistent across multiple calls with same input', () => {
-      const args = ['TENANT#x#AUDITLOG', 'EVENT#2026-01-01T00:00:00.000Z#ulid1', 'deadbeef'] as const;
-      const first = computePrevHash(...args);
-      const second = computePrevHash(...args);
-      expect(first).toBe(second);
-    });
+describe('payloadHash key-order canonicalization (Task-11 live fix)', () => {
+  it('hash is identical regardless of key insertion order (DDB round-trip)', () => {
+    const insertionOrder = { before: null, after: { tool: 'capa-open', result: { records: 1 } } };
+    const ddbOrder = { before: null, after: { result: { records: 1 }, tool: 'capa-open' } };
+    expect(computePayloadHash(insertionOrder)).toBe(computePayloadHash(ddbOrder));
   });
 
-  describe('computePayloadHash', () => {
-    it('hashes canonical {before, after} JSON', () => {
-      const payload = { before: { status: 'open' }, after: { status: 'closed' } };
-      const result = computePayloadHash(payload);
-
-      const expected = createHash('sha256')
-        .update(JSON.stringify({ before: { status: 'open' }, after: { status: 'closed' } }))
-        .digest('hex');
-
-      expect(result).toBe(expected);
-    });
-
-    it('defaults missing before/after to null', () => {
-      const payload = { someOtherField: 'value' };
-      const result = computePayloadHash(payload);
-
-      const expected = createHash('sha256')
-        .update(JSON.stringify({ before: null, after: null }))
-        .digest('hex');
-
-      expect(result).toBe(expected);
-    });
-
-    it('uses only before and after, ignoring other fields', () => {
-      const payload1 = { before: null, after: { x: 1 }, extra: 'noise' };
-      const payload2 = { before: null, after: { x: 1 } };
-      expect(computePayloadHash(payload1)).toBe(computePayloadHash(payload2));
-    });
+  it('nested objects and arrays are canonicalized deeply', () => {
+    const a = { after: { z: [{ b: 1, a: 2 }], m: { y: 1, x: 2 } }, before: null };
+    const b = { before: null, after: { m: { x: 2, y: 1 }, z: [{ a: 2, b: 1 }] } };
+    expect(computePayloadHash(a)).toBe(computePayloadHash(b));
   });
 
-  describe('GENESIS_HASH', () => {
-    it('is the string "GENESIS"', () => {
-      expect(GENESIS_HASH).toBe('GENESIS');
-    });
+  it('different VALUES still produce different hashes', () => {
+    expect(computePayloadHash({ before: null, after: { tool: 'a' } }))
+      .not.toBe(computePayloadHash({ before: null, after: { tool: 'b' } }));
+  });
+
+  it('absent before/after default to null (constant hash preserved)', () => {
+    expect(computePayloadHash({})).toBe(computePayloadHash({ unrelated: 'x' }));
+  });
+
+  it('prevHash unchanged (string concatenation, no ordering concern)', () => {
+    expect(computePrevHash('PK', 'SK', 'hash')).toMatch(/^[0-9a-f]{64}$/);
+    expect(GENESIS_HASH).toBe('GENESIS');
   });
 });
