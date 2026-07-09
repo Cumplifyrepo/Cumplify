@@ -105,18 +105,20 @@ describe('converse', () => {
     expect(mockSend).toHaveBeenCalledTimes(4); // 1 initial + 3 retries
   });
 
-  it('includes requestMetadata in the Converse input', async () => {
+  it('includes requestMetadata at top-level Converse param (SERVE-7, F-2 fix)', async () => {
     mockSend.mockResolvedValueOnce(successResponse());
 
     await converse(baseParams());
 
     const cmd = mockSend.mock.calls[0][0];
-    expect(cmd.input.additionalModelRequestFields.requestMetadata).toEqual({
+    expect(cmd.input.requestMetadata).toEqual({
       tenantId: 'tenant-1',
       agent: 'CAPAGuru',
       module: 'M2',
       feature: 'capa-open',
     });
+    // Must NOT be in additionalModelRequestFields
+    expect(cmd.input.additionalModelRequestFields).toBeUndefined();
   });
 
   it('adds cachePoint to system prompt when cachingEnabled=true (Nova)', async () => {

@@ -63,17 +63,24 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   let result = await converse(converseParams);
   let usage = result.usage;
 
-  // Step 6: Schema-validate + one-retry (SERVE-10, Workhorse tier only)
-  if (request.outputSchema && tier === 'workhorse') {
+  // Step 6: Schema-validate + one-retry (SERVE-10 + COND-3: Workhorse AND Editor-AI)
+  // Gate on outputSchema presence (tier-agnostic) — any seat declaring a schema gets the guard.
+  if (request.outputSchema) {
     try {
       assertSchemaValid(result.text, request.outputSchema, {
         seat, modelId, attempt: 1,
       });
     } catch (err) {
       if (err instanceof InvokeError && err.code === 'SCHEMA_VALIDATION_ERROR') {
-        // One retry
+        // One retry — append corrective turn (nit: helps model self-correct)
         logger.info('Schema validation failed, retrying once', { seat, modelId });
-        result = await converse(converseParams);
+        const retryMessages = [
+          ...request.messages,
+          { role: 'assistant' as const, content: [{ text: result.text }] },
+          { role: 'user' as const, content: [{ text: 'Your previous output failed JSON schema validation. Please return valid JSON matching the required schema.' }] },
+        ];
+        const retryParams = { ...converseParams, messages: retryMessages };
+        result = await converse(retryParams);
         usage = addUsage(usage, result.usage);
 
         try {
@@ -81,7 +88,16 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
             seat, modelId, attempt: 2,
           });
         } catch (retryErr) {
-          // Second failure — propagate error
+          // F-1 FIX: meter consumed usage BEFORE propagating the error
+          const credits = computeCredits(usage, weights);
+          await incrementMeter(tenantId, credits);
+          await emitCreditsTelemetry({
+            tenantId, agent, module, feature,
+            inputTokens: usage.inputTokens,
+            outputTokens: usage.outputTokens,
+            cacheReadTokens: usage.cacheReadInputTokens,
+            creditsConsumed: credits, modelId,
+          });
           throw retryErr;
         }
       } else {

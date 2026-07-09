@@ -153,12 +153,10 @@ function buildConverseInput(params: ConverseParams): ConverseCommandInput {
       maxTokens: params.maxTokens,
     },
     ...(params.guardrailConfig && { guardrailConfig: params.guardrailConfig }),
-    additionalModelRequestFields: {
-      // requestMetadata for multi-tenant attribution (SERVE-7)
-      ...(Object.keys(params.requestMetadata).length > 0 && {
-        requestMetadata: params.requestMetadata,
-      }),
-    },
+    // F-2 FIX: requestMetadata is a TOP-LEVEL Converse param (SERVE-7)
+    ...(Object.keys(params.requestMetadata).length > 0 && {
+      requestMetadata: params.requestMetadata,
+    }),
   };
 
   return input;

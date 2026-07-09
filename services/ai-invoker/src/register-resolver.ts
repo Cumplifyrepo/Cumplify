@@ -60,6 +60,13 @@ export function resolveModel(seat: SeatId, register?: CompiledRegister): SeatEnt
   // Live expiry date check (D-4: runs at invoke time regardless of build-time map)
   if (entry.expiry) {
     const expiryDate = new Date(entry.expiry);
+    // F-5 FIX: unparseable expiry = EXPIRED (fail closed, never fail open)
+    if (isNaN(expiryDate.getTime())) {
+      throw new InvokeError(
+        'MODEL_SEAT_EXPIRED',
+        `Seat '${seat}' has unparseable expiry '${entry.expiry}' — treated as EXPIRED`,
+      );
+    }
     const now = new Date();
     if (now > expiryDate) {
       throw new InvokeError(

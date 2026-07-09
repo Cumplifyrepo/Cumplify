@@ -86,4 +86,15 @@ describe('register-resolver', () => {
     const reg = makeRegister();
     expect(() => resolveModel('nonexistent' as any, reg)).toThrow(InvokeError);
   });
+
+  it('throws MODEL_SEAT_EXPIRED for unparseable expiry (F-5: fail closed, never open)', () => {
+    const reg = makeRegister({ status: 'ASSIGNED', expiry: 'not-a-date' });
+    expect(() => resolveModel('workhorse', reg)).toThrow(InvokeError);
+    try {
+      resolveModel('workhorse', reg);
+    } catch (err) {
+      expect((err as InvokeError).code).toBe('MODEL_SEAT_EXPIRED');
+      expect((err as InvokeError).message).toContain('unparseable');
+    }
+  });
 });

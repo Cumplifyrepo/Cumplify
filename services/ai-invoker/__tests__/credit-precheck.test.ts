@@ -46,7 +46,6 @@ describe('credit-precheck', () => {
       Item: {
         monthlyGrant: { N: '30000' },
         paygoEnabled: { BOOL: false },
-        autoRefill: { BOOL: false },
         planTier: { S: 'launch' },
       },
     });
@@ -62,7 +61,6 @@ describe('credit-precheck', () => {
       Item: {
         monthlyGrant: { N: '30000' },
         paygoEnabled: { BOOL: false },
-        autoRefill: { BOOL: false },
         planTier: { S: 'launch' },
       },
     });
@@ -76,20 +74,55 @@ describe('credit-precheck', () => {
     }
   });
 
-  it('does not block enterprise with auto-refill even when over grant', async () => {
+  it('does not block enterprise even when over grant (F-6: never block)', async () => {
     mockSend.mockResolvedValueOnce({
       Item: { creditsUsed: { N: '250000' } },
     });
     mockSend.mockResolvedValueOnce({
       Item: {
         monthlyGrant: { N: '200000' },
-        paygoEnabled: { BOOL: true },
-        autoRefill: { BOOL: true },
+        paygoEnabled: { BOOL: false },
         planTier: { S: 'enterprise' },
       },
     });
 
     await expect(checkCreditBalance('tenant-1', false)).resolves.toBeUndefined();
+  });
+
+  it('does not block when paygoEnabled even past grant (F-6: serve overage)', async () => {
+    mockSend.mockResolvedValueOnce({
+      Item: { creditsUsed: { N: '45000' } },
+    });
+    mockSend.mockResolvedValueOnce({
+      Item: {
+        monthlyGrant: { N: '30000' },
+        paygoEnabled: { BOOL: true },
+        planTier: { S: 'launch' },
+      },
+    });
+
+    await expect(checkCreditBalance('tenant-1', false)).resolves.toBeUndefined();
+  });
+
+  it('blocks trial (no paygo) when past grant (F-6)', async () => {
+    mockSend.mockResolvedValueOnce({
+      Item: { creditsUsed: { N: '16000' } },
+    });
+    mockSend.mockResolvedValueOnce({
+      Item: {
+        monthlyGrant: { N: '15000' },
+        paygoEnabled: { BOOL: false },
+        planTier: { S: 'trial' },
+      },
+    });
+
+    try {
+      await checkCreditBalance('tenant-1', false);
+      expect.fail('Should have thrown');
+    } catch (err) {
+      expect(err).toBeInstanceOf(InvokeError);
+      expect((err as InvokeError).code).toBe('PAUSED_FOR_CREDITS');
+    }
   });
 
   it('applies trial defaults (15,000) when no entitlement record exists', async () => {

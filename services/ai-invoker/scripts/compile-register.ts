@@ -1,11 +1,15 @@
 /**
- * compile-register — parses contracts/model-register.md and emits
- * services/ai-invoker/data/register-compiled.json.
+ * compile-register — produces services/ai-invoker/data/register-compiled.json
+ * from a hardcoded SEAT_MAP that MUST be kept in sync with contracts/model-register.md.
  *
  * Run: npx tsx services/ai-invoker/scripts/compile-register.ts
  *
+ * CI-gated (D-4): an acceptance test (register-drift.test.ts) parses the
+ * model-register.md seat table and asserts equality with the compiled output.
+ * Any drift between the Register source-of-truth and SEAT_MAP fails CI.
+ *
  * This is a build-time step. The output is committed and deployed.
- * Model reassignment requires running this script + redeploying (D-4 trade-off).
+ * Model reassignment requires updating SEAT_MAP + redeploying (D-4 trade-off).
  */
 
 import { writeFileSync } from 'node:fs';

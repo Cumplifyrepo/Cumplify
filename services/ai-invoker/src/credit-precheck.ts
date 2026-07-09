@@ -15,11 +15,10 @@ const logger = new Logger({ serviceName: 'ai-invoker-credit-precheck' });
 const ddb = new DynamoDBClient({});
 const TABLE_NAME = process.env.TABLE_NAME!;
 
-/** Tenant credit limit per month (from entitlement/plan — loaded from DDB) */
+/** Tenant credit limit shape (informational — loaded from DDB) */
 export interface CreditLimit {
   monthlyGrant: number;
   paygoEnabled: boolean;
-  autoRefill: boolean;
   planTier: 'trial' | 'launch' | 'ims-pro' | 'enterprise';
 }
 
@@ -70,7 +69,7 @@ export async function checkCreditBalance(
   );
 
   if (!limitResult.Item) {
-    // No entitlement record = default trial limits
+    // No entitlement record = default trial limits (trial has no paygo)
     logger.warn('No entitlement record found, applying trial defaults', { tenantId });
     const trialGrant = 15000; // Part 22: trial = 15,000 credits
     if (creditsUsed >= trialGrant) {
@@ -84,21 +83,23 @@ export async function checkCreditBalance(
 
   const monthlyGrant = parseFloat(limitResult.Item.monthlyGrant?.N ?? '0');
   const paygoEnabled = limitResult.Item.paygoEnabled?.BOOL ?? false;
-  const autoRefill = limitResult.Item.autoRefill?.BOOL ?? false;
   const planTier = limitResult.Item.planTier?.S ?? 'trial';
 
-  // Enterprise with auto-refill never blocks
-  if (planTier === 'enterprise' && autoRefill) {
+  // F-6 OWNER-RESOLVED: serve & bill overage. Logic decoupled from autoRefill.
+  // Enterprise: never block (contracted).
+  if (planTier === 'enterprise') {
     return;
   }
 
-  // If PAYG enabled with auto-refill, don't block (overage is billed)
-  if (paygoEnabled && autoRefill) {
+  // PAYG enabled: serve overage, meter + bill downstream.
+  // NOTE: overage now accrues past grant — the telemetry.credits.consumed event
+  // is the billing signal; the billing/entitlement consumer must handle overage line-items.
+  if (paygoEnabled) {
     return;
   }
 
-  // Hard limit: grant exhausted, no auto-refill
-  if (creditsUsed >= monthlyGrant && !autoRefill) {
+  // Trial/Launch without paygo: hard-block at grant ceiling.
+  if (creditsUsed >= monthlyGrant) {
     throw new InvokeError(
       'PAUSED_FOR_CREDITS',
       `Tenant ${tenantId} credit balance exhausted (used: ${creditsUsed.toFixed(0)}, grant: ${monthlyGrant})`,
