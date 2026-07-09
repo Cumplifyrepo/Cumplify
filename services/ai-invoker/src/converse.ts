@@ -143,15 +143,24 @@ function buildConverseInput(params: ConverseParams): ConverseCommandInput {
     };
   }
 
+  // Task-11 fix: Nova tool calling requires GREEDY decoding per the Amazon
+  // Nova tool-use troubleshooting guide (temperature=1, topP=1, topK=1) —
+  // sampled decoding deterministically produced "Model produced invalid
+  // sequence as part of ToolUse" live (2×, CAPAGuru E2E). Non-Nova models
+  // and tool-less calls keep seat-default temperature.
+  const novaToolGreedy = toolConfig !== undefined && params.modelId.includes('nova');
+
   const input: ConverseCommandInput = {
     modelId: params.modelId,
     messages,
     ...(system && { system }),
     ...(toolConfig && { toolConfig }),
-    inferenceConfig: {
-      temperature: params.temperature,
-      maxTokens: params.maxTokens,
-    },
+    inferenceConfig: novaToolGreedy
+      ? { temperature: 1, topP: 1, maxTokens: params.maxTokens }
+      : { temperature: params.temperature, maxTokens: params.maxTokens },
+    ...(novaToolGreedy && {
+      additionalModelRequestFields: { inferenceConfig: { topK: 1 } },
+    }),
     ...(params.guardrailConfig && { guardrailConfig: params.guardrailConfig }),
     // F-2 FIX: requestMetadata is a TOP-LEVEL Converse param (SERVE-7)
     ...(Object.keys(params.requestMetadata).length > 0 && {

@@ -176,3 +176,40 @@ describe('converse', () => {
     expect(result.toolUseBlocks[0].input).toEqual({ ncId: 'nc-123' });
   });
 });
+
+describe('Nova tool-use greedy decoding (Task 11 fix)', () => {
+  const SAMPLE_TOOLS = [{
+    toolSpec: {
+      name: 'capa-open',
+      description: 'Propose a corrective action',
+      inputSchema: { json: { type: 'object', required: ['ncId'], properties: { ncId: { type: 'string' } } } },
+    },
+  }];
+  const okResponse = () => successResponse('ok');
+  beforeEach(() => { mockSend.mockReset(); resetClient(); });
+
+  it('applies greedy params (temp=1, topP=1, topK=1) for Nova WITH tools', async () => {
+    mockSend.mockResolvedValueOnce(okResponse());
+    await converse({ ...baseParams(), modelId: 'us.amazon.nova-pro-v1:0', tools: SAMPLE_TOOLS });
+    const input = mockSend.mock.calls[0][0].input;
+    expect(input.inferenceConfig.temperature).toBe(1);
+    expect(input.inferenceConfig.topP).toBe(1);
+    expect(input.additionalModelRequestFields).toEqual({ inferenceConfig: { topK: 1 } });
+  });
+
+  it('keeps seat temperature for Nova WITHOUT tools', async () => {
+    mockSend.mockResolvedValueOnce(okResponse());
+    await converse({ ...baseParams(), modelId: 'us.amazon.nova-pro-v1:0', tools: undefined });
+    const input = mockSend.mock.calls[0][0].input;
+    expect(input.inferenceConfig.temperature).toBe(baseParams().temperature);
+    expect(input.additionalModelRequestFields).toBeUndefined();
+  });
+
+  it('keeps seat temperature for non-Nova WITH tools (qwen)', async () => {
+    mockSend.mockResolvedValueOnce(okResponse());
+    await converse({ ...baseParams(), modelId: 'qwen.qwen3-next-80b-a3b', tools: SAMPLE_TOOLS });
+    const input = mockSend.mock.calls[0][0].input;
+    expect(input.inferenceConfig.temperature).toBe(baseParams().temperature);
+    expect(input.additionalModelRequestFields).toBeUndefined();
+  });
+});
