@@ -87,9 +87,9 @@ describe('enterHitlGate', () => {
     expect(item.itemType).toBe('HITL_PENDING');
     expect(item.status).toBe('PENDING');
 
-    // GSI keys (D-2: TENANT#<tenantId>#HITL_PENDING — tenant-isolated)
-    expect(item.gsiHitlPendingPk).toBe('TENANT#tenant-abc#HITL_PENDING');
-    expect(item.gsiHitlPendingSk).toBeDefined(); // createdAt ISO string
+    // GSI keys (D-2: TENANT#<tenantId>#HITL_PENDING — tenant-isolated, via GSI9)
+    expect(item.GSI9PK).toBe('TENANT#tenant-abc#HITL_PENDING');
+    expect(item.GSI9SK).toBeDefined(); // createdAt ISO string
 
     // Agent/action
     expect(item.agentName).toBe('DocStudio');
@@ -110,8 +110,8 @@ describe('resolveHitlItem', () => {
     const ddbCall = mockDdbSend.mock.calls[0][0];
     const updateExpr: string = ddbCall.input.UpdateExpression;
 
-    // Must REMOVE GSI attributes
-    expect(updateExpr).toContain('REMOVE gsiHitlPendingPk, gsiHitlPendingSk');
+    // Must REMOVE GSI9 attributes (sparse GSI pattern)
+    expect(updateExpr).toContain('REMOVE GSI9PK, GSI9SK');
     // Must SET status + resolvedAt + approver + TTL
     expect(updateExpr).toContain('SET #status = :status');
     expect(ddbCall.input.ExpressionAttributeValues[':status']).toBe('APPROVED');

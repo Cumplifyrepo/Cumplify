@@ -80,9 +80,10 @@ export async function enterHitlGate(input: HitlGateInput): Promise<HitlResult> {
           PK: `TENANT#${input.tenantId}#HITL`,
           SK: `PENDING#${hitlItemId}`,
           itemType: 'HITL_PENDING',
-          // GSI-HITL-PENDING attributes (sparse GSI: only pending items projected)
-          gsiHitlPendingPk: `TENANT#${input.tenantId}#HITL_PENDING`,
-          gsiHitlPendingSk: now, // createdAt for newest-first query
+          // GSI9 allocated for HITL-PENDING (D-2: tenant-isolated, LeadingKeys-compatible)
+          // PK = TENANT#<tenantId>#HITL_PENDING, SK = createdAt (newest-first query)
+          GSI9PK: `TENANT#${input.tenantId}#HITL_PENDING`,
+          GSI9SK: now,
           agentName: input.agentName,
           proposedAction: input.proposedAction,
           createdAt: now,
@@ -128,7 +129,7 @@ export async function resolveHitlItem(
       }),
       UpdateExpression:
         'SET #status = :status, resolvedAt = :now, approver = :approver, #ttl = :ttl ' +
-        'REMOVE gsiHitlPendingPk, gsiHitlPendingSk',
+        'REMOVE GSI9PK, GSI9SK',
       ExpressionAttributeNames: {
         '#status': 'status',
         '#ttl': 'ttl',
