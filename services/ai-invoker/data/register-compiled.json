@@ -1,0 +1,86 @@
+{
+  "seats": {
+    "workhorse": {
+      "modelId": "us.amazon.nova-pro-v1:0",
+      "status": "PROVISIONAL",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.948,
+      "tier": "workhorse",
+      "cachingSupported": true
+    },
+    "lightweight": {
+      "modelId": "us.amazon.nova-lite-v1:0",
+      "status": "ASSIGNED",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.99,
+      "tier": "lightweight",
+      "cachingSupported": true
+    },
+    "guru-9001": {
+      "modelId": "qwen.qwen3-next-80b-a3b",
+      "status": "ASSIGNED",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.966,
+      "tier": "guru",
+      "cachingSupported": false
+    },
+    "guru-14001": {
+      "modelId": "qwen.qwen3-next-80b-a3b",
+      "status": "ASSIGNED",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.975,
+      "tier": "guru",
+      "cachingSupported": false
+    },
+    "guru-45001": {
+      "modelId": "moonshotai.kimi-k2.5",
+      "status": "PROVISIONAL",
+      "expiry": null,
+      "marginHeadroom": 0.949,
+      "tier": "guru",
+      "cachingSupported": false
+    },
+    "micro": {
+      "modelId": "us.amazon.nova-2-lite-v1:0",
+      "status": "PROVISIONAL",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.931,
+      "tier": "micro",
+      "cachingSupported": true
+    },
+    "snapshot": {
+      "modelId": "zai.glm-4.7-flash",
+      "status": "ASSIGNED",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.971,
+      "tier": "snapshot",
+      "cachingSupported": false
+    },
+    "editor-ai": {
+      "modelId": "us.amazon.nova-pro-v1:0",
+      "status": "ASSIGNED",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.854,
+      "tier": "editor-ai",
+      "cachingSupported": true
+    },
+    "pain-distiller": {
+      "modelId": "qwen.qwen3-next-80b-a3b",
+      "status": "ASSIGNED",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.978,
+      "tier": "pain-distiller",
+      "cachingSupported": false
+    },
+    "legal-ledger": {
+      "modelId": "",
+      "status": "UNASSIGNED",
+      "expiry": null,
+      "marginHeadroom": 0,
+      "tier": "legal-ledger",
+      "cachingSupported": false
+    }
+  },
+  "compiledAt": "2026-07-09T00:53:47.846Z",
+  "sourceCommit": "bfc94a7"
+}

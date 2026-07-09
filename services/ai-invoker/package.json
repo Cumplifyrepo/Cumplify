@@ -1,0 +1,11 @@
+{
+  "name": "@cumplify/ai-invoker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "compile-register": "tsx scripts/compile-register.ts"
+  }
+}
