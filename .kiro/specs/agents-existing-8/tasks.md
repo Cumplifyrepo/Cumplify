@@ -12,22 +12,22 @@
 > The one-door module per design §1. All agents depend on this.
 
 ### Deliverables
-- [ ] `services/ai-invoker/package.json` — workspace package `@cumplify/ai-invoker`
-- [ ] `services/ai-invoker/tsconfig.json`
-- [ ] `services/ai-invoker/src/types.ts` — InvokeRequest, InvokeResponse, SeatId, ModelWeight, CompiledRegister
-- [ ] `services/ai-invoker/src/register-resolver.ts` — loads `register-compiled.json`, checks status/expiry live, fails closed (EXPIRED/UNASSIGNED)
-- [ ] `services/ai-invoker/src/converse.ts` — BedrockRuntimeClient + ConverseCommand wrapper; retry (5xx/429, base 1s, max 3); requestMetadata (SERVE-7); guardrailConfig; conditional cachePoint for Nova models only (§1.6)
-- [ ] `services/ai-invoker/src/metering.ts` — token→credit computation using MODELWEIGHT# items (wIn/wOut/wCache per §1.4); atomic DynamoDB UpdateItem ADD on TENANT#<tenantId>#METER / MONTH#<yyyymm>; emits telemetry.credits.consumed event
-- [ ] `services/ai-invoker/src/credit-precheck.ts` — balance check; PAUSED_FOR_CREDITS; incident/HITL exemption (SERVE-9)
-- [ ] `services/ai-invoker/src/schema-retry.ts` — JSON schema validation + one-retry guard (SERVE-10, Workhorse tier only)
-- [ ] `services/ai-invoker/src/guardrail.ts` — guardrailConfig builder (guardrailId + version from env)
-- [ ] `services/ai-invoker/src/index.ts` — public `invoke(seat, messages, opts)` API orchestrating steps 1-8 per §1.2
-- [ ] `services/ai-invoker/data/register-compiled.json` — built from contracts/model-register.md (script in package.json `compile-register`)
-- [ ] `services/ai-invoker/__tests__/register-resolver.test.ts` — unit: ASSIGNED passes, EXPIRED fails, UNASSIGNED fails, past-expiry fails
-- [ ] `services/ai-invoker/__tests__/metering.test.ts` — unit: credit computation with wIn/wOut/wCache; null wCache fallback; atomic meter update mock
-- [ ] `services/ai-invoker/__tests__/credit-precheck.test.ts` — unit: exhausted blocks; incident exemption passes; HITL exemption passes
-- [ ] `services/ai-invoker/__tests__/schema-retry.test.ts` — unit: valid passes; invalid retries once; second fail returns error
-- [ ] `services/ai-invoker/__tests__/converse.test.ts` — unit: retry on 5xx; no retry on 4xx; requestMetadata attached; cachePoint present for Nova, absent for qwen/kimi
+- [x] `services/ai-invoker/package.json` — workspace package `@cumplify/ai-invoker`
+- [x] `services/ai-invoker/tsconfig.json`
+- [x] `services/ai-invoker/src/types.ts` — InvokeRequest, InvokeResponse, SeatId, ModelWeight, CompiledRegister
+- [x] `services/ai-invoker/src/register-resolver.ts` — loads `register-compiled.json`, checks status/expiry live, fails closed (EXPIRED/UNASSIGNED)
+- [x] `services/ai-invoker/src/converse.ts` — BedrockRuntimeClient + ConverseCommand wrapper; retry (5xx/429, base 1s, max 3); requestMetadata (SERVE-7); guardrailConfig; conditional cachePoint for Nova models only (§1.6)
+- [x] `services/ai-invoker/src/metering.ts` — token→credit computation using MODELWEIGHT# items (wIn/wOut/wCache per §1.4); atomic DynamoDB UpdateItem ADD on TENANT#<tenantId>#METER / MONTH#<yyyymm>; emits telemetry.credits.consumed event
+- [x] `services/ai-invoker/src/credit-precheck.ts` — balance check; PAUSED_FOR_CREDITS; incident/HITL exemption (SERVE-9)
+- [x] `services/ai-invoker/src/schema-retry.ts` — JSON schema validation + one-retry guard (SERVE-10, Workhorse tier only)
+- [x] `services/ai-invoker/src/guardrail.ts` — guardrailConfig builder (guardrailId + version from env)
+- [x] `services/ai-invoker/src/index.ts` — public `invoke(seat, messages, opts)` API orchestrating steps 1-8 per §1.2
+- [x] `services/ai-invoker/data/register-compiled.json` — built from contracts/model-register.md (script in package.json `compile-register`)
+- [x] `services/ai-invoker/__tests__/register-resolver.test.ts` — unit: ASSIGNED passes, EXPIRED fails, UNASSIGNED fails, past-expiry fails
+- [x] `services/ai-invoker/__tests__/metering.test.ts` — unit: credit computation with wIn/wOut/wCache; null wCache fallback; atomic meter update mock
+- [x] `services/ai-invoker/__tests__/credit-precheck.test.ts` — unit: exhausted blocks; incident exemption passes; HITL exemption passes
+- [x] `services/ai-invoker/__tests__/schema-retry.test.ts` — unit: valid passes; invalid retries once; second fail returns error
+- [x] `services/ai-invoker/__tests__/converse.test.ts` — unit: retry on 5xx; no retry on 4xx; requestMetadata attached; cachePoint present for Nova, absent for qwen/kimi
 
 ### Acceptance
 - `npx tsc --noEmit` passes for the package
@@ -61,18 +61,18 @@
 > capa-intake/records queues) — touches spec-2's stack; flag in commit.
 
 ### Deliverables
-- [ ] `infra/lib/ai-stack.ts` — AiStack class per design §7 (queues, rules, Lambdas, guardrail, state machine, inference profiles)
-- [ ] AI Invoker Lambda (NodejsFunction: NODEJS_22_X, ARM_64, 512MB, 90s timeout, entry: services/ai-invoker)
-- [ ] MODELWEIGHT# seeding custom resource: reads `services/ai-invoker/data/model-weights-seed.json` (committed by Task 2, architect-witnessed) and writes DynamoDB MODELWEIGHT# items. Does NOT call live Pricing API at deploy time (T-2 correction).
-- [ ] CfnGuardrail (PII anonymize/block + PROMPT_ATTACK) — no Anthropic model IDs
-- [ ] 3 new SQS queues + DLQs (DocStudioQueue, LeadAuditorQueue, ControlTowerQueue) per §2.2
-- [ ] 3 EventBridge rules (R-8/R-9/R-10) with canonical input transformer + retry + delivery-failure DLQ
-- [ ] HITL State Machine (Step Functions Standard, waitForTaskToken) per §3.2
-- [ ] 3 DLQ alarms (depth > 0 for 15 min)
-- [ ] CfnOutputs for all ARNs/IDs/URLs
-- [ ] Modified `infra/lib/eventing-stack.ts`: new exports (`deliveryFailureDlqArn`, `capaIntakeQueueArn`, `recordsQueueArn`) + SQS event-source mappings (ESM) on existing capa-intake/records queues for agent handler Lambdas
-- [ ] `infra/lib/cumplify-stage.ts` modified — AiStack added with addDependency on DataStack, ApiStack, EventingStack, AuditTrailStack
-- [ ] `infra/lib/ai-stack.unit.test.ts` — template-assertion tests for: Lambda configs, SQS properties, EventBridge rule patterns, IAM policy statements, guardrail config, state machine definition
+- [x] `infra/lib/ai-stack.ts` — AiStack class per design §7 (queues, rules, Lambdas, guardrail, state machine, inference profiles)
+- [x] AI Invoker Lambda (NodejsFunction: NODEJS_22_X, ARM_64, 512MB, 90s timeout, entry: services/ai-invoker)
+- [x] MODELWEIGHT# seeding custom resource: reads `services/ai-invoker/data/model-weights-seed.json` (committed by Task 2, architect-witnessed) and writes DynamoDB MODELWEIGHT# items. Does NOT call live Pricing API at deploy time (T-2 correction).
+- [x] CfnGuardrail (PII anonymize/block + PROMPT_ATTACK) — no Anthropic model IDs
+- [x] 3 new SQS queues + DLQs (DocStudioQueue, LeadAuditorQueue, ControlTowerQueue) per §2.2
+- [x] 3 EventBridge rules (R-8/R-9/R-10) with canonical input transformer + retry + delivery-failure DLQ
+- [x] HITL State Machine (Step Functions Standard, waitForTaskToken) per §3.2
+- [x] 3 DLQ alarms (depth > 0 for 15 min)
+- [x] CfnOutputs for all ARNs/IDs/URLs
+- [x] Modified `infra/lib/eventing-stack.ts`: new exports (`deliveryFailureDlqArn`, `capaIntakeQueueArn`, `recordsQueueArn`) + SQS event-source mappings (ESM) on existing capa-intake/records queues for agent handler Lambdas
+- [x] `infra/lib/cumplify-stage.ts` modified — AiStack added with addDependency on DataStack, ApiStack, EventingStack, AuditTrailStack
+- [x] `infra/lib/ai-stack.unit.test.ts` — template-assertion tests for: Lambda configs, SQS properties, EventBridge rule patterns, IAM policy statements, guardrail config, state machine definition
 
 ### Acceptance
 - `npx tsc --noEmit` passes
@@ -86,12 +86,12 @@
 > Depends on Task 3. IAM code requires architect review before commit.
 
 ### Deliverables
-- [ ] AI Invoker execution role: `bedrock:InvokeModel` (Resource `*`), `bedrock:ApplyGuardrail`, DynamoDB (TENANT#*#METER read/write, MODELWEIGHT# read), EventBridge PutEvents, `lambda:InvokeFunction` NOT needed (invoker IS the Lambda)
-- [ ] Agent handler execution roles (×8): `lambda:InvokeFunction` on AI Invoker ARN, RDS Data API READ-ONLY (execute-statement SELECT for context — NO write/begin/commit/rollback), SQS (receive/delete on own queue), SFN (StartExecution on HITL state machine). NO `bedrock:InvokeModel`. NO RDS write. NO DynamoDB PutItem/UpdateItem on domain tables (TENANT#*#AUDITLOG, TENANT#*#HITL writes are NOT on agent handlers).
-- [ ] ExecuteWriteback role (invoked by Step Functions AFTER approval): RDS Data API write (begin/commit/rollback + execute-statement), EventBridge PutEvents (for publishAuditEvent). Reuses api-core's app_role/beginTenantTransaction path. This is the ONLY role that can write to domain tables post-HITL.
-- [ ] Resource-based policy on AI Invoker Lambda allowing agent handler roles
-- [ ] Template-assertion tests for all IAM statements in `ai-stack.unit.test.ts`
-- [ ] **Negative template assertion (T-1):** no agent handler role has `rds-data:ExecuteStatement` with write (INSERT/UPDATE/DELETE), `rds-data:BeginTransaction`, `rds-data:CommitTransaction`, `dynamodb:PutItem`, or `dynamodb:UpdateItem` on domain table resources. Enforces HITL gate at IAM layer.
+- [x] AI Invoker execution role: `bedrock:InvokeModel` (Resource `*`), `bedrock:ApplyGuardrail`, DynamoDB (TENANT#*#METER read/write, MODELWEIGHT# read), EventBridge PutEvents, `lambda:InvokeFunction` NOT needed (invoker IS the Lambda)
+- [x] Agent handler execution roles (×8): `lambda:InvokeFunction` on AI Invoker ARN, RDS Data API READ-ONLY (execute-statement SELECT for context — NO write/begin/commit/rollback), SQS (receive/delete on own queue), SFN (StartExecution on HITL state machine). NO `bedrock:InvokeModel`. NO RDS write. NO DynamoDB PutItem/UpdateItem on domain tables (TENANT#*#AUDITLOG, TENANT#*#HITL writes are NOT on agent handlers).
+- [x] ExecuteWriteback role (invoked by Step Functions AFTER approval): RDS Data API write (begin/commit/rollback + execute-statement), EventBridge PutEvents (for publishAuditEvent). Reuses api-core's app_role/beginTenantTransaction path. This is the ONLY role that can write to domain tables post-HITL.
+- [x] Resource-based policy on AI Invoker Lambda allowing agent handler roles
+- [x] Template-assertion tests for all IAM statements in `ai-stack.unit.test.ts`
+- [x] **Negative template assertion (T-1):** no agent handler role has `rds-data:ExecuteStatement` with write (INSERT/UPDATE/DELETE), `rds-data:BeginTransaction`, `rds-data:CommitTransaction`, `dynamodb:PutItem`, or `dynamodb:UpdateItem` on domain table resources. Enforces HITL gate at IAM layer.
 
 ### Acceptance
 - CDK Nag zero on IAM (no AwsSolutions-IAM4/IAM5 without justified suppression)
@@ -107,9 +107,9 @@
 > Depends on Task 1 (types). Required before Guru + CAPAGuru handlers.
 
 ### Deliverables
-- [ ] `services/agents/shared/retrieval.ts` — AOSS retrieval wrapper per design §4.1 (mandatory tenantId filter, exponential backoff base 500ms/factor 2/jitter/ceiling 45s, AossColdStartTimeoutError)
-- [ ] `services/agents/shared/__tests__/retrieval.test.ts` — unit: tenantId filter always present (fails without it); backoff config correct; timeout error thrown at ceiling
-- [ ] `services/agents/__tests__/cross-tenant-isolation.test.ts` — integration test skeleton (REQ-RET-2): seed Tenant-A + Tenant-B docs, assert zero cross-tenant leakage (requires live AOSS — marked [ARCHITECT] execution)
+- [x] `services/agents/shared/retrieval.ts` — AOSS retrieval wrapper per design §4.1 (mandatory tenantId filter, exponential backoff base 500ms/factor 2/jitter/ceiling 45s, AossColdStartTimeoutError)
+- [x] `services/agents/shared/__tests__/retrieval.test.ts` — unit: tenantId filter always present (fails without it); backoff config correct; timeout error thrown at ceiling
+- [x] `services/agents/__tests__/cross-tenant-isolation.test.ts` — integration test skeleton (REQ-RET-2): seed Tenant-A + Tenant-B docs, assert zero cross-tenant leakage (requires live AOSS — marked [ARCHITECT] execution)
 
 ### Acceptance
 - Unit tests green
@@ -123,10 +123,10 @@
 > Depends on Tasks 1, 3 (state machine). Required before agent handlers.
 
 ### Deliverables
-- [ ] `services/agents/shared/tool-loop.ts` — multi-turn Converse tool-use orchestration per design §2.5 (MAX_TURNS=10 loop guard, tool dispatch, HITL detection)
-- [ ] `services/agents/shared/hitl.ts` — Step Functions waitForTaskToken integration per design §3.3 (start execution, write HITL_PENDING to DynamoDB with GSI PK `TENANT#<tenantId>#HITL_PENDING`, return HITL_PENDING status)
-- [ ] `services/agents/shared/__tests__/tool-loop.test.ts` — unit: end_turn exits; tool_use dispatches; loop guard throws at MAX_TURNS; HITL tool triggers gate
-- [ ] `services/agents/shared/__tests__/hitl.test.ts` — unit: SFN startExecution called with correct input; DynamoDB HITL_PENDING item written with correct GSI PK; resolved items remove GSI attribute
+- [x] `services/agents/shared/tool-loop.ts` — multi-turn Converse tool-use orchestration per design §2.5 (MAX_TURNS=10 loop guard, tool dispatch, HITL detection)
+- [x] `services/agents/shared/hitl.ts` — Step Functions waitForTaskToken integration per design §3.3 (start execution, write HITL_PENDING to DynamoDB with GSI PK `TENANT#<tenantId>#HITL_PENDING`, return HITL_PENDING status)
+- [x] `services/agents/shared/__tests__/tool-loop.test.ts` — unit: end_turn exits; tool_use dispatches; loop guard throws at MAX_TURNS; HITL tool triggers gate
+- [x] `services/agents/shared/__tests__/hitl.test.ts` — unit: SFN startExecution called with correct input; DynamoDB HITL_PENDING item written with correct GSI PK; resolved items remove GSI attribute
 
 ### Acceptance
 - Unit tests green
