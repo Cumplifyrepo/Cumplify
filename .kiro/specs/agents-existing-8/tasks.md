@@ -42,10 +42,10 @@
 > This committed file is the SOLE source for weight seeding (T-2).
 
 ### Deliverables
-- [ ] Execute `fetchPricing()` (from `services/model-evals/src/pricing.ts`) for the 4 in-scope models: `us.amazon.nova-pro-v1:0`, `us.amazon.nova-lite-v1:0`, `qwen.qwen3-next-80b-a3b`, `moonshotai.kimi-k2.5`
-- [ ] Record raw prices (inputPricePerMToken, outputPricePerMToken) + derive wIn/wOut/wCache per formula: `weight = pricePerMToken × 1000`
-- [ ] Commit `services/ai-invoker/data/model-weights-seed.json` with derived values + provenance (capturedAt, sourceCommit, API source)
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-2-pricing-seed.log` (timestamp, exit code, raw API values, derived weights)
+- [x] Execute `fetchPricing()` (from `services/model-evals/src/pricing.ts`) for the 4 in-scope models: `us.amazon.nova-pro-v1:0`, `us.amazon.nova-lite-v1:0`, `qwen.qwen3-next-80b-a3b`, `moonshotai.kimi-k2.5`
+- [x] Record raw prices (inputPricePerMToken, outputPricePerMToken) + derive wIn/wOut/wCache per formula: `weight = pricePerMToken × 1000`
+- [x] Commit `services/ai-invoker/data/model-weights-seed.json` with derived values + provenance (capturedAt, sourceCommit, API source)
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-2-pricing-seed.log` (timestamp, exit code, raw API values, derived weights)
 
 ### Acceptance
 - All 4 models have wIn + wOut defined (numeric > 0)

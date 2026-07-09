@@ -1,0 +1,184 @@
+# Task 2 — MODELWEIGHT# Pricing Seed [ARCHITECT] — Evidence Log
+
+Executed: 2026-07-09T16:37:39Z (architect, standing authorization)
+Profile: AWS_PROFILE=cumplify-dev-readonly (pricing:GetProducts — read-only, no spend/mutation possible)
+Command: cd services/model-evals && AWS_PROFILE=cumplify-dev-readonly SOURCE_COMMIT=$(git rev-parse HEAD) npx tsx task2-seed.mts
+Exit code: 0
+Capture script: one-off services/model-evals/task2-seed.mts (deleted after run; full source
+reproduced in the run transcript below is NOT included — script called fetchPricing() from
+services/model-evals/src/pricing.ts verbatim + a direct GetProducts query for cache-read dims,
+since fetchPricing intentionally EXCLUDES cache usagetypes and design §1.4 requires
+wCache = cacheReadPricePerMToken × 1000 for caching-capable models).
+
+## Derivation (design §1.4, calibration 1,000 credits ≈ $1.00)
+  wIn/wOut  = {input,output}PricePerMToken × 1000   (fetchPricing, live API)
+  wCache    = cacheReadPricePerMToken × 1000        (Nova Pro/Lite only; qwen/kimi = null)
+
+| Model | in $/1M | out $/1M | cache-read $/1M | wIn | wOut | wCache |
+|-------|---------|----------|-----------------|-----|------|--------|
+| us.amazon.nova-pro-v1:0  | 0.80 | 3.20 | 0.20  | 800 | 3200 | 200 |
+| us.amazon.nova-lite-v1:0 | 0.06 | 0.24 | 0.015 | 60  | 240  | 15  |
+| qwen.qwen3-next-80b-a3b  | 0.14 | 1.20 | n/a   | 140 | 1200 | null |
+| moonshotai.kimi-k2.5     | 0.60 | 3.00 | n/a   | 600 | 3000 | null |
+
+All 4 sources = live-api (SNAPSHOT_ONLY_MODELS empty — no snapshot fallback used).
+NOTE (float normalization): fetchPricing returns per-1M as per-1K × 1000 in binary floats
+(e.g. 0.060000000000000005 → ×1000 = 60.00000000000001). Committed seed carries the exact
+decimal weights (60, 240, 140) — raw values verbatim below. Derivation remains
+weight = pricePerMToken × 1000 on the exact decimal prices ($0.06/1M × 1000 = 60).
+NOTE (cache writes): Pricing API confirms Nova Pro/Lite cache-WRITE dims price = $0.00 —
+validates metering formula charging only cacheRead × wCache (no cache-write term).
+
+## Also in this commit
+- services/ai-invoker/__tests__/weight-seeder.test.ts updated: placeholder-era 'no-data'
+  assertions → populated-seed behavior (4 seeded; ConditionalCheckFailed → skip now actually
+  exercised); Task-2 acceptance criteria encoded as CI assertions against the seed file.
+- tasks.md Task 2 checkboxes ticked (rule 7).
+
+## Verification gates
+- npx tsc --noEmit: NO errors in ai-invoker (grep -c ai-invoker = 0). 3 repo errors, all
+  outside this task: infra/lib/env-config.unit.test.ts (pre-existing, documented every prior
+  task) + 2 in services/api/__tests__/cross-tenant-denial.int.test.ts (uncommitted C-7
+  architect file, pending owner routing decision — not part of this commit).
+- npx vitest --run: 369 passed | 3 skipped (38 files passed | 1 skipped), exit 0.
+  weight-seeder.test.ts: 7/7 including the 3 ACCEPTANCE tests.
+
+## Acceptance check (per tasks.md)
+- [x] All 4 models wIn + wOut numeric > 0 (table above; CI-asserted)
+- [x] Nova Pro/Lite wCache defined (200 / 15); qwen/kimi wCache = null (CI-asserted)
+- [x] Derivation matches formula, verifiable from raw API values below
+
+## Raw run transcript (verbatim)
+=== Task 2 pricing capture @ 2026-07-09T16:37:39.677Z ===
+models: us.amazon.nova-pro-v1:0, us.amazon.nova-lite-v1:0, qwen.qwen3-next-80b-a3b, moonshotai.kimi-k2.5
+
+--- fetchPricing() raw result (USD per 1M tokens) ---
+{
+  "prices": {
+    "us.amazon.nova-pro-v1:0": {
+      "inputPricePerMToken": 0.8,
+      "outputPricePerMToken": 3.2,
+      "unit": "USD per 1M tokens"
+    },
+    "us.amazon.nova-lite-v1:0": {
+      "inputPricePerMToken": 0.060000000000000005,
+      "outputPricePerMToken": 0.24000000000000002,
+      "unit": "USD per 1M tokens"
+    },
+    "qwen.qwen3-next-80b-a3b": {
+      "inputPricePerMToken": 0.13999999999999999,
+      "outputPricePerMToken": 1.2,
+      "unit": "USD per 1M tokens"
+    },
+    "moonshotai.kimi-k2.5": {
+      "inputPricePerMToken": 0.6,
+      "outputPricePerMToken": 3,
+      "unit": "USD per 1M tokens"
+    }
+  },
+  "sources": {
+    "us.amazon.nova-pro-v1:0": "live-api",
+    "us.amazon.nova-lite-v1:0": "live-api",
+    "qwen.qwen3-next-80b-a3b": "live-api",
+    "moonshotai.kimi-k2.5": "live-api"
+  }
+}
+
+--- cache dimensions raw (all cache-related dims incl. writes/zero-price) ---
+{
+  "us.amazon.nova-pro-v1:0": [
+    {
+      "inferenceType": "Prompt cache write input tokens",
+      "usagetype": "USE1-NovaPro-cache-write-input-token-count-custom-model",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0000000000",
+      "description": "$0.00 per 1K tokens for USE1-NovaPro-cache-write-input-token-count-custom-model in US East (N. Virginia)"
+    },
+    {
+      "inferenceType": "Prompt cache read input tokens",
+      "usagetype": "USE1-NovaPro-cache-read-input-token-count",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0002000000",
+      "description": "$0.0002 per 1K cache read input tokens of Nova Pro in US East (N. Virginia)"
+    },
+    {
+      "inferenceType": "Prompt cache read input tokens",
+      "usagetype": "USE1-NovaPro-cache-read-input-token-count-custom-model",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0002000000",
+      "description": "$0.0002 per 1K tokens for USE1-NovaPro-cache-read-input-token-count-custom-model in US East (N. Virginia)"
+    },
+    {
+      "inferenceType": "Prompt cache write input tokens",
+      "usagetype": "USE1-NovaPro-cache-write-input-token-count",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0000000000",
+      "description": "$0.00 per 1K tokens for USE1-NovaPro-cache-write-input-token-count in US East (N. Virginia)"
+    }
+  ],
+  "us.amazon.nova-lite-v1:0": [
+    {
+      "inferenceType": "Prompt cache write input tokens",
+      "usagetype": "USE1-NovaLite-cache-write-input-token-count-custom-model",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0000000000",
+      "description": "$0.00 per 1K tokens for USE1-NovaLite-cache-write-input-token-count-custom-model in US East (N. Virginia)"
+    },
+    {
+      "inferenceType": "Prompt cache read input tokens",
+      "usagetype": "USE1-NovaLite-cache-read-input-token-count",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0000150000",
+      "description": "$0.000015 per 1K cache read input tokens of Nova Lite in US East (N. Virginia)"
+    },
+    {
+      "inferenceType": "Prompt cache read input tokens",
+      "usagetype": "USE1-NovaLite-cache-read-input-token-count-custom-model",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0000150000",
+      "description": "$0.000015 per 1K tokens for USE1-NovaLite-cache-read-input-token-count-custom-model in US East (N. Virginia)"
+    },
+    {
+      "inferenceType": "Prompt cache write input tokens",
+      "usagetype": "USE1-NovaLite-cache-write-input-token-count",
+      "unit": "1K tokens",
+      "pricePerUnitUSD": "0.0000000000",
+      "description": "$0.00 per 1K tokens for USE1-NovaLite-cache-write-input-token-count in US East (N. Virginia)"
+    }
+  ]
+}
+
+--- cache-read USD per 1M tokens (selected) ---
+{
+  "us.amazon.nova-pro-v1:0": 0.2,
+  "us.amazon.nova-lite-v1:0": 0.015
+}
+
+--- FINAL SEED (weight = pricePerMToken × 1000; 1000 credits ≈ $1) ---
+{
+  "capturedAt": "2026-07-09T16:37:39.677Z",
+  "sourceCommit": "a9f41423ebd90603e67fe16e8a071a4d5df18253",
+  "source": "AWS Pricing API (GetProducts, ServiceCode=AmazonBedrock, regionCode=us-east-1) via services/model-evals/src/pricing.ts fetchPricing() + direct cache-read query",
+  "models": {
+    "us.amazon.nova-pro-v1:0": {
+      "wIn": 800,
+      "wOut": 3200,
+      "wCache": 200
+    },
+    "us.amazon.nova-lite-v1:0": {
+      "wIn": 60.00000000000001,
+      "wOut": 240.00000000000003,
+      "wCache": 15
+    },
+    "qwen.qwen3-next-80b-a3b": {
+      "wIn": 139.99999999999997,
+      "wOut": 1200,
+      "wCache": null
+    },
+    "moonshotai.kimi-k2.5": {
+      "wIn": 600,
+      "wOut": 3000,
+      "wCache": null
+    }
+  }
+}
