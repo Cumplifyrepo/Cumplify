@@ -10,6 +10,7 @@
 
 import { createHandler } from '../../eventing/src/consumer.js';
 import { toolLoop } from '../shared/tool-loop.js';
+import { createInvokeFn } from '../shared/invoke-transport.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
 import { RECORDS_VAULT_PROMPT } from './prompt.js';
 import { RECORDS_VAULT_TOOLS } from './tools.js';
@@ -17,6 +18,7 @@ import { RECORDS_VAULT_TOOLS } from './tools.js';
 const DLQ_URL = process.env.RECORDS_VAULT_DLQ_URL!;
 
 const HITL_TOOLS = new Set(['records-retention-schedule']);
+const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
@@ -37,6 +39,7 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
       module: 'M4',
       feature: 'records-management',
       hitlTools: HITL_TOOLS,
+      invokeFn,
       dispatchTool: async (toolName, input, tid) => {
         return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
       },

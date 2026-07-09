@@ -25,6 +25,7 @@ import * as bedrock from 'aws-cdk-lib/aws-bedrock';
 import * as opensearchserverless from 'aws-cdk-lib/aws-opensearchserverless';
 import * as cr from 'aws-cdk-lib/custom-resources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NagSuppressions } from 'cdk-nag';
 import type { EnvConfig } from './env-config.js';
 
@@ -42,8 +43,10 @@ export interface AiStackProps extends cdk.StackProps {
   readonly deliveryFailureDlqArn: string;
   // Existing queues consumed by agents
   readonly capaIntakeQueueArn: string;
+  readonly capaIntakeDlqUrl: string;
   readonly auditSinkQueueArn: string;
   readonly recordsQueueArn: string;
+  readonly recordsDlqUrl: string;
   // AOSS infra (from NetworkStack + SecurityStack)
   readonly aossVpcEndpointId: string;
   readonly bedrockKeyArn: string;
@@ -159,20 +162,15 @@ export class AiStack extends cdk.Stack {
       environment: {
         CLUSTER_ARN: props.clusterArn,
         APP_ROLE_SECRET_ARN: props.appRoleSecretArn,
+        DB_NAME: 'postgres', // C-3e: must match api-core DATABASE setting
         BUS_NAME: props.busName,
         POWERTOOLS_SERVICE_NAME: 'execute-writeback',
       },
     });
 
-    // T-8b (BINDING): ExecuteWriteback invoke-permission = HITL state-machine role ONLY.
-    // No agent handler can invoke this Lambda — only SFN after approval.
-    executeWritebackLambda.addPermission('AllowSfnInvokeOnly', {
-      principal: new iam.ServicePrincipal('states.amazonaws.com'),
-      sourceArn: 'arn:aws:states:*:*:stateMachine:*', // Refined after SFN creation below
-      action: 'lambda:InvokeFunction',
-    });
-
     // ─── HITL State Machine (Step Functions Standard, waitForTaskToken) ─────
+    // C-2 (Task 8R): No EmitAuditEvent state — execute-writeback.ts emits
+    // the audit event post-commit. A second emitter would double-write the sealed trail.
     const recordProposal = new sfn.Pass(this, 'RecordProposal', {
       comment: 'Record the proposed action metadata',
     });
@@ -191,6 +189,14 @@ export class AiStack extends cdk.Stack {
         },
         TimeoutSeconds: 604800, // 7 days
         ResultPath: '$.approvalResult',
+        Retry: [
+          {
+            ErrorEquals: ['Lambda.ServiceException', 'Lambda.AWSLambdaException', 'Lambda.SdkClientException'],
+            IntervalSeconds: 2,
+            MaxAttempts: 3,
+            BackoffRate: 2,
+          },
+        ],
       },
     });
 
@@ -199,22 +205,19 @@ export class AiStack extends cdk.Stack {
         Type: 'Task',
         Resource: 'arn:aws:states:::lambda:invoke',
         Parameters: {
-          'FunctionName': 'PLACEHOLDER_WRITEBACK_LAMBDA', // Set in Task 4/8
+          // C-2 (Task 8R): wired to the actual ExecuteWriteback Lambda ARN.
+          'FunctionName': executeWritebackLambda.functionArn,
           'Payload.$': '$',
         },
         ResultPath: '$.writebackResult',
-      },
-    });
-
-    const emitAuditEvent = new sfn.CustomState(this, 'EmitAuditEvent', {
-      stateJson: {
-        Type: 'Task',
-        Resource: 'arn:aws:states:::lambda:invoke',
-        Parameters: {
-          'FunctionName': 'PLACEHOLDER_AUDIT_LAMBDA', // Set in Task 4/8
-          'Payload.$': '$',
-        },
-        ResultPath: '$.auditResult',
+        Retry: [
+          {
+            ErrorEquals: ['Lambda.ServiceException', 'Lambda.AWSLambdaException', 'Lambda.SdkClientException', 'DatabaseResumingException'],
+            IntervalSeconds: 5,
+            MaxAttempts: 3,
+            BackoffRate: 2,
+          },
+        ],
       },
     });
 
@@ -223,14 +226,20 @@ export class AiStack extends cdk.Stack {
 
     const definition = recordProposal
       .next(waitForApproval)
-      .next(executeWriteback)
-      .next(emitAuditEvent);
+      .next(executeWriteback);
 
     const hitlStateMachine = new sfn.StateMachine(this, 'HitlStateMachine', {
       definitionBody: sfn.DefinitionBody.fromChainable(definition),
       stateMachineType: sfn.StateMachineType.STANDARD,
       timeout: cdk.Duration.days(8), // Slightly over 7d to allow for processing
     });
+
+    // H-1 (Task 8R): Identity grant to the HITL SM role ONLY.
+    // SFN task states sign with the state-machine role's credentials — this is
+    // the correct auth path (NOT a resource-based policy on the Lambda).
+    // No wildcard addPermission. No other principal may invoke ExecuteWriteback.
+    storeTokenLambda.grantInvoke(hitlStateMachine.role);
+    executeWritebackLambda.grantInvoke(hitlStateMachine.role);
 
     // ─── New SQS Queues + DLQs (DocStudio, LeadAuditor, ControlTower) ──────
     const docStudioDlq = this.createStdDlq('DocStudioDlq');
@@ -433,12 +442,161 @@ export class AiStack extends cdk.Stack {
     }));
     props.dynamodbKey.grantEncryptDecrypt(storeTokenLambda);
 
+    // ─── 8 Agent Handler Lambdas + Roles (H-2, Task 8R) ───────────────────
+    // Each handler gets AgentHandlerReadOnlyPolicy attached.
+    // SQS consumers get ESMs on their respective queues.
+    // Guru resolvers are AppSync-invoked (no ESM).
+    // BLOCKED-ON-DESIGN: embedding path — handlers use placeholder vectors.
+    // The AI Invoker needs an embed() door (Titan Embed v2, 1024-dim) before
+    // retrieval-grounding is real. Flagged as design amendment, not faked.
+
+    const capaIntakeQueue = sqs.Queue.fromQueueArn(this, 'ImportedCapaIntakeQueue', props.capaIntakeQueueArn);
+    const recordsQueue = sqs.Queue.fromQueueArn(this, 'ImportedRecordsQueue', props.recordsQueueArn);
+
+    // Shared env for all agent handlers
+    const agentHandlerBaseEnv = {
+      AI_INVOKER_ARN: aiInvoker.functionArn,
+      TABLE_NAME: props.tableName,
+      HITL_STATE_MACHINE_ARN: hitlStateMachine.stateMachineArn,
+      POWERTOOLS_LOG_LEVEL: 'INFO',
+    };
+
+    // AOSS endpoint env vars
+    const aossEndpoints = {
+      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
+      AOSS_TENANT_DOCS_ENDPOINT: aossCollections['cumplify-tenant-docs-kb'].attrCollectionEndpoint,
+      AOSS_NC_HISTORY_ENDPOINT: aossCollections['cumplify-nc-history'].attrCollectionEndpoint,
+    };
+
+    // Helper: create an agent handler Lambda with the managed policy
+    const createAgentHandler = (
+      id: string,
+      entry: string,
+      env: Record<string, string>,
+      _opts?: { fifo?: boolean },
+    ) => {
+      const fn = new NodejsFunction(this, id, {
+        entry,
+        handler: 'handler',
+        runtime: lambda.Runtime.NODEJS_22_X,
+        architecture: lambda.Architecture.ARM_64,
+        memorySize: 512,
+        timeout: cdk.Duration.seconds(60),
+        bundling: { externalModules: [], target: 'node22' },
+        environment: { ...agentHandlerBaseEnv, ...env },
+      });
+      fn.role!.addManagedPolicy(agentHandlerPolicy);
+      props.dynamodbKey.grantDecrypt(fn); // For DDB reads through HITL gate (PutItem uses storeToken)
+      return fn;
+    };
+
+    // ── SQS Consumer Handlers ──
+
+    // 1. CAPAGuru (FIFO queue: capa-intake)
+    const capaGuruHandler = createAgentHandler('CapaGuruFn', 'services/agents/capa-guru/handler.ts', {
+      ...aossEndpoints,
+      DLQ_URL: props.capaIntakeDlqUrl,
+      POWERTOOLS_SERVICE_NAME: 'agent-capa-guru',
+    });
+    capaGuruHandler.addEventSource(new SqsEventSource(capaIntakeQueue, {
+      batchSize: 1,
+      reportBatchItemFailures: true,
+    }));
+
+    // 2. DocStudio (standard queue)
+    const docStudioHandler = createAgentHandler('DocStudioHandlerFn', 'services/agents/doc-studio/handler.ts', {
+      ...aossEndpoints,
+      DOC_STUDIO_DLQ_URL: docStudioDlq.queueUrl,
+      DLQ_URL: docStudioDlq.queueUrl,
+      POWERTOOLS_SERVICE_NAME: 'agent-doc-studio',
+    });
+    docStudioHandler.addEventSource(new SqsEventSource(docStudioQueue, {
+      batchSize: 1,
+      reportBatchItemFailures: true,
+    }));
+
+    // 3. LeadAuditor (standard queue)
+    const leadAuditorHandler = createAgentHandler('LeadAuditorHandlerFn', 'services/agents/lead-auditor/handler.ts', {
+      ...aossEndpoints,
+      LEAD_AUDITOR_DLQ_URL: leadAuditorDlq.queueUrl,
+      DLQ_URL: leadAuditorDlq.queueUrl,
+      POWERTOOLS_SERVICE_NAME: 'agent-lead-auditor',
+    });
+    leadAuditorHandler.addEventSource(new SqsEventSource(leadAuditorQueue, {
+      batchSize: 1,
+      reportBatchItemFailures: true,
+    }));
+
+    // 4. ControlTower (standard queue)
+    const controlTowerHandler = createAgentHandler('ControlTowerHandlerFn', 'services/agents/control-tower/handler.ts', {
+      ...aossEndpoints,
+      CONTROL_TOWER_DLQ_URL: controlTowerDlq.queueUrl,
+      DLQ_URL: controlTowerDlq.queueUrl,
+      POWERTOOLS_SERVICE_NAME: 'agent-control-tower',
+    });
+    controlTowerHandler.addEventSource(new SqsEventSource(controlTowerQueue, {
+      batchSize: 1,
+      reportBatchItemFailures: true,
+    }));
+
+    // 5. RecordsVault (standard queue: records)
+    const recordsVaultHandler = createAgentHandler('RecordsVaultHandlerFn', 'services/agents/records-vault/handler.ts', {
+      RECORDS_VAULT_DLQ_URL: props.recordsDlqUrl,
+      DLQ_URL: props.recordsDlqUrl,
+      POWERTOOLS_SERVICE_NAME: 'agent-records-vault',
+    });
+    recordsVaultHandler.addEventSource(new SqsEventSource(recordsQueue, {
+      batchSize: 1,
+      reportBatchItemFailures: true,
+    }));
+
+    // ── Guru Handlers (AppSync-invoked, no ESM) ──
+
+    // 6. ISO9001Guru
+    const guru9001Handler = createAgentHandler('Guru9001Fn', 'services/agents/guru-9001/handler.ts', {
+      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
+      POWERTOOLS_SERVICE_NAME: 'agent-guru-9001',
+    });
+
+    // 7. ISO14001Guru
+    const guru14001Handler = createAgentHandler('Guru14001Fn', 'services/agents/guru-14001/handler.ts', {
+      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
+      POWERTOOLS_SERVICE_NAME: 'agent-guru-14001',
+    });
+
+    // 8. ISO45001Guru
+    const guru45001Handler = createAgentHandler('Guru45001Fn', 'services/agents/guru-45001/handler.ts', {
+      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
+      POWERTOOLS_SERVICE_NAME: 'agent-guru-45001',
+    });
+
+    // Collect all handler role ARNs for AOSS data-access amendment
+    const agentHandlerRoleArns = [
+      capaGuruHandler.role!.roleArn,
+      docStudioHandler.role!.roleArn,
+      leadAuditorHandler.role!.roleArn,
+      controlTowerHandler.role!.roleArn,
+      recordsVaultHandler.role!.roleArn,
+      guru9001Handler.role!.roleArn,
+      guru14001Handler.role!.roleArn,
+      guru45001Handler.role!.roleArn,
+    ];
+
     // ─── CfnOutputs for IAM roles ──────────────────────────────────────────
     new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackLambda.role!.roleArn });
     new cdk.CfnOutput(this, 'StoreTokenRoleArn', { value: storeTokenLambda.role!.roleArn });
     new cdk.CfnOutput(this, 'AgentHandlerPolicyArn', { value: agentHandlerPolicy.managedPolicyArn });
     new cdk.CfnOutput(this, 'ExecuteWritebackLambdaArn', { value: executeWritebackLambda.functionArn });
     new cdk.CfnOutput(this, 'StoreTokenLambdaArn', { value: storeTokenLambda.functionArn });
+    // Agent handler outputs
+    new cdk.CfnOutput(this, 'CapaGuruHandlerArn', { value: capaGuruHandler.functionArn });
+    new cdk.CfnOutput(this, 'DocStudioHandlerArn', { value: docStudioHandler.functionArn });
+    new cdk.CfnOutput(this, 'LeadAuditorHandlerArn', { value: leadAuditorHandler.functionArn });
+    new cdk.CfnOutput(this, 'ControlTowerHandlerArn', { value: controlTowerHandler.functionArn });
+    new cdk.CfnOutput(this, 'RecordsVaultHandlerArn', { value: recordsVaultHandler.functionArn });
+    new cdk.CfnOutput(this, 'Guru9001HandlerArn', { value: guru9001Handler.functionArn });
+    new cdk.CfnOutput(this, 'Guru14001HandlerArn', { value: guru14001Handler.functionArn });
+    new cdk.CfnOutput(this, 'Guru45001HandlerArn', { value: guru45001Handler.functionArn });
 
     // ─── Index Mapping (R5 carry — metadata.tenantId as keyword) ──────────
     // Committed artifact: services/agents/shared/aoss-index-template.json
@@ -515,18 +673,18 @@ export class AiStack extends cdk.Stack {
     });
 
     // ─── AOSS Data-Access Policy (assembled post-seeder to avoid forward ref) ──
+    // H-2 (Task 8R): READ block amended with exact agent-handler role ARNs.
     new opensearchserverless.CfnAccessPolicy(this, 'AiAossDataAccessPolicy', {
       name: `cumplify-ai-access-${envConfig.envName}`,
       type: 'data',
       policy: JSON.stringify([
         {
-          // READ access: AI Invoker (retrieval for one-door path)
+          // READ access: AI Invoker + all 8 agent handler roles
           Rules: [
             { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:DescribeCollectionItems'] },
             { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:DescribeIndex', 'aoss:ReadDocument'] },
           ],
-          Principal: [aiInvoker.role!.roleArn],
-          // NOTE: agent-handler principals AMENDED in Task 8 with exact role ARNs.
+          Principal: [aiInvoker.role!.roleArn, ...agentHandlerRoleArns],
         },
         {
           // WRITE access: weight-seeder + future apply-template

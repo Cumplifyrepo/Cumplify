@@ -32,7 +32,9 @@ export class EventingStack extends cdk.Stack {
   // New exports for AiStack (spec 4, agents-existing-8)
   public readonly deliveryFailureDlqArn: string;
   public readonly capaIntakeQueueArn: string;
+  public readonly capaIntakeDlqUrl: string;
   public readonly recordsQueueArn: string;
+  public readonly recordsDlqUrl: string;
 
   constructor(scope: Construct, id: string, props: EventingStackProps) {
     super(scope, id, props);
@@ -90,7 +92,9 @@ export class EventingStack extends cdk.Stack {
     // New exports for AiStack (agents-existing-8)
     this.deliveryFailureDlqArn = deliveryFailureDlq.queueArn;
     this.capaIntakeQueueArn = capaIntakeQueue.queueArn;
+    this.capaIntakeDlqUrl = capaIntakeDlq.queueUrl;
     this.recordsQueueArn = recordsQueue.queueArn;
+    this.recordsDlqUrl = recordsDlq.queueUrl;
 
     // ─── FIFO-Router Lambda (FIX-4: NODEJS_22_X, FIX-5: grants) ────────────
     const router = new NodejsFunction(this, 'FifoRouterFn', {

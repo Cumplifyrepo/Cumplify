@@ -6,14 +6,21 @@
  * When a mutating tool is detected, enters the HITL gate (§3).
  */
 
-import { invoke } from '../../ai-invoker/src/index.js';
 import type { InvokeRequest, ConversationMessage, ToolConfig, SeatId, ContentBlock } from '../../ai-invoker/src/types.js';
+import type { InvokeResponse } from '../../ai-invoker/src/types.js';
 import { enterHitlGate, type HitlResult } from './hitl.js';
 import { Logger } from '@aws-lambda-powertools/logger';
 
 const logger = new Logger({ serviceName: 'agents-tool-loop' });
 
 const MAX_TURNS = 10;
+
+/**
+ * Invoke function signature — injected by agent handlers.
+ * In production: wraps LambdaClient.invoke(AI_INVOKER_ARN) with RequestResponse.
+ * C-1: agent handlers MUST NOT import invoke() directly from ai-invoker.
+ */
+export type InvokeFn = (request: InvokeRequest) => Promise<InvokeResponse>;
 
 export interface ToolLoopOpts {
   seat: SeatId;
@@ -27,6 +34,8 @@ export interface ToolLoopOpts {
   hitlTools: Set<string>;
   /** Tool dispatch function — executes a tool and returns the result */
   dispatchTool: (toolName: string, input: unknown, tenantId: string) => Promise<ToolDispatchResult>;
+  /** C-1 (BINDING): injected invoke function (Lambda transport to AI Invoker) */
+  invokeFn: InvokeFn;
   /** Optional: credit exemption (incident/HITL flow) */
   creditExempt?: boolean;
   /** Optional: output schema for schema-retry */
@@ -78,7 +87,7 @@ export async function toolLoop(
       outputSchema: opts.outputSchema,
     };
 
-    const response = await invoke(request);
+    const response = await opts.invokeFn(request);
     totalUsage.inputTokens += response.usage.inputTokens;
     totalUsage.outputTokens += response.usage.outputTokens;
 

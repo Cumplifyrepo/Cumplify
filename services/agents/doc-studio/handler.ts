@@ -8,6 +8,7 @@
 
 import { createHandler } from '../../eventing/src/consumer.js';
 import { toolLoop } from '../shared/tool-loop.js';
+import { createInvokeFn } from '../shared/invoke-transport.js';
 import { retrieve } from '../shared/retrieval.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
 import { DOC_STUDIO_PROMPT } from './prompt.js';
@@ -18,6 +19,7 @@ const AOSS_ISO_KB_ENDPOINT = process.env.AOSS_ISO_KB_ENDPOINT!;
 const AOSS_TENANT_DOCS_ENDPOINT = process.env.AOSS_TENANT_DOCS_ENDPOINT!;
 
 const HITL_TOOLS = new Set(['doc-publish', 'doc-version-control']);
+const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
@@ -70,6 +72,7 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
       module: 'M1',
       feature: 'document-studio',
       hitlTools: HITL_TOOLS,
+      invokeFn,
       dispatchTool: async (toolName, input, tid) => {
         return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
       },

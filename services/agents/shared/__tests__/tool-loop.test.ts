@@ -1,15 +1,11 @@
 /**
  * Unit tests for tool-loop module.
  * Verifies: end_turn exits; tool_use dispatches; loop guard throws; HITL tool triggers gate.
+ *
+ * C-1 (Task 8R): invokeFn is injected via opts — no module mock of ai-invoker.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-
-// Mock the invoke function
-const mockInvoke = vi.fn();
-vi.mock('../../../ai-invoker/src/index.js', () => ({
-  invoke: (...args: unknown[]) => mockInvoke(...args),
-}));
 
 // Mock the HITL gate
 const mockEnterHitlGate = vi.fn();
@@ -30,6 +26,7 @@ function baseOpts(overrides: Partial<Parameters<typeof toolLoop>[1]> = {}) {
     feature: 'capa',
     hitlTools: new Set(['capa-open']),
     dispatchTool: vi.fn().mockResolvedValue({ output: 'tool result' }),
+    invokeFn: vi.fn(), // C-1: injected, not mocked at module level
     ...overrides,
   };
 }
@@ -56,33 +53,31 @@ const toolUseResponse = (toolName: string, input: unknown) => ({
 
 describe('toolLoop', () => {
   beforeEach(() => {
-    mockInvoke.mockReset();
     mockEnterHitlGate.mockReset();
   });
 
   it('returns immediately on end_turn', async () => {
-    mockInvoke.mockResolvedValueOnce(endTurnResponse('done'));
+    const invokeFn = vi.fn().mockResolvedValueOnce(endTurnResponse('done'));
 
     const result = await toolLoop(
       [{ role: 'user', content: [{ text: 'hello' }] }],
-      baseOpts(),
+      baseOpts({ invokeFn }),
     );
 
     expect(result.finalResponse).toBe('done');
     expect(result.turns).toBe(1);
-    expect(mockInvoke).toHaveBeenCalledTimes(1);
+    expect(invokeFn).toHaveBeenCalledTimes(1);
   });
 
   it('dispatches non-HITL tools and continues loop', async () => {
     const dispatchTool = vi.fn().mockResolvedValue({ output: { data: 'result' } });
-
-    mockInvoke
+    const invokeFn = vi.fn()
       .mockResolvedValueOnce(toolUseResponse('read-data', { id: '123' }))
       .mockResolvedValueOnce(endTurnResponse('processed'));
 
     const result = await toolLoop(
       [{ role: 'user', content: [{ text: 'fetch data' }] }],
-      baseOpts({ dispatchTool }),
+      baseOpts({ dispatchTool, invokeFn }),
     );
 
     expect(result.finalResponse).toBe('processed');
@@ -97,11 +92,11 @@ describe('toolLoop', () => {
       hitlItemId: 'hitl-001',
     });
 
-    mockInvoke.mockResolvedValueOnce(toolUseResponse('capa-open', { ncId: 'nc-1' }));
+    const invokeFn = vi.fn().mockResolvedValueOnce(toolUseResponse('capa-open', { ncId: 'nc-1' }));
 
     const result = await toolLoop(
       [{ role: 'user', content: [{ text: 'open capa' }] }],
-      baseOpts(),
+      baseOpts({ invokeFn }),
     );
 
     expect(result.hitlResult).toBeDefined();
@@ -117,17 +112,65 @@ describe('toolLoop', () => {
   });
 
   it('throws LoopGuardError after MAX_TURNS (10)', async () => {
-    // Always return tool_use to exhaust the loop
-    mockInvoke.mockResolvedValue(toolUseResponse('read-data', {}));
+    const invokeFn = vi.fn().mockResolvedValue(toolUseResponse('read-data', {}));
     const dispatchTool = vi.fn().mockResolvedValue({ output: 'ok' });
 
     await expect(
       toolLoop(
         [{ role: 'user', content: [{ text: 'infinite' }] }],
-        baseOpts({ dispatchTool }),
+        baseOpts({ dispatchTool, invokeFn }),
       ),
     ).rejects.toThrow(LoopGuardError);
 
-    expect(mockInvoke).toHaveBeenCalledTimes(10);
+    expect(invokeFn).toHaveBeenCalledTimes(10);
+  });
+
+  it('accumulates token usage across turns', async () => {
+    const invokeFn = vi.fn()
+      .mockResolvedValueOnce(toolUseResponse('read-data', {}))
+      .mockResolvedValueOnce(endTurnResponse('done'));
+    const dispatchTool = vi.fn().mockResolvedValue({ output: 'ok' });
+
+    const result = await toolLoop(
+      [{ role: 'user', content: [{ text: 'go' }] }],
+      baseOpts({ dispatchTool, invokeFn }),
+    );
+
+    expect(result.totalUsage.inputTokens).toBe(200); // 100 per turn × 2
+    expect(result.totalUsage.outputTokens).toBe(100); // 50 per turn × 2
+  });
+
+  it('handles stop stopReason as end_turn', async () => {
+    const invokeFn = vi.fn().mockResolvedValueOnce({
+      ...endTurnResponse('stopped'),
+      stopReason: 'stop',
+    });
+
+    const result = await toolLoop(
+      [{ role: 'user', content: [{ text: 'hi' }] }],
+      baseOpts({ invokeFn }),
+    );
+
+    expect(result.finalResponse).toBe('stopped');
+    expect(result.turns).toBe(1);
+  });
+
+  it('handles dynamic HITL (dispatchTool returns requiresHitl=true)', async () => {
+    mockEnterHitlGate.mockResolvedValueOnce({
+      status: 'HITL_PENDING',
+      executionArn: 'arn:aws:states:us-east-1:123:execution:dyn-hitl',
+      hitlItemId: 'hitl-dyn',
+    });
+
+    const invokeFn = vi.fn().mockResolvedValueOnce(toolUseResponse('read-data', { id: '99' }));
+    const dispatchTool = vi.fn().mockResolvedValue({ output: 'blocked', requiresHitl: true });
+
+    const result = await toolLoop(
+      [{ role: 'user', content: [{ text: 'do it' }] }],
+      baseOpts({ invokeFn, dispatchTool }),
+    );
+
+    expect(result.hitlResult).toBeDefined();
+    expect(result.hitlResult!.hitlItemId).toBe('hitl-dyn');
   });
 });

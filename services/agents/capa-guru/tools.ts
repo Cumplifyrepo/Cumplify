@@ -14,11 +14,12 @@ export const CAPA_GURU_TOOLS: ToolConfig[] = [
       inputSchema: {
         json: {
           type: 'object',
-          required: ['ncId', 'actionDesc', 'suggestedOwnerId'],
+          required: ['ncId', 'actionDesc', 'suggestedOwnerId', 'dueDate'],
           properties: {
             ncId: { type: 'string', description: 'ID of the nonconformity' },
             actionDesc: { type: 'string', description: 'Description of the proposed corrective action' },
             suggestedOwnerId: { type: 'string', description: 'Suggested owner (user ID) for the action' },
+            dueDate: { type: 'string', description: 'Due date for the corrective action (ISO 8601 timestamp)' },
           },
         },
       },

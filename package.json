@@ -7,6 +7,7 @@
     "verify": "tsx scripts/verify.ts",
     "readback": "vitest run --config infra/readback/vitest.config.ts --reporter=verbose",
     "test": "vitest run",
+    "test:int": "vitest run --config vitest.int.config.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit"
@@ -42,6 +43,7 @@
     "@aws-sdk/client-s3": "^3.1079.0",
     "@aws-sdk/client-scheduler": "^3.1079.0",
     "@aws-sdk/client-sfn": "^3.1083.0",
+    "@aws-sdk/client-lambda": "^3.1079.0",
     "@aws-sdk/client-sqs": "^3.1079.0",
     "@aws-sdk/client-ssm": "^3.1079.0",
     "@aws-sdk/util-dynamodb": "^3.996.5",

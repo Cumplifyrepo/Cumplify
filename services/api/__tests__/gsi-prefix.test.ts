@@ -67,18 +67,64 @@ describe('GSI*PK prefix convention (FF-5)', () => {
     expect(hitlCode).toContain('REMOVE GSI9PK, GSI9SK');
   });
 
-  it('NEGATIVE: no GSI*PK in the codebase lacks TENANT# prefix', () => {
-    // Scan agents/shared for any GSI writes that violate FF-5
-    const hitlCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/hitl.ts'), 'utf-8');
-    const gsiPkPattern = /GSI\dPK.*?[`'"](.*?)[`'"]/g;
-    let match;
+  it('NEGATIVE: no GSI*PK in services/agents/** lacks TENANT# prefix (M-3, Task 8R)', () => {
+    // Scan ALL files under services/agents/ for any GSI writes that violate FF-5.
+    // Task 8R (M-3): broadened from hitl.ts-only to full glob coverage.
+    const { readdirSync: readdir, statSync } = require('node:fs');
+    const agentsDir = resolve(__dirname, '../../../services/agents');
+
+    function getAllTsFiles(dir: string): string[] {
+      const results: string[] = [];
+      for (const entry of readdir(dir)) {
+        const fullPath = resolve(dir, entry);
+        if (statSync(fullPath).isDirectory()) {
+          if (entry === 'node_modules' || entry === '__tests__') continue;
+          results.push(...getAllTsFiles(fullPath));
+        } else if (entry.endsWith('.ts')) {
+          results.push(fullPath);
+        }
+      }
+      return results;
+    }
+
+    const tsFiles = getAllTsFiles(agentsDir);
     const violations: string[] = [];
-    while ((match = gsiPkPattern.exec(hitlCode)) !== null) {
-      // The template literal will contain ${...} — check the static prefix
-      if (!match[0].includes('TENANT#')) {
-        violations.push(`hitl.ts: GSI PK value "${match[1]}" missing TENANT# prefix`);
+    const gsiPkPattern = /GSI\dPK.*?[`'"](.*?)[`'"]/g;
+
+    for (const file of tsFiles) {
+      const content = readFileSync(file, 'utf-8');
+      let match;
+      // Reset regex lastIndex for each file
+      gsiPkPattern.lastIndex = 0;
+      while ((match = gsiPkPattern.exec(content)) !== null) {
+        if (!match[0].includes('TENANT#')) {
+          const relPath = file.replace(agentsDir + '/', '');
+          violations.push(`${relPath}: GSI PK value "${match[1]}" missing TENANT# prefix`);
+        }
       }
     }
     expect(violations).toEqual([]);
+  });
+
+  it('GSI9 sparse projection: resolved HITL items REMOVE GSI9PK/GSI9SK (M-3, Task 8R)', () => {
+    // Verifies the sparse-projection invariant: when a HITL item is resolved,
+    // GSI9PK and GSI9SK are REMOVEd so the item disappears from the pending query.
+    const hitlCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/hitl.ts'), 'utf-8');
+
+    // resolveHitlItem must REMOVE both GSI attributes
+    expect(hitlCode).toContain('REMOVE GSI9PK, GSI9SK');
+
+    // The REMOVE must be in the UpdateExpression of resolveHitlItem
+    // (not in enterHitlGate which SETs them)
+    const resolveSection = hitlCode.slice(hitlCode.indexOf('resolveHitlItem'));
+    expect(resolveSection).toContain('REMOVE GSI9PK, GSI9SK');
+
+    // enterHitlGate must SET them (for sparse projection to work — items appear on write)
+    const enterSection = hitlCode.slice(
+      hitlCode.indexOf('enterHitlGate'),
+      hitlCode.indexOf('resolveHitlItem'),
+    );
+    expect(enterSection).toContain('GSI9PK');
+    expect(enterSection).toContain('GSI9SK');
   });
 });

@@ -185,3 +185,8 @@ raised, evaluated) belong in the immutable audit trail.
 | `ManagementReview.ObjectivesSet` | true | State transition: objectives committed from review |
 | `ManagementReview.ContextInput` | true | State transition: context input gathered |
 | `Review.Completed` | true | State transition: management review concluded |
+
+### Agent Writeback Events (Task 8R, H-3)
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `Agent.WritebackCommitted` | true | State transition: HITL-approved agent mutation committed to RDS — sealed for audit completeness |

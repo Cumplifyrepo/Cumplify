@@ -2,16 +2,21 @@
  * ISO9001Guru agent handler — AppSync resolver (user-triggered, NOT SQS consumer).
  * Advisory-only: retrieves ISO 9001 clause context and answers questions.
  *
- * Flow: AppSync query → retrieve ISO KB (AOSS) → invoke Converse → return answer.
+ * Flow: AppSync query → retrieve ISO KB (AOSS) → invoke Converse via Lambda
+ * transport (one-door) → return answer.
  * No tool-loop needed (no tools, advisory only).
+ *
+ * C-1 (BINDING): uses createInvokeFn() Lambda transport to reach AI Invoker.
+ * NEVER imports invoke() directly from ai-invoker.
  */
 
 import { retrieve } from '../shared/retrieval.js';
-import { invoke } from '../../ai-invoker/src/index.js';
+import { createInvokeFn } from '../shared/invoke-transport.js';
 import { ISO9001_GURU_PROMPT } from './prompt.js';
 
 const AOSS_ISO_KB_ENDPOINT = process.env.AOSS_ISO_KB_ENDPOINT!;
 
+const invokeFn = createInvokeFn();
 
 export async function handleQuery(
   tenantId: string,
@@ -39,7 +44,7 @@ export async function handleQuery(
     groundingContext ? `\nRelevant ISO 9001:2015 clauses:\n${groundingContext}` : '',
   ].join('');
 
-  const response = await invoke({
+  const response = await invokeFn({
     seat: 'guru-9001',
     system: ISO9001_GURU_PROMPT,
     messages: [{ role: 'user', content: [{ text: userMessage }] }],

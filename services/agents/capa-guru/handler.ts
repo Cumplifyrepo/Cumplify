@@ -11,6 +11,7 @@
 
 import { createFifoHandler } from '../../eventing/src/consumer.js';
 import { toolLoop } from '../shared/tool-loop.js';
+import { createInvokeFn } from '../shared/invoke-transport.js';
 import { retrieve } from '../shared/retrieval.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
 import { CAPA_GURU_PROMPT } from './prompt.js';
@@ -20,6 +21,7 @@ const DLQ_URL = process.env.DLQ_URL!;
 const AOSS_ENDPOINT = process.env.AOSS_NC_HISTORY_ENDPOINT!;
 
 const HITL_TOOLS = new Set(['capa-open', 'capa-verify-effectiveness']);
+const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
@@ -65,6 +67,7 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
       module: 'M2',
       feature: 'capa-intake',
       hitlTools: HITL_TOOLS,
+      invokeFn,
       dispatchTool: async (toolName, input, tid) => {
         // Non-HITL tools execute directly (read-only / advisory)
         // HITL tools are caught by the tool-loop and routed to the gate

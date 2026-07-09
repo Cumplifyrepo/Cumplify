@@ -83,4 +83,7 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   'Audit.ChecklistGenerated': false,
   'Risk.TreatmentAdded': true,
   'Record.RetentionPolicySet': true,
+
+  // --- Spec 8R: agent writeback (Task 8R, H-3) ---
+  'Agent.WritebackCommitted': true,
 };

@@ -8,6 +8,7 @@
 
 import { createHandler } from '../../eventing/src/consumer.js';
 import { toolLoop } from '../shared/tool-loop.js';
+import { createInvokeFn } from '../shared/invoke-transport.js';
 import { retrieve } from '../shared/retrieval.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
 import { CONTROL_TOWER_PROMPT } from './prompt.js';
@@ -17,6 +18,7 @@ const DLQ_URL = process.env.CONTROL_TOWER_DLQ_URL!;
 const AOSS_TENANT_DOCS_ENDPOINT = process.env.AOSS_TENANT_DOCS_ENDPOINT!;
 
 const HITL_TOOLS = new Set(['ct-governance-write']);
+const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
@@ -57,6 +59,7 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
       module: 'cross-standard',
       feature: 'governance',
       hitlTools: HITL_TOOLS,
+      invokeFn,
       dispatchTool: async (toolName, input, tid) => {
         return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
       },
