@@ -64,7 +64,7 @@ export async function checkCreditBalance(
         PK: { S: `TENANT#${tenantId}#ENTITLEMENT` },
         SK: { S: 'CREDIT_LIMIT' },
       },
-      ProjectionExpression: 'monthlyGrant, paygoEnabled, autoRefill, planTier',
+      ProjectionExpression: 'monthlyGrant, paygoEnabled, planTier',
     }),
   );
 
