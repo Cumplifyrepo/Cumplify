@@ -21,11 +21,14 @@ const invokeFn = createInvokeFn();
 export async function handleQuery(
   tenantId: string,
   question: string,
-  queryVector: number[],
+  queryVector?: number[],
 ): Promise<string> {
   // Retrieve relevant ISO 14001 clause text
   let groundingContext = '';
+  // Retrieval requires a 1024-dim query vector; skip grounding when absent
+  // (embed() door is BLOCKED-ON-DESIGN — vector arrives via the API arg for now).
   try {
+    if (!queryVector) throw new Error('no query vector');
     const results = await retrieve({
       tenantId,
       collectionEndpoint: AOSS_ISO_KB_ENDPOINT,
@@ -56,4 +59,26 @@ export async function handleQuery(
   });
 
   return response.text || 'Unable to generate a response.';
+}
+
+/**
+ * AppSync direct-Lambda-resolver entrypoint (Task 8R-2 hotfix, architect).
+ * - question/queryVector come from event.arguments (schema: askISO14001).
+ * - tenantId comes ONLY from the Lambda authorizer's resolverContext (verified
+ *   claim) — NEVER from client arguments. Fail-closed if absent.
+ */
+interface AppSyncGuruEvent {
+  arguments: { question: string; queryVector?: string };
+  identity?: { resolverContext?: { tenantId?: string } };
+}
+
+export async function handler(event: AppSyncGuruEvent): Promise<string> {
+  const tenantId = event.identity?.resolverContext?.tenantId;
+  if (!tenantId) {
+    throw new Error('Unauthorized: missing tenantId in resolver context');
+  }
+  const queryVector = event.arguments.queryVector
+    ? (JSON.parse(event.arguments.queryVector) as number[])
+    : undefined;
+  return handleQuery(tenantId, event.arguments.question, queryVector);
 }
