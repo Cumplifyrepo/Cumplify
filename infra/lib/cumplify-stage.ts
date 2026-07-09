@@ -139,6 +139,8 @@ export class CumplifyStage extends cdk.Stage {
       capaIntakeQueueArn: eventingStack.capaIntakeQueueArn,
       auditSinkQueueArn: eventingStack.auditSinkQueueArn,
       recordsQueueArn: eventingStack.recordsQueueArn,
+      aossVpcEndpointId: networkStack.aossVpcEndpointId,
+      bedrockKeyArn: securityStack.outputs.bedrockKey.keyArn,
     });
     aiStack.addDependency(dataStack);
     aiStack.addDependency(apiStack);

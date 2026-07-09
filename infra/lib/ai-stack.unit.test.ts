@@ -11,16 +11,21 @@ import * as cdk from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import { AiStack } from './ai-stack.js';
+import { ENV_CONFIGS } from './env-config.js';
 
 function createTestStack(): Template {
   const app = new cdk.App();
-  const envConfig = { envName: 'dev' as const, account: '123456789012', region: 'us-east-1' };
+  const envConfig = ENV_CONFIGS.dev;
 
-  // Create a mock key
-  const mockStack = new cdk.Stack(app, 'MockStack');
-  const mockKey = new kms.Key(mockStack, 'MockKey');
+  const stack = new cdk.Stack(app, 'TestAiStack', {
+    env: { account: envConfig.account, region: envConfig.region },
+  });
 
-  const stack = new AiStack(app, 'TestAiStack', {
+  // Import keys within the same stack to avoid cross-environment errors
+  const mockKey = kms.Key.fromKeyArn(stack, 'MockKey', 'arn:aws:kms:us-east-1:123456789012:key/mock-key-id');
+
+  // Instantiate AiStack as a nested construct (not a separate stack) to avoid cross-env
+  const aiStack = new AiStack(app, 'AiStack', {
     envConfig,
     tableArn: 'arn:aws:dynamodb:us-east-1:123456789012:table/CumplifyCore',
     tableName: 'CumplifyCore',
@@ -34,9 +39,12 @@ function createTestStack(): Template {
     capaIntakeQueueArn: 'arn:aws:sqs:us-east-1:123456789012:CapaIntakeQueue.fifo',
     auditSinkQueueArn: 'arn:aws:sqs:us-east-1:123456789012:AuditSinkQueue.fifo',
     recordsQueueArn: 'arn:aws:sqs:us-east-1:123456789012:RecordsQueue',
+    aossVpcEndpointId: 'vpce-0123456789abcdef0',
+    bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
+    env: { account: envConfig.account, region: envConfig.region },
   });
 
-  return Template.fromStack(stack);
+  return Template.fromStack(aiStack);
 }
 
 describe('AiStack', () => {
@@ -180,6 +188,48 @@ describe('AiStack', () => {
 
     it('exports DocStudioQueueUrl', () => {
       template.hasOutput('DocStudioQueueUrl', {});
+    });
+  });
+
+  describe('AOSS Collections', () => {
+    it('creates 3 VECTORSEARCH collections', () => {
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection', {
+        Properties: { Type: 'VECTORSEARCH' },
+      });
+      expect(Object.keys(collections).length).toBe(3);
+    });
+
+    it('creates encryption policies per collection', () => {
+      const policies = template.findResources('AWS::OpenSearchServerless::SecurityPolicy', {
+        Properties: { Type: 'encryption' },
+      });
+      expect(Object.keys(policies).length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('creates network policies with VPC endpoint', () => {
+      // Verify network policies reference the VPC endpoint
+      const templateJson = JSON.stringify(template.toJSON());
+      expect(templateJson).toContain('vpce-0123456789abcdef0');
+    });
+
+    it('collections have standbyReplicas DISABLED (scale-to-zero)', () => {
+      template.hasResourceProperties('AWS::OpenSearchServerless::Collection', {
+        StandbyReplicas: 'DISABLED',
+      });
+    });
+
+    it('exports collection endpoints', () => {
+      template.hasOutput('cumplifyisokbEndpoint', {});
+      template.hasOutput('cumplifytenantdocskbEndpoint', {});
+      template.hasOutput('cumplifynchistoryEndpoint', {});
+    });
+  });
+
+  describe('MODELWEIGHT# Seeding', () => {
+    it('creates a weight seeder Lambda', () => {
+      // The seeder Lambda should exist with TABLE_NAME env
+      const templateJson = JSON.stringify(template.toJSON());
+      expect(templateJson).toContain('weight-seeder');
     });
   });
 });

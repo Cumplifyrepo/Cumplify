@@ -22,6 +22,8 @@ import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as bedrock from 'aws-cdk-lib/aws-bedrock';
+import * as opensearchserverless from 'aws-cdk-lib/aws-opensearchserverless';
+import * as cr from 'aws-cdk-lib/custom-resources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { NagSuppressions } from 'cdk-nag';
 import type { EnvConfig } from './env-config.js';
@@ -42,6 +44,9 @@ export interface AiStackProps extends cdk.StackProps {
   readonly capaIntakeQueueArn: string;
   readonly auditSinkQueueArn: string;
   readonly recordsQueueArn: string;
+  // AOSS infra (from NetworkStack + SecurityStack)
+  readonly aossVpcEndpointId: string;
+  readonly bedrockKeyArn: string;
 }
 
 export class AiStack extends cdk.Stack {
@@ -135,7 +140,10 @@ export class AiStack extends cdk.Stack {
         Type: 'Task',
         Resource: 'arn:aws:states:::lambda:invoke.waitForTaskToken',
         Parameters: {
-          'FunctionName': '', // Placeholder — no Lambda needed for pure wait
+          // TODO-Task-8: Replace with the store-token Lambda that writes
+          // $$.Task.Token into the DDB HITL item keyed by hitlItemId.
+          // This Lambda is defined in Task 8 (agent code modules) and wired here.
+          'FunctionName': 'PLACEHOLDER_STORE_TOKEN_LAMBDA',
           'Payload': {
             'taskToken.$': '$$.Task.Token',
             'input.$': '$',
@@ -254,6 +262,142 @@ export class AiStack extends cdk.Stack {
       });
     }
 
+    // ─── AOSS Collections (3x VECTORSEARCH, NextGen scale-to-zero) ─────────
+    // Design §4.2: ISO-KB, TENANT-DOCS-KB, NC-HISTORY
+    const collectionNames = ['cumplify-iso-kb', 'cumplify-tenant-docs-kb', 'cumplify-nc-history'] as const;
+
+    const aossCollections: Record<string, opensearchserverless.CfnCollection> = {};
+
+    for (const name of collectionNames) {
+      // Encryption policy (per collection)
+      const encPolicy = new opensearchserverless.CfnSecurityPolicy(this, `${name}-enc`, {
+        name: `${name}-enc`,
+        type: 'encryption',
+        policy: JSON.stringify({
+          Rules: [{ ResourceType: 'collection', Resource: [`collection/${name}`] }],
+          AWSOwnedKey: false,
+          KmsARN: props.bedrockKeyArn,
+        }),
+      });
+
+      // Network policy — VPC endpoint only + Bedrock service access
+      const netPolicy = new opensearchserverless.CfnSecurityPolicy(this, `${name}-net`, {
+        name: `${name}-net`,
+        type: 'network',
+        policy: JSON.stringify([{
+          Rules: [
+            { ResourceType: 'collection', Resource: [`collection/${name}`] },
+            { ResourceType: 'dashboard', Resource: [`collection/${name}`] },
+          ],
+          AllowFromPublic: false,
+          // SourceVPCEs: AWS::OpenSearchServerless::VpcEndpoint ID (NOT EC2 interface endpoint)
+          SourceVPCEs: [props.aossVpcEndpointId],
+          SourceServices: ['bedrock.amazonaws.com'],
+        }]),
+      });
+
+      // Collection
+      const collection = new opensearchserverless.CfnCollection(this, `Aoss-${name}`, {
+        name,
+        type: 'VECTORSEARCH',
+        description: `Cumplify AI agents: ${name} (Titan Embed v2, 1024 dims, scale-to-zero)`,
+        standbyReplicas: 'DISABLED', // NextGen scale-to-zero
+      });
+      collection.addDependency(encPolicy);
+      collection.addDependency(netPolicy);
+
+      aossCollections[name] = collection;
+    }
+
+    // NOTE: AOSS data-access policy (granting invoker + agent roles read/write)
+    // is DEFERRED to Task 4 (IAM, REQUIRES-HUMAN). Collection provisioning is
+    // separate from access grants per owner decision.
+
+    // ─── Index Mapping Definition (metadata.tenantId as keyword) ────────────
+    // The index template with knn_vector (1024 dims) + metadata.tenantId keyword
+    // is applied via a custom resource that calls the AOSS _index_template API.
+    // This ensures the term filter in retrieval.ts isolates tenants correctly.
+    //
+    // Index mapping schema (applied per collection):
+    // {
+    //   "settings": { "index.knn": true },
+    //   "mappings": {
+    //     "properties": {
+    //       "embedding": { "type": "knn_vector", "dimension": 1024, "method": { "engine": "faiss", "name": "hnsw" } },
+    //       "text": { "type": "text" },
+    //       "metadata": {
+    //         "properties": {
+    //           "tenantId": { "type": "keyword" },  <-- CRITICAL: keyword = filterable
+    //           "standard": { "type": "keyword" },
+    //           "clauseRef": { "type": "keyword" }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+    //
+    // Custom resource to apply mapping deferred to Task 9 deploy (requires live AOSS).
+    // The mapping definition is committed here as the source of truth.
+
+    // ─── MODELWEIGHT# Seeding Custom Resource (T-2/T3-F3) ──────────────────
+    // Reads services/ai-invoker/data/model-weights-seed.json (committed by Task 2,
+    // architect-witnessed) and writes MODELWEIGHT# items to DynamoDB.
+    // Does NOT call live Pricing API at deploy time (T-2 correction).
+    const weightSeeder = new NodejsFunction(this, 'WeightSeederFn', {
+      entry: 'services/ai-invoker/src/weight-seeder.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        TABLE_NAME: props.tableName,
+        POWERTOOLS_SERVICE_NAME: 'weight-seeder',
+      },
+    });
+    weightSeeder.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['dynamodb:PutItem'],
+      resources: [props.tableArn],
+      conditions: {
+        'ForAllValues:StringLike': {
+          'dynamodb:LeadingKeys': ['MODELWEIGHT#*'],
+        },
+      },
+    }));
+    props.dynamodbKey.grantEncryptDecrypt(weightSeeder);
+
+    // Custom resource trigger (runs on deploy)
+    new cr.AwsCustomResource(this, 'WeightSeederTrigger', {
+      onCreate: {
+        service: 'Lambda',
+        action: 'invoke',
+        parameters: {
+          FunctionName: weightSeeder.functionName,
+          InvocationType: 'RequestResponse',
+          Payload: JSON.stringify({ action: 'seed' }),
+        },
+        physicalResourceId: cr.PhysicalResourceId.of('weight-seeder-v1'),
+      },
+      onUpdate: {
+        service: 'Lambda',
+        action: 'invoke',
+        parameters: {
+          FunctionName: weightSeeder.functionName,
+          InvocationType: 'RequestResponse',
+          Payload: JSON.stringify({ action: 'seed' }),
+        },
+        physicalResourceId: cr.PhysicalResourceId.of('weight-seeder-v1'),
+      },
+      policy: cr.AwsCustomResourcePolicy.fromStatements([
+        new iam.PolicyStatement({
+          actions: ['lambda:InvokeFunction'],
+          resources: [weightSeeder.functionArn],
+        }),
+      ]),
+    });
+
     // ─── CfnOutputs ────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'AiInvokerArn', { value: aiInvoker.functionArn });
     new cdk.CfnOutput(this, 'AiInvokerRoleArn', { value: aiInvoker.role!.roleArn });
@@ -274,6 +418,14 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'DocStudioRuleName', { value: docStudioRule.ruleName });
     new cdk.CfnOutput(this, 'LeadAuditorRuleName', { value: leadAuditorRule.ruleName });
     new cdk.CfnOutput(this, 'ControlTowerRuleName', { value: controlTowerRule.ruleName });
+
+    // AOSS collection outputs
+    for (const name of collectionNames) {
+      const safeName = name.replace(/-/g, '');
+      const collection = aossCollections[name];
+      new cdk.CfnOutput(this, `${safeName}Endpoint`, { value: collection.attrCollectionEndpoint });
+      new cdk.CfnOutput(this, `${safeName}Arn`, { value: collection.attrArn });
+    }
 
     // ─── CDK Nag Suppressions ──────────────────────────────────────────────
     NagSuppressions.addResourceSuppressions(
