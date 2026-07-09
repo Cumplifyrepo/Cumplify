@@ -47,6 +47,8 @@ export interface AiStackProps extends cdk.StackProps {
   // AOSS infra (from NetworkStack + SecurityStack)
   readonly aossVpcEndpointId: string;
   readonly bedrockKeyArn: string;
+  // App-role secret for RLS-safe writes (from ApiStack, T4-F1)
+  readonly appRoleSecretArn: string;
 }
 
 export class AiStack extends cdk.Stack {
@@ -308,9 +310,112 @@ export class AiStack extends cdk.Stack {
       aossCollections[name] = collection;
     }
 
-    // NOTE: AOSS data-access policy (granting invoker + agent roles read/write)
-    // is DEFERRED to Task 4 (IAM, REQUIRES-HUMAN). Collection provisioning is
-    // separate from access grants per owner decision.
+    // ─── AOSS Data-Access Policy (Task 4, REQUIRES-HUMAN) ────────────────
+    // T4-F2 FIX: AOSS requires EXACT ARNs — no globs. Seeder ARN is known now;
+    // agent-handler + apply-template roles are AMENDED in Task 8 / Task 9 with
+    // exact ARNs once those roles exist.
+    const collectionResources = collectionNames.map((n) => `collection/${n}`);
+    const indexResources = collectionNames.map((n) => `index/${n}/*`);
+    const collectionArns = collectionNames.map((n) => aossCollections[n].attrArn);
+
+    // READ access policy (invoker — seeder WRITE added post-declaration below)
+    // Full data-access policy assembled after weightSeeder is defined (avoid forward ref).
+
+    // ─── Agent Handler Read-Only Policy Factory (T4-F4, T-1 gate b) ────────
+    // Agent handlers get: lambda:Invoke(invoker), SFN start, AOSS read.
+    // They have ZERO RDS access, ZERO DynamoDB access (context via SQS event
+    // payload + AOSS retrieval). NO dynamodb:PutItem/UpdateItem/DeleteItem.
+    // NO dynamodb:GetItem/Query (T4R-F1: avoids cross-tenant reads; handler
+    // proposes then pauses — frontend polls HITL status, not the handler).
+    // SQS consume permissions auto-granted by CDK SqsEventSource in Task 8.
+    //
+    // Exported as a reusable managed policy so Task 8 attaches it to each handler.
+    const agentHandlerPolicy = new iam.ManagedPolicy(this, 'AgentHandlerReadOnlyPolicy', {
+      description: 'Shared read-only policy for agent handler Lambdas (T-1: zero write, zero DDB).',
+      statements: [
+        // lambda:InvokeFunction on AI Invoker only
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['lambda:InvokeFunction'],
+          resources: [aiInvoker.functionArn],
+        }),
+        // SFN: StartExecution on HITL state machine
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['states:StartExecution'],
+          resources: [hitlStateMachine.stateMachineArn],
+        }),
+        // AOSS: APIAccessAll for retrieval (read path)
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['aoss:APIAccessAll'],
+          resources: collectionArns,
+        }),
+      ],
+    });
+
+    // ─── ExecuteWriteback Role (post-HITL, the ONLY write path) ────────────
+    // T4-F1 FIX: uses app_role secret (NOT master) → RLS enforced.
+    // T4-F5 carry: invoke-permission restricted to HITL state-machine role in Task 8.
+    const executeWritebackRole = new iam.Role(this, 'ExecuteWritebackRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      description: 'Post-HITL writeback role — the ONLY role with RDS write. Uses app_role (RLS). Invoked ONLY by SFN after approval.',
+    });
+    // RDS Data API write via app_role (RLS-safe, T4-F1)
+    executeWritebackRole.addToPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: [
+        'rds-data:ExecuteStatement',
+        'rds-data:BatchExecuteStatement',
+        'rds-data:BeginTransaction',
+        'rds-data:CommitTransaction',
+        'rds-data:RollbackTransaction',
+      ],
+      resources: [props.clusterArn],
+    }));
+    // Secrets Manager: app_role secret ONLY (NOT master — T4-F1)
+    executeWritebackRole.addToPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['secretsmanager:GetSecretValue'],
+      resources: [props.appRoleSecretArn],
+    }));
+    // dynamodbKey encrypts the app_role secret (api-stack.ts:88)
+    props.dynamodbKey.grantDecrypt(executeWritebackRole);
+    // EventBridge PutEvents (for publishAuditEvent post-writeback)
+    executeWritebackRole.addToPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['events:PutEvents'],
+      resources: [props.busArn],
+    }));
+    executeWritebackRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
+    );
+
+    // ─── Store-Token Lambda Role (gate c) ──────────────────────────────────
+    // Writes ONLY the taskToken field into the DDB HITL item, tenant-scoped.
+    const storeTokenRole = new iam.Role(this, 'StoreTokenRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      description: 'Store-token Lambda — writes taskToken into DDB HITL item only.',
+    });
+    storeTokenRole.addToPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['dynamodb:UpdateItem'],
+      resources: [props.tableArn],
+      conditions: {
+        'ForAllValues:StringLike': {
+          'dynamodb:LeadingKeys': ['TENANT#*#HITL'],
+        },
+      },
+    }));
+    props.dynamodbKey.grantEncryptDecrypt(storeTokenRole);
+    storeTokenRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
+    );
+
+    // ─── CfnOutputs for IAM roles ──────────────────────────────────────────
+    new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackRole.roleArn });
+    new cdk.CfnOutput(this, 'StoreTokenRoleArn', { value: storeTokenRole.roleArn });
+    new cdk.CfnOutput(this, 'AgentHandlerPolicyArn', { value: agentHandlerPolicy.managedPolicyArn });
 
     // ─── Index Mapping (R5 carry — metadata.tenantId as keyword) ──────────
     // Committed artifact: services/agents/shared/aoss-index-template.json
@@ -385,6 +490,44 @@ export class AiStack extends cdk.Stack {
         }),
       ]),
     });
+
+    // ─── AOSS Data-Access Policy (assembled post-seeder to avoid forward ref) ──
+    new opensearchserverless.CfnAccessPolicy(this, 'AiAossDataAccessPolicy', {
+      name: `cumplify-ai-access-${envConfig.envName}`,
+      type: 'data',
+      policy: JSON.stringify([
+        {
+          // READ access: AI Invoker (retrieval for one-door path)
+          Rules: [
+            { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:DescribeCollectionItems'] },
+            { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:DescribeIndex', 'aoss:ReadDocument'] },
+          ],
+          Principal: [aiInvoker.role!.roleArn],
+          // NOTE: agent-handler principals AMENDED in Task 8 with exact role ARNs.
+        },
+        {
+          // WRITE access: weight-seeder + future apply-template
+          Rules: [
+            { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:CreateCollectionItems', 'aoss:UpdateCollectionItems', 'aoss:DescribeCollectionItems'] },
+            { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:CreateIndex', 'aoss:UpdateIndex', 'aoss:DescribeIndex', 'aoss:ReadDocument', 'aoss:WriteDocument'] },
+          ],
+          Principal: [weightSeeder.role!.roleArn],
+          // NOTE: apply-template principal AMENDED in Task 9 with exact role ARN.
+        },
+      ]),
+    });
+
+    // T4-F3 FIX: aoss:APIAccessAll in IAM (data-plane access to AOSS collections)
+    aiInvoker.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['aoss:APIAccessAll'],
+      resources: collectionArns,
+    }));
+    weightSeeder.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['aoss:APIAccessAll'],
+      resources: collectionArns,
+    }));
 
     // ─── CfnOutputs ────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'AiInvokerArn', { value: aiInvoker.functionArn });

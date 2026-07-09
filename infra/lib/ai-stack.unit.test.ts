@@ -41,6 +41,7 @@ function createTestStack(): Template {
     recordsQueueArn: 'arn:aws:sqs:us-east-1:123456789012:RecordsQueue',
     aossVpcEndpointId: 'vpce-0123456789abcdef0',
     bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
+    appRoleSecretArn: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
     env: { account: envConfig.account, region: envConfig.region },
   });
 
@@ -157,7 +158,7 @@ describe('AiStack', () => {
     });
   });
 
-  describe('IAM (partial — full IAM in Task 4)', () => {
+  describe('IAM (Task 4 — REQUIRES-HUMAN)', () => {
     it('has bedrock:InvokeModel in at least one policy', () => {
       template.hasResourceProperties('AWS::IAM::Policy', {
         PolicyDocument: {
@@ -170,6 +171,114 @@ describe('AiStack', () => {
           ]),
         },
       });
+    });
+
+    it('ExecuteWriteback role uses app_role secret NOT master (T4-F1)', () => {
+      template.hasResourceProperties('AWS::IAM::Policy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: 'secretsmanager:GetSecretValue',
+              Effect: 'Allow',
+              Resource: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
+            }),
+          ]),
+        },
+      });
+    });
+
+    it('ExecuteWriteback role has RDS write permissions', () => {
+      template.hasResourceProperties('AWS::IAM::Policy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: Match.arrayWith([
+                'rds-data:ExecuteStatement',
+                'rds-data:BeginTransaction',
+                'rds-data:CommitTransaction',
+              ]),
+              Effect: 'Allow',
+            }),
+          ]),
+        },
+      });
+    });
+
+    it('StoreToken role writes ONLY to TENANT#*#HITL keys', () => {
+      template.hasResourceProperties('AWS::IAM::Policy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: 'dynamodb:UpdateItem',
+              Effect: 'Allow',
+              Condition: {
+                'ForAllValues:StringLike': {
+                  'dynamodb:LeadingKeys': ['TENANT#*#HITL'],
+                },
+              },
+            }),
+          ]),
+        },
+      });
+    });
+
+    it('AI Invoker has aoss:APIAccessAll (T4-F3)', () => {
+      template.hasResourceProperties('AWS::IAM::Policy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: 'aoss:APIAccessAll',
+              Effect: 'Allow',
+            }),
+          ]),
+        },
+      });
+    });
+
+    it('AgentHandlerReadOnlyPolicy exists as a managed policy', () => {
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        Description: Match.stringLikeRegexp('read-only.*agent handler.*T-1'),
+      });
+    });
+
+    it('NEGATIVE (T-1): no policy has both bedrock:InvokeModel AND rds-data write', () => {
+      const policies = template.findResources('AWS::IAM::Policy');
+      for (const [policyId, policy] of Object.entries(policies)) {
+        const statements = (policy as any).Properties?.PolicyDocument?.Statement ?? [];
+        const allActions = statements.flatMap((s: any) => {
+          const actions = s.Action;
+          return Array.isArray(actions) ? actions : [actions];
+        }).filter(Boolean);
+        const hasBedrockInvoke = allActions.includes('bedrock:InvokeModel');
+        const hasRdsWrite = allActions.includes('rds-data:BeginTransaction');
+        expect(
+          hasBedrockInvoke && hasRdsWrite,
+          `Policy ${policyId} has both bedrock:InvokeModel and rds-data:BeginTransaction — violates T-1`,
+        ).toBe(false);
+      }
+    });
+
+    it('NEGATIVE (T-1): AgentHandlerReadOnlyPolicy has NO rds-data or DDB actions (T4R-F1)', () => {
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      for (const [_policyId, policy] of Object.entries(policies)) {
+        const desc: string = (policy as any).Properties?.Description ?? '';
+        if (!desc.includes('agent handler')) continue;
+        const statements = (policy as any).Properties?.PolicyDocument?.Statement ?? [];
+        const allActions = statements.flatMap((s: any) => {
+          const actions = s.Action;
+          return Array.isArray(actions) ? actions : [actions];
+        }).filter(Boolean);
+        // Zero RDS actions
+        expect(allActions.filter((a: string) => a.startsWith('rds-data:'))).toHaveLength(0);
+        // Zero DynamoDB actions (T4R-F1: no cross-tenant read risk)
+        expect(allActions.filter((a: string) => a.startsWith('dynamodb:'))).toHaveLength(0);
+      }
+    });
+
+    it('creates ExecuteWritebackRole, StoreTokenRole, and AgentHandlerPolicy outputs', () => {
+      template.hasOutput('ExecuteWritebackRoleArn', {});
+      template.hasOutput('StoreTokenRoleArn', {});
+      template.hasOutput('AgentHandlerPolicyArn', {});
     });
   });
 

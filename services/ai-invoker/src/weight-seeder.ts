@@ -1,11 +1,12 @@
 /**
  * MODELWEIGHT# seeding Lambda — custom resource handler.
- * Uses createRequire to load the seed JSON (esbuild resolves and inlines it).
+ * Uses a static JSON import (esbuild inlines at bundle time).
  *
  * Does NOT call live Pricing API at deploy time (T-2 correction).
  * MUST run before Task 9 (first deploy that expects weights to exist).
  *
- * T3E-F2: uses createRequire (not readFileSync) — esbuild bundles JSON inline.
+ * T3E-F2: static import `from '../data/model-weights-seed.json'` — esbuild's
+ *   native JSON loader inlines the content. createRequire does NOT inline.
  * T3E-F3: ConditionalCheckFailedException caught per-item (already seeded = skip).
  * T3E-F4: payload includes seedHash for re-trigger detection.
  */

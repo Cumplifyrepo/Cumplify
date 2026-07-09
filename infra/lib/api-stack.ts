@@ -56,6 +56,7 @@ export class ApiStack extends cdk.Stack {
   public readonly graphqlApiId: string;
   public readonly authorizerArn: string;
   public readonly tenantDataRoleArn: string;
+  public readonly appRoleSecretArn: string;
 
   constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, props);
@@ -86,6 +87,7 @@ export class ApiStack extends cdk.Stack {
       },
       encryptionKey: props.dynamodbKey, // reuse secrets CMK (same key policy)
     });
+    this.appRoleSecretArn = appRoleSecret.secretArn;
 
     // ─── Lambda Authorizer ───────────────────────────────────────────────────
     const authorizerFn = new NodejsFunction(this, 'AuthorizerFn', {
