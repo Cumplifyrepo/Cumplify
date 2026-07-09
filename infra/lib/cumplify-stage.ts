@@ -146,6 +146,8 @@ export class CumplifyStage extends cdk.Stage {
       privateSubnets: networkStack.privateSubnets,
       bedrockKeyArn: securityStack.outputs.bedrockKey.keyArn,
       appRoleSecretArn: apiStack.appRoleSecretArn,
+      isoKbCollectionArn: dataStack.isoKbCollectionArn,
+      isoKbCollectionEndpoint: dataStack.isoKbCollectionEndpoint,
       graphqlApiId: apiStack.graphqlApiId,
       graphqlApiUrl: apiStack.graphqlApiUrl,
     });

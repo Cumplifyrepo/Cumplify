@@ -57,6 +57,9 @@ export interface AiStackProps extends cdk.StackProps {
   readonly bedrockKeyArn: string;
   // App-role secret for RLS-safe writes (from ApiStack, T4-F1)
   readonly appRoleSecretArn: string;
+  // Existing iso-kb AOSS collection (OWNED by DataStack, spec 1 — imported here)
+  readonly isoKbCollectionArn: string;
+  readonly isoKbCollectionEndpoint: string;
   // AppSync API (from ApiStack) — guru resolver wiring
   readonly graphqlApiId: string;
   readonly graphqlApiUrl: string;
@@ -92,7 +95,7 @@ export class AiStack extends cdk.Stack {
           { type: 'EMAIL', action: 'ANONYMIZE' },
           { type: 'PHONE', action: 'ANONYMIZE' },
           { type: 'NAME', action: 'ANONYMIZE' },
-          { type: 'SSN', action: 'BLOCK' },
+          { type: 'US_SOCIAL_SECURITY_NUMBER', action: 'BLOCK' },
           { type: 'CREDIT_DEBIT_CARD_NUMBER', action: 'BLOCK' },
         ],
       },
@@ -319,13 +322,19 @@ export class AiStack extends cdk.Stack {
       });
     }
 
-    // ─── AOSS Collections (3x VECTORSEARCH, NextGen scale-to-zero) ─────────
-    // Design §4.2: ISO-KB, TENANT-DOCS-KB, NC-HISTORY
+    // ─── AOSS Collections ──────────────────────────────────────────────────
+    // Design §4.2: ISO-KB, TENANT-DOCS-KB, NC-HISTORY.
+    // Task-9 deploy correction: cumplify-iso-kb is OWNED BY DataStack (spec 1,
+    // deployed 2026-07-03; its data-access placeholder says "specs 4/5 add real
+    // principals"). AiStack IMPORTS it (arn+endpoint props) and creates ONLY
+    // the two new collections. Duplicate declaration failed live change-set
+    // validation ("identifier encryption|cumplify-iso-kb-enc already exists").
     const collectionNames = ['cumplify-iso-kb', 'cumplify-tenant-docs-kb', 'cumplify-nc-history'] as const;
+    const newCollectionNames = ['cumplify-tenant-docs-kb', 'cumplify-nc-history'] as const;
 
     const aossCollections: Record<string, opensearchserverless.CfnCollection> = {};
 
-    for (const name of collectionNames) {
+    for (const name of newCollectionNames) {
       // Encryption policy (per collection)
       const encPolicy = new opensearchserverless.CfnSecurityPolicy(this, `${name}-enc`, {
         name: `${name}-enc`,
@@ -371,7 +380,16 @@ export class AiStack extends cdk.Stack {
     // exact ARNs once those roles exist.
     const collectionResources = collectionNames.map((n) => `collection/${n}`);
     const indexResources = collectionNames.map((n) => `index/${n}/*`);
-    const collectionArns = collectionNames.map((n) => aossCollections[n].attrArn);
+    // iso-kb imported from DataStack; the two new collections resolved from attrs
+    const collectionArns = [
+      props.isoKbCollectionArn,
+      ...newCollectionNames.map((n) => aossCollections[n].attrArn),
+    ];
+    const collectionEndpoints: Record<string, string> = {
+      'cumplify-iso-kb': props.isoKbCollectionEndpoint,
+      'cumplify-tenant-docs-kb': aossCollections['cumplify-tenant-docs-kb'].attrCollectionEndpoint,
+      'cumplify-nc-history': aossCollections['cumplify-nc-history'].attrCollectionEndpoint,
+    };
 
     // READ access policy (invoker — seeder WRITE added post-declaration below)
     // Full data-access policy assembled after weightSeeder is defined (avoid forward ref).
@@ -471,9 +489,9 @@ export class AiStack extends cdk.Stack {
 
     // AOSS endpoint env vars
     const aossEndpoints = {
-      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
-      AOSS_TENANT_DOCS_ENDPOINT: aossCollections['cumplify-tenant-docs-kb'].attrCollectionEndpoint,
-      AOSS_NC_HISTORY_ENDPOINT: aossCollections['cumplify-nc-history'].attrCollectionEndpoint,
+      AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
+      AOSS_TENANT_DOCS_ENDPOINT: collectionEndpoints['cumplify-tenant-docs-kb'],
+      AOSS_NC_HISTORY_ENDPOINT: collectionEndpoints['cumplify-nc-history'],
     };
 
     // Helper: create an agent handler Lambda with the managed policy
@@ -561,19 +579,19 @@ export class AiStack extends cdk.Stack {
 
     // 6. ISO9001Guru
     const guru9001Handler = createAgentHandler('Guru9001Fn', 'services/agents/guru-9001/handler.ts', {
-      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
+      AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
       POWERTOOLS_SERVICE_NAME: 'agent-guru-9001',
     });
 
     // 7. ISO14001Guru
     const guru14001Handler = createAgentHandler('Guru14001Fn', 'services/agents/guru-14001/handler.ts', {
-      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
+      AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
       POWERTOOLS_SERVICE_NAME: 'agent-guru-14001',
     });
 
     // 8. ISO45001Guru
     const guru45001Handler = createAgentHandler('Guru45001Fn', 'services/agents/guru-45001/handler.ts', {
-      AOSS_ISO_KB_ENDPOINT: aossCollections['cumplify-iso-kb'].attrCollectionEndpoint,
+      AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
       POWERTOOLS_SERVICE_NAME: 'agent-guru-45001',
     });
 
@@ -721,7 +739,7 @@ export class AiStack extends cdk.Stack {
         COLLECTIONS: JSON.stringify(
           collectionNames.map((n) => ({
             name: n,
-            endpoint: aossCollections[n].attrCollectionEndpoint,
+            endpoint: collectionEndpoints[n],
           })),
         ),
         POWERTOOLS_SERVICE_NAME: 'aoss-apply-template',
@@ -793,7 +811,7 @@ export class AiStack extends cdk.Stack {
       ]),
     });
     applyTemplateTrigger.node.addDependency(aossDataAccessPolicy);
-    for (const name of collectionNames) {
+    for (const name of newCollectionNames) {
       applyTemplateTrigger.node.addDependency(aossCollections[name]);
     }
 
@@ -831,12 +849,16 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'LeadAuditorRuleName', { value: leadAuditorRule.ruleName });
     new cdk.CfnOutput(this, 'ControlTowerRuleName', { value: controlTowerRule.ruleName });
 
-    // AOSS collection outputs
+    // AOSS collection outputs (iso-kb imported from DataStack; others created here)
+    const collectionArnByName: Record<string, string> = {
+      'cumplify-iso-kb': props.isoKbCollectionArn,
+      'cumplify-tenant-docs-kb': aossCollections['cumplify-tenant-docs-kb'].attrArn,
+      'cumplify-nc-history': aossCollections['cumplify-nc-history'].attrArn,
+    };
     for (const name of collectionNames) {
       const safeName = name.replace(/-/g, '');
-      const collection = aossCollections[name];
-      new cdk.CfnOutput(this, `${safeName}Endpoint`, { value: collection.attrCollectionEndpoint });
-      new cdk.CfnOutput(this, `${safeName}Arn`, { value: collection.attrArn });
+      new cdk.CfnOutput(this, `${safeName}Endpoint`, { value: collectionEndpoints[name] });
+      new cdk.CfnOutput(this, `${safeName}Arn`, { value: collectionArnByName[name] });
     }
 
     // ─── CDK Nag Suppressions ──────────────────────────────────────────────

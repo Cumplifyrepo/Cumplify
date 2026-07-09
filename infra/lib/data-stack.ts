@@ -47,6 +47,9 @@ export class DataStack extends cdk.Stack {
   public readonly clusterArn: string;
   public readonly dbSecretArn: string;
   public readonly evidenceBucketArn: string;
+  /** iso-kb AOSS collection (spec 1) — imported by AiStack (spec 4) */
+  public readonly isoKbCollectionArn: string;
+  public readonly isoKbCollectionEndpoint: string;
 
   constructor(scope: Construct, id: string, props: DataStackProps) {
     super(scope, id, { ...props, crossRegionReferences: true });
@@ -344,6 +347,10 @@ export class DataStack extends cdk.Stack {
     // Ensure policies are created before the collection
     aossCollection.addDependency(this.node.findChild('AossEncryptionPolicy') as cdk.CfnResource);
     aossCollection.addDependency(this.node.findChild('AossNetworkPolicy') as cdk.CfnResource);
+
+    // Exported for AiStack (spec 4): import instead of duplicate declaration
+    this.isoKbCollectionArn = aossCollection.attrArn;
+    this.isoKbCollectionEndpoint = aossCollection.attrCollectionEndpoint;
 
     // -----------------------------------------------------------------------
     // S3 Evidence Vault (AC-4.5)

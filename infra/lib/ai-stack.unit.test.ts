@@ -54,6 +54,8 @@ function createTestStack(): Template {
     ],
     bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
     appRoleSecretArn: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
+    isoKbCollectionArn: 'arn:aws:aoss:us-east-1:123456789012:collection/mockisokb123',
+    isoKbCollectionEndpoint: 'https://mockisokb123.us-east-1.aoss.amazonaws.com',
     graphqlApiId: 'test-api-id-123',
     graphqlApiUrl: 'https://test-api.appsync-api.us-east-1.amazonaws.com/graphql',
     env: { account: envConfig.account, region: envConfig.region },
@@ -100,7 +102,7 @@ describe('AiStack', () => {
       template.hasResourceProperties('AWS::Bedrock::Guardrail', {
         SensitiveInformationPolicyConfig: {
           PiiEntitiesConfig: Match.arrayWith([
-            Match.objectLike({ Type: 'SSN', Action: 'BLOCK' }),
+            Match.objectLike({ Type: 'US_SOCIAL_SECURITY_NUMBER', Action: 'BLOCK' }),
           ]),
         },
       });
@@ -315,18 +317,24 @@ describe('AiStack', () => {
   });
 
   describe('AOSS Collections', () => {
-    it('creates 3 VECTORSEARCH collections', () => {
+    it('creates 2 VECTORSEARCH collections (iso-kb IMPORTED from DataStack, spec 1)', () => {
       const collections = template.findResources('AWS::OpenSearchServerless::Collection', {
         Properties: { Type: 'VECTORSEARCH' },
       });
-      expect(Object.keys(collections).length).toBe(3);
+      expect(Object.keys(collections).length).toBe(2);
+      // iso-kb must NOT be declared here (owned by DataStack — duplicate failed live validation)
+      const names = JSON.stringify(collections);
+      expect(names).not.toContain('cumplify-iso-kb');
+      expect(names).toContain('cumplify-tenant-docs-kb');
+      expect(names).toContain('cumplify-nc-history');
     });
 
     it('creates encryption policies per collection', () => {
       const policies = template.findResources('AWS::OpenSearchServerless::SecurityPolicy', {
         Properties: { Type: 'encryption' },
       });
-      expect(Object.keys(policies).length).toBeGreaterThanOrEqual(3);
+      // 2 created here; iso-kb's encryption policy is DataStack-owned (spec 1)
+      expect(Object.keys(policies).length).toBeGreaterThanOrEqual(2);
     });
 
     it('creates network policies with VPC endpoint', () => {
