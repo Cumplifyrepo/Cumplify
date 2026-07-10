@@ -4,8 +4,25 @@ fileMatchPattern: "{frontend/**,scripts/verify-framer.mjs}"
 ---
 # Framer Is the UI Design Source of Truth
 The SaaS UI is designed in Framer, project "Spora (copy)"
-(FRAMER_PROJECT_URL in .env). frontend/ is still empty — UI implementation
-work should read the Framer project as the design source, not invent layout.
+(FRAMER_PROJECT_URL in .env). UI implementation work should read the Framer
+project as the design source, not invent layout.
+
+The UI design originates in Figma and is integrated into the Framer project
+(owner, 2026-07-10). Framer remains the SINGLE machine-readable design
+source — do NOT add a separate Figma API integration (no Figma credentials
+are configured); if direct Figma access ever becomes necessary, the owner
+provides a token first.
+
+## Brand assets
+- Canonical logo: `frontend/public/brand/cumplify-logo.png` (2444x881 PNG,
+  sha256 846ad064..., master copy owner-held in the planning-docs folder as
+  "Cumplify Logo.png"). Every logo/wordmark rendering in the product uses
+  this asset (or size-optimized derivatives generated at build time) — never
+  a recreated/approximated logo, never text styled to look like the logo.
+- Composition: blue infinity-checkmark mark + WHITE "Cumplify" wordmark —
+  legible on dark surfaces only. OPEN BRAND ITEM: a light-background variant
+  (and a square mark-only crop for favicon/avatar use) is needed from the
+  owner; flag, don't fabricate one.
 
 ## Access
 - Framer's official Server API (open beta, launched 2026-02-12) is used via
