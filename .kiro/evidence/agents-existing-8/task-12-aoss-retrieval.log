@@ -1,0 +1,95 @@
+# Task 12 — AOSS Retrieval: Cold-Start + Tenant Isolation Proof (ACC-4)
+
+Architect-executed 2026-07-09/10 (witnessed, dev 697114252993).
+Tooling: AossProverFn (VPC-attached ops Lambda, this task) invoking the REAL
+production retrieve() wrapper — proof exercises the exact code agents will run.
+
+## 0. Carry fixed first: retrieval client was UNSIGNED (Task-11 live 403)
+
+retrieval.ts's default client was a bare fetch (no SigV4) — every AOSS query
+from a deployed Lambda 403'd. Fix: SigV4 machinery extracted from
+aoss-apply-template.ts into shared/aoss-signed-client.ts (single-source signing,
+REV-10 discipline); retrieval defaultAossClient now signs (service 'aoss',
+x-amz-content-sha256). Regression pinned: default-client test asserts
+AWS4-HMAC-SHA256 + /aoss/aws4_request headers on the wire.
+
+## 1. Infrastructure (deployed + cloud-read-back)
+
+- AossProverFn: VPC-attached (2 subnets), 120s, actions template-check / seed /
+  query(→retrieve()) / search-control / delete-index. ONE-DOOR intact: no
+  bedrock:* on its role (unit-asserted); vectors arrive in payloads only.
+  Index guard: mutations refused unless index prefixed task12-/task13-/task14-.
+- Data-access policy (read back live): READ = invoker + 8 handlers;
+  WRITE = seeder + apply-template; prover = own block (see §5 defect).
+
+## 2. Fail-closed template check (T3E-F1 part 3)
+
+FIRST data-plane op, before any seeding:
+- 23:22:31.170Z → 23:22:32.763Z (1.59s wall incl. prover cold start, after 6h+
+  collection idle): {dimension: 1024, tenantIdType: keyword} — PASS.
+- Check is STRUCTURAL: prover 'seed' calls verifyTemplate() before indexing
+  (unit-asserted: template failure → zero docs indexed).
+
+## 3. Seed + tenant isolation proof (ACC-4) — ALL GREEN
+
+Seeded task12-e2e (cumplify-tenant-docs-kb): 6 docs — 3× tenant-a-t12 (A1
+calibration/7.1.5, A2 audits/9.2, A3 aspects/6.1.2), 3× tenant-b-t12 (B1
+incidents/10.2, B2 mgmt review/9.3, B3 compliance eval/9.1.2). Titan Embed v2
+1024-dim vectors, architect-generated (ops action, weight-seeder precedent).
+AOSS VECTORSEARCH auto-IDs confirmed (client _id rejected by design).
+Visibility lag: docs searchable ~75s post-index (async refresh, no ?refresh
+support in serverless) — operational note for future seeding.
+
+Queries via retrieve() (mandatory REQ-RET-1 term filter on metadata.tenantId):
+
+| # | Query | tenantId | Result | Verdict |
+|---|-------|----------|--------|---------|
+| Q1 "calibration frequency?" | tenant-a-t12 | 3 hits, ALL tenant-a; top=A1 @0.5544 (semantically correct) | PASS |
+| Q1 same query | tenant-b-t12 | 3 hits, ALL tenant-b (B3 @0.3802 best); ZERO tenant-a docs — A1 (the best match in the index) EXCLUDED by filter | CROSS-TENANT NEGATIVE PASS |
+| Q2 "incident deadline?" | tenant-b-t12 | 3 hits, ALL tenant-b; top=B1 @0.5079 (correct) | PASS |
+| Q1 | tenant-c-t12 (no docs) | 0 results — empty, NOT other tenants' docs | FAIL-CLOSED PASS |
+| Control: unfiltered match_all | n/a (ops only) | 6 docs, {tenant-a-t12: 3, tenant-b-t12: 3} in ONE index | proves isolation = the filter |
+
+Warm latencies 42–281ms, attempts=1 throughout.
+
+## 4. Cold-start budget (45s, REQ-RET-3) — DEMONSTRATED, with honest deviation
+
+DEVIATION from deliverable wording: dev AOSS does NOT scale to literal zero.
+Witnessed: SearchOCU/IndexingOCU flat at 0.5/0.5 for 6+ idle hours pre-proof
+AND through the active proof (CloudWatch, ClientId=697114252993, 17:00Z→00:20Z
+all datapoints avg=max=0.5). Config: VECTORSEARCH, standbyReplicas=DISABLED —
+0.5 OCU is the AOSS floor for this posture. "Wait for scale-to-zero" is
+unachievable in this account; the equivalent honest proof is first-query-after-idle:
+
+- After 6h+ idle: first data-plane hit 1.59s wall (template GET, incl. Lambda
+  cold start).
+- After a witnessed 50-min zero-data-plane idle window (23:25:17Z→00:15:17Z,
+  timer-enforced): timed retrieve() at 00:15:34Z → latencyMs=557, attempts=1,
+  results identical & correct (A1/A2/A3, all tenant-a).
+- 45s budget headroom ≈ 80×. Backoff machinery (500ms base → 45s ceiling)
+  additionally unit-proven (retries on 503, AossColdStartTimeoutError at ceiling).
+
+## 5. Live-found defect during cleanup (fixed + deployed + test-pinned)
+
+delete-index → HTTP 403 authorization_exception: the shared WRITE block lacked
+aoss:DeleteIndex. Fix: prover moved to its OWN data-access rule block with
+DeleteIndex; seeder/apply-template deliberately do NOT gain it (least
+privilege). Unit test pins DeleteIndex appears exactly once and only for the
+prover. Deployed (45/45 infra tests), delete retried → {"deleted":"task12-e2e",
+"status":200}; deletion visibility also async (~60s) — GONE (404) confirmed
+00:19:04Z.
+
+## 6. Costs
+
+Titan embeds (6 docs + 2 queries, 229 tokens): $0.000005. AOSS marginal: $0
+(0.5-OCU floor). Prover invocations: ~30 × 128ms-class = negligible.
+NOTE for cost topology: the 0.5/0.5 OCU floor bills continuously (~1 OCU-hr/hr)
+— this is the standing AOSS dev cost, not workload-driven; flag at next cost review.
+
+## Acceptance
+
+- ACC-4 tenant-filtered results: CONFIRMED (all queries, witnessed above)
+- Cross-tenant negative: PASS (semantically-best foreign doc excluded)
+- 45s cold-start budget: DEMONSTRATED (557ms after idle; deviation documented)
+- Titan Embed v2 dimension 1024: confirmed in template AND enforced at seed/query
+- Template present, metadata.tenantId=keyword, fail-closed check: PASS (structural)

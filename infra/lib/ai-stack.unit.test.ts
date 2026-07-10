@@ -534,16 +534,22 @@ describe('AOSS Apply-Template CR (Task 9)', () => {
     }
   });
 
-  it('T-9a: AOSS data-access WRITE block has exactly 2 principals (seeder + apply-template)', () => {
+  it('T-9a: AOSS data-access policy — seeder/apply-template WRITE + prover-only DeleteIndex', () => {
     const policies = template.findResources('AWS::OpenSearchServerless::AccessPolicy');
     const dataPolicy = Object.values(policies)[0] as any;
     // Policy is a JSON string with CFN tokens — parse structure via the Fn::Join parts
     const policyStr = JSON.stringify(dataPolicy.Properties.Policy);
-    // WRITE block: two role ARN references follow the CreateIndex permission set
     expect(policyStr).toContain('aoss:CreateIndex');
-    // Both seeder and apply-template roles must appear as principals
     expect(policyStr).toContain('WeightSeederFn');
     expect(policyStr).toContain('ApplyTemplateFn');
+    expect(policyStr).toContain('AossProverFn');
+    // DeleteIndex appears EXACTLY once (prover block only) — the shared WRITE
+    // block must never gain it (live-found 403: cleanup needs it; least privilege).
+    expect(policyStr.match(/aoss:DeleteIndex/g)).toHaveLength(1);
+    const deleteBlock = policyStr.slice(policyStr.indexOf('aoss:DeleteIndex'));
+    expect(deleteBlock).toContain('AossProverFn');
+    expect(deleteBlock).not.toContain('WeightSeederFn');
+    expect(deleteBlock).not.toContain('ApplyTemplateFn');
   });
 
   it('ApplyTemplateTrigger CR exists and can invoke ONLY ApplyTemplateFn', () => {
@@ -552,5 +558,52 @@ describe('AOSS Apply-Template CR (Task 9)', () => {
     expect(trigger).toBeDefined();
     const create = JSON.parse((trigger![1] as any).Properties.Create['Fn::Join'][1].join(''));
     expect(create.parameters.Payload).toContain('"action":"apply"');
+  });
+});
+
+describe('AOSS Prover (Task 12)', () => {
+  const template = createTestStack();
+
+  const findProverFn = () => {
+    const lambdas = template.findResources('AWS::Lambda::Function');
+    return Object.values(lambdas).find((r) => {
+      const env = (r as any).Properties?.Environment?.Variables ?? {};
+      return env.POWERTOOLS_SERVICE_NAME === 'aoss-prover';
+    }) as any;
+  };
+
+  it('AossProverFn is VPC-attached with COLLECTIONS env and 120s timeout', () => {
+    const fn = findProverFn();
+    expect(fn).toBeDefined();
+    expect(fn.Properties.VpcConfig?.SubnetIds?.length).toBeGreaterThanOrEqual(2);
+    expect(fn.Properties.Timeout).toBe(120);
+    const collectionsEnv = JSON.stringify(fn.Properties.Environment.Variables.COLLECTIONS);
+    for (const name of ['cumplify-iso-kb', 'cumplify-tenant-docs-kb', 'cumplify-nc-history']) {
+      expect(collectionsEnv).toContain(name);
+    }
+  });
+
+  it('one-door holds: prover role has NO bedrock permissions', () => {
+    const policies = template.findResources('AWS::IAM::Policy');
+    const proverPolicies = Object.entries(policies).filter(([id]) => id.includes('AossProverFn'));
+    expect(proverPolicies.length).toBeGreaterThan(0);
+    for (const [, policy] of proverPolicies) {
+      const statements = (policy as any).Properties.PolicyDocument.Statement as Array<any>;
+      for (const stmt of statements) {
+        const actions = Array.isArray(stmt.Action) ? stmt.Action : [stmt.Action];
+        for (const action of actions) {
+          expect(String(action)).not.toMatch(/^bedrock:/);
+        }
+      }
+    }
+  });
+
+  it('prover has no CR trigger (on-demand ops tool only)', () => {
+    const customs = template.findResources('Custom::AWS');
+    const proverTriggers = Object.entries(customs).filter(([, r]) => {
+      const create = (r as any).Properties?.Create;
+      return JSON.stringify(create ?? '').includes('AossProverFn');
+    });
+    expect(proverTriggers).toHaveLength(0);
   });
 });

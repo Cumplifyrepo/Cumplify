@@ -15,17 +15,14 @@
  * Retries cover data-access-policy propagation + collection activation delays.
  */
 
-import { createHash, createHmac } from 'node:crypto';
-import { SignatureV4 } from '@smithy/signature-v4';
-import { defaultProvider } from '@aws-sdk/credential-provider-node';
 import { Logger } from '@aws-lambda-powertools/logger';
+import { signedAossFetch } from './aoss-signed-client.js';
 
 import templateRaw from './aoss-index-template.json' with { type: 'json' };
 
 const logger = new Logger({ serviceName: 'aoss-apply-template' });
 
 const TEMPLATE_NAME = 'cumplify-kb-template';
-const REGION = process.env.AWS_REGION ?? 'us-east-1';
 /** JSON array: [{ "name": "cumplify-iso-kb", "endpoint": "https://xxx.us-east-1.aoss.amazonaws.com" }, ...] */
 const COLLECTIONS: Array<{ name: string; endpoint: string }> = JSON.parse(
   process.env.COLLECTIONS ?? '[]',
@@ -35,66 +32,7 @@ const MAX_ATTEMPTS = 8;
 const BASE_DELAY_MS = 2_000;
 const MAX_DELAY_MS = 30_000;
 
-/** Minimal Sha256 HashConstructor over node:crypto (no @aws-crypto dep in repo). */
-type SourceData = string | ArrayBuffer | ArrayBufferView;
 
-function toBuffer(data: SourceData): Buffer {
-  if (typeof data === 'string') return Buffer.from(data);
-  if (ArrayBuffer.isView(data)) return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
-  return Buffer.from(data);
-}
-
-class NodeSha256 {
-  private hash: ReturnType<typeof createHash> | ReturnType<typeof createHmac>;
-  constructor(secret?: SourceData) {
-    this.hash = secret !== undefined ? createHmac('sha256', toBuffer(secret)) : createHash('sha256');
-  }
-  update(data: SourceData): void {
-    this.hash.update(toBuffer(data));
-  }
-  async digest(): Promise<Uint8Array> {
-    return new Uint8Array(this.hash.digest());
-  }
-  reset(): void {
-    this.hash = createHash('sha256');
-  }
-}
-
-const signer = new SignatureV4({
-  service: 'aoss',
-  region: REGION,
-  credentials: defaultProvider(),
-  sha256: NodeSha256,
-  applyChecksum: true, // AOSS requires x-amz-content-sha256
-});
-
-async function signedFetch(
-  method: 'GET' | 'PUT',
-  endpoint: string,
-  path: string,
-  body?: string,
-): Promise<{ status: number; body: string }> {
-  const url = new URL(endpoint);
-  const request = {
-    method,
-    protocol: 'https:',
-    hostname: url.hostname,
-    path,
-    headers: {
-      host: url.hostname,
-      ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
-    } as Record<string, string>,
-    ...(body !== undefined ? { body } : {}),
-  };
-  const signed = await signer.sign(request);
-  const resp = await fetch(`https://${url.hostname}${path}`, {
-    method,
-    headers: signed.headers,
-    body,
-    signal: AbortSignal.timeout(20_000),
-  });
-  return { status: resp.status, body: await resp.text() };
-}
 
 function retryable(status: number): boolean {
   // 403: data-access policy still propagating; 404/0: endpoint DNS/activation; 5xx/429: transient
@@ -127,17 +65,21 @@ async function withRetry(
   );
 }
 
-interface VerifyResult {
+export interface VerifyResult {
   collection: string;
   dimension: number;
   tenantIdType: string;
 }
 
-/** GET the template back and fail-closed on any mapping drift. */
-async function verifyTemplate(name: string, endpoint: string): Promise<VerifyResult> {
+/**
+ * GET the template back and fail-closed on any mapping drift.
+ * Exported for the Task-12 prover — seeding MUST run this check first and
+ * abort if the template is absent/wrong (never index against auto-mapping).
+ */
+export async function verifyTemplate(name: string, endpoint: string): Promise<VerifyResult> {
   const resp = await withRetry(
     `verify:${name}`,
-    () => signedFetch('GET', endpoint, `/_index_template/${TEMPLATE_NAME}`),
+    () => signedAossFetch('GET', endpoint, `/_index_template/${TEMPLATE_NAME}`),
     [200],
   );
   const parsed = JSON.parse(resp.body);
@@ -171,7 +113,7 @@ export async function handler(event: { action: string }): Promise<{
     if (event.action !== 'verify') {
       const put = await withRetry(
         `apply:${name}`,
-        () => signedFetch('PUT', endpoint, `/_index_template/${TEMPLATE_NAME}`, templateBody),
+        () => signedAossFetch('PUT', endpoint, `/_index_template/${TEMPLATE_NAME}`, templateBody),
         [200],
       );
       logger.info('Template applied', { collection: name, status: put.status });

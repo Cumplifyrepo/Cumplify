@@ -11,6 +11,7 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
+import { signedAossFetch } from './aoss-signed-client.js';
 
 const logger = new Logger({ serviceName: 'agents-retrieval' });
 
@@ -228,26 +229,28 @@ export interface AossHttpClient {
   search(endpoint: string, indexName: string, body: Record<string, unknown>, timeoutMs?: number): Promise<unknown>;
 }
 
-/** Default AOSS client — placeholder for real OpenSearch client integration */
+/**
+ * Default AOSS client — SigV4-signed (service 'aoss') via the shared client.
+ * Task-12 fix: the previous default was a bare fetch — AOSS rejected every
+ * query with 403 (live-confirmed, Task-11 carry). Caller must run inside the
+ * VPC (AOSS network policy allows the VPC endpoint only).
+ */
 const defaultAossClient: AossHttpClient = {
   async search(endpoint: string, indexName: string, body: Record<string, unknown>, timeoutMs?: number): Promise<unknown> {
-    // In production, this uses @opensearch-project/opensearch with SigV4 signing.
-    // Injected via Lambda environment or imported from a shared AOSS client module.
-    const url = `${endpoint}/${indexName}/_search`;
-    const socketTimeout = timeoutMs ?? 50_000;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(socketTimeout),
-    });
+    const response = await signedAossFetch(
+      'POST',
+      endpoint,
+      `/${indexName}/_search`,
+      JSON.stringify(body),
+      timeoutMs ?? 50_000,
+    );
 
-    if (!response.ok) {
-      const error = new Error(`AOSS search failed: ${response.status} ${response.statusText}`);
+    if (response.status < 200 || response.status >= 300) {
+      const error = new Error(`AOSS search failed: ${response.status} ${response.body.slice(0, 300)}`);
       (error as any).statusCode = response.status;
       throw error;
     }
 
-    return response.json();
+    return JSON.parse(response.body);
   },
 };

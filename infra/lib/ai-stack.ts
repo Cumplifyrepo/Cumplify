@@ -751,6 +751,38 @@ export class AiStack extends cdk.Stack {
       resources: collectionArns,
     }));
 
+    // ─── AOSS Prover Lambda (Task 12, ACC-4, architect ops tool) ──────────
+    // VPC-attached, SigV4-signing. Executes the Task-12 proof sequence
+    // (template-check / seed / query-via-retrieve() / search-control /
+    // delete-index). ONE-DOOR: never touches Bedrock — embedding vectors
+    // arrive in the invocation payload. seed/delete refuse indexes not
+    // prefixed 'task12-'. Invoked on demand by the architect, no CR trigger.
+    const aossProverFn = new NodejsFunction(this, 'AossProverFn', {
+      entry: 'services/agents/shared/aoss-prover.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(120), // retrieve() ceiling 45s + cold-start margin
+      bundling: { externalModules: [], target: 'node22' },
+      vpc: props.vpc,
+      vpcSubnets: { subnets: props.privateSubnets },
+      environment: {
+        COLLECTIONS: JSON.stringify(
+          collectionNames.map((n) => ({
+            name: n,
+            endpoint: collectionEndpoints[n],
+          })),
+        ),
+        POWERTOOLS_SERVICE_NAME: 'aoss-prover',
+      },
+    });
+    aossProverFn.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['aoss:APIAccessAll'],
+      resources: collectionArns,
+    }));
+
     // ─── AOSS Data-Access Policy (assembled post-seeder to avoid forward ref) ──
     // H-2 (Task 8R): READ block amended with exact agent-handler role ARNs.
     const aossDataAccessPolicy = new opensearchserverless.CfnAccessPolicy(this, 'AiAossDataAccessPolicy', {
@@ -766,13 +798,23 @@ export class AiStack extends cdk.Stack {
           Principal: [aiInvoker.role!.roleArn, ...agentHandlerRoleArns],
         },
         {
-          // WRITE access: weight-seeder + future apply-template
+          // WRITE access: weight-seeder + apply-template (T-9a exact role ARNs)
           Rules: [
             { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:CreateCollectionItems', 'aoss:UpdateCollectionItems', 'aoss:DescribeCollectionItems'] },
             { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:CreateIndex', 'aoss:UpdateIndex', 'aoss:DescribeIndex', 'aoss:ReadDocument', 'aoss:WriteDocument'] },
           ],
-          // T-9a (Task 9): apply-template principal amended with exact role ARN.
           Principal: [weightSeeder.role!.roleArn, applyTemplateFn.role!.roleArn],
+        },
+        {
+          // Task-12 prover: own block because cleanup needs aoss:DeleteIndex,
+          // which the seeder/template principals must NOT gain (live-found:
+          // delete-index 403'd without it). Code-level task1[2-4]- prefix
+          // guard keeps deletes off production indexes.
+          Rules: [
+            { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:CreateCollectionItems', 'aoss:UpdateCollectionItems', 'aoss:DescribeCollectionItems'] },
+            { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:CreateIndex', 'aoss:UpdateIndex', 'aoss:DeleteIndex', 'aoss:DescribeIndex', 'aoss:ReadDocument', 'aoss:WriteDocument'] },
+          ],
+          Principal: [aossProverFn.role!.roleArn],
         },
       ]),
     });
@@ -829,6 +871,7 @@ export class AiStack extends cdk.Stack {
 
     // ─── CfnOutputs ────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'ApplyTemplateFnArn', { value: applyTemplateFn.functionArn });
+    new cdk.CfnOutput(this, 'AossProverFnArn', { value: aossProverFn.functionArn });
     new cdk.CfnOutput(this, 'AiInvokerArn', { value: aiInvoker.functionArn });
     new cdk.CfnOutput(this, 'AiInvokerRoleArn', { value: aiInvoker.role!.roleArn });
     new cdk.CfnOutput(this, 'GuardrailId', { value: guardrail.attrGuardrailId });

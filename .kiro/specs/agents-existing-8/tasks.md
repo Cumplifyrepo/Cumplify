@@ -237,12 +237,12 @@
 > Depends on Tasks 5, 9 (retrieval wrapper deployed + AOSS collections accessible).
 
 ### Deliverables
-- [ ] **Fail-closed template check (T3E-F1 part 3):** BEFORE seeding any documents, GET `_index_template` from the TENANT-DOCS-KB collection endpoint. If the template is absent or `metadata.tenantId` is not `keyword`, ABORT seeding — never index a document against an auto-mapped field.
-- [ ] Seed AOSS TENANT-DOCS-KB collection with test documents for Tenant-A and Tenant-B (Titan Embed v2, 1024 dimensions)
-- [ ] Execute retrieval query as Tenant-A → verify results contain ONLY Tenant-A documents
-- [ ] Execute retrieval query as Tenant-B → verify zero Tenant-A results (cross-tenant negative proof)
-- [ ] Force AOSS cold start (wait for scale-to-zero, then query) → verify completes within 45s budget with retries logged
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-12-aoss-retrieval.log` (timestamps, retry count, latencies, tenant isolation assertion results, template-check confirmation)
+- [x] **Fail-closed template check (T3E-F1 part 3):** BEFORE seeding any documents, GET `_index_template` from the TENANT-DOCS-KB collection endpoint. If the template is absent or `metadata.tenantId` is not `keyword`, ABORT seeding — never index a document against an auto-mapped field.
+- [x] Seed AOSS TENANT-DOCS-KB collection with test documents for Tenant-A and Tenant-B (Titan Embed v2, 1024 dimensions)
+- [x] Execute retrieval query as Tenant-A → verify results contain ONLY Tenant-A documents
+- [x] Execute retrieval query as Tenant-B → verify zero Tenant-A results (cross-tenant negative proof)
+- [x] Force AOSS cold start (wait for scale-to-zero, then query) → verify completes within 45s budget with retries logged
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-12-aoss-retrieval.log` (timestamps, retry count, latencies, tenant isolation assertion results, template-check confirmation)
 
 ### Acceptance
 - ACC-4: tenant-filtered results confirmed; cross-tenant negative proof passes; 45s cold-start budget demonstrated — witnessed
