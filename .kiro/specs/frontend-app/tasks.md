@@ -57,7 +57,7 @@
 - [ ] Implement `services/api/src/resolvers/hitl-approval.ts` per design §2.3:
   - Step 1–2: extract resolverContext, validate role via `canApprove()` → 403.
   - Step 3: GetItem base-table key `PK=TENANT#<tenantId>#HITL, SK=PENDING#<hitlItemId>` → 404 on missing/mismatch.
-  - Step 4: Conditional UpdateItem (`attribute_exists(PK) AND #status = :pending`, SET status=RESOLVING) → catch `ConditionalCheckFailedException` → 409.
+  - Step 4: Conditional UpdateItem (`attribute_exists(PK) AND #status = :pending`, SET status=RESOLVING, resolvingAt=<now>) → catch `ConditionalCheckFailedException` → 409.
   - Step 5–6: extract taskToken + sfnExecutionArn from item.
   - Step 7a (APPROVE): SFN `SendTaskSuccess` → catch `TaskDoesNotExist`/`TaskTimedOut` → 410. Call `resolveHitlItem(APPROVED)`.
   - Step 7b (SEND_BACK): SFN `SendTaskFailure(error:'SENT_BACK', cause: note)` → catch same → 410. Call `resolveHitlItem(REJECTED)`.
@@ -117,9 +117,10 @@
 
 ## Task 8 — RESOLVING-Cleanup Sweeper [KIRO]
 
-- [ ] Create `services/api/src/resolvers/hitl-sweeper.ts`: scheduled Lambda (EventBridge rate 5 min) that scans GSI9 for items with `status=RESOLVING` and `tokenStoredAt` older than 5 minutes, resets them to `status=PENDING` (re-sets GSI9PK/GSI9SK so they reappear in the queue).
+- [ ] Create `services/api/src/resolvers/hitl-sweeper.ts`: scheduled Lambda (EventBridge rate 5 min) that scans GSI9 for items with `status=RESOLVING` and `resolvingAt` older than 5 minutes (NOT `tokenStoredAt` — that would race live approvals the instant they enter RESOLVING).
+- [ ] Reset uses a conditional UpdateItem: `ConditionExpression: #status = :resolving` (prevents resurrecting an item that completed between SendTaskSuccess and resolveHitlItem). SET status=PENDING, remove resolvingAt, re-set GSI9PK/GSI9SK so the item reappears in the queue.
 - [ ] Wire in ApiStack: NodejsFunction + EventBridge Schedule (rate 5 min) + IAM (DDB Query GSI9 + UpdateItem on CumplifyCore, tenant-scoped).
-- [ ] Unit test: item older than 5 min → reset; item younger → untouched.
+- [ ] Unit tests: item with resolvingAt > 5min ago AND status=RESOLVING → reset; item with resolvingAt < 5min → untouched; item with status=APPROVED (race) → ConditionalCheckFailedException caught, skipped.
 - [ ] `cdk synth` passes, CDK Nag zero non-compliant.
 
 **Depends on:** nothing.
@@ -175,8 +176,9 @@
 
 ## Task 12 — Amplify Hosting CDK Infrastructure [KIRO]
 
-- [ ] Add Amplify app + branch to ApiStack (or new AmplifyStack): `CfnApp` (platform=WEB_COMPUTE, no repository, enableBranchAutoBuild=false) + `CfnBranch` per env.
+- [ ] Create new `infra/lib/amplify-stack.ts` (AmplifyStack — own lifecycle, keeps ApiStack lean): `CfnApp` (platform=WEB_COMPUTE, no repository, enableBranchAutoBuild=false) + `CfnBranch` per env.
 - [ ] CfnOutputs: Amplify App ID, branch URL, deploy bucket name.
+- [ ] Wire AmplifyStack into `infra/lib/cumplify-stage.ts` with addDependency on ApiStack (needs API URL output).
 - [ ] `cdk synth` passes, CDK Nag zero non-compliant.
 - [ ] Template-assertion test: app + branch exist with correct platform.
 
@@ -213,7 +215,7 @@
 3. **Approval Lambda IAM** (Task 4): `states:SendTaskSuccess`, `states:SendTaskFailure` on HITL state machine ARN(s); `dynamodb:GetItem`+`UpdateItem` (tenant-scoped); `events:PutEvents`.
 4. **RESOLVING-cleanup sweeper IAM** (Task 8): EventBridge schedule + DDB Query/UpdateItem on CumplifyCore (tenant-scoped).
 5. **Cross-account credentialed-step role** (shared with pipeline `test:int` carry): a single role in the dev workload account assumable by the pipeline mgmt-account role, granting `amplify:CreateDeployment`+`amplify:StartDeployment` + the integration-test permissions. Designed ONCE with both consumers.
-6. **Amplify Hosting infra** (Task 12): CfnApp (WEB_COMPUTE) + CfnBranch + pipeline deploy step.
+6. **Amplify Hosting infra** (Task 12): AmplifyStack with CfnApp (WEB_COMPUTE) + CfnBranch + pipeline deploy step.
 
 - [ ] **[ARCHITECT]** All diffs assembled and presented as a single review package.
 - [ ] **[ARCHITECT]** Owner sign-off obtained (or requested changes applied).
@@ -448,10 +450,11 @@
 
 - [ ] Framer page confirmed via SDK inventory.
 - [ ] Settings nav entry (Pool B only, per `custom:role`).
-- [ ] Organization section: `document-locale` field (EN/ES/PT selector) → calls `updateProfile` for tenant-level locale.
+- [ ] Organization section: tenant `document-locale` field rendered **READ-ONLY** (displays the tenant default locale). The `updateProfile` mutation writes the per-USER locale only — it must NOT be used for the tenant document-locale. The tenant-settings write surface is a **NAMED CARRY to the settings spec**.
 - [ ] All strings via `next-intl`.
 
 **Binds to:** owner-provided Framer page for Settings.
+**Named carry:** tenant document-locale write → `settings-ui` spec.
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-31-settings.log`
 

@@ -215,7 +215,7 @@ extend type Subscription {
    → 404 if not found or tenantId mismatch (defense-in-depth)
 4. Guard: conditional UpdateItem with ConditionExpression:
    attribute_exists(PK) AND #status = :pending
-   Sets status = RESOLVING (optimistic lock — prevents double-approval race)
+   Sets status = RESOLVING, resolvingAt = <now> (optimistic lock — prevents double-approval race)
    → On ConditionalCheckFailedException: return 409 "already resolved"
 5. Extract taskToken from the item (server-side only — BC-8)
 6. Extract sfnExecutionArn from the item (populated by carry #3 amendment)
@@ -301,6 +301,8 @@ Consumed by `hitl-approval.ts` step 2. Versioned alongside the schema — change
 **Tenant isolation:** PK includes tenantId; resolver assumes tenant-data role with user's tenantId session tag. LeadingKeys ABAC restricts to `TENANT#<tenantId>#*`.
 
 **GSI usage:** None. Fetched by exact PK+SK (GetItem).
+
+**Scope boundary (AM-3):** `updateProfile` writes the per-USER locale only. The tenant `document-locale` (Settings → Organization) is a DIFFERENT item (`TENANT#<tenantId>#META` or equivalent) — its write surface is a **NAMED CARRY to the `settings-ui` spec**. This spec reads the tenant default locale (fallback) but does not write it.
 
 ### 3.2 HITL Item (existing base-table keys — verified `store-token.ts:54`, `hitl.ts:106`)
 
@@ -390,7 +392,7 @@ All data access patterns follow the api-core convention:
 | Failure | Impact | Mitigation | Rollback |
 |---------|--------|------------|----------|
 | AppSync subscription disconnect | Live feed stale; HITL queue not updating | SUB-4: exponential backoff reconnect + refetch on reconnect. 15s polling interim for HITL queue. | N/A (client-side) |
-| HITL approval Lambda timeout | User sees error; item remains in RESOLVING state | Retry: user clicks again → step 4 conditional check succeeds (status=RESOLVING is not PENDING → 409 if set by another caller, or same caller retries and the original SFN call may have succeeded). Timeout recovery: a scheduled cleanup marks RESOLVING items older than 5 min back to PENDING. | Item stays in queue — no corruption |
+| HITL approval Lambda timeout | User sees error; item remains in RESOLVING state | Retry: user clicks again → step 4 conditional check succeeds (status=RESOLVING is not PENDING → 409 if set by another caller, or same caller retries and the original SFN call may have succeeded). Timeout recovery: a scheduled cleanup sweeper resets items with `resolvingAt` older than 5 min back to PENDING (conditional on status=RESOLVING — cannot resurrect completed items). | Item stays in queue — no corruption |
 | SFN SendTaskSuccess: TaskDoesNotExist | Task token expired (SFN timeout fired) | Caught in step 7a: return 410 "task expired — the agent will re-draft." Cleanup: resolveHitlItem marks TIMED_OUT. | No corruption — SFN owns timeout lifecycle |
 | SFN SendTaskFailure: TaskDoesNotExist | Same as above for send-back | Same pattern: 410 + TIMED_OUT bookkeeping | Same |
 | Double-approval race (two users click simultaneously) | First wins, second gets 409 | Step 4: conditional UpdateItem (`attribute_exists(PK) AND #status = :pending`). Second caller's condition fails → ConditionalCheckFailedException → 409. | No corruption — conditional write is the guard |
@@ -470,8 +472,9 @@ Button/Back Button, CTA Card, Toggle Button, Pricing Cards, Footer, FAQ, Menu Ic
 | Staging | `cumplify-frontend-staging` | `staging` | Same pattern, Staging post-deploy step |
 | Prod | `cumplify-frontend-prod` | `main` | Same pattern, Prod post-deploy step |
 
-**CDK implementation (ApiStack or new AmplifyStack):**
+**CDK implementation (new AmplifyStack — own lifecycle, keeps ApiStack lean):**
 ```typescript
+// infra/lib/amplify-stack.ts
 const amplifyApp = new amplify.CfnApp(this, 'FrontendApp', {
   name: `cumplify-frontend-${envConfig.envName}`,
   platform: 'WEB_COMPUTE',
