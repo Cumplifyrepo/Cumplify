@@ -86,4 +86,8 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
 
   // --- Spec 8R: agent writeback (Task 8R, H-3) ---
   'Agent.WritebackCommitted': true,
+
+  // --- Spec 9 (frontend-app): HITL approval events ---
+  'Hitl.Approved': true,
+  'Hitl.SentBack': true,
 };

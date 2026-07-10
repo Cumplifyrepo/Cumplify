@@ -68,6 +68,14 @@ Consumers validate `detailType` (string) and ET-4 fields on `.detail`.
 
 ---
 
+## Spec 9 (frontend-app): HITL Approval Events
+
+| Domain | Events |
+|--------|--------|
+| Hitl | `Hitl.Approved` (auditTrail: **true**), `Hitl.SentBack` (auditTrail: **true**) |
+
+---
+
 ## Registry Notes
 
 ### Note 1 — Prefix matching vs domain membership (R-7 `records-q`)
