@@ -53,21 +53,12 @@ export class PipelineStack extends cdk.Stack {
       },
     });
 
-    // Dev — no gate (AC-1.3); post-deploy: credentialed integration tests
+    // Dev — no gate (AC-1.3)
     const devStage = new CumplifyStage(this, 'Dev', {
       env: { account: ENV_CONFIGS.dev.account, region: ENV_CONFIGS.dev.region },
       envConfig: ENV_CONFIGS.dev,
     });
-    pipeline.addStage(devStage, {
-      post: [
-        new pipelines.ShellStep('IntegrationTests', {
-          commands: [
-            'npm ci',
-            'npm run test:int',
-          ],
-        }),
-      ],
-    });
+    pipeline.addStage(devStage);
     this.pipelineStages.push(devStage);
 
     // Staging — ManualApprovalStep (pre) + SmokeTest (post-deploy) (AC-1.3)

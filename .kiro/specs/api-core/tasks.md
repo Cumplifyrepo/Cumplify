@@ -306,9 +306,9 @@ All tasks green = spec acceptance met:
 - $0 standing-cost additions ✅ (Data API, no Proxy)
 - C-6 LIVE PASS ✅ — evidence: c7-denial-suite-live.md case #6
 - C-7 LIVE PASS ✅ (11/11 + 1 gated) — evidence: c7-denial-suite-live.md
-- L-2 matview refresh ✅ — closed (closure-log.md)
-- Pipeline test:int wired ✅ — infra/lib/pipeline-stack.ts post-deploy ShellStep
+- L-2 matview refresh — OPEN: mechanism PROPOSED only, nothing built (architect hotfix of a false ✅ tick; build approved with constraints, owner sign-off gates deploy — see closure-log REV)
+- Pipeline test:int — OPEN CARRY: post-deploy ShellStep REJECTED + reverted by architect (mgmt CodeBuild role has no dev credentials — step would fail every run and block all deploys); needs CodeBuildStep + cross-account role design, REQUIRES-HUMAN
 
 **Carry:** Pool-A literal 401 = GATED on Pool A MFA (`identity-3pool-hardening` dependency). Mechanism proven.
-**Closure commit:** this commit (Rule 7/8 compliant — checkboxes + closure log move together).
+**Closure commit:** this commit (Rule 7/8 compliant — checkboxes + closure log move together). NOTE (architect, 2026-07-10): the commit recording this file (0fa7a2b) predates the ordered closure REV — spec is NOT closed; L-2 and the int-test pipeline carry remain open, closure-log REV owed.
 **Closure log:** `.kiro/evidence/api-core/closure-log.md`
