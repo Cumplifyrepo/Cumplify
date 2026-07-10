@@ -34,8 +34,8 @@
     },
     "guru-45001": {
       "modelId": "moonshotai.kimi-k2.5",
-      "status": "PROVISIONAL",
-      "expiry": null,
+      "status": "ASSIGNED",
+      "expiry": "2026-10-08",
       "marginHeadroom": 0.949,
       "tier": "guru",
       "cachingSupported": false
@@ -73,14 +73,14 @@
       "cachingSupported": false
     },
     "legal-ledger": {
-      "modelId": "",
-      "status": "UNASSIGNED",
-      "expiry": null,
-      "marginHeadroom": 0,
+      "modelId": "zai.glm-5",
+      "status": "ASSIGNED",
+      "expiry": "2026-10-08",
+      "marginHeadroom": 0.853,
       "tier": "legal-ledger",
       "cachingSupported": false
     }
   },
-  "compiledAt": "2026-07-09T00:53:47.846Z",
-  "sourceCommit": "bfc94a7"
+  "compiledAt": "2026-07-10T01:07:47.369Z",
+  "sourceCommit": "9432b3d"
 }

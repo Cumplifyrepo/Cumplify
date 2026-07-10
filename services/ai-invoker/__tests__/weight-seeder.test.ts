@@ -34,6 +34,7 @@ const IN_SCOPE_MODELS = [
   'us.amazon.nova-lite-v1:0',
   'qwen.qwen3-next-80b-a3b',
   'moonshotai.kimi-k2.5',
+  'zai.glm-5', // legal-ledger ASSIGNED at Task 14 (live-API $1.00/$3.20)
 ];
 
 describe('weight-seeder', () => {
@@ -43,13 +44,13 @@ describe('weight-seeder', () => {
   });
 
   it('loads seed data at module level (bundled inline, no runtime fs)', async () => {
-    // Real seed has 4 models — handler seeds all of them.
+    // Real seed has 5 models (glm-5 added at Task-14 assignment) — handler seeds all.
     // This proves the import resolved at bundle time without ENOENT.
     const result = await handler({ action: 'seed' });
     expect(result.status).toBe('success');
-    expect(result.seeded).toBe(4);
+    expect(result.seeded).toBe(5);
     expect(result.skipped).toBe(0);
-    expect(mockSend).toHaveBeenCalledTimes(4);
+    expect(mockSend).toHaveBeenCalledTimes(5);
   });
 
   it('skips non-seed actions', async () => {
@@ -63,10 +64,10 @@ describe('weight-seeder', () => {
     condError.name = 'ConditionalCheckFailedException';
     mockSend.mockRejectedValueOnce(condError);
 
-    // First model already seeded → skipped; remaining 3 seed normally.
+    // First model already seeded → skipped; remaining 4 seed normally.
     const result = await handler({ action: 'seed' });
     expect(result.status).toBe('success');
-    expect(result.seeded).toBe(3);
+    expect(result.seeded).toBe(4);
     expect(result.skipped).toBe(1);
   });
 
@@ -82,7 +83,7 @@ describe('weight-seeder', () => {
 
   // ── Task 2 acceptance criteria, encoded against the committed seed file ──
 
-  it('ACCEPTANCE: all 4 in-scope models present with numeric wIn/wOut > 0', () => {
+  it('ACCEPTANCE: all in-scope models present with numeric wIn/wOut > 0', () => {
     expect(Object.keys(seed.models).sort()).toEqual([...IN_SCOPE_MODELS].sort());
     for (const id of IN_SCOPE_MODELS) {
       expect(seed.models[id].wIn).toBeGreaterThan(0);
