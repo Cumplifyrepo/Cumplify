@@ -1,0 +1,50 @@
+{
+ "37": {
+  "task": "legal-ledger-008",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: table saws (1910.213 woodworking machinery) + combustible wood dust missed \u2014 scenario-explicit; BOTH candidates missed (corpus lacks 1910.213; neither supplied from knowledge)"
+  ],
+  "note": "8 items with clean APPLIES/NOT-APPLIES determinations incl explicit rejection of irrelevant corpus doc (acquisition-integration) \u2014 good discipline; 1904.39 carve-out present"
+ },
+ "38": {
+  "task": "legal-ledger-010",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: OUTDOOR heat illness (Cal/OSHA \u00a73395) missed though scenario plants 'yard workers moving trailers outdoors' \u2014 corpus doc covers only indoor \u00a73396 (corpus gap), model didn't supply \u00a73395"
+  ],
+  "note": "Indoor heat core exact (82/87\u00b0F tiers, \u00a73203 IIPP); state-plan gap analysis correct; temp-worker angle relevant for fulfillment"
+ },
+ "39": {
+  "task": "legal-ledger-019",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: GA local land-disturbing-activity permit not broken out as separate entry (state E&S law named at source level)"
+  ],
+  "note": "CGP core complete: NOI-before-earthwork, common-plan 3.5-of-25 applicability, SWPPP, stabilization/termination; controlling-employer framing apt for homebuilder"
+ },
+ "40": {
+  "task": "legal-ledger-023",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: the sharpest NOT-crossed determinations absent \u2014 PSM TQ 1,500 lb and RMP TQ 2,500 lb for chlorine (1,200 lb on site crosses neither); HAZWOPER 1910.120(q) emergency-response for operators isolating the leak also missed"
+  ],
+  "note": "Release notification RQ 10 lb + written follow-up nailed; Tier II chlorine EHS ongoing correct; honest not-crossed section (SPCC/LQG/UST) though corpus-driven rather than scenario-sharp"
+ }
+}

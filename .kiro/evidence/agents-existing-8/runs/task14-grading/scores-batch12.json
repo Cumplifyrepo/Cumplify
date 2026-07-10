@@ -1,0 +1,50 @@
+{
+ "45": {
+  "task": "legal-ledger-025",
+  "obligation_id": 3,
+  "reg_mapping": 4,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 4,
+  "fm": [
+   "FM-5: POTW categorical pretreatment (40 CFR 413/433) + F006 sludge determination not itemized (sludge gets one glancing mention) \u2014 both scenario-explicit; BOTH candidates missed pretreatment on this task; 6-month Cr(VI) monitoring tied to PEL instead of action level; Sector N loosely misapplied"
+  ],
+  "note": "Subpart N controls detailed (fume suppressants, mesh pads, surface tension); MOC/register-integration framing decent"
+ },
+ "46": {
+  "task": "legal-ledger-024",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: no explicit not-crossed determinations (counterpart had TRI/Tier II with math); PEL/exposure item folded into TSCA entry"
+  ],
+  "note": "Episodic core correct with verify-PA-rules discipline note; waste determination/manifest/TSDF chain right"
+ },
+ "47": {
+  "task": "legal-ledger-005",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: wholesale-industry partial-exemption check for routine 1904 logs unperformed (hospitalization report unaffected)"
+  ],
+  "note": "BOTH PIT training triggers caught: post-accident refresher AND lapsed 3-year evaluation (1910.178(l)(4)(iii)); 24h in-patient report + scene preservation + 7-day log entry all exact"
+ },
+ "48": {
+  "task": "legal-ledger-020",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5 mild: state air-permit confirmation + Tier II fuel-oil determination absent (3 items, thin); silent on SPCC certification type (safer than counterpart's PE overstatement)"
+  ],
+  "note": "Both core traps caught with exact math (1,460>1,320 aggregation; NSPS IIII 100-hr emergency status)"
+ }
+}

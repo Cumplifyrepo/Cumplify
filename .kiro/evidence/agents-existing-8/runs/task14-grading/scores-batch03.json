@@ -1,0 +1,48 @@
+{
+ "9": {
+  "task": "legal-ledger-020",
+  "obligation_id": 5,
+  "reg_mapping": 4,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 4,
+  "fm": [
+   "mild: states PE 'must' certify SPCC \u2014 1,460 gal qualifies for Tier-I self-certification (overstated, conservative direction); Tier II determination for combined fuel-oil inventory unflagged"
+  ],
+  "note": "Both scenario traps caught: NSPS IIII emergency status w/ 100-hr cap AND SPCC aggregation 660+800=1,460>1,320 with math shown"
+ },
+ "10": {
+  "task": "legal-ledger-014",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: Tier II MISSED \u2014 2,000 gal diesel \u2248 14,200 lb > 10,000 lb threshold; industrial stormwater (Sector P trucking, ditch\u2192creek) also missed"
+  ],
+  "note": "SPCC aggregate 2,995 gal exact incl drums; used-oil Part 279 correct; ditch\u2192creek nexus recognized for SPCC but not stormwater"
+ },
+ "11": {
+  "task": "legal-ledger-017",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 5,
+  "accuracy": 5,
+  "fm": [],
+  "note": "608/AIM core exact; PSM+RMP documented as tracked-non-applicable with correct ammonia-TQ scoping; Tier II handled per-location (avoids counterpart's aggregate error); MOC linkage to remodels"
+ },
+ "12": {
+  "task": "legal-ledger-029",
+  "obligation_id": 5,
+  "reg_mapping": 4,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 4,
+  "fm": [
+   "FM-4-adj: invented acronym 'DOSWIS' (correct name is WISHA) \u2014 concept right, name fabricated; WA dangerous-waste-broader-than-RCRA nuance missed"
+  ],
+  "note": "M&A integration core nailed (permit transfer/re-issue, EPA IDs, DOSH continuity, register restructure by jurisdiction)"
+ }
+}

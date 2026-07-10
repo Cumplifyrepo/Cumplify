@@ -1,0 +1,50 @@
+{
+ "1": {
+  "task": "legal-ledger-007",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: LOTO (1910.147) for submerged-mixer servicing inside the pit MISSED \u2014 material for quarterly mixer service; respiratory-protection program not called out beyond PRCS"
+  ],
+  "note": "PRCS core nailed w/ hatch-guarding catch; strong evaluation cadence"
+ },
+ "2": {
+  "task": "legal-ledger-022",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 3,
+  "completeness": 4,
+  "accuracy": 3,
+  "fm": [
+   "FM-3-adj: invents speculative generator/belly-tank linkage (no scenario basis) padding SPCC+NSPS items into the register (hedged with 'if')"
+  ],
+  "note": "UST Part 280 family thorough incl closure/site assessment + A/B/C training; excavation-phase worker safety unmentioned"
+ },
+ "3": {
+  "task": "legal-ledger-017",
+  "obligation_id": 4,
+  "reg_mapping": 3,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 3,
+  "fm": [
+   "FM-2: EPCRA Tier II applicability computed on CORPORATE AGGREGATE across 22 stores \u2014 thresholds are per-facility; per-store 300-500 lb is far below 10,000 lb"
+  ],
+  "note": "608/AIM leak-repair core correct (15lb, 20%/yr); EXCELLENT explicit PSM/RMP non-applicability documentation"
+ },
+ "4": {
+  "task": "legal-ledger-002",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: PPE hazard assessment (1910.132) for routine skin exposure missed; entire environmental side absent (TRI otherwise-used determination for xylene, VOC minor-source air permit)"
+  ],
+  "note": "OSHA side strong incl secondary-container labeling; no fabrications"
+ }
+}

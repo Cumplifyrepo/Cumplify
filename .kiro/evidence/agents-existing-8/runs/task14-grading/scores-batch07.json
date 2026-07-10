@@ -1,0 +1,48 @@
+{
+ "25": {
+  "task": "legal-ledger-029",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 4,
+  "fm": [
+   "corpus-echo: #2 evaluation timing mentions 'plating lines' (not a corrugated-plant activity); LQG/Tier II/stormwater continuity not itemized (covered generically by permits-inventory)"
+  ],
+  "note": "Integration core correct incl legacy liabilities; no invented acronyms (counterpart fabricated 'DOSWIS')"
+ },
+ "26": {
+  "task": "legal-ledger-003",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 4,
+  "fm": [
+   "corpus-induced: 'required or provided' respirator trigger repeated from grounding doc (overbroad vs 1910.134 voluntary-use nuance) \u2014 corpus wording defect, model grounded faithfully; NOTE for corpus revision"
+  ],
+  "note": "6 obligations incl permit-BEFORE-install as critical pre-startup; mixed-coating secondary-container labeling detail"
+ },
+ "27": {
+  "task": "legal-ledger-016",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: OSHA side entirely absent (shear guarding/LOTO, PIT training, noise for shearing ops); SPCC determination only implied in discipline item"
+  ],
+  "note": "MSGP Sector N core complete: NOI, SWPPP, quarterly visual, benchmark monitoring, no-exposure correctly ruled out for outdoor yard"
+ },
+ "28": {
+  "task": "legal-ledger-001",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [],
+  "note": "1910.147 surfaced EXPLICITLY as own obligation with honest 'not in excerpts' disclosure + model-knowledge citation \u2014 ideal grounded behavior; counterpart left LOTO implied"
+ }
+}

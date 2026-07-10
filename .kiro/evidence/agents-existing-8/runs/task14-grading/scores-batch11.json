@@ -1,0 +1,50 @@
+{
+ "41": {
+  "task": "legal-ledger-010",
+  "obligation_id": 3,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 2,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: thinnest response of run \u2014 outdoor heat \u00a73395 (yard workers planted in scenario) missed; Subpart D mezzanine, HazCom, temp-worker, recordkeeping all absent (3 items vs counterpart's 5)"
+  ],
+  "note": "What's there is precise: 85\u00b0F correctly read as 82\u00b0F-tier duties + approaching 87\u00b0F trigger; IIPP \u00a73203 correct"
+ },
+ "42": {
+  "task": "legal-ledger-009",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: no standalone engineering-controls/LEV entry (folded into others); avoids numeric PELs (counterpart cited exact values correctly)"
+  ],
+  "note": "1910.1026 core right incl regulated areas + 6-month monitoring; respirator likelihood correctly tied to 20 arc-hrs/day and dilution-only ventilation"
+ },
+ "43": {
+  "task": "legal-ledger-027",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "FM-5 mild: distributor DOWNSTREAM duties (compliant label/SDS transmission to customers per 1910.1200(b)) unnamed \u2014 the deeper trap for a chemicals distributor"
+  ],
+  "note": "Reg-change management core exact incl phased-deadline gating; repackaging secondary-container labeling caught as critical; register-response section directly answers the ask"
+ },
+ "44": {
+  "task": "legal-ledger-011",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: incident-investigation/corrective-action (45001 10.2) not an item though injury occurred; machine-source guarding for laceration cause absent; 'plating chemistry' corpus echo"
+  ],
+  "note": "Joint-responsibility core nailed with explicit rebuttal of agency claim; recording assigned to supervising host (1904.31) correct"
+ }
+}

@@ -1,0 +1,50 @@
+{
+ "21": {
+  "task": "legal-ledger-028",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 4,
+  "fm": [
+   "FM-5: scenario explicitly names spent solvent/lacquer waste + used booth filters \u2014 NO RCRA generator-status/waste-characterization item; FM-1-adj: asserts isocyanates present (not in scenario); 'plating chemistry' corpus echo"
+  ],
+  "note": "Permit-before-install + HHHHHH + 1910.107 core solid; TRI tracking right"
+ },
+ "22": {
+  "task": "legal-ledger-006",
+  "obligation_id": 3,
+  "reg_mapping": 4,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: mechanical power press standard (1910.217) missed for a stamping press line \u2014 cited generic 1910.212; LOTO for die-setting/servicing absent"
+  ],
+  "note": "Hearing conservation exactly right (AL 85 dBA program vs PEL 90 controls distinction correct at 88 dBA); thin at 3 obligations"
+ },
+ "23": {
+  "task": "legal-ledger-004",
+  "obligation_id": 3,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: HazCom-from-contractor-chemicals and hot-work/fire-watch both absent (counterpart caught HazCom)"
+  ],
+  "note": "Multi-employer + Subpart D + PPE assessment all correct; 3 obligations, thinner than counterpart"
+ },
+ "24": {
+  "task": "legal-ledger-013",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "FM-5 mild: air-permit modification for tripled coating throughput missed (counterpart caught it); LQG re-notification unnamed"
+  ],
+  "note": "LQG core best-in-pair: 90-vs-180-day contrast, monthly category re-evaluation, before-quarter gating; TRI threshold bases correctly assigned"
+ }
+}

@@ -1,0 +1,48 @@
+{
+ "53": {
+  "task": "legal-ledger-016",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "FM-5 mild: shear guarding/LOTO + SPCC determination for hydraulic equipment still absent (both candidates)"
+  ],
+  "note": "MSGP core complete + adds OSHA side (PIT, first aid) that counterpart omitted entirely"
+ },
+ "54": {
+  "task": "legal-ledger-027",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [],
+  "note": "'Containers LEAVING the facility' touches downstream distributor duty (better than counterpart); \u00a7311 SDS-basis ripple to EPCRA reasonable and hedged"
+ },
+ "55": {
+  "task": "legal-ledger-019",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: HazCom absent (counterpart had it); GA land-disturbing permit not broken out (both)"
+  ],
+  "note": "CGP core complete: common-plan trigger explicit, before-earthwork gating, stabilization/termination"
+ },
+ "56": {
+  "task": "legal-ledger-015",
+  "obligation_id": 4,
+  "reg_mapping": 3,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 3,
+  "fm": [
+   "MATERIAL: sulfuric-acid Tier II wrongly ruled out \u2014 quotes min(500 lb, TPQ) rule but attaches it to \u00a7302 instead of \u00a7312, so 900 lb > 500 lb reportability missed (same trap as counterpart but NO fabricated values: TPQ 1,000 correct); minor: propane under 1910.106 instead of 1910.110 LP-Gas"
+  ],
+  "note": "8 explicit determinations incl \u00a7311 first-crossing catch; PSM/RMP fuel-use conclusions correct; visible honest reasoning \u2014 wrong on the trap without fabricating"
+ }
+}

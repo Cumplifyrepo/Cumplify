@@ -1,0 +1,50 @@
+{
+ "5": {
+  "task": "legal-ledger-026",
+  "obligation_id": 5,
+  "reg_mapping": 4,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: 1904.39 serious-incident reporting persists despite small-employer exemption \u2014 not stated; #1 source cited to corpus doc not 40 CFR 112"
+  ],
+  "note": "All 4 consultant claims correctly triaged with threshold math (300<1320 gal, 2000<10000 lb, 50 kg/mo=VSQG); honest about corpus gap on OSHA 300"
+ },
+ "6": {
+  "task": "legal-ledger-021",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "FM-5 mild: 'never filed' = existing non-compliance; retroactive/late Form R remediation not addressed, only go-forward cadence"
+  ],
+  "note": "TRI core exact (otherwise-used 10k lb, NAICS, FTE, July 1); good breadth notes (HazCom, 1910.107, minor NSR, PELs)"
+ },
+ "7": {
+  "task": "legal-ledger-002",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: PPE hazard assessment missed; environmental side absent (TRI determination, VOC air permit)"
+  ],
+  "note": "Same 4 OSHA obligations as its counterpart; slightly better evaluation cadence (weekly eyewash, monthly inspections)"
+ },
+ "8": {
+  "task": "legal-ledger-004",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: hot-work/fire-watch during flat-roof replacement (torch/kettle) unaddressed"
+  ],
+  "note": "Multi-employer core correct incl controlling-employer exposure; year-round HVAC fall protection caught; HazCom-from-contractor-chemicals good"
+ }
+}

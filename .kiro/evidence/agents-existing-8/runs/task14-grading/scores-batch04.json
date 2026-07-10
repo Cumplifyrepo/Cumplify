@@ -1,0 +1,46 @@
+{
+ "13": {
+  "task": "legal-ledger-030",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 5,
+  "accuracy": 5,
+  "fm": [],
+  "note": "TQ-crossing core exact: PSM+RMP newly triggered at 10k lb, Tier II update + \u00a7302, CERCLA/EPCRA RQ 100 lb, register documents 8k\u219214k transition; before-operation gating"
+ },
+ "14": {
+  "task": "legal-ledger-001",
+  "obligation_id": 4,
+  "reg_mapping": 3,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "FM-4-adj: scenario is a textbook 1910.147 LOTO case (stored spring/gravity energy, jam clearing) but 1910.147 never cited \u2014 LOTO folded into electrical 1910.331-335 as 'implied'; grounded-honest but register lacks the primary citation. [Grader taint disclosure: this response was the pre-shuffle spot-check]"
+  ],
+  "note": "Machine guarding correct; forklift item speculative-hedged; PPE assessment missing"
+ },
+ "15": {
+  "task": "legal-ledger-009",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 5,
+  "accuracy": 5,
+  "fm": [],
+  "note": "Cr(VI) PEL 5 / AL 2.5 \u00b5g/m\u00b3 and 6-month monitoring cadence all CORRECT from model knowledge (verified); LEV-vs-dilution, regulated areas, 1910.134, hot-work fire watch \u2014 full hierarchy sequenced"
+ },
+ "16": {
+  "task": "legal-ledger-007",
+  "obligation_id": 3,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: LOTO for mixer servicing missed (both candidates missed on this task); hatch guarding (Subpart D) and first-aid/rescue depth also absent \u2014 3 obligations vs counterpart's 5"
+  ],
+  "note": "PRCS core correct with better ISO mapping breadth (6.1.2/8.1.1/8.2); thinner overall"
+ }
+}

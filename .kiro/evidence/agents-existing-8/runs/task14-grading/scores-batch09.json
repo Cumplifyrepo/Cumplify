@@ -1,0 +1,48 @@
+{
+ "33": {
+  "task": "legal-ledger-026",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 5,
+  "accuracy": 5,
+  "fm": [],
+  "note": "All 4 consultant claims triaged with math AND 1904.39 carve-out explicit AND positive-obligations section (HazCom/flam/spray) \u2014 best consultant-triage response"
+ },
+ "34": {
+  "task": "legal-ledger-030",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 5,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "mild: CERCLA/EPCRA release-notification RQ item not broken out (counterpart had it)"
+  ],
+  "note": "PSM+RMP trigger exact; MOC as own item; 3-yearly PSM audit cadence correct (1910.119(o)); ammonia TPQ 500 lb right"
+ },
+ "35": {
+  "task": "legal-ledger-012",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: Tier II sulfuric-acid EHS missed (both candidates); battery-wash wastewater/POTW missed (both)"
+  ],
+  "note": "1910.178(g) + 151 + HazCom + PIT electric retraining + charger LOTO \u2014 parity with counterpart"
+ },
+ "36": {
+  "task": "legal-ledger-008",
+  "obligation_id": 3,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: table saws explicit in scenario but 1910.213 woodworking machinery guarding MISSED; wood dust (combustible dust housekeeping + PEL) also explicit and missed; EAP oral-plan (\u226410 employees) nuance absent"
+  ],
+  "note": "Recordkeeping exemption + 1904.39 carve-out exact (the scenario core); conditional spray/welding honest; multi-employer slightly padded"
+ }
+}

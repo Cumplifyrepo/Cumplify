@@ -1,0 +1,48 @@
+{
+ "49": {
+  "task": "legal-ledger-022",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [],
+  "note": "UST install+closure complete; PRCS for old-tank-interior entry during removal = sharp construction-phase catch; NO speculative padding (counterpart invented generator linkage)"
+ },
+ "50": {
+  "task": "legal-ledger-018",
+  "obligation_id": 5,
+  "reg_mapping": 4,
+  "risk_class": 4,
+  "completeness": 5,
+  "accuracy": 5,
+  "fm": [
+   "minor: waste-determination source cited as 'implied RCRA' instead of 40 CFR 262.11"
+  ],
+  "note": "ALL 5 audit findings addressed; lamps >1yr correctly flagged as violation; aerosols-as-universal-waste supplied correctly BEYOND corpus (2019 federal UW rule); filter draining-status check right"
+ },
+ "51": {
+  "task": "legal-ledger-011",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 4,
+  "accuracy": 5,
+  "fm": [
+   "minor: first-aid adequacy item absent (counterpart had it); incident investigation not an item (both)"
+  ],
+  "note": "Shared-responsibility core correct w/ 5.4 consultation mapping; register-ready summary table; cut-resistant gloves specificity"
+ },
+ "52": {
+  "task": "legal-ledger-014",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 3,
+  "fm": [
+   "ARITHMETIC ERROR: aggregate stated 3,295 gal; components sum to 2,995 (2,000+500+275+220) \u2014 wrong figure propagated twice into register-bound text (conclusion >1,320 unchanged); FM-5: Tier II diesel (~14,200 lb) + Sector P stormwater missed (both candidates); speculative generator item (scenario says fleet fueling)"
+  ],
+  "note": "SPCC applicability logic right incl ditch\u2192creek nexus; used-oil linkage to SPCC aggregate documented"
+ }
+}

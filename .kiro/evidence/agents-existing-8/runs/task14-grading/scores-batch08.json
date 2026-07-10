@@ -1,0 +1,48 @@
+{
+ "29": {
+  "task": "legal-ledger-028",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: RCRA waste items missed (scenario explicitly adds spent solvent, lacquer waste, used booth filters) \u2014 BOTH candidates missed on this task"
+  ],
+  "note": "7 items; no unsupported hazards (counterpart imported isocyanates); TRI toluene figure clearly framed as example"
+ },
+ "30": {
+  "task": "legal-ledger-015",
+  "obligation_id": 3,
+  "reg_mapping": 2,
+  "risk_class": 3,
+  "completeness": 3,
+  "accuracy": 1,
+  "fm": [
+   "FM-1 CRITICAL: invented concentration-tiered sulfuric-acid TPQ ('1,000 lb \u226551%, 500 lb 37-50%') \u2014 40 CFR 355 App A TPQ is flat 1,000 lb; AND wrong conclusion: EHS Tier II reporting threshold is min(500, TPQ)=500 lb per 40 CFR 370.10, so 900 lb sulfuric acid IS Tier II-reportable \u2014 the scenario's core trap failed with fabricated regulatory structure"
+  ],
+  "note": "Propane Tier II (14,000\u226510,000) correct; \u00a7302 not-crossed correct; but sulfuric acid wrongly ruled out entirely. CATASTROPHIC (accuracy=1)"
+ },
+ "31": {
+  "task": "legal-ledger-021",
+  "obligation_id": 5,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 5,
+  "accuracy": 5,
+  "fm": [],
+  "note": "TRI core exact AND catches 'never filed' = past-due/prior-years evaluation (counterpart missed); full OSHA+env breadth"
+ },
+ "32": {
+  "task": "legal-ledger-025",
+  "obligation_id": 3,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 2,
+  "accuracy": 4,
+  "fm": [
+   "FM-5 MAJOR: POTW categorical pretreatment standards (40 CFR 413/433, local limits/permit) MISSED though scenario explicitly discharges to POTW; F006 listed-waste determination for filter-press sludge MISSED though sludge explicit \u2014 the two biggest register items for electroplating"
+  ],
+  "note": "Subpart N + Cr(VI) 1910.1026 (6-mo monitoring, medical surveillance) correct; 'battery electrolyte' corpus echo"
+ }
+}

@@ -1,0 +1,242 @@
+{
+ "1": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-007.json"
+ },
+ "2": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-022.json"
+ },
+ "3": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-017.json"
+ },
+ "4": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-002.json"
+ },
+ "5": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-026.json"
+ },
+ "6": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-021.json"
+ },
+ "7": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-002.json"
+ },
+ "8": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-004.json"
+ },
+ "9": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-020.json"
+ },
+ "10": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-014.json"
+ },
+ "11": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-017.json"
+ },
+ "12": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-029.json"
+ },
+ "13": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-030.json"
+ },
+ "14": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-001.json"
+ },
+ "15": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-009.json"
+ },
+ "16": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-007.json"
+ },
+ "17": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-012.json"
+ },
+ "18": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-013.json"
+ },
+ "19": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-003.json"
+ },
+ "20": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-024.json"
+ },
+ "21": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-028.json"
+ },
+ "22": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-006.json"
+ },
+ "23": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-004.json"
+ },
+ "24": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-013.json"
+ },
+ "25": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-029.json"
+ },
+ "26": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-003.json"
+ },
+ "27": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-016.json"
+ },
+ "28": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-001.json"
+ },
+ "29": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-028.json"
+ },
+ "30": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-015.json"
+ },
+ "31": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-021.json"
+ },
+ "32": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-025.json"
+ },
+ "33": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-026.json"
+ },
+ "34": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-030.json"
+ },
+ "35": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-012.json"
+ },
+ "36": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-008.json"
+ },
+ "37": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-008.json"
+ },
+ "38": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-010.json"
+ },
+ "39": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-019.json"
+ },
+ "40": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-023.json"
+ },
+ "41": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-010.json"
+ },
+ "42": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-009.json"
+ },
+ "43": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-027.json"
+ },
+ "44": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-011.json"
+ },
+ "45": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-025.json"
+ },
+ "46": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-024.json"
+ },
+ "47": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-005.json"
+ },
+ "48": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-020.json"
+ },
+ "49": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-022.json"
+ },
+ "50": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-018.json"
+ },
+ "51": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-011.json"
+ },
+ "52": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-014.json"
+ },
+ "53": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-016.json"
+ },
+ "54": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-027.json"
+ },
+ "55": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-019.json"
+ },
+ "56": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-015.json"
+ },
+ "57": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-005.json"
+ },
+ "58": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-023.json"
+ },
+ "59": {
+  "model": "zai.glm-5",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-glm5/legal-ledger-006.json"
+ },
+ "60": {
+  "model": "deepseek.v3.2",
+  "source": ".kiro/evidence/agents-existing-8/runs/task14-deepseek/legal-ledger-018.json"
+ }
+}

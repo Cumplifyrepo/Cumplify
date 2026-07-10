@@ -1,0 +1,50 @@
+{
+ "57": {
+  "task": "legal-ledger-005",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: lapsed 3-year periodic evaluation trigger (1910.178(l)(4)(iii)) uncaught though scenario-planted ('no evaluation since'); no standalone incident-investigation item"
+  ],
+  "note": "Post-accident refresher + 24h report + 7-day log all correct; thinner than counterpart"
+ },
+ "58": {
+  "task": "legal-ledger-023",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: PSM (TQ 1,500 lb) / RMP (TQ 2,500 lb) not-crossed determinations + HAZWOPER response absent (both candidates); presentation: item 4 self-corrects mid-text (honest but register-bound text should be clean)"
+  ],
+  "note": "RQ 10 lb notification nailed; Tier II correctly concluded APPLIES (1,200>TPQ 100) after visible self-correction; honest SPCC not-crossed"
+ },
+ "59": {
+  "task": "legal-ledger-006",
+  "obligation_id": 4,
+  "reg_mapping": 4,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: 1910.217 mechanical power press standard + LOTO for die setting missed (both candidates)"
+  ],
+  "note": "Hearing conservation exact (AL 85/PEL 90, 25 enrolled); metalworking-fluid mist assessment = genuine add for stamping"
+ },
+ "60": {
+  "task": "legal-ledger-018",
+  "obligation_id": 4,
+  "reg_mapping": 5,
+  "risk_class": 4,
+  "completeness": 3,
+  "accuracy": 5,
+  "fm": [
+   "FM-5: aerosol cans NOT itemized as universal waste (only via HazCom; counterpart cited the UW rule correctly); drained oil filters entirely unaddressed \u2014 2 of 5 audit findings unhandled as waste streams"
+  ],
+  "note": "Lamps >1yr violation flagged; waste determination cites 40 CFR 262.11 properly; SPCC/UST not-apply notes good"
+ }
+}
