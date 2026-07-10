@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-032",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 146,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.4.2",
+    "score": 0.4903678
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48388615
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.48230708
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.46958363
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.46719044
+   }
+  ],
+  "recall": 0.5
+ },
+ "response": " Based on the retrieved excerpts, the following ISO 45001 clauses apply to bringing the roofing contractor's crew on site safely:\n\n## **Clause 8.1.4.2 — Contractor Coordination**\n\nThis is the **primary clause** for your situation. It requires you to:\n- Coordinate procurement processes with the contractor to **identify hazards and assess/control OH&S risks** arising from:\n  - Contractor activities impacting your organization (workers below, ongoing operations)\n  - Your activities impacting the contractor's workers (warehouse operations below the roof work)\n  - Contractor activities impacting other interested parties (neighbors, visitors)\n- **Ensure your OH&S management system requirements are met** by the contractor and their workers\n- Define and apply **occupational health and safety criteria for contractor selection**\n\n## **Clause 6.1.3 — Legal and Other Requirements**\n\nYou must determine and access **up-to-date legal requirements** applicable to:\n- Hazards and OH&S risks from working at height\n- Contractor management obligations\n- Work activities continuing during construction\n\nDocument how these apply and ensure they're accounted for in how you manage this contractor arrangement.\n\n## **Clause 8.2 — Emergency Preparedness and Response**\n\nGiven the **height work hazard** with **operations continuing below**, you need processes for:\n- **Planned first-aid response** for potential falls or injuries\n- **Training** for emergency situations\n- **Periodic testing** of response capability\n- **Communication of duties** to your workers and the contractor's crew\n- Explicit **consideration of contractors** in your emergency planning\n- **Documented response plans** maintained\n\n## **Clause 5.4 — Consultation and Participation**\n\nYou must ensure **workers at all levels** are consulted in:\n- Planning for this contractor activity\n- Implementation of controls\n- Removing barriers (language, literacy concerns with external crew)\n- **Special emphasis on non-managerial workers** (those working below the roof repairs)\n\n## **Clause 6.1.4 — Planning to Take Action**\n\nYou must **plan actions** to address:\n- **Risks** from simultaneous roof work and warehouse operations\n- **Legal requirements** for contractor safety\n- **Emergency preparedness** for working at height\n- Integrate these into your OH&S processes, **evaluating effectiveness** and applying the **hierarchy of controls**\n\n---\n\n**Key practical implication:** You cannot simply hand over the roof to the contractor. You must actively coordinate hazard identification, risk controls, emergency planning, and legal compliance—while ensuring your own workers below are consulted and protected.",
+ "inputTokens": 528,
+ "outputTokens": 524,
+ "costUsd": 0.0018888,
+ "latencyMs": 6657,
+ "score": 0.5
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-046",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 42,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.59078264
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.4712804
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.46996835
+   },
+   {
+    "clauseRef": "7.1",
+    "score": 0.465498
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.46410465
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.1.4** applies to this bandsaw procurement.\n\nThis clause specifically addresses procurement processes that must be established to **\"ensure purchased products and services conform to the OH&S management system\"** — which directly matches your scenario of buying a machine that needs to arrive conforming to your OH&S requirements.\n\nThe other elements in 8.1.4 (contractor activities, outsourced functions) don't apply to your situation as you've confirmed no outside workers or outsourcing is involved. The core requirement for ensuring purchased **products** conform to your OH&S system remains relevant.",
+ "inputTokens": 470,
+ "outputTokens": 124,
+ "costUsd": 0.0006540000000000001,
+ "latencyMs": 3033,
+ "score": 0
+}

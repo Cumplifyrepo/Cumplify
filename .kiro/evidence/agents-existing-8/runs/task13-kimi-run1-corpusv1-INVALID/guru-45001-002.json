@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-002",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 77,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.2",
+    "score": 0.7237497
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.6244306
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.6032548
+   },
+   {
+    "clauseRef": "7.1",
+    "score": 0.5975566
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5974514
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 5.2** is the specific ISO 45001 clause that requires an OH&S policy and defines what it must commit to.\n\nAccording to clause 5.2, the OH&S policy must commit to:\n- Providing safe and healthy working conditions\n- Satisfying legal and other requirements\n- Eliminating hazards and reducing OH&S risks\n- Continual improvement\n- Consultation and participation of workers\n\nAdditionally, clause 5.2 requires that the policy be **documented, communicated, and available to interested parties**.\n\nFor your top-level safety commitment document as safety manager, you should also be aware that clause 5.1 establishes related leadership responsibilities for top management, and clause 7.3 requires that workers be made aware of this policy—so your communication plan will need to address that requirement as well.",
+ "inputTokens": 406,
+ "outputTokens": 174,
+ "costUsd": 0.0007656,
+ "latencyMs": 3036,
+ "score": 1
+}

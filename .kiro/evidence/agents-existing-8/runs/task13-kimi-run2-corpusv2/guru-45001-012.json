@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-012",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 55,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "10.3",
+    "score": 0.8223426
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.736965
+   },
+   {
+    "clauseRef": "7.1",
+    "score": 0.67220044
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.66264
+   },
+   {
+    "clauseRef": "6.1.2.3",
+    "score": 0.6134828
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 10.3** requires the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system to enhance safety performance.\n\nSpecifically, clause 10.3 states: \"The suitability, adequacy and effectiveness of the OH&S management system must be continually improved by enhancing performance, promoting a culture that supports the system, promoting worker participation in implementing improvement actions, communicating relevant improvement results to workers and their representatives, and maintaining documented evidence of continual improvement.\"\n\nWhile other clauses also mention continual improvement (such as clause 4.4 on establishing and maintaining the system, clause 7.1 on providing resources, and clause 9.3 on management review), **clause 10.3** is the specific clause that directly addresses the requirement to continually improve the **suitability, adequacy and effectiveness** of the OH&S management system with the explicit purpose of **enhancing performance**.",
+ "inputTokens": 441,
+ "outputTokens": 192,
+ "costUsd": 0.0008405999999999999,
+ "latencyMs": 3135,
+ "score": 1
+}

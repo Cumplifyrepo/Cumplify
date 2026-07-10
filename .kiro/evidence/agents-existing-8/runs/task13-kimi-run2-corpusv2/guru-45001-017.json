@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-017",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 93,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.2",
+    "score": 0.65052
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.58191705
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.5692766
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.56014395
+   },
+   {
+    "clauseRef": "6.1.2.2",
+    "score": 0.553527
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001 requires the OH&S policy to contain the following specific commitments:\n\n1. **Providing safe and healthy working conditions** [Doc 1 — clause 5.2]\n\n2. **Satisfying legal and other requirements** [Doc 1 — clause 5.2]\n\n3. **Eliminating hazards and reducing OH&S risks** [Doc 1 — clause 5.2]\n\n4. **Continual improvement** [Doc 1 — clause 5.2]\n\n5. **Consultation and participation of workers** [Doc 1 — clause 5.2]\n\nAdditionally, clause 5.2 requires that the policy must be:\n- **Documented**\n- **Communicated**\n- **Available to interested parties** [Doc 1 — clause 5.2]\n\nThese five commitments form the mandatory content requirements for your OH&S policy as specified in ISO 45001:2018.",
+ "inputTokens": 450,
+ "outputTokens": 195,
+ "costUsd": 0.0008550000000000001,
+ "latencyMs": 4420,
+ "score": 1
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-015",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 34,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.3",
+    "score": 0.6487827
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.5626056
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5465381
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5464993
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.54148304
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 5.3** directly addresses your situation.\n\n**Clause 5.3** requires that:\n- Responsibilities and authorities for relevant roles within the OH&S system **must be assigned by top management**\n- These must be **communicated at all levels**\n- They must be **kept as documented information**\n- **Accountability for the system's performance stays with top management** even where duties are delegated\n\nThis clause explicitly covers the assignment and communication of OH&S roles and responsibilities—exactly what's needed to clarify ownership of your lockout-tagout program decisions following the merger.\n\nAdditionally, **clause 5.1** reinforces this by requiring top management to demonstrate leadership through \"taking overall responsibility and accountability\" and \"providing resources,\" while **clause 5.4** requires processes for consultation and participation of workers that would help ensure affected employees understand the clarified roles.",
+ "inputTokens": 475,
+ "outputTokens": 185,
+ "costUsd": 0.0008399999999999999,
+ "latencyMs": 3244,
+ "score": 1
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-029",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 145,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5723288
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5421394
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.49961638
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4992338
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.49501416
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, here's what ISO 45001 requires you to do next with your hazard register, risk scores, and legal register:\n\n## Integrate and Plan Actions (Clause 6.1.4)\n\nYou must now **plan the specific actions** you will take to address:\n- The risks and opportunities identified in your hazard register and risk assessments\n- The legal and other requirements captured in your legal register\n- Your emergency preparedness needs\n\nThese actions must be:\n- **Integrated** into your OH&S system processes or other business processes\n- **Evaluated for effectiveness**, considering the hierarchy of controls and system outputs\n\n## Ensure Your Foundations Are Complete\n\nBefore finalizing those actions, verify you've met these supporting requirements:\n\n| What you've done | What to verify |\n|----------------|--------------|\n| Hazard register & risk scores | Clause 6.1.2 — Ensure your hazard identification covers routine/non-routine activities, human factors, past incidents, work organization, and people beyond your own workforce; confirm risk assessment uses **defined methodologies and criteria** |\n| Legal register | Clause 6.1.3 — Ensure you have processes to **determine, access, and keep up-to-date** legal requirements; confirm you understand how they apply, what needs communicating, and that you're **retaining documented information** |\n\n## Set Objectives and Plan Implementation (Clause 6.2.2)\n\nFor each OH&S objective that flows from your planning, you must define:\n- **What** will be done\n- **Which resources** are required\n- **Who** is responsible\n- **When** it will be completed\n- **How results will be evaluated** (including monitoring indicators)\n\nIntegrate these actions into business processes where practicable.\n\n## Prepare for Emergencies (Clause 8.2)\n\nYour planning must also establish processes to **prepare for and respond to emergency situations**, including:\n- Planned first-aid response\n- Training and periodic testing\n- Performance evaluation and revision after tests/actual emergencies\n- Communication of duties to workers and interested parties\n- Consideration of contractors, visitors, and neighbours\n\nMaintain **documented information** on these processes and response plans.\n\n---\n\n**In summary:** Your registers are inputs—Clause 6.1.4 now requires you to translate them into concrete, integrated action plans with effectiveness evaluation built in.",
+ "inputTokens": 471,
+ "outputTokens": 477,
+ "costUsd": 0.0017136,
+ "latencyMs": 6228,
+ "score": 1
+}

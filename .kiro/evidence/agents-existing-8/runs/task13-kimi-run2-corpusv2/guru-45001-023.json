@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-023",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 37,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.57838136
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5043823
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.49433717
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.46709794
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.4663173
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.2** specifically addresses emergency preparedness requirements. While your evacuation map is a good start, the standard requires your emergency preparedness process to include several additional elements:\n\n| Required Element | Citation |\n|------------------|----------|\n| **Planned first-aid response** | 8.2 |\n| **Training** | 8.2 |\n| **Periodic testing and exercising of response capability** | 8.2 |\n| **Performance evaluation and revision after tests or actual emergencies** | 8.2 |\n| **Communication of duties to workers and relevant interested parties** | 8.2 |\n| **Consideration of contractors, visitors and neighbours** | 8.2 |\n| **Documented information on the processes and response plans** (maintained) | 8.2 |\n\nAdditionally, **clause 6.1.4** requires that your emergency preparedness planning be **integrated into your OH&S system processes or other business processes** and that you **evaluate their effectiveness**, considering the **hierarchy of controls** and system outputs.\n\nYour evacuation map alone would not satisfy these requirements—you need documented processes covering the full cycle of preparation, response, testing, evaluation, and continuous improvement, with clear communication of roles and consideration of all persons who may be present during an emergency.",
+ "inputTokens": 491,
+ "outputTokens": 268,
+ "costUsd": 0.0010986,
+ "latencyMs": 3415,
+ "score": 1
+}

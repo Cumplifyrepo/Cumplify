@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-033",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 121,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.46918923
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.45869902
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.44710422
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.44675577
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.44518867
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, your retrofitting of fixed guards onto press brakes involves **two key ISO 45001 clauses**:\n\n## Selecting the Control Approach: Clause 8.1.2\n\nThis clause governs your selection of fixed guards as the control measure. The hierarchy of controls requires you to apply controls **in order**, starting with elimination, then substitution, engineering controls, administrative controls, and **only lastly PPE**.\n\nYour shift from **training-and-signage (administrative controls)** to **fixed guards (engineering controls)** represents moving **up** the hierarchy to a more effective control type. This is explicitly required by clause 8.1.2, which mandates that processes to eliminate hazards and reduce OH&S risks must apply the hierarchy in this prescribed order.\n\n## Managing the Changeover: Clause 8.1.3\n\nThis clause governs the implementation and control of your planned **permanent change**. Specifically, clause 8.1.3 requires you to:\n- Establish processes for implementing and controlling planned permanent changes that impact OH&S performance\n- Review **unintended consequences** of the change\n- Act to **mitigate any adverse effects**\n\nThe changeover from training-based controls to fixed guards affects work conditions, equipment, and potentially workforce knowledge—making it squarely within the scope of clause 8.1.3's change management requirements.\n\n---\n\n**Additional consideration:** Depending on your jurisdiction, this retrofit may also trigger **clause 6.1.3** (legal requirements), as machinery guarding obligations in regulations may have evolved since your original installation, requiring you to determine and access up-to-date applicable legal requirements.",
+ "inputTokens": 457,
+ "outputTokens": 334,
+ "costUsd": 0.0012762,
+ "latencyMs": 5143,
+ "score": 1
+}

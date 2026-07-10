@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-040",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 153,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.5837827
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5258631
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5231231
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.5120242
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.50091815
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.2** covers all of these requirements.\n\n**Clause 8.2** explicitly requires the organization to establish, implement and maintain processes to prepare for and respond to potential emergency situations, including:\n\n| Corporate Requirement | Clause 8.2 Coverage |\n|----------------------|---------------------|\n| Documented scenarios & response procedures | \"documented information on the processes and response plans maintained\" |\n| Accounting for contractors and visitors | \"consideration of contractors, visitors and neighbours\" |\n| Scheduled evacuation drills | \"periodic testing and exercising of response capability\" |\n| Lessons-learned reviews | \"performance evaluation and revision after tests or actual emergencies\" |\n\nThe clause also specifically mentions \"planned first-aid response, training\" and \"communication of duties to workers and relevant interested parties,\" which further supports comprehensive emergency preparedness for fire scenarios.",
+ "inputTokens": 495,
+ "outputTokens": 174,
+ "costUsd": 0.0008190000000000001,
+ "latencyMs": 4062,
+ "score": 1
+}

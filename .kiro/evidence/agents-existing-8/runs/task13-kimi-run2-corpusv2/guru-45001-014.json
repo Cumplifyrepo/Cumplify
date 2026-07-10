@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-014",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 37,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "4.2",
+    "score": 0.66891533
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5652288
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.5651162
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.54519045
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.5408825
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the ISO 45001 clause that requires identifying workers and other interested parties, understanding their needs and expectations, and deciding which become legal or other requirements is **clause 4.2**.\n\nThis clause states: \"Beyond workers, the organization must identify the other interested parties relevant to the OH&S system — regulators, unions, contractors, visitors, neighbours — and determine which of their needs and expectations become compliance obligations it chooses or is required to meet.\"\n\nAdditionally, **clause 6.1.3** builds upon this by requiring processes to \"determine and access the up-to-date legal requirements and other requirements applicable to its hazards, OH&S risks and management system\" — which includes implementing the obligations identified through clause 4.2.",
+ "inputTokens": 454,
+ "outputTokens": 154,
+ "costUsd": 0.0007344,
+ "latencyMs": 2788,
+ "score": 1
+}

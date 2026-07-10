@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-048",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 36,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.53501236
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.49095315
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48303038
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.47579455
+   },
+   {
+    "clauseRef": "10.2",
+    "score": 0.46305633
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, a register entry alone is **not sufficient**. Your plant manager's view doesn't meet ISO 45001 requirements for emergency preparedness.\n\nThe specific clause requiring standing response plans, drills, and post-drill reviews is **clause 8.2**, which mandates that the organization must:\n\n- **Establish, implement and maintain processes** to prepare for and respond to potential emergency situations\n- Include **planned first-aid response**\n- Conduct **training and periodic testing and exercising** of response capability\n- Perform **performance evaluation and revision after tests or actual emergencies**\n- **Communicate duties** to workers and relevant interested parties\n- Consider **contractors, visitors and neighbours**\n- Maintain **documented information** on the processes and response plans\n\nAdditionally, **clause 6.1.4** requires the organization to plan actions specifically addressing **emergency preparedness**, integrate these into OH&S system processes, and **evaluate their effectiveness**.\n\nWhile **clause 6.1.2** covers hazard identification and risk assessment (which your register addresses), and **clause 6.1.3** covers legal requirements, these do not replace the operational emergency preparedness requirements in **clause 8.2**.\n\nYour high risk score for fire in the hazard register satisfies the identification and assessment requirements, but **clause 8.2** explicitly requires active, maintained, tested, and reviewed emergency response processes—not merely a documented hazard.",
+ "inputTokens": 562,
+ "outputTokens": 289,
+ "costUsd": 0.0012041999999999999,
+ "latencyMs": 10927,
+ "score": 1
+}

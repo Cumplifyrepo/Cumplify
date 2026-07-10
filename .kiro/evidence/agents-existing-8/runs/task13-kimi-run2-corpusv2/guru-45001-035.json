@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-035",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 129,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.50390095
+   },
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.47813812
+   },
+   {
+    "clauseRef": "10.2",
+    "score": 0.47370356
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.4693315
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4685435
+   }
+  ],
+  "recall": 0.3333333333333333
+ },
+ "response": " Based on the retrieved excerpts, the following ISO 45001 clauses drive your response and prevention updates for this heat exhaustion incident:\n\n## Immediate Response & Investigation\n\n**Clause 10.2** — Requires you to:\n- React in a timely manner and take action to control/correct the situation and deal with consequences\n- Evaluate (with worker participation) the need for corrective action to eliminate root causes\n- Review existing OH&S risk assessments\n- Determine and implement corrective actions following the hierarchy of controls\n- Assess related risks before acting\n- Review corrective-action effectiveness and make system changes if needed\n- Retain documented information on the incident, actions taken, and results\n- Communicate to relevant workers and interested parties\n\n## Emergency Preparedness\n\n**Clause 8.2** — Requires you to:\n- Establish, implement and maintain processes to prepare for and respond to potential emergency situations (heat events qualify)\n- Include planned first-aid response, training, periodic testing and exercising of response capability\n- Conduct performance evaluation and revision after actual emergencies\n- Communicate duties to workers and relevant interested parties\n\n## Planning Actions to Address Risks\n\n**Clause 6.1.4** — Requires you to:\n- Plan actions to address risks, legal requirements, and emergency preparedness\n- Integrate actions into OH&S system processes\n- Evaluate effectiveness, considering hierarchy of controls\n\n## Change Management (for prevention updates)\n\n**Clause 8.1.3** — Applies if you implement changes to work conditions, equipment, processes, or workforce practices to address heat risks, requiring you to:\n- Establish processes for planned temporary and permanent changes impacting OH&S performance\n- Review unintended consequences and mitigate adverse effects\n\n## Legal & Other Requirements\n\n**Clause 6.1.3** — Requires you to determine and access up-to-date legal requirements applicable to your hazards (e.g., heat exposure regulations), account for them in your system, and retain documented information.\n\n---\n\n**Priority actions:** Given this is your second heat event, clause 10.2's root cause analysis and corrective action requirements are most critical, alongside clause 8.2's emergency preparedness updates to prevent recurrence.",
+ "inputTokens": 544,
+ "outputTokens": 437,
+ "costUsd": 0.0016374,
+ "latencyMs": 6277,
+ "score": 0.3333333333333333
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-034",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 88,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.3",
+    "score": 0.5058274
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.47664046
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.46469855
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4621709
+   },
+   {
+    "clauseRef": "5.2",
+    "score": 0.46163324
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the following ISO 45001 clauses cover ensuring your new hire is ready to work safely before her first solo shift:\n\n## **Clause 7.2 — Competence**\n\nThis is the **primary clause** for your situation. It requires the organization to:\n- Determine the **necessary competence** of workers who affect OH&S performance\n- Ensure competence on the basis of **education, training or experience** — **including the ability to identify hazards**\n- Take **actions to acquire and maintain competence** where needed\n- **Evaluate the effectiveness** of those actions\n- **Retain documented evidence of competence**\n\n*Application:* You must provide specific training on the shrink-wrap machine, verify she can identify its hazards, and document her competence before solo operation.\n\n## **Clause 7.3 — Awareness**\n\nRequires workers be made aware of:\n- **Hazards and risks that concern them**\n- **Relevant incidents and investigation outcomes**\n- **Implications of not conforming**\n- Their **right to remove themselves from situations of imminent and serious danger without reprisal**\n\n*Application:* She needs orientation on night-shift-specific risks, past machine incidents, and her stop-work authority.\n\n## **Clause 6.1.3 — Legal and Other Requirements**\n\nRequires processes to:\n- Determine and access **up-to-date legal requirements** applicable to hazards\n- **Account for them when building and running the system**\n\n*Application:* Ensure training covers any regulatory requirements for shrink-wrap machine operation (guarding, lockout/tagout, etc.).\n\n## **Clause 5.1 — Leadership and Commitment**\n\nTop management must:\n- **Provide resources** for the OH&S system\n- **Integrate OH&S requirements into business processes**\n\n*Application:* Management must ensure adequate training time, qualified trainers, and proper equipment are available for night-shift onboarding.\n\n---\n\n**Summary:** **Clause 7.2** is your core requirement—train, verify competence (especially hazard identification), evaluate effectiveness, and document it. **Clauses 7.3, 6.1.3, and 5.1** provide supporting requirements for awareness, legal compliance, and resourcing.",
+ "inputTokens": 469,
+ "outputTokens": 444,
+ "costUsd": 0.0016134,
+ "latencyMs": 5601,
+ "score": 1
+}

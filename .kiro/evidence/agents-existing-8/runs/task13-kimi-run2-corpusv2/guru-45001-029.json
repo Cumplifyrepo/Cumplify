@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-029",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 121,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5723288
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5421394
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4992338
+   },
+   {
+    "clauseRef": "6.1.2.1",
+    "score": 0.49557406
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.49501416
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, ISO 45001's planning-action clause (6.1.4) requires you to take the following next steps with your hazard register, risk scores, and legal register:\n\n## 1. Plan Actions to Address Your Inputs\n\nYou must plan specific actions to address:\n- The **risks and opportunities** identified in your hazard register and risk scoring\n- The **legal and other requirements** captured in your legal register\n- **Emergency preparedness** needs identified during your planning\n\n## 2. Integrate Actions into Business Processes\n\nYou need to **integrate those planned actions** into:\n- Your OH&S system processes, **or**\n- Other business processes\n\nThis means your risk treatments and legal compliance measures shouldn't sit in separate documents—they must become part of how you actually operate.\n\n## 3. Apply the Hierarchy of Controls\n\nWhen planning these actions, you must consider the **hierarchy of controls** (elimination, substitution, engineering controls, administrative controls, PPE) and the **outputs of your OH&S system**.\n\n## 4. Evaluate Effectiveness\n\nYou must establish how you will **evaluate the effectiveness** of these planned actions.\n\n---\n\n**Key connection to your existing work:** Your hazard register feeds into clause 6.1.2.1 (hazard identification), your risk scores inform the \"risks and opportunities\" in 6.1.4, and your legal register satisfies part of 6.1.3 (legal requirements). Clause 6.1.4 is the bridge that turns those planning outputs into **integrated, actionable plans with evaluation criteria**.\n\nAdditionally, clause 6.2.2 requires you to plan **OH&S objectives** with specific details: what will be done, resources required, responsibilities, timelines, and how results will be evaluated—including monitoring indicators.",
+ "inputTokens": 542,
+ "outputTokens": 372,
+ "costUsd": 0.0014412,
+ "latencyMs": 5499,
+ "score": 1
+}

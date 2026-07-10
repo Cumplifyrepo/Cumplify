@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-025",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 44,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.3",
+    "score": 0.6135047
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.55484635
+   },
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.5447211
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.5419243
+   },
+   {
+    "clauseRef": "9.2",
+    "score": 0.5411908
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001 clause 9.3 specifies the following safety-specific inputs that top management must consider in the OH&S management review:\n\n**OH&S Performance Trends and Data:**\n- Incidents (work-related injuries and ill health)\n- Nonconformities\n- Audit results\n- Monitoring results\n- Compliance evaluations\n\n**System Status and Context:**\n- Status of actions from previous management reviews\n- Changes in internal and external context\n- Changes in requirements\n- Policy and objective achievement\n\n**Stakeholder and Worker Elements:**\n- Worker consultation and participation\n- Communications with interested parties\n\n**Risk and Resource Considerations:**\n- Risks and opportunities\n- Resource adequacy\n\n**Improvement Opportunities**\n\nThese inputs ensure the review assesses continuing **suitability, adequacy and effectiveness** of the OH&S management system [Doc 1 — clause 9.3].\n\nAdditionally, clause 5.1 establishes that top management must demonstrate leadership by taking **overall responsibility and accountability for preventing work-related injury and ill health**, which provides the foundational context for how these review inputs should be evaluated [Doc 2 — clause 5.1].",
+ "inputTokens": 511,
+ "outputTokens": 237,
+ "costUsd": 0.0010176,
+ "latencyMs": 2617,
+ "score": 1
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-043",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 539,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.4",
+    "score": 0.64380264
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.55210394
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.55164623
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.53389835
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.53220534
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the clause that requires the two-way process where workers actually influence OH&S decisions before they're made is **clause 5.4**.\n\n**Clause 5.4** explicitly requires the organization to establish processes for **\"consultation and participation of workers\"** in the **\"development, planning, implementation, performance evaluation and improvement actions of the OH&S system.\"** This is fundamentally different from one-way communication — it requires active involvement where workers' input can shape outcomes, not merely receive information after decisions are made.\n\nYour consultant is correct: your monthly email bulletin with read receipts satisfies **communication** requirements (addressed in **clause 7.4**), which covers what, when, with whom and how information is shared. However, **consultation and participation** under **clause 5.4** requires removing barriers like \"language, literacy or fear of reprisal\" and giving \"special emphasis to the involvement of non-managerial workers\" in actual decision-making processes — not just informing them of decisions already taken.\n\nThe distinction is reinforced by **clause 9.3**, which lists \"worker consultation and participation\" separately from \"communications with interested parties\" as distinct inputs to management review, confirming these are separate requirements with different purposes.",
+ "inputTokens": 547,
+ "outputTokens": 257,
+ "costUsd": 0.0010991999999999998,
+ "latencyMs": 3949,
+ "score": 1
+}

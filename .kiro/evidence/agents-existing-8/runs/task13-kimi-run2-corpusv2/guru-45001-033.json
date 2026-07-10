@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-033",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 111,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.46918923
+   },
+   {
+    "clauseRef": "8.1.4.3",
+    "score": 0.46191952
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.45869902
+   },
+   {
+    "clauseRef": "8.1.4.1",
+    "score": 0.44857696
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.44710422
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, your retrofitting of fixed guards onto press brakes is governed by the following ISO 45001 clauses:\n\n## Selecting the Control Approach: **Clause 8.1.2**\n\nThis clause mandates the **hierarchy of controls**, which your change directly implements. By replacing training-and-signage (administrative controls) with fixed guards (engineering controls), you are moving **up** the hierarchy from a less effective to a more effective control measure. The clause specifies the order: elimination → substitution → **engineering controls and work reorganization** → administrative controls including training → PPE. Your fixed guards constitute engineering controls, properly prioritized above administrative measures.\n\n## Managing the Changeover: **Clause 8.1.3**\n\nThis clause governs **planned changes** that impact OH&S performance. Your retrofitting represents a **permanent change** to equipment and work conditions. The clause requires you to:\n- Establish processes for implementing and controlling this change\n- Review **unintended consequences** of the change\n- Act to mitigate any adverse effects\n\n## Additional Considerations\n\n**Clause 8.1.4.1** may apply if the fixed guards are being procured as products, requiring processes to ensure their conformity to your OH&S management system.\n\n**Clause 6.1.3** should be consulted to verify that any applicable legal requirements for machinery guarding are identified and applied in your retrofitting decision.",
+ "inputTokens": 433,
+ "outputTokens": 291,
+ "costUsd": 0.0011328,
+ "latencyMs": 3712,
+ "score": 1
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-024",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 53,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.4",
+    "score": 0.7363832
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.5479026
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.5358446
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.5343637
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5338472
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, ISO 45001's communication requirements for internal and external OH&S communications are found in **clause 7.4**.\n\nAccording to **clause 7.4**, you must establish processes for internal and external communication that define:\n\n| Element | Requirement |\n|--------|-------------|\n| **What** | will be communicated |\n| **When** | communication occurs |\n| **With whom** | the communication is directed |\n| **How** | the communication is conducted |\n\nAdditionally, the clause requires you to:\n- Account for **diversity aspects** (such as language and culture)\n- Ensure **workers' views are considered**\n- Communicate **internally among levels and functions**, including system changes\n- Communicate **externally as required by legal and other obligations**\n- **Retain documented information as evidence** where appropriate\n\nThese communication processes work in conjunction with **clause 5.4** (consultation and participation of workers), which requires removing barriers such as language, literacy or fear of reprisal, and **clause 7.3** (awareness), which specifies what workers must be made aware of regarding OH&S matters.",
+ "inputTokens": 464,
+ "outputTokens": 236,
+ "costUsd": 0.0009864,
+ "latencyMs": 3877,
+ "score": 1
+}

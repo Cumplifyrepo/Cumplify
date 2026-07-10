@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-005",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 47,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.6209946
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.51221216
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5111558
+   },
+   {
+    "clauseRef": "10.2",
+    "score": 0.49542046
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.47889864
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.2** covers being ready for and responding to potential emergencies like fires, chemical spills, or medical events on site.\n\nClause 8.2 specifically requires the organization to \"establish, implement and maintain processes to prepare for and respond to potential emergency situations identified during planning, including planned first-aid response, training, periodic testing and exercising of response capability, performance evaluation and revision after tests or actual emergencies, communication of duties to workers and relevant interested parties, and consideration of contractors, visitors and neighbours — with documented information on the processes and response plans maintained.\"",
+ "inputTokens": 533,
+ "outputTokens": 121,
+ "costUsd": 0.0006828,
+ "latencyMs": 2352,
+ "score": 1
+}

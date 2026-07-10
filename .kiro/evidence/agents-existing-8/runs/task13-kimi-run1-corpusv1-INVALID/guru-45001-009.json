@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-009",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 60,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5924523
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.5069686
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.49196687
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.49081272
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.48575225
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the ISO 45001 clause that requires you to determine and have access to the legal and other requirements that apply to your hazards is **clause 6.1.3**.\n\nThis clause states: \"The organization must have processes to determine and access the up-to-date legal requirements and other requirements applicable to its hazards, OH&S risks and management system, work out how they apply and what needs communicating, and account for them when building and running the system, retaining documented information on them.\"\n\nThis directly addresses your situation of operating across three states with different fall-protection and crane rules—you must establish processes to identify, access, and maintain these varying legal requirements for each jurisdiction where you operate.",
+ "inputTokens": 472,
+ "outputTokens": 143,
+ "costUsd": 0.0007122000000000001,
+ "latencyMs": 2423,
+ "score": 1
+}

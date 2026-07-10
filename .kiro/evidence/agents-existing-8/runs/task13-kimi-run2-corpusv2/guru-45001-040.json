@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-040",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 136,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.5837827
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5258631
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5231231
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.5120242
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.50091815
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.2** covers all of these requirements.\n\n**Clause 8.2** explicitly requires the organization to establish, implement and maintain processes to prepare for and respond to potential emergency situations, including:\n\n| Corporate Requirement | Clause 8.2 Coverage |\n|----------------------|---------------------|\n| Documented scenarios / response procedures | \"processes to prepare for and respond to potential emergency situations\" + \"documented information on the processes and response plans maintained\" |\n| Account for contractors and visitors | \"consideration of contractors, visitors and neighbours\" |\n| Scheduled evacuation drills | \"periodic testing and exercising of response capability\" |\n| Lessons-learned reviews afterward | \"performance evaluation and revision after tests or actual emergencies\" |\n\nWhile clause 6.1.4 mentions emergency preparedness in passing, it does so only as one input among many for planning actions. Clause 8.2 is the dedicated, comprehensive requirement for emergency preparedness and response processes.",
+ "inputTokens": 495,
+ "outputTokens": 199,
+ "costUsd": 0.000894,
+ "latencyMs": 2723,
+ "score": 1
+}

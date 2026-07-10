@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-019",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 65,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.6491972
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.6358892
+   },
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.59282374
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.5744008
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.56735474
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved excerpts, ISO 45001 requires the following regarding assessment of OH&S risks from identified hazards:\n\n**Clause 6.1.2** establishes that the organization must assess OH&S risks from identified hazards and assess OH&S opportunities, **using defined methodologies and criteria**. This assessment must cover:\n- Routine and non-routine activities\n- Human factors\n- Past incidents including emergencies\n- How work is organized\n- People beside the organization's own workforce\n\nAdditionally, **Clause 6.1.1** requires that when planning the OH&S system, the organization determines the risks and opportunities that need to be addressed to:\n- Give assurance the system can achieve its intended outcomes\n- Prevent undesired effects\n- Achieve continual improvement\n\n**Clause 6.1.3** further requires that the organization account for applicable legal requirements and other requirements when building and running the system, retaining documented information on them.\n\nIn summary, once hazards are identified, ISO 45001 requires you to:\n1. Use **defined methodologies and criteria** to assess the OH&S risks (6.1.2)\n2. Consider the broader context including interested-party requirements and system scope (6.1.1)\n3. Incorporate applicable legal and other requirements into your assessment (6.1.3)\n4. Retain **documented information** on these requirements (6.1.3)",
+ "inputTokens": 448,
+ "outputTokens": 284,
+ "costUsd": 0.0011208000000000001,
+ "latencyMs": 22277,
+ "score": 0
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-026",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 110,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.5",
+    "score": 0.57437915
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.53929776
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5246556
+   },
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.52463746
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5238384
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, ISO 45001 has specific requirements for managing OH&S documented information that your current shared drive arrangement likely doesn't meet.\n\n## Key Requirements from the Standard\n\n**Document Control (Clause 7.5)**\n\nYour system must include documented information required by the standard plus what you determine necessary. Critically, when creating and updating documents you must ensure:\n\n- **Proper identification and format**\n- **Review and approval**\n- **Controls to ensure availability, suitability and protection**\n\nThis includes governing:\n- Distribution and access\n- Storage\n- **Change control** ← *your gap*\n- Retention and disposition\n- Documents of external origin\n\n**Legal and Other Requirements (Clause 6.1.3)**\n\nYou must retain documented information on applicable legal requirements and other requirements, ensuring you can determine and access **up-to-date** versions.\n\n## The Problem with Your Current Setup\n\nYour shared drive with no version control and old revisions floating around violates clause 7.5's requirements for:\n- **Change control** — no mechanism to manage revisions\n- **Proper identification** — unclear which version is current\n- **Protection** — uncontrolled access risking use of obsolete documents\n\n## What You Need to Implement\n\n| Current State | ISO 45001 Requirement |\n|-------------|----------------------|\n| No version control | Change control process (7.5) |\n| Old revisions accessible | Removal or clear archiving of obsolete documents (7.5) |\n| Uncontrolled shared drive | Controlled distribution, access protection, and availability (7.5) |\n| Unknown currency of documents | Up-to-date access to requirements (6.1.3) |\n\nYou need a document control system that ensures only current, approved versions are accessible for use, with clear identification of revision status and approval status.",
+ "inputTokens": 435,
+ "outputTokens": 363,
+ "costUsd": 0.0013499999999999999,
+ "latencyMs": 5018,
+ "score": 1
+}

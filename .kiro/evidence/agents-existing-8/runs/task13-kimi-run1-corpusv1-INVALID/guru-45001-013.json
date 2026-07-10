@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-013",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 41,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.5503539
+   },
+   {
+    "clauseRef": "10.1",
+    "score": 0.53426594
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.5154456
+   },
+   {
+    "clauseRef": "6.2.1",
+    "score": 0.5146852
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.5107167
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved excerpts, the sub-clause that requires assessing OH&S opportunities is **clause 6.1.2**.\n\nThis clause explicitly states that the organization must \"assess OH&S risks from identified hazards **and assess OH&S opportunities**, using defined methodologies and criteria\" (Doc 3 — clause 6.1.2).\n\nAdditionally, clause 6.1.1 establishes the broader context by requiring the organization to \"determine the risks **and opportunities** that need to be addressed\" when planning the OH&S system (Doc 1 — clause 6.1.1).",
+ "inputTokens": 464,
+ "outputTokens": 122,
+ "costUsd": 0.0006444,
+ "latencyMs": 6589,
+ "score": 0
+}

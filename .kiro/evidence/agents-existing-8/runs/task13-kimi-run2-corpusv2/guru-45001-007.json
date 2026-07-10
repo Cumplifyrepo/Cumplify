@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-007",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 58,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.4.2",
+    "score": 0.5840607
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5119672
+   },
+   {
+    "clauseRef": "6.1.2.1",
+    "score": 0.49626642
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.4958683
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.49512443
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the specific ISO 45001 sub-clause that requires you to coordinate hazards with contractors working on your site is **clause 8.1.4.2**.\n\nThis clause states that \"The organization must coordinate its procurement processes with its contractors to identify hazards and to assess and control the OH&S risks arising from contractor activities and operations that impact the organization, from the organization's activities and operations that impact the contractors' workers, and from contractor activities that impact other interested parties in the workplace.\"\n\nThe clause further requires that you ensure your OH&S management system requirements are met by contractors and their workers, and that your procurement processes define and apply occupational health and safety criteria for contractor selection.",
+ "inputTokens": 580,
+ "outputTokens": 142,
+ "costUsd": 0.0007740000000000001,
+ "latencyMs": 1897,
+ "score": 1
+}

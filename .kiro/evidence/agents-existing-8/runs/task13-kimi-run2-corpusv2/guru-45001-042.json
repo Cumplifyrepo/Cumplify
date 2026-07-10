@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-042",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 59,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.58294845
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.5046186
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.50305027
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.4984656
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.49631202
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, your site safety dashboard activity is covered by **clause 9.1.1**.\n\nThis clause requires the organization to determine:\n- **What needs to be monitored and measured** — including \"progress on legal and other compliance, activities related to identified hazards and risks, operational controls and **OH&S objectives**\"\n- **The methods for monitoring, measurement, analysis and evaluation**\n- **The criteria and indicators**\n- **When monitoring happens and results are evaluated**\n\nYour dashboard directly implements this by:\n- Defining specific **indicators** (near-miss reporting rates, training completion, lost-time injury rates)\n- Establishing **criteria** (annual targets for comparison)\n- Setting up **measurement methods** (tracking leading and lagging indicators)\n- Creating a structure for **regular evaluation** of results\n\nAdditionally, **clause 6.2.2** is relevant as it requires planning \"**how the results — including monitoring indicators — will be evaluated**\" for each OH&S objective, which your dashboard addresses by measuring performance against annual targets.",
+ "inputTokens": 519,
+ "outputTokens": 217,
+ "costUsd": 0.0009624,
+ "latencyMs": 6324,
+ "score": 1
+}

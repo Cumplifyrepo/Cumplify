@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-043",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 115,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.4",
+    "score": 0.64380264
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.55210394
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.55164623
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.53389835
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.53220534
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the clause that requires the two-way process where workers actually influence OH&S decisions before they're made is **clause 5.4**.\n\n**Clause 5.4** explicitly requires \"processes for **consultation and participation** of workers at all levels and functions... **in the development, planning, implementation, performance evaluation and improvement actions** of the OH&S system.\" This is fundamentally different from one-way communication — it requires workers to be involved *before* decisions are finalized, not merely informed after the fact.\n\nYour consultant is correct: your monthly safety bulletin with read receipts satisfies **communication** requirements under **clause 7.4** (which covers \"what will be communicated, when, with whom and how\"), but it does not constitute **consultation and participation** under **clause 5.4**. \n\nThe key distinction is:\n- **Clause 7.4 (Communication)**: One-way information flow — workers are made *aware* of information\n- **Clause 5.4 (Consultation and Participation)**: Two-way influence — workers actively contribute *to* development and planning decisions\n\nAdditionally, **clause 9.3** reinforces this by requiring management review to consider \"worker consultation and participation\" as an input, with outputs \"communicated to workers and their representatives\" — showing consultation feeds into decisions, not just follows them.",
+ "inputTokens": 547,
+ "outputTokens": 280,
+ "costUsd": 0.0011681999999999999,
+ "latencyMs": 5147,
+ "score": 1
+}

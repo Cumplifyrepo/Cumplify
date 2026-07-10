@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-017",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 122,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.2",
+    "score": 0.65052
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.58191705
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.5692766
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.56014395
+   },
+   {
+    "clauseRef": "7.1",
+    "score": 0.5530231
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved documentation, ISO 45001 requires the OH&S policy to contain the following specific commitments:\n\n**Clause 5.2** requires the OH&S policy to commit to:\n\n1. **Providing safe and healthy working conditions**\n2. **Satisfying legal and other requirements**\n3. **Eliminating hazards and reducing OH&S risks**\n4. **Continual improvement**\n5. **Consultation and participation of workers**\n\nAdditionally, clause 5.2 specifies that the policy must be **documented, communicated, and available to interested parties**.\n\nThese commitments align with the leadership responsibilities outlined in **clause 5.1**, where top management must ensure the OH&S policy and objectives fit the organization's strategy and integrate OH&S requirements into business processes.",
+ "inputTokens": 391,
+ "outputTokens": 154,
+ "costUsd": 0.0006966,
+ "latencyMs": 2091,
+ "score": 1
+}

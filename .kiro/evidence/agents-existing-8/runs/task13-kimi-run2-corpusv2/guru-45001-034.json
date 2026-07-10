@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-034",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 39,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.3",
+    "score": 0.5058274
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.47664046
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.46469855
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4621709
+   },
+   {
+    "clauseRef": "5.2",
+    "score": 0.46163324
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the following ISO 45001 clauses cover ensuring your new hire is ready to work safely before her first solo shift:\n\n## **Clause 7.2 — Competence**\n\nThis is the primary clause addressing your situation. It requires the organization to:\n- Determine the **necessary competence** of workers who affect OH&S performance\n- Ensure workers are **competent on the basis of education, training or experience** — including the **ability to identify hazards**\n- Take **actions to acquire and maintain competence** where needed\n- **Evaluate the effectiveness** of those actions\n- **Retain documented evidence of competence**\n\nFor your new hire, this means providing specific training on the shrink-wrap machine, verifying she can identify its hazards, and documenting her competence before solo operation.\n\n## **Clause 7.3 — Awareness**\n\nThis clause requires workers to be made aware of:\n- **Hazards and risks that concern them**\n- **Relevant incidents and investigation outcomes**\n- **The implications of not conforming**\n- Their **right to remove themselves from situations of imminent and serious danger without reprisal**\n\nShe needs this awareness before starting, especially regarding night-shift-specific risks and emergency procedures.\n\n## **Clause 5.1 — Leadership and commitment**\n\nTop management must demonstrate leadership by:\n- **Providing resources** for training and safe equipment operation\n- **Integrating OH&S requirements into business processes** (including shift handovers and night operations)\n\n## **Clause 6.1.3 — Legal and other requirements**\n\nThe organization must have processes to:\n- **Determine and access up-to-date legal requirements** applicable to its hazards\n- **Account for them when building and running the system**\n\nThis includes any specific training certifications or safety requirements for operating shrink-wrap machinery.\n\n---\n\n**Key action:** Before her first solo shift, ensure she receives documented training (7.2), demonstrates hazard identification ability (7.2), is aware of relevant risks (7.3), and you retain records proving her competence.",
+ "inputTokens": 469,
+ "outputTokens": 410,
+ "costUsd": 0.0015114,
+ "latencyMs": 5718,
+ "score": 1
+}

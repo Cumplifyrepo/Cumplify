@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-032",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 131,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48388615
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.48230708
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.46958363
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.46719044
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.46421695
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved excerpts, the following ISO 45001 clauses apply to bringing the roofing contractor on site safely:\n\n## **Clause 6.1.3 — Legal and other requirements**\nYou must determine and access up-to-date legal requirements applicable to the hazards and OH&S risks associated with having contractors working at height on your site, understand how they apply, and account for them when building and running your system.\n\n## **Clause 8.2 — Emergency preparedness and response**\nYou must establish processes to prepare for and respond to potential emergency situations, including **consideration of contractors** in your planning, with documented response plans. This covers scenarios such as falls, structural incidents, or other emergencies involving the roofing crew.\n\n## **Clause 5.4 — Consultation and participation of workers**\nYou must involve your own workers (at all levels, with special emphasis on non-managerial workers) in planning and implementation, removing barriers to participation. Your workers below the roofing operation need to be consulted on the risks and safety measures.\n\n## **Clause 6.1.4 — Planning to take action**\nYou must plan actions to address the risks and opportunities presented by the contractor work, **integrate those actions into your OH&S system processes**, and evaluate their effectiveness — **considering the hierarchy of controls** (elimination, substitution, engineering controls, etc.) for protecting both the roofing crew and your workers below.\n\n## **Clause 7.2 — Competence**\nYou must determine the necessary competence of **workers who affect or can affect OH&S performance** — this includes ensuring the roofing contractor's crew are competent (education, training, experience) for working at height, and retaining documented evidence of their competence.\n\n---\n\n**Key cross-cutting requirement:** Clause 8.2 explicitly requires \"consideration of contractors, visitors and neighbours,\" making contractor safety an integrated obligation rather than an external matter.",
+ "inputTokens": 487,
+ "outputTokens": 381,
+ "costUsd": 0.0014352,
+ "latencyMs": 4912,
+ "score": 0
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-021",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 120,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.2",
+    "score": 0.5474332
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.4958846
+   },
+   {
+    "clauseRef": "8.1.4.3",
+    "score": 0.48804936
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4788824
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.47390455
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001's competence requirements for your field service technicians are found in **clause 7.2** (Doc 1).\n\n## What You Must Ensure\n\nFor workers who affect or can affect OH&S performance—which includes your field service technicians working alone at customer sites—you must ensure they are competent on the basis of **education, training, or experience**, including specifically:\n\n- **The ability to identify hazards** — particularly critical given they work unsupervised at varied customer sites with potentially unfamiliar risks\n\n## Actions Required\n\n| Requirement | Application to Field Technicians |\n|-------------|----------------------------------|\n| Determine necessary competence | Assess what skills/knowledge are needed for lone working, site-specific hazards, emergency response |\n| Ensure competence (education/training/experience) | Verify they have appropriate qualifications and practical capability |\n| **Acquire and maintain competence** | Provide initial and ongoing training, especially for new site types or equipment |\n| **Evaluate effectiveness** | Check that training actually enables safe performance in the field |\n| **Retain documented evidence** | Keep records of qualifications, training completion, assessments |\n\n## Documentation Required\n\nPer **clause 7.2**, you must retain **documented evidence of competence** for these technicians. This would typically include:\n- Training records and certifications\n- Skills assessments or competency evaluations\n- Evidence of experience\n- Records of refresher training\n\nAdditionally, **clause 7.5** (Doc 2) requires that this documented information be properly controlled—available when needed, protected, and retained according to your organization's requirements.\n\nGiven that these technicians work **alone** (an outsourced/field arrangement), you should also consider **clause 8.1.4.3** (Doc 3) regarding control of outsourced functions, ensuring your arrangements with customers regarding technician safety are consistent with legal requirements and your OH&S system outcomes.",
+ "inputTokens": 482,
+ "outputTokens": 380,
+ "costUsd": 0.0014291999999999998,
+ "latencyMs": 4857,
+ "score": 1
+}

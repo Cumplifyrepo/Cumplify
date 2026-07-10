@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-037",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 39,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.4",
+    "score": 0.48341155
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4783988
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.47498116
+   },
+   {
+    "clauseRef": "10.2",
+    "score": 0.47320962
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.47262853
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the following ISO 45001 clauses are in play for this situation:\n\n## **Clause 5.4 — Consultation and participation of workers**\n\nThis clause directly supports involving your tower crews in selecting replacement harnesses. The standard requires processes for **consultation and participation of workers** in the **development, planning, and implementation** of the OH&S system, with **special emphasis on non-managerial workers**. Your tower crews are precisely the workers experiencing the hazard and discomfort, so their input on PPE selection is essential.\n\n## **Clause 8.1.2 — Hierarchy of controls**\n\nThis clause is critical because it establishes that **personal protective equipment is the last resort** in the hierarchy of controls. The discomfort and misuse of current harnesses suggests the existing controls may be inadequate. When selecting replacements, you must ensure you've applied the hierarchy: elimination, substitution, engineering controls, and work reorganization before relying on PPE. The crews' feedback may reveal opportunities for controls *above* PPE in the hierarchy.\n\n## **Clause 7.3 — Awareness**\n\nYour crews must be **made aware** of the hazards and risks that concern them, the implications of not conforming (loosened harnesses), and the benefits of improved performance. Their involvement in selection will build this awareness and likely improve compliance.\n\n## **Clause 10.2 — Incident/nonconformity response**\n\nThe practice of loosening harnesses constitutes a **nonconformity** requiring timely reaction. The clause requires **evaluation with participation of workers** to determine corrective action, **review of existing risk assessments**, and implementation of actions **in line with the hierarchy of controls** — all applicable to your harness replacement process.\n\n---\n\n**Key point:** Involving crews in selection isn't merely consultative best practice — it's a **requirement** under 5.4, and doing so supports your obligations under 8.1.2 to ensure PPE is truly a last-resort control that workers will actually use correctly.",
+ "inputTokens": 548,
+ "outputTokens": 410,
+ "costUsd": 0.0015588,
+ "latencyMs": 6029,
+ "score": 1
+}

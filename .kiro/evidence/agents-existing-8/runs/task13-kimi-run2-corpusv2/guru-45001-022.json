@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-022",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 105,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.5013954
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.4794685
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.47324723
+   },
+   {
+    "clauseRef": "10.2",
+    "score": 0.4602045
+   },
+   {
+    "clauseRef": "8.1.4.1",
+    "score": 0.45772845
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved ISO 45001 documentation, PPE is explicitly the **last resort** in the hierarchy of controls. According to **clause 8.1.2**, you must apply controls in this order:\n\n1. **Eliminate the hazard** (remove it entirely)\n2. **Substitution** (replace with less hazardous processes or materials)\n3. **Engineering controls and work reorganization** (physical changes to equipment, layout, or workflow)\n4. **Administrative controls including training** (procedures, signage, education)\n5. **Personal protective equipment** (only when all above are inadequate or not feasible)\n\nAdditionally, **clause 6.1.4** reinforces that planning must consider this hierarchy, and **clause 10.2** requires that corrective actions also follow the hierarchy of controls.\n\nYour plant manager's default approach of \"buy more PPE\" violates the standard's fundamental requirement to exhaust higher-level controls first.",
+ "inputTokens": 517,
+ "outputTokens": 193,
+ "costUsd": 0.0008891999999999999,
+ "latencyMs": 2420,
+ "score": 1
+}

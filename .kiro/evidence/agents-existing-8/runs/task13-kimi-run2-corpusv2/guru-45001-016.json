@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-016",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 40,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "10.2",
+    "score": 0.5283653
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48414198
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4795779
+   },
+   {
+    "clauseRef": "6.1.2.1",
+    "score": 0.4676616
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.46288902
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved ISO 45001 documentation, here's what clause 10.2 requires your organization to do following the recordable hand injury:\n\n## Immediate Response\n- **React in a timely manner** to the incident\n- **Take action to control and correct it** and deal with the consequences\n\n## Evaluation & Analysis\n- **Evaluate the need for corrective action** to eliminate root causes, ensuring this evaluation includes:\n  - **Participation of workers**\n  - **Involvement of other relevant interested parties**\n- **Review existing OH&S risk assessments** in light of this incident\n\n## Corrective Action Implementation\n- **Determine and implement corrective actions** in line with the **hierarchy of controls**\n- **Assess related risks before acting** on any corrective measures\n\n## Follow-Up & System Improvement\n- **Review corrective-action effectiveness** after implementation\n- **Make system changes if needed** based on what you learn\n\n## Documentation & Communication\n- **Retain documented information** on:\n  - The incident itself\n  - Any nonconformities identified\n  - Actions taken\n  - Results of those actions\n- **Communicate this information** to relevant workers and interested parties\n\n---\n\n**Key point:** The standard emphasizes not just fixing the immediate problem, but systematically evaluating whether deeper corrective action is needed to prevent recurrence or similar incidents elsewhere, with worker participation throughout the process.",
+ "inputTokens": 621,
+ "outputTokens": 283,
+ "costUsd": 0.0012216,
+ "latencyMs": 4660,
+ "score": 1
+}

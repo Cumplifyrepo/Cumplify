@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-010",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 55,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.1",
+    "score": 0.91030043
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.7614282
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.67073554
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.64217824
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.62490135
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 7.1** requires the organization to determine and provide the resources needed to establish, implement, and maintain the OH&S management system.\n\n[Doc 1 — clause 7.1]: \"The organization must determine and provide the resources needed to establish, implement, maintain and continually improve the OH&S management system.\"",
+ "inputTokens": 379,
+ "outputTokens": 73,
+ "costUsd": 0.0004464,
+ "latencyMs": 1068,
+ "score": 1
+}

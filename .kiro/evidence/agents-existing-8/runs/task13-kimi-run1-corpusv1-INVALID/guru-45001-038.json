@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-038",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 109,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.49249902
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.46823877
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.46358123
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.46009398
+   },
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.45662576
+   }
+  ],
+  "recall": 0.3333333333333333
+ },
+ "response": " Based on the retrieved excerpts, introducing a new solvent-based degreaser involves **four key ISO 45001 clauses**:\n\n## 8.1.3 — Management of Change\nThis is the primary clause governing your situation. The switch to a new degreaser constitutes a **planned permanent change** to processes and materials that impacts OH&S performance. You must:\n- Establish processes to implement and control this change\n- Review **unintended consequences** (e.g., new chemical exposures, fire risks, ventilation needs)\n- Act to mitigate any adverse effects\n\n## 8.1.2 — Hierarchy of Controls\nBefore approving the solvent-based degreaser, you must apply the hierarchy in order:\n1. **Eliminate** — Can you avoid degreasing entirely?\n2. **Substitute** — Is there a less hazardous water-based or non-solvent alternative?\n3. **Engineering controls** — Ventilation, enclosure\n4. **Administrative controls** — Training, exposure limits\n5. **PPE** — Respiratory protection, gloves (last resort)\n\n## 6.1.3 — Legal and Other Requirements\nYou must determine and access **up-to-date legal requirements** applicable to this new chemical (e.g., OSHA PELs, EPA regulations, fire codes, hazardous material storage rules), work out how they apply, and account for them when implementing the change.\n\n## 8.1.4 — Procurement\nIf you're purchasing this degreaser from a supplier, you must ensure it **conforms to your OH&S management system** and that any contractor involvement in installation or maintenance is coordinated and controlled with appropriate OH&S selection criteria.\n\n---\n\n**Recommended action:** Document your change management process under 8.1.3, explicitly showing how you applied the hierarchy of controls (8.1.2) and verified legal compliance (6.1.3) before approving the solvent switch.",
+ "inputTokens": 452,
+ "outputTokens": 392,
+ "costUsd": 0.0014472,
+ "latencyMs": 5319,
+ "score": 0.3333333333333333
+}

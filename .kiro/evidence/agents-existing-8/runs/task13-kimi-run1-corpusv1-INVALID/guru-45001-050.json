@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-050",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 132,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "10.2",
+    "score": 0.5979465
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4949759
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.49067155
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48090556
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.47030476
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 10.2** governs the response to incidents and nonconformities in ISO 45001.\n\n## What ISO 45001 clause 10.2 adds beyond a typical ISO 9001 process when the trigger is an incident:\n\n| ISO 9001 typical elements | ISO 45001 clause 10.2 additional requirements |\n|---------------------------|---------------------------------------------|\n| Control and correction | **Worker participation** and involvement of other relevant interested parties in evaluating the need for corrective action |\n| Root cause analysis | **Review of existing OH&S risk assessments** |\n| Corrective action implementation | Must follow the **hierarchy of controls** |\n| — | **Assessment of related risks before acting** (prevention of unintended consequences) |\n| Effectiveness review | **System changes if needed** (broader organizational learning) |\n| Documented information | **Communication to relevant workers and interested parties** (explicit requirement) |\n\n## Key OH&S-specific additions in 45001:\n\n- **Clause 10.2** requires evaluating whether corrective action is needed **\"to eliminate root causes so it does not recur or occur elsewhere\"** — emphasizing prevention of recurrence across the organization, not just fixing the immediate issue\n\n- The explicit requirement to **review existing OH&S risk assessments** ensures the incident feeds back into the organization's hazard identification and risk management framework\n\n- The **hierarchy of controls** requirement ensures elimination/substitution are prioritized over administrative controls\n\n- **Assessing related risks before acting** prevents \"fixes\" that create new hazards — critical in safety contexts where quick fixes can introduce unforeseen risks",
+ "inputTokens": 563,
+ "outputTokens": 330,
+ "costUsd": 0.0013278,
+ "latencyMs": 3891,
+ "score": 1
+}

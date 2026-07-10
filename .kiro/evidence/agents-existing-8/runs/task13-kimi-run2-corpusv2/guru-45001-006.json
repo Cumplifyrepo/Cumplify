@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-006",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 42,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.6579792
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.588939
+   },
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.5522075
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.55081344
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.536139
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.1.3** directly addresses your question.\n\nThis clause requires the organization to **establish processes for implementing and controlling planned temporary and permanent changes that impact OH&S performance**, including changes to work conditions and equipment. It also requires reviewing unintended consequences of changes and acting to mitigate any adverse effects.\n\nRearranging the production line layout constitutes a **change to work conditions and equipment** that could affect OH&S performance, so clause 8.1.3 applies.\n\nAdditionally, **clause 8.1.1** supports this by requiring the organization to **plan, implement, control and maintain the processes needed to meet OH&S system requirements**, including establishing operating criteria and controlling processes to those criteria.",
+ "inputTokens": 405,
+ "outputTokens": 150,
+ "costUsd": 0.0006929999999999999,
+ "latencyMs": 2548,
+ "score": 1
+}

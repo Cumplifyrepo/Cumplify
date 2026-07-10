@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-039",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 104,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.51376563
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.48003793
+   },
+   {
+    "clauseRef": "10.2",
+    "score": 0.47338635
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.4714924
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.46777692
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, here are the ISO 45001 clauses that require you to capture the new fall-protection rule and verify compliance:\n\n## Capturing the New Rule\n\n**Clause 6.1.3** — You must have processes to:\n- Determine and access up-to-date legal requirements applicable to your hazards and OH&S risks\n- Work out how they apply and what needs communicating\n- Account for them when building and running your system\n- **Retain documented information on them**\n\n## Verifying You're Meeting the Rule\n\n**Clause 9.1.2** — You must establish a process to **evaluate compliance** with legal requirements, including:\n- Determining frequency and methods of evaluation\n- Evaluating compliance and acting if needed\n- Maintaining knowledge and understanding of your compliance status\n- **Retaining documented information of the compliance evaluation results**\n\n**Clause 9.1.1** — You must determine what to monitor and measure, including:\n- **Progress on legal and other compliance**\n- Activities related to identified hazards and risks\n- Operational controls\n- Methods, criteria, indicators, and timing for monitoring\n- **Retaining results as documented information**\n\n## Additional Considerations\n\nGiven that fall protection involves worker competence, **Clause 7.2** also applies: you must determine necessary competence for workers affected by or affecting OH&S performance, ensure they can identify hazards, and **retain documented evidence of competence** (e.g., training records for the new fall-protection requirements).\n\nIf gaps are found during verification, **Clause 10.2** would require corrective action, including evaluating root causes, reviewing risk assessments, implementing actions per the hierarchy of controls, and **retaining documented information on actions taken and their results**.",
+ "inputTokens": 537,
+ "outputTokens": 354,
+ "costUsd": 0.0013842,
+ "latencyMs": 4848,
+ "score": 1
+}

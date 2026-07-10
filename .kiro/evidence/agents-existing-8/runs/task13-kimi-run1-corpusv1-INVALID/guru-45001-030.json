@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-030",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 123,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.2.1",
+    "score": 0.67700654
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.65317935
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.60516304
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5987273
+   },
+   {
+    "clauseRef": "5.2",
+    "score": 0.58873224
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001 has specific requirements for setting and planning OH&S objectives that go beyond a vague goal like \"fewer injuries.\"\n\n## Requirements for Setting OH&S Objectives (Clause 6.2.1)\n\nObjectives must be **measurable** and:\n- Set at relevant functions and levels\n- Take account of:\n  - Applicable requirements\n  - Risk and opportunity assessment results\n  - Consultation outcomes\n- Be **monitored, communicated, and updated** as appropriate\n- Be **kept as documented information**\n\n\"Fewer injuries\" would need to be made specific and quantifiable (e.g., \"reduce lost-time injury frequency rate by X% by [date]\").\n\n## Requirements for Planning Each Objective (Clause 6.2.2)\n\nFor each objective, the organization must plan:\n- **What** will be done\n- **Which resources** are required\n- **Who** is responsible\n- **When** it will be completed\n- **How** the results will be evaluated — including monitoring indicators\n\nThese actions must be **integrated into business processes where practicable**.\n\n## Additional Context from Leadership Requirements\n\nPer **clause 5.1**, top management must ensure OH&S objectives **fit the organization's strategy** and integrate OH&S requirements into business processes. Per **clause 5.2**, the OH&S policy must commit to **eliminating hazards and reducing OH&S risks** and **continual improvement** — objectives should align with these policy commitments.\n\n## Summary\n\n\"Fewer injuries\" needs to be transformed into a properly planned objective with: specific metrics, clear accountability, resource allocation, timelines, evaluation methods, and integration into business operations — all documented and developed with worker consultation.",
+ "inputTokens": 446,
+ "outputTokens": 357,
+ "costUsd": 0.0013386,
+ "latencyMs": 6302,
+ "score": 1
+}

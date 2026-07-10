@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-016",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 60,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "10.2",
+    "score": 0.5283653
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48414198
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4795779
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.47055253
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.46288902
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the ISO 45001 requirements in your documentation, here's what clause 10.2 requires you to do following this recordable hand injury:\n\n## Immediate Response\n- **React in a timely manner** and take action to **control and correct** the incident\n- **Deal with the consequences** (e.g., worker treatment, line shutdown if needed)\n\n## Evaluation & Root Cause Analysis\n- **Evaluate the need for corrective action** to eliminate root causes so this doesn't recur or happen elsewhere\n- This evaluation must include **participation of workers** and **involvement of other relevant interested parties**\n- **Review existing OH&S risk assessments** related to the packaging line\n\n## Corrective Action Implementation\n- **Determine and implement corrective actions** following the **hierarchy of controls**\n- **Assess related risks before acting** (don't introduce new hazards)\n- **Review the effectiveness** of your corrective actions after implementation\n\n## System-Level Response\n- **Make system changes if needed** (broader than just this one fix)\n\n## Documentation & Communication\n- **Retain documented information** on:\n  - The incident itself\n  - Any nonconformities identified\n  - Actions taken\n  - Results of those actions\n- **Communicate this information** to relevant workers and interested parties\n\n## Additional Considerations from Related Clauses\n\nGiven this was a hand injury on equipment, you should also consider:\n- **Clause 6.1.2**: Was this hazard properly identified in your ongoing hazard identification processes? Does your methodology need updating?\n- **Clause 6.1.3**: Are there updated legal requirements (e.g., machinery guarding regulations) that apply?\n- **Clause 5.1**: Has top management demonstrated leadership by ensuring resources are available for prevention and protecting workers from reprisals for reporting?\n\nThe key distinction in ISO 45001 is that you're not just fixing this one incident—you're required to evaluate whether **corrective action** (addressing root causes) is needed to prevent recurrence, with worker participation built into that evaluation.",
+ "inputTokens": 550,
+ "outputTokens": 421,
+ "costUsd": 0.001593,
+ "latencyMs": 7098,
+ "score": 1
+}

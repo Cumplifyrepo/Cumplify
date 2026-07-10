@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-020",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 80,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.3",
+    "score": 0.5766381
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.49978998
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.49159855
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.48341396
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.48219603
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on **clause 7.3**, ISO 45001 requires your warehouse workers to be made aware of the following specific elements:\n\n| Required Awareness Element | What It Means for Warehouse Workers |\n|---------------------------|-------------------------------------|\n| **OH&S policy and objectives** | They need to understand the safety policy itself, not just see it posted, plus what the organization is trying to achieve |\n| **Their own contribution to system effectiveness** | How their individual actions affect whether the safety system works |\n| **Benefits of improved performance** | What's in it for them when safety improves |\n| **Implications of not conforming** | Consequences of not following safety requirements |\n| **Relevant incidents and investigation outcomes** | Learning from past accidents and near-misses in their workplace |\n| **Hazards and risks that concern them** | Specific dangers in their warehouse environment that affect their role |\n| **Right to remove themselves from imminent and serious danger without reprisal** | Their legal protection to stop work immediately when facing serious danger, with no retaliation |\n\n**Key distinction from clause 7.3:** The standard requires workers to be *made aware* of these elements—passive posting is insufficient. The organization must actively ensure understanding, not merely display information.\n\nAdditionally, **clause 5.4** reinforces this by requiring processes that remove barriers to participation (such as language, literacy, or fear of reprisal), which directly supports effective awareness for warehouse workers who may face these specific barriers.",
+ "inputTokens": 476,
+ "outputTokens": 305,
+ "costUsd": 0.0012006,
+ "latencyMs": 5230,
+ "score": 1
+}

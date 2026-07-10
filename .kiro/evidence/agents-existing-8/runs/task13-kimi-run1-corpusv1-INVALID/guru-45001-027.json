@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-027",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 130,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "4.3",
+    "score": 0.6079373
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5931537
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.5875315
+   },
+   {
+    "clauseRef": "7.1",
+    "score": 0.5851563
+   },
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.5663367
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, when setting the boundaries of your OH&S management system for ISO 45001 certification of only two of your five sites, the standard requires you to consider and document the following:\n\n## Required Considerations (Clause 4.3)\n\nYou must define the **boundaries and applicability** of your OH&S management system to establish its scope, taking into account:\n\n1. **Context issues** — the internal and external factors affecting your organization\n2. **Obligations owed to interested parties** — requirements from workers, regulators, customers, and other stakeholders\n3. **Planned work-related activities** — the operations, processes, and activities you intend to include\n\n## Documentation Requirements\n\nThe scope must:\n- **Cover activities that can impact OH&S performance** — ensuring all relevant health and safety aspects within the two certified sites are included\n- **Be available as documented information** — formally documented and accessible\n\n## Additional Planning Considerations (Clause 6.1.1)\n\nWhen planning your OH&S system, you must also consider:\n- Your **context** and **interested-party requirements**\n- The **system scope** you've defined\n- **Risks and opportunities** that need addressing to ensure the system achieves intended outcomes, prevents undesired effects, and enables continual improvement\n\n## Key Implication for Multi-Site Certification\n\nSince you're excluding three sites from certification, your scope documentation must clearly delineate which two sites are included and justify why the excluded sites fall outside the system boundaries—ensuring this exclusion doesn't compromise your ability to achieve intended OH&S outcomes at the certified locations.",
+ "inputTokens": 397,
+ "outputTokens": 326,
+ "costUsd": 0.0012162000000000002,
+ "latencyMs": 5215,
+ "score": 1
+}

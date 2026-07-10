@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-049",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 127,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.68634564
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.56481373
+   },
+   {
+    "clauseRef": "9.2",
+    "score": 0.52548367
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.5114461
+   },
+   {
+    "clauseRef": "10.1",
+    "score": 0.5070439
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, **clause 9.1.2** covers evaluation of compliance in ISO 45001.\n\n## What clause 9.1.2 actually requires you to evaluate\n\nThe quality manager's assumption is incorrect. Unlike ISO 9001's customer satisfaction focus, ISO 45001's \"evaluation of compliance\" specifically requires you to evaluate:\n\n- **Legal requirements** — compliance with applicable laws and regulations\n- **Other requirements** — other requirements the organization subscribes to (such as contractual obligations, industry standards, or voluntary commitments)\n\n## The full requirements of clause 9.1.2\n\nThe clause requires your organization to establish a process that includes:\n\n| Element | Requirement |\n|--------|-------------|\n| **Frequency & methods** | Determine how often and how to evaluate compliance |\n| **Evaluation** | Actually carry out the compliance evaluation |\n| **Action** | Take action if non-compliance is identified |\n| **Knowledge maintenance** | Keep up-to-date understanding of compliance status |\n| **Documented information** | Retain records of compliance evaluation results |\n\n## Key distinction from ISO 9001\n\nWhile ISO 9001 focuses on **customer satisfaction** and product/service quality, ISO 45001's evaluation of compliance is strictly about **regulatory and other requirement conformance** for occupational health and safety. There is no customer satisfaction component in this clause.\n\nIf your audit plan references \"evaluation of compliance,\" the auditors will be looking for evidence of how you monitor and verify compliance with OH&S legal requirements and other subscribed requirements — not customer feedback or satisfaction metrics.",
+ "inputTokens": 522,
+ "outputTokens": 323,
+ "costUsd": 0.0012822,
+ "latencyMs": 5001,
+ "score": 1
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-027",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 130,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "4.3",
+    "score": 0.6079373
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5931537
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.5875315
+   },
+   {
+    "clauseRef": "7.1",
+    "score": 0.5851563
+   },
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.5663367
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, when setting the boundaries of your OH&S management system for certification of only two of your five sites, ISO 45001 requires you to consider and document the following:\n\n## Required Considerations (Clause 4.3)\n\nYou must take into account:\n- **Context issues** affecting your organization\n- **Obligations owed to interested parties**\n- **Planned work-related activities**\n\nThe scope must cover **activities that can impact OH&S performance** and must be **available as documented information**.\n\n## Additional Planning Requirements (Clause 6.1.1)\n\nWhen planning your OH&S system, you must also consider:\n- Your **context**\n- **Interested-party requirements**\n- **System scope**\n\nAnd determine the **risks and opportunities** that need to be addressed to:\n- Give assurance the system can achieve its intended outcomes\n- Prevent undesired effects\n- Achieve continual improvement\n\n## Documentation Requirements (Clause 7.5)\n\nYour scope and boundary documentation must include:\n- **Proper identification** and **format**\n- **Review and approval**\n- **Availability, suitability, and protection** of the documented information\n- **Change control** and **retention** provisions\n\n## Practical Implications\n\nSince you're excluding three sites from certification, your scope statement must clearly define which two sites are included and explicitly exclude the others. You need to ensure that:\n- Activities at the non-certified sites that could affect OH&S performance at certified sites are considered in your context analysis\n- Interested parties (workers, contractors, regulators) at all sites are appropriately addressed where they create obligations for the certified scope\n- The boundaries are logical and don't create unacceptable risks through interfaces between certified and non-certified operations\n\nThe standard does not prohibit partial certification, but your scope must be clearly defined and documented to prevent confusion about what is and isn't covered by your ISO 45001 certification.",
+ "inputTokens": 397,
+ "outputTokens": 382,
+ "costUsd": 0.0013842000000000001,
+ "latencyMs": 16598,
+ "score": 1
+}

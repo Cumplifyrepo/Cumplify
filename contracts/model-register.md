@@ -116,13 +116,13 @@ form declined + margin-fail at credit pricing).
 |-------|-------|
 | **Seat** | ISO 45001 Domain Guru (clause Q&A) |
 | **Assigned Model** | `moonshotai.kimi-k2.5` |
-| **Status** | PROVISIONAL — retrieval-grounded re-eval gate at spec 4 (knowledge-base) |
-| **Justification** | No bare passer at 0.85 bar (best: kimi-k2.5 at 0.843). Sub-clause precision is the failure mode. Production Gurus run retrieval-grounded on the KB — clause-tagged chunks target exactly this gap. Retrieval-grounded re-eval REQUIRED at spec-4 readback before any user-facing GO. |
-| **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/guru-run7-45001/report.md` |
-| **$/task P50** | $0.00101 |
+| **Status** | ASSIGNED — retrieval-grounded re-eval PASSED 2026-07-10 (agents-existing-8 Task 13) |
+| **Justification** | No bare passer at 0.85 bar (best: kimi-k2.5 at 0.843). Sub-clause precision is the failure mode. Production Gurus run retrieval-grounded on the KB — clause-tagged chunks target exactly this gap. Retrieval-grounded re-eval REQUIRED at spec-4 readback before any user-facing GO. RE-EVAL RESULT: grounded on clause-tagged AOSS corpus (Titan Embed v2, topK=5, production retrieve() path), mean clause-citation 0.9433 over 50 tasks ≥ 0.85 bar — the grounding hypothesis held (ungrounded 0.843 → grounded 0.9433; every residual error was a retrieval-breadth miss on multi-clause tasks, zero model mis-citations of retrieved clauses). Run-1 at 0.7533 was INVALIDATED for a grounding-corpus granularity defect (depth-3 docs vs depth-4 expected clauses), diagnosed mid-run and documented — not a model failure. |
+| **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/guru-run7-45001/report.md` (ungrounded); `.kiro/evidence/agents-existing-8/task-13-guru45001-reeval.log` + `runs/task13-kimi-run2-corpusv2/` (grounded) |
+| **$/task P50** | $0.00101 (ungrounded); grounded run mean $0.00111 |
 | **$/task P95** | $0.00184 |
 | **Margin at credit pricing** | 94.9% (mandate: >50%) |
-| **Expiry** | Contingent on spec-4 retrieval-grounded re-eval |
+| **Expiry** | 2026-10-08 (90 days from grounded re-eval) |
 
 ---
 

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-026",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 50,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.5",
+    "score": 0.57437915
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.53929776
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5246556
+   },
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.52463746
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5238384
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, ISO 45001 has specific requirements for managing your OH&S documented information that your current shared drive arrangement likely doesn't meet.\n\n## Key Requirements\n\n**Document Control (Clause 7.5)**\nYour system must ensure documented information is:\n- **Properly identified and formatted** — with review and approval when created and updated\n- **Available and suitable** for use where and when needed\n- **Protected** from unintended changes or loss\n- **Controlled for distribution, access, storage, change control, retention and disposition**\n\nThe standard explicitly requires governing **change control** — which your current setup with \"old revisions still floating around\" violates.\n\n**Legal Requirements Documentation (Clause 6.1.3)**\nYou must retain **documented information** on applicable legal and other requirements, with processes to ensure you have **up-to-date** versions. Uncontrolled multiple revisions directly undermine this.\n\n## What This Means for Your Situation\n\n| Your Current State | ISO 45001 Requirement |\n|---|---|\n| No version control | Proper identification and change control (7.5) |\n| Old revisions accessible | Controlled distribution, access and disposition (7.5) |\n| Shared drive only | Protection and availability (7.5) |\n\n## Recommended Actions\n\n1. **Implement version control** — unique document IDs, revision numbers, dates\n2. **Establish approval workflows** — review and authorize before issuance\n3. **Remove obsolete documents** — or clearly identify them to prevent unintended use\n4. **Define retention periods** — and disposition methods for outdated versions\n5. **Control access** — so only current approved versions are usable for operations\n\nYour multi-employer coordination obligations (8.1.1) and change management processes (8.1.3) also depend on reliable document control — uncontrolled procedures create risks when adapting work or implementing changes.",
+ "inputTokens": 435,
+ "outputTokens": 382,
+ "costUsd": 0.001407,
+ "latencyMs": 4834,
+ "score": 1
+}

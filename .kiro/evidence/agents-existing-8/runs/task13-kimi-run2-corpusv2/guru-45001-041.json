@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-041",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 42,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.4",
+    "score": 0.5139831
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.47668785
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.4756314
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.47492635
+   },
+   {
+    "clauseRef": "4.2",
+    "score": 0.47481596
+   }
+  ],
+  "recall": 0.5
+ },
+ "response": " Based on the retrieved excerpts, the safety committee's position is supported by **ISO 45001 clause 5.4** and **clause 7.3**.\n\n**Clause 5.4** requires the organization to establish processes for \"consultation and participation of workers at all levels and functions\" in \"development, planning, implementation, **performance evaluation and improvement actions** of the OH&S system,\" with \"special emphasis on the involvement of non-managerial workers.\" An injury investigation constitutes both performance evaluation and improvement action, and the clause explicitly mandates non-managerial worker involvement.\n\n**Clause 7.3** reinforces this by requiring workers to be made aware of \"**relevant incidents and investigation outcomes**.\" Meaningful awareness implies meaningful participation in the investigation process itself, not merely receiving information after the fact.\n\nAdditionally, **clause 5.1** supports the broader principle by requiring top management to \"protect workers from reprisals when they report incidents,\" which aligns with having workers directly involved in investigations rather than filtered through supervisory layers.",
+ "inputTokens": 471,
+ "outputTokens": 209,
+ "costUsd": 0.0009096,
+ "latencyMs": 2511,
+ "score": 0.5
+}

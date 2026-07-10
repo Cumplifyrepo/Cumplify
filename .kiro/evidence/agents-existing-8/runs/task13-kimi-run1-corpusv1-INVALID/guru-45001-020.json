@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-020",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 122,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.3",
+    "score": 0.5766381
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.49978998
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.49159855
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.48341396
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.48219603
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved documentation, **clause 7.3** specifies that workers must be made aware of the following elements beyond simply posting the policy:\n\n| Required Awareness Element | What It Means for Warehouse Workers |\n|---------------------------|-------------------------------------|\n| **OH&S policy and objectives** | The actual content and goals of the safety system, not just where it's posted |\n| **Their own contribution to system effectiveness** | How their individual actions impact overall safety performance |\n| **Benefits of improved performance** | What's in it for them and the organization when safety improves |\n| **Implications of not conforming** | Consequences of failing to follow safety requirements |\n| **Relevant incidents and investigation outcomes** | Lessons learned from past accidents and near-misses |\n| **Hazards and risks that concern them** | Specific dangers in their actual work environment |\n| **Right to remove themselves from imminent/serious danger without reprisal** | Their legal protection to stop work when seriously threatened |\n\nAdditionally, **clause 5.4** reinforces that this awareness must be achieved through active processes that remove barriers like \"language, literacy or fear of reprisal\" — meaning passive posting alone is insufficient if workers cannot understand, access, or act on the information without fear.\n\nThe standard requires **active communication and engagement**, not merely physical display of documents.",
+ "inputTokens": 476,
+ "outputTokens": 274,
+ "costUsd": 0.0011076,
+ "latencyMs": 4569,
+ "score": 1
+}

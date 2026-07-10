@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-028",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 102,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.1",
+    "score": 0.56880754
+   },
+   {
+    "clauseRef": "5.2",
+    "score": 0.5219746
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.47090408
+   },
+   {
+    "clauseRef": "5.3",
+    "score": 0.47030583
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.466738
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001 requires far more from top management than an annual signature. Here are the specific leadership obligations under **clause 5.1**:\n\n**Ongoing active involvement, not symbolic gestures:**\n- Take **overall responsibility and accountability** for preventing work-related injury and ill health\n- Ensure OH&S policy and objectives **fit the organization's strategy**\n- **Integrate OH&S requirements into business processes** — not treat safety as separate from operations\n- **Provide resources** for the system to function\n- **Protect workers from reprisals** when they report incidents\n- **Support a culture** that backs the system's intended results\n\n**Additional requirements from related clauses:**\n\nUnder **clause 5.2**, top management must **establish** the policy (not merely sign it), ensuring it commits to:\n- Safe and healthy working conditions\n- Satisfying legal and other requirements\n- Eliminating hazards and reducing OH&S risks\n- Continual improvement\n- Consultation and participation of workers\n\nThe policy must be **documented, communicated, and available to interested parties** — ongoing obligations, not one-time events.\n\nUnder **clause 5.3**, top management must **assign responsibilities and authorities**, communicate them at all levels, and crucially, **retain accountability for system performance even where duties are delegated** — including receiving reports on OH&S performance.\n\n**The bottom line:** Annual signatures are insufficient. ISO 45001 demands continuous, visible leadership engagement integrated into how the business actually runs.",
+ "inputTokens": 453,
+ "outputTokens": 309,
+ "costUsd": 0.0011987999999999999,
+ "latencyMs": 14922,
+ "score": 1
+}

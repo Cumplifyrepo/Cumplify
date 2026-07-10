@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-018",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 52,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.65705955
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.55510443
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5255878
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.5221397
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.5140299
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001 requires your hazard identification process to take into account the following elements, as specified in **clause 6.1.2**:\n\n**Activities and situations:**\n- **Routine activities** — regular, day-to-day operations at your distribution center\n- **Non-routine activities** — irregular or infrequent tasks that may occur\n\n**Factors to consider:**\n- **Human factors** — how human behavior, capabilities, and limitations affect safety\n- **Past incidents including emergencies** — historical accidents, near-misses, and emergency events\n- **How work is organized** — the structure, scheduling, and management of work activities\n- **People beside the organization's own workforce** — individuals beyond your direct employees, such as contractors, visitors, delivery drivers, and other third parties who may be present at your facility\n\nAdditionally, **clause 6.1.4** indicates that your planning must also account for **emergency preparedness**, and **clause 8.2** specifically reinforces that emergency planning must consider **contractors, visitors and neighbours**.\n\nOnce hazards are identified, your organization must then assess OH&S risks and opportunities using **defined methodologies and criteria** (clause 6.1.2), and plan actions that apply the **hierarchy of controls** (clause 6.1.4 and 8.1.2).",
+ "inputTokens": 479,
+ "outputTokens": 280,
+ "costUsd": 0.0011274,
+ "latencyMs": 3714,
+ "score": 0
+}

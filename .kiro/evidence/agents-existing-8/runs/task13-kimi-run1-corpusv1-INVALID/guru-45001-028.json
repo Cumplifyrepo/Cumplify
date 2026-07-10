@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-028",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 128,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.1",
+    "score": 0.56880754
+   },
+   {
+    "clauseRef": "5.2",
+    "score": 0.5219746
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.47090408
+   },
+   {
+    "clauseRef": "5.3",
+    "score": 0.47030583
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.466738
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001 requires far more from top management than an annual signature. Here are the specific leadership obligations across multiple clauses:\n\n## Ongoing Leadership Responsibilities (Clause 5.1)\n\nTop management must **demonstrate leadership** through continuous actions, not one-time sign-offs:\n\n- Take **overall responsibility and accountability** for preventing work-related injury and ill health\n- Ensure OH&S policy and objectives **fit the organization's strategy**\n- **Integrate OH&S requirements into business processes**\n- **Provide resources** for the system\n- **Protect workers from reprisals** when they report incidents\n- **Support a culture** that backs the system's intended results\n\n## Policy Establishment and Active Commitment (Clause 5.2)\n\nThe policy itself must commit to specific actions and be **actively maintained**:\n\n- Providing safe and healthy working conditions\n- Satisfying legal and other requirements\n- **Eliminating hazards and reducing OH&S risks**\n- **Continual improvement**\n- **Consultation and participation of workers**\n\nThe policy must be **documented, communicated, and available to interested parties** — not just signed annually.\n\n## Accountability Cannot Be Delegated (Clause 5.3)\n\nEven when duties are delegated:\n- **Accountability for the system's performance stays with top management**\n- Responsibilities and authorities must be **assigned and communicated at all levels**\n- Top management retains **reporting on OH&S performance to themselves**\n\n## What This Means in Practice\n\nYour executives' annual signature approach falls short because ISO 45001 requires **demonstrated, ongoing leadership integration** into business operations, active cultural support, resource provision, and retained accountability — not passive annual endorsement.",
+ "inputTokens": 453,
+ "outputTokens": 346,
+ "costUsd": 0.0013098,
+ "latencyMs": 9004,
+ "score": 1
+}

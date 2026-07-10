@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-004",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 43,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.8371419
+   },
+   {
+    "clauseRef": "6.1.2.2",
+    "score": 0.5913824
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5819748
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.57241
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5578833
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, the requirement to apply the hierarchy of controls when working to eliminate hazards and reduce OH&S risks is found in **clause 8.1.2**.\n\nThis clause explicitly states: \"Processes to eliminate hazards and reduce OH&S risks must apply the hierarchy of controls in order: first eliminate the hazard, then substitute with less hazardous processes or materials, then apply engineering controls and work reorganization, then administrative controls including training, and only lastly rely on adequate personal protective equipment.\"",
+ "inputTokens": 441,
+ "outputTokens": 100,
+ "costUsd": 0.0005646,
+ "latencyMs": 1541,
+ "score": 1
+}

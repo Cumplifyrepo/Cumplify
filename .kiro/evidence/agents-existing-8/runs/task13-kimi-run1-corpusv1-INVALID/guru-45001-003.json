@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-003",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 74,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.7206625
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.57035506
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.5251394
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.5237417
+   },
+   {
+    "clauseRef": "9.2",
+    "score": 0.52231246
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved excerpts, the requirement for an **ongoing and proactive** process for hazard identification is found in **clause 6.1.2** (Doc 1).\n\nThis clause explicitly states that \"Ongoing and proactive processes for hazard identification must be established, covering routine and non-routine activities, human factors, past incidents including emergencies, how work is organized, and people beside the organization's own workforce.\"\n\nYour auditor is correct that a once-a-year hazard walkthrough would not satisfy this requirement. The standard mandates **continuous** hazard identification processes, not periodic or annual reviews.",
+ "inputTokens": 504,
+ "outputTokens": 119,
+ "costUsd": 0.0006594,
+ "latencyMs": 2876,
+ "score": 0
+}

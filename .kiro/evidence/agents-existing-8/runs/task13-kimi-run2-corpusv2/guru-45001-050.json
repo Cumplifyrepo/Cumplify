@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-050",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 116,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "10.2",
+    "score": 0.5979465
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4949759
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.49067155
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48090556
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.47030476
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 10.2** governs the response to incidents and nonconformities in ISO 45001.\n\n## What ISO 45001 clause 10.2 adds beyond ISO 9001\n\nWhen the trigger is an **incident** (such as a lost-time injury), clause 10.2 requires several OH&S-specific elements that go beyond a generic quality management corrective action process:\n\n| ISO 45001-specific requirement | Clause 10.2 reference |\n|-------------------------------|----------------------|\n| **Evaluate need for corrective action with participation of workers and involvement of other relevant interested parties** | \"evaluate — with participation of workers and involvement of other relevant interested parties — the need for corrective action\" |\n| **Review existing OH&S risk assessments** | \"review existing OH&S risk assessments\" |\n| **Apply the hierarchy of controls** | \"determine and implement corrective actions in line with the hierarchy of controls\" |\n| **Assess related OH&S risks before acting** | \"assess related risks before acting\" |\n| **OH&S-specific communication** | \"communicating this to relevant workers and interested parties\" |\n\n## Key distinction\n\nWhile ISO 9001 focuses on correcting nonconformities affecting product/service quality, ISO 45001 clause 10.2 mandates that incident response must:\n- Engage workers and interested parties in the evaluation\n- Explicitly revisit risk assessments that may have failed to prevent the injury\n- Apply the **hierarchy of controls** (elimination, substitution, engineering controls, administrative controls, PPE) rather than jumping to procedural fixes\n- Assess whether the corrective action itself introduces new safety risks before implementation\n\nThe quality team's existing ISO 9001 process would need these adaptations to comply with ISO 45001 clause 10.2 for a lost-time injury.",
+ "inputTokens": 563,
+ "outputTokens": 373,
+ "costUsd": 0.0014568,
+ "latencyMs": 4909,
+ "score": 1
+}

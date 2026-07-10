@@ -1,0 +1,13 @@
+{
+ "model": "moonshotai.kimi-k2.5",
+ "seat": "guru",
+ "tasks": 50,
+ "meanScore": 0.7533,
+ "bar": 0.85,
+ "pass": false,
+ "meanRetrievalRecall": 0.7333,
+ "retrievalColdStarts": 0,
+ "totalCostUsd": 0.0522,
+ "capUsd": 1.5,
+ "finishedAt": "2026-07-10T00:24:58.131Z"
+}

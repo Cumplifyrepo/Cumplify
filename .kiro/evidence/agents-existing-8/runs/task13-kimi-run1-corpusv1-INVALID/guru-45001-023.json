@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-023",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 120,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.57838136
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.5043823
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.49433717
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.471336
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.46709794
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.2** (Doc 1) specifies the requirements for emergency preparedness. In addition to having an evacuation map posted, your emergency preparedness process must include:\n\n| Required Element | Clause 8.2 Reference |\n|------------------|----------------------|\n| **Planned first-aid response** | explicitly listed |\n| **Training** | explicitly listed |\n| **Periodic testing and exercising of response capability** | explicitly listed |\n| **Performance evaluation and revision** after tests or actual emergencies | explicitly listed |\n| **Communication of duties** to workers and relevant interested parties | explicitly listed |\n| **Consideration of contractors, visitors and neighbours** | explicitly listed |\n| **Documented information** on the processes and response plans | explicitly listed |\n\nAdditionally, **clause 6.1.4** (Doc 2) requires that your emergency preparedness planning must:\n- Integrate actions into your OH&S system processes or other business processes\n- Evaluate their effectiveness\n- Consider the **hierarchy of controls** and outputs of the system when planning\n\nYour evacuation map alone satisfies only the visual communication aspect. The standard requires a comprehensive, documented, tested, and continuously improved emergency preparedness process with active worker participation (as also required by **clause 5.4**, Doc 5) covering all the elements above.",
+ "inputTokens": 486,
+ "outputTokens": 269,
+ "costUsd": 0.0010986,
+ "latencyMs": 6898,
+ "score": 1
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-011",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 40,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.2",
+    "score": 0.814206
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.6209721
+   },
+   {
+    "clauseRef": "4.4",
+    "score": 0.6207693
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.6112561
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.5914427
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 9.2** requires planned internal audits to verify that the OH&S management system conforms to requirements and is effectively implemented.\n\nSpecifically, clause 9.2 states that \"Internal audits at planned intervals must verify that the OH&S management system conforms to the organization's own requirements and to the standard, and is effectively implemented and maintained.\"",
+ "inputTokens": 485,
+ "outputTokens": 76,
+ "costUsd": 0.000519,
+ "latencyMs": 1276,
+ "score": 1
+}

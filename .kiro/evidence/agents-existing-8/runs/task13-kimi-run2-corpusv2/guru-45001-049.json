@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-049",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 142,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.68634564
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.56481373
+   },
+   {
+    "clauseRef": "9.2",
+    "score": 0.52548367
+   },
+   {
+    "clauseRef": "9.3",
+    "score": 0.5114461
+   },
+   {
+    "clauseRef": "10.1",
+    "score": 0.5070439
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, **clause 9.1.2** covers evaluation of compliance in ISO 45001.\n\n## What clause 9.1.2 actually requires you to evaluate\n\nThe evaluation of compliance in ISO 45001 is **not** about customer satisfaction. According to clause 9.1.2, your organization must establish a process to evaluate compliance with:\n\n- **Legal requirements**\n- **Other requirements** (i.e., other requirements the organization subscribes to)\n\n## Specific requirements of clause 9.1.2\n\nThe clause requires your organization to:\n\n| Element | Requirement |\n|--------|-------------|\n| **Frequency & methods** | Determine how often and by what methods evaluation occurs |\n| **Evaluation** | Actually evaluate compliance |\n| **Action** | Take action if needed |\n| **Knowledge maintenance** | Maintain knowledge and understanding of compliance status |\n| **Documentation** | Retain documented information of compliance evaluation results |\n\n## Key distinction from ISO 9001\n\nYour quality manager's assumption appears to conflate ISO 45001 with ISO 9001. In ISO 45001, \"evaluation of compliance\" specifically refers to **regulatory and legal compliance** related to occupational health and safety—not customer satisfaction metrics. This is part of the **performance evaluation** processes (clause 9), which also includes monitoring and measurement (clause 9.1.1), internal audits (clause 9.2), and management review (clause 9.3).\n\nThe results of your compliance evaluations are also inputs to management review (clause 9.3) and should inform opportunities for improvement (clause 10.1).",
+ "inputTokens": 522,
+ "outputTokens": 337,
+ "costUsd": 0.0013242,
+ "latencyMs": 4215,
+ "score": 1
+}

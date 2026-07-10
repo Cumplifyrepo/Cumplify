@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-019",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 111,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.2.2",
+    "score": 0.75419056
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.6358892
+   },
+   {
+    "clauseRef": "6.1.2.1",
+    "score": 0.6204266
+   },
+   {
+    "clauseRef": "6.1.2.3",
+    "score": 0.5973804
+   },
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.59282374
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, ISO 45001 requires the following regarding how you assess OH&S risks from your listed hazards:\n\n**Assessment Process Requirements (Clause 6.1.2.2)**\n\nThe organization must establish processes to:\n- **Assess OH&S risks from the identified hazards**, taking into account the **effectiveness of existing controls**\n- **Determine and assess other risks** related to the establishment, implementation, operation and maintenance of the OH&S management system\n\n**Methodology Requirements (Clause 6.1.2.2)**\n\nThe assessment methodologies and criteria must be:\n- **Defined with respect to scope, nature and timing**\n- **Proactive rather than reactive**\n- **Maintained as documented information**\n\n**Context to Consider (Clause 6.1.3)**\n\nWhile identifying hazards, you should already have considered factors that will inform your risk assessment, including: how work is organized, social factors, routine and non-routine activities, past incidents, potential emergencies, people involved, design of work areas, and actual or proposed changes.\n\n**Integration with Opportunities (Clause 6.1.2.3)**\n\nThe standard also requires you to establish processes to assess **OH&S opportunities** to enhance performance — including possibilities to eliminate hazards and reduce OH&S risks.\n\n**Systematic Planning Context (Clause 6.1.1)**\n\nThis risk assessment work sits within the broader planning requirement to determine risks and opportunities that need addressing to ensure the system achieves intended outcomes, prevents undesired effects, and achieves continual improvement.\n\nIn summary, ISO 45001 requires a **proactive, documented, and systematic approach** to risk assessment that evaluates both the risks from hazards and the effectiveness of current controls, while also considering opportunities for improvement.",
+ "inputTokens": 554,
+ "outputTokens": 352,
+ "costUsd": 0.0013884000000000001,
+ "latencyMs": 4255,
+ "score": 1
+}

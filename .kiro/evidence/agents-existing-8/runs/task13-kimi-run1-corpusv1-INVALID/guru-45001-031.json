@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-031",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 129,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "10.2",
+    "score": 0.5326177
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.5008519
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4996343
+   },
+   {
+    "clauseRef": "7.3",
+    "score": 0.4851795
+   },
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.47652137
+   }
+  ],
+  "recall": 0.5
+ },
+ "response": " Based on the retrieved excerpts, this near-miss incident is governed by the following ISO 45001 clauses:\n\n## Immediate Response and Investigation\n\n**Clause 10.2** — This is the primary clause governing your response. It requires you to:\n- React in a timely manner and take action to control/correct the situation\n- Evaluate the need for corrective action to eliminate root causes, with **participation of workers** and involvement of other relevant interested parties\n- Review existing OH&S risk assessments\n- Determine and implement corrective actions in line with the hierarchy of controls\n- Assess related risks before acting\n- Review corrective-action effectiveness\n- Make system changes if needed\n- **Retain documented information** on the incident, actions taken and their results\n- Communicate this to relevant workers and interested parties\n\n## Worker Awareness Requirements\n\n**Clause 7.3** — Your pickers and forklift operators must be made aware of:\n- This relevant incident and investigation outcomes\n- Hazards and risks that concern them (aisle traffic/pedestrian-vehicle interaction)\n- Their right to remove themselves from situations of imminent and serious danger without reprisal\n\n## Potential Emergency Preparedness Connection\n\n**Clause 8.2** — Depending on whether this near-miss reveals gaps in your emergency response capabilities, you may need to review your processes for preparing for and responding to potential emergency situations, including communication of duties to workers.\n\n## System Updates Required\n\nPer **clause 10.2**, you must retain documented information on this near-miss, the actions taken, and their results. You should also review whether **clause 8.1.3** (management of change) applies if you implement changes to aisle layouts, traffic patterns, or equipment as a result.",
+ "inputTokens": 554,
+ "outputTokens": 358,
+ "costUsd": 0.0014064,
+ "latencyMs": 8696,
+ "score": 0.5
+}

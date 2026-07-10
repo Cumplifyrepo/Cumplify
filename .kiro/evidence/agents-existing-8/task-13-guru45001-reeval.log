@@ -1,0 +1,77 @@
+# Task 13 — guru-45001 Retrieval-Grounded Re-Eval (REQ-RET-7, design §6.2)
+
+Architect-executed 2026-07-10, dev 697114252993. Owner budget GO 2026-07-09
+(verbatim "go", ceilings per task-13-budget-estimate.md — cap $1.50).
+
+## Setup
+
+- Seat: guru-45001 = `moonshotai.kimi-k2.5` (PROVISIONAL at 0.843 ungrounded, spec-30)
+- Eval set: guru-iso45001.json, 50 tasks, clause-citation bar ≥ 0.85
+- Grounding: architect-AUTHORED paraphrased ISO 45001 clause corpus (NO verbatim
+  ISO text — owner licensing decision 2026-07-05), committed at
+  services/model-evals/data/grounding/iso45001-corpus.json; embedded with Titan
+  Embed v2 (1024-dim); seeded to AOSS cumplify-iso-kb via AossProverFn with
+  fail-closed template check (dimension 1024, tenantId keyword — PASS both runs)
+- Retrieval: PRODUCTION retrieve() wrapper (SigV4, mandatory tenantId filter,
+  topK=5) via prover; eval tenant tenant-eval45001-t13
+- Inference: kimi-k2.5, temp 0, maxTokens 2048, via spec-30 invokeCandidate
+  (eval-boundary ruling — direct Converse allowed only in services/model-evals)
+- Driver: services/model-evals/run-grounded.ts (committed this task)
+
+## Run 1 — INVALIDATED (corpus granularity defect, diagnosed mid-run)
+
+Index task13-guru45001-kb (corpus v1, 31 docs, depth-3 granularity).
+Result: mean 0.7533, retrieval recall 0.7333, $0.0522.
+DIAGNOSIS (at 27/50, before final score known — anti-cherry-pick): every
+zero-score task expected DEPTH-4 sub-clauses (6.1.2.1/.2/.3, 8.1.4.2/.3);
+corpus v1 merged those families into 6.1.2 and 8.1.4 docs, so the model could
+never see or cite depth-4 numbers. Score == retrieval recall exactly — a
+corpus/harness artifact, not a model failure. 16/50 tasks expect depth-4.
+Raw outputs preserved: runs/task13-kimi-run1-corpusv1-INVALID/.
+
+## Corpus v2 fix
+
+6.1.2 split into 6.1.2.1 (hazard identification), 6.1.2.2 (OH&S risk
+assessment), 6.1.2.3 (OH&S opportunities); 8.1.4 split into 8.1.4.1
+(procurement), 8.1.4.2 (contractors), 8.1.4.3 (outsourcing). 35 docs total.
+Coverage check vs eval set: zero missing clause refs (bare '6.2' expectation
+satisfied by substring of 6.2.1/6.2.2 citations). Seeded task13-guru45001-kb2,
+template check PASS, 35/35 visible.
+
+## Run 2 — VALID RESULT
+
+Index task13-guru45001-kb2 (corpus v2). runs/task13-kimi-run2-corpusv2/ + summary.json:
+
+| Metric | Value |
+|---|---|
+| Mean clause-citation | **0.9433** |
+| Bar | 0.85 |
+| **Outcome** | **PASS — Outcome A** |
+| Mean retrieval recall (expected clause in top-5) | 0.9233 |
+| Retrieval cold starts | 0 |
+| Cost | $0.0553 |
+
+Residual misses (5 tasks, scores 0.33–0.50): ALL multi-clause tasks where
+score == retrieval recall — kimi correctly cited every clause whose doc reached
+top-5; the residual is retrieval breadth (topK=5 vs 2–3 expected clauses), not
+model mis-citation. Zero cases of the model citing wrongly from retrieved docs.
+Grounding hypothesis from spec-30 CONFIRMED: 0.843 ungrounded → 0.9433 grounded.
+
+## Register
+
+guru-45001 → ASSIGNED (contracts/model-register.md updated, expiry 2026-10-08).
+COND-2 (spec-30) satisfied.
+
+## Budget
+
+kimi run 1 $0.0522 + run 2 $0.0553 + Titan embeds (~15K tokens) $0.0003
+≈ **$0.108 total vs $1.50 cap**. Within approved estimate.
+
+## Operational notes
+
+- topK=5 is tight for multi-clause questions — production guru prompts asking
+  compound questions should consider topK 8–10 (design note for spec 9 / embed-door
+  amendment; cost impact nil at AOSS floor).
+- Grounding-corpus granularity MUST match the citation granularity users need —
+  corpus docs at clause-family level cap citation precision (run-1 lesson,
+  applies to tenant onboarding guidance: chunk uploaded standards at sub-clause level).

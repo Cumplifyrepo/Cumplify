@@ -257,12 +257,12 @@
 > Budget estimate required before execution.
 
 ### Deliverables
-- [ ] Architect-approved budget estimate committed: `.kiro/evidence/agents-existing-8/task-13-budget-estimate.md`
-- [ ] Execute retrieval-grounded re-eval for guru-45001 (`moonshotai.kimi-k2.5`) per design §6.2: 50 tasks from guru-iso45001 eval set, grounded on tenant-uploaded ISO 45001 content
-- [ ] Score: clause-citation accuracy (bar >= 0.85)
-- [ ] If pass: update `contracts/model-register.md` → guru-45001 status ASSIGNED
-- [ ] If fail: update Register → status EXPIRED, document outcome + next candidate
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-13-guru45001-reeval.log` (scored report, outcome, Register diff)
+- [x] Architect-approved budget estimate committed: `.kiro/evidence/agents-existing-8/task-13-budget-estimate.md`
+- [x] Execute retrieval-grounded re-eval for guru-45001 (`moonshotai.kimi-k2.5`) per design §6.2: 50 tasks from guru-iso45001 eval set, grounded on tenant-uploaded ISO 45001 content
+- [x] Score: clause-citation accuracy (bar >= 0.85)
+- [x] If pass: update `contracts/model-register.md` → guru-45001 status ASSIGNED
+- [x] If fail: update Register → status EXPIRED, document outcome + next candidate
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-13-guru45001-reeval.log` (scored report, outcome, Register diff)
 
 ### Acceptance
 - ACC-5 (partial): guru-45001 re-eval outcome recorded in Register with evidence link

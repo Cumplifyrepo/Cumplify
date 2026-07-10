@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-036",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 105,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "5.3",
+    "score": 0.5017221
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.49272954
+   },
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.4831389
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.4781777
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.47282106
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.1.4** directly addresses your situation.\n\n**Clause 8.1.4** states that \"outsourced functions and processes must be controlled to a degree consistent with the risk, defined within the OH&S system.\"\n\nEven though the forklift fleet maintenance is \"off your books\" with the dealer's people and schedule, ISO 45001 explicitly requires you to maintain control over this outsourced function proportionate to the risks involved. Forklift maintenance presents clear OH&S risks (mechanical failures, improper repairs, safety system malfunctions), so you must define and implement controls within your OH&S system — such as specifying safety standards in the contract, verifying the dealer's competence, monitoring maintenance quality, and ensuring communication of hazards.\n\nAdditionally, **clause 8.1.1** supports this by requiring you to \"control and maintain the processes needed to meet OH&S system requirements,\" and **clause 5.1** reinforces that top management retains ultimate accountability for OH&S outcomes even when activities are delegated externally.",
+ "inputTokens": 469,
+ "outputTokens": 213,
+ "costUsd": 0.0009204,
+ "latencyMs": 3147,
+ "score": 0
+}

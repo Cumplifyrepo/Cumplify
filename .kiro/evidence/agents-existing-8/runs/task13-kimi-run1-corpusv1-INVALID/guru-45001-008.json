@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-008",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 47,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.52421486
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.50570995
+   },
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.4844962
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4844237
+   },
+   {
+    "clauseRef": "5.3",
+    "score": 0.48104805
+   }
+  ],
+  "recall": 0
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.1.4** directly addresses your situation.\n\nThis clause requires that \"outsourced functions and processes must be controlled to a degree consistent with the risk, defined within the OH&S system\" [Doc 1 — clause 8.1.4]. Since you're outsourcing your entire janitorial and facilities-upkeep function, this sub-clause explicitly applies to ensure those outsourced activities remain controlled within your OH&S management system.\n\nAdditionally, **clause 8.1.1** is relevant as it requires controlling and maintaining processes needed to meet OH&S system requirements, including \"in multi-employer workplaces — coordinating the relevant parts of the system with other organizations\" [Doc 2 — clause 8.1.1].",
+ "inputTokens": 454,
+ "outputTokens": 155,
+ "costUsd": 0.0007374,
+ "latencyMs": 2087,
+ "score": 0
+}

@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-021",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 113,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.2",
+    "score": 0.5474332
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.4958846
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4788824
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.47390455
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4695153
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, ISO 45001's competence requirements for your field service technicians are found in **clause 7.2** (Doc 1).\n\n## What You Must Ensure\n\nFor workers who affect or can affect OH&S performance — which includes your field service technicians working alone at customer sites — you must ensure they are **competent on the basis of education, training or experience**, including specifically **the ability to identify hazards** (Doc 1 — clause 7.2).\n\nGiven the nature of their work, this would encompass:\n- Technical competence for their service tasks\n- **Hazard identification skills** relevant to varied customer site conditions\n- Ability to assess risks when working without direct supervision\n\n## What You Must Document\n\nYou must **retain documented evidence of competence** (Doc 1 — clause 7.2). This documented information falls under the broader requirements of **clause 7.5** (Doc 2), which requires proper identification, format, review/approval, and controls for availability and protection.\n\n## Additional Related Requirements\n\nYour technicians' solitary work also implicates:\n- **Clause 6.1.3** (Doc 3): You must determine and access up-to-date legal requirements applicable to their hazards and OH&S risks, and retain documented information on these requirements\n- **Clause 9.1.2** (Doc 5): You must evaluate compliance with legal requirements, maintain knowledge of compliance status, and retain documented information of compliance evaluation results\n\n## Summary Table\n\n| Requirement | Clause | Key Action |\n|-------------|--------|-----------|\n| Ensure competence (education/training/experience + hazard identification) | 7.2 | Train and assess technicians |\n| Retain documented evidence of competence | 7.2 | Maintain training records, certifications, assessments |\n| Control documented information | 7.5 | Proper identification, storage, access, retention |\n| Determine applicable legal requirements | 6.1.3 | Identify lone worker regulations, site-specific requirements |\n| Evaluate and document compliance | 9.1.2 | Periodic compliance assessment |",
+ "inputTokens": 471,
+ "outputTokens": 427,
+ "costUsd": 0.0015636,
+ "latencyMs": 7724,
+ "score": 1
+}

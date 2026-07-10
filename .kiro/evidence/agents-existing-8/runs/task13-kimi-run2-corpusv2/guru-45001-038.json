@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-038",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 69,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.49249902
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.46823877
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.46358123
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.46009398
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.45335457
+   }
+  ],
+  "recall": 0.3333333333333333
+ },
+ "response": " Based on the retrieved standards documentation, introducing a new solvent-based degreaser to your parts-cleaning line is governed by the following ISO 45001 clauses:\n\n## **Clause 8.1.3 — Management of Change**\n\nThis is the primary clause governing your situation. It requires the organization to establish processes for implementing and controlling **planned temporary and permanent changes** that impact OH&S performance, including:\n- New products, services or processes\n- Changes to work conditions, equipment, or knowledge\n\nThe clause specifically requires you to **review unintended consequences of changes** and **act to mitigate any adverse effects** — critical for solvent introduction given potential chemical exposure, fire, and health hazards.\n\n---\n\n## **Clause 8.1.2 — Hierarchy of Controls**\n\nWhen implementing this change, you must apply the **hierarchy of controls in order**:\n1. **Eliminate** the hazard (if possible)\n2. **Substitute** with less hazardous processes or materials\n3. **Engineering controls** and work reorganization\n4. **Administrative controls** including training\n5. **Personal protective equipment** (only as last resort)\n\nThis ensures you don't simply default to PPE for solvent exposure without considering safer alternatives first.\n\n---\n\n## **Clause 6.1.3 — Legal and Other Requirements**\n\nYou must determine and access **up-to-date legal requirements** applicable to this new chemical hazard (e.g., chemical safety regulations, exposure limits, storage requirements), work out how they apply, and **retain documented information** on them.\n\n---\n\n## **Clause 5.4 — Consultation and Participation of Workers**\n\nYou must involve **workers at all levels** in this change — particularly those operating the cleaning line — removing barriers to participation and giving **special emphasis to non-managerial workers** who will handle the solvent directly.\n\n---\n\n## **Clause 8.1.1 — Operational Planning and Control**\n\nYou must **plan, implement, control and maintain** the processes needed for this change by establishing **operating criteria** and controlling processes to those criteria, plus **adapting work to workers**.\n\n---\n\n**Summary:** Start with **8.1.3** (change management process), apply **8.1.2** (hierarchy of controls), ensure **6.1.3** (legal compliance), engage workers per **5.4**, and establish operational controls under **8.1.1**.",
+ "inputTokens": 463,
+ "outputTokens": 492,
+ "costUsd": 0.0017538,
+ "latencyMs": 7405,
+ "score": 0.3333333333333333
+}

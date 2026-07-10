@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-025",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 54,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.3",
+    "score": 0.6135047
+   },
+   {
+    "clauseRef": "5.1",
+    "score": 0.55484635
+   },
+   {
+    "clauseRef": "6.1.2.2",
+    "score": 0.54846144
+   },
+   {
+    "clauseRef": "6.1.1",
+    "score": 0.5447211
+   },
+   {
+    "clauseRef": "6.2.2",
+    "score": 0.5419243
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved standards documentation, ISO 45001 clause 9.3 specifies the following safety-specific inputs that top management must consider in the OH&S management review:\n\n## Core Safety Performance Inputs (Clause 9.3)\n\n- **OH&S performance trends** — including incidents and nonconformities\n- **Audit results** — from internal and external OH&S audits\n- **Monitoring results** — ongoing surveillance of OH&S performance\n- **Compliance evaluations** — assessments of legal and other requirement fulfillment\n\n## System and Contextual Inputs (Clause 9.3)\n\n- **Status of prior actions** — follow-through on previous management review decisions\n- **Changes in context and requirements** — internal and external factors affecting the OH&S system\n- **Risks and opportunities** — those identified per clauses 6.1.1 and 6.1.2.2\n- **Resource adequacy** — whether sufficient resources are available for OH&S management\n\n## Stakeholder and Cultural Inputs (Clause 9.3)\n\n- **Worker consultation and participation** — feedback from workers and their representatives\n- **Communications with interested parties** — external stakeholder input\n\n## Improvement-Oriented Inputs (Clause 9.3)\n\n- **Policy and objective achievement** — progress toward stated OH&S goals\n- **Improvement opportunities** — areas where the system can be enhanced\n\nThese inputs align with top management's leadership responsibilities under **clause 5.1**, which includes accountability for preventing work-related injury and ill health, and ensuring OH&S policy and objectives fit organizational strategy.",
+ "inputTokens": 509,
+ "outputTokens": 323,
+ "costUsd": 0.0012744,
+ "latencyMs": 4219,
+ "score": 1
+}

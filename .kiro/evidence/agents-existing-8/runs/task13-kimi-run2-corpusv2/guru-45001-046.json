@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-046",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 66,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.4.2",
+    "score": 0.5440041
+   },
+   {
+    "clauseRef": "8.1.4.1",
+    "score": 0.52658224
+   },
+   {
+    "clauseRef": "8.1.4.3",
+    "score": 0.48612005
+   },
+   {
+    "clauseRef": "5.4",
+    "score": 0.4712804
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.46996835
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 8.1.4.1** applies to this situation.\n\n**Clause 8.1.4.1** states: \"The organization must establish, implement and maintain processes to control the procurement of **products and services** in order to ensure their **conformity to its OH&S management system**.\"\n\nThis clause directly addresses your scenario because:\n- You are procuring a **product** (the bandsaw), not engaging contractors or outsourcing functions\n- The focus is on ensuring the **machine itself conforms** to your OH&S requirements\n- No outside workers or outsourced processes are involved\n\nThe other procurement sub-clauses do not apply here:\n- **8.1.4.2** covers **contractor** coordination and controlling risks arising from contractor activities — not applicable since no outside workers will be on site\n- **8.1.4.3** covers **outsourced functions and processes** — not applicable since nothing is being outsourced",
+ "inputTokens": 510,
+ "outputTokens": 202,
+ "costUsd": 0.000912,
+ "latencyMs": 3536,
+ "score": 1
+}

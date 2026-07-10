@@ -1,0 +1,38 @@
+{
+ "taskId": "guru-45001-047",
+ "model": "moonshotai.kimi-k2.5",
+ "retrieval": {
+  "latencyMs": 44,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "10.2",
+    "score": 0.5166528
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.5142427
+   },
+   {
+    "clauseRef": "6.1.4",
+    "score": 0.50122696
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48623523
+   },
+   {
+    "clauseRef": "8.1.3",
+    "score": 0.48025158
+   }
+  ],
+  "recall": 1
+ },
+ "response": " Based on the retrieved excerpts, **clause 10.2** governs your reaction to this incident.\n\nYour colleague's approach of simply logging it in the risk-and-opportunity planning register would not satisfy the requirements of clause 10.2, which specifically addresses **incidents and nonconformities that have already occurred**.\n\nClause 10.2 requires you to:\n\n- **React in a timely manner** and take action to **control and correct** the incident\n- **Evaluate the need for corrective action** to eliminate root causes (with worker participation)\n- **Review existing OH&S risk assessments**\n- **Determine and implement corrective actions** following the hierarchy of controls\n- **Assess related risks before acting**\n- **Review corrective-action effectiveness**\n- **Retain documented information** on the incident, actions taken, and results\n- **Communicate** this information to relevant workers and interested parties\n\nWhile clause 6.1.4 (planning actions for risks and opportunities) and clause 6.1.3 (legal requirements) support proactive planning, they do not replace the specific reactive requirements of clause 10.2 for actual incidents. The fallen pallet was an uncontrolled event that already happened — it is not merely a \"risk\" to plan for, but an incident requiring investigation, root cause analysis, and corrective action to prevent recurrence.",
+ "inputTokens": 556,
+ "outputTokens": 274,
+ "costUsd": 0.0011556000000000001,
+ "latencyMs": 3832,
+ "score": 1
+}
