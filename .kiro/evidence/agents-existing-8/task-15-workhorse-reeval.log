@@ -1,0 +1,34 @@
+# Task 15 — Workhorse PROVISIONAL Re-Eval (REQ-RET-9, design §6.4) — PARTIAL
+
+Architect-executed telemetry review 2026-07-10, dev 697114252993.
+STATUS: OUTCOME DEFERRED — insufficient live sample. Neither Outcome A
+(ASSIGNED) nor Outcome B (swap eval) can honestly fire yet.
+
+## Actual numbers (CloudWatch Logs Insights, invoker log group, 2026-07-09→10)
+
+| Metric | Value |
+|---|---|
+| Total workhorse (`us.amazon.nova-pro-v1:0`) invocations | **18** |
+| Required by design §6.4 | first 100 live invocations under real agent load |
+| Invocation errors | 8 ModelErrorException events, ALL in the 20:18–20:42Z pre-fix window of the Task-11 hyphenated-tool-name defect (root-caused + fixed 27cfb13 — wire-encoding, not schema drift) |
+| Post-fix invocations | clean tool_use with correct arguments (Task-11 E2E witnessed) |
+| Schema-validation failures (SERVE-10 guard) | 0 observed |
+| Retries / retry-successes (schema class) | 0 / 0 (no schema retries triggered) |
+| Other seats for context | guru-9001: 2, guru-14001: 2, lightweight: 2, unknown-tagged: 6 |
+
+## Ruling
+
+Design §6.4 requires compliance rate over the FIRST 100 LIVE invocations under
+real agent load, explicitly "not synthetic eval set" — generating 100 synthetic
+invocations to force closure would violate the task's own definition. The 18
+existing invocations are dev acceptance traffic (Tasks 10/11), not production load.
+
+- Register: Workhorse stays PROVISIONAL (unchanged entry, conditions already
+  recorded there; expiry 2026-10-06 unaffected).
+- Re-review TRIGGER: cumulative 100 live workhorse invocations (expected during
+  beta) — re-run this telemetry query, then fire Outcome A or B.
+- Checkbox state: telemetry-review + record-numbers boxes ticked; the two
+  outcome boxes left UNTICKED (rule 7 — nothing happened to tick).
+
+Early signal (non-binding, n=18): zero schema-validation failures; the only
+failures were a transport-encoding defect already fixed and test-pinned.

@@ -296,11 +296,11 @@
 > Depends on Tasks 10, 11 (live agent load generated). Observational.
 
 ### Deliverables
-- [ ] After Tasks 10-11, review schema compliance telemetry for Workhorse seat (`us.amazon.nova-pro-v1:0`) across the live invocations
-- [ ] Record: total invocations, schema-validation-pass count, retry count, retry-success count
+- [x] After Tasks 10-11, review schema compliance telemetry for Workhorse seat (`us.amazon.nova-pro-v1:0`) across the live invocations
+- [x] Record: total invocations, schema-validation-pass count, retry count, retry-success count
 - [ ] If 100% compliance (with one-retry guard): update Register → Workhorse status ASSIGNED
 - [ ] If < 100%: flag for swap eval, identify failure patterns, record in Register
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-15-workhorse-reeval.log` (telemetry summary, outcome, Register diff)
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-15-workhorse-reeval.log` (telemetry summary, outcome, Register diff)
 
 ### Acceptance
 - ACC-5 (partial): Workhorse re-eval outcome recorded in Register
