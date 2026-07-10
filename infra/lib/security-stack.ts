@@ -51,7 +51,10 @@ const SERVICE_PRINCIPALS: Record<string, string[]> = {
   's3-general': ['s3.amazonaws.com'],
   secrets: ['secretsmanager.amazonaws.com'],
   'cloudwatch-logs': ['logs.amazonaws.com'],
-  sns: ['sns.amazonaws.com'],
+  // cloudwatch.amazonaws.com: CloudWatch alarms publish to CMK-encrypted SNS
+  // topics (COND-4 credit-cap alerts) — without it, alarm delivery fails
+  // silently at the KMS layer.
+  sns: ['sns.amazonaws.com', 'cloudwatch.amazonaws.com'],
   sqs: ['sqs.amazonaws.com'],
   eventbridge: ['events.amazonaws.com'],
   bedrock: ['bedrock.amazonaws.com'],

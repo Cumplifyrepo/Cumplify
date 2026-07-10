@@ -1,10 +1,29 @@
 /**
  * Unit tests for metering module.
- * Verifies: credit computation with wIn/wOut/wCache; null wCache fallback; atomic meter update.
+ * Verifies: credit computation with wIn/wOut/wCache; null wCache fallback; atomic meter update;
+ * telemetry.credits.consumed event shape (COND-4 cap alerting filters on detail.seat and
+ * extracts detail.creditsConsumed as a metric value — both are contract).
  */
 
-import { describe, it, expect } from 'vitest';
-import { computeCredits } from '../src/metering.js';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Mock EventBridge (must precede module import)
+const mockEbSend = vi.fn();
+vi.mock('@aws-sdk/client-eventbridge', () => {
+  return {
+    EventBridgeClient: class {
+      send = mockEbSend;
+    },
+    PutEventsCommand: class {
+      input: unknown;
+      constructor(input: unknown) { this.input = input; }
+    },
+  };
+});
+
+vi.stubEnv('TABLE_NAME', 'CumplifyCore');
+
+const { computeCredits, emitCreditsTelemetry } = await import('../src/metering.js');
 import type { ModelWeight, TokenUsage } from '../src/types.js';
 
 describe('computeCredits', () => {
@@ -94,5 +113,49 @@ describe('computeCredits', () => {
       cacheWriteInputTokens: 0,
     };
     expect(computeCredits(usage, novaProWeights)).toBe(0);
+  });
+});
+
+describe('emitCreditsTelemetry (telemetry.credits.consumed contract)', () => {
+  beforeEach(() => {
+    mockEbSend.mockReset();
+    mockEbSend.mockResolvedValue({});
+  });
+
+  const opts = {
+    tenantId: 'tenant-1',
+    agent: 'legal-ledger',
+    module: 'M8',
+    feature: 'obligations',
+    inputTokens: 13,
+    outputTokens: 5,
+    cacheReadTokens: 0,
+    creditsConsumed: 0.029,
+    modelId: 'zai.glm-5',
+    seat: 'legal-ledger',
+  };
+
+  it('emits detail with seat and NUMERIC creditsConsumed (COND-4 metric filter contract)', async () => {
+    await emitCreditsTelemetry(opts);
+
+    expect(mockEbSend).toHaveBeenCalledTimes(1);
+    const entry = (mockEbSend.mock.calls[0][0] as { input: { Entries: Array<{ Source: string; DetailType: string; Detail: string }> } })
+      .input.Entries[0];
+    expect(entry.Source).toBe('cumplify.ai-invoker');
+    expect(entry.DetailType).toBe('telemetry.credits.consumed');
+
+    const detail = JSON.parse(entry.Detail);
+    // COND-4 alert pipeline: EventBridge rule matches detail.seat; the CloudWatch
+    // metric filter extracts detail.creditsConsumed — it must serialize as a number.
+    expect(detail.seat).toBe('legal-ledger');
+    expect(typeof detail.creditsConsumed).toBe('number');
+    expect(detail.creditsConsumed).toBeCloseTo(0.029, 6);
+    expect(detail.modelId).toBe('zai.glm-5');
+    expect(detail.tenantId).toBe('tenant-1');
+  });
+
+  it('swallows EventBridge failures (telemetry is non-blocking)', async () => {
+    mockEbSend.mockRejectedValueOnce(new Error('bus unavailable'));
+    await expect(emitCreditsTelemetry(opts)).resolves.toBeUndefined();
   });
 });

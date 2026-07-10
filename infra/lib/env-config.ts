@@ -36,6 +36,12 @@ export interface EnvConfig {
   readonly cacheNodeType: string;
   /** Object Lock COMPLIANCE retention for the audit-archive bucket (days). */
   readonly auditArchiveRetentionDays: number;
+  /**
+   * Email endpoint for cost/ops alert SNS subscriptions (COND-4 credit-cap
+   * alerts). SNS email subscriptions require a one-time confirmation click
+   * by the recipient before delivery starts.
+   */
+  readonly alertEmail: string;
 }
 
 export const ENV_CONFIGS: Record<string, EnvConfig> = {
@@ -60,6 +66,7 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     cacheMultiAz: false,
     cacheNodeType: 'cache.t4g.micro',
     auditArchiveRetentionDays: 1,
+    alertEmail: 'julio@mbdesignremodel.com',
   },
   staging: {
     envName: 'staging',
@@ -79,6 +86,7 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     cacheMultiAz: false,
     cacheNodeType: 'cache.t4g.micro',
     auditArchiveRetentionDays: 1,
+    alertEmail: 'julio@mbdesignremodel.com',
   },
   prod: {
     envName: 'prod',
@@ -98,6 +106,7 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     cacheMultiAz: true,
     cacheNodeType: 'cache.t4g.medium',
     auditArchiveRetentionDays: 2555,
+    alertEmail: 'julio@mbdesignremodel.com',
   },
 };
 

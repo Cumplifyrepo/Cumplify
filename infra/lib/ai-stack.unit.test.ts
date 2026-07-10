@@ -37,6 +37,7 @@ function createTestStack(): Template {
     busName: 'cumplify-events',
     busArn: 'arn:aws:events:us-east-1:123456789012:event-bus/cumplify-events',
     deliveryFailureDlqArn: 'arn:aws:sqs:us-east-1:123456789012:DeliveryFailureDlq',
+    snsKey: mockKey,
     capaIntakeQueueArn: 'arn:aws:sqs:us-east-1:123456789012:CapaIntakeQueue.fifo',
     capaIntakeDlqUrl: 'https://sqs.us-east-1.amazonaws.com/123456789012/CapaIntakeDlq.fifo',
     auditSinkQueueArn: 'arn:aws:sqs:us-east-1:123456789012:AuditSinkQueue.fifo',
@@ -605,5 +606,88 @@ describe('AOSS Prover (Task 12)', () => {
       return JSON.stringify(create ?? '').includes('AossProverFn');
     });
     expect(proverTriggers).toHaveLength(0);
+  });
+});
+
+describe('COND-4 credit-cap alerts (owner-ratified 2026-07-10, $25/mo alert-only)', () => {
+  const template = createTestStack();
+
+  it('cap rule matches telemetry.credits.consumed for the legal-ledger seat only', () => {
+    template.hasResourceProperties('AWS::Events::Rule', {
+      EventPattern: {
+        source: ['cumplify.ai-invoker'],
+        'detail-type': ['telemetry.credits.consumed'],
+        detail: { seat: ['legal-ledger'] },
+      },
+    });
+  });
+
+  it('metric filter extracts detail.creditsConsumed into Cumplify/AI namespace', () => {
+    template.hasResourceProperties('AWS::Logs::MetricFilter', {
+      MetricTransformations: Match.arrayWith([
+        Match.objectLike({
+          MetricNamespace: 'Cumplify/AI',
+          MetricName: 'LegalLedgerCreditsConsumed',
+          MetricValue: '$.detail.creditsConsumed',
+        }),
+      ]),
+    });
+  });
+
+  it('daily-pace alarm: SUM >= 833 credits over 86400s (25,000/mo ÷ 30)', () => {
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      MetricName: 'LegalLedgerCreditsConsumed',
+      Namespace: 'Cumplify/AI',
+      Statistic: 'Sum',
+      Period: 86400,
+      Threshold: 833,
+      EvaluationPeriods: 1,
+      ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+      TreatMissingData: 'notBreaching',
+    });
+  });
+
+  it('burn-rate alarm: SUM >= 250 credits over 3600s', () => {
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      MetricName: 'LegalLedgerCreditsConsumed',
+      Namespace: 'Cumplify/AI',
+      Statistic: 'Sum',
+      Period: 3600,
+      Threshold: 250,
+      EvaluationPeriods: 1,
+      ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+    });
+  });
+
+  it('both cap alarms notify the CMK-encrypted alert topic; owner email subscribed', () => {
+    // Topic: CMK-encrypted (AwsSolutions-SNS2) — KmsMasterKeyId present
+    template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({
+      TopicName: 'cumplify-dev-credit-cap-alerts',
+      KmsMasterKeyId: Match.anyValue(),
+    }));
+    // Owner email subscription (delivery starts after confirmation click)
+    template.hasResourceProperties('AWS::SNS::Subscription', {
+      Protocol: 'email',
+      Endpoint: 'julio@mbdesignremodel.com',
+    });
+    // Both cap alarms wired to an SNS action
+    const alarms = template.findResources('AWS::CloudWatch::Alarm');
+    const capAlarms = Object.values(alarms).filter(
+      (a) => (a as any).Properties?.MetricName === 'LegalLedgerCreditsConsumed',
+    );
+    expect(capAlarms).toHaveLength(2);
+    for (const alarm of capAlarms) {
+      expect((alarm as any).Properties.AlarmActions).toHaveLength(1);
+    }
+  });
+
+  it('cap enforcement is ALERT-ONLY: invoker env carries no cap variable, no cap DDB writes', () => {
+    // The ratified cap must never block serving (F-6). Guard against a future
+    // hard-block sneaking in via an env var on the invoker.
+    const fns = template.findResources('AWS::Lambda::Function');
+    for (const fn of Object.values(fns)) {
+      const env = (fn as any).Properties?.Environment?.Variables ?? {};
+      expect(Object.keys(env).join(',')).not.toMatch(/CAP|BUDGET/i);
+    }
   });
 });

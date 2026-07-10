@@ -170,7 +170,7 @@ form declined + margin-fail at credit pricing).
 | **$/task P50 (ungrounded)** | glm-5: $0.00582, deepseek.v3.2: $0.00335 |
 | **$/task (grounded run mean)** | glm-5: $0.00490, deepseek.v3.2: $0.00295 |
 | **Margin at credit pricing** | glm-5: 85.3% (ungrounded basis; grounded cost lower → margin holds, clears >50%) |
-| **Monthly budget cap (COND-4)** | PROPOSED $25/mo platform-wide (dev/beta) — owner to ratify; enforcement via ai-invoker credit pre-check carry |
+| **Monthly budget cap (COND-4)** | **RATIFIED $25/mo platform-wide, ALERT-ONLY** (owner 2026-07-10, in-session — option (a) of {(a) $25 alert-only / (b) other amount / (c) hard-block}, verbatim "a"). Never blocks serving (consistent with F-6 serve-&-bill). Enforcement live: `telemetry.credits.consumed` now carries `seat` → EventBridge rule → metric `Cumplify/AI · LegalLedgerCreditsConsumed` → daily-pace alarm (≥833 credits/day = 25,000/mo ÷ 30) + burn-rate alarm (≥250 credits/hr) → CMK-encrypted SNS → owner email. Evidence: `.kiro/evidence/agents-existing-8/cond4-cap-ratification.md` |
 | **Expiry** | 2026-10-08 (90 days from grounded re-eval) |
 
 ---
@@ -196,5 +196,5 @@ form declined + margin-fail at credit pricing).
 | COND-1 | Micro | Bar 0.90 recalibration requires owner ratification (Task 10) | Owner |
 | COND-2 | Guru ISO 45001 | Retrieval-grounded re-eval at spec-4 readback before user-facing GO | spec-4 (knowledge-base) |
 | COND-3 | Workhorse | (a) schema-validate + one-retry guard, (b) per-agent scaffolding, (c) re-eval per agent spec | ai-core + agent specs |
-| COND-4 | LegalLedger | Retrieval-grounded re-eval; monthly budget cap attaches on assignment | spec-4 + ai-core |
+| COND-4 | LegalLedger | **SATISFIED 2026-07-10** — re-eval PASSED (Task 14, glm-5 4.34 blind); cap RATIFIED $25/mo alert-only, alarm enforcement deployed | spec-4 + ai-core |
 | CARRY-AI-CORE | All seats | Invoke-time EXPIRED flag enforcement (REG-5 → ai-core) | api-core / ai-core |

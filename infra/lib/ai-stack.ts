@@ -21,6 +21,10 @@ import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as cwActions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as bedrock from 'aws-cdk-lib/aws-bedrock';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
@@ -43,6 +47,8 @@ export interface AiStackProps extends cdk.StackProps {
   readonly busName: string;
   readonly busArn: string;
   readonly deliveryFailureDlqArn: string;
+  // SNS CMK (from SecurityStack) — credit-cap alert topic encryption (COND-4)
+  readonly snsKey: kms.IKey;
   // Existing queues consumed by agents
   readonly capaIntakeQueueArn: string;
   readonly capaIntakeDlqUrl: string;
@@ -321,6 +327,79 @@ export class AiStack extends cdk.Stack {
         treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
       });
     }
+
+    // ─── COND-4: LegalLedger credit-cap alerts (owner-ratified 2026-07-10) ──
+    // $25/mo platform-wide, ALERT-ONLY (never blocks serving — F-6 ruling).
+    // Hook is the canonical billing signal (telemetry.credits.consumed), not
+    // Lambda log lines: rule filters detail.seat, log-group target + metric
+    // filter turn detail.creditsConsumed into a CloudWatch metric.
+    // 1,000 credits ≈ $1.00 raw Bedrock (metering §1.4), so $25/mo = 25,000
+    // credits/mo. A strict calendar-month total is not expressible as a CW
+    // alarm window — the daily-pace alarm (25,000/30 ≈ 833/day) fires on the
+    // first day of any pattern that would breach the month; the hourly-burn
+    // alarm catches runaway loops within the hour.
+    const capLogGroup = new logs.LogGroup(this, 'LegalLedgerCapLogGroup', {
+      logGroupName: `/cumplify/${envConfig.envName}/credit-cap/legal-ledger`,
+      retention: logs.RetentionDays.THREE_MONTHS,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    const capRule = new events.Rule(this, 'LegalLedgerCapRule', {
+      eventBus: bus,
+      description: 'COND-4: route legal-ledger credit telemetry to the cap metric log group',
+      eventPattern: {
+        source: ['cumplify.ai-invoker'],
+        detailType: ['telemetry.credits.consumed'],
+        detail: { seat: ['legal-ledger'] },
+      },
+    });
+    capRule.addTarget(new targets.CloudWatchLogGroup(capLogGroup));
+
+    capLogGroup.addMetricFilter('LegalLedgerCreditsFilter', {
+      filterPattern: logs.FilterPattern.stringValue('$.detail.seat', '=', 'legal-ledger'),
+      metricNamespace: 'Cumplify/AI',
+      metricName: 'LegalLedgerCreditsConsumed',
+      metricValue: '$.detail.creditsConsumed',
+      unit: cloudwatch.Unit.NONE,
+    });
+
+    const capMetric = new cloudwatch.Metric({
+      namespace: 'Cumplify/AI',
+      metricName: 'LegalLedgerCreditsConsumed',
+      statistic: 'Sum',
+    });
+
+    const creditCapAlertTopic = new sns.Topic(this, 'CreditCapAlertTopic', {
+      topicName: `cumplify-${envConfig.envName}-credit-cap-alerts`,
+      masterKey: props.snsKey,
+      enforceSSL: true,
+    });
+    creditCapAlertTopic.addSubscription(
+      new snsSubscriptions.EmailSubscription(envConfig.alertEmail),
+    );
+
+    const capDailyPaceAlarm = new cloudwatch.Alarm(this, 'LegalLedgerDailyPaceAlarm', {
+      alarmDescription:
+        'COND-4: legal-ledger seat spend on pace to exceed the ratified $25/mo cap '
+        + '(≥833 credits ≈ $0.83 in one day). Alert-only — serving is never blocked.',
+      metric: capMetric.with({ period: cdk.Duration.days(1) }),
+      threshold: 833,
+      evaluationPeriods: 1,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+    const capBurnRateAlarm = new cloudwatch.Alarm(this, 'LegalLedgerBurnRateAlarm', {
+      alarmDescription:
+        'COND-4: anomalous legal-ledger burn (≥250 credits ≈ 50 tasks in one hour vs '
+        + '~1/hr organic) — runaway loop or abuse. Alert-only.',
+      metric: capMetric.with({ period: cdk.Duration.hours(1) }),
+      threshold: 250,
+      evaluationPeriods: 1,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+    capDailyPaceAlarm.addAlarmAction(new cwActions.SnsAction(creditCapAlertTopic));
+    capBurnRateAlarm.addAlarmAction(new cwActions.SnsAction(creditCapAlertTopic));
 
     // ─── AOSS Collections ──────────────────────────────────────────────────
     // Design §4.2: ISO-KB, TENANT-DOCS-KB, NC-HISTORY.
@@ -891,6 +970,10 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'DocStudioRuleName', { value: docStudioRule.ruleName });
     new cdk.CfnOutput(this, 'LeadAuditorRuleName', { value: leadAuditorRule.ruleName });
     new cdk.CfnOutput(this, 'ControlTowerRuleName', { value: controlTowerRule.ruleName });
+    new cdk.CfnOutput(this, 'CreditCapAlertTopicArn', { value: creditCapAlertTopic.topicArn });
+    new cdk.CfnOutput(this, 'LegalLedgerCapRuleName', { value: capRule.ruleName });
+    new cdk.CfnOutput(this, 'LegalLedgerDailyPaceAlarmName', { value: capDailyPaceAlarm.alarmName });
+    new cdk.CfnOutput(this, 'LegalLedgerBurnRateAlarmName', { value: capBurnRateAlarm.alarmName });
 
     // AOSS collection outputs (iso-kb imported from DataStack; others created here)
     const collectionArnByName: Record<string, string> = {

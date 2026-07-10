@@ -96,7 +96,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
             inputTokens: usage.inputTokens,
             outputTokens: usage.outputTokens,
             cacheReadTokens: usage.cacheReadInputTokens,
-            creditsConsumed: credits, modelId,
+            creditsConsumed: credits, modelId, seat,
           });
           throw retryErr;
         }
@@ -121,6 +121,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
     cacheReadTokens: usage.cacheReadInputTokens,
     creditsConsumed: credits,
     modelId,
+    seat,
   });
 
   logger.info('Invocation complete', {

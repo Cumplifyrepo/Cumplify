@@ -108,6 +108,8 @@ export async function emitCreditsTelemetry(opts: {
   cacheReadTokens: number;
   creditsConsumed: number;
   modelId: string;
+  /** Register seat that served the call — per-seat cost attribution (COND-4) */
+  seat: string;
 }): Promise<void> {
   try {
     await eb.send(
@@ -127,6 +129,7 @@ export async function emitCreditsTelemetry(opts: {
               cacheReadTokens: opts.cacheReadTokens,
               creditsConsumed: opts.creditsConsumed,
               modelId: opts.modelId,
+              seat: opts.seat,
               timestamp: new Date().toISOString(),
             }),
           },

@@ -136,6 +136,7 @@ export class CumplifyStage extends cdk.Stage {
       busName: eventingStack.busName,
       busArn: eventingStack.busArn,
       deliveryFailureDlqArn: eventingStack.deliveryFailureDlqArn,
+      snsKey: securityStack.outputs.snsKey,
       capaIntakeQueueArn: eventingStack.capaIntakeQueueArn,
       capaIntakeDlqUrl: eventingStack.capaIntakeDlqUrl,
       auditSinkQueueArn: eventingStack.auditSinkQueueArn,
