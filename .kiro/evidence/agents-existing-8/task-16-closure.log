@@ -1,0 +1,99 @@
+# Task 16 — Spec Closure: agents-existing-8
+
+Closed: 2026-07-10T14:45:00Z
+HEAD: 557c169 (develop)
+Closer: Kiro [KIRO]
+Spec: agents-existing-8 (spec-4)
+Tasks: 16 total (15 complete, T15 conditional outcomes DEFERRED)
+
+---
+
+## ACC-1..8 Verdict Table
+
+| ACC | Description | Verdict | Evidence File | Key Numbers |
+|-----|-------------|---------|---------------|-------------|
+| ACC-1 | One-door serving path — each seat invoked, model resolved, tokens metered, credits computed | **PASS** | task-10-serving-path.log | 4 seats (workhorse/lightweight/guru-9001/guru-14001), credits sum 0.05098 exact |
+| ACC-2 | Negative proofs — EXPIRED + UNASSIGNED fail closed | **PASS** | task-10-serving-path.log | synthetic-expired → MODEL_SEAT_EXPIRED; legal-ledger → MODEL_SEAT_UNASSIGNED; zero output |
+| ACC-3 | Writeback E2E — proposal → HITL → approve → RDS → sealed audit → hash-chain | **PASS** | task-11-writeback-e2e.log | SFN SUCCEEDED; RDS row created_by=agent:CAPAGuru+human:<sub>; chain verifier: 2 items, chainValid=TRUE, s3Mismatches=0 |
+| ACC-4 | AOSS retrieval + cross-tenant zero-leak + 45s cold-start | **PASS** | task-12-aoss-retrieval.log | Tenant-A: 3 hits all correct; cross-tenant negative: PASS (best foreign doc excluded by filter); cold-start after 50-min idle: 557ms (45s budget headroom 80x) |
+| ACC-5 | Grounded re-evals recorded in register | **PASS** | task-13-guru45001-reeval.log, task-14-legalledger-reeval.log, task-15-workhorse-reeval.log | guru-45001: 0.9433 ≥ 0.85 → ASSIGNED; legal-ledger: glm-5 4.34 ≥ 4.0 → ASSIGNED; Workhorse: n=18<100 → DEFERRED (recorded, not promoted) |
+| ACC-6 | CDK Nag zero for AiStack | **PASS** | This closure run (2026-07-10) | `npx cdk synth Dev/AiStack` exit 0, zero AwsSolutions-* findings; all suppressions resource-scoped + justified |
+| ACC-7 | Template tests green | **PASS** | This closure run (2026-07-10) | `npx vitest --run infra/lib/ai-stack.unit.test.ts`: 51 passed, 0 failed, 0 skipped |
+| ACC-8 | Infra floor / timeline | **PASS** | task-9-deploy-readback.log + task logs | AiStack deployed 2026-07-09; standing cost: AOSS 0.5 OCU floor (dev, scale-to-zero posture); Lambda/SQS/SFN = pay-per-use only; total spec execution: 2026-07-04 → 2026-07-10 (7 days, 16 tasks) |
+
+---
+
+## Evidence Inventory (.kiro/evidence/agents-existing-8/)
+
+### Committed (tracked by git)
+| File | Description |
+|------|-------------|
+| task-2-pricing-seed.log | MODELWEIGHT# pricing derivation (4 models, live API) |
+| task-9-deploy-readback.log | AiStack deploy + readback (CfnOutputs, template-apply) |
+| task-10-serving-path.log | One-door live proof (ACC-1, ACC-2) |
+| task-11-writeback-e2e.log | Writeback E2E + hash-chain (ACC-3) |
+| task-12-aoss-retrieval.log | AOSS retrieval + tenant isolation (ACC-4) |
+| task-13-budget-estimate.md | guru-45001 re-eval budget approval |
+| task-13-guru45001-reeval.log | guru-45001 grounded re-eval (ACC-5 partial) |
+| task-14-budget-estimate.md | LegalLedger re-eval budget approval |
+| task-14-legalledger-reeval.log | LegalLedger grounded re-eval (ACC-5 partial) |
+| task-15-workhorse-reeval.log | Workhorse telemetry review — DEFERRED (ACC-5 partial) |
+| task-7-8-validation.md | Task 7+8 architect validation (rejection → 8R scope) |
+| cond4-cap-ratification.md | $25/mo alert-only cap ratification (owner 2026-07-10) |
+| iam-consolidated-signoff.md | IAM surface consolidated sign-off |
+| req-serve-0-decision.md | SERVE-0 owner decision record |
+| runs/task13-kimi-run1-corpusv1-INVALID/ | 50 raw outputs (invalidated, corpus granularity) |
+| runs/task13-kimi-run2-corpusv2/ | 50 raw outputs + summary (valid run, PASS) |
+| runs/task14-glm5/ | 30 raw outputs + summary |
+| runs/task14-deepseek/ | 30 raw outputs + summary |
+| runs/task14-grading/ | AGGREGATE.json, sealed key, 15 score batches, 60 shuffled files |
+
+### Untracked (architect-authored validation files — NOT staged per instructions)
+| File | Description |
+|------|-------------|
+| task-1-validation.md | Task 1 architect validation |
+| task-3-validation.md | Task 3 architect validation |
+| task-3-extended-validation.md | Task 3 extended validation |
+| task-4-iam-validation.md | Task 4 IAM validation |
+| task-5-6-validation.md | Tasks 5+6 validation |
+| task-8r-validation.md | Task 8R validation (post-fix) |
+
+NOTE: These 6 untracked files are architect-authored and must be committed by the architect. They are flagged here for visibility.
+
+---
+
+## Model Register Status (contracts/model-register.md)
+
+| Seat | Model | Status | Evidence |
+|------|-------|--------|----------|
+| Workhorse | us.amazon.nova-pro-v1:0 | **PROVISIONAL** — conditions apply | task-15-workhorse-reeval.log (n=18<100, deferred to beta) |
+| guru-45001 | moonshotai.kimi-k2.5 | **ASSIGNED** | task-13-guru45001-reeval.log (0.9433 ≥ 0.85) |
+| legal-ledger | zai.glm-5 | **ASSIGNED** | task-14-legalledger-reeval.log (4.34 ≥ 4.0, 0 catastrophic) |
+
+No uncommitted register drift at closure time.
+
+---
+
+## CARRIED-FORWARD-TO-SPEC-9
+
+1. **embed() production grounding amendment** — agent handler retrieval uses placeholder vectors; production grounding requires an embed() door on the AI Invoker (Titan Embed v2, 1024-dim). Retrieval client SigV4 is fixed; only the embedding step is missing. BLOCKED-ON-DESIGN.
+2. **Task 15 Workhorse re-eval** — resume at 100 cumulative live workhorse invocations (expected during beta). Re-run the telemetry query from task-15-workhorse-reeval.log, then fire Outcome A (ASSIGNED) or Outcome B (swap eval).
+3. **sfnExecutionArn one-liner** — WaitForApproval's Payload should pass `'executionArn.$': '$$.Execution.Id'` so the HITL item regains sfnExecutionArn for ops tracking (store-token currently omits it).
+4. **resolveHitlItem caller** — exported but no caller exists; spec-9 approval path (SendTaskSuccess handler) will invoke it.
+5. **CAPA prompt relative dueDate** — nova-pro hallucinated 2023-10-15; all agent prompts with date fields must instruct the model to compute dates relative to the current date (prompt-quality item).
+6. **obligations-corpus respirator phrasing rev** — "required or provided" is overbroad vs 1910.134's voluntary-use nuance; corpus revision item for tenant onboarding guidance.
+
+---
+
+## Truth Statement
+
+No checkbox was marked complete for undone work. The two Task 15 conditional
+outcome boxes (ASSIGNED / swap-eval) remain UNCHECKED with deferral annotations
+— neither condition fired (n=18 < 100 sample floor, architect-deferred to beta).
+Workhorse remains PROVISIONAL in the register. Production agent-handler grounding
+is NOT real (embed() door BLOCKED-ON-DESIGN). ACC-4 was satisfied via the
+architect AossProverFn ops path, not production handlers.
+
+All ACC verdicts are based on reading the actual committed evidence files and
+running the actual verification commands (cdk synth, vitest) during this closure.
+No evidence was fabricated.

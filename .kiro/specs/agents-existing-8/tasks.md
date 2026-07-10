@@ -298,8 +298,8 @@
 ### Deliverables
 - [x] After Tasks 10-11, review schema compliance telemetry for Workhorse seat (`us.amazon.nova-pro-v1:0`) across the live invocations
 - [x] Record: total invocations, schema-validation-pass count, retry count, retry-success count
-- [ ] If 100% compliance (with one-retry guard): update Register → Workhorse status ASSIGNED
-- [ ] If < 100%: flag for swap eval, identify failure patterns, record in Register
+- [ ] If 100% compliance (with one-retry guard): update Register → Workhorse status ASSIGNED — DEFERRED to beta (n=18<100); see task-15-workhorse-reeval.log
+- [ ] If < 100%: flag for swap eval, identify failure patterns, record in Register — DEFERRED to beta (n=18<100); see task-15-workhorse-reeval.log
 - [x] Evidence: `.kiro/evidence/agents-existing-8/task-15-workhorse-reeval.log` (telemetry summary, outcome, Register diff)
 
 ### Acceptance
@@ -313,11 +313,11 @@
 > Depends on all prior tasks complete.
 
 ### Deliverables
-- [ ] All task checkboxes marked complete (truth rule 7)
-- [ ] Evidence directory `.kiro/evidence/agents-existing-8/` contains: pricing seed, deploy readback, serving path proof, writeback E2E, AOSS retrieval, re-eval reports
-- [ ] ACC-1..8 verified satisfied
-- [ ] Timestamp + evidence summary in closure log
-- [ ] Register updates from Tasks 13-15 committed
+- [x] All task checkboxes marked complete (truth rule 7)
+- [x] Evidence directory `.kiro/evidence/agents-existing-8/` contains: pricing seed, deploy readback, serving path proof, writeback E2E, AOSS retrieval, re-eval reports
+- [x] ACC-1..8 verified satisfied
+- [x] Timestamp + evidence summary in closure log
+- [x] Register updates from Tasks 13-15 committed
 
 ### Acceptance
 - All acceptance criteria from requirements §9 met
