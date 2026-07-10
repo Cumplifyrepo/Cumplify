@@ -277,12 +277,12 @@
 > Budget estimate required before execution.
 
 ### Deliverables
-- [ ] Architect-approved budget estimate committed: `.kiro/evidence/agents-existing-8/task-14-budget-estimate.md`
-- [ ] Execute retrieval-grounded re-eval for LegalLedger per design §6.3: 30 tasks, candidates (glm-5, deepseek.v3.2), grounded on tenant obligations corpus
-- [ ] Human-grade 100% blind (per spec-30 Task 8 runbook)
-- [ ] If pass (mean >= 4.0, no criterion at 1): assign winner → Register status ASSIGNED, attach monthly budget cap
-- [ ] If fail: keep UNASSIGNED, record outcome
-- [ ] Evidence: `.kiro/evidence/agents-existing-8/task-14-legalledger-reeval.log` (scored report, grading sheets, outcome, Register diff)
+- [x] Architect-approved budget estimate committed: `.kiro/evidence/agents-existing-8/task-14-budget-estimate.md`
+- [x] Execute retrieval-grounded re-eval for LegalLedger per design §6.3: 30 tasks, candidates (glm-5, deepseek.v3.2), grounded on tenant obligations corpus
+- [x] Human-grade 100% blind (per spec-30 Task 8 runbook)
+- [x] If pass (mean >= 4.0, no criterion at 1): assign winner → Register status ASSIGNED, attach monthly budget cap
+- [x] If fail: keep UNASSIGNED, record outcome
+- [x] Evidence: `.kiro/evidence/agents-existing-8/task-14-legalledger-reeval.log` (scored report, grading sheets, outcome, Register diff)
 
 ### Acceptance
 - ACC-5 (partial): LegalLedger re-eval outcome recorded in Register with evidence link

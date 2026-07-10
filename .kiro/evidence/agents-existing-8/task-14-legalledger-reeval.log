@@ -1,0 +1,84 @@
+# Task 14 — LegalLedger Retrieval-Grounded Re-Eval (REQ-RET-8, design §6.3)
+
+Architect-executed 2026-07-10, dev 697114252993. Owner budget GO 2026-07-09
+(verbatim "go"; cap $1.00 inference — actual $0.236).
+
+## Setup
+
+- Candidates: `zai.glm-5` ($1.00/$3.20 per M, spec-30 live-API) and
+  `deepseek.v3.2` ($0.62/$1.85, spec-30 live-API — NOT the fabricated
+  incident-#4 figures)
+- Eval set: legal-ledger.json, 30 scenario tasks, 100% human-graded blind
+- Grounding: architect-AUTHORED obligations corpus (41 entries paraphrasing
+  US public-domain OSHA/EPA requirements with CFR cites + ISO mappings;
+  services/model-evals/data/grounding/obligations-corpus.json), Titan-embedded,
+  prover-seeded to task14-obligations-kb (template check PASS, 41/41 visible)
+- Retrieval: production retrieve() (SigV4, tenant filter tenant-eval-legal-t14,
+  topK=8) via AossProverFn; inference via run-grounded.ts --no-score
+  (temp 0, maxTokens 8192, seat config legal-ledger)
+
+## Blind protocol (legal-ledger-grading.md, as executed)
+
+1. Raw outputs committed FIRST: commit 4218746 (pre-grading).
+2. Shuffle: seed = sha256(4218746...) → deterministic permutation of 60
+   (blind-shuffle.py, committed); shuffled files carry ONLY taskId+response
+   (model, tokens, costs stripped).
+3. Key sealed before grading: grading-key.json.sealed,
+   sha256 3bb85e21eb1c94a9cd610772122ff72fe32baa22934e307457d0239daf98f9f0
+   (recorded in the pre-grading commit; verified identical at unseal).
+4. Grader: architect (sole P1 grader per runbook). 60/60 graded in shuffled
+   order, 5 dimensions × 1-5 + FM checklist; scores persisted per batch;
+   SCORES LOCKED by commit BEFORE unsealing.
+5. TAINT DISCLOSURE: shuffled-14 (a legal-ledger-001 response) had been
+   spot-checked pre-shuffle during run monitoring — partial unblinding for
+   that one response, graded strictly by rubric and noted in its score record.
+
+## Result (AGGREGATE.json)
+
+| Candidate | Mean | Dim means (oblig/map/risk/compl/acc) | Catastrophic | $/task | Quality pass |
+|---|---|---|---|---|---|
+| **zai.glm-5** | **4.34** | 4.33 / 4.73 / 4.20 / 3.70 / 4.73 | **0** | $0.00490 | **PASS** |
+| deepseek.v3.2 | 4.22 | 4.10 / 4.67 / 4.17 / 3.60 / 4.57 | **1** | $0.00295 | **FAIL (disqualified)** |
+
+### deepseek disqualifier (FM-1, CRITICAL)
+legal-ledger-015 (threshold-trap scenario): invented concentration-tiered
+sulfuric-acid TPQ values ("1,000 lb ≥51% / 500 lb 37-50%" — 40 CFR 355 App A
+TPQ is flat 1,000 lb) AND wrongly ruled sulfuric acid out of Tier II entirely —
+the EHS reporting threshold is min(500 lb, TPQ) = 500 lb per 40 CFR 370.10,
+so the scenario's 900 lb IS reportable. Fabricated regulatory structure +
+wrong compliance conclusion = accuracy 1 = disqualification per runbook.
+(glm-5 ALSO missed that Tier II conclusion on the same task via provision
+mis-attachment — scored 3s, wrong-but-not-fabricated: it stated the correct
+TPQ and quoted the min-rule correctly.)
+
+### Grader observations (both candidates)
+- Regulatory mapping and accuracy are strong (4.6-4.7): CFR cites, deadlines,
+  and thresholds present in the grounding corpus were used correctly ~always.
+- Completeness is the weak dimension (3.6-3.7): scenario-planted obligations
+  OUTSIDE the corpus were the dominant miss class (e.g., POTW categorical
+  pretreatment + F006 sludge on the electroplating task — missed by BOTH;
+  1910.213 for table saws; Cal/OSHA §3395 outdoor heat; Tier II sulfuric acid
+  in battery rooms). Production lever = corpus breadth per tenant industry,
+  not model choice.
+- Corpus-induced defect found: my respirator doc's "required or provided"
+  phrasing is overbroad vs 1910.134's voluntary-use nuance — one candidate
+  repeated it faithfully. Corpus revision item.
+- One glm-5 arithmetic slip (3,295 vs 2,995 gal aggregate; conclusion
+  unaffected) — supports keeping SERVE-10-style numeric checks in agent
+  post-processing for register math.
+
+## Outcome (design §6.3 Outcome A)
+
+Winner: **zai.glm-5** — only quality-pass candidate ($/task rank moot).
+Register: legal-ledger UNASSIGNED → **ASSIGNED zai.glm-5**, expiry 2026-10-08,
+monthly cap PROPOSED $25/mo (COND-4, owner to ratify).
+
+## Budget
+
+glm-5 $0.1469 + deepseek $0.0886 + Titan embeds $0.0002 ≈ **$0.236 vs $1.00 cap**.
+
+## Cleanup
+
+task13-guru45001-kb, task13-guru45001-kb2 (iso-kb) and task14-obligations-kb
+(tenant-docs-kb) eval indexes deleted post-eval via prover delete-index
+(404-verified) — see closure commit.

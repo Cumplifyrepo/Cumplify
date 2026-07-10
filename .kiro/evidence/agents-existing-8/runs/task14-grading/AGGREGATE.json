@@ -1,0 +1,39 @@
+{
+ "zai.glm-5": {
+  "responses": 30,
+  "meanScore": 4.34,
+  "dimMeans": {
+   "obligation_id": 4.33,
+   "reg_mapping": 4.73,
+   "risk_class": 4.2,
+   "completeness": 3.7,
+   "accuracy": 4.73
+  },
+  "catastrophic": [],
+  "fmFlags": 24,
+  "qualityPass": true,
+  "totalCostUsd": 0.1469,
+  "costPerTask": 0.0049
+ },
+ "deepseek.v3.2": {
+  "responses": 30,
+  "meanScore": 4.22,
+  "dimMeans": {
+   "obligation_id": 4.1,
+   "reg_mapping": 4.67,
+   "risk_class": 4.17,
+   "completeness": 3.6,
+   "accuracy": 4.57
+  },
+  "catastrophic": [
+   [
+    "30",
+    "legal-ledger-015"
+   ]
+  ],
+  "fmFlags": 28,
+  "qualityPass": false,
+  "totalCostUsd": 0.0886,
+  "costPerTask": 0.00295
+ }
+}

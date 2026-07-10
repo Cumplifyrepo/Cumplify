@@ -163,14 +163,15 @@ form declined + margin-fail at credit pricing).
 | Field | Value |
 |-------|-------|
 | **Seat** | LegalLedger (statutory/legal-text interpretation — 14001 6.1.3, 45001 6.1.3, 9.1.2) |
-| **Assigned Model** | **UNASSIGNED** |
-| **Status** | UNASSIGNED — retrieval-gated re-eval required |
-| **Justification** | This is the highest-consequence seat. Human grading (90/90 blind, 3 candidates × 30 tasks) completed. Leading candidates: glm-5 and deepseek.v3.2. All candidates evaluated WITHOUT retrieval grounding (corpus maps only). Production LegalLedger runs retrieval-grounded on tenant-uploaded standards — the eval without grounding is not representative of production conditions. Assignment deferred until spec-4 (knowledge-base) deploys the retrieval path and a grounded re-eval executes. Monthly budget cap ($ TBD) attaches on assignment — enforcement via ai-invoker credit pre-check (ai-core spec CARRY). |
-| **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/legal-ledger-run7-20260706/report.md` + human grading at commit `645873e` |
+| **Assigned Model** | `zai.glm-5` |
+| **Status** | ASSIGNED — retrieval-grounded re-eval PASSED 2026-07-10 (agents-existing-8 Task 14) |
+| **Justification** | This is the highest-consequence seat. Human grading (90/90 blind, 3 candidates × 30 tasks) completed. Leading candidates: glm-5 and deepseek.v3.2. All candidates evaluated WITHOUT retrieval grounding (corpus maps only). Production LegalLedger runs retrieval-grounded on tenant-uploaded standards — the eval without grounding is not representative of production conditions. Assignment deferred until spec-4 (knowledge-base) deploys the retrieval path and a grounded re-eval executes. Monthly budget cap ($ TBD) attaches on assignment — enforcement via ai-invoker credit pre-check (ai-core spec CARRY). GROUNDED RE-EVAL RESULT (blind protocol, 60/60 architect-graded, seed commit 4218746, key sha 3bb85e21): glm-5 mean 4.34 ≥ 4.0 with ZERO catastrophic scores → QUALITY PASS. deepseek.v3.2 mean 4.22 but DISQUALIFIED — one catastrophic (accuracy=1, FM-1: fabricated concentration-tiered sulfuric-acid TPQ values + wrong Tier II conclusion on legal-ledger-015). Cheaper candidate rejected on the no-1s rule: fabricated regulatory thresholds are the exact failure mode this seat cannot tolerate. Shared weakness of both candidates (grader observation): completeness ~3.6-3.7 — scenario-planted obligations outside the grounding corpus were missed more often than mis-stated; grounding-corpus breadth is the production lever (obligations corpus must grow with tenant industries). |
+| **Eval Evidence** | `.kiro/evidence/model-policy-evals/runs/legal-ledger-run7-20260706/report.md` + human grading at commit `645873e` (ungrounded); `.kiro/evidence/agents-existing-8/task-14-legalledger-reeval.log` + `runs/task14-grading/` (grounded, blind) |
 | **$/task P50 (ungrounded)** | glm-5: $0.00582, deepseek.v3.2: $0.00335 |
-| **$/task P95 (ungrounded)** | glm-5: $0.00670, deepseek.v3.2: $0.00386 |
-| **Margin at credit pricing** | glm-5: 85.3%, deepseek.v3.2: 91.5% (both clear >50%) |
-| **Expiry** | Contingent on spec-4 retrieval-grounded re-eval |
+| **$/task (grounded run mean)** | glm-5: $0.00490, deepseek.v3.2: $0.00295 |
+| **Margin at credit pricing** | glm-5: 85.3% (ungrounded basis; grounded cost lower → margin holds, clears >50%) |
+| **Monthly budget cap (COND-4)** | PROPOSED $25/mo platform-wide (dev/beta) — owner to ratify; enforcement via ai-invoker credit pre-check carry |
+| **Expiry** | 2026-10-08 (90 days from grounded re-eval) |
 
 ---
 
