@@ -191,6 +191,7 @@ extend type Subscription {
 - `HitlQueryDS` → NodejsFunction `services/api/src/resolvers/hitl-query.ts`
 - `ProfileDS` → NodejsFunction `services/api/src/resolvers/profile.ts`
 - `HitlSubscriptionDS` → None data source (with C-6 subscription auth resolver Lambda)
+- `HitlSweeperFn` → NodejsFunction `services/api/src/resolvers/hitl-sweeper.ts` + EventBridge Schedule (rate 5 min). IAM: DDB Query GSI9 + UpdateItem on CumplifyCore (tenant-scoped via LeadingKeys). Part of the REQUIRES-HUMAN IAM bundle.
 
 **Tenant isolation:** `listPendingHitlItems` queries GSI9 with key prefix `TENANT#<tenantId>#HITL_PENDING` where tenantId is from `resolverContext` (never client). `approveHitlItem` fetches the HITL item by base-table key and verifies tenantId ownership before acting. `getProfile`/`updateProfile` operate on `PROFILE#<userId>` with tenant-scoped PK. Subscription `onHitlItemResolved` verifies tenantId server-side (C-6 pattern, dedicated resolver Lambda).
 
@@ -361,14 +362,16 @@ All data access patterns follow the api-core convention:
 | Storage | $0.023 / GB | ~$0.02/mo | ~$0.05/mo |
 | **Subtotal** | | **~$0.73/mo** | **~$5.45/mo** |
 
-### 6.2 HITL Approval Lambda + new resolvers
+### 6.2 HITL Approval Lambda + new resolvers + sweeper
 
 | Line item | Unit price | Estimate |
 |-----------|-----------|----------|
-| Lambda invocations (3 new resolvers) | $0.20 / 1M | negligible (< 10K/mo at P1) |
+| Lambda invocations (4 new resolvers + sweeper) | $0.20 / 1M | negligible (< 10K/mo at P1) |
 | DDB reads (GetItem/Query HITL + PROFILE) | $0.25 / 1M RRU | negligible |
+| DDB writes (sweeper resets, ~10 items/day) | $1.25 / 1M WRU | negligible |
 | SFN SendTaskSuccess/Failure | $0.025 / 1K transitions | negligible (< 1K/mo) |
 | EventBridge PutEvents | $1.00 / 1M | negligible |
+| EventBridge Scheduler (sweeper, rate 5 min) | free tier (14K/mo) | $0.00 |
 
 ### 6.3 Monthly delta summary
 
@@ -490,6 +493,11 @@ const branch = new amplify.CfnBranch(this, 'AppBranch', {
 ```
 
 Pipeline deploys the frontend in a post-deploy step (same pattern as eventual pipeline `test:int` — a credentialed ShellStep). The Amplify `start-deployment` call requires `amplify:StartDeployment` + `amplify:CreateDeployment` IAM permissions on the pipeline role.
+
+**Residual design notes (architect, baked into task plan):**
+1. **Deploy artifact format:** The `next build` output alone is NOT deployable to WEB_COMPUTE. The pipeline must package the artifact per the Amplify Hosting deployment specification (`deploy-manifest.json` + compute bundle layout). Task 1 (hosting spike) proves this end-to-end.
+2. **Cross-account step role:** The pipeline frontend-deploy post-step requires the same cross-account credentialed-step role as the `test:int` carry — designed ONCE with both consumers inside the REQUIRES-HUMAN bundle (Task 14).
+3. **RESOLVING-cleanup sweeper:** New scheduled Lambda in ApiStack (Task 8) — included in the stack inventory, §6 cost table, and the IAM bundle.
 
 ---
 
