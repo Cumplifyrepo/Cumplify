@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-024",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 69,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1",
+    "score": 0.60246396
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.50734967
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.45009917
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.44793883
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.43689403
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.43568096
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.4336936
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.43281463
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, here are the compliance obligations for the compliance-obligations register regarding the one-time TCE vapor degreaser decommissioning:\n\n### 1. Hazardous Waste Determination and Management (RCRA)\n*   **Requirement:** The facility must conduct a hazardous waste determination for the TCE cleanout waste (still bottoms and spent solvent). Because this waste is typically a listed hazardous waste (spent halogenated solvent), it must be managed as hazardous waste. This involves manifesting the waste to a permitted Treatment, Storage, and Disposal Facility (TSDF). Due to the volume (1,600 kg) exceeding the normal VSQG status, the facility must utilize \"episodic generation\" provisions to manage the waste without permanently bumping their generator category to Large Quantity Generator (LQG).\n*   **Source:** 40 CFR Parts 262/263 (cited in Doc 1).\n*   **Applicability:** Applies specifically to this situation as a \"one-time removal of a TCE vapor degreaser\" generating approximately 1,600 kg of waste in a single month (Doc 1). While the facility is normally a VSQG (<100 kg/mo), this event exceeds that threshold, triggering the need for episodic generation handling or a temporary category change (Doc 2).\n*   **ISO Mapping:** ISO 14001 6.1.3 (Compliance Obligations) and 8.1 (Operational Control).\n*   **Evaluation (9.1.2):** Verify the obligation against actual facility thresholds. Document the quantities and dates of the cleanout in the obligations register to justify the use of episodic generation provisions and confirm that the waste was properly manifested to a permitted TSDF (Doc 5).\n\n### 2. Air Quality Standards (NESHAP Subpart T)\n*   **Requirement:** The decommissioning and cleanout of the vapor degreaser must comply with the halogenated solvent cleaning National Emission Standards for Hazardous Air Pollutants (NESHAP), specifically 40 CFR 63 Subpart T, which governs the operating of these machines.\n*   **Source:** 40 CFR 63 Subpart T (cited in Doc 1).\n*   **Applicability:** Applies when performing the \"one-time removal of a TCE vapor degreaser\" (Doc 1).\n*   **ISO Mapping:** ISO 14001 8.1 (Operational Control) and 6.1.3.\n*   **Evaluation (9.1.2):** Verify that the decommissioning procedures adhered to the specific operational controls required by Subpart T for the machine's final operating cycle/cleanout. Document the specific applicability in the register rather than adopting blanket consultant claims (Doc 5).\n\n### 3. Worker Exposure Risk Management (TSCA)\n*   **Requirement:** Implement specific worker-exposure risk management measures for Trichloroethylene (TCE) during the decommissioning process, adhering to TSCA §6 rule phase-outs/limits.\n*   **Source:** TSCA §6 (cited in Doc 1).\n*   **Applicability:** Applies to the \"one-time removal of a TCE vapor degreaser\" due to the specific worker-exposure risks associated with TCE (Doc 1).\n*   **ISO Mapping:** ISO 45001 6.1.2 (Hazard Identification) and 6.1.3 (Compliance Obligations).\n*   **Evaluation (9.1.2):** Evaluate compliance by verifying that risk management measures (e.g., monitoring, PPE, ventilation) were implemented during the specific dates of the cleanout activity (Doc 5).\n\n### 4. Generator Category Status Verification\n*   **Requirement:** Monitor and document generator status. While the cleanout generates 1,600 kg (which would normally trigger LQG status with duties like weekly inspections, personnel training, and contingency plans), the facility should utilize the \"episodic event\" provision for VSQG/SQG under state-adopted rules to avoid a permanent category bump.\n*   **Source:** 40 CFR Part 262 (cited in Doc 2).\n*   **Applicability:** Applies when \"one-time decommissioning wastes\" cause waste volumes to spike above normal monthly generation limits (Doc 2).\n*   **ISO Mapping:** ISO 14001 6.1.3 and 8.1.\n*   **Evaluation (9.1.2):** Before adopting the episodic event status, verify the specific state-adopted rules for Pennsylvania DEP regarding episodic generation. Document why the LQG obligations (weekly inspections, 90-day limit) do or do not apply permanently, recording the specific quantities (1,600 kg) and dates in the register (Doc 5).",
+ "inputTokens": 1557,
+ "outputTokens": 1020,
+ "costUsd": 0.004821000000000001,
+ "latencyMs": 6550
+}

@@ -1,0 +1,13 @@
+{
+ "model": "deepseek.v3.2",
+ "seat": "legal-ledger",
+ "tasks": 30,
+ "meanScore": "HUMAN-GRADED",
+ "bar": null,
+ "pass": "PENDING-HUMAN-GRADING",
+ "meanRetrievalRecall": 1,
+ "retrievalColdStarts": 0,
+ "totalCostUsd": 0.0886,
+ "capUsd": 0.4,
+ "finishedAt": "2026-07-10T00:46:51.590Z"
+}

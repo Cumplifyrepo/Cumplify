@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-015",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 63,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.4",
+    "score": 0.50496596
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.4833347
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.4675128
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.46538967
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4612102
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4465786
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.44371012
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.43589234
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, here are the compliance obligations identified for the compliance-obligations register regarding the fleet and equipment expansion at the Olathe facility.\n\n### 1. EPCRA §312 (Tier II Inventory Reporting)\n*   **Requirement:** Submit an annual Tier II inventory report by March 1 to state/local emergency bodies and the fire department.\n*   **Source:** EPCRA §312, 40 CFR Part 370.\n*   **Applicability:** **Applies.** The year-end inventory shows 14,000 pounds of propane on site. This exceeds the 10,000 lb threshold for hazardous chemicals. Propane is explicitly listed as a chemical that counts toward this threshold. The presence of sulfuric acid (900 lb) does not exceed the 10,000 lb standard hazardous chemical threshold, nor does it exceed the Extremely Hazardous Substance (EHS) Threshold Planning Quantity (TPQ) of 1,000 lb; therefore, reporting for sulfuric acid is not triggered.\n*   **ISO Mapping:** ISO 14001 6.1.3 (Compliance obligations).\n*   **Evaluation:** Compliance should be evaluated annually (per clause 9.1.2) by verifying the year-end inventory quantities against the 10,000 lb threshold. The register must document that propane exceeds the threshold (triggering the report) and sulfuric acid is below the threshold (no report required), with dates and quantities.\n\n### 2. EPCRA §311 (SDS Reporting)\n*   **Requirement:** Submit Safety Data Sheets (SDS) or a list of chemicals to the same emergency bodies upon first exceeding the threshold.\n*   **Source:** EPCRA §311, 40 CFR Part 370.\n*   **Applicability:** **Applies.** Since the propane inventory exceeded the 10,000 lb threshold for the first time, the facility is now subject to §311 reporting requirements (unless previously submitted).\n*   **ISO Mapping:** ISO 14001 6.1.3 (Compliance obligations).\n*   **Evaluation:** Evaluate immediately upon threshold determination. Document in the register that the threshold was crossed and the submission date.\n\n### 3. OSHA Hazard Communication (HazCom)\n*   **Requirement:** Maintain a written HazCom program, chemical inventory, accessible Safety Data Sheets (SDS), labeled containers (including secondary containers), and provide effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** **Applies.** The facility uses hazardous chemicals (propane, sulfuric acid in batteries). The fleet expansion introduces these chemicals in new quantities/locations, necessitating updates to the inventory and potentially new training if the expansion constitutes a \"new hazard\" introduction.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation:** Evaluate upon any change in chemical use or inventory (per clause 9.1.2). Verify that the chemical inventory is updated to reflect the 14,000 lb propane and sulfuric acid batteries, and that SDS are accessible.\n\n### 4. Battery Charging Installations (Operational Safety)\n*   **Requirement:** Designate charging areas with facilities for flushing/neutralizing spilled electrolyte, fire protection, protection of charging apparatus from truck damage, adequate ventilation for hydrogen off-gassing, eyewash where electrolyte is handled, and PPE.\n*   **Source:** OSHA 29 CFR 1910.178(g); 1910.151(c).\n*   **Applicability:** **Applies.** The situation involves \"forklift and UPS batteries\" and \"fleet... expansion.\" The sulfuric acid (900 lb) is contained in these batteries. While the reporting threshold for sulfuric acid (1,000 lb TPQ) is **NOT crossed**, the operational safety requirements for battery charging areas apply regardless of the quantity.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation:** Evaluate during operational planning of the new facilities (per clause 9.1.2). Inspect the charging areas to ensure ventilation, eyewash stations, and spill control measures are present.\n\n### 5. Flammable Liquids Handling (Propane)\n*   **Requirement:** Implement quantity limits outside storage rooms, use approved cabinets, ensure bonding and grounding during transfer/dispensing, and control ventilation and ignition sources.\n*   **Source:** OSHA 29 CFR 1910.106.\n*   **Applicability:** **Applies.** Propane is a flammable liquid/gas. The presence of 14,000 lb for \"fleet fueling and heaters\" implies storage and transfer operations that must meet these safety standards.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation:** Evaluate during operational controls review (per clause 9.1.2). Verify that storage and dispensing areas meet bonding/grounding and ventilation requirements.\n\n### 6. EPCRA §302 (Emergency Planning Notification)\n*   **Requirement:** Notify the State Emergency Response Commission (SERC) and Local Emergency Planning Committee (LEPC) if the facility has an Extremely Hazardous Substance (EHS) in excess of its TPQ.\n*   **Source:** EPCRA §302, 40 CFR Part 355.\n*   **Applicability:** **Does NOT Apply.** Sulfuric acid is an EHS. The threshold is the lower of 500 lb or the TPQ. The inventory shows 900 lb of sulfuric acid. *Note: While the provided text lists chlorine (100 lb) and ammonia (500 lb) as examples, it states the rule applies at \"the lower of 500 lb or their TPQ.\" If sulfuric acid's TPQ is >900 lb, the 500 lb default applies. If the TPQ is <900 lb, the TPQ applies. However, based strictly on the text provided, the presence of EHS can trigger notification.* **Correction based on standard thresholds:** Sulfuric acid (battery acid) typically has a TPQ of 1,000 lb. The inventory is 900 lb. Therefore, the threshold is **NOT crossed**.\n*   **ISO Mapping:** ISO 14001 6.1.3.\n*   **Evaluation:** Document in the register (per clause 9.1.2) that the sulfuric acid quantity (900 lb) was compared against the EHS threshold (TPQ or 500 lb) and determined to be below the limit, requiring no notification.\n\n### 7. Toxics Release Inventory (Form R)\n*   **Requirement:** Report annually by July 1 for listed chemicals exceeding activity thresholds (25,000 lb manufactured/processed or 10,000 lb otherwise used).\n*   **Source:** EPCRA §313, 40 CFR Part 372.\n*   **Applicability:** **Does NOT Apply.** The inventory shows 14,000 lb of propane. This is below the 25,000 lb threshold for processing or 10,000 lb \"otherwise used\" threshold typically required for reporting (unless the \"otherwise used\" threshold is met through consumption, which is not indicated by the inventory alone).\n*   **ISO Mapping:** ISO 14001 6.1.3.\n*   **Evaluation:** Document in the register that the throughput was reviewed and determined to be below the 25,000/10,000 lb thresholds.\n\n### 8. Process Safety Management (PSM) & Risk Management Program (RMP)\n*   **Requirement:** Full PSM/RMP programs for listed chemicals at or above threshold quantities (e.g., anhydrous ammonia 10,000 lb).\n*   **Source:** OSHA 1910.119 / Clean Air Act §112(r).\n*   **Applicability:** **Does NOT Apply.** The facility has propane and sulfuric acid. Neither chemical is listed in the provided excerpts as having a threshold quantity relevant to the amounts on site (Propane is not listed as a PSM/RMP chemical in the excerpts; Ammonia is listed at 10,000 lb).\n*   **ISO Mapping:** ISO 14001 6.1.3 / ISO 45001 6.1.3.\n*   **Evaluation:** Document in the register that the inventory was reviewed against PSM/RMP lists and no thresholds were crossed.",
+ "inputTokens": 1428,
+ "outputTokens": 1792,
+ "costUsd": 0.007162400000000001,
+ "latencyMs": 11247
+}

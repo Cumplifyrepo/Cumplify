@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-001",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 60,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.4",
+    "score": 0.45078203
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.44703585
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.43890727
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.42982614
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42363438
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.42279506
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42268634
+   },
+   {
+    "clauseRef": "7.2",
+    "score": 0.42220727
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the installation of the new automated packaging line creates or affects the following compliance obligations for the register:\n\n1.  **Obligation: Machine Guarding**\n    *   **Requirement:** Points of operation, ingoing nip points, rotating parts, and areas with flying debris must be guarded using fixed, interlocked, or other protective devices. Robotic cells typically require perimeter guarding with interlocked access.\n    *   **Source:** OSHA 29 CFR 1910.212 (general machine guarding) **[Doc 2 — clause 8.1.2]**.\n    *   **Applicability:** This applies directly because the new line includes powered conveyors, a case erector, and a robotic palletizer **[Doc 2 — clause 8.1.2]**.\n    *   **ISO Mapping:** ISO 45001 8.1.2 (engineering controls in the hierarchy) **[Doc 2 — clause 8.1.2]**.\n    *   **Evaluation (9.1.2):** Compliance should be evaluated before initial operation of the line through a documented inspection to verify all required guards are installed and functional. Ongoing evaluation should occur during regular safety audits and after any guard modifications.\n\n2.  **Obligation: Electrical Safe Work Practices**\n    *   **Requirement:** De-energize live parts before work where feasible (tied to lockout/tagout). For work on or near exposed energized parts, qualified-person training, protective equipment, and insulated tools are required. An arc-flash risk assessment per NFPA 70E supports compliance.\n    *   **Source:** OSHA 29 CFR 1910.331–335 **[Doc 5 — clause 8.1.2]**.\n    *   **Applicability:** This applies because maintenance technicians will service the line, which involves electrical energy sources and control panels **[Doc 5 — clause 8.1.2]**.\n    *   **ISO Mapping:** ISO 45001 8.1.2 and 7.2 (qualified persons) **[Doc 5 — clause 8.1.2]**.\n    *   **Evaluation (9.1.2):** Compliance should be evaluated before technicians begin work on the new equipment by verifying training records for \"qualified persons,\" reviewing lockout/tagout procedures specific to the line, and ensuring appropriate PPE and tools are available. Ongoing evaluation occurs during audits of maintenance activities and after any incident involving electrical work.\n\n3.  **Obligation: Lockout/Tagout (Implied/Referenced)**\n    *   **Requirement:** While not explicitly detailed in the excerpts, the **Electrical Safe Work Practices** obligation references de-energization tied to lockout/tagout **[Doc 5 — clause 8.1.2]**. Furthermore, the scenario describes technicians clearing jams and performing servicing with multiple energy sources (electrical, pneumatic, stored mechanical), which triggers the full OSHA Lockout/Tagout standard (29 CFR 1910.147).\n    *   **Source:** OSHA 29 CFR 1910.147 (Control of Hazardous Energy).\n    *   **Applicability:** This applies because servicing and clearing jams expose employees to the unexpected energization or release of hazardous energy from the line's electrical, pneumatic, and mechanical systems.\n    *   **ISO Mapping:** ISO 45001 8.1.2 (hierarchy of controls).\n    *   **Evaluation (9.1.2):** Compliance should be evaluated before startup by developing, documenting, and training on specific lockout/tagout procedures for the new packaging line. Evaluation must occur before any servicing begins and be re-evaluated annually or when procedures change.\n\n**Important Note on Applicability Determination:** Per **[Doc 3 — clause 9.1.2]**, before adding these obligations to the register, the company must verify they apply based on the actual equipment and tasks, not just a consultant's claim. The register entry should document the rationale (e.g., \"applies due to installation of robotic palletizer and powered conveyors per 29 CFR 1910.212\") with the date of the determination.",
+ "inputTokens": 1285,
+ "outputTokens": 869,
+ "costUsd": 0.00240435,
+ "latencyMs": 9185
+}

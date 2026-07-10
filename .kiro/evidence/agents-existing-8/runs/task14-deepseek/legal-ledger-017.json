@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-017",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 78,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1",
+    "score": 0.5400945
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.43433797
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4136334
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.41264567
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.40229166
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.39731762
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.39490306
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.3923738
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the company's situation creates or affects the following compliance obligations for the register:\n\n**1. Obligation: Refrigerant Leak-Repair and Servicing**\n*   **Requirement**: Systems with 15+ lb of HFC refrigerant (like R-448A) are subject to leak-repair rules, including leak-rate calculation on refrigerant additions, repair deadlines if leak rates exceed 20% per year for commercial refrigeration, use of certified technicians, recordkeeping, and automatic leak detection for very large charges. **[Doc 1 — clause 8.1]**\n*   **Source**: Clean Air Act (CAA) §608; AIM Act; 40 CFR Part 84 Subpart C. **[Doc 1 — clause 8.1]**\n*   **Applicability**: Directly applies because the company operates rack refrigeration with 300–500 lb HFC charges per store, which exceeds the 15 lb threshold. **[Doc 1 — clause 8.1]**\n*   **ISO Mapping**: ISO 14001 clauses 8.1, 9.1.1, and **6.1.3**. **[Doc 1 — clause 8.1]**\n*   **Evaluation (9.1.2)**: Compliance should be evaluated **quarterly** via review of refrigerant addition logs and leak-rate calculations, and **annually** as part of the compliance audit, documenting findings in the obligations register. **[Doc 3 — clause 9.1.2]**\n\n**2. Obligation: Hazard Communication**\n*   **Requirement**: A written HazCom program, chemical inventory, accessible Safety Data Sheets (SDS), labeled containers, and effective employee training before initial assignment and when new hazards are introduced. **[Doc 5 — clause 7.4]**\n*   **Source**: OSHA 29 CFR 1910.1200. **[Doc 5 — clause 7.4]**\n*   **Applicability**: Applies because technicians handle R-448A, which is a hazardous chemical. The planned remodels may introduce new hazards (e.g., new solvents, coatings). **[Doc 5 — clause 7.4]**\n*   **ISO Mapping**: ISO 45001 clauses **7.4** (communication), 7.2/7.3 (competence, awareness), and **6.1.3**. **[Doc 5 — clause 7.4]**\n*   **Evaluation (9.1.2)**: Compliance should be evaluated **before technicians begin work on remodeled systems** to ensure training on new hazards, and **annually** via program audit and review of the chemical inventory/SDS library. **[Doc 3 — clause 9.1.2]**\n\n**3. Obligation: Flammable Liquids Handling and Storage**\n*   **Requirement**: Quantity limits outside approved storage, use of approved cabinets, bonding and grounding during transfer from drums, and ignition-source control. **[Doc 6 — clause 8.1.1]**\n*   **Source**: OSHA 29 CFR 1910.106. **[Doc 6 — clause 8.1.1]**\n*   **Applicability**: Applies if the remodels or routine servicing involve dispensing flammable solvents (e.g., for cleaning) from drums in work areas. **[Doc 6 — clause 8.1.1]**\n*   **ISO Mapping**: ISO 45001 clauses **8.1.1** (operational controls) and **6.1.3**. **[Doc 6 — clause 8.1.1]**\n*   **Evaluation (9.1.2)**: Compliance should be evaluated **during the planning phase of remodels** to assess solvents needed and storage/transfer methods, and **periodically** via workplace inspections. **[Doc 3 — clause 9.1.2]**\n\n**4. Obligation: EPCRA Hazardous Chemical Inventory (Tier II)**\n*   **Requirement**: Annual Tier II inventory reporting by March 1 to state/local/fire authorities for hazardous chemicals at or above 10,000 lb at any time, or for Extremely Hazardous Substances (EHS) at their Threshold Planning Quantity (TPQ). **[Doc 8 — clause 7.4]**\n*   **Source**: EPCRA §§311/312; 40 CFR Parts 355/370. **[Doc 8 — clause 7.4]**\n*   **Applicability**: Applies if the **corporate aggregate** of R-448A across all 22 stores (300-500 lb/store = 6,600 - 11,000 lb total) meets or exceeds the 10,000 lb reporting threshold at any time. R-448A is a hazardous chemical. **[Doc 8 — clause 7.4]**\n*   **ISO Mapping**: ISO 14001 clauses 7.4.3 (external communication) and **6.1.3**; ISO 45001 clause 8.2. **[Doc 8 — clause 7.4]**\n*   **Evaluation (9.1.2)**: Compliance should be evaluated **annually** by calculating the company-wide inventory of R-448A (and other reportable chemicals like propane/diesel) to determine if the 10,000 lb threshold is met, documenting the determination in the register. **[Doc 3 — clause 9.1.2]**\n\n**Note on Other Obligations**: The documentation indicates that Process Safety Management (PSM) **[Doc 4 — clause 8.1.1]** and the EPA Risk Management Program (RMP) **[Doc 2 — clause 6.1.3]** are triggered at a 10,000 lb threshold for anhydrous ammonia. Since the company uses R-448A, an HFC, these obligations **do not apply** unless ammonia is also present at that threshold. This non-applicability should be documented in the register per the **applicability determination discipline** in **[Doc 3 — clause 9.1.2]**.",
+ "inputTokens": 1414,
+ "outputTokens": 1274,
+ "costUsd": 0.00323358,
+ "latencyMs": 24825
+}

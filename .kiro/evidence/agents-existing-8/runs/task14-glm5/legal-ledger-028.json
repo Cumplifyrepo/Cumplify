@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-028",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 37,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5922517
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5175023
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.48140207
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.45961702
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.4411614
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.4329025
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.43051946
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42611772
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the provided standards documentation, here are the compliance obligations created or affected by the installation of the new spray-finishing booth for the furniture manufacturer.\n\n**1. Spray Finishing Safety (Flammable/Combustible Materials)**\n*   **Requirement:** Spray finishing operations must be confined to approved booths or rooms equipped with adequate ventilation, filters, listed electrical equipment for classified areas, sprinkler/extinguishing coverage, and control of residue and ignition sources.\n*   **Source:** OSHA 29 CFR 1910.107.\n*   **Applicability:** Applies directly to the new enclosed spray-finishing booth being installed for solvent-borne lacquers and sealers.\n*   **ISO Mapping:** ISO 45001 8.1.1 (operating criteria), 8.1.3 (change control).\n*   **Evaluation (9.1.2):** Compliance should be evaluated **before the booth is placed in service** (during design and installation) to ensure all safety specifications are met, and periodically thereafter through routine inspections of ventilation, filters, and electrical equipment.\n\n**2. Air Permitting for Coating/Solvent Operations**\n*   **Requirement:** New or increased VOC emissions usually require state minor-source construction/operating permits BEFORE installation. This includes emission limits, control/capture requirements, and record-keeping of coating usage and VOC content. Surface-coating NESHAPs (e.g., 40 CFR 63 Subpart HHHHHH) may also apply.\n*   **Source:** State minor NSR programs; CAA NESHAPs.\n*   **Applicability:** Applies as the company is adding a spray booth with a projected 8 tons per year of VOC emissions potential, which triggers permitting requirements for new coating capacity.\n*   **ISO Mapping:** ISO 14001 6.1.3, 8.1, 9.1.1.\n*   **Evaluation (9.1.2):** Compliance must be evaluated **prior to installation** (permit acquisition) and ongoing through the maintenance of usage records and VOC content documentation to demonstrate compliance with permit limits.\n\n**3. Flammable Liquids Handling and Storage**\n*   **Requirement:** Implement quantity limits outside storage rooms/cabinets, use approved cabinets, ensure bonding and grounding during transfer/dispensing from drums, and maintain ventilation and ignition-source control.\n*   **Source:** OSHA 29 CFR 1910.106.\n*   **Applicability:** Applies because solvents such as lacquer thinners will be dispensed from drums and stored in work areas associated with the new booth.\n*   **ISO Mapping:** ISO 45001 8.1.1 (operational controls), 8.1.2 (substitution consideration).\n*   **Evaluation (9.1.2):** Evaluate **upon installation** of storage areas and during routine operations to ensure bonding/grounding procedures are followed and quantity limits are maintained.\n\n**4. Hazard Communication**\n*   **Requirement:** Maintain a written HazCom program, chemical inventory, accessible Safety Data Sheets (SDS), labeled containers (including secondary/dispensing containers), and provide effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** Applies as new hazardous chemicals (solvents, coatings, plating chemistry) are introduced into the workplace with the new operation.\n*   **ISO Mapping:** ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness), 6.1.3.\n*   **Evaluation (9.1.2):** Evaluate **before the new process begins** (training and labeling) and continuously update the chemical inventory and SDS access as new chemicals are introduced.\n\n**5. Air Contaminant Exposure Limits and Assessment**\n*   **Requirement:** Keep employee exposures within permissible exposure limits. Substance-specific standards (e.g., hexavalent chromium) may require initial exposure determinations, periodic monitoring, regulated areas, and medical surveillance.\n*   **Source:** OSHA 29 CFR 1910.1000 and substance standards.\n*   **Applicability:** Applies due to the presence of solvent vapors and isocyanates from the spray operations.\n*   **ISO Mapping:** ISO 45001 9.1.1 (monitoring/measurement), 6.1.2 (risk assessment).\n*   **Evaluation (9.1.2):** Evaluate through **initial exposure monitoring** to determine employee exposure levels, followed by periodic monitoring as required by results or specific substance standards.\n\n**6. Respiratory Protection Program**\n*   **Requirement:** Where air contaminants (e.g., isocyanate two-component coatings) cannot be controlled below limits by engineering means, implement a written program including medical evaluation, fit testing, respirator selection, training, and a program administrator.\n*   **Source:** OSHA 29 CFR 1910.134.\n*   **Applicability:** Applies if respirators are required or provided to protect against isocyanates or solvent vapors during spraying.\n*   **ISO Mapping:** ISO 45001 8.1.2 (PPE), 7.2 (competence).\n*   **Evaluation (9.1.2):** Evaluate **prior to respirator use** (medical evaluations and fit testing) and annually thereafter through program audits and training updates.\n\n**7. Toxics Release Inventory (Form R)**\n*   **Requirement:** Facilities with 10+ full-time-equivalents must report annually by July 1 for listed chemicals exceeding activity thresholds (e.g., 10,000 lb \"otherwise used\").\n*   **Source:** EPCRA §313, 40 CFR Part 372.\n*   **Applicability:** Applies if annual chemical throughput (e.g., toluene in coatings) crosses thresholds. The company has 75 employees (>10 FTEs), so coating usage must be tracked against thresholds.\n*   **ISO Mapping:** ISO 14001 9.1.1 (evaluation/reporting), 6.1.3.\n*   **Evaluation (9.1.2):** Evaluate **annually** by calculating chemical throughput against activity thresholds to determine if Form R reporting is required by the July 1 deadline.",
+ "inputTokens": 1380,
+ "outputTokens": 1325,
+ "costUsd": 0.00562,
+ "latencyMs": 19280
+}

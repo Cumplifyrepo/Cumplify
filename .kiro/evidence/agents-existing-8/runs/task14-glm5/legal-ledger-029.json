@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-029",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 95,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "4.1",
+    "score": 0.5375904
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.43810415
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42658618
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.41791245
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.41766044
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.415569
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.41543943
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.41455922
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the acquisition of the Tacoma plant creates specific compliance obligations and necessitates a restructuring of the corporate obligations register to account for Washington State's regulatory jurisdiction.\n\n### 1. Acquisition Integration and Register Harmonization\n*   **Requirement:** The company must inventory and transfer/re-issue environmental permits, verify OSHA programs and posting/recordkeeping continuity under the new employer, harmonize the obligations register across jurisdictions (specifically noting that state plans differ), and evaluate legacy liabilities.\n*   **Source:** Permit transfer provisions in each program; OSH Act employer duties.\n*   **Applicability:** This applies directly to the closing of the acquisition of an operating plant. The corporate register (built for Ohio/Federal OSHA) must be restructured to incorporate the Washington DOSH (state plan) requirements, as state plans differ from federal requirements.\n*   **ISO Mapping:** ISO 14001/45001 4.1 (context), 6.1.3 (compliance obligations).\n*   **Compliance Evaluation (9.1.2):** Compliance evaluation of the acquired site should occur immediately following the acquisition closing.\n*   **Clause:** [Doc 1 — clause 4.1]\n\n### 2. Air Permitting (State Air Operating Permit)\n*   **Requirement:** The facility must maintain its state air operating permit (synthetic minor), which involves adhering to emission limits, control/capture requirements, and recording coating usage and VOC content to demonstrate potential-to-emit below major-source thresholds.\n*   **Source:** State minor NSR programs; CAA NESHAPs.\n*   **Applicability:** The Tacoma plant holds a state air operating permit. The acquisition triggers the need to verify permit transfer or re-issuance and integrate these specific state-level conditions into the corporate register.\n*   **ISO Mapping:** ISO 14001 6.1.3 (legal requirements determination).\n*   **Compliance Evaluation (9.1.2):** Evaluation is required when adding spray booths, coating capacity, or plating lines, and during routine compliance audits.\n*   **Clause:** [Doc 6 — clause 6.1.3]\n\n### 3. Hazard Communication (DOSH/OSHA)\n*   **Requirement:** Implement a written HazCom program, maintain a chemical inventory, ensure safety data sheets are accessible, label containers (including secondary/dispensing containers), and provide effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned) / Washington DOSH State Plan.\n*   **Applicability:** The acquisition creates a \"new employer\" situation requiring verification of program continuity. The corporate register must be updated to reflect that the Tacoma plant falls under the Washington State Plan (DOSH) rather than Federal OSHA.\n*   **ISO Mapping:** ISO 45001 6.1.3 (legal requirements determination).\n*   **Compliance Evaluation (9.1.2):** Evaluate compliance whenever new solvents, coatings, plating chemistry, or other hazardous chemicals are used or stored.\n*   **Clause:** [Doc 2 — clause 7.4]\n\n### 4. Injury and Illness Recordkeeping\n*   **Requirement:** Maintain the OSHA 300 log, 301 incident reports, and post the annual 300A summary from Feb 1–Apr 30. Electronic submission applies to larger/high-hazard establishments.\n*   **Source:** OSHA 29 CFR Part 1904 (incorporated by reference in Washington State Plan).\n*   **Applicability:** The Tacoma plant has 180 employees, exceeding the 10-employee exemption threshold for recordkeeping. The corporate register must account for recordkeeping continuity under the new employer.\n*   **ISO Mapping:** ISO 45001 6.1.3 (legal requirements determination).\n*   **Compliance Evaluation (9.1.2):** Routine evaluation is required to determine paperwork duties by size and industry; annual verification of 300A posting and electronic submission requirements.\n*   **Clause:** [Doc 4 — clause 7.5]\n\n### 5. Machine Guarding\n*   **Requirement:** Guard points of operation, ingoing nip points, rotating parts, and flying debris (fixed, interlocked, or devices). Robotic cells typically need perimeter guarding with interlocked access.\n*   **Source:** OSHA 29 CFR 1910.212 (general machine guarding).\n*   **Applicability:** As a corrugated-packaging plant, the facility operates powered conveyors, presses, palletizers, and case erectors, which are explicitly listed as applicable equipment.\n*   **ISO Mapping:** ISO 45001 6.1.3 (legal requirements determination).\n*   **Compliance Evaluation (9.1.2):** Evaluate compliance when powered conveyors, presses, palletizers, case erectors or similar equipment are operated or modified.\n*   **Clause:** [Doc 3 — clause 8.1.2]\n\n### 6. PPE Hazard Assessment\n*   **Requirement:** Assess the workplace to determine hazards requiring PPE, certify the assessment in writing, select and require appropriate PPE, and train employees.\n*   **Source:** OSHA 29 CFR 1910.132.\n*   **Applicability:** The acquisition and potential process changes at the Tacoma plant necessitate a new assessment to determine hazards requiring PPE.\n*   **ISO Mapping:** ISO 45001 6.1.3 (legal requirements determination).\n*   **Compliance Evaluation (9.1.2):** Evaluate compliance whenever any new process, line, or chemical changes the hazard picture.\n*   **Clause:** [Doc 7 — clause 6.1.2]",
+ "inputTokens": 1391,
+ "outputTokens": 1207,
+ "costUsd": 0.0052534,
+ "latencyMs": 21196
+}

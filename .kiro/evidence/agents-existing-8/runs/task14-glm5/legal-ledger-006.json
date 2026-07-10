@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-006",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 123,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.5355453
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.44535127
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.43268466
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.43016472
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.42341506
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42303658
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42095444
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.42008248
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the following compliance obligations are created or affected by the commissioning of the new high-tonnage press line and the resulting noise exposures of 88 dBA TWA.\n\n### 1. Occupational Noise / Hearing Conservation\n*   **Requirement:** Implement a hearing conservation program. This includes noise monitoring, audiometric testing (with baselines), offering/requiring hearing protection, and training. Feasible engineering or administrative controls must be implemented if exposures reach 90 dBA (PEL).\n*   **Source:** OSHA 29 CFR 1910.95.\n*   **Applicability:** This applies directly to the situation. The press bay exposure of 88 dBA exceeds the action level of 85 dBA. The 25 employees working in the press bay must be enrolled in the hearing conservation program.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated by verifying the existence and implementation of the program elements (monitoring records, training records, audiometric testing records). Evaluation should occur immediately upon commissioning to establish baselines and then periodically (e.g., annual audiometric testing reviews) to ensure ongoing effectiveness.\n\n### 2. Air Contaminant Exposure Limits and Assessment\n*   **Requirement:** Employee exposures must be kept within permissible exposure limits (PELs). This requires assessment (monitoring) to determine exposure levels.\n*   **Source:** OSHA 29 CFR 1910.1000 (Air Contaminants) and substance-specific standards.\n*   **Applicability:** While the primary finding is noise, the commissioning of a \"new high-tonnage press line\" constitutes a change in process. If the stamping operations involve the use of lubricants, coolants, or metalworking fluids that generate mists, or if welding is performed on the line, an assessment of air contaminants is required to ensure exposures are below PELs.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated by conducting initial exposure monitoring for relevant air contaminants (if applicable) to verify they are below PELs. Evaluation should take place during the commissioning phase (initial determination) and whenever process changes occur.\n\n### 3. Machine Guarding\n*   **Requirement:** Points of operation, ingoing nip points, rotating parts, and flying debris must be guarded using fixed guards, interlocked guards, or devices.\n*   **Source:** OSHA 29 CFR 1910.212 (General machine guarding).\n*   **Applicability:** A \"new high-tonnage press line\" introduces new machinery with significant mechanical hazards. The press line must be equipped with appropriate guarding (e.g., interlocked perimeter guarding or point-of-operation devices) to protect the 25 employees in the press bay.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated through a pre-operation inspection of the guarding installation to ensure it meets regulatory requirements before the line goes into full production. Regular inspections should be scheduled to ensure guards remain in place and functional.",
+ "inputTokens": 1319,
+ "outputTokens": 691,
+ "costUsd": 0.0035302,
+ "latencyMs": 6938
+}

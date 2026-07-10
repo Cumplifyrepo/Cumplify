@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-020",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 124,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48277768
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.46038383
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4382354
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4342724
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.43289903
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42820343
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.42607206
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4224219
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the following compliance obligations should be entered into the compliance-obligations register for the Data-services company in Ashburn, Virginia:\n\n### 1. Spill Prevention, Control, and Countermeasure (SPCC) Plan\n*   **Requirement:** A written/certified SPCC plan is required, including secondary containment, inspections, training, and tank integrity measures.\n*   **Source:** 40 CFR Part 112.\n*   **Applicability:** This obligation applies because the installation of the 660-gallon diesel belly tank, when aggregated with the existing 800-gallon heating-oil tank, results in a total aboveground oil storage capacity of 1,460 gallons. This exceeds the 1,320-gallon threshold for aggregate aboveground oil storage in containers ≥55 gallons. As noted in **[Doc 1 — clause 6.1.3]**, the belly tank \"counts toward SPCC aggregate.\"\n*   **ISO Mapping:** ISO 14001 6.1.3 (Environmental compliance obligation determination).\n*   **Evaluation (9.1.2):** Per **[Doc 2 — clause 9.1.2]**, the register must document the calculation (660 + 800 = 1,460 gal) and dates to justify why the obligation applies. Compliance should be evaluated whenever tanks are added or removed to verify threshold status.\n\n### 2. Stationary Emergency Engine Emission Standards\n*   **Requirement:** The new diesel engine must be certified to NSPS Subpart IIII emission standards and use ULSD fuel. Operation for non-emergency purposes (maintenance and readiness testing) is generally limited to about 100 hours/year, requiring hour-meter tracking.\n*   **Source:** 40 CFR Part 60 Subpart IIII (and NESHAP Subpart ZZZZ for existing engines, though this is a new install).\n*   **Applicability:** This applies specifically to the installation of the 750 kW diesel standby generator described in the situation. **[Doc 1 — clause 6.1.3]** explicitly cites \"installing standby generators (e.g., 750 kW diesel with belly tank...)\" as the trigger for this obligation.\n*   **ISO Mapping:** ISO 14001 6.1.3.\n*   **Evaluation (9.1.2):** Per **[Doc 2 — clause 9.1.2]**, the obligation must be verified against actual facility thresholds. Compliance evaluation involves tracking the hour meter to ensure the \"emergency\" status cap (approx. 100 hours for testing) is not exceeded, as noted in **[Doc 1 — clause 6.1.3]**.\n\n### 3. Hazard Communication (HazCom)\n*   **Requirement:** A written HazCom program, chemical inventory, accessible Safety Data Sheets (SDS), labeled containers (including secondary/dispensing containers), and employee training before initial assignment.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** This obligation is triggered because the new generator introduces a hazardous chemical (diesel fuel) to the campus. **[Doc 7 — clause 7.4]** states this applies \"when: any hazardous chemical is used or stored — new solvents, coatings, plating chemistry\" (and by extension, fuels).\n*   **ISO Mapping:** ISO 45001 6.1.3 (OH&S compliance obligation determination).\n*   **Evaluation (9.1.2):** Per **[Doc 2 — clause 9.1.2]**, the obligation should be documented in the register with quantities and dates. Compliance is evaluated when the generator is installed (ensuring SDS are accessible and tanks are labeled) and when employees are assigned to operate/maintain it.",
+ "inputTokens": 1414,
+ "outputTokens": 799,
+ "costUsd": 0.0039708,
+ "latencyMs": 15650
+}

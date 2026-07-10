@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-011",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 128,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.5599698
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.44785735
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.44203204
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.4369828
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.43466625
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.43139762
+   },
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.4303532
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.4279242
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the provided standards documentation, here are the compliance obligations created or affected by the situation at the Plastics Injection Molder in Cookeville, Tennessee.\n\n### 1. Obligation: Temporary/Staffing-Agency Worker Safety and Injury Recording\n\n*   **Requirement:** The host employer (the company) and the staffing agency share responsibility. The host employer typically controls site-specific hazard training, Personal Protective Equipment (PPE), and supervision. Injury recording generally falls to the employer supervising the day-to-day work (usually the host). Crucially, duties cannot be contracted away. Because the company's shift leads supervise the temp workers day-to-day, the company is responsible for recording the laceration injury.\n*   **Source:** OSH Act; OSHA temporary worker initiative guidance; 29 CFR 1904.31.\n*   **Applicability:** This applies directly because the temp headcount has increased (doubled) and a temp worker was injured. The staffing agency's claim that \"all OSHA duties are theirs\" is incorrect regarding injury recording and site-specific training, as the company supervises the work.\n*   **ISO Mapping:** ISO 45001 8.1.4 (procurement/outsourcing of labor).\n*   **Compliance Evaluation (ISO 9.1.2):**\n    *   *How:* Verify that the injury (laceration) was recorded on the company’s OSHA 300 log (not just the agency's) and confirm that site-specific training and PPE provisions were provided by the host employer.\n    *   *When:* Immediately regarding the injury recording; periodically regarding training verification, especially now that the headcount has doubled.\n\n### 2. Obligation: PPE Hazard Assessment\n\n*   **Requirement:** Assess the workplace to determine hazards requiring PPE, certify the assessment in writing, select and require appropriate PPE, and train employees. The employer must pay for most required PPE.\n*   **Source:** OSHA 29 CFR 1910.132.\n*   **Applicability:** This applies \"when any new process, line, or chemical changes the hazard picture.\" The sudden doubling of the temporary workforce changes the operational dynamics and potentially the hazard exposure profile. Furthermore, the laceration injury indicates a potential failure in hazard control or PPE usage that must be reassessed.\n*   **ISO Mapping:** ISO 45001 6.1.2 (hazard identification/risk assessment).\n*   **Compliance Evaluation (ISO 9.1.2):**\n    *   *How:* Review and update the written hazard certification to ensure it covers the specific workstations where the temp workers are now deployed and verify that the PPE provided is adequate for the laceration hazard.\n    *   *When:* Immediately following the injury and the workforce expansion.\n\n### 3. Obligation: Hazard Communication\n\n*   **Requirement:** Maintain a written HazCom program, chemical inventory, and accessible Safety Data Sheets (SDS). Containers (including secondary/dispensing containers) must be labeled. Effective employee training must occur before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** As an injection molder, the company uses hazardous chemicals (e.g., solvents, coatings, plating chemistry). The doubling of the temp headcount means a significant number of new workers are being assigned to roles involving these chemicals. The company must ensure these workers are trained *before* initial assignment.\n*   **ISO Mapping:** ISO 45001 7.4 (communication).\n*   **Compliance Evaluation (ISO 9.1.2):**\n    *   *How:* Audit the training records for the new temporary workers to ensure they received HazCom training prior to starting work. Verify that SDSs are accessible to these new workers.\n    *   *When:* Immediately, given the recent influx of temporary workers.\n\n### 4. Obligation: Medical Services and First Aid\n\n*   **Requirement:** Ensure the ready availability of medical personnel and trained first-aid providers, particularly where no clinic/hospital is near. Ensure adequate first-aid supplies are available.\n*   **Source:** OSHA 29 CFR 1910.151.\n*   **Applicability:** The recent laceration injury tests the facility's readiness to provide medical response. The doubling of the workforce may strain existing first-aid resources or personnel-to-provider ratios.\n*   **ISO Mapping:** ISO 45001 8.2.\n*   **Compliance Evaluation (ISO 9.1.2):**\n    *   *How:* Evaluate if first-aid supplies were readily available and adequate for the laceration injury response. Assess if the number of trained first-aid providers is sufficient for the expanded workforce of 120 total employees.\n    *   *When:* Immediately following the injury incident.",
+ "inputTokens": 1316,
+ "outputTokens": 1020,
+ "costUsd": 0.004580000000000001,
+ "latencyMs": 14561
+}

@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-019",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 68,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1",
+    "score": 0.4501769
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.4411188
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4300229
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.42805642
+   },
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.4137707
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.41365498
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.41240898
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.41162792
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved excerpts, the primary compliance obligation for this homebuilder is the **construction stormwater permit** requirement. Here is the detailed entry for the compliance-obligations register:\n\n**1. Obligation: Construction Stormwater Permit**\n*   **Requirement:** Obtain construction general permit coverage (via a Notice of Intent) before beginning earthwork. Develop and implement a Stormwater Pollution Prevention Plan (SWPPP) with erosion and sediment controls. Conduct required inspections and meet stabilization/termination requirements.\n*   **Source:** Clean Water Act (CWA) National Pollutant Discharge Elimination System (NPDES) Construction General Permit (CGP) or state equivalent, as administered by the Georgia Environmental Protection Division (EPD) under state erosion and sedimentation law.\n*   **Applicability:** This applies because the site development phase (3.5 acres) is part of a larger common plan of development (25 acres) and disturbs more than one acre [Doc 1 — clause 8.1].\n*   **ISO Mapping:** ISO 14001:2015, clauses 8.1 (operational planning and control), 6.1.2 (environmental aspects), and **6.1.3 (compliance obligations)**.\n*   **Evaluation (How & When per 9.1.2):**\n    *   **How:** Verify the obligation applies by confirming the disturbed acreage (3.5 acres) and its inclusion in the larger common plan (25 acres). Evaluate compliance by reviewing the submitted NOI, the approved SWPPP, inspection records, and final stabilization documentation against permit requirements.\n    *   **When:** Evaluate during the planning phase before clearing/grating begins (to confirm NOI submission), periodically during active earthwork (via inspection reviews), and at project termination (to confirm final stabilization).\n\n**Supporting/Related Obligations:**\nThe construction activity also triggers the following general workplace safety obligations, which should be included in the register:\n\n**2. Obligation: Multi-Employer Worksite and Contractor Safety**\n*   **Requirement:** As the host employer, coordinate with contractors on shared hazards (e.g., equipment operations, exclusion zones), exchange hazard information, and fulfill duties as a controlling employer. Ensure contractors provide required fall protection (at 6 feet) for their employees.\n*   **Source:** OSH Act multi-employer citation policy; 29 CFR 1926, particularly 29 CFR 1926.501 (construction fall protection) [Doc 5 — clause 8.1.4].\n*   **Applicability:** Applies because contractors (e.g., for grading, framing, roofing) will be working on the construction site [Doc 5 — clause 8.1.4].\n*   **ISO Mapping:** ISO 45001:2018, clauses **8.1.4.2 (control of contractors)** and 4.2 (interested parties).\n*   **Evaluation (How & When per 9.1.2):**\n    *   **How:** Review contractor safety programs and qualifications during selection. Evaluate compliance through site audits of contractor work practices, documentation of pre-work coordination meetings, and verification of implemented control measures.\n    *   **When:** Evaluate during contractor onboarding and periodically during site visits throughout the construction phase.\n\n**3. Obligation: PPE Hazard Assessment**\n*   **Requirement:** Assess the construction site to determine hazards requiring Personal Protective Equipment (PPE), certify the assessment in writing, select appropriate PPE, and train employees. The employer must provide and pay for required PPE.\n*   **Source:** OSHA 29 CFR 1910.132 [Doc 7 — clause 6.1.2].\n*   **Applicability:** Applies as a new process (subdivision construction) that changes the workplace hazard picture (e.g., introducing hazards from equipment, excavation, cutting, etc.) [Doc 7 — clause 6.1.2].\n*   **ISO Mapping:** ISO 45001:2018, clauses **6.1.2 (hazard identification and risk assessment)** and 8.1.2.\n*   **Evaluation (How & When per 9.1.2):**\n    *   **How:** Inspect the written site-specific hazard assessment and PPE certification. Observe employees to verify correct PPE use and review training records.\n    *   **When:** Evaluate during the site mobilization phase and when new tasks or equipment are introduced.\n\n**4. Obligation: Hazard Communication**\n*   **Requirement:** Maintain a written Hazard Communication program, a chemical inventory, accessible Safety Data Sheets (SDSs), properly labeled containers, and provide effective employee training.\n*   **Source:** OSHA 29 CFR 1910.1200 [Doc 8 — clause 7.4].\n*   **Applicability:** Applies because hazardous chemicals (e.g., fuels, solvents, adhesives, coatings) will be used and stored on the construction site [Doc 8 — clause 7.4].\n*   **ISO Mapping:** ISO 45001:2018, clauses **7.4 (communication)**, 7.2/7.3 (competence/awareness), and 6.1.3.\n*   **Evaluation (How & When per 9.1.2):**\n    *   **How:** Audit the written program, chemical inventory, SDS accessibility, and container labels. Interview employees and review training records to verify understanding.\n    *   **When:** Evaluate during site setup and periodically during audits, especially when new chemicals are introduced.\n\n**Methodology Note:** This analysis follows the **applicability determination discipline** [Doc 3 — clause 9.1.2], verifying each obligation against the specific thresholds and conditions of the company's activity (clearing/grading >1 acre as part of a common plan, and associated construction hazards).",
+ "inputTokens": 1301,
+ "outputTokens": 1210,
+ "costUsd": 0.00304512,
+ "latencyMs": 24926
+}

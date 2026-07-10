@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-020",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 103,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.48277768
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.46038383
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4382354
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4342724
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.43289903
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42820343
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.42607206
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4224219
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved excerpts, the installation of a 750 kW diesel emergency standby generator with a 660-gallon belly tank at your Ashburn, Virginia campus creates or affects the following compliance obligations for your register:\n\n### 1. **Obligation: Stationary Emergency Engines (NSPS/NESHAP)**\n*   **Requirement:** New diesel emergency engines must be certified to NSPS Subpart IIII emission standards using ULSD fuel. The 'emergency' status caps non-emergency operation (maintenance and readiness testing) to approximately 100 hours/year and requires hour-meter tracking. State permitting (as an exempt/insignificant source) must be confirmed.\n*   **Source:** 40 CFR Part 60 Subpart IIII (NSPS) and Part 63 Subpart ZZZZ (NESHAP) (Doc 1).\n*   **Applicability:** This applies because you are installing a new 750 kW diesel emergency standby generator. The \"emergency\" designation and operational hour limits are directly applicable.\n*   **ISO 14001 Mapping:** 6.1.3 (determination of compliance obligations), 8.1 (operational control), 9.1.1 (monitoring and measurement - hour logging).\n*   **Evaluation (per 9.1.2):** Verify the engine's certification documentation against Subpart IIII standards. Install an hour meter and establish a procedure to log all run hours (for outages and testing) to demonstrate compliance with the ~100-hour annual cap for non-emergency operation. Confirm Virginia's specific permitting requirements for emergency generators. Evaluate compliance annually by reviewing hour logs and any state-specific reporting requirements.\n\n### 2. **Obligation: Spill Prevention, Control, and Countermeasure (SPCC) Plan**\n*   **Requirement:** An SPCC Plan is required if the aggregate aboveground oil storage capacity in containers ≥55 gallons exceeds 1,320 gallons and a discharge could reach navigable waters. Requirements include a written/certified plan, secondary containment, inspections, and training.\n*   **Source:** 40 CFR Part 112 (Doc 3).\n*   **Applicability:** This is triggered because the new 660-gallon diesel belly tank, when aggregated with the existing 800-gallon heating-oil tank, results in a total of 1,460 gallons of aboveground oil storage. This exceeds the 1,320-gallon threshold. Both diesel and heating oil count toward the aggregate.\n*   **ISO 14001 Mapping:** 8.2 (emergency preparedness), 8.1 (operational control), 6.1.3.\n*   **Evaluation (per 9.1.2):** Document the calculation (660 gal + 800 gal = 1,460 gal > 1,320 gal threshold) in the obligations register. A professional engineer must prepare or certify an SPCC Plan for the facility. Implement required secondary containment, inspection schedules, and training. Evaluate compliance initially upon plan completion and then at least annually through plan reviews, inspection records audits, and by confirming the aggregate storage quantity has not changed.\n\n### 3. **Obligation: Hazard Communication**\n*   **Requirement:** A written hazard communication program, chemical inventory, accessible Safety Data Sheets (SDS), labeled containers, and employee training for all hazardous chemicals.\n*   **Source:** OSHA 29 CFR 1910.1200 (Doc 7).\n*   **Applicability:** This applies because diesel fuel in the generator tank is a hazardous chemical. Employee training is required for those who might be exposed during maintenance, testing, or refueling.\n*   **ISO 45001 Mapping:** 7.4 (communication), 7.2/7.3 (competence/awareness), 6.1.3.\n*   **Evaluation (per 9.1.2):** Ensure diesel fuel is included on the facility chemical inventory, that SDS for diesel is readily accessible, and that all diesel storage containers (including the belly tank) are properly labeled. Provide effective training to relevant employees (e.g., facilities staff) before they begin work involving the generator. Evaluate compliance annually by reviewing the chemical inventory, SDS accessibility, container labeling, and training records.\n\n**Important Note on Applicability Determination:** As emphasized in Doc 2 (clause 9.1.2), you must verify each obligation against actual facility thresholds. For the SPCC obligation, the key determination is that the **aggregate** storage (1,460 gal) exceeds the 1,320-gallon trigger. This must be documented in the obligations register with quantities and dates. Other obligations referenced in the excerpts (e.g., RCRA generator status, USTs, battery charging) do not appear applicable based on the provided company profile and situation.",
+ "inputTokens": 1397,
+ "outputTokens": 996,
+ "costUsd": 0.0027087400000000003,
+ "latencyMs": 24345
+}

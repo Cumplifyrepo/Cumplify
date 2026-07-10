@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-009",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 55,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.6852114
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.51892763
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.4450394
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.43013668
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.42894062
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42494023
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42438143
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.41374606
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the company's new stainless-steel work triggers specific compliance obligations. Here is the breakdown for the compliance-obligations register:\n\n**1. Obligation: Welding, Cutting, Brazing – Fire Prevention and Fume Control (with specific duties for stainless steel)**\n*   **Requirement:** Implementation of fire prevention measures (hot-work permits, fire watch, 35-ft combustible clearance) and ventilation for fumes. For stainless steel work, this adds specific duties for hexavalent chromium and nickel fume exposure, including assessment and controls, which may lead to establishing regulated areas.\n*   **Source:** OSHA 29 CFR 1910.252 (general welding) and 29 CFR 1910.1026 for hexavalent chromium (Clause 8.1.1).\n*   **Applicability:** Directly applicable as the company is now performing TIG/MIG welding and plasma cutting on stainless steels (Clause 8.1.1).\n*   **ISO 45001 Mapping:** 6.1.2 (hazard identification and risk assessment), 8.1.1 (operational planning and control).\n*   **Evaluation (9.1.2):** Compliance should be evaluated initially upon starting this work and then periodically through:\n    *   **How:** Review of hot-work permits, inspection of ventilation system effectiveness, and exposure monitoring for hexavalent chromium.\n    *   **When:** Initial assessment required immediately; ongoing evaluation through periodic audits and exposure monitoring as required by the hexavalent chromium standard.\n\n**2. Obligation: Air Contaminant Exposure Limits and Assessment (specifically for Hexavalent Chromium)**\n*   **Requirement:** Employee exposures must be kept within permissible exposure limits (PELs). The substance-specific standard for hexavalent chromium (Cr(VI)) mandates initial exposure determination, periodic monitoring, establishment of regulated areas if exposures exceed the PEL, and medical surveillance.\n*   **Source:** OSHA 29 CFR 1910.1000 (air contaminants) and 29 CFR 1910.1026 (hexavalent chromium) (Clause 9.1.1).\n*   **Applicability:** Directly applicable due to the generation of hexavalent chromium fume from stainless steel welding and plasma cutting (Clause 9.1.1).\n*   **ISO 45001 Mapping:** 6.1.2 (risk assessment), 9.1.1 (monitoring, measurement, analysis and evaluation).\n*   **Evaluation (9.1.2):** Compliance should be evaluated through:\n    *   **How:** Air monitoring conducted with calibrated equipment to measure welder exposure to Cr(VI); review of monitoring records and medical surveillance program.\n    *   **When:** Initial exposure determination must be performed promptly. Subsequent periodic monitoring (e.g., every 6 months if exposures are at or above the action level) and annual program reviews.\n\n**3. Obligation: Respiratory Protection Program**\n*   **Requirement:** Where engineering controls (like ventilation) are not sufficient to reduce air contaminant exposure below permissible limits, a written respiratory protection program is required. This includes medical evaluation, fit testing, respirator selection, training, and a program administrator.\n*   **Source:** OSHA 29 CFR 1910.134 (Clause 8.1.2).\n*   **Applicability:** Applicable if the current general dilution ventilation is inadequate to control hexavalent chromium fume exposures below the PEL, which is likely given the described activity level (20 arc-hours/day across six welders) (Clause 8.1.2).\n*   **ISO 45001 Mapping:** 8.1.2 (hierarchy of controls, with PPE as a last tier), 7.2 (competence).\n*   **Evaluation (9.1.2):** Compliance should be evaluated through:\n    *   **How:** Audit of the written program, review of fit testing records, medical clearance documentation, and employee training records.\n    *   **When:** Upon implementation of the program and annually thereafter, or whenever changes occur that affect respirator use.\n\n**4. Obligation: Hazard Communication**\n*   **Requirement:** A written Hazard Communication program, chemical inventory, accessible Safety Data Sheets (SDSs), labeled containers, and effective employee training.\n*   **Source:** OSHA 29 CFR 1910.1200 (Clause 7.4).\n*   **Applicability:** Applicable because the welding process generates a hazardous chemical in the form of hexavalent chromium fume (Clause 7.4).\n*   **ISO 45001 Mapping:** 7.4 (communication), 6.1.3 (determination of legal and other requirements).\n*   **Evaluation (9.1.2):** Compliance should be evaluated through:\n    *   **How:** Review of the HazCom written program, verification that SDSs for the hazards of welding stainless steel (Cr(VI), nickel) are available, inspection of workplace labeling, and review of training records for welders.\n    *   **When:** Prior to the start of the stainless steel work (initial training) and whenever new hazard information is available; program effectiveness reviewed at least annually.\n\n**Summary of ISO 14001/45001 Clause 6.1.3 Mapping:**\nThe determination of these specific legal requirements (OSHA 29 CFR 1910.252, 1910.1026, 1910.134, 1910.1200) is an activity that maps directly to **ISO 45001:2018 Clause 6.1.3 (Compliance Obligations)**. The company must ensure these identified obligations are documented, maintained, and updated in its compliance register.",
+ "inputTokens": 1285,
+ "outputTokens": 1199,
+ "costUsd": 0.00301485,
+ "latencyMs": 30003
+}

@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-028",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 162,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5922517
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5175023
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.48140207
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.45961702
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.4411614
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.4329025
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.43051946
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42611772
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the installation of a new enclosed spray-finishing booth for solvent-borne lacquers creates or affects the following compliance obligations for the furniture manufacturer's register:\n\n**1. Obligation: Spray Finishing with Flammable/Combustible Materials**\n*   **Requirement:** Spray finishing must be confined to approved booths or rooms with adequate ventilation, filters, listed electrical equipment for classified areas, sprinkler/extinguishing coverage, and control of residue and ignition sources.\n*   **Source:** OSHA 29 CFR 1910.107.\n*   **Applicability:** Directly applies as the company is installing a new spray-finishing line using solvent-borne coatings.\n*   **ISO Mapping:** ISO 45001 8.1.1 (operating criteria) and 8.1.3 (change control for new processes).\n*   **Evaluation (9.1.2):** Evaluate through initial and periodic inspections of the booth's construction, ventilation, electrical classification, fire protection systems, and housekeeping. Timing: Before operational startup and at least annually thereafter.\n\n**2. Obligation: Air Permitting for Coating/Solvent Operations**\n*   **Requirement:** New or increased VOC emissions usually require state minor-source construction/operating permits **BEFORE** installation. Permits include emission limits, control requirements, and records of coating usage and VOC content to demonstrate potential-to-emit below major-source thresholds.\n*   **Source:** State minor NSR programs; CAA NESHAPs (e.g., 40 CFR 63 Subpart HHHHHH for miscellaneous surface coating).\n*   **Applicability:** Directly applies as the company is adding a spray booth with projected VOC emissions (~8 tons/year).\n*   **ISO Mapping:** ISO 14001 6.1.3 and 8.1.\n*   **Evaluation (9.1.2):** Evaluate by reviewing the permit application status and issued permit conditions. Monitor compliance through records of coating usage and VOC content. Timing: Permit must be evaluated and obtained prior to installation/operation; ongoing compliance evaluated quarterly or as specified by the permit.\n\n**3. Obligation: Flammable Liquids Handling and Storage**\n*   **Requirement:** Quantity limits for storage outside approved rooms/cabinets, use of approved cabinets, bonding and grounding during transfer/dispensing from drums, and ventilation and ignition-source control.\n*   **Source:** OSHA 29 CFR 1910.106.\n*   **Applicability:** Applies as solvents (lacquers, sealers, thinners) will be dispensed from drums and stored in work areas.\n*   **ISO Mapping:** ISO 45001 8.1.1 (operational controls).\n*   **Evaluation (9.1.2):** Evaluate through inspections of storage areas and transfer operations for proper containers, bonding/grounding, and ignition source control. Timing: Before operations begin and during routine safety audits.\n\n**4. Obligation: Hazard Communication**\n*   **Requirement:** Written HazCom program, updated chemical inventory, accessible Safety Data Sheets (SDS), labeled containers (including secondary containers), and effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200.\n*   **Applicability:** Applies as new hazardous chemicals (solvent-borne lacquers, sealers, thinners) are being introduced.\n*   **ISO Mapping:** ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness).\n*   **Evaluation (9.1.2):** Evaluate by reviewing the program, SDS accessibility, container labeling, and training records for affected employees. Timing: Before employees begin work with the new materials and whenever new hazards are introduced.\n\n**5. Obligation: Air Contaminant Exposure Limits and Assessment**\n*   **Requirement:** Employee exposures to solvent vapors must be kept within permissible exposure limits (PELs). An initial exposure assessment may be required.\n*   **Source:** OSHA 29 CFR 1910.1000.\n*   **Applicability:** Applies as solvent vapors will be present during spray operations.\n*   **ISO Mapping:** ISO 45001 9.1.1 (monitoring/measurement) and 6.1.2 (risk assessment).\n*   **Evaluation (9.1.2):** Evaluate through initial exposure monitoring under representative conditions and periodic monitoring thereafter. Review monitoring results against PELs. Timing: Initial assessment before or shortly after startup; periodic monitoring as determined by the initial results (e.g., annually).\n\n**6. Obligation: Toxics Release Inventory (Form R) Reporting**\n*   **Requirement:** If the facility is in a covered NAICS sector and uses a listed chemical (e.g., toluene) above the threshold (10,000 lb/yr for \"otherwise use\"), it must report annual releases and waste management quantities on Form R by July 1.\n*   **Source:** EPCRA §313, 40 CFR Part 372.\n*   **Applicability:** Applies if the annual throughput of any listed solvent in the coatings exceeds the \"otherwise use\" threshold (e.g., toluene at 28,000 lb/yr would exceed the 10,000 lb threshold).\n*   **ISO Mapping:** ISO 14001 9.1.1 (evaluation/reporting) and 6.1.3.\n*   **Evaluation (9.1.2):** Evaluate by tracking annual purchase/usage of listed chemicals in coatings against the thresholds. Timing: Annual calculation after year-end; report filed by July 1.\n\n**7. Obligation: Respiratory Protection Program**\n*   **Requirement:** If engineering controls cannot maintain exposures below limits, a written respiratory protection program is required, including medical evaluation, fit testing, selection, training, and a program administrator.\n*   **Source:** OSHA 29 CFR 1910.134.\n*   **Applicability:** Applies if respirators are required or voluntarily provided for spray operators or others in the area.\n*   **ISO Mapping:** ISO 45001 8.1.2 (PPE as last tier) and 7.2 (competence).\n*   **Evaluation (9.1.2):** Evaluate by reviewing the written program, medical clearance records, fit test records, and training documentation. Timing: Before respirator use begins and annually for program effectiveness.\n\n**Citations:** Doc 1 clause 8.1.1; Doc 2 clause 6.1.3; Doc 3 clause 8.1.1; Doc 4 clause 7.4; Doc 5 clause 9.1.1; Doc 6 clause 9.1.1; Doc 7 clause 8.1.2.",
+ "inputTokens": 1361,
+ "outputTokens": 1420,
+ "costUsd": 0.00347082,
+ "latencyMs": 37404
+}

@@ -1,0 +1,13 @@
+{
+ "model": "zai.glm-5",
+ "seat": "legal-ledger",
+ "tasks": 30,
+ "meanScore": "HUMAN-GRADED",
+ "bar": null,
+ "pass": "PENDING-HUMAN-GRADING",
+ "meanRetrievalRecall": 1,
+ "retrievalColdStarts": 0,
+ "totalCostUsd": 0.1469,
+ "capUsd": 0.6,
+ "finishedAt": "2026-07-10T00:41:06.575Z"
+}

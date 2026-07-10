@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-019",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 125,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1",
+    "score": 0.4501769
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.4411188
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4300229
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.42805642
+   },
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.4137707
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.41365498
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.41240898
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.41162792
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the provided standards documentation, the compliance obligations for the Regional homebuilder are identified below.\n\n### 1. Construction Stormwater Permit\n*   **Requirement:** Obtain Construction General Permit coverage before earthwork. This involves submitting a Notice of Intent (NOI), developing a Stormwater Pollution Prevention Plan (SWPPP), implementing erosion and sediment controls, conducting inspections, and meeting stabilization/termination requirements.\n*   **Source:** CWA NPDES CGP or state equivalent (Georgia EPD).\n*   **Applicability:** This applies directly to the company because the project involves clearing/grading disturbing 3.5 acres, which is greater than one acre. Furthermore, the 3.5-acre phase is part of a larger 25-acre common plan of development, triggering the obligation regardless of the individual phase size.\n*   **ISO Mapping:** ISO 14001 8.1, 6.1.2, 6.1.3.\n*   **Compliance Evaluation (9.1.2):** Compliance should be evaluated by verifying that the specific threshold (disturbing ≥1 acre) is met and documented in the obligations register. Per **[Doc 3 — clause 9.1.2]**, the company must document why the obligation applies (with quantities/acreage and dates) rather than adopting blanket consultant claims. Evaluation occurs before earthwork begins and continues through the construction phase via the required inspections.\n\n### 2. Applicability Determination Discipline\n*   **Requirement:** Verify each asserted obligation against actual facility thresholds. Document why each obligation applies or does not apply, with quantities and dates, in the obligations register.\n*   **Source:** Threshold provisions of each cited program.\n*   **Applicability:** This applies because the company is undergoing a third-party assessment or planning process where specific thresholds (e.g., the 3.5-acre disturbance) must be verified against the permit requirements to avoid blanket adoption of irrelevant obligations or omission of relevant ones.\n*   **ISO Mapping:** ISO 14001 6.1.3 + 9.1.2 (compliance evaluation).\n*   **Compliance Evaluation (9.1.2):** Compliance is evaluated by creating and maintaining an obligations register that details the specific thresholds (e.g., \"3.5 acres disturbed\") and dates, ensuring the construction stormwater permit obligation is accurately recorded **[Doc 3 — clause 9.1.2]**.\n\n### 3. PPE Hazard Assessment\n*   **Requirement:** Assess the workplace to determine hazards requiring PPE, certify the assessment in writing, select and require appropriate PPE, train employees, and ensure the employer pays for required PPE.\n*   **Source:** OSHA 29 CFR 1910.132.\n*   **Applicability:** This applies because the clearing and grading operations constitute a \"new process\" or \"line\" that changes the hazard picture for the 60 employees, necessitating a specific assessment of physical hazards associated with earthwork.\n*   **ISO Mapping:** ISO 45001 6.1.2 (hazard identification/risk assessment), 8.1.2.\n*   **Compliance Evaluation (9.1.2):** Compliance should be evaluated whenever a new process or line changes the hazard picture **[Doc 7 — clause 6.1.2]**. The evaluation involves verifying the written certification of the hazard assessment and ensuring PPE selection and training are complete before work commences.\n\n### 4. Multi-Employer Worksite and Contractor Safety\n*   **Requirement:** The host employer (homebuilder) must coordinate with contractors on shared hazards (e.g., exclusion zones), exchange hazard information, and recognize potential liability as the controlling/exposing employer.\n*   **Source:** OSH Act multi-employer citation policy; 29 CFR 1926.\n*   **Applicability:** This applies because the company is a homebuilder that will likely utilize contractors for clearing, grading, or construction activities on the 3.5-acre site.\n*   **ISO Mapping:** ISO 45001 8.1.4.2, 4.2.\n*   **Compliance Evaluation (9.1.2):** Compliance is evaluated when contractors work on site. The evaluation focuses on the coordination of shared hazards and the exchange of safety information **[Doc 5 — clause 8.1.4]**.",
+ "inputTokens": 1303,
+ "outputTokens": 908,
+ "costUsd": 0.0042086,
+ "latencyMs": 11317
+}

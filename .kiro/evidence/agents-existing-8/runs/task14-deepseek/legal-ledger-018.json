@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-018",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 42,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1",
+    "score": 0.5068152
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4569779
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.44937754
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.44550246
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.43184587
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42986855
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42219192
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.4214229
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved excerpts, the following compliance obligations are created or affected by the described situation at the fleet maintenance garage. Each obligation should be documented in the obligations register with the required details, per **clause 9.1.2** (Doc 4), which mandates verifying applicability against actual facility thresholds and documenting why each obligation applies or does not.\n\n**1. Obligation: Used Oil Management**\n*   **Requirement:** Used oil must be stored in labeled tanks or containers in good condition, with spill response measures and use of authorized transporters for disposal/recycling.\n*   **Source:** 40 CFR Part 279, as cited in **clause 8.1 (Doc 1)**.\n*   **Applicability:** Directly applies because maintenance activities generate used motor oil, which is stored in a 300-gallon tank.\n*   **ISO Mapping:** ISO 14001:2015, clause 8.1 (Operational planning and control) and clause 6.1.3 (Compliance obligations).\n*   **Evaluation (per 9.1.2):** Evaluate compliance initially upon registering this obligation, and then periodically (e.g., quarterly) through inspections of the storage tank condition, labeling, and spill kit availability. Review transporter manifests annually.\n\n**2. Obligation: Universal Waste Management (Fluorescent Lamps)**\n*   **Requirement:** Spent fluorescent lamps, as a universal waste, must be stored in labeled containers, have a one-year accumulation limit from the date the waste is generated, and follow handler duties.\n*   **Source:** 40 CFR Part 273, as cited in **clause 8.1 (Doc 1)**.\n*   **Applicability:** Directly applies because spent fluorescent lamps are present and have been boxed in a corner for over a year, which exceeds the accumulation limit.\n*   **ISO Mapping:** ISO 14001:2015, clause 8.1 (Operational planning and control) and clause 6.1.3 (Compliance obligations).\n*   **Evaluation (per 9.1.2):** Evaluate compliance immediately, as a violation exists (lamps stored >1 year). Compliance should be evaluated monthly via waste accumulation area inspections to ensure universal wastes are dated upon generation and shipped within one year.\n\n**3. Obligation: Hazard Communication**\n*   **Requirement:** Requires a written program, chemical inventory, accessible Safety Data Sheets (SDSs), labeled containers (including secondary containers), and employee training.\n*   **Source:** OSHA 29 CFR 1910.1200, as cited in **clause 7.4 (Doc 8)**.\n*   **Applicability:** Applies because hazardous chemicals are used (e.g., solvents in the parts washer, contents of aerosol cans). The shelf of used aerosol cans and the solvent parts washer necessitate proper hazard communication.\n*   **ISO Mapping:** ISO 45001:2018, clause 7.4 (Communication) and clause 6.1.3 (Determination of legal requirements).\n*   **Evaluation (per 9.1.2):** Evaluate compliance initially by verifying the written program, inventory, SDS access, and container labels. Re-evaluate annually and whenever new chemicals are introduced (e.g., new solvent for parts washer).\n\n**4. Obligation: Flammable Liquids Handling and Storage**\n*   **Requirement:** Includes quantity limits outside approved storage cabinets/rooms, bonding and grounding during transfer from drums, ventilation, and ignition source control.\n*   **Source:** OSHA 29 CFR 1910.106, as cited in **clause 8.1.1 (Doc 3)**.\n*   **Applicability:** Likely applies if flammable solvents are used in the parts washer or stored on-site. Dispensing of solvents would trigger bonding/grounding requirements.\n*   **ISO Mapping:** ISO 45001:2018, clause 8.1.1 (Operational controls).\n*   **Evaluation (per 9.1.2):** Evaluate compliance initially by assessing the parts washer setup, solvent storage quantities, and transfer practices. Conduct periodic (e.g., monthly) inspections of storage and handling areas.\n\n**5. Obligation: Used Oil and Universal Waste Management (Batteries)**\n*   **Requirement:** Spent batteries are a universal waste and must be managed similarly to lamps: in labeled containers, with a one-year accumulation limit, and following handler duties.\n*   **Source:** 40 CFR Part 273, as cited in **clause 8.1 (Doc 1)**.\n*   **Applicability:** Applies if the garage generates spent vehicle batteries. While not explicitly mentioned in the scenario, it is a common waste stream for fleet maintenance and should be proactively addressed in the register.\n*   **ISO Mapping:** ISO 14001:2015, clause 8.1 (Operational planning and control) and clause 6.1.3 (Compliance obligations).\n*   **Evaluation (per 9.1.2):** If batteries are generated, evaluate compliance monthly via waste area inspections to ensure proper labeling, dating, and shipment within one year.\n\n**6. Obligation: Waste Determination for Spent Solvent**\n*   **Requirement:** A waste determination is required to classify the spent solvent from the parts washer. This is a fundamental step under the hazardous waste regulations (40 CFR 262.11) to determine if it is a listed or characteristic hazardous waste.\n*   **Source:** While not explicitly excerpted, this is a prerequisite for proper hazardous waste management and is implied by the need for compliance evaluation in **clause 9.1.2 (Doc 4)**. The situation explicitly states the spent solvent \"has never had a waste determination.\"\n*   **Applicability:** Directly applies because the garage generates spent solvent, which must be characterized to determine proper management requirements.\n*   **ISO Mapping:** ISO 14001:2015, clause 6.1.3 (Compliance obligations) and clause 8.1 (Operational planning and control).\n*   **Evaluation (per 9.1.2):** Evaluate compliance immediately by performing or contracting for a waste determination (testing or knowledge of process). Re-evaluate whenever the solvent type or parts-washing process changes.\n\n**Applicability Determination Note (per Doc 4):**\n*   **SPCC Plan (clause 8.2, Doc 2):** The 300-gallon used oil tank alone does not trigger the SPCC threshold of 1,320 gallons aggregate aboveground oil storage. However, if other oil containers (diesel, hydraulic oil, new oil) are present, the total must be calculated to confirm the obligation does **not** apply, as required by **clause 9.1.2 (Doc 4)**.\n*   **Underground Storage Tanks (clause 8.1, Doc 5):** Only applies if the facility has USTs. Based on the provided scenario, this obligation likely does **not** apply, but this should be explicitly documented in the register per **clause 9.1.2**.",
+ "inputTokens": 1308,
+ "outputTokens": 1488,
+ "costUsd": 0.00356376,
+ "latencyMs": 38593
+}

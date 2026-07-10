@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-005",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 71,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.2",
+    "score": 0.5252491
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.4548371
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.44534057
+   },
+   {
+    "clauseRef": "10.2",
+    "score": 0.43767315
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.4329725
+   },
+   {
+    "clauseRef": "6.1.2",
+    "score": 0.4284654
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.42454016
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.42406994
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, here are the compliance obligations created or affected by the forklift tip-over incident for the Beverage Distributor in Rockford, Illinois.\n\n### 1. Incident Reporting to OSHA\n*   **Requirement:** The employer must report any work-related in-patient hospitalization to OSHA within 24 hours. Additionally, the incident scene must be preserved for investigation.\n*   **Source:** OSHA 29 CFR 1904.39.\n*   **Applicability:** This applies directly to the company as the operator was admitted to the hospital overnight (in-patient admission) following the tip-over.\n*   **ISO Mapping:** ISO 45001 6.1.3 (determination of legal requirements).\n*   **Evaluation (9.1.2):** Compliance must be evaluated immediately upon the incident occurring. The evaluation involves verifying that the 24-hour reporting deadline was met and that scene preservation protocols were followed.\n\n### 2. Powered Industrial Truck Operator Refresher Training and Evaluation\n*   **Requirement:** Operators of powered industrial trucks must undergo refresher training and evaluation when they have been involved in an accident or are observed operating the vehicle in an unsafe manner.\n*   **Source:** OSHA 29 CFR 1910.178(l) (referenced in Doc 1).\n*   **Applicability:** This applies because the operator was involved in a tip-over accident. Furthermore, the operator's lack of evaluation since the initial training three years ago highlights a gap in the periodic evaluation requirement (typically every three years) that must be corrected.\n*   **ISO Mapping:** ISO 45001 6.1.3.\n*   **Evaluation (9.1.2):** Compliance should be evaluated immediately following the incident investigation. The evaluation must confirm that the operator has completed the required refresher training and practical evaluation before returning to forklift operation.\n\n### 3. Incident Investigation and Corrective Action\n*   **Requirement:** The employer must investigate the incident to determine the root cause and implement corrective actions to prevent recurrence.\n*   **Source:** OSHA 29 CFR 1904.39 (implied by \"investigate\" in Doc 4) and OSHA 29 CFR 1910.178(l) (refresher evaluation triggers).\n*   **Applicability:** Applies to this specific tip-over event. The investigation should analyze why the load was elevated while turning and why the tip-over occurred.\n*   **ISO Mapping:** ISO 45001 10.2 (incident investigation).\n*   **Evaluation (9.1.2):** Evaluation should occur during the post-incident review. It must verify that a formal investigation was conducted, root causes were identified, and corrective actions (such as retraining or procedural changes regarding turning with elevated loads) were implemented.\n\n### 4. Injury/Illness Recordkeeping (OSHA 300 Log)\n*   **Requirement:** Employers must record work-related injuries and illnesses on the OSHA 300 Log. If the establishment had 10 or fewer employees all year, they would be exempt from routine logs, but not from serious incident reports.\n*   **Source:** OSHA 29 CFR Part 1904.\n*   **Applicability:** With 85 employees, the company exceeds the 10-employee threshold for exemption. Therefore, the hospitalization must be recorded on the OSHA 300 Log.\n*   **ISO Mapping:** ISO 45001 6.1.3.\n*   **Evaluation (9.1.2):** Compliance is evaluated when the entry is made in the log (within 7 days of the incident) and verified during the annual review of the log and the posting of the OSHA 300A summary (Feb 1–Apr 30).",
+ "inputTokens": 1250,
+ "outputTokens": 780,
+ "costUsd": 0.003746,
+ "latencyMs": 18860
+}

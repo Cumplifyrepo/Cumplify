@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-009",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 59,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.6852114
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.51892763
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.4450394
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.43013668
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.42894062
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42494023
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42438143
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.41374606
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved excerpts, here are the compliance obligations for the Custom Metal Fabricator's register regarding the new stainless-steel work:\n\n### 1. Air Contaminant Exposure Assessment (Hexavalent Chromium)\n*   **Requirement:** The employer must ensure employee exposures are kept within permissible exposure limits (PELs). Specifically for hexavalent chromium (Cr(VI)) from stainless steel welding, initial exposure determinations must be performed to assess the 8-hour time-weighted average exposure. If exposures are above the action level, periodic monitoring is required.\n*   **Source:** OSHA 29 CFR 1910.1000 (Air Contaminants) and 29 CFR 1910.1026 (Hexavalent Chromium).\n*   **Applicability:** Highly applicable. The company is performing TIG/MIG welding and plasma cutting on stainless steel (304/316), which generates Cr(VI) and nickel fumes. The current \"general dilution only\" ventilation may not be sufficient to keep exposures below the PEL (5 µg/m³) or action level (2.5 µg/m³), necessitating an initial exposure assessment.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Determination of legal requirements).\n*   **Evaluation (9.1.2):** Compliance must be evaluated through initial exposure monitoring (personal air sampling) to determine worker exposure levels. This evaluation should occur immediately upon starting the new process. If results are uncertain or above the action level, periodic monitoring (e.g., every 6 months) is required per the substance-specific standard.\n\n### 2. Engineering Controls and Regulated Areas for Cr(VI)\n*   **Requirement:** Where feasible, engineering controls (such as local exhaust ventilation) must be implemented to reduce exposures. If engineering controls are not sufficient to reduce exposure below the PEL, regulated areas must be established to limit access and protect employees.\n*   **Source:** OSHA 29 CFR 1910.1026 (Hexavalent Chromium) referenced in Doc 1 and Doc 2.\n*   **Applicability:** Applicable. The current reliance on general dilution ventilation is likely inadequate for controlling welding fume at the source. The company must assess if local exhaust ventilation (LEV) is required to control the 20 hours of daily arc time across six welders.\n*   **ISO Mapping:** ISO 45001 8.1.1 (Operational criteria and controls).\n*   **Evaluation (9.1.2):** Evaluate the effectiveness of controls through ongoing air monitoring and visual inspections. Evaluation should occur upon installation of new controls and periodically thereafter to ensure exposures remain controlled.\n\n### 3. Respiratory Protection Program\n*   **Requirement:** If engineering controls are not feasible or sufficient to reduce exposures below permissible limits, a written respiratory protection program is required. This includes medical evaluations, fit testing, respirator selection, training, and a designated program administrator.\n*   **Source:** OSHA 29 CFR 1910.134 (Respiratory Protection).\n*   **Applicability:** Applicable. Until engineering controls are proven effective, or if they are insufficient, respirators will be necessary for the six welders performing stainless steel work.\n*   **ISO Mapping:** ISO 45001 8.1.2 (Hierarchy of controls).\n*   **Evaluation (9.1.2):** Evaluate compliance by auditing the written program annually, verifying current fit tests and medical clearances for all required personnel.\n\n### 4. Hot Work Fire Prevention\n*   **Requirement:** Implementation of fire prevention measures including hot-work permits, fire watch, and maintaining at least 35 feet of clearance from combustibles during welding and cutting operations.\n*   **Source:** OSHA 29 CFR 1910.252 (General requirements for welding, cutting, and brazing).\n*   **Applicability:** Applicable. The situation involves TIG/MIG welding and plasma cutting, all of which constitute hot work capable of igniting combustibles.\n*   **ISO Mapping:** ISO 45001 8.1.1 (Operational criteria).\n*   **Evaluation (9.1.2):** Evaluate compliance through daily/shift inspections of hot work areas, verification of permit issuance, and ensuring fire watch is posted during and at least 30-60 minutes after work ceases.\n\n### 5. Hazard Communication (Training and SDS)\n*   **Requirement:** A written HazCom program, maintaining Safety Data Sheets (SDS), labeling containers, and providing effective employee training before initial assignment and when new hazards (such as stainless steel welding fumes/Cr(VI)) are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (Hazard Communication).\n*   **Applicability:** Applicable. The introduction of stainless steel work introduces new chemical hazards (Cr(VI) and nickel fumes) that were not previously present or were less hazardous (compared to mild steel). Employees must be trained on these specific new hazards.\n*   **ISO Mapping:** ISO 45001 7.4 (Communication) and 7.2/7.3 (Competence/Awareness).\n*   **Evaluation (9.1.2):** Evaluate compliance by reviewing training records for the six welders to ensure they received specific training on Cr(VI) hazards before starting the new work. Verify SDS accessibility for welding consumables and base metals.\n\n### 6. Welding Fume Ventilation (General)\n*   **Requirement:** Mechanical ventilation must be provided when welding on metals of hazardous composition (such as stainless steel) or when general ventilation is insufficient.\n*   **Source:** OSHA 29 CFR 1910.252 (referenced in Doc 1).\n*   **Applicability:** Applicable. The current \"general dilution only\" is likely non-compliant for stainless steel welding, which requires more robust ventilation due to the toxic nature of the fumes.\n*   **ISO Mapping:** ISO 45001 8.1.1 (Operational criteria).\n*   **Evaluation (9.1.2):** Evaluate compliance by measuring air flow rates and comparing them against the specific ventilation requirements for confined or specific hazardous welding operations. Evaluation should occur immediately.",
+ "inputTokens": 1306,
+ "outputTokens": 1304,
+ "costUsd": 0.0054788,
+ "latencyMs": 20109
+}

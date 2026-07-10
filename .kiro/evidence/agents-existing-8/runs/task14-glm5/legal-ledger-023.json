@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-023",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 75,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.4896817
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.44886702
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.44348192
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4427663
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.43930873
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.43254358
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.430819
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42948613
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, here are the compliance obligations identified for the compliance-obligations register regarding the chlorine release incident.\n\n### 1. Emergency Release Notification (Triggered)\n*   **Requirement:** Immediate notification is required for releases of listed substances at or above their reportable quantity (RQ). Notification must be made to the National Response Center (CERCLA §103) and state/local commissions (EPCRA §304) within 24 hours, followed by a written follow-up report.\n*   **Source:** CERCLA §103, EPCRA §304, 40 CFR 302/355.\n*   **Applicability:** **Applies.** The incident involved an accidental release of chlorine. The documented Reportable Quantity (RQ) for chlorine is 10 lb. The release of an estimated 25 lb exceeds this threshold, triggering the immediate notification requirement.\n*   **ISO Mapping:** ISO 14001 8.2; ISO 45001 8.2/10.2 (incident response and investigation).\n*   **Evaluation (9.1.2):** Compliance is evaluated immediately upon the occurrence of the accidental release. Per clause 9.1.2, the obligations register must document the quantities and dates to verify the obligation applied (25 lb > 10 lb RQ).\n\n### 2. Hazard Communication (Affected)\n*   **Requirement:** Maintain a written HazCom program, chemical inventory, accessible Safety Data Sheets (SDS), labeled containers (including secondary/dispensing containers), and provide effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** **Applies.** The facility stores and uses chlorine (1,200 lb total), which is a hazardous chemical. The valve failure incident may necessitate a review of the existing program to ensure labeling and training regarding the specific hazards of the equipment (cylinders/valves) were adequate.\n*   **ISO Mapping:** ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness), 6.1.3 (legal requirements determination).\n*   **Evaluation (9.1.2):** Evaluate during the incident investigation to verify that SDS were accessible and containers (cylinders) were properly labeled. Training records should be reviewed to ensure operators were trained on the specific hazards involved.\n\n### 3. Medical Services and First Aid (Affected)\n*   **Requirement:** Ensure ready availability of medical personnel, trained first-aid providers (especially where no clinic/hospital is near), first-aid supplies, and quick drenching/flushing facilities (eyewash/shower) where corrosive materials are handled.\n*   **Source:** OSHA 29 CFR 1910.151.\n*   **Applicability:** **Applies.** Chlorine is a corrosive material. While no injuries occurred, the incident triggers a review of these obligations. As a rural utility, the facility likely qualifies as a site lacking nearby medical care, requiring trained first-aid providers on site.\n*   **ISO Mapping:** ISO 45001 8.2, 7.1 (resources).\n*   **Evaluation (9.1.2):** Evaluate during the post-incident review to confirm that drenching/flushing facilities were functional and accessible and that first-aid providers were available during the shift the release occurred.\n\n### 4. EPCRA Hazardous Chemical Inventory (Threshold Not Crossed)\n*   **Requirement:** SDS reporting (§311) and annual Tier II inventory (§312) due March 1 to state/local emergency bodies and the fire department. Required for hazardous chemicals at or above 10,000 lb, or Extremely Hazardous Substances (EHS) at the lower of 500 lb or their Threshold Planning Quantity (TPQ).\n*   **Source:** EPCRA §§302/311/312, 40 CFR Parts 355/370.\n*   **Applicability:** **Does Not Apply (Threshold Not Crossed).** Chlorine is an EHS with a TPQ of 100 lb. However, the facility typically stores 1,200 lb total. Since 1,200 lb is greater than the 100 lb TPQ, this obligation actually **Applies** for annual reporting (contrary to a \"not crossed\" status for EHS, though standard hazardous chemicals would be 10,000 lb). *Correction based on excerpt text:* The excerpt states the threshold is \"the lower of 500 lb or their TPQ (chlorine TPQ 100 lb).\" Since the facility has 1,200 lb on site, it exceeds the 100 lb TPQ threshold. Therefore, this obligation **Applies** and the facility should be submitting Tier II reports.\n*   **ISO Mapping:** ISO 14001 7.4.3 (external communication), 6.1.3; ISO 45001 8.2.\n*   **Evaluation (9.1.2):** Per clause 9.1.2, verify the obligation against actual facility thresholds. Document in the register that the maximum quantity (1,200 lb) exceeds the TPQ (100 lb), triggering the reporting requirement.\n\n### 5. Spill Prevention, Control, and Countermeasure (SPCC) Plan (Threshold Not Crossed)\n*   **Requirement:** A written/certified SPCC plan, secondary containment, inspections, and training are required when aggregate aboveground oil storage in containers ≥55 gal exceeds 1,320 gallons and a discharge could reach navigable waters.\n*   **Source:** 40 CFR Part 112.\n*   **Applicability:** **Does Not Apply (Threshold Not Crossed).** The scenario describes a water treatment plant storing chlorine. There is no mention of oil/diesel storage quantities in the provided profile. If the facility does not store >1,320 gallons of oil, this obligation does not apply.\n*   **ISO Mapping:** ISO 14001 8.2 (emergency preparedness), 8.1, 6.1.3.\n*   **Evaluation (9.1.2):** Verify against actual facility thresholds. Document in the register why the obligation does not apply (e.g., \"Aggregate oil storage < 1,320 gal\" or \"No oil storage\").\n\n### 6. Applicability Determination Discipline\n*   **Requirement:** Before adopting consultant claims wholesale, verify each asserted obligation against actual facility thresholds. Document why each obligation applies or does not apply, with quantities and dates, in the obligations register.\n*   **Source:** Threshold provisions of each cited program.\n*   **Applicability:** **Applies.** This is a mandatory procedural step for the register.\n*   **ISO Mapping:** ISO 14001 6.1.3 + 9.1.2 (compliance evaluation), ISO 45001 6.1.3.\n*   **Evaluation (9.1.2):** This is the process obligation itself. For the chlorine release, the facility must document the comparison of the 25 lb release against the 10 lb RQ to prove the notification was required, and the 1,200 lb inventory against the 100 lb TPQ for inventory reporting.",
+ "inputTokens": 1395,
+ "outputTokens": 1531,
+ "costUsd": 0.0062942,
+ "latencyMs": 17609
+}

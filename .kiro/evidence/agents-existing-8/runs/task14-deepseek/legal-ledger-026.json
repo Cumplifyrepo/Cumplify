@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-026",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 120,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.48274624
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.48029315
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.47004455
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.46878612
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.45522615
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.4432105
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.438603
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.43678433
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation and the company profile provided, the consultant's proposal contains several overstatements. Here is an evaluation of each claimed obligation:\n\n### 1. **SPCC Plan**\n*   **Requirement & Source:** An SPCC plan is required for facilities with an aggregate aboveground oil storage capacity greater than 1,320 gallons (Doc 1, clause 9.1.2).\n*   **Applicability:** **Does NOT apply.** The shop's total inventory of finishes, stains, and oils is about 300 gallons, which is well below the 1,320-gallon threshold.\n*   **ISO Mapping:** ISO 14001 6.1.3 / ISO 45001 6.1.3 (compliance evaluation).\n*   **Compliance Evaluation (9.1.2):** The determination of non-applicability, based on the documented quantity of 300 gallons, should be recorded in the obligations register (Doc 1, clause 9.1.2). This should be reviewed annually or whenever inventory volumes change significantly.\n\n### 2. **Tier II Reports (EPCRA §312)**\n*   **Requirement & Source:** An annual Tier II inventory report (due March 1) is required for hazardous chemicals stored at or above 10,000 pounds at any time, or for Extremely Hazardous Substances (EHS) at or above 500 pounds or their Threshold Planning Quantity (TPQ) (Doc 2, clause 7.4).\n*   **Applicability:** **Does NOT apply.** The shop's maximum chemical on hand is about 2,000 pounds of any one product, which is below the 10,000-pound general threshold. There is no indication of EHS (e.g., ammonia, chlorine) on site at or above their TPQs.\n*   **ISO Mapping:** ISO 14001 6.1.3 / ISO 45001 6.1.3.\n*   **Compliance Evaluation (9.1.2):** The determination of non-applicability, based on the documented maximum inventory of 2,000 pounds, should be recorded in the obligations register. This should be verified annually during year-end inventory audits (Doc 2, clause 7.4).\n\n### 3. **Large Quantity Generator (LQG) Hazardous Waste Program**\n*   **Requirement & Source:** An LQG status and its associated duties (weekly inspections, formal training, contingency plan, biennial reporting, 90-day accumulation limit) are triggered when hazardous waste generation is ≥1,000 kg/month (Doc 4, clause 6.1.3).\n*   **Applicability:** **Does NOT apply.** The shop generates roughly 50 kg/month of hazardous waste, which places it in the **Very Small Quantity Generator (VSQG)** category (<100 kg/month) (Doc 4, clause 6.1.3). A one-time cleanout may be handled as an episodic event without changing the generator category.\n*   **ISO Mapping:** ISO 14001 6.1.3 / ISO 45001 6.1.3.\n*   **Compliance Evaluation (9.1.2):** The determination of VSQG status, based on the documented 50 kg/month generation rate, should be recorded in the obligations register. Waste generation volumes must be tracked monthly to confirm the category (Doc 4, clause 6.1.3).\n\n### 4. **Complete OSHA 300 Recordkeeping**\n*   **Requirement & Source:** OSHA 300 Log and Summary of Work-Related Injuries and Illnesses (29 CFR 1904).\n*   **Applicability:** **Partially applies, but is likely simplified.** Establishments with **10 or fewer employees** at all times during the last calendar year are partially exempt from maintaining the OSHA 300/301 forms, but must still report fatalities, hospitalizations, amputations, and losses of an eye (29 CFR 1904.1). The shop had 9 employees (peak 9) last year, placing it below the 10-employee threshold.\n*   **ISO Mapping:** ISO 14001 6.1.3 / ISO 45001 6.1.3.\n*   **Compliance Evaluation (9.1.2):** The partial exemption, based on the documented peak employee count of 9, should be noted. The requirement to report serious incidents (fatality, hospitalization, etc.) remains and should be evaluated as part of incident management procedures.\n\n### **Additional Obligations That Likely DO Apply:**\nBased on the profile, the following core obligations from the standards documentation are applicable and should be the focus:\n\n*   **Hazard Communication (OSHA):** A written HazCom program, chemical inventory, accessible Safety Data Sheets, container labeling, and employee training are required as hazardous chemicals are used/stored (Doc 3, clause 7.4). **ISO Mapping:** ISO 45001 7.4, 7.2/7.3.\n*   **Flammable Liquids Handling (OSHA):** Requirements for bonding/grounding during transfer from drums, approved storage, and ignition-source control apply when solvents are dispensed from drums (Doc 6, clause 8.1.1). **ISO Mapping:** ISO 45001 8.1.1.\n*   **Spray Finishing (OSHA):** If spray application of flammable/combustible coatings occurs, requirements for approved booths, ventilation, and electrical classification apply (Doc 5, clause 8.1.1). **ISO Mapping:** ISO 45001 8.1.1, 8.1.3.\n\n**Conclusion:** The consultant's proposal incorrectly claims the need for an SPCC plan, Tier II reporting, and an LQG program. The shop's quantities place it below all these thresholds. OSHA 300 recordkeeping is largely exempt due to company size. The core compliance focus should be on **Hazard Communication, Flammable Liquids Handling, and Spray Finishing** controls, as grounded in the provided standards documentation.",
+ "inputTokens": 1474,
+ "outputTokens": 1272,
+ "costUsd": 0.00326708,
+ "latencyMs": 29461
+}

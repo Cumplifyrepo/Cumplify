@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-010",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 124,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.47573528
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.40647167
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.40200093
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.3995211
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.3924898
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.390055
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.38953102
+   },
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.38890877
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the California expansion creates or affects the following compliance obligations for your e-commerce fulfillment company:\n\n**1. Indoor Heat Illness Prevention Program**\n- **Requirement:** A written Injury and Illness Prevention Program (IIPP) and specific indoor heat illness prevention measures. When indoor temperatures reach 82°F, employers must provide water and encourage cool-down rest periods. At 87°F or above, they must implement additional controls such as cooling areas, adjusted work schedules, and increased monitoring.\n- **Source:** Cal/OSHA Title 8, specifically §3203 (IIPP) and §3396 (indoor heat illness prevention).\n- **Applicability:** This applies directly to your non-climate-controlled Fresno warehouse, as summer indoor temperatures on the mezzanine are stated to exceed 85°F, triggering the requirements at the 82°F threshold.\n- **ISO Mapping:** ISO 45001 6.1.3 (determining legal requirements per jurisdiction) and 4.1 (context).\n- **Evaluation (9.1.2):** Compliance should be evaluated through regular documented inspections of the warehouse (especially the mezzanine) during warm months to monitor temperatures, verify the availability of water and cool-down areas, and assess the effectiveness of work practice controls. This evaluation should occur at least annually and whenever a heat-related incident occurs.\n\n**2. State-Plan Jurisdiction Obligations (General)**\n- **Requirement:** Adherence to the full set of Cal/OSHA standards, which are at least as protective as federal OSHA and often stricter. This requires a shift from a compliance register built solely on federal OSHA.\n- **Source:** Cal/OSHA Title 8 (state-plan jurisdiction requirements).\n- **Applicability:** This applies because the company is opening a site in California, a state-plan state.\n- **ISO Mapping:** ISO 45001 6.1.3 (determining legal requirements per jurisdiction) and 4.1 (context).\n- **Evaluation (9.1.2):** Compliance should be evaluated by conducting a comprehensive gap analysis of the existing federal OSHA-based compliance register against Cal/OSHA standards. This evaluation must be completed prior to the facility's opening and updated whenever Cal/OSHA standards change or new operations are introduced.\n\n**3. Walking-Working Surfaces and Fall Protection**\n- **Requirement:** Keeping surfaces clean, dry, and orderly; guarding floor holes and open-sided platforms 4 feet or more above a lower level; and providing fall protection (guardrails, personal fall arrest systems) for elevated work.\n- **Source:** OSHA 29 CFR 1910 Subpart D (adopted by Cal/OSHA).\n- **Applicability:** This applies to warehousing operations and specifically to work on the mezzanine, which is an elevated work surface.\n- **ISO Mapping:** ISO 45001 8.1.2 and 6.1.2.\n- **Evaluation (9.1.2):** Compliance should be evaluated through periodic inspections of the mezzanine and other elevated work areas to ensure guardrails are in place and intact, surfaces are maintained, and proper fall protection is used by employees working at height. This should be part of routine safety audits.\n\n**4. Hazard Communication**\n- **Requirement:** A written HazCom program, chemical inventory, accessible Safety Data Sheets (SDSs), labeled containers (including secondary containers), and employee training.\n- **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned, adopted by Cal/OSHA).\n- **Applicability:** This applies if the warehouse uses or stores any hazardous chemicals (e.g., solvents, coatings, fuels, or cleaning agents).\n- **ISO Mapping:** ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness), and 6.1.3.\n- **Evaluation (9.1.2):** Compliance should be evaluated by auditing the chemical inventory, SDS accessibility, container labeling, and training records for all affected employees. This evaluation should occur at least annually and whenever new hazardous chemicals are introduced.\n\n**5. Temporary/Staffing-Agency Workers**\n- **Requirement:** Shared responsibility between the host employer and staffing agency. The host (your company) typically controls site-specific hazard training, provides necessary PPE, and provides day-to-day supervision. Injury recording generally falls to the employer supervising the work.\n- **Source:** OSH Act; OSHA temporary worker initiative guidance; 29 CFR 1904.31 (adopted by Cal/OSHA).\n- **Applicability:** This applies if the company uses temporary workers in the Fresno warehouse or for yard operations.\n- **ISO Mapping:** ISO 45001 8.1.4 (procurement/outsourcing of labor) and 4.2 (workers as interested parties).\n- **Evaluation (9.1.2):** Compliance should be evaluated by reviewing contracts with staffing agencies, verifying that site-specific training and required PPE are provided to temporary workers, and ensuring injury recording responsibilities are clearly defined and followed. This should be evaluated at the time of contracting and during regular compliance audits.\n\n**Citations:** [Doc 1 — clause 6.1.3], [Doc 3 — clause 8.1.2], [Doc 6 — clause 7.4], [Doc 8 — clause 8.1.4]",
+ "inputTokens": 1350,
+ "outputTokens": 1122,
+ "costUsd": 0.0029127000000000003,
+ "latencyMs": 33508
+}

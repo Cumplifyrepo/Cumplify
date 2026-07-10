@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-003",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 65,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.5950149
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.49247164
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.4852591
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.48492774
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.47332284
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.44626468
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.4459789
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.43592066
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the furniture refinishing company's new spray application process creates or affects the following compliance obligations for its register:\n\n**1. Obligation: Spray Finishing with Flammable/Combustible Materials**\n*   **Requirement:** Spraying must be confined to an approved booth with adequate ventilation, appropriate filters, listed electrical equipment for classified areas, fire protection (sprinkler/extinguishing coverage), and control of residue and ignition sources.\n*   **Source:** OSHA 29 CFR 1910.107 (cited in Doc 1, clause 8.1.1).\n*   **Applicability:** Directly applies because the company is adding spray application of solvent-borne lacquers (flammable/combustible materials) in an existing spray booth.\n*   **ISO Mapping:** ISO 45001 8.1.1 (operating criteria) and 8.1.3 (change control for new processes) (Doc 1).\n*   **Evaluation (9.1.2):** Evaluate through initial and periodic inspections of the spray booth and its safety features (ventilation, electrical classification, housekeeping, fire protection) to ensure they meet the standard's specifications. This should be done before operational startup and at regular intervals thereafter.\n\n**2. Obligation: Respiratory Protection Program**\n*   **Requirement:** A written program is required where air contaminants cannot be controlled below limits by engineering means. It must include medical evaluation, fit testing, respirator selection, training, and a program administrator.\n*   **Source:** OSHA 29 CFR 1910.134 (cited in Doc 4, clause 8.1.2).\n*   **Applicability:** Applies because employees have requested respirators for spraying, and the new two-component polyurethane topcoat contains isocyanates (a hazardous air contaminant). The standard is triggered when respirators are \"required or provided\" (Doc 4). Since air sampling has not been done to prove exposures are below limits, a program must be implemented.\n*   **ISO Mapping:** ISO 45001 8.1.2 (PPE as a last tier of the hierarchy) and 7.2 (competence) (Doc 4).\n*   **Evaluation (9.1.2):** Evaluate through audits of the written program, review of medical clearance and fit test records, observation of employee use, and assessment of training records. This should be done immediately upon providing respirators and then periodically (e.g., annually).\n\n**3. Obligation: Air Contaminant Exposure Limits and Assessment**\n*   **Requirement:** Employee exposures must be kept within permissible exposure limits (PELs). For specific substances like isocyanates and hexavalent chromium (which can be generated during welding on stainless steel, if applicable), initial exposure determinations and periodic monitoring may be required.\n*   **Source:** OSHA 29 CFR 1910.1000 (general industry PELs) and substance-specific standards (e.g., for isocyanates and Cr(VI)) (cited in Doc 6, clause 9.1.1).\n*   **Applicability:** Directly applies due to the presence of solvent vapors and isocyanate-containing hardeners during spray operations.\n*   **ISO Mapping:** ISO 45001 9.1.1 (monitoring/measurement) and 6.1.2 (risk assessment) (Doc 6).\n*   **Evaluation (9.1.2):** Evaluate by conducting initial exposure monitoring (air sampling) for key contaminants (solvent vapors, isocyanates) to determine if exposures are at or above action levels/PELs. Compliance is evaluated based on sampling results and the need for further controls or monitoring. This should be done before or shortly after process startup.\n\n**4. Obligation: Hazard Communication**\n*   **Requirement:** A written program, chemical inventory, accessible Safety Data Sheets (SDSs), labeled containers (including secondary containers for mixed coatings), and effective employee training.\n*   **Source:** OSHA 29 CFR 1910.1200 (cited in Doc 5, clause 7.4).\n*   **Applicability:** Applies because new hazardous chemicals (solvent-borne lacquers, polyurethane topcoat with isocyanate hardener) are being introduced.\n*   **ISO Mapping:** ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness), and 6.1.3 (legal requirements determination) (Doc 5).\n*   **Evaluation (9.1.2):** Evaluate through audits of the written program, SDS accessibility, container labeling in the spray area, and employee training records. This should be done before employees begin using the new chemicals and reviewed periodically.\n\n**5. Obligation: Flammable Liquids Handling and Storage**\n*   **Requirement:** Quantity limits for storage outside approved cabinets/rooms, use of approved storage cabinets, and bonding and grounding during transfer/dispensing from drums to prevent static ignition.\n*   **Source:** OSHA 29 CFR 1910.106 (cited in Doc 3, clause 8.1.1).\n*   **Applicability:** Applies because solvents (lacquer thinners, etc.) are likely dispensed from drums or stored in work areas near the new spray operation.\n*   **ISO Mapping:** ISO 45001 8.1.1 (operational controls) (Doc 3).\n*   **Evaluation (9.1.2):** Evaluate through inspections of storage areas and dispensing practices to ensure proper cabinets, bonding/grounding, and quantity limits are in place. This should be done in conjunction with the new process setup.\n\n**6. Obligation: Air Permitting for Coating/Solvent Operations**\n*   **Requirement:** New or increased VOC/HAP emissions usually require state minor-source construction/operating permits **BEFORE** installation. Permits include emission limits and may require records of coating usage and VOC content.\n*   **Source:** State minor NSR programs; CAA NESHAPs (cited in Doc 2, clause 6.1.3).\n*   **Applicability:** Applies because the company is adding spray booths/coating capacity, which increases VOC/HAP emissions. Georgia's state permitting requirements would be triggered.\n*   **ISO Mapping:** ISO 14001 6.1.3, 8.1, 9.1.1 (Doc 2).\n*   **Evaluation (9.1.2):** Evaluate by confirming the appropriate permit has been obtained prior to installation/operation and by maintaining required records (coating usage, VOC content) to demonstrate compliance with permit limits. This is a critical pre-startup obligation.",
+ "inputTokens": 1346,
+ "outputTokens": 1406,
+ "costUsd": 0.00343562,
+ "latencyMs": 30252
+}

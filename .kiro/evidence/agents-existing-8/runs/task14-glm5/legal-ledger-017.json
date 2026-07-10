@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-017",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 96,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1",
+    "score": 0.5400945
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.43433797
+   },
+   {
+    "clauseRef": "9.1.2",
+    "score": 0.4136334
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.41264567
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.40229166
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.39731762
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.39490306
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.3923738
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved excerpts, here are the compliance obligations identified for the Regional grocery chain's compliance-obligations register.\n\n### 1. Refrigerant Leak-Repair and Servicing (HFCs)\n*   **Requirement:** The chain must adhere to leak-repair rules extended to HFCs by the AIM Act. This includes calculating leak rates upon refrigerant additions, repairing leaks within deadlines if leak rates exceed thresholds (commercial refrigeration threshold is 20%/yr), using certified technicians (CAA §608), adhering to sales restrictions, maintaining recordkeeping, and installing automatic leak detection for very large charges.\n*   **Source:** Clean Air Act (CAA) §608; AIM Act, 40 CFR Part 84 Subpart C.\n*   **Applicability:** This applies directly to the company's operation of rack refrigeration systems with 300–500 lb HFC charges (R-448A) per store. The \"remodels that will modify several systems\" trigger the need for strict adherence to servicing and repair protocols to avoid exceeding leak-rate thresholds during modifications.\n*   **ISO Mapping:** ISO 14001 6.1.3 (Compliance obligations), 8.1 (Operational planning and control), 9.1.1 (Monitoring).\n*   **Evaluation (How/When):** Per clause 9.1.2, the company must verify this obligation against actual facility thresholds. Compliance should be evaluated by tracking refrigerant additions and leak rates continuously, particularly during the remodel period, and documenting these in the obligations register with specific quantities and dates.\n\n### 2. Applicability Determination Discipline\n*   **Requirement:** Before adopting consultant claims wholesale during the remodels, the company must verify each asserted obligation against actual facility thresholds. The company must document why each obligation applies or does not apply, with quantities and dates, in the obligations register.\n*   **Source:** Threshold provisions of each cited program (referenced in excerpt).\n*   **Applicability:** This applies specifically when third-party assessments propose blanket program adoption or when planning remodels that change system configurations.\n*   **ISO Mapping:** ISO 14001 6.1.3 (Compliance obligations) + 9.1.2 (Compliance evaluation); ISO 45001 6.1.3.\n*   **Evaluation (How/When):** This is the governing discipline for the register. Compliance is evaluated \"before adopting consultant claims\" and when \"third-party assessments propose blanket program adoption.\" The company must check specific thresholds (e.g., verifying if any remodel pushes a store over specific limits) rather than assuming applicability.\n\n### 3. Process Safety Management (PSM) of Highly Hazardous Chemicals\n*   **Requirement:** If a process contains a listed chemical at or above the threshold quantity (TQ), the company must implement a full PSM program. This includes process safety information, PHA, operating procedures, training, mechanical integrity, MOC, incident investigation, emergency planning, and compliance audits.\n*   **Source:** OSHA 29 CFR 1910.119.\n*   **Applicability:** Currently, the typical charge of 300–500 lbs per store is well below the anhydrous ammonia TQ of 10,000 lbs. However, this obligation must be listed in the register to ensure that the \"remodels that will modify several systems\" do not inadvertently cross the 10,000 lb threshold (e.g., if the chain switches refrigerants or consolidates systems).\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination), 8.1.1, 8.1.3 (MOC), 8.2, 10.2.\n*   **Evaluation (How/When):** Per clause 9.1.2, the company must verify the actual quantity of regulated substances on site. Evaluation occurs when \"ammonia refrigeration charge grows to ≥10,000 lb\" or when other listed chemicals are introduced. The register should document that current quantities are below the threshold to justify why the full PSM program does not currently apply.\n\n### 4. EPA Risk Management Program (RMP)\n*   **Requirement:** Facilities with a regulated substance above the threshold in a process (anhydrous ammonia 10,000 lb) must implement an RMP, including a hazard assessment with worst-case release scenarios, a prevention program, emergency response coordination, and an RMP filing to EPA updated at least five-yearly.\n*   **Source:** Clean Air Act §112(r), 40 CFR Part 68.\n*   **Applicability:** Similar to PSM, this applies if \"ammonia refrigeration expansions cross 10,000 lb.\" While the current HFC charges (R-448A) do not trigger this, the obligation must be tracked to ensure remodels do not switch to ammonia in quantities that cross the threshold.\n*   **ISO Mapping:** ISO 14001 6.1.3 (Compliance obligations), 8.2 (Emergency preparedness); ISO 45001 8.2.\n*   **Evaluation (How/When):** Per clause 9.1.2, verify actual facility thresholds against the 10,000 lb limit. Evaluation is necessary during the planning phase of remodels to confirm that the threshold is not crossed.\n\n### 5. EPCRA Hazardous Chemical Inventory (Tier II)\n*   **Requirement:** Submit SDS reporting (§311) and annual Tier II inventory by March 1 (§312) to state/local emergency bodies and the fire department for hazardous chemicals at or above 10,000 lb at any time, or Extremely Hazardous Substances (EHS) at the lower of 500 lb or their TPQ.\n*   **Source:** EPCRA §§302/311/312, 40 CFR Parts 355/370.\n*   **Applicability:** This applies when year-end inventories show propane, ammonia, chlorine, or bulk fuels above thresholds. The company must verify if the aggregate HFC refrigerant or other hazardous chemicals (e.g., cleaning solvents, fuels) across the 22 stores or at individual locations meet reporting thresholds.\n*   **ISO Mapping:** ISO 14001 6.1.3, 7.4.3 (External communication); ISO 45001 8.2.\n*   **Evaluation (How/When):** Per clause 9.1.2, verify actual inventory quantities against thresholds (10,000 lb for hazardous chemicals; 500 lb for EHS like ammonia). Evaluation occurs annually or when \"year-end inventories show\" quantities above thresholds.\n\n### 6. Hazard Communication (HazCom)\n*   **Requirement:** Maintain a written HazCom program, chemical inventory, accessible safety data sheets (SDS), labeled containers (including secondary/dispensing containers), and provide effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** This applies to the in-house refrigeration technicians who use hazardous chemicals (solvents, coatings, refrigerants). The \"remodels\" may introduce new hazards requiring updates to the program and training.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination), 7.2/7.3 (Competence, awareness), 7.4 (Communication).\n*   **Evaluation (How/When):** Evaluate compliance whenever \"new hazards are introduced\" (such as during remodels) or new chemicals are used. Verify that SDSs are accessible and containers are labeled.\n\n### 7. Flammable Liquids Handling and Storage\n*   **Requirement:** Adhere to quantity limits outside storage rooms/cabinets, use approved cabinets, ensure bonding and grounding during transfer/dispensing from drums, and maintain ventilation and ignition-source control.\n*   **Source:** OSHA 29 CFR 1910.106.\n*   **Applicability:** This applies when solvents (such as xylene or lacquer thinners) are dispensed from drums or stored in work areas during refrigeration servicing or remodels.\n*   **ISO Mapping:** ISO 45001 6.1.3, 8.1.1 (Operational controls), 8.1.2 (Substitution consideration).\n*   **Evaluation (How/When):** Evaluate compliance when \"solvents... are dispensed from drums or stored in work areas.\" Verify that operational controls (bonding/grounding) are in place during maintenance activities.",
+ "inputTokens": 1445,
+ "outputTokens": 1797,
+ "costUsd": 0.0071954,
+ "latencyMs": 11020
+}

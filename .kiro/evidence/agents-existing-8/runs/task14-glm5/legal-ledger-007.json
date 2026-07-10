@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-007",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 99,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.47045776
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.44865897
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.44568196
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.44104865
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.43131012
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.42537683
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.4251877
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.42316192
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the provided standards documentation, here are the compliance obligations for the poultry further-processing plant's situation involving the new below-grade wastewater equalization pit.\n\n### 1. Permit-Required Confined Spaces\n*   **Requirement:** The company must identify and evaluate the pit as a permit-required confined space (due to limited entry/exit, not being meant for continuous occupancy, and containing atmospheric hazards like hydrogen sulfide and oxygen deficiency). The company must post signs, write a permit program, control entries with permits, perform atmospheric testing, provide attendants, and arrange for rescue services—or prevent entry entirely.\n*   **Source:** OSHA 29 CFR 1910.146.\n*   **Applicability:** This applies directly to the \"below-grade wastewater equalization pit (12 ft deep, hatch access, submerged mixer)\" which sanitation employees enter quarterly. The presence of hydrogen sulfide and potential oxygen deficiency confirms it is a permit-required confined space.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated before the first entry (to verify the program and permits are in place) and periodically thereafter (e.g., quarterly or annually) by auditing entry permits, atmospheric monitoring records, and rescue drill logs.\n\n### 2. Air Contaminant Exposure Limits and Assessment\n*   **Requirement:** Employee exposures must be kept within permissible exposure limits (PELs). Specifically, for hydrogen sulfide, the company must perform initial exposure determinations and periodic monitoring to ensure employee safety.\n*   **Source:** OSHA 29 CFR 1910.1000 (Air Contaminants) and substance-specific standards.\n*   **Applicability:** This applies because the pit atmosphere \"may contain hydrogen sulfide\" and sanitation employees enter the space. The company must assess exposure levels to determine if respiratory protection or engineering controls are required.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated initially (prior to or during the first entry) through exposure monitoring. Periodic evaluations should occur as required by the monitoring results or annually by reviewing air sampling data and calibration records for monitoring equipment.\n\n### 3. Medical Services and First Aid\n*   **Requirement:** The company must ensure the ready availability of medical personnel for emergency treatment. If the plant is not near a clinic or hospital (infirmary), the company must have trained first-aid providers and adequate first-aid supplies. Additionally, if corrosive materials are handled, quick drenching/flushing facilities (eyewash/shower) must be available.\n*   **Source:** OSHA 29 CFR 1910.151.\n*   **Applicability:** This applies to the confined space entry scenario, particularly regarding \"rescue arrangements\" required under the confined space standard. If the plant is in a remote location relative to medical facilities, trained first-aid providers must be available on-site to handle potential rescue or exposure incidents.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated prior to the commencement of entry operations (verifying rescue arrangements and first-aid availability) and periodically (e.g., annually) by reviewing rescue service agreements, first-aid provider certifications, and supply inventories.\n\n### 4. Hazard Communication\n*   **Requirement:** The company must maintain a written HazCom program, ensure chemical inventory and Safety Data Sheets (SDS) are accessible, label containers, and provide effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** This applies if any hazardous chemicals (e.g., cleaning solvents used to wash down solids) are used during the quarterly pit maintenance. The sanitation employees must be trained on these hazards before entering the pit.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated before the initial assignment of sanitation employees to the pit task and whenever new cleaning chemicals are introduced. Periodic evaluations (e.g., annually) should verify training records and SDS accessibility.\n\n### 5. Walking-Working Surfaces and Fall Protection\n*   **Requirement:** The company must keep surfaces clean, dry, and orderly. Specifically, floor holes (such as the hatch access) must be guarded, and open-sided platforms/floors 4 feet or more above a lower level must have protection (guardrails).\n*   **Source:** OSHA 29 CFR 1910 Subpart D.\n*   **Applicability:** This applies to the \"hatch access\" of the 12 ft deep pit. When the hatch is open for entry/exit or maintenance, it constitutes a floor hole that requires guarding or fall protection to prevent accidental falls into the pit.\n*   **ISO Mapping:** ISO 45001 6.1.3 (Legal requirements determination).\n*   **Evaluation (9.1.2):** Compliance should be evaluated during the installation of the pit (ensuring proper guarding is installed) and periodically (e.g., quarterly during the maintenance entries or annually) by inspecting the hatch guarding and fall protection equipment.",
+ "inputTokens": 1343,
+ "outputTokens": 1134,
+ "costUsd": 0.0049718,
+ "latencyMs": 24209
+}

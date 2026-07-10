@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-025",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 116,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.2",
+    "score": 0.4505532
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.44658092
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.43468514
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.4316404
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.4300195
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.42554468
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.42309824
+   },
+   {
+    "clauseRef": "8.1",
+    "score": 0.42242736
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the addition of an in-house decorative chromium and nickel electroplating line creates or affects the following compliance obligations for the company's register:\n\n**1. Obligation: Air Permitting for Coating/Solvent Operations**\n*   **Requirement:** New or increased emissions from plating lines typically require state minor-source construction/operating permits **BEFORE installation**. This includes establishing emission limits, control/capture requirements, and maintaining records (e.g., of fume suppressant usage) to demonstrate potential-to-emit stays below major-source thresholds. The Chromium Electroplating NESHAP (Subpart N) specifically attaches, requiring controls like fume suppressants or composite mesh pads and surface-tension monitoring.\n*   **Source:** State minor New Source Review (NSR) programs; Clean Air Act NESHAPs (specifically 40 CFR 63 Subpart N for chromium electroplating).\n*   **Applicability:** Directly applicable because the company is adding a chromium and nickel electroplating line.\n*   **ISO Mapping:** ISO 14001 6.1.3 (determination of compliance obligations).\n*   **Evaluation (How & When - ISO 14001/45001 9.1.2):** Compliance should be evaluated through a review of the air permit conditions and monitoring records (e.g., surface-tension logs, fume suppressant usage logs) during internal audits and as part of management review. Initial evaluation must occur before operation begins, and then periodically per the permit and NESHAP requirements.\n\n**2. Obligation: Hazard Communication**\n*   **Requirement:** A written HazCom program, chemical inventory, accessible Safety Data Sheets (SDSs), labeled containers (including secondary containers for dispensing), and effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** Directly applicable because the new plating line will introduce new hazardous chemicals (e.g., plating acids, chromium and nickel compounds, solvents).\n*   **ISO Mapping:** ISO 45001 7.4 (communication), with determination of these legal requirements mapping to ISO 45001 6.1.3.\n*   **Evaluation (How & When - ISO 45001 9.1.2):** Compliance should be evaluated through inspection of labels and SDS accessibility, review of training records, and auditing the HazCom program. Evaluation must occur before employees begin working with the new chemicals and periodically thereafter (e.g., during annual audits).\n\n**3. Obligation: Air Contaminant Exposure Limits and Assessment**\n*   **Requirement:** Employee exposures to air contaminants must be kept within Permissible Exposure Limits (PELs). The substance-specific standard for hexavalent chromium (Cr(VI)) adds requirements for an initial exposure determination, periodic monitoring if exposures are at or above the action level, establishment of regulated areas, and medical surveillance for exposed employees.\n*   **Source:** OSHA 29 CFR 1910.1000 and 29 CFR 1910.1026 for hexavalent chromium.\n*   **Applicability:** Directly applicable because chromium electroplating and nickel plating generate fumes/mists containing Cr(VI) and nickel, which are hazardous air contaminants.\n*   **ISO Mapping:** ISO 45001 9.1.1 (monitoring/measurement), with the obligation determination mapping to ISO 45001 6.1.3.\n*   **Evaluation (How & When - ISO 45001 9.1.2):** Compliance should be evaluated by reviewing industrial hygiene monitoring results, medical surveillance records, and inspection of regulated areas. An initial exposure assessment must be conducted promptly after the line is operational, with follow-up monitoring as required by the standard (e.g., every 6 months if exposures exceed the PEL).\n\n**4. Obligation: Medical Services and First Aid**\n*   **Requirement:** Ensure ready availability of quick drenching/flushing facilities (eyewash/shower) where corrosive materials like battery electrolyte or **plating acids** are handled.\n*   **Source:** OSHA 29 CFR 1910.151.\n*   **Applicability:** Directly applicable because the electroplating line involves handling corrosive materials (e.g., pickling and plating acids).\n*   **ISO Mapping:** ISO 45001 8.2.\n*   **Evaluation (How & When - ISO 45001 9.1.2):** Compliance should be evaluated through regular inspections of eyewash/showers (e.g., weekly activation checks) and review of inspection records during internal audits.\n\n**5. Obligation: Industrial Stormwater Permit**\n*   **Requirement:** Facilities with industrial activities exposed to precipitation require NPDES multi-sector general permit coverage. This involves submitting a Notice of Intent (NOI), developing a Stormwater Pollution Prevention Plan (SWPPP), implementing control measures, conducting quarterly visual assessments, and performing sector-specific benchmark monitoring with corrective actions for exceedances.\n*   **Source:** Clean Water Act NPDES, EPA Multi-Sector General Permit (MSGP) or Michigan state equivalent.\n*   **Applicability:** Likely applicable if the facility has outdoor material staging, dumpsters, or tanks associated with the new operation that are exposed to rain. The \"Sector N\" reference in the standard may be relevant if the plating sludge is managed as scrap.\n*   **ISO Mapping:** ISO 14001 8.1, with determination of this obligation mapping to ISO 14001 6.1.3.\n*   **Evaluation (How & When - ISO 14001 9.1.2):** Compliance should be evaluated by reviewing monitoring data, inspection reports, and the SWPPP during internal audits and management review. Evaluation should occur at least annually and whenever benchmark levels are exceeded.\n\n**6. Obligation: Acquisition Integration of Compliance Obligations** *(Note: This maps to the \"change\" aspect of the new operation)*\n*   **Requirement:** While not an acquisition, the core obligation to **\"harmonize the obligations register across jurisdictions\"** and **\"evaluate legacy liabilities\"** applies by analogy to this significant operational change. The addition of a plating line with wastewater discharge and sludge generation introduces new environmental permits and legacy liability risks (e.g., sludge as hazardous waste) that must be integrated into the company's compliance register.\n*   **Source:** Permit transfer provisions; OSH Act employer duties. Analogous application to management of change.\n*   **Applicability:** Applicable as a major operational change introducing new compliance streams (air, water, waste) that must be inventoried and managed.\n*   **ISO Mapping:** ISO 14001/45001 6.1.3 (determination of compliance obligations), 8.1.3 (management of change).\n*   **Evaluation (How & When - ISO 14001/45001 9.1.2):** Compliance should be evaluated by auditing the updated obligations register and the management of change process for this project. Evaluation should occur as part of the pre-operational planning and be verified during the next internal audit cycle.\n\n**Citations:** [Doc 4 — clause 6.1.3], [Doc 5 — clause 7.4], [Doc 7 — clause 9.1.1], [Doc 1 — clause 8.2], [Doc 8 — clause 8.1], [Doc 3 — clause 4.1].",
+ "inputTokens": 1390,
+ "outputTokens": 1562,
+ "costUsd": 0.0037515000000000005,
+ "latencyMs": 36989
+}

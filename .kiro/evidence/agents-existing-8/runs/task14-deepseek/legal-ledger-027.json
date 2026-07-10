@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-027",
+ "model": "deepseek.v3.2",
+ "retrieval": {
+  "latencyMs": 120,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "7.4",
+    "score": 0.58845085
+   },
+   {
+    "clauseRef": "6.1.3",
+    "score": 0.5563562
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.47562233
+   },
+   {
+    "clauseRef": "9.1.1",
+    "score": 0.45901272
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.45440602
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.4534662
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.45322874
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.44355312
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, the OSHA update to the Hazard Communication Standard triggers specific compliance obligations for your specialty chemicals distribution company. The primary obligations are derived from **Clause 6.1.3 (Regulatory Change Management)** and **Clause 7.4 (Hazard Communication)**, with cascading effects on training and documentation.\n\nHere are the identified obligations for your compliance register:\n\n1.  **Obligation: Regulatory Change Identification and Program Update**\n    *   **Requirement:** Identify the change, assess applicability by the specified compliance dates, and update the written HazCom program, labels, and Safety Data Sheet (SDS) libraries.\n    *   **Source:** OSHA 29 CFR 1910.1200 update (as managed through administrative rulemaking). This is explicitly governed by **Clause 6.1.3 (Doc 2)**.\n    *   **Applicability:** Directly applies as your company repackages and distributes industrial chemicals, making you subject to the Hazard Communication Standard. The update affects all hazardous chemicals you handle.\n    *   **ISO Mapping:** ISO 45001/14001 6.1.3 (keeping legal requirements up to date); ISO 45001 8.1.3 (management of change) **(Doc 2)**.\n    *   **Evaluation (per 9.1.2):** The evaluation must be **recorded in the obligations register (Doc 2)**. Compliance should be evaluated **upon the rule's effective date** and again **prior to each phased compliance deadline** to confirm program updates are complete.\n\n2.  **Obligation: Employee Retraining**\n    *   **Requirement:** Retrain affected workers on the updated hazard classification criteria, label elements, and SDS format.\n    *   **Source:** OSHA 29 CFR 1910.1200 (HazCom training). This is a direct consequence of the change managed under **Clause 6.1.3** and is part of the **Clause 7.4 (Doc 1)** HazCom program.\n    *   **Applicability:** Applies to all employees who are exposed to hazardous chemicals in their work area (e.g., warehouse, repackaging).\n    *   **ISO Mapping:** ISO 45001 7.2/7.3 (competence, awareness) **(Doc 1, Doc 2)**.\n    *   **Evaluation (per 9.1.2):** Compliance should be evaluated **after the updated training is delivered** and before the applicable compliance date. Evaluation must verify training records are updated for all affected workers.\n\n3.  **Obligation: Container Labeling (including secondary/dispensing containers)**\n    *   **Requirement:** Ensure all containers, including those used for repackaging (secondary containers), are labeled according to the updated GHS standard.\n    *   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned). This is a core element of **Clause 7.4 (Doc 1)**.\n    *   **Applicability:** Critically applies to your repackaging operations. All secondary containers must have compliant labels.\n    *   **ISO Mapping:** ISO 45001 7.4 (communication) **(Doc 1)**.\n    *   **Evaluation (per 9.1.2):** Compliance should be evaluated via **periodic inspections** of labeling in storage and repackaging areas, with a formal review **prior to the OSHA compliance deadline** and after full implementation.\n\n**How the Compliance Obligations Register Itself Must Respond:**\nAs stated in **Clause 6.1.3 (Doc 2)**, the register is not passive. Upon this regulatory change being flagged, the organization must:\n1.  **Identify the change** in the tracked obligations.\n2.  **Assess its applicability** to the company's operations.\n3.  **Update the specific obligations** related to HazCom (Clause 7.4) within the register to reflect the new requirements and deadlines.\n4.  **Record the evaluation** of this change and the planned actions in the register.\n\n**Summary:** The regulatory change directly activates **Clause 6.1.3 (Doc 2)** processes, which in turn mandate updates to the **Clause 7.4 (Doc 1)** HazCom program elements (SDS, labels, training). Your compliance register must be updated to reflect these revised obligations with their new compliance dates, and evaluations (9.1.2) must be scheduled to verify implementation before each deadline.",
+ "inputTokens": 1366,
+ "outputTokens": 954,
+ "costUsd": 0.00261182,
+ "latencyMs": 27941
+}

@@ -1,0 +1,49 @@
+{
+ "taskId": "legal-ledger-008",
+ "model": "zai.glm-5",
+ "retrieval": {
+  "latencyMs": 153,
+  "attempts": 1,
+  "coldStart": false,
+  "chunks": [
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.4849467
+   },
+   {
+    "clauseRef": "8.1.2",
+    "score": 0.4646314
+   },
+   {
+    "clauseRef": "7.4",
+    "score": 0.463839
+   },
+   {
+    "clauseRef": "4.1",
+    "score": 0.452559
+   },
+   {
+    "clauseRef": "8.2",
+    "score": 0.45206603
+   },
+   {
+    "clauseRef": "7.5",
+    "score": 0.44498906
+   },
+   {
+    "clauseRef": "8.1.1",
+    "score": 0.44400436
+   },
+   {
+    "clauseRef": "8.1.4",
+    "score": 0.4438268
+   }
+  ],
+  "recall": 1
+ },
+ "response": "Based on the retrieved standards documentation, here is the identification of compliance obligations for the custom cabinet shop in Grand Junction, Colorado.\n\n### 1. Injury/Illness Recordkeeping (Clause 7.5)\n*   **Requirement:** Maintain injury and illness records using the OSHA 300 Log, 301 Incident Reports, and post the annual 300A summary from Feb 1–Apr 30. Electronic submission requirements apply to larger/high-hazard establishments.\n*   **Source:** OSHA 29 CFR Part 1904.\n*   **Applicability:** **DOES NOT APPLY.** According to Clause 7.5, establishments with \"10 or fewer employees all year\" are exempt from routine logs. With only 8 current employees and a peak of 9 last year, the shop meets this size exemption.\n*   **ISO Mapping:** ISO 45001 7.5 (documented information), 9.1.1 (performance data).\n*   **Evaluation (9.1.2):** Compliance should be evaluated annually during the annual recordkeeping cycle (Feb 1–Apr 30) to verify that the employee count remains at or below 10, maintaining the exemption status. Note that the exemption does not extend to serious-incident reports required under 1904.39 if a severe incident occurs.\n\n### 2. Spray Finishing Operations (Clause 8.1.1)\n*   **Requirement:** Spray finishing using flammable/combustible materials must be confined to approved booths or rooms with adequate ventilation, filters, listed electrical equipment for classified areas, sprinkler/extinguishing coverage, and control of residue and ignition sources.\n*   **Source:** OSHA 29 CFR 1910.107.\n*   **Applicability:** **APPLIES.** The shop has a \"small spray-finish corner.\" Clause 8.1.1 specifies this applies \"when solvent-borne coatings are spray-applied (new finishing lines, spray booths).\"\n*   **ISO Mapping:** ISO 45001 8.1.1 (operating criteria), 8.1.3 (change control).\n*   **Evaluation (9.1.2):** Compliance must be evaluated prior to the commencement of spraying (design phase) and continuously during operation. An inspection of the spray area/booth should verify that ventilation, electrical classifications, and fire suppression meet the criteria in 1910.107.\n\n### 3. Hazard Communication (Clause 7.4)\n*   **Requirement:** Maintain a written HazCom program, chemical inventory, ensure Safety Data Sheets (SDS) are accessible, label containers (including secondary/dispensing containers), and provide effective employee training before initial assignment and when new hazards are introduced.\n*   **Source:** OSHA 29 CFR 1910.1200 (GHS-aligned).\n*   **Applicability:** **APPLIES.** Clause 7.4 states this applies \"when any hazardous chemical is used or stored — new solvents, coatings...\" The shop uses solvents/coatings in the spray-finish corner.\n*   **ISO Mapping:** ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness), 6.1.3 (legal requirements).\n*   **Evaluation (9.1.2):** Compliance should be evaluated before any new chemical is introduced and during annual safety audits to ensure the inventory is current, SDSs are accessible, and employees are trained.\n\n### 4. Walking-Working Surfaces and Fall Protection (Clause 8.1.2)\n*   **Requirement:** Keep surfaces clean/dry/orderly, guard floor holes and open-sided platforms 4 feet or more above a lower level, ensure ladder safety, and utilize fall protection options (guardrails, personal fall arrest) for elevated work.\n*   **Source:** OSHA 29 CFR 1910 Subpart D.\n*   **Applicability:** **APPLIES.** Clause 8.1.2 notes applicability \"when: warehousing, mezzanines, or maintenance at height by in-house crews.\" The cabinet shop profile implies warehousing/storage and the use of ladders or mezzanines typical of such facilities.\n*   **ISO Mapping:** ISO 45001 8.1.2, 6.1.2.\n*   **Evaluation (9.1.2):** Compliance should be evaluated during routine housekeeping inspections and specifically whenever work is performed at height (4 feet or more) or on mezzanines/racks.\n\n### 5. Medical Services and First Aid (Clause 8.2)\n*   **Requirement:** Ensure ready availability of medical personnel, trained first-aid providers where no clinic/hospital is near, first-aid supplies, and quick drenching/flushing facilities (eyewash/shower) where corrosive materials are handled.\n*   **Source:** OSHA 29 CFR 1910.151.\n*   **Applicability:** **APPLIES.** Clause 8.2 applies \"when: corrosives are used or remote sites lack nearby medical care.\" Woodworking shops typically require first-aid supplies due to injury risks (saws), and if the spray corner uses corrosive solvents or stains, eyewash stations are required.\n*   **ISO Mapping:** ISO 45001 8.2, 7.1 (resources).\n*   **Evaluation (9.1.2):** Compliance is evaluated by verifying the presence and condition of first-aid supplies and eyewash stations (weekly inspections) and ensuring adequate training of staff, particularly given the remote nature of Grand Junction relative to medical facilities.\n\n### 6. Welding, Cutting, Brazing (Clause 8.1.1)\n*   **Requirement:** Implement fire prevention measures (hot-work permits, fire watch, 35-ft combustible clearance), ventilation for fume, and screens for arc flash.\n*   **Source:** OSHA 29 CFR 1910.252.\n*   **Applicability:** **LIKELY DOES NOT APPLY.** Clause 8.1.1 specifies this applies \"when: TIG/MIG welding or plasma cutting... is performed.\" The company profile lists \"table saws\" and \"spray-finish corner\" but does not mention metalworking or welding capabilities.\n*   **ISO Mapping:** ISO 45001 8.1.1, 6.1.2.\n*   **Evaluation (9.1.2):** Compliance should be evaluated by reviewing the scope of work processes. If no welding is performed, this obligation is marked \"not applicable\" in the register. This must be re-evaluated if the process changes (e.g., adding metal hardware fabrication).\n\n### 7. Acquisition Integration (Clause 4.1)\n*   **Requirement:** Inventory and transfer/re-issue environmental permits, verify OSHA programs and posting/recordkeeping continuity, and harmonize the obligations register.\n*   **Source:** Permit transfer provisions; OSH Act employer duties.\n*   **Applicability:** **DOES NOT APPLY.** Clause 4.1 applies \"when: closing an acquisition of an operating plant.\" The scenario describes an existing operating shop, not a new acquisition.\n*   **ISO Mapping:** ISO 14001/45001 4.1 (context), 6.1.3, 8.1.3.\n*   **Evaluation (9.1.2):** Not applicable to current operations. Evaluation occurs only during M&A activity.\n\n### 8. Multi-employer Worksite and Contractor Safety (Clause 8.1.4)\n*   **Requirement:** Host must coordinate on shared hazards, exchange hazard information, and manage contractor safety (e.g., construction fall protection at 6 feet).\n*   **Source:** OSH Act multi-employer citation policy; 29 CFR 1926.\n*   **Applicability:** **CONDITIONALLY APPLIES.** Clause 8.1.4 applies \"when: contractors work on site.\" If the cabinet shop hires contractors (e.g., for roof repair or electrical work), these obligations apply.\n*   **ISO Mapping:** ISO 45001 8.1.4.2 (contractors), 4.2 (interested parties).\n*   **Evaluation (9.1.2):** Compliance is evaluated whenever a contractor is hired to work on-site. The host employer must verify the contractor's safety plan and coordinate hazards (e.g., wood dust/flammable spray areas) before work begins.",
+ "inputTokens": 1331,
+ "outputTokens": 1783,
+ "costUsd": 0.0070366000000000005,
+ "latencyMs": 14113
+}
