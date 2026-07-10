@@ -21,7 +21,13 @@ describe('ApiStack template assertions (source-level)', () => {
     const querySection = SCHEMA_CODE.match(/type Query \{([^}]+)\}/s);
     expect(querySection).not.toBeNull();
     const queryLines = querySection![1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/));
-    const queryFieldCount = queryLines.length;
+    let queryFieldCount = queryLines.length;
+
+    // Also count fields in `extend type Query` blocks
+    const extendQuerySections = SCHEMA_CODE.matchAll(/extend type Query \{([^}]+)\}/gs);
+    for (const m of extendQuerySections) {
+      queryFieldCount += m[1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/)).length;
+    }
 
     // Count Query resolver attachments in api-stack + ai-stack (guru resolvers live in AiStack)
     const apiResolvers = (API_STACK_CODE.match(/typeName: 'Query'/g) ?? []).length;
@@ -36,7 +42,13 @@ describe('ApiStack template assertions (source-level)', () => {
     expect(mutationSection).not.toBeNull();
     // Count lines that have a field definition (word followed by '(' or ':')
     const mutationLines = mutationSection![1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/));
-    const mutationFieldCount = mutationLines.length;
+    let mutationFieldCount = mutationLines.length;
+
+    // Also count fields in `extend type Mutation` blocks
+    const extendMutationSections = SCHEMA_CODE.matchAll(/extend type Mutation \{([^}]+)\}/gs);
+    for (const m of extendMutationSections) {
+      mutationFieldCount += m[1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/)).length;
+    }
 
     // Count Mutation resolver attachments in api-stack
     const mutationResolvers = API_STACK_CODE.match(/typeName: 'Mutation'/g) ?? [];
@@ -95,13 +107,15 @@ describe('ApiStack template assertions (source-level)', () => {
     expect(API_STACK_CODE).toContain("typeName: 'Subscription'");
   });
 
-  it('total resolver count is 50 (12 Query + 33 Mutation + 5 Subscription)', () => {
+  it('total resolver count is 55 (14 Query + 35 Mutation + 6 Subscription)', () => {
     const queryCount = (API_STACK_CODE.match(/typeName: 'Query'/g) ?? []).length;
     const mutationCount = (API_STACK_CODE.match(/typeName: 'Mutation'/g) ?? []).length;
     // Subscription count: 5 fields in subscriptionFields array (loop-generated)
     const subscriptionFields = API_STACK_CODE.match(/subscriptionFields = \[([^\]]+)\]/s);
-    const subCount = subscriptionFields ? (subscriptionFields[1].match(/'/g) ?? []).length / 2 : 0;
-    expect(queryCount + mutationCount + subCount).toBe(50);
+    const subLoopCount = subscriptionFields ? (subscriptionFields[1].match(/'/g) ?? []).length / 2 : 0;
+    // Plus individually-created subscription resolvers (Spec 9: onHitlItemResolved)
+    const individualSubCount = (API_STACK_CODE.match(/typeName: 'Subscription'/g) ?? []).length - 1; // -1 for the loop template
+    expect(queryCount + mutationCount + subLoopCount + individualSubCount).toBe(55);
   });
 
   it('subscription resolvers enforce C-6 tenant-claim check via $util.unauthorized()', () => {

@@ -507,6 +507,121 @@ export class ApiStack extends cdk.Stack {
       });
     }
 
+    // ─── Spec 9 (frontend-app): HITL + Profile Resolvers ──────────────────────
+
+    // HITL Approval Lambda — owns approveHitlItem mutation
+    const hitlApprovalFn = new NodejsFunction(this, 'HitlApprovalFn', {
+      entry: 'services/api/src/resolvers/hitl-approval.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        TABLE_NAME: props.tableName,
+        BUS_NAME: props.busName,
+        TENANT_DATA_ROLE_ARN: tenantDataRole.roleArn,
+        REGION: cdk.Stack.of(this).region,
+        POWERTOOLS_SERVICE_NAME: 'resolver-hitl-approval',
+      },
+    });
+
+    // HITL Query Lambda — owns listPendingHitlItems query
+    const hitlQueryFn = new NodejsFunction(this, 'HitlQueryFn', {
+      entry: 'services/api/src/resolvers/hitl-query.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        TABLE_NAME: props.tableName,
+        BUS_NAME: props.busName,
+        TENANT_DATA_ROLE_ARN: tenantDataRole.roleArn,
+        REGION: cdk.Stack.of(this).region,
+        POWERTOOLS_SERVICE_NAME: 'resolver-hitl-query',
+      },
+    });
+
+    // Profile Lambda — owns getProfile + updateProfile
+    const profileFn = new NodejsFunction(this, 'ProfileFn', {
+      entry: 'services/api/src/resolvers/profile.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        TABLE_NAME: props.tableName,
+        BUS_NAME: props.busName,
+        TENANT_DATA_ROLE_ARN: tenantDataRole.roleArn,
+        REGION: cdk.Stack.of(this).region,
+        POWERTOOLS_SERVICE_NAME: 'resolver-profile',
+      },
+    });
+
+    // IAM: all 3 new Lambdas need STS AssumeRole + DDB via tenant-data role
+    for (const fn of [hitlApprovalFn, hitlQueryFn, profileFn]) {
+      fn.role!.addToPrincipalPolicy(new iam.PolicyStatement({
+        actions: ['sts:AssumeRole', 'sts:TagSession'],
+        resources: [tenantDataRole.roleArn],
+      }));
+      fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['events:PutEvents'],
+        resources: [props.busArn],
+      }));
+      props.dynamodbKey.grantDecrypt(fn);
+      fn.addEnvironment('TENANT_DATA_ROLE_ARN', tenantDataRole.roleArn);
+    }
+
+    // Add new Lambdas to the tenant-data role trust policy
+    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['sts:AssumeRole'],
+      principals: [hitlApprovalFn, hitlQueryFn, profileFn].map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
+    }));
+    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['sts:TagSession'],
+      principals: [hitlApprovalFn, hitlQueryFn, profileFn].map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
+      conditions: {
+        'StringLike': { 'aws:RequestTag/tenantId': '*' },
+      },
+    }));
+    // DENY # injection on new principals too
+    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
+      effect: iam.Effect.DENY,
+      actions: ['sts:TagSession'],
+      principals: [hitlApprovalFn, hitlQueryFn, profileFn].map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
+      conditions: {
+        'StringLike': { 'aws:RequestTag/tenantId': '*#*' },
+      },
+    }));
+
+    // Data sources
+    const hitlApprovalDS = api.addLambdaDataSource('HitlApprovalDS', hitlApprovalFn);
+    const hitlQueryDS = api.addLambdaDataSource('HitlQueryDS', hitlQueryFn);
+    const profileDS = api.addLambdaDataSource('ProfileDS', profileFn);
+
+    // Query resolvers (Spec 9)
+    hitlQueryDS.createResolver('ListPendingHitlItems', { typeName: 'Query', fieldName: 'listPendingHitlItems' });
+    profileDS.createResolver('GetProfile', { typeName: 'Query', fieldName: 'getProfile' });
+
+    // Mutation resolvers (Spec 9)
+    hitlApprovalDS.createResolver('ApproveHitlItem', { typeName: 'Mutation', fieldName: 'approveHitlItem' });
+    profileDS.createResolver('UpdateProfile', { typeName: 'Mutation', fieldName: 'updateProfile' });
+
+    // Subscription resolver (Spec 9, C-6 tenant verification via VTL)
+    noneDS.createResolver('SubOnHitlItemResolved', {
+      typeName: 'Subscription',
+      fieldName: 'onHitlItemResolved',
+      requestMappingTemplate: subscriptionRequestTemplate,
+      responseMappingTemplate: subscriptionResponseTemplate,
+    });
+
     // ─── CfnOutputs ─────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'GraphqlApiUrl', { value: this.graphqlApiUrl });
     new cdk.CfnOutput(this, 'GraphqlApiId', { value: this.graphqlApiId });
@@ -535,7 +650,7 @@ export class ApiStack extends cdk.Stack {
     );
 
     // FIX-3(a): IAM5 on Lambda log-group wildcards only (not the DDB grant)
-    const lambdaResources = [authorizerFn, migratorFn, ...resolverFns];
+    const lambdaResources = [authorizerFn, migratorFn, ...resolverFns, hitlApprovalFn, hitlQueryFn, profileFn];
     for (const fn of lambdaResources) {
       NagSuppressions.addResourceSuppressions(fn, [
         {
@@ -586,7 +701,7 @@ export class ApiStack extends cdk.Stack {
     // xray:PutTraceSegments + xray:PutTelemetryRecords with Resource:* (AWS-managed behavior).
     // IAM5[Resource::<FnArn>:*] from AppSync data source service roles — lambda:InvokeFunction
     // on <fnArn>:* for versioned invocation (CDK-generated, cannot scope further).
-    const dataSources = [m1DS, m2DS, m3DS, m4DS, m5DS];
+    const dataSources = [m1DS, m2DS, m3DS, m4DS, m5DS, hitlApprovalDS, hitlQueryDS, profileDS];
     for (const ds of dataSources) {
       NagSuppressions.addResourceSuppressions(ds, [
         {

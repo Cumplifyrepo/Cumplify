@@ -610,3 +610,94 @@ type Subscription {
     @aws_subscribe(mutations: ["publishRiskEvent"])
     @aws_lambda
 }
+
+# ─── Spec 9 (frontend-app): HITL + Profile Schema Surface ─────────────────────
+
+enum HitlDecision {
+  APPROVE
+  SEND_BACK
+}
+
+type GuardrailEvidence @aws_lambda {
+  groundingScore: Float
+  arVerdict: String
+  arDetails: String
+  citations: [Citation!]
+}
+
+type Citation @aws_lambda {
+  clauseRef: String!
+  sourceChunk: String
+  score: Float
+}
+
+type HitlItem @aws_lambda {
+  hitlItemId: ID!
+  agentName: String!
+  clauseRef: String
+  standard: Standard
+  module: String!
+  draftBody: String!
+  status: String!
+  createdAt: AWSDateTime!
+  guardrailEvidence: GuardrailEvidence
+}
+
+type HitlApprovalResult @aws_lambda {
+  hitlItemId: ID!
+  decision: HitlDecision!
+  auditEventId: String!
+  auditEventTimestamp: AWSDateTime!
+  resolvedBy: String!
+  resolvedAt: AWSDateTime!
+}
+
+input ApproveHitlItemInput {
+  hitlItemId: ID!
+  decision: HitlDecision!
+  editedPayload: AWSJSON
+  note: String
+  justification: String
+}
+
+input PaginationInput {
+  limit: Int
+  nextToken: String
+}
+
+type HitlItemConnection @aws_lambda {
+  items: [HitlItem!]!
+  nextToken: String
+}
+
+type UserProfile @aws_lambda {
+  userId: ID!
+  locale: String!
+  updatedAt: AWSDateTime
+}
+
+input UpdateProfileInput {
+  locale: String!
+}
+
+# ─── Extended Query (Spec 9) ──────────────────────────────────────────────────
+
+extend type Query {
+  listPendingHitlItems(pagination: PaginationInput): HitlItemConnection! @aws_lambda
+  getProfile: UserProfile @aws_lambda
+}
+
+# ─── Extended Mutation (Spec 9) ───────────────────────────────────────────────
+
+extend type Mutation {
+  approveHitlItem(input: ApproveHitlItemInput!): HitlApprovalResult! @aws_lambda
+  updateProfile(input: UpdateProfileInput!): UserProfile! @aws_lambda
+}
+
+# ─── Extended Subscription (Spec 9) ───────────────────────────────────────────
+
+extend type Subscription {
+  onHitlItemResolved(tenantId: ID!): HitlApprovalResult
+    @aws_subscribe(mutations: ["approveHitlItem"])
+    @aws_lambda
+}
