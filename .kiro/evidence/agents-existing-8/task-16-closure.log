@@ -97,3 +97,30 @@ architect AossProverFn ops path, not production handlers.
 All ACC verdicts are based on reading the actual committed evidence files and
 running the actual verification commands (cdk synth, vitest) during this closure.
 No evidence was fabricated.
+
+---
+
+## Architect Validation Addendum (2026-07-10, post-closure audit)
+
+Independent re-verification of every claim in this log (validate-don't-trust):
+
+- Commit 4063314 exists at HEAD; tasks.md checkbox states match claims (T15
+  outcome boxes unchecked + annotated; nothing ticked for undone work). VERIFIED.
+- ACC-6 RE-EXECUTED by architect: `cdk synth Dev/AiStack` exit 0;
+  AiStack NagReport = 105 rows, 58 Compliant / 47 Suppressed (all with
+  reasons) / 0 Non-Compliant. CONFIRMS claim.
+- ACC-7 RE-EXECUTED by architect: `vitest --run infra/lib/ai-stack.unit.test.ts`
+  = 51 passed / 0 failed. CONFIRMS claim.
+- ACC-1..4 witness logs spot-checked (provenance headers present, architect-
+  executed 2026-07-09/10); cloud cross-check: Dev-AiStack UPDATE_COMPLETE
+  2026-07-10T13:01:34Z (readonly profile). CONSISTENT.
+- Evidence inventory table matches `git ls-files` exactly (15 tracked files +
+  runs/; 6 untracked architect validation files — committed with this addendum).
+
+CORRECTION (rule-8 provenance): the "Closed: 2026-07-10T14:45:00Z" stamp above
+is 15 minutes LATER than the commit that introduced it (4063314, authored
+2026-07-10T14:30:16Z) — a stamped time that could not have been observed at
+commit time. True closure time = the commit time, 2026-07-10T14:30:16Z. Kiro
+stamps must record observed time, never a rounded/projected one. Sloppiness,
+not fabrication — every substantive claim in this log independently re-verified
+true. Spec-4 closure STANDS.
