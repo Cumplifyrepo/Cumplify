@@ -202,6 +202,8 @@ export class AiStack extends cdk.Stack {
           'Payload': {
             'taskToken.$': '$$.Task.Token',
             'input.$': '$',
+            // HITL-10 carry #3: SFN execution ARN for tracing
+            'sfnExecutionArn.$': '$$.Execution.Id',
           },
         },
         TimeoutSeconds: 604800, // 7 days
@@ -212,6 +214,14 @@ export class AiStack extends cdk.Stack {
             IntervalSeconds: 2,
             MaxAttempts: 3,
             BackoffRate: 2,
+          },
+        ],
+        // HITL-10: Catch SENT_BACK from SendTaskFailure → HandleSendBack
+        Catch: [
+          {
+            ErrorEquals: ['SENT_BACK'],
+            Next: 'HandleSendBack',
+            ResultPath: '$.sendBackError',
           },
         ],
       },
@@ -240,6 +250,12 @@ export class AiStack extends cdk.Stack {
 
     // Timeout handled by WaitForApproval's TimeoutSeconds (7 days)
     // On timeout, SFN execution fails — CloudWatch alarm detects failed executions.
+
+    // HITL-10: HandleSendBack is a terminal Pass state referenced by the
+    // WaitForApproval Catch.Next. CDK CustomState renders it from the stateJson.
+    new sfn.Pass(this, 'HandleSendBack', {
+      comment: 'HITL-10: Handle send-back decision. Agent re-draft logic TBD (agents-existing-8).',
+    });
 
     const definition = recordProposal
       .next(waitForApproval)

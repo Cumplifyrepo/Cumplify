@@ -308,6 +308,18 @@ describe('AiStack', () => {
       template.hasOutput('HitlStateMachineArn', {});
     });
 
+    it('HITL-10: WaitForApproval passes sfnExecutionArn and catches SENT_BACK', () => {
+      // Find the state machine resource and verify HITL-10 amendments in the ASL
+      const stateMachines = template.findResources('AWS::StepFunctions::StateMachine');
+      const smDef = JSON.stringify(stateMachines);
+      // Carry #3: sfnExecutionArn passed via $$.Execution.Id
+      expect(smDef).toContain('sfnExecutionArn');
+      expect(smDef).toContain('Execution.Id');
+      // HITL-10: Catch SENT_BACK → HandleSendBack
+      expect(smDef).toContain('SENT_BACK');
+      expect(smDef).toContain('HandleSendBack');
+    });
+
     it('exports GuardrailId', () => {
       template.hasOutput('GuardrailId', {});
     });
