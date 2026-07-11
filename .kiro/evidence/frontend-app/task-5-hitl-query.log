@@ -1,0 +1,15 @@
+# Task 5 — HITL Query Resolver (listPendingHitlItems)
+# Evidence: commit 23dff5e
+# Date: 2026-07-10
+# Verification: 11 unit tests pass, tsc clean
+#
+# Artifacts:
+#   services/api/src/resolvers/hitl-query.ts — GSI9 query, pagination, BC-8
+#   services/api/__tests__/resolvers/hitl-query.test.ts — 11 tests
+#     (happy path, taskToken exclusion, empty, pagination, cross-tenant reject,
+#      malformed token, limit cap, default limit, guardrailEvidence, unknown field)
+#
+# Test result at commit: 504/504 pass; at HEAD: 522/522 pass
+# tsc --noEmit: 0 errors
+# GSI-prefix test: green (TENANT# prefix verified)
+# BC-8: taskToken assertion — response serialization contains zero occurrences

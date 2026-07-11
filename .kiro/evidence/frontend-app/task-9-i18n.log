@@ -1,0 +1,19 @@
+# Task 9 — i18n Scaffold + Pseudo-Locale CI Check
+# Evidence: commit 0cc0927 (code) + 6a6a1f3 (architect fix: next-intl config consolidated)
+# Date: 2026-07-10
+# Verification: CI check runs (detects hardcoded strings = proof), next build passes (post-fix)
+#
+# Artifacts:
+#   frontend/messages/{en,es,pt}.json — seed catalogs (Command Center, HITL card, profile, common)
+#   frontend/src/i18n/request.ts — next-intl server config (locale resolution with PROFILE# TODO)
+#   frontend/scripts/check-hardcoded-strings.mjs — pseudo-locale CI check
+#   frontend/package.json — "i18n:check" script wired
+#
+# ARCHITECT FIX (6a6a1f3): duplicate src/i18n.ts deleted, plugin wired in next.config.mjs,
+# path bug in request.ts fixed. Lesson: re-run `next build` after every frontend/ change.
+#
+# CI check proof: detects "Cumplify OK" and "If this timestamp changes..." in spike page
+# (exit 1 = check works). Spike page is intentionally hardcoded (placeholder).
+#
+# Test result at HEAD: 522/522 pass (backend tests unaffected by frontend i18n)
+# next build: passes (post-6a6a1f3)

@@ -11,14 +11,14 @@
 
 > GATES all hosting-dependent tasks. If the deploy spec rejects WEB_COMPUTE manual bundles, STOP — hosting decision reopens.
 
-- [ ] Create `frontend/` Next.js App Router hello-world app (minimal: one page, SSR `getServerSideProps` or RSC fetch, renders "Cumplify OK" + request timestamp).
-- [ ] Run `next build` and produce the Amplify Hosting deployment artifact per the Amplify deployment specification: `deploy-manifest.json` + compute bundle layout (routes, handlers, static assets in the structure Amplify expects for WEB_COMPUTE).
-- [ ] [ARCHITECT] Create a dev Amplify app via CLI: `aws amplify create-app --name cumplify-frontend-spike --platform WEB_COMPUTE --no-enable-branch-auto-build`.
-- [ ] [ARCHITECT] Create branch: `aws amplify create-branch --app-id <id> --branch-name spike --framework "Next.js - SSR" --enable-auto-build false`.
-- [ ] [ARCHITECT] Deploy: `aws amplify create-deployment --app-id <id> --branch-name spike` → upload to presigned URL → `aws amplify start-deployment --app-id <id> --branch-name spike --job-id <jobId>`.
-- [ ] [ARCHITECT] Verify: `curl -f https://<branch>.<appId>.amplifyapp.com/` returns SSR response (timestamp changes on reload, proving server-side execution).
-- [ ] Evidence: screenshot + curl output + job status JSON. If WEB_COMPUTE rejects the manual bundle → STOP, document failure, reopen OQ-1.
-- [ ] [ARCHITECT] Tear down spike app after proof: `aws amplify delete-app --app-id <id>`.
+- [x] Create `frontend/` Next.js App Router hello-world app (minimal: one page, SSR `getServerSideProps` or RSC fetch, renders "Cumplify OK" + request timestamp).
+- [x] Run `next build` and produce the Amplify Hosting deployment artifact per the Amplify deployment specification: `deploy-manifest.json` + compute bundle layout (routes, handlers, static assets in the structure Amplify expects for WEB_COMPUTE).
+- [x] [ARCHITECT] Create a dev Amplify app via CLI: `aws amplify create-app --name cumplify-frontend-spike --platform WEB_COMPUTE --no-enable-branch-auto-build`.
+- [x] [ARCHITECT] Create branch: `aws amplify create-branch --app-id <id> --branch-name spike --framework "Next.js - SSR" --enable-auto-build false`.
+- [x] [ARCHITECT] Deploy: `aws amplify create-deployment --app-id <id> --branch-name spike` → upload to presigned URL → `aws amplify start-deployment --app-id <id> --branch-name spike --job-id <jobId>`.
+- [x] [ARCHITECT] Verify: `curl -f https://<branch>.<appId>.amplifyapp.com/` returns SSR response (timestamp changes on reload, proving server-side execution).
+- [x] Evidence: screenshot + curl output + job status JSON. If WEB_COMPUTE rejects the manual bundle → STOP, document failure, reopen OQ-1.
+- [x] [ARCHITECT] Tear down spike app after proof: `aws amplify delete-app --app-id <id>`.
 
 **D-rung:** D3 (deployed + read back).
 **Evidence:** `.kiro/evidence/frontend-app/task-1-hosting-spike.md`
@@ -27,12 +27,12 @@
 
 ## Task 2 — Schema SDL + Resolver Scaffolds [KIRO]
 
-- [ ] Append the BC-7 consolidated SDL (design §2.2) to `services/api/schema/schema.graphql`: types (`HitlItem`, `HitlApprovalResult`, `GuardrailEvidence`, `Citation`, `HitlItemConnection`, `UserProfile`), enums (`HitlDecision`), inputs (`ApproveHitlItemInput`, `PaginationInput`, `UpdateProfileInput`), extended Query/Mutation/Subscription.
-- [ ] Create resolver stub files: `services/api/src/resolvers/hitl-approval.ts`, `services/api/src/resolvers/hitl-query.ts`, `services/api/src/resolvers/profile.ts` (each exports a handler that returns a placeholder 501).
-- [ ] Create subscription auth resolver stub: `services/api/src/resolvers/hitl-subscription-auth.ts` (C-6 tenantId verification pattern from existing subscription resolvers).
-- [ ] Wire data sources + resolvers in `infra/lib/api-stack.ts` (4 new NodejsFunction data sources + 1 None DS for subscription).
-- [ ] `tsc --noEmit` passes, `cdk synth` passes, CDK Nag zero non-compliant.
-- [ ] Unit test: template assertion verifies 4 new Lambda data sources + 5 new resolvers exist.
+- [x] Append the BC-7 consolidated SDL (design §2.2) to `services/api/schema/schema.graphql`: types (`HitlItem`, `HitlApprovalResult`, `GuardrailEvidence`, `Citation`, `HitlItemConnection`, `UserProfile`), enums (`HitlDecision`), inputs (`ApproveHitlItemInput`, `PaginationInput`, `UpdateProfileInput`), extended Query/Mutation/Subscription.
+- [x] Create resolver stub files: `services/api/src/resolvers/hitl-approval.ts`, `services/api/src/resolvers/hitl-query.ts`, `services/api/src/resolvers/profile.ts` (each exports a handler that returns a placeholder 501).
+- [x] Create subscription auth resolver stub: `services/api/src/resolvers/hitl-subscription-auth.ts` (C-6 tenantId verification pattern from existing subscription resolvers).
+- [x] Wire data sources + resolvers in `infra/lib/api-stack.ts` (4 new NodejsFunction data sources + 1 None DS for subscription).
+- [x] `tsc --noEmit` passes, `cdk synth` passes, CDK Nag zero non-compliant.
+- [x] Unit test: template assertion verifies 4 new Lambda data sources + 5 new resolvers exist.
 
 **Depends on:** nothing (parallel-ready).
 **D-rung:** D1 (code + synth).
@@ -42,9 +42,9 @@
 
 ## Task 3 — Permission Matrix Module [KIRO]
 
-- [ ] Create `services/api/src/permissions/role-matrix.ts` with the Part 13 permission map (12 roles → module sets) and `canApprove(role, module): boolean`.
-- [ ] Unit tests: each role's expected modules asserted; unknown role returns false; edge cases (document-controller can approve M1 only, etc.).
-- [ ] `tsc --noEmit` passes.
+- [x] Create `services/api/src/permissions/role-matrix.ts` with the Part 13 permission map (12 roles → module sets) and `canApprove(role, module): boolean`.
+- [x] Unit tests: each role's expected modules asserted; unknown role returns false; edge cases (document-controller can approve M1 only, etc.).
+- [x] `tsc --noEmit` passes.
 
 **Depends on:** nothing.
 **D-rung:** D1.
@@ -54,7 +54,7 @@
 
 ## Task 4 — HITL Approval Lambda [KIRO]
 
-- [ ] Implement `services/api/src/resolvers/hitl-approval.ts` per design §2.3:
+- [x] Implement `services/api/src/resolvers/hitl-approval.ts` per design §2.3:
   - Step 1–2: extract resolverContext, validate role via `canApprove()` → 403.
   - Step 3: GetItem base-table key `PK=TENANT#<tenantId>#HITL, SK=PENDING#<hitlItemId>` → 404 on missing/mismatch.
   - Step 4: Conditional UpdateItem (`attribute_exists(PK) AND #status = :pending`, SET status=RESOLVING, resolvingAt=<now>) → catch `ConditionalCheckFailedException` → 409.
@@ -63,8 +63,8 @@
   - Step 7b (SEND_BACK): SFN `SendTaskFailure(error:'SENT_BACK', cause: note)` → catch same → 410. Call `resolveHitlItem(REJECTED)`.
   - Step 8: publish `Hitl.Approved` or `Hitl.SentBack` via `publishAuditEvent`.
   - Step 9: return `HitlApprovalResult`.
-- [ ] Unit tests (mock DDB + SFN + EventBridge): happy-path approve, happy-path send-back, 403 wrong role, 404 missing item, 409 already resolved, 410 expired token, justification pass-through for flagged items.
-- [ ] `tsc --noEmit` passes.
+- [x] Unit tests (mock DDB + SFN + EventBridge): happy-path approve, happy-path send-back, 403 wrong role, 404 missing item, 409 already resolved, 410 expired token, justification pass-through for flagged items.
+- [x] `tsc --noEmit` passes.
 
 **Depends on:** Task 3 (role-matrix).
 **D-rung:** D1.
@@ -74,13 +74,13 @@
 
 ## Task 5 — HITL Query Resolver (listPendingHitlItems) [KIRO]
 
-- [ ] Implement `services/api/src/resolvers/hitl-query.ts`:
+- [x] Implement `services/api/src/resolvers/hitl-query.ts`:
   - Query GSI9 with `KeyConditionExpression: GSI9PK = :pk` where `:pk = TENANT#<tenantId>#HITL_PENDING`.
   - Pagination: `Limit` from input (default 20, max 50), `ExclusiveStartKey` decoded from `nextToken` (base64). Validate decoded key's PK matches caller's tenantId.
   - Map DDB items → `HitlItem` type (exclude `taskToken` from response — BC-8).
   - Return `HitlItemConnection { items, nextToken }`.
-- [ ] Unit tests: empty queue, single page, pagination round-trip, taskToken exclusion assertion, cross-tenant nextToken rejection.
-- [ ] `tsc --noEmit` passes.
+- [x] Unit tests: empty queue, single page, pagination round-trip, taskToken exclusion assertion, cross-tenant nextToken rejection.
+- [x] `tsc --noEmit` passes.
 
 **Depends on:** nothing.
 **D-rung:** D1.
@@ -90,11 +90,11 @@
 
 ## Task 6 — PROFILE# Plumbing (getProfile / updateProfile) [KIRO]
 
-- [ ] Implement `services/api/src/resolvers/profile.ts`:
+- [x] Implement `services/api/src/resolvers/profile.ts`:
   - `getProfile`: GetItem `PK=TENANT#<tenantId>#PROFILE, SK=USER#<sub>`. Return `{ userId: sub, locale, updatedAt }` or default `{ locale: 'en' }` if not found.
   - `updateProfile`: PutItem (upsert) same key with `locale` + `updatedAt`. Validate locale ∈ ['en','es','pt'].
-- [ ] Unit tests: get existing, get missing (default), update, invalid locale rejected.
-- [ ] `tsc --noEmit` passes.
+- [x] Unit tests: get existing, get missing (default), update, invalid locale rejected.
+- [x] `tsc --noEmit` passes.
 
 **Depends on:** nothing.
 **D-rung:** D1.
@@ -104,10 +104,10 @@
 
 ## Task 7 — Event Registration [KIRO]
 
-- [ ] Append to `contracts/events.md` Hitl domain: `Hitl.Approved` (auditTrail: true), `Hitl.SentBack` (auditTrail: true).
-- [ ] Append to `services/eventing/src/audit-trail-registry.ts`: both events with `auditTrail: true`.
-- [ ] Parity test (existing api-core Task 3 pattern) passes: registry keys ↔ events.md agreement.
-- [ ] `tsc --noEmit` passes.
+- [x] Append to `contracts/events.md` Hitl domain: `Hitl.Approved` (auditTrail: true), `Hitl.SentBack` (auditTrail: true).
+- [x] Append to `services/eventing/src/audit-trail-registry.ts`: both events with `auditTrail: true`.
+- [x] Parity test (existing api-core Task 3 pattern) passes: registry keys ↔ events.md agreement.
+- [x] `tsc --noEmit` passes.
 
 **Depends on:** nothing.
 **D-rung:** D1.
@@ -117,11 +117,11 @@
 
 ## Task 8 — RESOLVING-Cleanup Sweeper [KIRO]
 
-- [ ] Create `services/api/src/resolvers/hitl-sweeper.ts`: scheduled Lambda (EventBridge rate 5 min) that scans GSI9 for items with `status=RESOLVING` and `resolvingAt` older than 5 minutes (NOT `tokenStoredAt` — that would race live approvals the instant they enter RESOLVING).
-- [ ] Reset uses a conditional UpdateItem: `ConditionExpression: #status = :resolving` (prevents resurrecting an item that completed between SendTaskSuccess and resolveHitlItem). SET status=PENDING, remove resolvingAt, re-set GSI9PK/GSI9SK so the item reappears in the queue.
-- [ ] Wire in ApiStack: NodejsFunction + EventBridge Schedule (rate 5 min) + IAM (DDB Query GSI9 + UpdateItem on CumplifyCore, tenant-scoped).
-- [ ] Unit tests: item with resolvingAt > 5min ago AND status=RESOLVING → reset; item with resolvingAt < 5min → untouched; item with status=APPROVED (race) → ConditionalCheckFailedException caught, skipped.
-- [ ] `cdk synth` passes, CDK Nag zero non-compliant.
+- [x] Create `services/api/src/resolvers/hitl-sweeper.ts`: scheduled Lambda (EventBridge rate 5 min) that scans GSI9 for items with `status=RESOLVING` and `resolvingAt` older than 5 minutes (NOT `tokenStoredAt` — that would race live approvals the instant they enter RESOLVING).
+- [x] Reset uses a conditional UpdateItem: `ConditionExpression: #status = :resolving` (prevents resurrecting an item that completed between SendTaskSuccess and resolveHitlItem). SET status=PENDING, remove resolvingAt, re-set GSI9PK/GSI9SK so the item reappears in the queue.
+- [x] Wire in ApiStack: NodejsFunction + EventBridge Schedule (rate 5 min) + IAM (DDB Query GSI9 + UpdateItem on CumplifyCore, tenant-scoped).
+- [x] Unit tests: item with resolvingAt > 5min ago AND status=RESOLVING → reset; item with resolvingAt < 5min → untouched; item with status=APPROVED (race) → ConditionalCheckFailedException caught, skipped.
+- [x] `cdk synth` passes, CDK Nag zero non-compliant.
 
 **Depends on:** nothing.
 **D-rung:** D1.
@@ -131,11 +131,11 @@
 
 ## Task 9 — i18n Scaffold + Pseudo-Locale CI Check [KIRO]
 
-- [ ] Initialize `next-intl` in `frontend/`: App Router integration, `messages/en.json`, `messages/es.json`, `messages/pt.json` (seed with Command Center strings: readiness score labels, HITL card anatomy, approval buttons, trust-ritual footer).
-- [ ] Implement locale resolution: read from PROFILE# item (server component fetch) → fallback to tenant `document-locale` → fallback to `en`.
-- [ ] Create pseudo-locale CI script (`scripts/check-hardcoded-strings.ts` or eslint rule): fails the build if any JSX string literal outside `useTranslations()` / `getTranslations()` is detected in `frontend/src/`.
-- [ ] Wire into `package.json` scripts (runs in `npm run lint` or a dedicated `npm run i18n:check`).
-- [ ] Test: deliberately hardcoded string → CI check fails (evidence captured).
+- [x] Initialize `next-intl` in `frontend/`: App Router integration, `messages/en.json`, `messages/es.json`, `messages/pt.json` (seed with Command Center strings: readiness score labels, HITL card anatomy, approval buttons, trust-ritual footer).
+- [x] Implement locale resolution: read from PROFILE# item (server component fetch) → fallback to tenant `document-locale` → fallback to `en`.
+- [x] Create pseudo-locale CI script (`scripts/check-hardcoded-strings.ts` or eslint rule): fails the build if any JSX string literal outside `useTranslations()` / `getTranslations()` is detected in `frontend/src/`.
+- [x] Wire into `package.json` scripts (runs in `npm run lint` or a dedicated `npm run i18n:check`).
+- [x] Test: deliberately hardcoded string → CI check fails (evidence captured).
 
 **Depends on:** Task 1 (frontend/ exists).
 **D-rung:** D1.
@@ -145,10 +145,10 @@
 
 ## Task 10 — Design-Sync Tooling [KIRO]
 
-- [ ] Create `scripts/framer-sync.mjs`: connects to Framer project via `framer-api` SDK, extracts design tokens (colors, spacing, typography from the component library), writes to `frontend/src/tokens/design-tokens.ts` (or JSON consumed by Tailwind/CSS variables).
-- [ ] Extracts page metadata (available routes) and writes `frontend/src/tokens/framer-pages.json` for build-time route validation.
-- [ ] `node --env-file=.env scripts/framer-sync.mjs` runs successfully (evidence: output + generated files).
-- [ ] `.env` keys required: `FRAMER_API_KEY`, `FRAMER_PROJECT_URL` (git-ignored, per steering 21).
+- [x] Create `scripts/framer-sync.mjs`: connects to Framer project via `framer-api` SDK, extracts design tokens (colors, spacing, typography from the component library), writes to `frontend/src/tokens/design-tokens.ts` (or JSON consumed by Tailwind/CSS variables).
+- [x] Extracts page metadata (available routes) and writes `frontend/src/tokens/framer-pages.json` for build-time route validation.
+- [x] `node --env-file=.env scripts/framer-sync.mjs` runs successfully (evidence: output + generated files).
+- [x] `.env` keys required: `FRAMER_API_KEY`, `FRAMER_PROJECT_URL` (git-ignored, per steering 21).
 
 **Depends on:** Task 1 (frontend/ exists).
 **D-rung:** D1.
@@ -191,11 +191,11 @@
 ## Task 13 — HITL-10 SFN Amendment + Carry #3 [KIRO] [REQUIRES-HUMAN]
 
 - [ ] Amend the WaitForApproval task Parameters: add `"sfnExecutionArn.$": "$$.Execution.Id"` to the payload passed to store-token.
-- [ ] Amend `services/agents/shared/store-token.ts`: add `sfnExecutionArn` to the UpdateItem SET expression (from `input.sfnExecutionArn`).
+- [x] Amend `services/agents/shared/store-token.ts`: add `sfnExecutionArn` to the UpdateItem SET expression (from `input.sfnExecutionArn`).
 - [ ] Add Catch on WaitForApproval: `{"ErrorEquals":["SENT_BACK"],"Next":"HandleSendBack"}`.
 - [ ] Add `HandleSendBack` state: Pass state logging the send-back (downstream re-draft logic owned by `agents-existing-8`).
 - [ ] `cdk synth` passes, CDK Nag zero non-compliant.
-- [ ] Unit test: store-token writes sfnExecutionArn field.
+- [x] Unit test: store-token writes sfnExecutionArn field.
 - [ ] **[REQUIRES-HUMAN]** — AiStack state machine amendment. Owner reviews diff.
 
 **Depends on:** nothing.

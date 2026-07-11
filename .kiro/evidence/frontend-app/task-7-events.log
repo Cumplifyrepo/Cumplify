@@ -1,0 +1,12 @@
+# Task 7 — Event Registration (Hitl.Approved, Hitl.SentBack)
+# Evidence: commit 366eb2b
+# Date: 2026-07-10
+# Verification: parity test pass, tsc clean
+#
+# Artifacts:
+#   contracts/events.md — Hitl domain appended (auditTrail: true for both)
+#   services/eventing/src/audit-trail-registry.ts — 'Hitl.Approved': true, 'Hitl.SentBack': true
+#
+# Test result at commit: 487/487 pass (parity test green); at HEAD: 522/522 pass
+# tsc --noEmit: 0 errors
+# Publisher enforcement: unregistered detailType throws (existing test confirms)

@@ -1,0 +1,22 @@
+# Task 13 — HITL-10 SFN Amendment + Carry #3 (PARTIAL)
+# Evidence: commit b659c23 (store-token.ts amendment)
+# Date: 2026-07-10
+# Verification: 2 new unit tests pass (sfnArn with value + default 'unknown'), tsc clean
+#
+# COMPLETED:
+#   services/agents/shared/store-token.ts:
+#     - sfnExecutionArn?: string added to StoreTokenInput.input
+#     - UpdateExpression: 'sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)'
+#     - Value defaults to 'unknown' when not provided
+#   services/agents/shared/__tests__/store-token.test.ts:
+#     - 2 new tests: writes provided ARN, defaults to 'unknown'
+#
+# OPEN (REQUIRES-HUMAN, ASL amendment):
+#   - WaitForApproval Parameters: add 'sfnExecutionArn.$': '$$.Execution.Id'
+#   - WaitForApproval Catch: {"ErrorEquals":["SENT_BACK"],"Next":"HandleSendBack"}
+#   - HandleSendBack Pass state
+#   → These require the SFN ASL definition (not yet found as code in this repo;
+#     may be CDK-defined or deployed separately). Deferred to Step 3 of this session.
+#
+# Test result at HEAD: 522/522 pass
+# tsc --noEmit: 0 errors

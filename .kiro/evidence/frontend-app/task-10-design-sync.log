@@ -1,0 +1,16 @@
+# Task 10 — Design-Sync Tooling (framer-api)
+# Evidence: commit 0cc0927
+# Date: 2026-07-10
+# Verification: script structurally correct, connectivity proven via verify-framer.mjs
+#
+# Artifacts:
+#   scripts/framer-sync.mjs — connects to Framer, extracts pages + components,
+#     writes framer-pages.json + framer-components.json to frontend/src/tokens/
+#   frontend/src/tokens/.gitkeep — generated files directory
+#
+# Connectivity proof: verify-framer.mjs executed successfully earlier in session
+# (returned project info: {id, name:"Spora (copy)", apiVersion1Id}).
+# framer-sync.mjs uses the same connect/getNodesWithType/disconnect pattern.
+# Full enumeration executed earlier: 14 pages, 22 components confirmed.
+#
+# .env keys required: FRAMER_API_KEY, FRAMER_PROJECT_URL (git-ignored per steering 21)

@@ -1,0 +1,18 @@
+# Task 8 — RESOLVING-Cleanup Sweeper
+# Evidence: commit b659c23 (code) + aefd02a (architect fix: GSI9 scan, not base table)
+# Date: 2026-07-10
+# Verification: 6 unit tests pass, tsc clean
+#
+# Artifacts:
+#   services/api/src/resolvers/hitl-sweeper.ts — Scan GSI9 + conditional reset
+#   services/api/__tests__/resolvers/hitl-sweeper.test.ts — 6 tests
+#     (happy path reset, skip-resolved race, empty scan, pagination, error propagation, FilterExpression)
+#
+# ARCHITECT FIX (aefd02a): original code scanned the base table (no IndexName).
+# Fixed to scan GSI9 (sparse index) — matches spec-5 precedent: never scan base table.
+#
+# AM-1: filters on resolvingAt < cutoff (not tokenStoredAt)
+# AM-2: ConditionExpression #status = :resolving (prevents resurrection)
+#
+# Test result at HEAD: 522/522 pass
+# tsc --noEmit: 0 errors

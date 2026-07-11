@@ -1,0 +1,11 @@
+# Task 3 — Permission Matrix Module
+# Evidence: commit 366eb2b
+# Date: 2026-07-10
+# Verification: 14 unit tests pass, tsc clean
+#
+# Artifacts:
+#   services/api/src/permissions/role-matrix.ts — 12 roles × module write sets, canApprove()
+#   services/api/__tests__/permissions/role-matrix.test.ts — 14 tests
+#
+# Test result at commit: 487/487 pass; at HEAD: 522/522 pass
+# tsc --noEmit: 0 errors

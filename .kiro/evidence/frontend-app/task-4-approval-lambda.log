@@ -1,0 +1,14 @@
+# Task 4 — HITL Approval Lambda
+# Evidence: commit b659c23
+# Date: 2026-07-10
+# Verification: 10 unit tests pass, tsc clean
+#
+# Artifacts:
+#   services/api/src/resolvers/hitl-approval.ts — full 9-step implementation
+#   services/api/__tests__/resolvers/hitl-approval.test.ts — 10 tests
+#     (approve, send-back, 403, 404, 409, 410×2, justification, editedPayload)
+#
+# Test result at commit: 522/522 pass; at HEAD: 522/522 pass
+# tsc --noEmit: 0 errors
+# Error codes verified: 403 (role), 404 (not found), 409 (race), 410 (SFN expired)
+# BC-8 enforced: taskToken read server-side from DDB, never in response

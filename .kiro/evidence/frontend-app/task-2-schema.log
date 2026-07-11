@@ -1,0 +1,14 @@
+# Task 2 — Schema SDL + Resolver Scaffolds
+# Evidence: commit 72145b4 (code) + aefd02a (architect fix)
+# Date: 2026-07-10
+# Verification: tsc clean, cdk synth green, 504→522 tests pass (at HEAD)
+#
+# Artifacts:
+#   services/api/schema/schema.graphql — BC-7 SDL appended (extend Query/Mutation/Subscription)
+#   infra/lib/api-stack.ts — 3 Lambda DS (HitlApproval, HitlQuery, Profile) + 5 resolvers + C-6 VTL
+#   services/api/src/resolvers/hitl-approval.ts — stub (replaced by Task 4)
+#   infra/lib/api-stack.unit.test.ts — template assertion updated
+#
+# Test result at commit: 504/504 pass (pre-Task 4/8); at HEAD (post-fixes): 522/522 pass
+# tsc --noEmit: 0 errors (excluding pre-existing model-evals)
+# cdk synth --all: exit 0
