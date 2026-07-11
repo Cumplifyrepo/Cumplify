@@ -533,6 +533,11 @@ type Query {
   askISO9001(question: String!, queryVector: AWSJSON): String! @aws_lambda
   askISO14001(question: String!, queryVector: AWSJSON): String! @aws_lambda
   askISO45001(question: String!, queryVector: AWSJSON): String! @aws_lambda
+
+  # Spec 9 (frontend-app) — AppSync does not support extend-type blocks;
+  # new fields live in the base type (live failure 2x: field 404 on resolver create)
+  listPendingHitlItems(pagination: PaginationInput): HitlItemConnection! @aws_lambda
+  getProfile: UserProfile @aws_lambda
 }
 
 # ─── Mutations ────────────────────────────────────────────────────────────────
@@ -584,6 +589,10 @@ type Mutation {
   publishCAPAEvent(input: CAPAEventInput!): CorrectiveAction @aws_iam
   publishAuditEvent(input: AuditEventTriggerInput!): AuditFinding @aws_iam
   publishRiskEvent(input: RiskEventInput!): Risk @aws_iam
+
+  # Spec 9 (frontend-app)
+  approveHitlItem(input: ApproveHitlItemInput!): HitlApprovalResult! @aws_lambda
+  updateProfile(input: UpdateProfileInput!): UserProfile! @aws_lambda
 }
 
 # ─── Subscriptions ────────────────────────────────────────────────────────────
@@ -608,6 +617,11 @@ type Subscription {
 
   onRiskEscalated(tenantId: ID!): Risk
     @aws_subscribe(mutations: ["publishRiskEvent"])
+    @aws_lambda
+
+  # Spec 9 (frontend-app)
+  onHitlItemResolved(tenantId: ID!): HitlApprovalResult
+    @aws_subscribe(mutations: ["approveHitlItem"])
     @aws_lambda
 }
 
@@ -680,24 +694,5 @@ input UpdateProfileInput {
   locale: String!
 }
 
-# ─── Extended Query (Spec 9) ──────────────────────────────────────────────────
 
-extend type Query {
-  listPendingHitlItems(pagination: PaginationInput): HitlItemConnection! @aws_lambda
-  getProfile: UserProfile @aws_lambda
-}
 
-# ─── Extended Mutation (Spec 9) ───────────────────────────────────────────────
-
-extend type Mutation {
-  approveHitlItem(input: ApproveHitlItemInput!): HitlApprovalResult! @aws_lambda
-  updateProfile(input: UpdateProfileInput!): UserProfile! @aws_lambda
-}
-
-# ─── Extended Subscription (Spec 9) ───────────────────────────────────────────
-
-extend type Subscription {
-  onHitlItemResolved(tenantId: ID!): HitlApprovalResult
-    @aws_subscribe(mutations: ["approveHitlItem"])
-    @aws_lambda
-}
