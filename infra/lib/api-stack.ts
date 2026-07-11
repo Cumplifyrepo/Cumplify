@@ -21,6 +21,8 @@ import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as cr from 'aws-cdk-lib/custom-resources';
 import * as kms from 'aws-cdk-lib/aws-kms';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
@@ -600,6 +602,53 @@ export class ApiStack extends cdk.Stack {
         'StringLike': { 'aws:RequestTag/tenantId': '*#*' },
       },
     }));
+
+    // SFN task-callback permissions for the approval Lambda (design §2.3).
+    // SendTaskSuccess/SendTaskFailure authorize via the task token itself;
+    // resource-level scoping exists only for activities (not used here), so
+    // Resource must be '*' — verified against the service authorization
+    // reference at Task 14 review.
+    hitlApprovalFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['states:SendTaskSuccess', 'states:SendTaskFailure'],
+      resources: ['*'],
+    }));
+    NagSuppressions.addResourceSuppressions(hitlApprovalFn.role!, [{
+      id: 'AwsSolutions-IAM5',
+      reason: 'states:SendTaskSuccess/SendTaskFailure support resource-level permissions only for activities; callback-pattern authorization is scoped by the task token, which the Lambda obtains exclusively from the tenant-scoped HITL item (BC-8).',
+      appliesTo: ['Resource::*'],
+    }], true);
+
+    // HITL RESOLVING-cleanup sweeper (Task 8) — system-level scheduled recovery.
+    // Cross-tenant BY DESIGN (resets stale RESOLVING locks for every tenant), so
+    // it uses a direct, narrowly-scoped policy instead of the tenant-data role:
+    // Scan restricted to the sparse GSI9 index + UpdateItem on CumplifyCore only.
+    const hitlSweeperFn = new NodejsFunction(this, 'HitlSweeperFn', {
+      entry: 'services/api/src/resolvers/hitl-sweeper.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 256,
+      timeout: cdk.Duration.seconds(60),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        TABLE_NAME: props.tableName,
+        POWERTOOLS_SERVICE_NAME: 'hitl-sweeper',
+      },
+    });
+    hitlSweeperFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['dynamodb:Scan'],
+      resources: [`${props.tableArn}/index/GSI9`],
+    }));
+    hitlSweeperFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['dynamodb:UpdateItem'],
+      resources: [props.tableArn],
+    }));
+    props.dynamodbKey.grantDecrypt(hitlSweeperFn);
+    new events.Rule(this, 'HitlSweeperSchedule', {
+      schedule: events.Schedule.rate(cdk.Duration.minutes(5)),
+      targets: [new targets.LambdaFunction(hitlSweeperFn)],
+      description: 'HITL sweeper: reset stale RESOLVING items to PENDING (Task 8)',
+    });
 
     // Data sources
     const hitlApprovalDS = api.addLambdaDataSource('HitlApprovalDS', hitlApprovalFn);

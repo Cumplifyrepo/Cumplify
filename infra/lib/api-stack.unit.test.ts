@@ -122,4 +122,17 @@ describe('ApiStack template assertions (source-level)', () => {
     expect(API_STACK_CODE).toContain('$ctx.identity.resolverContext.tenantId != $ctx.args.tenantId');
     expect(API_STACK_CODE).toContain('$util.unauthorized()');
   });
+
+  it('approval Lambda holds SFN callback permissions (SendTaskSuccess + SendTaskFailure) with reasoned IAM5 suppression', () => {
+    expect(API_STACK_CODE).toContain("'states:SendTaskSuccess', 'states:SendTaskFailure'");
+    expect(API_STACK_CODE).toContain('scoped by the task token');
+  });
+
+  it('HITL sweeper is wired: NodejsFunction + 5-minute schedule + index-scoped Scan (never base-table Scan IAM)', () => {
+    expect(API_STACK_CODE).toContain("entry: 'services/api/src/resolvers/hitl-sweeper.ts'");
+    expect(API_STACK_CODE).toContain('events.Schedule.rate(cdk.Duration.minutes(5))');
+    expect(API_STACK_CODE).toContain('/index/GSI9`');
+    const scanStatements = API_STACK_CODE.match(/dynamodb:Scan/g) ?? [];
+    expect(scanStatements.length).toBe(1);
+  });
 });

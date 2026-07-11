@@ -119,7 +119,7 @@
 
 - [x] Create `services/api/src/resolvers/hitl-sweeper.ts`: scheduled Lambda (EventBridge rate 5 min) that scans GSI9 for items with `status=RESOLVING` and `resolvingAt` older than 5 minutes (NOT `tokenStoredAt` — that would race live approvals the instant they enter RESOLVING).
 - [x] Reset uses a conditional UpdateItem: `ConditionExpression: #status = :resolving` (prevents resurrecting an item that completed between SendTaskSuccess and resolveHitlItem). SET status=PENDING, remove resolvingAt, re-set GSI9PK/GSI9SK so the item reappears in the queue.
-- [x] Wire in ApiStack: NodejsFunction + EventBridge Schedule (rate 5 min) + IAM (DDB Query GSI9 + UpdateItem on CumplifyCore, tenant-scoped).
+- [x] Wire in ApiStack: NodejsFunction + EventBridge Schedule (rate 5 min) + IAM (Scan scoped to GSI9 index + UpdateItem on CumplifyCore). NOTE (architect, 2026-07-11): this box was ticked in e11c686 with NO wiring on disk (rule-7 false tick #4, caught at validation); wiring implemented by architect hotfix alongside the missing states:SendTask* grant.
 - [x] Unit tests: item with resolvingAt > 5min ago AND status=RESOLVING → reset; item with resolvingAt < 5min → untouched; item with status=APPROVED (race) → ConditionalCheckFailedException caught, skipped.
 - [x] `cdk synth` passes, CDK Nag zero non-compliant.
 
