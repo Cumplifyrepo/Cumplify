@@ -154,11 +154,11 @@ describe('hitl-sweeper handler', () => {
     await handler();
 
     const scanCmd = mockDdbSend.mock.calls[0][0];
+    expect(scanCmd.input.IndexName).toBe('GSI9');
     expect(scanCmd.input.FilterExpression).toBe(
-      '#status = :resolving AND resolvingAt < :cutoff AND attribute_exists(#gsi9pk)',
+      '#status = :resolving AND resolvingAt < :cutoff',
     );
     expect(scanCmd.input.ExpressionAttributeNames['#status']).toBe('status');
-    expect(scanCmd.input.ExpressionAttributeNames['#gsi9pk']).toBe('GSI9PK');
     expect(scanCmd.input.ExpressionAttributeValues[':resolving']).toBe('RESOLVING');
   });
 });

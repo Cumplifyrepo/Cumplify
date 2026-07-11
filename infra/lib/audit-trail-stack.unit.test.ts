@@ -13,6 +13,7 @@ import type { EnvConfig } from './env-config.js';
 const testEnvConfig: EnvConfig = {
   envName: 'dev',
   account: '697114252993',
+  alertEmail: 'test-alerts@example.com',
   region: 'us-east-1',
   availabilityZones: ['us-east-1b', 'us-east-1c'],
   globalTableReplica: false,

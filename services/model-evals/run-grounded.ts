@@ -161,7 +161,7 @@ async function main(): Promise<void> {
     model: MODEL, seat: SEAT, tasks: tasks.length,
     meanScore: AUTO_SCORE ? Number(mean.toFixed(4)) : 'HUMAN-GRADED',
     bar: seatConfig.qualityBar,
-    pass: AUTO_SCORE ? mean >= seatConfig.qualityBar : 'PENDING-HUMAN-GRADING',
+    pass: AUTO_SCORE && seatConfig.qualityBar != null ? mean >= seatConfig.qualityBar : 'PENDING-HUMAN-GRADING',
     meanRetrievalRecall: Number(meanRecall.toFixed(4)),
     retrievalColdStarts,
     totalCostUsd: Number(totalCost.toFixed(4)),

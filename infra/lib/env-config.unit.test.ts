@@ -10,9 +10,11 @@ import {
 // are irrelevant to the guardrail).
 function cfg(account: string): EnvConfig {
   return {
-    envName: 'test',
+    envName: 'dev',
     account,
     region: 'us-east-1',
+    auditArchiveRetentionDays: 1,
+    alertEmail: 'test-alerts@example.com',
     availabilityZones: ['us-east-1b', 'us-east-1c'],
     globalTableReplica: false,
     drRegionStack: false,

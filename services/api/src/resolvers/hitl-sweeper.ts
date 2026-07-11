@@ -23,9 +23,6 @@ const logger = new Logger({ serviceName: 'hitl-sweeper' });
 const ddb = new DynamoDBClient({});
 const TABLE_NAME = process.env.TABLE_NAME!;
 
-/** The GSI attribute name used for pending HITL items (sparse projection). */
-const HITL_GSI_PK_ATTR = 'GSI9' + 'PK'; // Split to avoid FF-5 regex false-positive
-
 /** Stale threshold: items in RESOLVING state for longer than this are reset. */
 const STALE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -40,11 +37,12 @@ export interface SweepResult {
  * Scans for HITL items in RESOLVING state with stale resolvingAt and resets
  * them to PENDING so they re-appear in the approval queue.
  *
- * Why Scan instead of GSI9 Query? The GSI partition key varies per tenant
- * (TENANT#<id>#HITL_PENDING) so we can't query a single partition for all
- * tenants. The Scan uses a FilterExpression to find RESOLVING items with
- * the GSI PK still present (meaning resolveHitlItem hasn't cleaned them up
- * yet) and resolvingAt older than cutoff.
+ * Why Scan the GSI9 INDEX (never the base table)? The GSI partition key
+ * varies per tenant (TENANT#<id>#HITL_PENDING) so no single Query covers all
+ * tenants — but GSI9 is SPARSE (only items with GSI9PK, i.e. unresolved HITL
+ * items, projection ALL), so an index Scan is bounded to the pending-approval
+ * set and needs no table-wide read. A base-table Scan would violate the
+ * no-Scan precedent (spec-5) and require every-partition read IAM.
  */
 export async function handler(): Promise<SweepResult> {
   const cutoff = new Date(Date.now() - STALE_THRESHOLD_MS).toISOString();
@@ -58,8 +56,9 @@ export async function handler(): Promise<SweepResult> {
   do {
     const result = await ddb.send(new ScanCommand({
       TableName: TABLE_NAME,
-      FilterExpression: '#status = :resolving AND resolvingAt < :cutoff AND attribute_exists(#gsi9pk)',
-      ExpressionAttributeNames: { '#status': 'status', '#gsi9pk': HITL_GSI_PK_ATTR },
+      IndexName: 'GSI9', // sparse index — membership already implies GSI9PK exists
+      FilterExpression: '#status = :resolving AND resolvingAt < :cutoff',
+      ExpressionAttributeNames: { '#status': 'status' },
       ExpressionAttributeValues: marshall({
         ':resolving': 'RESOLVING',
         ':cutoff': cutoff,
