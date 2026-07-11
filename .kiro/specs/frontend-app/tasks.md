@@ -228,15 +228,15 @@
 
 ## Task 15 — Deploy to Dev [ARCHITECT]
 
-- [ ] `cdk deploy --all` (dev account) — deploys ApiStack amendments (new resolvers + data sources), AiStack SFN amendment, FrontendStack (S3+CloudFront).
-- [ ] Deploy frontend: `cd frontend && npm ci && npm run build` → `aws s3 sync out/ s3://<bucket>/ --delete` → `aws cloudfront create-invalidation --distribution-id <id> --paths "/*"` via the cross-account step role.
-- [ ] Capture `cdk-outputs.json` SHA.
-- [ ] Readback (invoke, not just inspect):
-  - [ ] `listPendingHitlItems` query returns `HitlItemConnection` (may be empty).
-  - [ ] `getProfile` returns default locale for a new user.
-  - [ ] `updateProfile(locale:'es')` succeeds; subsequent `getProfile` returns `es`.
-  - [ ] CloudFront distribution URL responds with SPA shell (index.html served on any path).
-  - [ ] Subscription `onHitlItemResolved` connects (WebSocket established).
+- [x] Deployed (direct-deploy fallback lane; push paused on owner PAT): ApiStack UPDATE_COMPLETE after 3 live defects fixed (schema/resolver CFN race; AppSync extend-type unsupported; tenant-data trust 2048-byte quota → owner-re-signed PrincipalArn pattern), AiStack SFN amendment live, FrontendStack CREATE_COMPLETE.
+- [x] Frontend deployed: build → s3 sync → invalidation (architect creds this once; cross-account step role still to build). LIVE: d1tw2kanxo5wnt.cloudfront.net.
+- [x] Outputs blob sha256 e83f79b4beaceb90 @ 2026-07-11T13:42:40Z.
+- [x] Readback (invoked live, Pool-B SRP token):
+  - [x] `listPendingHitlItems` — returned a REAL pending CAPAGuru item, tenant-scoped; taskToken field rejected at schema level (FieldUndefined).
+  - [x] `getProfile` — fail-safe default en.
+  - [x] `updateProfile(es)` → `getProfile` = es, live round-trip.
+  - [x] CloudFront 200 on / and /dashboard (SPA fallback verified).
+  - [ ] Subscription `onHitlItemResolved` — resolver LIVE on the API (config verified); WSS connect deliberately left open, fires at Task 16 ACC-3 E2E.
 
 **Depends on:** Task 14 (sign-off obtained).
 **D-rung:** D3 (deployed + read back).
