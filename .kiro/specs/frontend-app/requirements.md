@@ -197,7 +197,7 @@ Every agent-touched artifact renders the same card anatomy, so the product teach
 | A11Y-2 | **Every HITL action button shall** have an accessible label describing the action and the artifact it applies to. | WCAG 2.1 |
 | A11Y-3 | **The chat interface (Ask Cumplify) shall** support keyboard navigation and screen-reader announcements for new messages. | WCAG 2.1 |
 | PERF-1 | **Initial page load (Command Center) shall** achieve Largest Contentful Paint ≤ 2.5s on a simulated 4G connection. | Web Vitals target |
-| PERF-2 | **The system shall** use Next.js App Router with server components for initial data fetching (readiness score, top risks) and client components for interactive elements (subscriptions, chat, HITL actions). | Next.js architecture |
+| PERF-2 | **The system shall** use Next.js static export (`output: 'export'`) as a client-side SPA. All data fetching is client-side against AppSync after sign-in. Code-splitting and a light shell with skeleton loading states enable LCP ≤ 2.5s. No server components — the app is fully static, served from S3+CloudFront. | Next.js architecture (hosting pivot fc6849a) |
 
 ---
 

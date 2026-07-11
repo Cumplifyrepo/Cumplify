@@ -174,17 +174,17 @@
 
 ---
 
-## Task 12 — Amplify Hosting CDK Infrastructure [KIRO]
+## Task 12 — FrontendStack CDK Infrastructure (S3+CloudFront) [KIRO]
 
-- [ ] Create new `infra/lib/amplify-stack.ts` (AmplifyStack — own lifecycle, keeps ApiStack lean): `CfnApp` (platform=WEB_COMPUTE, no repository, enableBranchAutoBuild=false) + `CfnBranch` per env.
-- [ ] CfnOutputs: Amplify App ID, branch URL, deploy bucket name.
-- [ ] Wire AmplifyStack into `infra/lib/cumplify-stage.ts` with addDependency on ApiStack (needs API URL output).
+- [ ] Create new `infra/lib/frontend-stack.ts` (FrontendStack — own lifecycle, keeps ApiStack lean): private S3 bucket (SSE-S3, block all public access) + CloudFront Distribution (OAC origin, custom error responses 403/404 → /index.html for SPA routing, HTTPS redirect).
+- [ ] CfnOutputs: bucket name, distribution ID, distribution domain name.
+- [ ] Wire FrontendStack into `infra/lib/cumplify-stage.ts` with addDependency on ApiStack (needs API URL output for build-time env vars).
 - [ ] `cdk synth` passes, CDK Nag zero non-compliant.
-- [ ] Template-assertion test: app + branch exist with correct platform.
+- [ ] Template-assertion test: S3 bucket (BlockPublicAccess=BLOCK_ALL) + CloudFront distribution (OAC, error responses) exist.
 
-**Depends on:** Task 1 (spike proves the mechanism works).
+**Depends on:** Task 1 CLOSED (hosting decision resolved).
 **D-rung:** D1.
-**Evidence:** `.kiro/evidence/frontend-app/task-12-amplify-infra.log`
+**Evidence:** `.kiro/evidence/frontend-app/task-12-frontend-infra.log`
 
 ---
 
@@ -214,8 +214,8 @@
 2. **HITL-10 SFN amendment** (Task 13): carry #3 (`sfnExecutionArn` in payload) + Catch/HandleSendBack branch.
 3. **Approval Lambda IAM** (Task 4): `states:SendTaskSuccess`, `states:SendTaskFailure` on HITL state machine ARN(s); `dynamodb:GetItem`+`UpdateItem` (tenant-scoped); `events:PutEvents`.
 4. **RESOLVING-cleanup sweeper IAM** (Task 8): EventBridge schedule + DDB Query/UpdateItem on CumplifyCore (tenant-scoped).
-5. **Cross-account credentialed-step role** (shared with pipeline `test:int` carry): a single role in the dev workload account assumable by the pipeline mgmt-account role, granting `amplify:CreateDeployment`+`amplify:StartDeployment` + the integration-test permissions. Designed ONCE with both consumers.
-6. **Amplify Hosting infra** (Task 12): AmplifyStack with CfnApp (WEB_COMPUTE) + CfnBranch + pipeline deploy step.
+5. **Cross-account credentialed-step role** (shared with pipeline `test:int` carry): a single role in the dev workload account assumable by the pipeline mgmt-account role, granting `s3:PutObject`+`s3:DeleteObject`+`s3:ListBucket` on the frontend bucket + `cloudfront:CreateInvalidation` on the distribution + integration-test permissions. Designed ONCE with both consumers.
+6. **FrontendStack infra** (Task 12): S3 bucket (private, OAC) + CloudFront distribution + pipeline deploy step (s3 sync + invalidation).
 
 - [ ] **[ARCHITECT]** All diffs assembled and presented as a single review package.
 - [ ] **[ARCHITECT]** Owner sign-off obtained (or requested changes applied).
@@ -228,14 +228,14 @@
 
 ## Task 15 — Deploy to Dev [ARCHITECT]
 
-- [ ] `cdk deploy --all` (dev account) — deploys ApiStack amendments (new resolvers + data sources), AiStack SFN amendment, Amplify app/branch.
-- [ ] Deploy frontend: `npm run build` → package per Amplify deploy spec → `amplify start-deployment` via the cross-account step role.
+- [ ] `cdk deploy --all` (dev account) — deploys ApiStack amendments (new resolvers + data sources), AiStack SFN amendment, FrontendStack (S3+CloudFront).
+- [ ] Deploy frontend: `cd frontend && npm ci && npm run build` → `aws s3 sync out/ s3://<bucket>/ --delete` → `aws cloudfront create-invalidation --distribution-id <id> --paths "/*"` via the cross-account step role.
 - [ ] Capture `cdk-outputs.json` SHA.
 - [ ] Readback (invoke, not just inspect):
   - [ ] `listPendingHitlItems` query returns `HitlItemConnection` (may be empty).
   - [ ] `getProfile` returns default locale for a new user.
   - [ ] `updateProfile(locale:'es')` succeeds; subsequent `getProfile` returns `es`.
-  - [ ] Amplify app URL responds with SSR content (timestamp changes on reload).
+  - [ ] CloudFront distribution URL responds with SPA shell (index.html served on any path).
   - [ ] Subscription `onHitlItemResolved` connects (WebSocket established).
 
 **Depends on:** Task 14 (sign-off obtained).

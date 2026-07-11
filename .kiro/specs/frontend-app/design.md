@@ -12,12 +12,12 @@
 ```mermaid
 flowchart TB
   subgraph EDGE["Edge"]
-    CF[CloudFront – Amplify Hosting managed]
+    CF[CloudFront Distribution + OAC]
+    S3F[S3 Bucket – private, static export]
   end
 
-  subgraph AMPLIFY["Amplify Hosting (Next.js App Router, SSR, platform=WEB_COMPUTE)"]
-    SC[Server Components – initial data fetch]
-    CC[Client Components – subscriptions, chat, HITL actions]
+  subgraph FRONTEND["Next.js Static Export (client-side SPA)"]
+    CC[Client Components – AppSync queries, subscriptions, chat, HITL actions]
   end
 
   subgraph AUTH["Identity (steering 16)"]
@@ -45,8 +45,9 @@ flowchart TB
     EB[EventBridge cumplify-events]
   end
 
-  CF --> AMPLIFY
-  AMPLIFY -- ID token SRP --> APPSYNC
+  CF --> S3F
+  CF --> FRONTEND
+  FRONTEND -- ID token SRP --> APPSYNC
   APPSYNC --> AUTHZ --> RESOLVERS
   APPSYNC --> HITL_LAMBDA
   APPSYNC --> PROFILE_RES
@@ -56,17 +57,18 @@ flowchart TB
   HITL_LAMBDA -- resolveHitlItem bookkeeping --> DDB
   HITL_LAMBDA -- publishAuditEvent --> EB
   APPSYNC -. subscriptions .-> CC
-  COGB & COGC -- SRP auth --> AMPLIFY
+  COGB & COGC -- SRP auth --> FRONTEND
 ```
 
 ### Request paths
 
 | Path | Flow | Steering |
 |------|------|----------|
-| Initial load (SSR) | CloudFront → Amplify SSR → AppSync (server-side, ID token) → resolvers → RDS/DDB | 03-auth-modes |
+| Initial load (static) | CloudFront → S3 (index.html) → browser renders SPA shell | — |
+| Data fetch (client-side) | Browser → AppSync (ID token via Amplify Auth SRP) → resolvers → RDS/DDB | 03-auth-modes |
 | Real-time updates | Client → AppSync WebSocket (ID token, tenantId verified C-6) → subscription events | 03-auth-modes |
 | HITL approval | Client → AppSync `approveHitlItem` → HITL Approval Lambda → SFN + DDB + EventBridge | 05-hitl, 01-tenancy |
-| Ask Cumplify | Client → AppSync query (`askISO*`, question text only) → guru resolver → ai-invoker (server-side embed when spec-35 EMB-1 lands) | 12-token-metering |
+| Ask Cumplify | Client → AppSync query (`askISO*`, question text only) → guru resolver → ai-invoker | 12-token-metering |
 | Profile save | Client → AppSync `updateProfile` → Profile Resolver → DDB `PROFILE#` item | 01-tenancy |
 | Pending HITL list | Client → AppSync `listPendingHitlItems` → query resolver → DDB GSI9 | 01-tenancy |
 
@@ -453,54 +455,98 @@ Button/Back Button, CTA Card, Toggle Button, Pricing Cards, Footer, FAQ, Menu Ic
 
 ---
 
-## 9. Hosting Architecture (OQ-1 Resolved)
+## 9. Hosting Architecture (OQ-1 Resolved → PIVOTED, owner decision fc6849a)
 
-**Decision: Amplify Hosting with manual deployments (no Git connection)**
+**Decision: Next.js static export (client-side SPA) served from private S3 + CloudFront (OAC), deployed from the CDK pipeline.**
 
-**Evidence (verified via readonly profile 2026-07-10):**
-- `amplify list-apps` = empty (no existing apps)
-- `platform` enum includes `WEB_COMPUTE` (SSR support confirmed)
-- `StartDeployment` API accepts `sourceUrl` + `sourceUrlType: BUCKET_PREFIX` — pipeline uploads Next.js build artifact to S3, calls `start-deployment`. Zero GitHub coupling.
-- `CreateApp` does NOT require `repository` parameter
-- CodeStar connections are NOT supported by Amplify Hosting — removed from design
+SSR dropped: the app is auth-gated, SSR/SEO value is low; all data fetching is client-side against AppSync. Task 1 spike proved Amplify manual deployments are static-only (WEB_COMPUTE bundles rejected) — the pivot eliminates Amplify entirely.
 
-**Per-environment strategy:**
+**Evidence:**
+- `task-1-hosting-spike.md`: Amplify WEB_COMPUTE manual deploy = static-only (live proof, 2 independent signals)
+- `oq1-hosting-decision.md`: owner chose option (c) — static SPA on S3+CloudFront
 
-| Env | Amplify App | Branch | Deploy trigger |
-|-----|------------|--------|----------------|
-| Dev | `cumplify-frontend-dev` | `develop` | Pipeline Dev post-deploy step: `npm run build` → S3 upload → `amplify start-deployment --source-url` |
-| Staging | `cumplify-frontend-staging` | `staging` | Same pattern, Staging post-deploy step |
-| Prod | `cumplify-frontend-prod` | `main` | Same pattern, Prod post-deploy step |
+**Architecture:**
 
-**CDK implementation (new AmplifyStack — own lifecycle, keeps ApiStack lean):**
-```typescript
-// infra/lib/amplify-stack.ts
-const amplifyApp = new amplify.CfnApp(this, 'FrontendApp', {
-  name: `cumplify-frontend-${envConfig.envName}`,
-  platform: 'WEB_COMPUTE',
-  // NO repository — manual deployments only
-  enableBranchAutoBuild: false,
-  environmentVariables: [
-    { name: 'NEXT_PUBLIC_APPSYNC_URL', value: apiUrl },
-    { name: 'NEXT_PUBLIC_REGION', value: 'us-east-1' },
-    // Pool B/C IDs passed at build time (public, not secrets)
-  ],
-});
-
-const branch = new amplify.CfnBranch(this, 'AppBranch', {
-  appId: amplifyApp.attrAppId,
-  branchName: envConfig.envName,
-  enableAutoBuild: false, // pipeline is the SOLE deploy trigger
-  framework: 'Next.js - SSR',
-});
+```
+CDK Pipeline (mgmt account)
+  → Dev/Staging/Prod post-deploy step (credentialed ShellStep):
+      1. cd frontend && npm ci && npm run build   (next build → output: 'export' → out/)
+      2. aws s3 sync out/ s3://<frontend-bucket>/  --delete
+      3. aws cloudfront create-invalidation --distribution-id <id> --paths "/*"
 ```
 
-Pipeline deploys the frontend in a post-deploy step (same pattern as eventual pipeline `test:int` — a credentialed ShellStep). The Amplify `start-deployment` call requires `amplify:StartDeployment` + `amplify:CreateDeployment` IAM permissions on the pipeline role.
+**Per-environment resources (FrontendStack — new, own lifecycle):**
 
-**Residual design notes (architect, baked into task plan):**
-1. **Deploy artifact format:** The `next build` output alone is NOT deployable to WEB_COMPUTE. The pipeline must package the artifact per the Amplify Hosting deployment specification (`deploy-manifest.json` + compute bundle layout). Task 1 (hosting spike) proves this end-to-end.
-2. **Cross-account step role:** The pipeline frontend-deploy post-step requires the same cross-account credentialed-step role as the `test:int` carry — designed ONCE with both consumers inside the REQUIRES-HUMAN bundle (Task 14).
-3. **RESOLVING-cleanup sweeper:** New scheduled Lambda in ApiStack (Task 8) — included in the stack inventory, §6 cost table, and the IAM bundle.
+| Resource | Purpose | Notes |
+|----------|---------|-------|
+| S3 Bucket (private, BucketEncryption SSE-S3) | Static asset store | No public access; OAC grants CloudFront read |
+| CloudFront Distribution | Edge delivery, HTTPS, caching | OAC origin, custom error response (403/404 → /index.html, status 200) for SPA routing |
+| OAC (Origin Access Control) | S3→CF authentication | Replaces legacy OAI |
+| Bucket Policy | Allow CF via OAC condition | `s3:GetObject` with `aws:SourceArn` = distribution ARN |
+
+**CDK implementation (`infra/lib/frontend-stack.ts`):**
+```typescript
+import * as cdk from 'aws-cdk-lib';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import { Construct } from 'constructs';
+import { type EnvConfig } from './env-config.js';
+
+export interface FrontendStackProps extends cdk.StackProps {
+  readonly envConfig: EnvConfig;
+  readonly apiUrl: string;
+}
+
+export class FrontendStack extends cdk.Stack {
+  public readonly distributionId: string;
+  public readonly bucketName: string;
+  public readonly distributionDomainName: string;
+
+  constructor(scope: Construct, id: string, props: FrontendStackProps) {
+    super(scope, id, props);
+    const { envConfig } = props;
+
+    const bucket = new s3.Bucket(this, 'FrontendBucket', {
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      autoDeleteObjects: false,
+    });
+
+    const distribution = new cloudfront.Distribution(this, 'FrontendDistribution', {
+      defaultBehavior: {
+        origin: origins.S3BucketOrigin.withOriginAccessControl(bucket),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      },
+      defaultRootObject: 'index.html',
+      errorResponses: [
+        { httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html' },
+        { httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html' },
+      ],
+    });
+
+    this.distributionId = distribution.distributionId;
+    this.bucketName = bucket.bucketName;
+    this.distributionDomainName = distribution.distributionDomainName;
+
+    new cdk.CfnOutput(this, 'FrontendBucketName', { value: bucket.bucketName });
+    new cdk.CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
+    new cdk.CfnOutput(this, 'DistributionDomain', { value: distribution.distributionDomainName });
+  }
+}
+```
+
+**Cross-account credentialed-step role (ONE role, two consumers):**
+The pipeline post-deploy step (mgmt account) assumes a role in the workload account granting:
+- `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket` on the frontend bucket
+- `cloudfront:CreateInvalidation` on the distribution
+- Integration-test permissions (for `test:int` consumer — same role)
+
+This is designed ONCE inside the Task 14 REQUIRES-HUMAN bundle.
+
+**i18n note:** `next-intl` remains valid for static export (client-side `NextIntlClientProvider`). Locale resolution moves fully client-side: after sign-in, the app fetches `getProfile` and sets the locale in React context. Tenant-default fallback unchanged.
 
 ---
 
@@ -511,7 +557,7 @@ Pipeline deploys the frontend in a post-deploy step (same pattern as eventual pi
 | D-1 | Base-table key PK=`TENANT#<t>#HITL`, SK=`PENDING#<id>` (not GSI9PK) | Verified store-token.ts:54, hitl.ts:106 |
 | D-2 | Single result type `HitlApprovalResult` for both mutation + subscription | @aws_subscribe requires matching return types |
 | D-3 | Conditional UpdateItem (status=PENDING guard) + SFN error catch (TaskDoesNotExist/TaskTimedOut → 410) | Real guards — resolveHitlItem has no conditions (8R-2 removed them) |
-| D-4 | Amplify manual deployments via `start-deployment` + S3 source | Zero GitHub coupling, pipeline is sole trigger, WEB_COMPUTE confirmed |
+| D-4 | ~~Amplify manual deployments~~ **SUPERSEDED** — static SPA on S3+CloudFront (fc6849a) | Amplify WEB_COMPUTE rejects manual bundles (task-1 spike gate fired) |
 | D-5 | SEND_BACK = SendTaskFailure(error:'SENT_BACK') + Catch on WaitForApproval | Architect ruling — no either/or |
 | D-6 | ~~Component-pattern extraction~~ **SUPERSEDED** — owner provides Framer designs | Owner decision 33f1e57 |
 | D-7 | `next-intl` with App Router (server + client components) | Standard i18n for Next.js App Router; ICU message format |
