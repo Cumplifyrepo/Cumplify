@@ -200,6 +200,8 @@ export interface PublishAuditEventOptions {
   detailType: string;
   source: string;
   payload: Record<string, unknown>;
+  /** Envelope timestamp override — pass when the caller must return the exact sealed value. */
+  timestamp?: string;
 }
 
 export async function publishAuditEvent(opts: PublishAuditEventOptions): Promise<string> {
@@ -209,7 +211,7 @@ export async function publishAuditEvent(opts: PublishAuditEventOptions): Promise
     detailType: opts.detailType,
     event: {
       tenantId: opts.tenantId,
-      timestamp: new Date().toISOString(),
+      timestamp: opts.timestamp ?? new Date().toISOString(),
       actor: opts.actor,
       module: opts.module,
       clauseRef: opts.clauseRef,

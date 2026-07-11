@@ -128,6 +128,7 @@ beforeEach(() => {
   mockPublishAuditEvent.mockReset();
   mockResolveHitlItem.mockResolvedValue(undefined);
   mockSfnSend.mockResolvedValue({});
+  mockPublishAuditEvent.mockResolvedValue('01TESTEVENTULID0000000000');
 });
 
 describe('hitl-approval resolver — happy path approve', () => {
@@ -145,10 +146,18 @@ describe('hitl-approval resolver — happy path approve', () => {
       },
     }));
 
-    expect(result.success).toBe(true);
+    // Schema shape — every field non-nullable in HitlApprovalResult, and
+    // tenantId is the onHitlItemResolved(tenantId:) delivery-filter field
+    // (BUG-12/12b: the old {success,...} shape failed response marshalling
+    // after SendTaskSuccess had already fired).
     expect(result.hitlItemId).toBe('hitl-item-123');
+    expect(result.tenantId).toBe(TENANT_ID);
     expect(result.decision).toBe('APPROVE');
+    expect(result.auditEventId).toMatch(/^[0-9A-HJKMNP-TV-Z]{26}$/); // real ULID from the publisher
+    expect(result.auditEventTimestamp).toBeTruthy();
+    expect(result.resolvedBy).toBe('approver-user-1');
     expect(result.resolvedAt).toBeTruthy();
+    expect((result as unknown as Record<string, unknown>).success).toBeUndefined();
 
     // Verify SFN SendTaskSuccess was called
     expect(mockSfnSend).toHaveBeenCalledTimes(1);
@@ -196,8 +205,10 @@ describe('hitl-approval resolver — happy path send-back', () => {
       },
     }));
 
-    expect(result.success).toBe(true);
     expect(result.decision).toBe('SEND_BACK');
+    expect(result.tenantId).toBe(TENANT_ID);
+    expect(result.auditEventId).toMatch(/^[0-9A-HJKMNP-TV-Z]{26}$/);
+    expect(result.resolvedBy).toBe('approver-user-1');
 
     // Verify SFN SendTaskFailure was called
     expect(mockSfnSend).toHaveBeenCalledTimes(1);

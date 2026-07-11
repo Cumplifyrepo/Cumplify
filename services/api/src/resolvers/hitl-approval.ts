@@ -32,10 +32,20 @@ interface ApprovalInput {
   editedPayload?: Record<string, unknown>;
 }
 
+/**
+ * Must match the schema type HitlApprovalResult exactly — every field below is
+ * non-nullable there, and tenantId is what AppSync matches against the
+ * onHitlItemResolved(tenantId:) subscription argument; without it the
+ * subscription never delivers (BUG-12/12b, found at ACC-3: the old return
+ * shape errored response marshalling AFTER SendTaskSuccess had fired).
+ */
 interface HitlApprovalResult {
-  success: boolean;
   hitlItemId: string;
+  tenantId: string;
   decision: string;
+  auditEventId: string;
+  auditEventTimestamp: string;
+  resolvedBy: string;
   resolvedAt: string;
 }
 
@@ -145,7 +155,8 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
   const standard = (item.standard as 'ISO9001' | 'ISO14001' | 'ISO45001') ?? 'ISO9001';
   const clauseRef = (item.proposedAction as Record<string, unknown>)?.tool?.toString() ?? 'unknown';
 
-  await publishAuditEvent({
+  const auditEventTimestamp = new Date().toISOString();
+  const auditEventId = await publishAuditEvent({
     tenantId,
     actor: approverSub,
     module,
@@ -153,6 +164,7 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
     standard,
     detailType,
     source: 'cumplify.hitl.approval',
+    timestamp: auditEventTimestamp,
     payload: {
       hitlItemId,
       decision,
@@ -162,13 +174,16 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
     },
   });
 
-  logger.info('HITL approval complete', { hitlItemId, decision, resolution });
+  logger.info('HITL approval complete', { hitlItemId, decision, resolution, auditEventId });
 
-  // Step 11: Return HitlApprovalResult
+  // Step 11: Return HitlApprovalResult (schema shape — see interface note)
   return {
-    success: true,
     hitlItemId,
+    tenantId,
     decision,
+    auditEventId,
+    auditEventTimestamp,
+    resolvedBy: approverSub,
     resolvedAt: now,
   };
 }

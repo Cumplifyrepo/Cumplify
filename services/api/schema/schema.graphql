@@ -659,6 +659,10 @@ type HitlItem @aws_lambda {
 
 type HitlApprovalResult @aws_lambda {
   hitlItemId: ID!
+  # AppSync delivers onHitlItemResolved(tenantId:) only when the mutation
+  # result carries a matching tenantId field — required for delivery, in
+  # addition to the C-6 subscription auth check.
+  tenantId: ID!
   decision: HitlDecision!
   auditEventId: String!
   auditEventTimestamp: AWSDateTime!
