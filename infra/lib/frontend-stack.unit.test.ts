@@ -1,7 +1,7 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import * as cdk from 'aws-cdk-lib';
-import { Template } from 'aws-cdk-lib/assertions';
-import { FrontendStack } from './frontend-stack.js';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { FrontendStack, URL_REWRITE_FN_CODE } from './frontend-stack.js';
 
 describe('FrontendStack', () => {
   const app = new cdk.App();
@@ -45,5 +45,52 @@ describe('FrontendStack', () => {
     template.hasOutput('FrontendBucketName', {});
     template.hasOutput('FrontendDistributionId', {});
     template.hasOutput('FrontendDistributionDomain', {});
+  });
+
+  it('associates the URL-rewrite function on viewer-request', () => {
+    template.resourceCountIs('AWS::CloudFront::Function', 1);
+    template.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        DefaultCacheBehavior: Match.objectLike({
+          FunctionAssociations: [Match.objectLike({ EventType: 'viewer-request' })],
+        }),
+      },
+    });
+  });
+});
+
+describe('URL_REWRITE_FN_CODE handler behavior', () => {
+  // Execute the actual CloudFront Function code so the rewrite rules are
+  // pinned against the static-export layout (dashboard.html, not dashboard/).
+  const handler = new Function(
+    'event',
+    `${URL_REWRITE_FN_CODE}; return handler(event);`
+  ) as (event: { request: { uri: string } }) => { uri: string };
+
+  const rewrite = (uri: string) => handler({ request: { uri } }).uri;
+
+  it('rewrites extensionless routes to their .html object', () => {
+    expect(rewrite('/dashboard')).toBe('/dashboard.html');
+  });
+
+  it('strips trailing slashes before rewriting', () => {
+    expect(rewrite('/dashboard/')).toBe('/dashboard.html');
+    expect(rewrite('/dashboard///')).toBe('/dashboard.html');
+  });
+
+  it('leaves root for defaultRootObject', () => {
+    expect(rewrite('/')).toBe('/');
+  });
+
+  it('leaves asset paths with extensions untouched', () => {
+    expect(rewrite('/_next/static/chunks/main-app-7b4335fd9d9ddc9a.js')).toBe(
+      '/_next/static/chunks/main-app-7b4335fd9d9ddc9a.js'
+    );
+    expect(rewrite('/brand/cumplify-logo.png')).toBe('/brand/cumplify-logo.png');
+    expect(rewrite('/dashboard.txt')).toBe('/dashboard.txt');
+  });
+
+  it('only inspects the last path segment for an extension', () => {
+    expect(rewrite('/docs.v2/intro')).toBe('/docs.v2/intro.html');
   });
 });

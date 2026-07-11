@@ -1,8 +1,9 @@
 /**
  * FrontendStack — static SPA hosting via S3 + CloudFront (OAC).
  * Design R3 §9: Next.js static export served from private S3 bucket with
- * CloudFront distribution. Custom error responses route all paths to index.html
- * for client-side SPA routing.
+ * CloudFront distribution. A viewer-request CloudFront Function maps
+ * extensionless routes to their exported .html objects; custom error
+ * responses fall back to index.html for unknown paths.
  *
  * Owner lifecycle: separate from ApiStack (keeps it lean).
  * Deploy: pipeline post-step → s3 sync out/ + cloudfront create-invalidation.
@@ -20,6 +21,25 @@ export interface FrontendStackProps extends cdk.StackProps {
   readonly envConfig: EnvConfig;
   readonly apiUrl: string;
 }
+
+/**
+ * Next.js output:'export' ships routes as flat files (dashboard.html), so
+ * /dashboard and /dashboard/ must be rewritten to /dashboard.html at the edge.
+ * Without this the request misses S3 and the 403 fallback serves index.html —
+ * the wrong page — with a 200 status. Exported for direct unit testing.
+ */
+export const URL_REWRITE_FN_CODE = `function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  while (uri.length > 1 && uri.endsWith('/')) {
+    uri = uri.slice(0, -1);
+  }
+  if (uri !== '/' && !uri.split('/').pop().includes('.')) {
+    uri += '.html';
+  }
+  request.uri = uri;
+  return request;
+}`;
 
 export class FrontendStack extends cdk.Stack {
   public readonly distributionId: string;
@@ -39,15 +59,27 @@ export class FrontendStack extends cdk.Stack {
       enforceSSL: true,
     });
 
+    const urlRewriteFn = new cloudfront.Function(this, 'UrlRewriteFn', {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      code: cloudfront.FunctionCode.fromInline(URL_REWRITE_FN_CODE),
+      comment: 'Map extensionless routes to static-export .html objects',
+    });
+
     // CloudFront distribution with OAC origin
     const distribution = new cloudfront.Distribution(this, 'FrontendDistribution', {
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(bucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        functionAssociations: [
+          {
+            function: urlRewriteFn,
+            eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+          },
+        ],
       },
       defaultRootObject: 'index.html',
-      // SPA routing: 403/404 from S3 → serve index.html (client router handles paths)
+      // Unknown routes (post-rewrite .html miss): 403/404 from S3 → index.html
       errorResponses: [
         {
           httpStatus: 403,
