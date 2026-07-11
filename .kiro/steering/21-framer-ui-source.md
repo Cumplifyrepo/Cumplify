@@ -19,10 +19,26 @@ provides a token first.
   "Cumplify Logo.png"). Every logo/wordmark rendering in the product uses
   this asset (or size-optimized derivatives generated at build time) — never
   a recreated/approximated logo, never text styled to look like the logo.
-- Composition: blue infinity-checkmark mark + WHITE "Cumplify" wordmark —
-  legible on dark surfaces only. OPEN BRAND ITEM: a light-background variant
-  (and a square mark-only crop for favicon/avatar use) is needed from the
-  owner; flag, don't fabricate one.
+- Square mark: `frontend/public/brand/cumplify-mark.png` (640x640, mechanical
+  crop of the mark region from the canonical asset) — favicon/avatar source.
+- THEME (owner decision 2026-07-11): the SaaS UI is DARK THEME. The white
+  wordmark is therefore correct everywhere in the product. A light-background
+  variant is NOT needed for the app — it becomes relevant only for surfaces
+  rendered on white (activation emails, PDF exports/controlled-copy stamps,
+  invoices); flag it again when those specs (frontend-funnel, records
+  export) open. Never fabricate one.
+
+## Design authority for views absent from Framer (owner decision 2026-07-11)
+The Framer Server API is READ-ONLY (live-probed: getProjectInfo,
+getNodesWithType, exportSVG, screenshot — no create/write methods), so
+designs cannot be authored into Framer programmatically. The owner has
+delegated the FRM-4 gap views (M1–M5 modules, Ask Cumplify, Settings) to the
+ARCHITECT: architect-authored dark-theme layouts implemented in code, using
+the Framer-extracted design tokens and component atoms (Nav Bar, Logo,
+Cards, Buttons) as the visual language, with exportSVG/screenshot pulls from
+existing Framer pages as reference anchors. Framer remains the source of
+truth for tokens/atoms and the /dashboard layout. This supersedes the
+2026-07-10 "owner provides Framer designs" decision (33f1e57).
 
 ## Access
 - Framer's official Server API (open beta, launched 2026-02-12) is used via

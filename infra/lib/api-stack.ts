@@ -656,20 +656,30 @@ export class ApiStack extends cdk.Stack {
     const profileDS = api.addLambdaDataSource('ProfileDS', profileFn);
 
     // Query resolvers (Spec 9)
-    hitlQueryDS.createResolver('ListPendingHitlItems', { typeName: 'Query', fieldName: 'listPendingHitlItems' });
-    profileDS.createResolver('GetProfile', { typeName: 'Query', fieldName: 'getProfile' });
+    const listHitlResolver = hitlQueryDS.createResolver('ListPendingHitlItems', { typeName: 'Query', fieldName: 'listPendingHitlItems' });
+    const getProfileResolver = profileDS.createResolver('GetProfile', { typeName: 'Query', fieldName: 'getProfile' });
 
     // Mutation resolvers (Spec 9)
-    hitlApprovalDS.createResolver('ApproveHitlItem', { typeName: 'Mutation', fieldName: 'approveHitlItem' });
-    profileDS.createResolver('UpdateProfile', { typeName: 'Mutation', fieldName: 'updateProfile' });
+    const approveHitlResolver = hitlApprovalDS.createResolver('ApproveHitlItem', { typeName: 'Mutation', fieldName: 'approveHitlItem' });
+    const updateProfileResolver = profileDS.createResolver('UpdateProfile', { typeName: 'Mutation', fieldName: 'updateProfile' });
 
     // Subscription resolver (Spec 9, C-6 tenant verification via VTL)
-    noneDS.createResolver('SubOnHitlItemResolved', {
+    const subHitlResolver = noneDS.createResolver('SubOnHitlItemResolved', {
       typeName: 'Subscription',
       fieldName: 'onHitlItemResolved',
       requestMappingTemplate: subscriptionRequestTemplate,
       responseMappingTemplate: subscriptionResponseTemplate,
     });
+
+    // CFN ordering: new resolvers MUST wait for the schema UPDATE to land —
+    // without an explicit dependency, CloudFormation creates resolvers in
+    // parallel with the schema update and AppSync 404s on the new fields
+    // (live failure 2026-07-11, exec 9d9c90a1: "No field named
+    // onHitlItemResolved found on type Subscription").
+    const schemaResource = api.node.findChild('Schema') as cdk.CfnResource;
+    for (const r of [listHitlResolver, getProfileResolver, approveHitlResolver, updateProfileResolver, subHitlResolver]) {
+      r.node.addDependency(schemaResource);
+    }
 
     // ─── CfnOutputs ─────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'GraphqlApiUrl', { value: this.graphqlApiUrl });
