@@ -21,6 +21,11 @@ const { mockDdbSend, mockSfnSend, mockResolveHitlItem, mockPublishAuditEvent } =
   return { mockDdbSend, mockSfnSend, mockResolveHitlItem, mockPublishAuditEvent };
 });
 
+vi.mock('@aws-sdk/client-eventbridge', () => ({
+  EventBridgeClient: class { send = vi.fn().mockResolvedValue({ FailedEntryCount: 0, Entries: [{ EventId: 'evt-test-1' }] }); },
+  PutEventsCommand: class { constructor(public input: unknown) {} },
+}));
+
 vi.mock('@aws-sdk/client-dynamodb', () => ({
   DynamoDBClient: class { send = mockDdbSend; },
   GetItemCommand: class {
