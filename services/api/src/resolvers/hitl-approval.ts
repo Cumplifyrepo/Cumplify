@@ -13,7 +13,7 @@ import { GetItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { SFNClient, SendTaskSuccessCommand, SendTaskFailureCommand } from '@aws-sdk/client-sfn';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { extractContext, getTenantDdbClient, publishAuditEvent, TABLE_NAME } from './shared.js';
-import { canApprove } from '../permissions/role-matrix.js';
+import { canApprove, resolveModule } from '../permissions/role-matrix.js';
 import { resolveHitlItem } from '../../../agents/shared/hitl.js';
 
 const logger = new Logger({ serviceName: 'resolver-hitl-approval' });
@@ -71,10 +71,10 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
   const taskToken = item.taskToken as string;
   const sfnExecutionArn = (item.sfnExecutionArn as string) ?? undefined;
 
-  // Step 6: Extract module from item
-  const module = (item.module as string) ??
-    (item.proposedAction as Record<string, unknown>)?.tool?.toString().split('-')[0] ??
-    'unknown';
+  // Step 6: Resolve module — explicit item field, else the writeback tool
+  // registry (BUG-11b: the old tool-prefix fallback derived vocabulary like
+  // 'capa' that can never match ROLE_WRITE_MODULES → universal 403).
+  const module = resolveModule(item);
 
   // Step 7: Validate role — canApprove(role, module)
   if (!canApprove(role, module)) {

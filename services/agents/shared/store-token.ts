@@ -10,14 +10,10 @@
  * T-8d (BINDING): wires StoreTokenRole into SFN WaitForApproval.
  * Write scope: TENANT#<tenantId>#HITL items (LeadingKeys-compatible).
  *
- * TODO [REQUIRES-HUMAN]: HITL-10 ASL Amendment — The SFN state machine definition
- * (WaitForApproval Catch + HandleSendBack state) needs the following ASL changes:
- *   1. Pass sfnExecutionArn (via $$.Execution.Id context object) into store-token input
- *   2. Add a Catch clause on WaitForApproval state for "SENT_BACK" error → HandleSendBack state
- *   3. HandleSendBack state should invoke agent-resume logic or mark item for re-queue
- * No ASL file found in the repo — the state machine may be defined in CDK code or
- * deployed separately. This amendment must be applied by a human to the actual
- * SFN definition wherever it lives.
+ * HITL-10 (ai-stack.ts): WaitForApproval passes sfnExecutionArn at the TOP
+ * level of the Payload ('sfnExecutionArn.$': '$$.Execution.Id') alongside
+ * taskToken — not inside input, which the agent builds before the execution
+ * ARN exists.
  */
 
 import { DynamoDBClient, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
@@ -30,13 +26,14 @@ const TABLE_NAME = process.env.TABLE_NAME!;
 
 export interface StoreTokenInput {
   taskToken: string;
+  /** Set by the ASL from $$.Execution.Id — sibling of taskToken, not part of input. */
+  sfnExecutionArn?: string;
   input: {
     tenantId: string;
     hitlItemId: string;
     agentName: string;
     proposedAction: { tool: string; args: unknown };
     createdAt: string;
-    sfnExecutionArn?: string;
   };
 }
 
@@ -49,8 +46,8 @@ export interface StoreTokenInput {
  * approvals, reads the taskToken, then calls SendTaskSuccess/SendTaskFailure.
  */
 export async function handler(event: StoreTokenInput): Promise<{ stored: true }> {
-  const { taskToken, input } = event;
-  const { tenantId, hitlItemId, agentName, proposedAction, createdAt, sfnExecutionArn } = input;
+  const { taskToken, sfnExecutionArn } = event;
+  const { tenantId, hitlItemId, agentName, proposedAction, createdAt } = event.input;
 
   logger.info('Creating/updating HITL item with task token', {
     tenantId, hitlItemId, agentName, tool: proposedAction.tool,

@@ -111,15 +111,19 @@ describe('store-token handler', () => {
   });
 
   it('writes sfnExecutionArn using if_not_exists (HITL-10)', async () => {
+    // The ASL passes sfnExecutionArn as a SIBLING of taskToken
+    // ('sfnExecutionArn.$': '$$.Execution.Id'), never inside input — the
+    // prior version of this test pinned the wrong shape and the ARN was
+    // silently 'unknown' on every real item (BUG-11c, found live at ACC-3).
     await handler({
       taskToken: 'token-arn-test',
+      sfnExecutionArn: 'arn:aws:states:us-east-1:123:execution:hitl-sm:hitl-capa-04GHI',
       input: {
         tenantId: 'tenant-arn',
         hitlItemId: '04GHI',
         agentName: 'CAPAGuru',
         proposedAction: { tool: 'capa-open', args: {} },
         createdAt: '2026-07-09T15:00:00.000Z',
-        sfnExecutionArn: 'arn:aws:states:us-east-1:123:execution:hitl-sm:hitl-capa-04GHI',
       },
     });
 
