@@ -308,16 +308,27 @@ describe('AiStack', () => {
       template.hasOutput('HitlStateMachineArn', {});
     });
 
-    it('HITL-10: WaitForApproval passes sfnExecutionArn and catches SENT_BACK', () => {
-      // Find the state machine resource and verify HITL-10 amendments in the ASL
+    it('HITL-10: WaitForApproval passes sfnExecutionArn and catches SENT_BACK → HandleSendBack', () => {
       const stateMachines = template.findResources('AWS::StepFunctions::StateMachine');
-      const smDef = JSON.stringify(stateMachines);
+      const hitl = Object.entries(stateMachines).find(([id]) => id.startsWith('HitlStateMachine'))?.[1] as any;
+      const def = hitl.Properties.DefinitionString;
+      // DefinitionString is an Fn::Join of literals + ARN refs — rebuild with
+      // placeholders so it parses, then assert on the real state graph. A plain
+      // string-contains check passes on the dangling Catch.Next reference alone,
+      // which is exactly the defect that reached the pipeline (SFN
+      // MISSING_TRANSITION_TARGET: HandleSendBack absent from States).
+      const raw = typeof def === 'string'
+        ? def
+        : def['Fn::Join'][1].map((p: unknown) => (typeof p === 'string' ? p : 'ARN')).join('');
+      const asl = JSON.parse(raw);
+      expect(asl.States.HandleSendBack).toBeDefined();
+      expect(asl.States.HandleSendBack.Type).toBe('Pass');
+      const wait = asl.States.WaitForApproval;
       // Carry #3: sfnExecutionArn passed via $$.Execution.Id
-      expect(smDef).toContain('sfnExecutionArn');
-      expect(smDef).toContain('Execution.Id');
-      // HITL-10: Catch SENT_BACK → HandleSendBack
-      expect(smDef).toContain('SENT_BACK');
-      expect(smDef).toContain('HandleSendBack');
+      expect(wait.Parameters.Payload['sfnExecutionArn.$']).toBe('$$.Execution.Id');
+      expect(wait.Catch).toHaveLength(1);
+      expect(wait.Catch[0].ErrorEquals).toEqual(['SENT_BACK']);
+      expect(wait.Catch[0].Next).toBe('HandleSendBack');
     });
 
     it('exports GuardrailId', () => {

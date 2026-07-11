@@ -60,3 +60,26 @@ is REAL data for Task 16's approval E2E.
 3. IAM role trust policies cap at 2048 bytes — enumerate-by-principal does not scale;
    PrincipalArn-pattern + two-key grants is the standing pattern.
 4. simulate-principal-policy can lag a fresh deploy — re-probe before concluding.
+
+## Architect addendum 2026-07-11 15:30Z (CORRECTION — rule 8, own error)
+
+The AiStack line above is **FALSE** as to HITL-10. Live readback today
+(`describe-state-machine HitlStateMachine1F6B4EA3-NaXnao6slsM8`, readonly profile):
+States = [RecordProposal, WaitForApproval, ExecuteWriteback] — **no HandleSendBack,
+no Catch, no sfnExecutionArn in the Payload**. The HITL-10 amendment was never live.
+
+Root cause: the Task-13 ASL amendment was defective — `HandleSendBack` was a dangling
+`sfn.Pass` never chained into the graph; CDK renders only graph-reachable states, so the
+synthesized definition carried a Catch.Next to a state absent from States. SFN rejects
+that definition (MISSING_TRANSITION_TARGET) — pipeline execs 8dd72f2e and d01dd996 both
+failed at AiStack.Deploy on it 2026-07-11. Since an invalid definition can never deploy,
+AiStack's UPDATE_COMPLETE at Task-15 time was from a prior deploy that did NOT include
+the SM change; this log conflated stack status with the amendment being live and never
+read the SM definition back. The Task-13 unit test was a string-contains false positive
+(the dangling reference alone satisfies `toContain('HandleSendBack')`).
+
+Fix: waitForApproval.addCatch(handleSendBack) replaces the raw stateJson Catch (creates
+the graph edge, state renders); test rewritten to parse the rendered ASL and assert
+States.HandleSendBack exists + Catch[0].Next resolves. READBACK RULE STRENGTHENED: a
+state-machine claim requires describe-state-machine on the LIVE definition, not stack
+status. (Same session, same lesson as BUG-9: status codes/stack states are not content.)
