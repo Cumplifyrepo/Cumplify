@@ -109,4 +109,46 @@ describe('store-token handler', () => {
     expect(vals[':gsi9pk']).toBe('TENANT#tenant-prefix-test#HITL_PENDING');
     expect(vals[':gsi9pk']).toMatch(/^TENANT#/);
   });
+
+  it('writes sfnExecutionArn using if_not_exists (HITL-10)', async () => {
+    await handler({
+      taskToken: 'token-arn-test',
+      input: {
+        tenantId: 'tenant-arn',
+        hitlItemId: '04GHI',
+        agentName: 'CAPAGuru',
+        proposedAction: { tool: 'capa-open', args: {} },
+        createdAt: '2026-07-09T15:00:00.000Z',
+        sfnExecutionArn: 'arn:aws:states:us-east-1:123:execution:hitl-sm:hitl-capa-04GHI',
+      },
+    });
+
+    const call = mockDdbSend.mock.calls[0][0];
+    const params = call.input;
+
+    // UpdateExpression includes sfnExecutionArn with if_not_exists
+    expect(params.UpdateExpression).toContain('sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)');
+    // Value is the provided ARN
+    expect(params.ExpressionAttributeValues[':sfnArn']).toBe(
+      'arn:aws:states:us-east-1:123:execution:hitl-sm:hitl-capa-04GHI',
+    );
+  });
+
+  it('defaults sfnExecutionArn to "unknown" when not provided (HITL-10)', async () => {
+    await handler({
+      taskToken: 'token-no-arn',
+      input: {
+        tenantId: 'tenant-no-arn',
+        hitlItemId: '05JKL',
+        agentName: 'DocStudio',
+        proposedAction: { tool: 'doc-publish', args: {} },
+        createdAt: '2026-07-09T16:00:00.000Z',
+        // sfnExecutionArn intentionally omitted
+      },
+    });
+
+    const call = mockDdbSend.mock.calls[0][0];
+    const vals = call.input.ExpressionAttributeValues;
+    expect(vals[':sfnArn']).toBe('unknown');
+  });
 });

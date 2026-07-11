@@ -9,6 +9,15 @@
  *
  * T-8d (BINDING): wires StoreTokenRole into SFN WaitForApproval.
  * Write scope: TENANT#<tenantId>#HITL items (LeadingKeys-compatible).
+ *
+ * TODO [REQUIRES-HUMAN]: HITL-10 ASL Amendment — The SFN state machine definition
+ * (WaitForApproval Catch + HandleSendBack state) needs the following ASL changes:
+ *   1. Pass sfnExecutionArn (via $$.Execution.Id context object) into store-token input
+ *   2. Add a Catch clause on WaitForApproval state for "SENT_BACK" error → HandleSendBack state
+ *   3. HandleSendBack state should invoke agent-resume logic or mark item for re-queue
+ * No ASL file found in the repo — the state machine may be defined in CDK code or
+ * deployed separately. This amendment must be applied by a human to the actual
+ * SFN definition wherever it lives.
  */
 
 import { DynamoDBClient, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
@@ -27,6 +36,7 @@ export interface StoreTokenInput {
     agentName: string;
     proposedAction: { tool: string; args: unknown };
     createdAt: string;
+    sfnExecutionArn?: string;
   };
 }
 
@@ -40,7 +50,7 @@ export interface StoreTokenInput {
  */
 export async function handler(event: StoreTokenInput): Promise<{ stored: true }> {
   const { taskToken, input } = event;
-  const { tenantId, hitlItemId, agentName, proposedAction, createdAt } = input;
+  const { tenantId, hitlItemId, agentName, proposedAction, createdAt, sfnExecutionArn } = input;
 
   logger.info('Creating/updating HITL item with task token', {
     tenantId, hitlItemId, agentName, tool: proposedAction.tool,
@@ -67,6 +77,8 @@ export async function handler(event: StoreTokenInput): Promise<{ stored: true }>
       // GSI9: sparse projection for frontend pending-approvals query (D-2)
       'GSI9PK = :gsi9pk',
       'GSI9SK = :gsi9sk',
+      // HITL-10: store SFN execution ARN for tracing/audit (if_not_exists preserves on retry)
+      'sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)',
     ].join(', '),
     ExpressionAttributeNames: {
       '#status': 'status',
@@ -81,6 +93,7 @@ export async function handler(event: StoreTokenInput): Promise<{ stored: true }>
       ':tokenStoredAt': now,
       ':gsi9pk': `TENANT#${tenantId}#HITL_PENDING`,
       ':gsi9sk': createdAt,
+      ':sfnArn': sfnExecutionArn ?? 'unknown',
     }),
   }));
 
