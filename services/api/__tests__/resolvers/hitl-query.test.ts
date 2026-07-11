@@ -119,6 +119,20 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
     expect(result.nextToken).toBeNull();
   });
 
+  it('resolves module from the tool registry when the item has none (the live shape — BUG-13)', async () => {
+    // Real items carry NO module field (enterHitlGate omits it); schema module
+    // is String!, so a null here fails the WHOLE list query at marshalling.
+    const raw = makeDdbItem({ proposedAction: { tool: 'capa-open', args: { ncId: 'nc-1' } } });
+    delete (raw as Record<string, unknown>).module;
+    mockDdbSend.mockResolvedValueOnce({ Items: [raw], LastEvaluatedKey: undefined });
+
+    const result = await handler(makeEvent('listPendingHitlItems', { pagination: null })) as {
+      items: Record<string, unknown>[];
+    };
+
+    expect(result.items[0].module).toBe('M2'); // capa-open → m2.corrective_actions
+  });
+
   it('BC-8: taskToken is EXCLUDED from response', async () => {
     mockDdbSend.mockResolvedValueOnce({
       Items: [makeDdbItem()],

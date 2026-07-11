@@ -8,6 +8,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { QueryCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { resolveModule } from '../permissions/role-matrix.js';
 import { extractContext, getTenantDdbClient, TABLE_NAME } from './shared.js';
 
 const logger = new Logger({ serviceName: 'resolver-hitl-query' });
@@ -86,7 +87,10 @@ async function listPendingHitlItems(event: AppSyncEvent, tenantId: string) {
       agentName: item.agentName ?? null,
       clauseRef: proposedAction?.tool ?? null,
       standard: item.standard ?? null,
-      module: item.module ?? null,
+      // Schema module is String! and items carry no module field (enterHitlGate
+      // omits it) — resolve via the same tool registry the approval path uses,
+      // else the whole list query fails marshalling (BUG-13, found live at ACC-3).
+      module: resolveModule(item),
       draftBody: proposedAction ? JSON.stringify(proposedAction) : null,
       status: item.status ?? 'PENDING',
       createdAt: item.createdAt ?? null,
