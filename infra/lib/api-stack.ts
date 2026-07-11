@@ -307,35 +307,37 @@ export class ApiStack extends cdk.Stack {
     // Trust: resolver execution roles + sts:TagSession (bare-tenantId session tag, FF-3).
     // Policy: DDB LeadingKeys condition wraps TENANT#${aws:PrincipalTag/tenantId}#*.
     // GSI grant included: all 9 GSIs use TENANT#-prefixed partition keys (FF-5 design constraint).
+    // TRUST REWRITE (2026-07-11, owner re-sign): the per-principal enumeration
+    // (one ArnPrincipal per resolver role) reached 1981 of the 2048-byte
+    // ACLSizePerRole quota with 5 roles; adding spec-9's 3 functions failed the
+    // deploy, and every future module spec adds more. Compact, scalable form:
+    // account principal gated by an aws:PrincipalArn pattern. TWO-KEY MODEL —
+    // matching the pattern is necessary but NOT sufficient: the caller's own
+    // identity policy must ALSO grant sts:AssumeRole on this role, and only
+    // the resolver/HITL/profile functions receive that grant (loops below).
+    // FF-3 tenantId-tag requirement and the FIX-4 '#'-injection DENY are
+    // preserved verbatim in effect.
     const tenantDataRole = new iam.Role(this, 'TenantDataRole', {
       roleName: `cumplify-${envConfig.envName}-tenant-data-role`,
-      assumedBy: new iam.CompositePrincipal(
-        ...resolverFns.map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
-      ),
+      assumedBy: new iam.SessionTagsPrincipal(new iam.PrincipalWithConditions(
+        new iam.AccountRootPrincipal(),
+        {
+          'StringLike': {
+            'aws:PrincipalArn': `arn:aws:iam::${cdk.Stack.of(this).account}:role/${cdk.Stack.of(this).stackName}-*`,
+            // Bare tenantId = UUID format; NOT TENANT#-prefixed (FF-3)
+            'aws:RequestTag/tenantId': '*',
+          },
+        },
+      )),
       description: 'Tenant-scoped DDB role assumed per-request with tenantId session tag (CARRY-1)',
     });
 
-    // Add sts:TagSession condition to trust policy (FF-3: bare tenantId, UUID format)
-    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['sts:TagSession'],
-      principals: resolverFns.map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
-      conditions: {
-        'StringLike': {
-          // Bare tenantId = UUID format (e.g., "abc-123-def-456")
-          // NOT TENANT#-prefixed — LeadingKeys adds the prefix at evaluation time
-          'aws:RequestTag/tenantId': '*',
-        },
-      },
-    }));
-
     // FIX-4: DENY any tag value containing '#' — prevents TENANT#-prefixed injection
-    // that would bypass LeadingKeys matching. A '#' in the tag value means the caller
-    // is trying to inject a key-prefix, which must be rejected loudly.
+    // that would bypass LeadingKeys matching (applies to every caller).
     tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
       effect: iam.Effect.DENY,
       actions: ['sts:TagSession'],
-      principals: resolverFns.map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
+      principals: [new iam.AnyPrincipal()],
       conditions: {
         'StringLike': {
           'aws:RequestTag/tenantId': '*#*',
@@ -579,29 +581,9 @@ export class ApiStack extends cdk.Stack {
       fn.addEnvironment('TENANT_DATA_ROLE_ARN', tenantDataRole.roleArn);
     }
 
-    // Add new Lambdas to the tenant-data role trust policy
-    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['sts:AssumeRole'],
-      principals: [hitlApprovalFn, hitlQueryFn, profileFn].map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
-    }));
-    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['sts:TagSession'],
-      principals: [hitlApprovalFn, hitlQueryFn, profileFn].map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
-      conditions: {
-        'StringLike': { 'aws:RequestTag/tenantId': '*' },
-      },
-    }));
-    // DENY # injection on new principals too
-    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
-      effect: iam.Effect.DENY,
-      actions: ['sts:TagSession'],
-      principals: [hitlApprovalFn, hitlQueryFn, profileFn].map(fn => new iam.ArnPrincipal(fn.role!.roleArn)),
-      conditions: {
-        'StringLike': { 'aws:RequestTag/tenantId': '*#*' },
-      },
-    }));
+    // Spec-9 functions are covered by the PrincipalArn-pattern trust above;
+    // their identity-policy sts:AssumeRole grants (the second key) are added in
+    // the loop over [hitlApprovalFn, hitlQueryFn, profileFn] above.
 
     // SFN task-callback permissions for the approval Lambda (design §2.3).
     // SendTaskSuccess/SendTaskFailure authorize via the task token itself;
