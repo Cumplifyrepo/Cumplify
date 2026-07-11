@@ -6,7 +6,8 @@
     "hitlQueue": "Approval Queue",
     "agentsFeed": "Agents Working Now",
     "topRisks": "Top Risks",
-    "noItems": "No items pending approval"
+    "noItems": "No items pending approval",
+    "loading": "Loading..."
   },
   "hitlCard": {
     "approve": "Approve",

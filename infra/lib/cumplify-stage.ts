@@ -18,6 +18,7 @@ import { EventingStack } from './eventing-stack.js';
 import { AuditTrailStack } from './audit-trail-stack.js';
 import { ApiStack } from './api-stack.js';
 import { AiStack } from './ai-stack.js';
+import { FrontendStack } from './frontend-stack.js';
 
 export interface CumplifyStageProps extends cdk.StageProps {
   readonly envConfig: EnvConfig;
@@ -156,6 +157,13 @@ export class CumplifyStage extends cdk.Stage {
     aiStack.addDependency(apiStack);
     aiStack.addDependency(eventingStack);
     aiStack.addDependency(auditTrailStack);
+
+    // FrontendStack — S3 + CloudFront for static SPA hosting (spec 5: frontend-app)
+    const frontendStack = new FrontendStack(this, 'FrontendStack', {
+      envConfig,
+      apiUrl: apiStack.graphqlApiUrl,
+    });
+    frontendStack.addDependency(apiStack);
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

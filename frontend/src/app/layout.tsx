@@ -1,3 +1,6 @@
+import { NextIntlClientProvider } from 'next-intl';
+import messages from '../../messages/en.json';
+
 export const metadata = {
   title: 'Cumplify',
   description: 'AI-powered Integrated Management System',
@@ -6,7 +9,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NextIntlClientProvider locale="en" messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
