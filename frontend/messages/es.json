@@ -1,0 +1,28 @@
+{
+  "commandCenter": {
+    "title": "Centro de Mando",
+    "readinessScore": "Puntuación de Preparación",
+    "trend": "{delta}: {attribution}",
+    "hitlQueue": "Cola de Aprobaciones",
+    "agentsFeed": "Agentes Trabajando",
+    "topRisks": "Riesgos Principales",
+    "noItems": "No hay elementos pendientes de aprobación"
+  },
+  "hitlCard": {
+    "approve": "Aprobar",
+    "editAndApprove": "Editar y aprobar",
+    "sendBack": "Devolver con nota",
+    "trustRitual": "Al aprobar, el evento se sella en tu registro de auditoría",
+    "flaggedJustification": "Justificación requerida (marcado por guardabarrera)",
+    "viewAuditEvent": "Ver evento de auditoría sellado"
+  },
+  "profile": {
+    "locale": "Idioma de Visualización",
+    "localeDescription": "Elige tu idioma preferido para la interfaz"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "retry": "Reintentar"
+  }
+}

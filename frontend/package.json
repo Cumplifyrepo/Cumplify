@@ -7,10 +7,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy:bundle": "node scripts/amplify-bundle.mjs"
+    "deploy:bundle": "node scripts/amplify-bundle.mjs",
+    "i18n:check": "node scripts/check-hardcoded-strings.mjs"
   },
   "dependencies": {
     "next": "^14.2.35",
+    "next-intl": "^4.13.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

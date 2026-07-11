@@ -1,0 +1,28 @@
+{
+  "commandCenter": {
+    "title": "Command Center",
+    "readinessScore": "Readiness Score",
+    "trend": "{delta}: {attribution}",
+    "hitlQueue": "Approval Queue",
+    "agentsFeed": "Agents Working Now",
+    "topRisks": "Top Risks",
+    "noItems": "No items pending approval"
+  },
+  "hitlCard": {
+    "approve": "Approve",
+    "editAndApprove": "Edit & approve",
+    "sendBack": "Send back with note",
+    "trustRitual": "On approval, event seals to your audit trail",
+    "flaggedJustification": "Justification required (flagged by guardrail)",
+    "viewAuditEvent": "View sealed audit event"
+  },
+  "profile": {
+    "locale": "Display Language",
+    "localeDescription": "Choose your preferred language for the interface"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry"
+  }
+}
