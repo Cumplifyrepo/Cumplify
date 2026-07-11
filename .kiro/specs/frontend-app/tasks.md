@@ -217,9 +217,9 @@
 5. **Cross-account credentialed-step role** (shared with pipeline `test:int` carry): a single role in the dev workload account assumable by the pipeline mgmt-account role, granting `s3:PutObject`+`s3:DeleteObject`+`s3:ListBucket` on the frontend bucket + `cloudfront:CreateInvalidation` on the distribution + integration-test permissions. Designed ONCE with both consumers.
 6. **FrontendStack infra** (Task 12): S3 bucket (private, OAC) + CloudFront distribution + pipeline deploy step (s3 sync + invalidation).
 
-- [ ] **[ARCHITECT]** All diffs assembled and presented as a single review package.
-- [ ] **[ARCHITECT]** Owner sign-off obtained (or requested changes applied).
-- [ ] Evidence: sign-off record in `.kiro/evidence/frontend-app/task-14-requires-human.md`.
+- [x] **[ARCHITECT]** All diffs assembled and presented as a single review package (six items, verified on disk pre-presentation).
+- [x] **[ARCHITECT]** Owner sign-off obtained 2026-07-11: "Approve — deploy to dev", full bundle, no items held.
+- [x] Evidence: sign-off record in `.kiro/evidence/frontend-app/task-14-requires-human.md`.
 
 **Depends on:** Tasks 2, 4, 8, 12, 13 (all code written, synth passing).
 **STOP until sign-off obtained.** No deploy proceeds without this.
