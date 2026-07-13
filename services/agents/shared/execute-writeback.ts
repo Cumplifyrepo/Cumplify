@@ -44,11 +44,19 @@ export interface WritebackInput {
   tenantId: string;
   agentName: string;
   proposedAction: { tool: string; args: Record<string, unknown> };
+  /**
+   * SendTaskSuccess output from the approval Lambda — the owner-signed
+   * frontend-app design §2.3 step 7a contract:
+   * { decision:'APPROVE', approverSub, editedPayload?, justification? }.
+   * (BUG-15: this module previously expected {approved, approver, role,
+   * timestamp} — a shape only Task 11's hand-crafted CLI callback ever sent —
+   * so every real human APPROVE was silently treated as rejected.)
+   */
   approvalResult: {
-    approved: boolean;
-    approver: string;
-    role: string;
-    timestamp: string;
+    decision: 'APPROVE' | 'SEND_BACK';
+    approverSub: string;
+    justification?: string;
+    editedPayload?: Record<string, unknown>;
   };
   hitlItemId: string;
 }
@@ -108,16 +116,24 @@ export async function handler(event: WritebackInput | { Payload: WritebackInput 
   const input: WritebackInput = 'Payload' in event ? event.Payload : event;
   const { tenantId, agentName, proposedAction, approvalResult } = input;
 
-  if (!approvalResult.approved) {
+  if (approvalResult.decision !== 'APPROVE') {
     logger.info('Writeback rejected by human', { tenantId, agentName, hitlItemId: input.hitlItemId });
     return { status: 'REJECTED' };
   }
 
   // M-2: full actor identity for provenance (persists into DB rows + audit)
-  const actor = `agent:${agentName}+human:${approvalResult.approver}`;
+  const actor = `agent:${agentName}+human:${approvalResult.approverSub}`;
+
+  // Approve-with-edits: the approver's editedPayload overrides the agent's
+  // proposed args field-by-field (design §2.3 — edits ride the task token,
+  // never the DDB item).
+  const effectiveAction = approvalResult.editedPayload
+    ? { ...proposedAction, args: { ...proposedAction.args, ...approvalResult.editedPayload } }
+    : proposedAction;
 
   logger.info('Executing approved writeback', {
-    tenantId, agentName, tool: proposedAction.tool, approver: approvalResult.approver,
+    tenantId, agentName, tool: effectiveAction.tool, approver: approvalResult.approverSub,
+    edited: Boolean(approvalResult.editedPayload),
   });
 
   // M-1: Begin transaction with Aurora resume-retry
@@ -140,7 +156,7 @@ export async function handler(event: WritebackInput | { Payload: WritebackInput 
     }));
 
     // Dispatch the tool-specific write
-    const writeResult = await dispatchToolWrite(proposedAction, tenantId, transactionId, actor);
+    const writeResult = await dispatchToolWrite(effectiveAction, tenantId, transactionId, actor);
 
     // Commit
     await rds.send(new CommitTransactionCommand({
@@ -150,13 +166,13 @@ export async function handler(event: WritebackInput | { Payload: WritebackInput 
     }));
 
     // H-3: Emit audit event via publishAuditEvent (registered, ULID, correct standard)
-    const standard = resolveStandard(proposedAction);
+    const standard = resolveStandard(effectiveAction);
     const auditEventId = await emitWritebackAuditEvent({
-      tenantId, actor, agentName, proposedAction, writeResult, standard,
+      tenantId, actor, agentName, proposedAction: effectiveAction, writeResult, standard,
     });
 
     logger.info('Writeback committed + audit emitted', {
-      tenantId, agentName, tool: proposedAction.tool, auditEventId,
+      tenantId, agentName, tool: effectiveAction.tool, auditEventId,
     });
 
     return { status: 'COMMITTED', auditEventId };

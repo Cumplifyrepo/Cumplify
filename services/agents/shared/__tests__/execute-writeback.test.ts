@@ -146,3 +146,49 @@ describe('execute-writeback dispatch: schema pinning', () => {
     });
   });
 });
+
+// ─── Approval-gate behavior (BUG-15) ─────────────────────────────────────────
+// The gate previously checked approvalResult.approved — a field the real
+// approval Lambda NEVER sends (its SendTaskSuccess output is the owner-signed
+// design §2.3 contract {decision, approverSub, ...}) — so every live human
+// APPROVE was silently treated as rejected while the SFN reported success.
+// These tests execute the real handler against the signed contract.
+import { handler as writebackHandler } from '../execute-writeback.js';
+
+describe('execute-writeback approval gate (signed contract — BUG-15)', () => {
+  const baseInput = {
+    tenantId: 'tenant-gate',
+    agentName: 'CAPAGuru',
+    proposedAction: { tool: 'capa-open', args: { ncId: 'nc-1', actionDesc: 'proposed', suggestedOwnerId: 'o', dueDate: '2026-08-01' } },
+    hitlItemId: '01GATE',
+  };
+
+  it('SEND_BACK short-circuits to REJECTED without touching RDS', async () => {
+    const res = await writebackHandler({
+      ...baseInput,
+      approvalResult: { decision: 'SEND_BACK', approverSub: 'sub-1' },
+    } as never);
+    expect(res).toEqual({ status: 'REJECTED' });
+  });
+
+  it('the legacy {approved:true} shape no longer approves (contract cutover pin)', async () => {
+    // If someone re-introduces a producer of the old shape, it must fail
+    // CLOSED (rejected), never silently write.
+    const res = await writebackHandler({
+      ...baseInput,
+      approvalResult: { approved: true, approver: 'sub-1', role: 'r', timestamp: 't' },
+    } as never);
+    expect(res).toEqual({ status: 'REJECTED' });
+  });
+
+  it('source: gate checks decision === APPROVE and actor uses approverSub', () => {
+    expect(WRITEBACK_CODE).toContain("approvalResult.decision !== 'APPROVE'");
+    expect(WRITEBACK_CODE).toContain('approvalResult.approverSub');
+    expect(WRITEBACK_CODE).not.toMatch(/approvalResult\.approved\b/);
+  });
+
+  it('source: editedPayload overrides proposed args field-by-field (approve-with-edits)', () => {
+    expect(WRITEBACK_CODE).toContain('...proposedAction.args, ...approvalResult.editedPayload');
+    expect(WRITEBACK_CODE).toContain('dispatchToolWrite(effectiveAction');
+  });
+});
