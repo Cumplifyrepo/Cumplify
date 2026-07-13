@@ -1,7 +1,7 @@
 # Task 26 — M1 Document Studio UI (Phase C)
 # Evidence log — rules 7/8: timestamp + exit code + cdk-outputs.json blob SHA
 
-Timestamp: 2026-07-13T21:25:39Z
+Timestamp: 2026-07-13T21:25:39Z (updated 2026-07-13T21:50:00Z delta)
 cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
 Section implemented: view-designs.md §5 (amended per gate review)
 
@@ -12,11 +12,24 @@ Section implemented: view-designs.md §5 (amended per gate review)
 - G3: approve/publish use REAL versionId from latestVersion in version rail
 - G3: compare = select two versions from rail → getDocumentVersionDiff(v1, v2)
 - G4: error handling in all handlers (try/catch, ErrorState with retry)
-- G6: updatePolicy + updateImsScope FormDrawers (MOD-3 complete)
 - G8: CSS modules, URL-param sync (?doc=<id>), ProvenanceLink success toast
+- All action buttons gated behind canApprove(role, 'M1')
 
 ## Ask chip integration
 - ?draft=1&title=<>&standard=<> opens createDocumentDraft drawer with prefilled fields
+
+## BLOCKED-ON-OWNER (§12 — reported, not coded around)
+
+updatePolicy and updateImsScope drawers (MOD-3 partial) BLOCKED on missing
+read surface. The schema has no getPolicy/listPolicies or getImsScope query.
+m1.policies and m1.ims_scope are independent tables (own gen_random_uuid(),
+no FK to m1.documents) — there is no way for the frontend to obtain the
+real row id needed by UpdatePolicyInput.id / UpdateImsScopeInput.id.
+
+Architect option (a): add getPolicy/getImsScope singleton queries (one Policy
+per standard per tenant, one ImsScope per tenant).
+
+This item re-opens when the read surface ships.
 
 ## Verification
 tsc=0, 69 frontend tests, i18n=0, next build=9 pages

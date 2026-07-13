@@ -128,12 +128,6 @@
     "versionHistory": "Version history",
     "noVersions": "No versions yet",
     "selectTwoVersions": "Select two versions to compare",
-    "updatePolicy": "Update policy",
-    "updateImsScope": "Update IMS scope",
-    "fieldPolicyText": "Policy text",
-    "fieldScopeStatement": "Scope statement",
-    "fieldBoundaries": "Boundaries",
-    "fieldExclusions9001": "Exclusions (ISO 9001)",
     "savedSuccessfully": "Saved successfully"
   },
   "m2": {

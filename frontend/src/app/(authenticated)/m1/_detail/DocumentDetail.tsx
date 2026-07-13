@@ -12,8 +12,6 @@ import {
   SecondaryButton,
   ProvenanceLink,
   ErrorState,
-  FormDrawer,
-  type FieldDef,
 } from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
@@ -27,8 +25,12 @@ import styles from './DocumentDetail.module.css';
  * Right rail: version history with compare selection.
  * G3: approveDocumentVersion/publishControlledDocument use a REAL versionId.
  * G4: all handlers wrapped in try/catch with error state.
- * G6: updatePolicy and updateImsScope FormDrawers.
  * G8: CSS modules, URL-param sync, success toast with ProvenanceLink.
+ *
+ * BLOCKED-ON-OWNER (§12): updatePolicy and updateImsScope drawers require
+ * getPolicy/getImsScope queries to obtain the real row id (m1.policies and
+ * m1.ims_scope are independent tables with own UUIDs — doc.id is NOT valid).
+ * No read surface exists in the schema. Flagged, not coded around.
  */
 
 interface Document {
@@ -82,20 +84,6 @@ const DIFF_QUERY = `query Diff($v1: ID!, $v2: ID!) {
   getDocumentVersionDiff(v1: $v1, v2: $v2) { additions deletions content }
 }`;
 
-const UPDATE_POLICY_MUTATION = `mutation UpdatePolicy($input: UpdatePolicyInput!) {
-  updatePolicy(input: $input) { id standard policyText }
-}`;
-
-const UPDATE_IMS_SCOPE_MUTATION = `mutation UpdateImsScope($input: UpdateImsScopeInput!) {
-  updateImsScope(input: $input) { id scopeStatement boundaries exclusions9001 }
-}`;
-
-const STANDARDS_OPTIONS = [
-  { value: 'ISO9001', label: 'ISO 9001' },
-  { value: 'ISO14001', label: 'ISO 14001' },
-  { value: 'ISO45001', label: 'ISO 45001' },
-];
-
 export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void }) {
   const t = useTranslations('m1');
   const router = useRouter();
@@ -110,13 +98,11 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
   const [diff, setDiff] = useState<Diff | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
-  const [policyDrawerOpen, setPolicyDrawerOpen] = useState(false);
-  const [scopeDrawerOpen, setScopeDrawerOpen] = useState(false);
   const [toast, setToast] = useState<{ entityId: string } | null>(null);
 
   const canAct = canApprove(role, 'M1');
 
-  // G8: URL-param sync — update browser URL with ?doc=<id>
+  // G8: URL-param sync
   useEffect(() => {
     router.replace(`?doc=${id}`, { scroll: false });
   }, [id, router]);
@@ -164,7 +150,6 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
         return prev.filter((v) => v !== versionId);
       }
       if (prev.length >= 2) {
-        // Replace oldest selection
         return [prev[1], versionId];
       }
       return [...prev, versionId];
@@ -175,7 +160,8 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
     if (!doc) return;
     setActionLoading(true);
     try {
-      await mutate(SUBMIT_MUTATION, { id: doc.id });
+      const result = await mutate<{ submitDocumentForApproval: { id: string } }>(SUBMIT_MUTATION, { id: doc.id });
+      showToast(result.submitDocumentForApproval.id);
       await fetchDoc();
       await fetchVersions();
     } catch {
@@ -190,7 +176,8 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
     setActionLoading(true);
     try {
       // G3: uses the REAL version id from the version list
-      await mutate(APPROVE_MUTATION, { input: { versionId: latestVersion.id, decision: 'APPROVED' } });
+      const result = await mutate<{ approveDocumentVersion: { id: string } }>(APPROVE_MUTATION, { input: { versionId: latestVersion.id, decision: 'APPROVED' } });
+      showToast(result.approveDocumentVersion.id);
       await fetchDoc();
       await fetchVersions();
     } catch {
@@ -205,7 +192,8 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
     setActionLoading(true);
     try {
       // G3: uses the REAL version id from the version list
-      await mutate(PUBLISH_MUTATION, { versionId: latestVersion.id });
+      const result = await mutate<{ publishControlledDocument: { id: string } }>(PUBLISH_MUTATION, { versionId: latestVersion.id });
+      showToast(result.publishControlledDocument.id);
       await fetchDoc();
       await fetchVersions();
     } catch {
@@ -218,56 +206,11 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
   async function handleCompare() {
     if (selectedVersions.length !== 2) return;
     try {
-      // Compare = user selects two versions from the rail
       const data = await query<{ getDocumentVersionDiff: Diff }>(DIFF_QUERY, {
         v1: selectedVersions[0],
         v2: selectedVersions[1],
       });
       setDiff(data.getDocumentVersionDiff);
-    } catch {
-      setError(true);
-    }
-  }
-
-  // G6: updatePolicy drawer fields
-  const policyFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS_OPTIONS },
-    { name: 'policyText', label: t('fieldPolicyText'), type: 'textarea', required: true },
-  ], [t]);
-
-  async function handleUpdatePolicy(values: Record<string, string | boolean>) {
-    if (!doc) return;
-    try {
-      const result = await mutate<{ updatePolicy: { id: string } }>(UPDATE_POLICY_MUTATION, {
-        input: { id: doc.id, standard: values.standard, policyText: values.policyText },
-      });
-      showToast(result.updatePolicy.id);
-      await fetchDoc();
-    } catch {
-      setError(true);
-    }
-  }
-
-  // G6: updateImsScope drawer fields
-  const scopeFields: FieldDef[] = useMemo(() => [
-    { name: 'scopeStatement', label: t('fieldScopeStatement'), type: 'textarea', required: true },
-    { name: 'boundaries', label: t('fieldBoundaries'), type: 'textarea' },
-    { name: 'exclusions9001', label: t('fieldExclusions9001'), type: 'textarea' },
-  ], [t]);
-
-  async function handleUpdateImsScope(values: Record<string, string | boolean>) {
-    if (!doc) return;
-    try {
-      const result = await mutate<{ updateImsScope: { id: string } }>(UPDATE_IMS_SCOPE_MUTATION, {
-        input: {
-          id: doc.id,
-          scopeStatement: values.scopeStatement as string,
-          boundaries: (values.boundaries as string) || undefined,
-          exclusions9001: (values.exclusions9001 as string) || undefined,
-        },
-      });
-      showToast(result.updateImsScope.id);
-      await fetchDoc();
     } catch {
       setError(true);
     }
@@ -301,12 +244,6 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
             {selectedVersions.length === 2 && (
               <SecondaryButton onClick={handleCompare}>{t('compare')}</SecondaryButton>
             )}
-            <SecondaryButton onClick={() => setPolicyDrawerOpen(true)}>
-              {t('updatePolicy')}
-            </SecondaryButton>
-            <SecondaryButton onClick={() => setScopeDrawerOpen(true)}>
-              {t('updateImsScope')}
-            </SecondaryButton>
           </div>
         }
       />
@@ -365,24 +302,6 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
           </Panel>
         </div>
       </div>
-
-      {/* G6: Update Policy drawer */}
-      <FormDrawer
-        open={policyDrawerOpen}
-        onClose={() => setPolicyDrawerOpen(false)}
-        title={t('updatePolicy')}
-        fields={policyFields}
-        onSubmit={handleUpdatePolicy}
-      />
-
-      {/* G6: Update IMS Scope drawer */}
-      <FormDrawer
-        open={scopeDrawerOpen}
-        onClose={() => setScopeDrawerOpen(false)}
-        title={t('updateImsScope')}
-        fields={scopeFields}
-        onSubmit={handleUpdateImsScope}
-      />
 
       {/* G8: Success toast with ProvenanceLink */}
       {toast && (

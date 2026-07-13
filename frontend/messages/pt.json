@@ -128,12 +128,6 @@
     "versionHistory": "Histórico de versões",
     "noVersions": "Sem versões ainda",
     "selectTwoVersions": "Selecione duas versões para comparar",
-    "updatePolicy": "Atualizar política",
-    "updateImsScope": "Atualizar escopo do SGI",
-    "fieldPolicyText": "Texto da política",
-    "fieldScopeStatement": "Declaração de escopo",
-    "fieldBoundaries": "Limites",
-    "fieldExclusions9001": "Exclusões (ISO 9001)",
     "savedSuccessfully": "Salvo com sucesso"
   },
   "m2": {

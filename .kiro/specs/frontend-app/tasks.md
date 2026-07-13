@@ -391,6 +391,7 @@
 - [x] Document list (filtered by standard/status), detail + version diff, forms per MOD-3.
 - [x] Real-time via `onDocumentStatusChanged`. Visible provenance links (MOD-9).
 - [x] All strings via `next-intl`.
+- [ ] **BLOCKED-ON-OWNER:** updatePolicy + updateImsScope drawers require getPolicy/getImsScope read surface (no query in schema; m1.policies/m1.ims_scope are independent tables with own UUIDs).
 
 **Binds to:** `view-designs.md` §5 (architect design authority).
 **D-rung:** D2.
