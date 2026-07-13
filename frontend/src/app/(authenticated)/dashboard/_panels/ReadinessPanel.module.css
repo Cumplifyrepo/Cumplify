@@ -1,0 +1,62 @@
+.loading {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.scores {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.scoreCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-lg);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-inner);
+}
+
+.scoreValue {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  color: var(--color-text-heading);
+}
+
+.standardLabel {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-top: var(--space-xs);
+}
+
+.trendPositive {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--space-xs);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-success);
+}
+
+.trendNegative {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--space-xs);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.trendAttribution {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}

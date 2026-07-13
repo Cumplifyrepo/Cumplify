@@ -1,0 +1,13 @@
+.shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main {
+  background: var(--color-bg);
+  padding: var(--space-panel-pad);
+  overflow-y: auto;
+  max-width: 1200px;
+}

@@ -1,12 +1,44 @@
 {
+  "nav": {
+    "mainNav": "Navegação principal",
+    "operate": "OPERAR",
+    "modules": "MÓDULOS",
+    "admin": "ADMIN",
+    "commandCenter": "Centro de Comando",
+    "askCumplify": "Perguntar ao Cumplify",
+    "documentStudio": "Estúdio de Documentos",
+    "capa": "CAPA",
+    "auditStudio": "Estúdio de Auditoria",
+    "records": "Registros",
+    "risk": "Risco",
+    "settings": "Configurações"
+  },
+  "shell": {
+    "signOut": "Sair",
+    "signIn": "Entrar",
+    "signingIn": "Entrando...",
+    "signInError": "E-mail ou senha inválidos",
+    "email": "E-mail",
+    "password": "Senha"
+  },
   "commandCenter": {
     "title": "Centro de Comando",
     "readinessScore": "Pontuação de Prontidão",
     "trend": "{delta}: {attribution}",
+    "trendFinding": "após achado registrado",
+    "trendCapa": "após mudança de status CAPA",
     "hitlQueue": "Fila de Aprovações",
     "agentsFeed": "Agentes Trabalhando",
     "topRisks": "Riscos Principais",
-    "noItems": "Nenhum item pendente de aprovação"
+    "noItems": "Nenhum item pendente de aprovação",
+    "noAgentActivity": "Sem atividade recente de agentes",
+    "noRisks": "Sem riscos registrados",
+    "viewAll": "Ver todos",
+    "loading": "Carregando...",
+    "eventDocument": "Documento",
+    "eventCapa": "CAPA",
+    "eventFinding": "Achado",
+    "eventRisk": "Risco"
   },
   "hitlCard": {
     "approve": "Aprovar",
@@ -14,11 +46,40 @@
     "sendBack": "Devolver com nota",
     "trustRitual": "Ao aprovar, o evento é selado no seu registro de auditoria",
     "flaggedJustification": "Justificação necessária (sinalizado pela guardrail)",
-    "viewAuditEvent": "Ver evento de auditoria selado"
+    "notePlaceholder": "Adicionar uma nota (opcional)",
+    "viewAuditEvent": "Ver evento de auditoria selado",
+    "guardrailEvidence": "Evidência de guardrail",
+    "groundingScore": "Pontuação de fundamentação",
+    "arVerdict": "Veredicto AR",
+    "actionError": "Ação falhou",
+    "editArgsLabel": "Editar argumentos da ação proposta",
+    "editParseError": "JSON inválido — corrija antes de confirmar",
+    "confirmEdit": "Confirmar e aprovar",
+    "cancelEdit": "Cancelar",
+    "dismiss": "Dispensar"
   },
   "profile": {
     "locale": "Idioma de Exibição",
     "localeDescription": "Escolha seu idioma preferido para a interface"
+  },
+  "provenance": {
+    "sealed": "Ver evento de auditoria selado"
+  },
+  "status": {
+    "DRAFT": "Rascunho",
+    "PENDING": "Pendente",
+    "IN_REVIEW": "Em revisão",
+    "OPEN": "Aberto",
+    "APPROVED": "Aprovado",
+    "CLOSED": "Fechado",
+    "VERIFIED": "Verificado",
+    "OBSOLETE": "Obsoleto",
+    "REJECTED": "Rejeitado",
+    "CRITICAL": "Crítico",
+    "HIGH": "Alto",
+    "IN_PROGRESS": "Em progresso",
+    "MEDIUM": "Médio",
+    "LOW": "Baixo"
   },
   "common": {
     "loading": "Carregando...",

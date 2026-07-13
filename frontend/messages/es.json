@@ -1,12 +1,44 @@
 {
+  "nav": {
+    "mainNav": "Navegación principal",
+    "operate": "OPERAR",
+    "modules": "MÓDULOS",
+    "admin": "ADMIN",
+    "commandCenter": "Centro de Mando",
+    "askCumplify": "Preguntar a Cumplify",
+    "documentStudio": "Estudio de Documentos",
+    "capa": "CAPA",
+    "auditStudio": "Estudio de Auditoría",
+    "records": "Registros",
+    "risk": "Riesgo",
+    "settings": "Configuración"
+  },
+  "shell": {
+    "signOut": "Cerrar sesión",
+    "signIn": "Iniciar sesión",
+    "signingIn": "Iniciando sesión...",
+    "signInError": "Correo electrónico o contraseña inválidos",
+    "email": "Correo electrónico",
+    "password": "Contraseña"
+  },
   "commandCenter": {
     "title": "Centro de Mando",
     "readinessScore": "Puntuación de Preparación",
     "trend": "{delta}: {attribution}",
+    "trendFinding": "tras hallazgo registrado",
+    "trendCapa": "tras cambio de estado CAPA",
     "hitlQueue": "Cola de Aprobaciones",
     "agentsFeed": "Agentes Trabajando",
     "topRisks": "Riesgos Principales",
-    "noItems": "No hay elementos pendientes de aprobación"
+    "noItems": "No hay elementos pendientes de aprobación",
+    "noAgentActivity": "Sin actividad reciente de agentes",
+    "noRisks": "Sin riesgos registrados",
+    "viewAll": "Ver todos",
+    "loading": "Cargando...",
+    "eventDocument": "Documento",
+    "eventCapa": "CAPA",
+    "eventFinding": "Hallazgo",
+    "eventRisk": "Riesgo"
   },
   "hitlCard": {
     "approve": "Aprobar",
@@ -14,11 +46,40 @@
     "sendBack": "Devolver con nota",
     "trustRitual": "Al aprobar, el evento se sella en tu registro de auditoría",
     "flaggedJustification": "Justificación requerida (marcado por guardabarrera)",
-    "viewAuditEvent": "Ver evento de auditoría sellado"
+    "notePlaceholder": "Agregar una nota (opcional)",
+    "viewAuditEvent": "Ver evento de auditoría sellado",
+    "guardrailEvidence": "Evidencia de guardabarrera",
+    "groundingScore": "Puntuación de fundamentación",
+    "arVerdict": "Veredicto AR",
+    "actionError": "Acción fallida",
+    "editArgsLabel": "Editar argumentos de la acción propuesta",
+    "editParseError": "JSON inválido — corregir antes de confirmar",
+    "confirmEdit": "Confirmar y aprobar",
+    "cancelEdit": "Cancelar",
+    "dismiss": "Descartar"
   },
   "profile": {
     "locale": "Idioma de Visualización",
     "localeDescription": "Elige tu idioma preferido para la interfaz"
+  },
+  "provenance": {
+    "sealed": "Ver evento de auditoría sellado"
+  },
+  "status": {
+    "DRAFT": "Borrador",
+    "PENDING": "Pendiente",
+    "IN_REVIEW": "En revisión",
+    "OPEN": "Abierto",
+    "APPROVED": "Aprobado",
+    "CLOSED": "Cerrado",
+    "VERIFIED": "Verificado",
+    "OBSOLETE": "Obsoleto",
+    "REJECTED": "Rechazado",
+    "CRITICAL": "Crítico",
+    "HIGH": "Alto",
+    "IN_PROGRESS": "En progreso",
+    "MEDIUM": "Medio",
+    "LOW": "Bajo"
   },
   "common": {
     "loading": "Cargando...",

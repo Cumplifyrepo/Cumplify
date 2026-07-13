@@ -1,0 +1,187 @@
+.loading {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.card {
+  padding: var(--space-card-pad);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-inner);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.agentName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-heading);
+}
+
+.body {
+  font-size: 14px;
+  color: var(--color-text-body);
+  margin: var(--space-sm) 0;
+  line-height: 1.5;
+}
+
+.trustRitual {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: var(--space-sm) 0;
+}
+
+/* M3/CARD-6: guardrail evidence display */
+.evidence {
+  margin: var(--space-md) 0;
+  padding: var(--space-md);
+  background: rgba(248, 113, 113, 0.08);
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.evidenceLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-danger);
+  margin-bottom: var(--space-sm);
+}
+
+.evidenceRow {
+  font-size: 13px;
+  color: var(--color-text-body);
+  margin-bottom: var(--space-xs);
+}
+
+.citations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+/* Note/justification input */
+.noteWrap {
+  margin: var(--space-md) 0;
+}
+
+.justificationInput {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-sm);
+  font-size: 13px;
+  color: var(--color-text-heading);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  resize: vertical;
+  font-family: inherit;
+}
+
+.justificationInput:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+/* M2/CARD-5: approved ProvenanceLink banner */
+.approvedBanner {
+  display: flex;
+  align-items: center;
+  margin: var(--space-md) 0;
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(74, 222, 128, 0.08);
+  border-radius: var(--radius-control);
+  font-size: 13px;
+  color: var(--color-success);
+}
+
+/* Action error */
+.actionError {
+  font-size: 13px;
+  color: var(--color-danger);
+  margin: var(--space-sm) 0;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* R1: Edit mode section */
+.editSection {
+  margin: var(--space-md) 0;
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+}
+
+.editLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.editTextarea {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--space-sm);
+  font-size: 13px;
+  font-family: monospace;
+  color: var(--color-text-heading);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  resize: vertical;
+}
+
+.editTextarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.editError {
+  font-size: 12px;
+  color: var(--color-danger);
+  margin-top: var(--space-xs);
+}
+
+.editActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+/* R2: Dismiss button on approval banner */
+.dismissBtn {
+  margin-left: auto;
+  font-size: 18px;
+  color: var(--color-text-muted);
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 0.15s;
+}
+
+.dismissBtn:hover {
+  color: var(--color-text-heading);
+}

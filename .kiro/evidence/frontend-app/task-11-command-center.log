@@ -1,0 +1,71 @@
+# Task 11 — Command Center View Build (Phase A)
+# Evidence log — rules 7/8: timestamp + exit code + cdk-outputs.json blob SHA
+
+Timestamp: 2026-07-13T15:46:03Z
+cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+
+## Sections implemented (view-designs.md authority)
+
+| Section | Scope | Status |
+|---------|-------|--------|
+| §1 App Shell | 260px sidebar + 1fr main, NavSections, NavItem (active state), UserFooter, LocaleSwitcher | DONE |
+| §2 Shared components | Panel, StatusBadge (i18n), ClauseChip, ProvenanceLink, EmptyState, ErrorState, PageHeader, PrimaryButton/SecondaryButton/DestructiveButton | DONE |
+| §3 GraphQL client + auth + Command Center panels | Amplify v6 SRP Pool B, fresh token per call (B3), Observable subscription (B1), LocaleProvider (B2), 4 panels bound | DONE |
+| §2 DataTable | Deferred to Phase C start (Task 26/M1, first consumer) | DEFERRED |
+| §2 FormDrawer | Deferred to Phase C start (Task 26/M1, first consumer) | DEFERRED |
+
+## Panel bindings (§3 Part 3.1 CC-1..CC-6)
+
+| Panel | Binding | Live |
+|-------|---------|------|
+| Readiness Score (CC-1) | getAuditReadiness × 3 (Promise.all), TrendIndicator (M7: delta + attribution), CC-6 refetch on onFindingRecorded/onCAPAStatusChanged | YES |
+| HITL Approval Queue | listPendingHitlItems + onHitlItemResolved sub + 15s poll fallback. CARD-1..7 full: 3 actions (R1: inline edit args editor), CARD-5 banner (R2: 10s + dismiss), CARD-6 evidence slots, CARD-7 justification gate, per-module gating (M4) | YES |
+| Agents Working Now (CC-3) | 4 subscriptions, append-only max 50, i18n labels (m2), 30s tick | YES |
+| Top Risks (CC-5) | getCrossRegisterRiskView top 5, ProvenanceLink on rating (M2) | YES |
+
+## Verification gates
+
+```
+$ cd frontend && npx tsc --noEmit
+Exit code: 0
+
+$ npm run test (root: services + infra)
+Test Files  50 passed | 1 skipped (51)
+Tests       552 passed | 3 skipped (555)
+Exit code: 0
+
+$ cd frontend && npx vitest run
+Test Files  6 passed (6)
+Tests       37 passed (37)
+Exit code: 0
+
+$ cd frontend && node scripts/check-hardcoded-strings.mjs
+✓ No hardcoded user-facing strings detected.
+Exit code: 0
+
+$ cd frontend && node scripts/load-env.mjs && npx next build
+✓ frontend/.env.local written from cdk-outputs.json
+✓ Compiled successfully
+✓ Generating static pages (6/6)
+Route (app)                              Size     First Load JS
+┌ ○ /                                    953 B    130 kB
+├ ○ /_not-found                          873 B    88.3 kB
+├ ○ /dashboard                           5.51 kB  189 kB
+└ ○ /sign-in                             1.6 kB   148 kB
+Exit code: 0
+```
+
+## Key design decisions
+
+- CON-2: aws-amplify v6 generateClient, Lambda authMode, ID token from Pool B SRP
+- CON-3: output:'export', all data fetching client-side after auth
+- CON-5: tenantId from ID-token claim in useTenantSubscription, never in mutation inputs
+- CON-6: role gating presentation-only via canApprove(role, module), server enforces
+- CON-8: CARD-7 justification required before approve mutation fires on flagged items
+- B1: Observable .subscribe(), not for-await (Amplify v6 contract)
+- B2: LocaleProvider static-imports all 3 catalogs, keys on user.locale
+- B3: fetchAuthSession() per call auto-refreshes expired tokens
+- R1: Edit & approve parses args from draftBody, sends object as editedPayload
+- R2: Approved items exempt from subscription/poll removal, 10s + dismiss
+- M5: images:{unoptimized:true} for static export compatibility
+- m5: Unit test asserts globals.css and cssVariables export match

@@ -1,0 +1,32 @@
+.item {
+  display: block;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-control);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+
+.item:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-heading);
+}
+
+.active {
+  background: var(--color-surface-raised);
+  color: var(--color-text-heading);
+}
+
+.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}

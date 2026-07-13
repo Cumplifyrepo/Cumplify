@@ -158,15 +158,15 @@
 
 ## Task 11 — Command Center (Surface 1, from /dashboard Framer design) [KIRO]
 
-- [ ] Implement `/dashboard` page using the Framer `/dashboard` design (extracted via Task 10 design-sync).
-- [ ] Panel: Readiness Score — server component fetching `getAuditReadiness(standard)` for each standard. Trend indicator with attribution text.
-- [ ] Panel: HITL Approval Queue — client component calling `listPendingHitlItems`, rendering Part 3.2 card anatomy (CARD-1..7). Role-gated buttons per `custom:role` claim.
-- [ ] Panel: Agents Working Now — live feed via `onDocumentStatusChanged`, `onCAPAStatusChanged`, `onFindingRecorded`, `onRiskEscalated` subscriptions.
-- [ ] Panel: Top Risks — server component fetching `getCrossRegisterRiskView`.
-- [ ] CC-6: readiness score refetch triggered on relevant subscription events.
-- [ ] 15s polling interim for HITL queue (until `onHitlItemResolved` subscription wired in deploy).
-- [ ] All strings via `next-intl` catalogs (no hardcoded strings).
-- [ ] Brand: logo renders from `frontend/public/brand/cumplify-logo.png` (BC-9).
+- [x] Implement `/dashboard` page using the Framer `/dashboard` design (extracted via Task 10 design-sync).
+- [x] Panel: Readiness Score — server component fetching `getAuditReadiness(standard)` for each standard. Trend indicator with attribution text.
+- [x] Panel: HITL Approval Queue — client component calling `listPendingHitlItems`, rendering Part 3.2 card anatomy (CARD-1..7). Role-gated buttons per `custom:role` claim.
+- [x] Panel: Agents Working Now — live feed via `onDocumentStatusChanged`, `onCAPAStatusChanged`, `onFindingRecorded`, `onRiskEscalated` subscriptions.
+- [x] Panel: Top Risks — server component fetching `getCrossRegisterRiskView`.
+- [x] CC-6: readiness score refetch triggered on relevant subscription events.
+- [x] 15s polling interim for HITL queue (until `onHitlItemResolved` subscription wired in deploy).
+- [x] All strings via `next-intl` catalogs (no hardcoded strings).
+- [x] Brand: logo renders from `frontend/public/brand/cumplify-logo.png` (BC-9).
 
 **Depends on:** Tasks 1, 2, 9, 10.
 **D-rung:** D2 (built + locally tested).

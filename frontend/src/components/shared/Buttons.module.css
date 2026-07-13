@@ -1,0 +1,68 @@
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-xl);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-on-accent);
+  background: var(--color-accent);
+  border-radius: var(--radius-pill);
+  border: none;
+  transition: filter 0.15s;
+}
+
+.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-xl);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-heading);
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  transition: background 0.15s;
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+
+.secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.destructive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-xl);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-on-accent);
+  background: var(--color-danger);
+  border-radius: var(--radius-pill);
+  border: none;
+  transition: filter 0.15s;
+}
+
+.destructive:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.destructive:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

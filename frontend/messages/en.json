@@ -1,13 +1,44 @@
 {
+  "nav": {
+    "mainNav": "Main navigation",
+    "operate": "OPERATE",
+    "modules": "MODULES",
+    "admin": "ADMIN",
+    "commandCenter": "Command Center",
+    "askCumplify": "Ask Cumplify",
+    "documentStudio": "Document Studio",
+    "capa": "CAPA",
+    "auditStudio": "Audit Studio",
+    "records": "Records",
+    "risk": "Risk",
+    "settings": "Settings"
+  },
+  "shell": {
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "signInError": "Invalid email or password",
+    "email": "Email",
+    "password": "Password"
+  },
   "commandCenter": {
     "title": "Command Center",
     "readinessScore": "Readiness Score",
     "trend": "{delta}: {attribution}",
+    "trendFinding": "after finding recorded",
+    "trendCapa": "after CAPA status change",
     "hitlQueue": "Approval Queue",
     "agentsFeed": "Agents Working Now",
     "topRisks": "Top Risks",
     "noItems": "No items pending approval",
-    "loading": "Loading..."
+    "noAgentActivity": "No recent agent activity",
+    "noRisks": "No risks registered",
+    "viewAll": "View all",
+    "loading": "Loading...",
+    "eventDocument": "Document",
+    "eventCapa": "CAPA",
+    "eventFinding": "Finding",
+    "eventRisk": "Risk"
   },
   "hitlCard": {
     "approve": "Approve",
@@ -15,11 +46,40 @@
     "sendBack": "Send back with note",
     "trustRitual": "On approval, event seals to your audit trail",
     "flaggedJustification": "Justification required (flagged by guardrail)",
-    "viewAuditEvent": "View sealed audit event"
+    "notePlaceholder": "Add a note (optional)",
+    "viewAuditEvent": "View sealed audit event",
+    "guardrailEvidence": "Guardrail evidence",
+    "groundingScore": "Grounding score",
+    "arVerdict": "AR verdict",
+    "actionError": "Action failed",
+    "editArgsLabel": "Edit proposed action arguments",
+    "editParseError": "Invalid JSON — fix before confirming",
+    "confirmEdit": "Confirm & approve",
+    "cancelEdit": "Cancel",
+    "dismiss": "Dismiss"
   },
   "profile": {
     "locale": "Display Language",
     "localeDescription": "Choose your preferred language for the interface"
+  },
+  "provenance": {
+    "sealed": "View sealed audit event"
+  },
+  "status": {
+    "DRAFT": "Draft",
+    "PENDING": "Pending",
+    "IN_REVIEW": "In review",
+    "OPEN": "Open",
+    "APPROVED": "Approved",
+    "CLOSED": "Closed",
+    "VERIFIED": "Verified",
+    "OBSOLETE": "Obsolete",
+    "REJECTED": "Rejected",
+    "CRITICAL": "Critical",
+    "HIGH": "High",
+    "IN_PROGRESS": "In progress",
+    "MEDIUM": "Medium",
+    "LOW": "Low"
   },
   "common": {
     "loading": "Loading...",

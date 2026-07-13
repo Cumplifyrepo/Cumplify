@@ -1,0 +1,17 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.link:hover {
+  color: var(--color-accent-muted);
+}
+
+.icon {
+  color: var(--color-accent-muted);
+  flex-shrink: 0;
+}

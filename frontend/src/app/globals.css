@@ -1,0 +1,93 @@
+/**
+ * Cumplify global styles — CSS custom properties from design-tokens.ts.
+ * Owner decision: dark theme (steering 21). All semantic tokens injected as
+ * CSS variables for components that prefer vanilla CSS or css-in-js fallback.
+ */
+
+:root {
+  --color-bg: rgb(20, 24, 31);
+  --color-surface: rgb(33, 37, 44);
+  --color-surface-raised: rgb(35, 40, 46);
+  --color-surface-hover: rgb(39, 42, 48);
+  --color-border-subtle: rgb(46, 50, 56);
+  --color-border: rgb(49, 53, 58);
+  --color-border-strong: rgb(59, 63, 68);
+  --color-text-heading: rgb(252, 252, 252);
+  --color-text-body: rgb(204, 208, 214);
+  --color-text-secondary: rgb(174, 180, 188);
+  --color-text-muted: rgb(137, 146, 159);
+  --color-text-on-accent: rgb(255, 255, 255);
+  --color-accent: rgb(0, 101, 248);
+  --color-accent-muted: rgb(117, 166, 240);
+  --color-success: rgb(74, 222, 128);
+  --color-warning: rgb(251, 191, 36);
+  --color-danger: rgb(248, 113, 113);
+  --font-display: 'Inter Display', 'Inter', system-ui, sans-serif;
+  --font-text: 'Inter', system-ui, sans-serif;
+  --radius-card: 16px;
+  --radius-inner: 12px;
+  --radius-control: 10px;
+  --radius-pill: 9999px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-panel-pad: 24px;
+  --space-card-pad: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: var(--font-text);
+  background: var(--color-bg);
+  color: var(--color-text-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* Scrollbar styling (dark theme) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-strong);
+}
