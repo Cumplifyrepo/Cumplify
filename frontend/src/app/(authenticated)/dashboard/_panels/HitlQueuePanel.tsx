@@ -222,7 +222,9 @@ export function HitlQueuePanel() {
         input: {
           hitlItemId: item.hitlItemId,
           decision: 'APPROVE',
-          editedPayload: editedArgs,
+          // AWSJSON scalar requires a JSON *string* on the wire; AppSync
+          // parses it before the resolver sees it (maps/lists, not text).
+          editedPayload: JSON.stringify(editedArgs),
           justification: isFlagged ? note : undefined,
         },
       });

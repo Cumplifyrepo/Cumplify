@@ -205,7 +205,7 @@ describe('HitlQueuePanel', () => {
   });
 
   describe('CARD-3: Edit & approve flow', () => {
-    it('enters edit mode and sends the edited args object (not a string)', async () => {
+    it('enters edit mode and sends the edited args as an AWSJSON string', async () => {
       mockMutate.mockResolvedValue({
         approveHitlItem: { hitlItemId: 'item-1', auditEventId: 'evt-3', auditEventTimestamp: '2026-07-13T12:00:00Z' },
       });
@@ -240,8 +240,9 @@ describe('HitlQueuePanel', () => {
 
       await waitFor(() => expect(mockMutate).toHaveBeenCalled());
       const callArgs = mockMutate.mock.calls[0][1];
-      // editedPayload is the parsed object, not a string
-      expect(callArgs.input.editedPayload).toEqual(newArgs);
+      // AWSJSON wire form: a JSON-encoded string (AppSync delivers the parsed
+      // object to the resolver — services hitl-approval.test.ts asserts that side)
+      expect(callArgs.input.editedPayload).toBe(JSON.stringify(newArgs));
       expect(callArgs.input.decision).toBe('APPROVE');
     });
   });
