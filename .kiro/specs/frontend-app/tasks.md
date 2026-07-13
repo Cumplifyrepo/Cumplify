@@ -264,9 +264,9 @@
 
 ## Task 17 — ACC-4: Flagged HITL Approval [ARCHITECT]
 
-- [ ] Create a HITL item with `guardrailEvidence` populated (simulate flagged draft).
-- [ ] Attempt `approveHitlItem` WITHOUT `justification` field → verify backend rejects (or frontend blocks — depending on enforcement location per design; if server-enforced, verify 400).
-- [ ] Call `approveHitlItem` WITH `justification` → verify sealed event includes `justification` in payload.
+- [x] Create a HITL item with `guardrailEvidence` populated (simulate flagged draft). — 2 items, evidence surfaced fully-typed via listPendingHitlItems (CARD-6/L5-1 data path proven). 2026-07-13.
+- [ ] Attempt `approveHitlItem` WITHOUT `justification` field → verify backend rejects (or frontend blocks — depending on enforcement location per design; if server-enforced, verify 400). — OPEN BY DESIGN: enforcement is the card (CARD-7, tasks 25-31) + spec-35 L5-2 server rule; current API pass-through WITNESSED (leg A, justification:null sealed). Re-verify at card build. Findings F-E (explicit flagged marker needed) + F-F (server-side defense) routed to spec-35 design.
+- [x] Call `approveHitlItem` WITH `justification` → verify sealed event includes `justification` in payload. — sealed Hitl.Approved 01KXDQ4PX9 carries the typed justification VERBATIM (L5-3); verifier chainValid=true/11 items.
 
 **Depends on:** Task 15.
 **D-rung:** D3.
