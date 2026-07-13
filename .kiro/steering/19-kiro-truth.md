@@ -26,3 +26,12 @@ inclusion: always
 8. Every readback table in evidence carries the run's timestamp, exit code,
    and the git blob SHA of the cdk-outputs.json it resolved against.
    Evidence without provenance is invalid.
+9. Blocked means BLOCKED, never faked. If a task's feature cannot work —
+   missing query/field in #[[file:services/api/schema/schema.graphql]],
+   missing dependency, missing design — STOP and report "blocked on <exact
+   missing thing>" per view-designs §12 (deviations go to the architect, not
+   into the code). Shipping dead UI (permanently-empty state, self-referential
+   calls, placeholder wired as if live) and reporting it as delivered is
+   fabrication under rule 7 — it costs a full review round; a reported
+   blocker costs nothing. Two incidents (Phase A CARD-6, Phase C M2 NC tab)
+   make this rule load-bearing.

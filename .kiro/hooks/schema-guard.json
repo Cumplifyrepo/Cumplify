@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Schema Guard",
+      "trigger": "PostFileSave",
+      "description": "Mechanical schema invariants (no extend blocks, SCHEMA-5, subscription tenantId args, auth directives). Runs the hermetic schema-guard test on every save of schema.graphql and reports its output verbatim.",
+      "matcher": "^services/api/schema/schema\\.graphql$",
+      "action": {
+        "type": "agent",
+        "prompt": "Run `npx vitest run services/api/__tests__/schema-guard.test.ts` and report the output VERBATIM. If any assertion fails, the schema edit violates a standing invariant (extend blocks are silently ignored by AppSync; SCHEMA-5 forbids tenantId in inputs; every Subscription field needs tenantId: ID!; every Query/Mutation field needs an @aws_ directive) — fix the schema before proceeding. Never weaken or delete the guard test to go green. Remember: any NEW resolver for a NEW schema field must carry an explicit node dependency on the schema in infra/lib/api-stack.ts (see the dependency loop; live 404 otherwise)."
+      }
+    }
+  ]
+}
