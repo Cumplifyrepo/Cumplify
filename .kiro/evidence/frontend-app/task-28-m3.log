@@ -1,0 +1,17 @@
+# Task 28 — M3 Audit Studio UI (Phase C)
+Timestamp: 2026-07-13T22:12:44Z
+cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+Section: view-designs.md §7
+
+## Delivered
+- Readiness heatmap: getAuditReadiness × 3 standards, grouped by clause family (4-10)
+- Cell colors: score >=0.8 success, >=0.5 warning, else danger (25% tint)
+- FormDrawers: createAuditProgramme, scheduleAudit, recordFinding
+- Real-time: onFindingRecorded → refetch readiness
+
+## BLOCKED-ON-OWNER
+- Programme overview listing: no listAuditProgrammes/listAudits query in schema
+- Audit detail view (checklist + findings list): no listAuditChecklist/listAuditFindings queries
+
+## Verification
+tsc=0, 69 frontend tests, i18n=0, next build=12 pages

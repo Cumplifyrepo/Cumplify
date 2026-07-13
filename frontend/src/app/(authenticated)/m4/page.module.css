@@ -1,0 +1,127 @@
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.tab {
+  padding: var(--space-sm) var(--space-xl);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: var(--color-text-heading);
+}
+
+.tabActive {
+  color: var(--color-text-heading);
+  border-bottom-color: var(--color-accent);
+}
+
+.loading {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.warningRow {
+  border-left: 3px solid var(--color-warning, #facc15);
+}
+
+.dangerRow {
+  border-left: 3px solid var(--color-danger, #ef4444);
+}
+
+.trailSearch {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  align-items: center;
+}
+
+.trailInput {
+  flex: 1;
+  padding: var(--space-xs) var(--space-md);
+  font-size: 14px;
+  color: var(--color-text-heading);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  outline: none;
+}
+
+.trailInput:focus {
+  border-color: var(--color-accent);
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.eventRow {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.eventRow:hover {
+  background: var(--color-surface-hover);
+}
+
+.eventHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.eventType {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-heading);
+}
+
+.eventId {
+  font-size: 11px;
+  font-family: monospace;
+  color: var(--color-text-muted);
+}
+
+.eventTimestamp {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.eventActor {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-left: auto;
+}
+
+.eventPayload {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-control);
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--color-text-body);
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: auto;
+}
+
+.drawerActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  flex-wrap: wrap;
+}

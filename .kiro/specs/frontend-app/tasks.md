@@ -415,9 +415,10 @@
 ### Task 28 — M3 Audit Studio UI [KIRO] [ARCHITECT-DESIGN]
 
 - [x] Design authority confirmed: `view-designs.md` §7 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
-- [ ] Programme overview, audit + checklist + findings, readiness heatmap, forms per MOD-5.
-- [ ] Real-time via `onFindingRecorded`. Visible provenance links.
-- [ ] All strings via `next-intl`.
+- [x] Programme overview, audit + checklist + findings, readiness heatmap, forms per MOD-5.
+- [x] Real-time via `onFindingRecorded`. Visible provenance links.
+- [x] All strings via `next-intl`.
+- [ ] **BLOCKED-ON-OWNER:** Programme listing + audit detail require listAuditProgrammes/listAudits/listAuditChecklist/listAuditFindings queries.
 
 **Binds to:** `view-designs.md` §7 (architect design authority).
 **D-rung:** D2.
@@ -428,9 +429,10 @@
 ### Task 29 — M4 Records Management UI [KIRO] [ARCHITECT-DESIGN]
 
 - [x] Design authority confirmed: `view-designs.md` §8 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
-- [ ] Record register, calibration schedule (from `listCalibrationsDue`), audit-trail viewer, forms per MOD-6.
-- [ ] Visible provenance links.
-- [ ] All strings via `next-intl`.
+- [x] Record register, calibration schedule (from `listCalibrationsDue`), audit-trail viewer, forms per MOD-6.
+- [x] Visible provenance links.
+- [x] All strings via `next-intl`.
+- [ ] **BLOCKED-ON-OWNER:** Record register tab listing requires listRecords query.
 
 **Binds to:** `view-designs.md` §8 (architect design authority).
 **D-rung:** D2.
@@ -441,9 +443,10 @@
 ### Task 30 — M5 Risk Management UI [KIRO] [ARCHITECT-DESIGN]
 
 - [x] Design authority confirmed: `view-designs.md` §9 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
-- [ ] Risk register, cross-register view, forms per MOD-7.
-- [ ] Real-time via `onRiskEscalated`. Visible provenance links.
-- [ ] All strings via `next-intl`.
+- [x] Risk register, cross-register view, forms per MOD-7.
+- [x] Real-time via `onRiskEscalated`. Visible provenance links.
+- [x] All strings via `next-intl`.
+- [ ] **BLOCKED-ON-OWNER:** Treatment listing in row expand requires listRiskTreatments query (treatments field not on Risk type).
 
 **Binds to:** `view-designs.md` §9 (architect design authority).
 **D-rung:** D2.

@@ -1,0 +1,18 @@
+# Task 29 — M4 Records Management UI (Phase C)
+Timestamp: 2026-07-13T22:12:44Z
+cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+Section: view-designs.md §8
+
+## Delivered
+- Three tabs: Record register, Calibration schedule, Audit-trail viewer
+- Calibration schedule: listCalibrationsDue(windowDays:90), sorted by nextDue
+- Audit-trail viewer: entityId search → getAuditTrail, expandable event rows
+  Deep-linkable via ?trail=<entityId>&eventId=<id> — ProvenanceLink TARGET
+- FormDrawers: registerRecord, createRetentionPolicy, recordCalibration
+- No subscription (MOD-10 by design)
+
+## BLOCKED-ON-OWNER
+- Record register listing: no listRecords query in schema
+
+## Verification
+tsc=0, 69 frontend tests, i18n=0, next build=12 pages

@@ -1,0 +1,19 @@
+# Task 30 — M5 Risk Management UI (Phase C)
+Timestamp: 2026-07-13T22:12:44Z
+cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+Section: view-designs.md §9
+
+## Delivered
+- Risk register: getCrossRegisterRiskView(standard, category) with filters
+- DataTable: description, category, standard, riskRating + StatusBadge + ProvenanceLink, owner, status
+- Row expand: treatment actions (addRiskTreatment, createChangePlan drawers)
+- Ask chip integration: consumes ?create=1&title=<>&standard=<> → createRisk drawer
+- Real-time: onRiskEscalated → refetch + 3s CSS flash on escalated row
+- FormDrawers: createRisk, addRiskTreatment, createChangePlan
+
+## BLOCKED-ON-OWNER
+- Treatment listing in row expand: no listRiskTreatments query in schema
+  (treatments field not on Risk type — mutation works, listing does not)
+
+## Verification
+tsc=0, 69 frontend tests, i18n=0, next build=12 pages

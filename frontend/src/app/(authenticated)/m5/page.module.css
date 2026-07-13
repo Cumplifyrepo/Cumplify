@@ -1,0 +1,122 @@
+.filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.pills {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.pill {
+  padding: var(--space-xs) var(--space-md);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-subtle);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pill:hover {
+  background: var(--color-surface-hover);
+}
+
+.pillActive {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent);
+}
+
+.categorySelect {
+  padding: var(--space-xs) var(--space-md);
+  font-size: 13px;
+  color: var(--color-text-heading);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  outline: none;
+}
+
+.loading {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.detailSection {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  transition: border-color 0.3s;
+}
+
+.escalatedFlash {
+  border-color: var(--color-danger, #ef4444);
+  animation: flash 0.6s ease-in-out 5;
+}
+
+@keyframes flash {
+  0%, 100% { border-color: var(--color-danger, #ef4444); }
+  50% { border-color: transparent; }
+}
+
+.detailTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-heading);
+  margin-bottom: var(--space-md);
+}
+
+.detailEmpty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+}
+
+.treatmentList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.treatmentItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--color-border-subtle);
+  flex-wrap: wrap;
+}
+
+.treatmentDesc {
+  font-size: 14px;
+  color: var(--color-text-body);
+  flex: 1;
+}
+
+.treatmentMeta {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.detailActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.ratingCell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-heading);
+}
