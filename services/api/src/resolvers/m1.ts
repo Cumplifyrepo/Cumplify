@@ -7,7 +7,7 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
-import { mapEnum, DOC_TYPE_MAP, APPROVAL_DECISION_MAP } from './enum-mappings.js';
+import { mapEnum, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m1' });
 
@@ -31,6 +31,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'updateImsScope': return updateImsScope(event, tenantId, sub);
     case 'getDocument': return getDocument(event, tenantId);
     case 'listDocuments': return listDocuments(event, tenantId);
+    case 'listDocumentVersions': return listDocumentVersions(event, tenantId);
     case 'getDocumentVersionDiff': return getDocumentVersionDiff(event, tenantId);
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
@@ -184,10 +185,40 @@ async function getDocument(event: AppSyncEvent, tenantId: string) {
   } catch (err) { await txn.rollback(); throw err; }
 }
 
-async function listDocuments(_event: AppSyncEvent, tenantId: string) {
+async function listDocuments(event: AppSyncEvent, tenantId: string) {
+  // Filters declared in the schema (standard, status) are honored here —
+  // previously ignored, which made the M1 filter bar a no-op live.
+  const clauses: string[] = [];
+  const params: Array<{ name: string; value: { stringValue: string } }> = [];
+  const standard = event.arguments.standard as string | undefined;
+  const status = event.arguments.status as string | undefined;
+  if (standard) {
+    clauses.push('standard = :standard');
+    params.push({ name: 'standard', value: { stringValue: standard } });
+  }
+  if (status) {
+    clauses.push('status = :status');
+    params.push({ name: 'status', value: { stringValue: mapEnum(DOC_STATUS_MAP, status, 'status') } });
+  }
+  const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(`SELECT * FROM m1.documents ORDER BY created_at DESC`);
+    const result = await txn.execute(
+      `SELECT * FROM m1.documents ${where} ORDER BY created_at DESC`,
+      params,
+    );
+    await txn.commit();
+    return marshalMany(result);
+  } catch (err) { await txn.rollback(); throw err; }
+}
+
+async function listDocumentVersions(event: AppSyncEvent, tenantId: string) {
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT * FROM m1.document_versions WHERE document_id = :documentId::uuid ORDER BY version_no DESC`,
+      [{ name: 'documentId', value: { stringValue: event.arguments.documentId as string } }],
+    );
     await txn.commit();
     return marshalMany(result);
   } catch (err) { await txn.rollback(); throw err; }

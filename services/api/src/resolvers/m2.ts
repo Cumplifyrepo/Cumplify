@@ -30,7 +30,9 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'verifyEffectiveness': return verifyEffectiveness(event, tenantId, sub);
     case 'disposeNonconformingOutput': return disposeNonconformingOutput(event, tenantId, sub);
     case 'getNonconformity': return getNonconformity(event, tenantId);
+    case 'listNonconformities': return listNonconformities(event, tenantId);
     case 'listOpenCAPAs': return listOpenCAPAs(event, tenantId);
+    case 'listCorrectiveActions': return listCorrectiveActions(event, tenantId);
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
@@ -208,13 +210,67 @@ async function getNonconformity(event: AppSyncEvent, tenantId: string) {
   } catch (err) { await txn.rollback(); throw err; }
 }
 
-async function listOpenCAPAs(_event: AppSyncEvent, tenantId: string) {
+async function listOpenCAPAs(event: AppSyncEvent, tenantId: string) {
+  // FIXED 2026-07-13 (architect): previous SQL referenced nc.title (column
+  // does not exist) and joined on ca.nonconformity_id (column is nc_id) —
+  // the query errored on every live call. Filters (standard, severity) are
+  // declared in the schema and honored here; both live on the NC row.
+  const clauses: string[] = [`ca.status IN ('open', 'in_progress')`];
+  const params: Array<{ name: string; value: { stringValue: string } }> = [];
+  const standard = event.arguments.standard as string | undefined;
+  const severity = event.arguments.severity as string | undefined;
+  if (standard) {
+    clauses.push('nc.standard = :standard');
+    params.push({ name: 'standard', value: { stringValue: standard } });
+  }
+  if (severity) {
+    clauses.push('nc.severity = :severity');
+    params.push({ name: 'severity', value: { stringValue: mapEnum(SEVERITY_MAP, severity, 'severity') } });
+  }
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
-      `SELECT ca.*, nc.title as nc_title FROM m2.corrective_actions ca
-       JOIN m2.nonconformities nc ON nc.id = ca.nonconformity_id
-       WHERE ca.status = 'open' ORDER BY ca.due_date ASC`,
+      `SELECT ca.* FROM m2.corrective_actions ca
+       JOIN m2.nonconformities nc ON nc.id = ca.nc_id
+       WHERE ${clauses.join(' AND ')} ORDER BY ca.due_date ASC`,
+      params,
+    );
+    await txn.commit();
+    return marshalMany(result);
+  } catch (err) { await txn.rollback(); throw err; }
+}
+
+async function listNonconformities(event: AppSyncEvent, tenantId: string) {
+  const clauses: string[] = [];
+  const params: Array<{ name: string; value: { stringValue: string } }> = [];
+  const standard = event.arguments.standard as string | undefined;
+  const severity = event.arguments.severity as string | undefined;
+  if (standard) {
+    clauses.push('standard = :standard');
+    params.push({ name: 'standard', value: { stringValue: standard } });
+  }
+  if (severity) {
+    clauses.push('severity = :severity');
+    params.push({ name: 'severity', value: { stringValue: mapEnum(SEVERITY_MAP, severity, 'severity') } });
+  }
+  const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT * FROM m2.nonconformities ${where} ORDER BY raised_at DESC`,
+      params,
+    );
+    await txn.commit();
+    return marshalMany(result);
+  } catch (err) { await txn.rollback(); throw err; }
+}
+
+async function listCorrectiveActions(event: AppSyncEvent, tenantId: string) {
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT * FROM m2.corrective_actions WHERE nc_id = :ncId::uuid ORDER BY created_at ASC`,
+      [{ name: 'ncId', value: { stringValue: event.arguments.ncId as string } }],
     );
     await txn.commit();
     return marshalMany(result);

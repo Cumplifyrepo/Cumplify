@@ -509,11 +509,14 @@ type Query {
   # M1 — Document Studio
   getDocument(id: ID!): Document @aws_lambda
   listDocuments(standard: Standard, status: DocumentStatus): [Document!]! @aws_lambda
+  listDocumentVersions(documentId: ID!): [DocumentVersion!]! @aws_lambda
   getDocumentVersionDiff(v1: ID!, v2: ID!): Diff @aws_lambda
 
   # M2 — CAPA
   getNonconformity(id: ID!): Nonconformity @aws_lambda
+  listNonconformities(standard: Standard, severity: Severity): [Nonconformity!]! @aws_lambda
   listOpenCAPAs(standard: Standard, severity: Severity): [CorrectiveAction!]! @aws_lambda
+  listCorrectiveActions(ncId: ID!): [CorrectiveAction!]! @aws_lambda
 
   # M3 — Audit Studio
   getAudit(id: ID!): Audit @aws_lambda

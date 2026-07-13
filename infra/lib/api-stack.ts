@@ -416,10 +416,15 @@ export class ApiStack extends cdk.Stack {
     // M1
     m1DS.createResolver('GetDocument', { typeName: 'Query', fieldName: 'getDocument' });
     m1DS.createResolver('ListDocuments', { typeName: 'Query', fieldName: 'listDocuments' });
+    // New field 2026-07-13 (frontend-app Phase C read surface) — MUST carry the
+    // schema dependency below, or CFN races the schema update (BUG at 9d9c90a1).
+    const listDocVersionsResolver = m1DS.createResolver('ListDocumentVersions', { typeName: 'Query', fieldName: 'listDocumentVersions' });
     m1DS.createResolver('GetDocumentVersionDiff', { typeName: 'Query', fieldName: 'getDocumentVersionDiff' });
     // M2
     m2DS.createResolver('GetNonconformity', { typeName: 'Query', fieldName: 'getNonconformity' });
+    const listNcResolver = m2DS.createResolver('ListNonconformities', { typeName: 'Query', fieldName: 'listNonconformities' });
     m2DS.createResolver('ListOpenCAPAs', { typeName: 'Query', fieldName: 'listOpenCAPAs' });
+    const listCaResolver = m2DS.createResolver('ListCorrectiveActions', { typeName: 'Query', fieldName: 'listCorrectiveActions' });
     // M3
     m3DS.createResolver('GetAudit', { typeName: 'Query', fieldName: 'getAudit' });
     m3DS.createResolver('GetAuditReadiness', { typeName: 'Query', fieldName: 'getAuditReadiness' });
@@ -674,7 +679,10 @@ export class ApiStack extends cdk.Stack {
     // (live failure 2026-07-11, exec 9d9c90a1: "No field named
     // onHitlItemResolved found on type Subscription").
     const schemaResource = api.node.findChild('Schema') as cdk.CfnResource;
-    for (const r of [listHitlResolver, getProfileResolver, approveHitlResolver, updateProfileResolver, subHitlResolver]) {
+    for (const r of [
+      listHitlResolver, getProfileResolver, approveHitlResolver, updateProfileResolver, subHitlResolver,
+      listDocVersionsResolver, listNcResolver, listCaResolver,
+    ]) {
       r.node.addDependency(schemaResource);
     }
 
