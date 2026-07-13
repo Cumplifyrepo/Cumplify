@@ -96,10 +96,14 @@ export async function resolveHitlItem(
   hitlItemId: string,
   resolution: 'APPROVED' | 'REJECTED' | 'TIMED_OUT',
   approver?: string,
+  // The approval Lambda passes its tenant-scoped client — its ambient role has
+  // no DDB grants at all; UpdateItem rides the tenant-data role's HITL-pinned
+  // statement (BUG-14). Default ambient client kept for future system callers.
+  client: { send: (cmd: UpdateItemCommand) => Promise<unknown> } = ddb,
 ): Promise<void> {
   const ttlEpoch = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // 30 days
 
-  await ddb.send(
+  await client.send(
     new UpdateItemCommand({
       TableName: TABLE_NAME,
       Key: marshall({

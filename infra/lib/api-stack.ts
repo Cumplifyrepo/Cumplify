@@ -367,6 +367,21 @@ export class ApiStack extends cdk.Stack {
       },
     }));
 
+    // UpdateItem pinned to the caller-tenant's HITL partition ONLY (exact
+    // LeadingKeys, no wildcard tail) — the approval Lambda's PENDING→RESOLVING
+    // guard and resolveHitlItem bookkeeping both write PK TENANT#<t>#HITL.
+    // Deliberately NOT added to the statement above: a tenant-wide UpdateItem
+    // would open a same-tenant AUDITLOG modify surface (BUG-14 fix, ACC-3).
+    tenantDataRole.addToPolicy(new iam.PolicyStatement({
+      actions: ['dynamodb:UpdateItem'],
+      resources: [props.tableArn],
+      conditions: {
+        'ForAllValues:StringLike': {
+          'dynamodb:LeadingKeys': ['TENANT#${aws:PrincipalTag/tenantId}#HITL'],
+        },
+      },
+    }));
+
     // KMS decrypt for DDB CMK (required for GetItem/PutItem on encrypted table)
     props.dynamodbKey.grantDecrypt(tenantDataRole);
 

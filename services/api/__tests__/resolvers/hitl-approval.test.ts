@@ -168,9 +168,10 @@ describe('hitl-approval resolver — happy path approve', () => {
     expect(output.approverSub).toBe('approver-user-1');
     expect(output.justification).toBe('Looks good');
 
-    // Verify resolveHitlItem was called
+    // Verify resolveHitlItem was called with the tenant-scoped client (BUG-14:
+    // the ambient role has no DDB grants)
     expect(mockResolveHitlItem).toHaveBeenCalledWith(
-      TENANT_ID, 'hitl-item-123', 'APPROVED', 'approver-user-1',
+      TENANT_ID, 'hitl-item-123', 'APPROVED', 'approver-user-1', expect.anything(),
     );
   });
 
@@ -217,9 +218,9 @@ describe('hitl-approval resolver — happy path send-back', () => {
     expect(sfnCmd.input.error).toBe('SENT_BACK');
     expect(sfnCmd.input.cause).toBe('Needs more detail');
 
-    // Verify resolveHitlItem was called with REJECTED
+    // Verify resolveHitlItem was called with REJECTED + the tenant-scoped client
     expect(mockResolveHitlItem).toHaveBeenCalledWith(
-      TENANT_ID, 'hitl-item-123', 'REJECTED', 'approver-user-1',
+      TENANT_ID, 'hitl-item-123', 'REJECTED', 'approver-user-1', expect.anything(),
     );
   });
 });

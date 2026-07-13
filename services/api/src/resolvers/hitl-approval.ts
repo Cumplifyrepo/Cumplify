@@ -146,9 +146,11 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
     throw err;
   }
 
-  // Step 9: resolveHitlItem bookkeeping (removes GSI9, sets TTL)
+  // Step 9: resolveHitlItem bookkeeping (removes GSI9, sets TTL) — rides the
+  // same tenant-scoped client as the RESOLVING guard (BUG-14: ambient role has
+  // no DDB grants).
   const resolution = decision === 'APPROVE' ? 'APPROVED' : 'REJECTED';
-  await resolveHitlItem(tenantId, hitlItemId, resolution, approverSub);
+  await resolveHitlItem(tenantId, hitlItemId, resolution, approverSub, ddb);
 
   // Step 10: Publish audit event
   const detailType = decision === 'APPROVE' ? 'Hitl.Approved' : 'Hitl.SentBack';

@@ -97,6 +97,18 @@ describe('ApiStack template assertions (source-level)', () => {
     expect(API_STACK_CODE).toContain('Effect.DENY');
   });
 
+  it('tenant-data role UpdateItem is pinned to the HITL partition only (BUG-14)', () => {
+    // Approval-path writes (RESOLVING guard + resolveHitlItem) need UpdateItem,
+    // but ONLY on PK TENANT#<t>#HITL — exact LeadingKeys, no wildcard tail.
+    expect(API_STACK_CODE).toContain("'dynamodb:UpdateItem'");
+    expect(API_STACK_CODE).toContain("'TENANT#${aws:PrincipalTag/tenantId}#HITL'");
+    // The broad tenant-wide statement must never gain UpdateItem — that would
+    // open a same-tenant AUDITLOG modify surface.
+    const broad = API_STACK_CODE.match(/actions: \[\s*'dynamodb:GetItem'[\s\S]*?\]/);
+    expect(broad).toBeTruthy();
+    expect(broad![0]).not.toContain('UpdateItem');
+  });
+
   it('has createResolver calls for all 5 Subscription fields (BLOCK-2)', () => {
     // Subscription resolvers are created in a loop over subscriptionFields array
     expect(API_STACK_CODE).toContain("'onDocumentStatusChanged'");
