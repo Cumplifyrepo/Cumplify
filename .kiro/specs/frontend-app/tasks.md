@@ -236,7 +236,7 @@
   - [x] `getProfile` — fail-safe default en.
   - [x] `updateProfile(es)` → `getProfile` = es, live round-trip.
   - [x] CloudFront 200 on / and /dashboard (SPA fallback verified).
-  - [ ] Subscription `onHitlItemResolved` — resolver LIVE on the API (config verified); WSS connect deliberately left open, fires at Task 16 ACC-3 E2E.
+  - [x] Subscription `onHitlItemResolved` — resolver LIVE on the API (config verified); WSS connect deliberately left open, fires at Task 16 ACC-3 E2E. CLOSED 2026-07-13: live WSS delivery witnessed twice at ACC-3 (task-16-acc3-hitl-flow.md).
 
 **Depends on:** Task 14 (sign-off obtained).
 **D-rung:** D3 (deployed + read back).
@@ -246,13 +246,15 @@
 
 ## Task 16 — ACC-3: Full HITL Approval Flow [ARCHITECT]
 
-- [ ] Trigger an agent HITL gate (or manually create a HITL_PENDING item via store-token invocation).
-- [ ] Verify item appears in `listPendingHitlItems` response.
-- [ ] Call `approveHitlItem(hitlItemId, decision:APPROVE)` with a valid Pool-B Quality Manager token.
-- [ ] Verify: item disappears from pending query (GSI9PK removed).
-- [ ] Verify: sealed audit event `Hitl.Approved` written to AUDITLOG (query by eventType).
-- [ ] Verify: SFN execution completed successfully (execution history shows TaskSucceeded).
-- [ ] Verify: no `taskToken` in any GraphQL response captured in network trace.
+- [x] Trigger an agent HITL gate (or manually create a HITL_PENDING item via store-token invocation). — NC.Raised → CAPAGuru → SFN 01KXDNDA8W, witnessed 2026-07-13.
+- [x] Verify item appears in `listPendingHitlItems` response. — witnessed (module M2 via tool registry; BUG-13 fixed en route).
+- [x] Call `approveHitlItem(hitlItemId, decision:APPROVE)` with a valid Pool-B Quality Manager token. — 200, full HitlApprovalResult; QM group live; Employee-fallback negative → 403 fail-closed.
+- [x] Verify: item disappears from pending query (GSI9PK removed). — DDB status APPROVED, GSI9PK removed, ttl +30d.
+- [x] Verify: sealed audit event `Hitl.Approved` written to AUDITLOG (query by eventType). — 01KXDNE8KJ sealed, hash-linked; mutation auditEventId matches sealed item exactly; verifier chainValid=true.
+- [x] Verify: SFN execution completed successfully (execution history shows TaskSucceeded). — TaskSucceeded ×2 + ExecutionSucceeded; writeback COMMITTED, RDS row 5076b811 (dual actor).
+- [x] Verify: no `taskToken` in any GraphQL response captured in network trace. — grep across all captured responses + WSS frames: clean.
+
+**Closed 2026-07-13 (architect, standing auth + owner BUG-14 IAM sign-off). Five never-run-live defects (BUG-11a/b/c, 12, 13, 14, 15) found+fixed by this acceptance — full record in the evidence file.**
 
 **Depends on:** Task 15.
 **D-rung:** D3.
