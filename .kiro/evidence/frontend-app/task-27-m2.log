@@ -1,0 +1,26 @@
+# Task 27 — M2 CAPA UI (Phase C)
+# Evidence log — rules 7/8: timestamp + exit code + cdk-outputs.json blob SHA
+
+Timestamp: 2026-07-13T21:25:39Z
+cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+Section implemented: view-designs.md §6 (amended per gate review)
+
+## Delivered
+
+- List page: two tabs (NC via listNonconformities + Open CAPAs via listOpenCAPAs)
+- Standard + severity filters wired to both queries
+- G1: NC tab uses listNonconformities with filters; refetch after raiseNonconformity
+- G2: NCDetail fetches listCorrectiveActions(ncId), renders CA list at stage
+- G2: verifyEffectiveness uses CA.id (correctiveActionId), closeCapa uses CA.id
+- G4: error handling in all handlers (try/catch, ErrorState with retry)
+- G8: URL-param sync (?nc=<id>)
+- CAPA timeline: 5 stages, completion derived from NC.status + rootCauseId + CAs + verified
+
+## Ask chip integration
+- ?raise=1&description=<>&standard=<> opens raiseNonconformity drawer with prefilled fields
+
+## Real-time
+- Single onCAPAStatusChanged subscription refetches both tabs + detail
+
+## Verification
+tsc=0, 69 frontend tests, i18n=0, next build=9 pages

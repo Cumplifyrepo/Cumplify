@@ -1,0 +1,46 @@
+.filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.pills {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.pill {
+  padding: var(--space-xs) var(--space-md);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-subtle);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pill:hover {
+  background: var(--color-surface-hover);
+}
+
+.pillActive {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent);
+}
+
+.statusSelect {
+  padding: var(--space-xs) var(--space-md);
+  font-size: 13px;
+  color: var(--color-text-heading);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  outline: none;
+}
+
+.loading {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}

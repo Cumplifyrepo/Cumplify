@@ -1,0 +1,79 @@
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: var(--space-xl);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--color-border-subtle);
+}
+
+.stage {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  position: relative;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.dotCompleted {
+  background: var(--color-accent);
+}
+
+.dotFuture {
+  background: transparent;
+  border: 2px dashed var(--color-border-subtle);
+}
+
+.stageContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.stageLabel {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.stageCompleted .stageLabel {
+  color: var(--color-text-heading);
+}
+
+.stageFuture .stageLabel {
+  color: var(--color-text-muted);
+}
+
+.stageDate {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.stageAction {
+  align-self: flex-start;
+  margin-top: var(--space-xs);
+}

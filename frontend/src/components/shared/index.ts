@@ -6,3 +6,5 @@ export { EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';
 export { PageHeader } from './PageHeader';
 export { PrimaryButton, SecondaryButton, DestructiveButton } from './Buttons';
+export { DataTable, type Column } from './DataTable';
+export { FormDrawer, type FieldDef } from './FormDrawer';

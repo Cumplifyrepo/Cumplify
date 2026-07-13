@@ -1,0 +1,37 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.headerRow {
+  background: var(--color-surface-raised);
+}
+
+.headerCell {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.row {
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background 0.1s;
+  cursor: pointer;
+}
+
+.row:hover {
+  background: var(--color-surface-hover);
+}
+
+.cell {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 14px;
+  color: var(--color-text-body);
+  vertical-align: middle;
+}

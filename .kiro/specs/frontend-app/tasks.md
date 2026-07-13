@@ -388,9 +388,9 @@
 ### Task 26 — M1 Document Studio UI [KIRO] [ARCHITECT-DESIGN]
 
 - [x] Design authority confirmed: `view-designs.md` §5 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
-- [ ] Document list (filtered by standard/status), detail + version diff, forms per MOD-3.
-- [ ] Real-time via `onDocumentStatusChanged`. Visible provenance links (MOD-9).
-- [ ] All strings via `next-intl`.
+- [x] Document list (filtered by standard/status), detail + version diff, forms per MOD-3.
+- [x] Real-time via `onDocumentStatusChanged`. Visible provenance links (MOD-9).
+- [x] All strings via `next-intl`.
 
 **Binds to:** `view-designs.md` §5 (architect design authority).
 **D-rung:** D2.
@@ -401,9 +401,9 @@
 ### Task 27 — M2 CAPA UI [KIRO] [ARCHITECT-DESIGN]
 
 - [x] Design authority confirmed: `view-designs.md` §6 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
-- [ ] NC list, CAPA timeline, forms per MOD-4.
-- [ ] Real-time via `onCAPAStatusChanged`. Visible provenance links.
-- [ ] All strings via `next-intl`.
+- [x] NC list, CAPA timeline, forms per MOD-4.
+- [x] Real-time via `onCAPAStatusChanged`. Visible provenance links.
+- [x] All strings via `next-intl`.
 
 **Binds to:** `view-designs.md` §6 (architect design authority).
 **D-rung:** D2.

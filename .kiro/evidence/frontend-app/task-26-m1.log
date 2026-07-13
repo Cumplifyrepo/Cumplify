@@ -1,0 +1,22 @@
+# Task 26 — M1 Document Studio UI (Phase C)
+# Evidence log — rules 7/8: timestamp + exit code + cdk-outputs.json blob SHA
+
+Timestamp: 2026-07-13T21:25:39Z
+cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+Section implemented: view-designs.md §5 (amended per gate review)
+
+## Delivered
+
+- List page with standard pills + status filter, DataTable, real-time onDocumentStatusChanged
+- Detail page with version rail (listDocumentVersions), status-gated actions, DiffView
+- G3: approve/publish use REAL versionId from latestVersion in version rail
+- G3: compare = select two versions from rail → getDocumentVersionDiff(v1, v2)
+- G4: error handling in all handlers (try/catch, ErrorState with retry)
+- G6: updatePolicy + updateImsScope FormDrawers (MOD-3 complete)
+- G8: CSS modules, URL-param sync (?doc=<id>), ProvenanceLink success toast
+
+## Ask chip integration
+- ?draft=1&title=<>&standard=<> opens createDocumentDraft drawer with prefilled fields
+
+## Verification
+tsc=0, 69 frontend tests, i18n=0, next build=9 pages

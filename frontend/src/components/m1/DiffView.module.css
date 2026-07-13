@@ -1,0 +1,43 @@
+.wrapper {
+  overflow-x: auto;
+}
+
+.stats {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  font-size: 13px;
+  font-family: monospace;
+}
+
+.added {
+  color: var(--color-success);
+}
+
+.removed {
+  color: var(--color-danger);
+}
+
+.code {
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.line {
+  padding: 1px var(--space-sm);
+  border-radius: 2px;
+}
+
+.addedLine {
+  background: rgba(74, 222, 128, 0.12);
+  color: var(--color-success);
+}
+
+.removedLine {
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--color-danger);
+  text-decoration: line-through;
+}
