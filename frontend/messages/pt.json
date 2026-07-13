@@ -62,6 +62,19 @@
     "locale": "Idioma de Exibição",
     "localeDescription": "Escolha seu idioma preferido para a interface"
   },
+  "ask": {
+    "title": "Perguntar ao Cumplify",
+    "placeholder": "Faça uma pergunta sobre seu SGI...",
+    "send": "Enviar",
+    "selectStandard": "Selecionar norma",
+    "generalGuidance": "Orientação geral (sem referência de cláusula específica)",
+    "chipDraftProcedure": "Redigir procedimento",
+    "chipRaiseNc": "Registrar não conformidade",
+    "chipAddRisk": "Adicionar risco",
+    "loading": "Pensando...",
+    "error": "Não foi possível obter uma resposta",
+    "close": "Fechar"
+  },
   "provenance": {
     "sealed": "Ver evento de auditoria selado"
   },

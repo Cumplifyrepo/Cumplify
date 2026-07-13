@@ -1,0 +1,65 @@
+# Task 25 — Ask Cumplify Chat Panel (Phase B)
+# Evidence log — rules 7/8: timestamp + exit code + cdk-outputs.json blob SHA
+
+Timestamp: 2026-07-13T20:01:00Z
+cdk-outputs.json blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+Section implemented: view-designs.md §4
+
+## Components delivered
+
+| Component | Path | Spec |
+|-----------|------|------|
+| AskPanel | `components/ask/AskPanel.tsx` | MessageList + StandardSelector + ChatInput + shimmer loading + ErrorState inline |
+| AskOverlay | `components/ask/AskOverlay.tsx` | Floating trigger (bottom-right pill) + 420px sheet, hidden on /ask |
+| /ask page | `app/(authenticated)/ask/page.tsx` | Full-page route |
+| ask-store | `lib/ask-store.ts` | Module-level state persistence, reset() on sign-out (P1) |
+| ask-chips | `lib/ask-chips.ts` | buildChipUrls + deriveTitle — tested URL construction |
+
+## ASK requirements
+
+| Req | Status |
+|-----|--------|
+| ASK-1 persistent access | ✓ sidebar + floating trigger |
+| ASK-2 routing | ✓ askISO9001/14001/45001(question) — text only |
+| ASK-3 citations | ✓ ClauseChip per citation; generalGuidance banner when none |
+| ASK-4 action chips | ✓ /m1?draft=1, /m2?raise=1, /m5?create=1 with title/description/standard |
+| ASK-5 locale | ✓ no client-side translation |
+| ASK-6 multilingual input | ✓ free text textarea |
+| ASK-7 no queryVector | ✓ never sent in any query |
+
+## Fixes applied (P1–P3)
+
+- P1: ask-store.reset() exported, called from auth-context signOut; test verifies
+- P2: AskOverlay aria-labels use t('ask.close')/t('ask.title') — localized
+- P3: Error state uses shared ErrorState component (§4: "errors: ErrorState inline")
+
+## Accepted carries
+
+- MarkdownBody: plain-text with pre-wrap; carry to polish task post ACC-2
+- Action chip targets: /m1, /m2, /m5 routes don't exist until Phase C — correct per plan
+
+## Verification gates
+
+```
+$ cd frontend && npx tsc --noEmit
+Exit code: 0
+
+$ npm run test (root)
+Test Files  50 passed | 1 skipped (51)
+Tests       552 passed | 3 skipped (555)
+Exit code: 0
+
+$ cd frontend && npx vitest run
+Test Files  8 passed (8)
+Tests       53 passed (53)
+Exit code: 0
+
+$ cd frontend && node scripts/check-hardcoded-strings.mjs
+✓ No hardcoded user-facing strings detected.
+Exit code: 0
+
+$ cd frontend && node scripts/load-env.mjs && npx next build
+✓ Compiled successfully
+✓ Generating static pages (7/7)
+Exit code: 0
+```

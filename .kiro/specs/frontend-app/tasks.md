@@ -374,10 +374,10 @@
 ### Task 25 — Ask Cumplify Chat Panel [KIRO] [ARCHITECT-DESIGN]
 
 - [x] Design authority confirmed: `view-designs.md` §4 (SDK inventory 2026-07-13 — page absent from Framer; architect design per 3433654).
-- [ ] Implement persistent chat overlay/sidebar per `view-designs.md` §4.
-- [ ] Route questions to `askISO9001`/`askISO14001`/`askISO45001` (question text only, no queryVector).
-- [ ] Render clauseRef citations inline; action chips per ASK-4.
-- [ ] All strings via `next-intl`.
+- [x] Implement persistent chat overlay/sidebar per `view-designs.md` §4.
+- [x] Route questions to `askISO9001`/`askISO14001`/`askISO45001` (question text only, no queryVector).
+- [x] Render clauseRef citations inline; action chips per ASK-4.
+- [x] All strings via `next-intl`.
 
 **Binds to:** `view-designs.md` §4 (architect design authority).
 **D-rung:** D2.

@@ -4,10 +4,12 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { AppShell } from '@/components/shell';
+import { AskOverlay } from '@/components/ask';
 
 /**
  * Authenticated layout — wraps all views in the AppShell.
  * Redirects to /sign-in if not authenticated.
+ * AskOverlay provides the floating trigger on all views (§4, ASK-1).
  */
 export default function AuthenticatedLayout({
   children,
@@ -33,5 +35,10 @@ export default function AuthenticatedLayout({
 
   if (!isAuthenticated) return null;
 
-  return <AppShell>{children}</AppShell>;
+  return (
+    <>
+      <AppShell>{children}</AppShell>
+      <AskOverlay />
+    </>
+  );
 }

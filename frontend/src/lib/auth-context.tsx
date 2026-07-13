@@ -16,6 +16,7 @@ import {
 } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import type { AuthUser, AuthState } from './auth-types';
+import { reset as resetAskStore } from './ask-store';
 
 export type { AuthUser, AuthState } from './auth-types';
 
@@ -80,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     await amplifySignOut();
+    resetAskStore();
     setUser(null);
     setIdToken(null);
     router.push('/sign-in');
