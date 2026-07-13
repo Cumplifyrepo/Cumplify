@@ -1,0 +1,27 @@
+# Dev SPA deploy — Phase A+B (commits 2f47edc, 58e0452, 0f29736) — ARCHITECT
+# Rules 7/8: every row carries timestamp + exit code + content witness.
+
+Deployed tree: develop @ 0f29736 (pushed)
+Bucket: cumplify-frontend-dev-697114252993 (s3 sync --delete, exit 0, 2026-07-13T20:14:43Z)
+Distribution: E2OONZTQOGYLSD; invalidation ICOH9IKHWUMTE86TYRDBESW2WO COMPLETED
+
+## Readback (content-level, not status codes) @ 2026-07-13T20:15:30Z–20:16:16Z
+
+| # | Assertion | Witness | Result |
+|---|-----------|---------|--------|
+| R1 | / serves SPA shell | <title>Cumplify</title> in body | PASS |
+| R2 | /ask (new Phase B route) | http=200, __next root present | PASS |
+| R3 | /dashboard | http=200, __next root present | PASS |
+| R4 | PERF-2 logo optimized | /brand/cumplify-logo.png = 20228 bytes | PASS |
+| R5 | es/pt catalogs shipped (B2) | app/layout-c9702b30633fd97e.js served sha256 feff81ff...3d530a == local build; contains "Cerrar" x2, "Fechar" | PASS |
+| R6 | ASK-7 at rest | zero "queryVector" occurrences across all served chunks referenced by /ask | PASS |
+
+Note: R5 first attempt compared compressed bytes (CloudFront gzip) — mismatch
+was encoding, not content; resolved with --compressed. Kept for honesty.
+
+## Still open (browser legs, architect + owner)
+- Task 22/ACC-1 walkthrough (incl. live WSS delivery, Edit&approve editedPayload
+  parsed-object witness in SFN output, drop 15s poll after verification)
+- Task 23/ACC-2 (PRECONDITION: guru grounding blocked on embed() door —
+  escalated to owner; citation+chips+no-queryVector legs ready)
+- Task 18/ACC-5 locale switch live; Task 20/ACC-7 role gating (fixtures ready)
