@@ -1,0 +1,29 @@
+# Phase C early gate (Tasks 26-27) — architect findings + backend unblock
+# Rules 7/8: rows carry timestamp + exit/error state + content witness.
+
+## Live backend bugs found during gate review (pre-existing, zero m1/m2 tests)
+| Bug | Witness |
+|-----|---------|
+| listOpenCAPAs SQL | selected non-existent nc.title; joined ca.nonconformity_id (real column: nc_id, migration 003) — errored on every live call since first deploy |
+| listDocuments filters | (standard, status) declared in schema, ignored by resolver (unfiltered SELECT) |
+
+## Unblock shipped — commit 067df30 (pushed)
+3 additive Query fields (listDocumentVersions, listNonconformities,
+listCorrectiveActions) + both SQL fixes + 9 hermetic SQL-asserting tests
+(suite 561) + resolver-count tripwire 55→58 + explicit schema node dependency
+on all new resolvers (9d9c90a1 lesson).
+
+## Deploy + live readback
+Direct deploy CumplifyPipeline/Dev/ApiStack --exclusively (pipeline converges
+on push): CFN Dev-ApiStack UPDATE_COMPLETE @ 2026-07-13T21:03Z.
+NOTE: `cdk deploy Dev-ApiStack` (unqualified) silently no-ops with exit 0 —
+stage stacks must be addressed as CumplifyPipeline/Dev/<Stack>.
+
+Resolver Lambda invokes (synthetic AppSync events, tenant acc-aaa,
+2026-07-13T21:03:33Z) — FunctionError=None + JSON array body for ALL of:
+listDocuments(standard=ISO9001), listDocumentVersions, listNonconformities,
+listOpenCAPAs (fix witnessed live), listCorrectiveActions. Empty arrays =
+empty dev register (honest); column errors would surface as FunctionError.
+
+AppSync list-resolvers @ 2026-07-13T21:03:54Z confirms all three new Query
+fields attached on the live API.
