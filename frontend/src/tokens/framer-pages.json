@@ -1,0 +1,62 @@
+{
+  "project": "Spora (copy)",
+  "syncedAt": "2026-07-13T13:00:48.226Z",
+  "pages": [
+    {
+      "name": "(unnamed)",
+      "path": "/"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/dashboard"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/Features"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/How-it-works"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/Pricings"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/Contact-us"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/Sign-up"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/Sign-in"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/Blogs"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/Blogs/:slug"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/404"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/legal/:slug"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/changelog"
+    },
+    {
+      "name": "(unnamed)",
+      "path": "/new-home"
+    }
+  ]
+}

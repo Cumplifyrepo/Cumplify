@@ -30,7 +30,12 @@ provides a token first.
 
 ## Design authority for views absent from Framer (owner decision 2026-07-11)
 The Framer Server API is READ-ONLY (live-probed: getProjectInfo,
-getNodesWithType, exportSVG, screenshot — no create/write methods), so
+getNodesWithType, exportSVG, screenshot, getColorStyles, getTextStyles —
+the last two verified 2026-07-13; the client is proxy-based, so method
+introspection under-reports: try the documented call directly. screenshot()
+takes a plain node-id string and works on WebPageNodes; component masters
+(SmartComponentNode) reject both screenshot and exportSVG — capture atoms
+via the pages that render them. No create/write methods exist), so
 designs cannot be authored into Framer programmatically. The owner has
 delegated the FRM-4 gap views (M1–M5 modules, Ask Cumplify, Settings) to the
 ARCHITECT: architect-authored dark-theme layouts implemented in code, using

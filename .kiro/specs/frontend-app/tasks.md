@@ -367,97 +367,97 @@
 
 ---
 
-## View Tasks [BLOCKED-ON-OWNER-DESIGN]
+## View Tasks [ARCHITECT-DESIGN]
 
-> Per owner decision 33f1e57: these tasks unblock when the owner provides Framer designs. Before implementation, re-run `framer-api getNodesWithType("WebPageNode")` to confirm the pages exist.
+> Gate lifted per owner decision 2026-07-11 (`design-authority-owner-decisions.md`, 3433654): view design is architect-authored — see **`view-designs.md`** in this spec (supersedes 33f1e57 "owner provides Framer designs"). Fresh `framer-api getNodesWithType("WebPageNode")` inventory re-run 2026-07-13: 14 pages / 22 components unchanged; the M1–M5, Ask Cumplify, and Settings pages remain ABSENT from Framer — absence resolves to the bound view-designs.md section, not to a block. Framer remains the source of truth for tokens/atoms (`frontend/src/tokens/design-tokens.ts`, extracted via live-verified `getColorStyles`/`getTextStyles`) and the /dashboard layout anatomy.
 
-### Task 25 — Ask Cumplify Chat Panel [KIRO] [BLOCKED-ON-OWNER-DESIGN]
+### Task 25 — Ask Cumplify Chat Panel [KIRO] [ARCHITECT-DESIGN]
 
-- [ ] Framer page confirmed via SDK inventory: `/<path-tbd>`.
-- [ ] Implement persistent chat overlay/sidebar per Framer layout.
+- [x] Design authority confirmed: `view-designs.md` §4 (SDK inventory 2026-07-13 — page absent from Framer; architect design per 3433654).
+- [ ] Implement persistent chat overlay/sidebar per `view-designs.md` §4.
 - [ ] Route questions to `askISO9001`/`askISO14001`/`askISO45001` (question text only, no queryVector).
 - [ ] Render clauseRef citations inline; action chips per ASK-4.
 - [ ] All strings via `next-intl`.
 
-**Binds to:** owner-provided Framer page for Ask Cumplify.
+**Binds to:** `view-designs.md` §4 (architect design authority).
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-25-ask-cumplify.log`
 
 ---
 
-### Task 26 — M1 Document Studio UI [KIRO] [BLOCKED-ON-OWNER-DESIGN]
+### Task 26 — M1 Document Studio UI [KIRO] [ARCHITECT-DESIGN]
 
-- [ ] Framer page confirmed via SDK inventory.
+- [x] Design authority confirmed: `view-designs.md` §5 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
 - [ ] Document list (filtered by standard/status), detail + version diff, forms per MOD-3.
 - [ ] Real-time via `onDocumentStatusChanged`. Visible provenance links (MOD-9).
 - [ ] All strings via `next-intl`.
 
-**Binds to:** owner-provided Framer page for M1.
+**Binds to:** `view-designs.md` §5 (architect design authority).
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-26-m1.log`
 
 ---
 
-### Task 27 — M2 CAPA UI [KIRO] [BLOCKED-ON-OWNER-DESIGN]
+### Task 27 — M2 CAPA UI [KIRO] [ARCHITECT-DESIGN]
 
-- [ ] Framer page confirmed via SDK inventory.
+- [x] Design authority confirmed: `view-designs.md` §6 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
 - [ ] NC list, CAPA timeline, forms per MOD-4.
 - [ ] Real-time via `onCAPAStatusChanged`. Visible provenance links.
 - [ ] All strings via `next-intl`.
 
-**Binds to:** owner-provided Framer page for M2.
+**Binds to:** `view-designs.md` §6 (architect design authority).
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-27-m2.log`
 
 ---
 
-### Task 28 — M3 Audit Studio UI [KIRO] [BLOCKED-ON-OWNER-DESIGN]
+### Task 28 — M3 Audit Studio UI [KIRO] [ARCHITECT-DESIGN]
 
-- [ ] Framer page confirmed via SDK inventory.
+- [x] Design authority confirmed: `view-designs.md` §7 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
 - [ ] Programme overview, audit + checklist + findings, readiness heatmap, forms per MOD-5.
 - [ ] Real-time via `onFindingRecorded`. Visible provenance links.
 - [ ] All strings via `next-intl`.
 
-**Binds to:** owner-provided Framer page for M3.
+**Binds to:** `view-designs.md` §7 (architect design authority).
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-28-m3.log`
 
 ---
 
-### Task 29 — M4 Records Management UI [KIRO] [BLOCKED-ON-OWNER-DESIGN]
+### Task 29 — M4 Records Management UI [KIRO] [ARCHITECT-DESIGN]
 
-- [ ] Framer page confirmed via SDK inventory.
+- [x] Design authority confirmed: `view-designs.md` §8 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
 - [ ] Record register, calibration schedule (from `listCalibrationsDue`), audit-trail viewer, forms per MOD-6.
 - [ ] Visible provenance links.
 - [ ] All strings via `next-intl`.
 
-**Binds to:** owner-provided Framer page for M4.
+**Binds to:** `view-designs.md` §8 (architect design authority).
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-29-m4.log`
 
 ---
 
-### Task 30 — M5 Risk Management UI [KIRO] [BLOCKED-ON-OWNER-DESIGN]
+### Task 30 — M5 Risk Management UI [KIRO] [ARCHITECT-DESIGN]
 
-- [ ] Framer page confirmed via SDK inventory.
+- [x] Design authority confirmed: `view-designs.md` §9 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
 - [ ] Risk register, cross-register view, forms per MOD-7.
 - [ ] Real-time via `onRiskEscalated`. Visible provenance links.
 - [ ] All strings via `next-intl`.
 
-**Binds to:** owner-provided Framer page for M5.
+**Binds to:** `view-designs.md` §9 (architect design authority).
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-30-m5.log`
 
 ---
 
-### Task 31 — Settings → Organization [KIRO] [BLOCKED-ON-OWNER-DESIGN]
+### Task 31 — Settings → Organization [KIRO] [ARCHITECT-DESIGN]
 
-- [ ] Framer page confirmed via SDK inventory.
+- [x] Design authority confirmed: `view-designs.md` §10 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
 - [ ] Settings nav entry (Pool B only, per `custom:role`).
 - [ ] Organization section: tenant `document-locale` field rendered **READ-ONLY** (displays the tenant default locale). The `updateProfile` mutation writes the per-USER locale only — it must NOT be used for the tenant document-locale. The tenant-settings write surface is a **NAMED CARRY to the settings spec**.
 - [ ] All strings via `next-intl`.
 
-**Binds to:** owner-provided Framer page for Settings.
+**Binds to:** `view-designs.md` §10 (architect design authority).
 **Named carry:** tenant document-locale write → `settings-ui` spec.
 **D-rung:** D2.
 **Evidence:** `.kiro/evidence/frontend-app/task-31-settings.log`
@@ -477,4 +477,4 @@ All acceptance criteria green = spec closes at D5 (human used it):
 - ACC-8 ✓ (Task 24) — Pool A rejection
 - ACC-9 ✓ (Task 21) — taskToken exclusion
 
-**Blocked tasks (25–31) do not gate closure** if their acceptance criteria (ACC-2 for Ask Cumplify) can be proven via a minimal implementation or they are explicitly deferred to a follow-up. ACC-2 requires Task 25 — if owner designs are not delivered by closure time, ACC-2 becomes a named carry.
+**View tasks (25–31) do not gate closure** if their acceptance criteria (ACC-2 for Ask Cumplify) can be proven via a minimal implementation or they are explicitly deferred to a follow-up. Design authority delivered 2026-07-13 (`view-designs.md` — architect, per 3433654); the tasks are UNBLOCKED and build-ready. ACC-2 requires Task 25 — if Task 25 is not implemented by closure time, ACC-2 becomes a named carry.

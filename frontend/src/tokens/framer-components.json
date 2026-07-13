@@ -1,0 +1,94 @@
+{
+  "project": "Spora (copy)",
+  "syncedAt": "2026-07-13T13:00:48.227Z",
+  "components": [
+    {
+      "name": "Button/Back Button",
+      "id": "KqhIRpZFv"
+    },
+    {
+      "name": "CTA Card",
+      "id": "VHA1YHcT6"
+    },
+    {
+      "name": "Toggle Button",
+      "id": "j9Lnv5WqY"
+    },
+    {
+      "name": "Pricing Cards",
+      "id": "js9Vv7ppV"
+    },
+    {
+      "name": "Footer",
+      "id": "alJojRmQR"
+    },
+    {
+      "name": "FAQ",
+      "id": "BorzoWLB1"
+    },
+    {
+      "name": "Menu Icon",
+      "id": "OVl6GLJn3"
+    },
+    {
+      "name": "Nav Bar",
+      "id": "mGGzfAWa7"
+    },
+    {
+      "name": "Logo",
+      "id": "BFuPguANj"
+    },
+    {
+      "name": "Card 2",
+      "id": "jeFtpWITU"
+    },
+    {
+      "name": "Card 3",
+      "id": "JFU36E5vz"
+    },
+    {
+      "name": "Card 1",
+      "id": "gj9_VTVMd"
+    },
+    {
+      "name": "Primary Button",
+      "id": "p4EYAfNS8"
+    },
+    {
+      "name": "Feature Card",
+      "id": "YsJ_brBs3"
+    },
+    {
+      "name": "Testimonial Card",
+      "id": "YCZ_afSa6"
+    },
+    {
+      "name": "Pricing Section Button",
+      "id": "FYzUbf4jl"
+    },
+    {
+      "name": "Social Icon",
+      "id": "iCdXNYPPI"
+    },
+    {
+      "name": "Secondary Button",
+      "id": "PMrkllq5y"
+    },
+    {
+      "name": "Contact Card",
+      "id": "CF9GznRxO"
+    },
+    {
+      "name": "Contact Form Button",
+      "id": "aDBhzx4fM"
+    },
+    {
+      "name": "Blog Card",
+      "id": "ZS_2uBOwb"
+    },
+    {
+      "name": "\"DELETE THIS\"",
+      "id": "tdaGWti35"
+    }
+  ]
+}

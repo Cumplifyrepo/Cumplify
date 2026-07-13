@@ -39,6 +39,13 @@ try {
   }));
   console.log(`Found ${components.length} components`);
 
+  // Extract design styles (colors + text ramp) — live-verified 2026-07-13.
+  // These feed the raw layer of frontend/src/tokens/design-tokens.ts; the
+  // semantic dark-theme mapping in that file is maintained by hand.
+  const colorStyles = await framer.getColorStyles();
+  const textStyles = await framer.getTextStyles();
+  console.log(`Found ${colorStyles.length} color styles, ${textStyles.length} text styles`);
+
   // Write framer-pages.json
   writeFileSync(
     resolve(TOKENS_DIR, 'framer-pages.json'),
@@ -51,9 +58,20 @@ try {
     JSON.stringify({ project: info.name, syncedAt: new Date().toISOString(), components: componentData }, null, 2),
   );
 
+  // Write framer-styles.json (raw color + text styles)
+  writeFileSync(
+    resolve(TOKENS_DIR, 'framer-styles.json'),
+    JSON.stringify(
+      { project: info.name, syncedAt: new Date().toISOString(), colorStyles, textStyles },
+      null,
+      2,
+    ),
+  );
+
   console.log(`\nWritten to ${TOKENS_DIR}/:`);
   console.log('  framer-pages.json');
   console.log('  framer-components.json');
+  console.log('  framer-styles.json');
 } finally {
   await framer.disconnect();
 }
