@@ -315,9 +315,11 @@
 
 ## Task 21 — ACC-9: taskToken Exclusion [ARCHITECT]
 
-- [ ] Capture network trace of `listPendingHitlItems` response.
-- [ ] Grep response body for "taskToken" — assert zero occurrences.
-- [ ] Inspect deployed GraphQL schema (introspection or `schema.graphql` file) — assert `taskToken` not present in any type.
+- [x] Capture network trace of `listPendingHitlItems` response. — fresh capture + all ACC-3/4 traces (lists, mutations, WSS frames). 2026-07-13.
+- [x] Grep response body for "taskToken" — assert zero occurrences. — zero across every captured body.
+- [x] Inspect deployed GraphQL schema (introspection or `schema.graphql` file) — assert `taskToken` not present in any type. — live introspection: 91 types, no such field anywhere; absent from SDL source too.
+
+**Closed 2026-07-13 (architect). Evidence: task-21-acc9-tasktoken.md.**
 
 **Depends on:** Task 15.
 **D-rung:** D3.
