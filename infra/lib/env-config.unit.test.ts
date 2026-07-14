@@ -14,6 +14,8 @@ function cfg(account: string): EnvConfig {
     account,
     region: 'us-east-1',
     auditArchiveRetentionDays: 1,
+    evidenceRetentionDays: 1,
+    evidenceRetentionMode: 'GOVERNANCE',
     alertEmail: 'test-alerts@example.com',
     availabilityZones: ['us-east-1b', 'us-east-1c'],
     globalTableReplica: false,

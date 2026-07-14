@@ -37,6 +37,24 @@ export interface EnvConfig {
   /** Object Lock COMPLIANCE retention for the audit-archive bucket (days). */
   readonly auditArchiveRetentionDays: number;
   /**
+   * EvidenceVault Object-Lock default retention (days) + mode.
+   *
+   * This is a SAFETY-NET default only: writers set a per-object
+   * `retain-until-date` derived from the TENANT's retention policy
+   * (m4.retention_policies), which overrides this default. The default exists
+   * so an object written without explicit retention is never unprotected.
+   *
+   * Was hardcoded COMPLIANCE / 2555 days for every environment (fixed
+   * 2026-07-14). Two consequences, both real: (1) one sealed object made the
+   * dev bucket permanently undeletable — COMPLIANCE cannot be shortened by
+   * anyone, including root; (2) it silently overrode every tenant retention
+   * policy shorter than 7 years, making ISO 7.5.3 disposition and GDPR
+   * erasure impossible. Dev/staging now use GOVERNANCE + a short window so
+   * the bucket stays disposable; prod keeps the 7-year COMPLIANCE floor.
+   */
+  readonly evidenceRetentionDays: number;
+  readonly evidenceRetentionMode: 'COMPLIANCE' | 'GOVERNANCE';
+  /**
    * Email endpoint for cost/ops alert SNS subscriptions (COND-4 credit-cap
    * alerts). SNS email subscriptions require a one-time confirmation click
    * by the recipient before delivery starts.
@@ -66,6 +84,8 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     cacheMultiAz: false,
     cacheNodeType: 'cache.t4g.micro',
     auditArchiveRetentionDays: 1,
+    evidenceRetentionDays: 1,
+    evidenceRetentionMode: 'GOVERNANCE',
     alertEmail: 'julio@mbdesignremodel.com',
   },
   staging: {
@@ -86,6 +106,8 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     cacheMultiAz: false,
     cacheNodeType: 'cache.t4g.micro',
     auditArchiveRetentionDays: 1,
+    evidenceRetentionDays: 1,
+    evidenceRetentionMode: 'GOVERNANCE',
     alertEmail: 'julio@mbdesignremodel.com',
   },
   prod: {
@@ -106,6 +128,8 @@ export const ENV_CONFIGS: Record<string, EnvConfig> = {
     cacheMultiAz: true,
     cacheNodeType: 'cache.t4g.medium',
     auditArchiveRetentionDays: 2555,
+    evidenceRetentionDays: 2555,
+    evidenceRetentionMode: 'COMPLIANCE',
     alertEmail: 'julio@mbdesignremodel.com',
   },
 };

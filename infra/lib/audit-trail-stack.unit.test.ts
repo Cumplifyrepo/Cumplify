@@ -26,6 +26,8 @@ const testEnvConfig: EnvConfig = {
   cacheMultiAz: false,
   cacheNodeType: 'cache.t4g.micro',
   auditArchiveRetentionDays: 1,
+  evidenceRetentionDays: 1,
+  evidenceRetentionMode: 'GOVERNANCE',
 };
 
 function createTemplate(): Template {

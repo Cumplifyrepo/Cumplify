@@ -383,9 +383,22 @@ export class DataStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
       objectLockEnabled: true,
-      objectLockDefaultRetention: s3.ObjectLockRetention.compliance(
-        cdk.Duration.days(2555), // ~7 years
-      ),
+      // SAFETY-NET default only — env-parameterized (see EnvConfig.evidenceRetention*).
+      // Writers set a per-object retain-until-date from the TENANT's retention
+      // policy (m4.retention_policies), which overrides this default.
+      // Was hardcoded COMPLIANCE/2555d in EVERY env: that made the dev bucket
+      // permanently undeletable after a single sealed object (COMPLIANCE cannot
+      // be shortened by anyone, including root) and silently overrode every
+      // tenant retention policy shorter than 7 years — breaking ISO 7.5.3
+      // disposition and GDPR erasure. Fixed 2026-07-14 (bucket was still empty).
+      objectLockDefaultRetention:
+        envConfig.evidenceRetentionMode === 'COMPLIANCE'
+          ? s3.ObjectLockRetention.compliance(
+              cdk.Duration.days(envConfig.evidenceRetentionDays),
+            )
+          : s3.ObjectLockRetention.governance(
+              cdk.Duration.days(envConfig.evidenceRetentionDays),
+            ),
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       eventBridgeEnabled: true,
       serverAccessLogsBucket: accessLogsBucket,
