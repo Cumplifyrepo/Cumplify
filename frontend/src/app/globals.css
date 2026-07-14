@@ -4,6 +4,44 @@
  * CSS variables for components that prefer vanilla CSS or css-in-js fallback.
  */
 
+/* Self-hosted Inter (rsms Inter v4.1, SIL OFL) — static export ships the
+ * files from /public/fonts; no external font host (CSP/offline safe).
+ * Fidelity fix 2026-07-14: these families were declared below but no
+ * @font-face ever loaded them — the whole app rendered in system-font
+ * fallback. Weights per the Framer text styles: text 400/500/600 (variable
+ * file covers all), display 400/500/600 static. */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Display';
+  src: url('/fonts/InterDisplay-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Display';
+  src: url('/fonts/InterDisplay-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Display';
+  src: url('/fonts/InterDisplay-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --color-bg: rgb(20, 24, 31);
   --color-surface: rgb(33, 37, 44);
@@ -54,6 +92,17 @@ body {
   color: var(--color-text-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings use the display family per the Framer text styles.
+ * Fidelity fix 2026-07-14: --font-display was defined but referenced by
+ * nothing — headings rendered in the body font. */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  color: var(--color-text-heading);
 }
 
 a {
