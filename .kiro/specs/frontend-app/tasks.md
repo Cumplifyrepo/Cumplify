@@ -392,6 +392,7 @@
 - [x] Real-time via `onDocumentStatusChanged`. Visible provenance links (MOD-9).
 - [x] All strings via `next-intl`.
 - [ ] **BLOCKED-ON-OWNER:** updatePolicy + updateImsScope drawers require getPolicy/getImsScope read surface (no query in schema; m1.policies/m1.ims_scope are independent tables with own UUIDs).
+- [ ] **BLOCKED-ON-OWNER** (found 2026-07-14 full-phase validation): version compare is live-broken — `getDocumentVersionDiff` returns `{v1Ref, v2Ref}` but the schema type `Diff` requires `additions: Int!, deletions: Int!, content: String!` → non-null serialization error on every call. A real diff needs the version content: S3 read grant for ResolverM1Fn (new IAM) + a content-format decision. Not coded around (a zeroed fake diff = fabrication). Compare UI errors cleanly via its existing catch → ErrorState.
 
 **Binds to:** `view-designs.md` §5 (architect design authority).
 **D-rung:** D2.
@@ -470,15 +471,22 @@
 
 ## Completion Criteria
 
-All acceptance criteria green = spec closes at D5 (human used it):
-- ACC-1 ✓ (Task 22) — Command Center walkthrough
-- ACC-2 ✓ (Task 23) — Ask Cumplify query
+All acceptance criteria green = spec closes at D5 (human used it).
+
+> **CORRECTED 2026-07-14 (architect, full-phase validation):** the ✓ marks
+> below previously showed all nine ACCs green — they were template artifacts
+> present verbatim since this file was generated (2ecc7c7), before any task
+> ran. Status now reflects the backing tasks' actual checkbox state. An ACC is
+> ✓ only when its backing task's boxes are ticked with evidence.
+
+- ACC-1 ☐ NOT RUN (Task 22, 6 open boxes) — Command Center walkthrough
+- ACC-2 ☐ NOT RUN (Task 23, 5 open boxes) — Ask Cumplify query
 - ACC-3 ✓ (Task 16) — HITL approval flow
-- ACC-4 ✓ (Task 17) — Flagged HITL approval
-- ACC-5 ✓ (Task 18) — Locale switch
-- ACC-6 ✓ (Task 19) — Pseudo-locale CI check
-- ACC-7 ✓ (Task 20) — Role gating
-- ACC-8 ✓ (Task 24) — Pool A rejection
+- ACC-4 ◐ (Task 17 — one box open by design, re-verify at card build) — Flagged HITL approval
+- ACC-5 ☐ NOT RUN (Task 18, 5 open boxes) — Locale switch
+- ACC-6 ☐ NOT RUN (Task 19, 4 open boxes) — Pseudo-locale CI check
+- ACC-7 ☐ NOT RUN (Task 20, 3 open boxes) — Role gating
+- ACC-8 ☐ NOT RUN (Task 24, 2 open boxes) — Pool A rejection
 - ACC-9 ✓ (Task 21) — taskToken exclusion
 
 **View tasks (25–31) do not gate closure** if their acceptance criteria (ACC-2 for Ask Cumplify) can be proven via a minimal implementation or they are explicitly deferred to a follow-up. Design authority delivered 2026-07-13 (`view-designs.md` — architect, per 3433654); the tasks are UNBLOCKED and build-ready. ACC-2 requires Task 25 — if Task 25 is not implemented by closure time, ACC-2 becomes a named carry.

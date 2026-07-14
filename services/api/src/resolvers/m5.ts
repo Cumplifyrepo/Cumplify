@@ -42,7 +42,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'getRisk':
       return getRisk(event, tenantId);
     case 'getCrossRegisterRiskView':
-      return getCrossRegisterRiskView(tenantId);
+      return getCrossRegisterRiskView(event, tenantId);
     default:
       throw new Error(`Unknown field: ${fieldName}`);
   }
@@ -183,13 +183,30 @@ async function getRisk(event: AppSyncEvent, tenantId: string) {
   }
 }
 
-async function getCrossRegisterRiskView(tenantId: string) {
+async function getCrossRegisterRiskView(event: AppSyncEvent, tenantId: string) {
   // risk_register_view accessed via SECURITY DEFINER function ONLY (design §6.4)
   // NEVER a direct SELECT on the materialized view.
+  // FIXED 2026-07-14 (architect): the schema declares optional standard/category
+  // filter args that were silently ignored — the M5 filter bar was a live no-op
+  // (same bug class as the earlier m1.listDocuments fix).
+  const clauses: string[] = [];
+  const params: Array<{ name: string; value: { stringValue: string } }> = [];
+  const standard = event.arguments.standard as string | undefined;
+  const category = event.arguments.category as string | undefined;
+  if (standard) {
+    clauses.push('standard = :standard');
+    params.push({ name: 'standard', value: { stringValue: standard } });
+  }
+  if (category) {
+    clauses.push('category = :category');
+    params.push({ name: 'category', value: { stringValue: mapEnum(RISK_CATEGORY_MAP, category, 'category') } });
+  }
+  const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
-      `SELECT * FROM m5_views.get_risk_register_view()`,
+      `SELECT * FROM m5_views.get_risk_register_view() ${where}`,
+      params,
     );
     await txn.commit();
     return marshalMany(result);

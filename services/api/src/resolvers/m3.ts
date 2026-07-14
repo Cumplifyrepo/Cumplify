@@ -84,7 +84,7 @@ async function scheduleAudit(event: AppSyncEvent, tenantId: string, actor: strin
       tenantId, actor, module: 'M3',
       clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
       detailType: 'Audit.Scheduled', source: 'cumplify.m3.audit-studio',
-      payload: { programmeId: input.programmeId, scheduledDate: input.scheduledDate },
+      payload: { programmeId: input.programmeId, plannedDate: input.plannedDate },
     });
     logger.info('Audit scheduled', { tenantId });
     return marshalOne(result);
@@ -98,7 +98,7 @@ async function recordFinding(event: AppSyncEvent, tenantId: string, actor: strin
   try {
     const result = await txn.execute(
       `INSERT INTO m3.audit_findings (tenant_id, audit_id, checklist_id, finding_type, clause_ref, description, evidence_ref, created_by)
-       VALUES (:tenantId, :auditId::uuid, :checklistId, :findingType, :clauseRef, :description, :evidenceRef, :actor)
+       VALUES (:tenantId, :auditId::uuid, :checklistId::uuid, :findingType, :clauseRef, :description, :evidenceRef, :actor)
        RETURNING *`,
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
@@ -116,7 +116,7 @@ async function recordFinding(event: AppSyncEvent, tenantId: string, actor: strin
       tenantId, actor, module: 'M3',
       clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
       detailType: 'Audit.FindingRaised', source: 'cumplify.m3.audit-studio',
-      payload: { auditId: input.auditId, findingType: input.findingType, severity: input.severity },
+      payload: { auditId: input.auditId, findingType: input.findingType, clauseRef: input.clauseRef },
     });
     return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }

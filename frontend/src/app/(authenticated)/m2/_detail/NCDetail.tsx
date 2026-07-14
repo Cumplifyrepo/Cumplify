@@ -37,7 +37,6 @@ interface Nonconformity {
   status: string;
   raisedBy: string;
   raisedAt: string;
-  rootCauseId?: string;
 }
 
 interface CorrectiveAction {
@@ -51,7 +50,7 @@ interface CorrectiveAction {
 }
 
 const GET_NC = `query GetNC($id: ID!) {
-  getNonconformity(id: $id) { id standard source ncType description clauseRef severity status raisedBy raisedAt rootCauseId }
+  getNonconformity(id: $id) { id standard source ncType description clauseRef severity status raisedBy raisedAt }
 }`;
 
 const LIST_CAS = `query ListCAs($ncId: ID!) {
@@ -83,14 +82,16 @@ const STAGES: TimelineStage[] = ['raised', 'rootCause', 'correctiveAction', 'eff
  */
 function deriveStageIndex(nc: Nonconformity, cas: CorrectiveAction[]): number {
   // Stage 0: raised — always complete if NC exists
-  // Stage 1: rootCause — complete if NC has a rootCauseId or status >= IN_PROGRESS
+  // Stage 1: rootCause — complete once NC status advances past OPEN
+  //   (recordRootCause moves the NC open → in_progress server-side; the
+  //   Nonconformity type has no root-cause field, so status is the signal)
   // Stage 2: correctiveAction — complete if CAs exist
   // Stage 3: effectiveness — complete if any CA is VERIFIED or CLOSED
   // Stage 4: closed — complete if NC status is CLOSED
 
   if (nc.status === 'CLOSED') return 4;
 
-  const hasRootCause = !!nc.rootCauseId || nc.status === 'IN_PROGRESS' || nc.status === 'VERIFIED';
+  const hasRootCause = nc.status === 'IN_PROGRESS' || nc.status === 'VERIFIED';
   if (!hasRootCause) return 0;
 
   const hasCAs = cas.length > 0;
@@ -154,7 +155,12 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
   }, [nc, cas]);
 
   const rootCauseFields: FieldDef[] = useMemo(() => [
-    { name: 'method', label: t('fieldMethod'), type: 'text', required: true },
+    // DB CHECK allows only these three methods — a free-text field would fail
+    { name: 'method', label: t('fieldMethod'), type: 'select', required: true, options: [
+      { value: '5why', label: t('method5why') },
+      { value: 'fishbone', label: t('methodFishbone') },
+      { value: 'fta', label: t('methodFta') },
+    ]},
     { name: 'findings', label: t('fieldFindings'), type: 'textarea', required: true },
     { name: 'rootCauseSummary', label: t('fieldRootCause'), type: 'textarea', required: true },
   ], [t]);

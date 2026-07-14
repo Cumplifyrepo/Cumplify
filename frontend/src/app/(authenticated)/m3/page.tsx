@@ -116,7 +116,7 @@ export default function M3AuditStudioPage() {
 
   const scheduleFields: FieldDef[] = useMemo(() => [
     { name: 'programmeId', label: t('fieldProgrammeId'), type: 'text', required: true },
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: false, options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
+    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
     { name: 'scope', label: t('fieldScope'), type: 'textarea', required: true },
     { name: 'leadAuditorId', label: t('fieldLeadAuditorId'), type: 'text', required: true },
     { name: 'plannedDate', label: t('fieldPlannedDate'), type: 'date', required: true },
@@ -140,7 +140,8 @@ export default function M3AuditStudioPage() {
       await mutate(CREATE_PROGRAMME_MUTATION, {
         input: {
           standard: values.standard,
-          year: values.year,
+          // CreateAuditProgrammeInput.year is Int! — text fields yield strings
+          year: Number(values.year),
           frequencyPlan: values.frequencyPlan || undefined,
         },
       });
@@ -154,7 +155,8 @@ export default function M3AuditStudioPage() {
       await mutate(SCHEDULE_AUDIT_MUTATION, {
         input: {
           programmeId: values.programmeId,
-          standard: values.standard || undefined,
+          // ScheduleAuditInput.standard is Standard! — required, never undefined
+          standard: values.standard,
           scope: values.scope,
           leadAuditorId: values.leadAuditorId,
           plannedDate: values.plannedDate,

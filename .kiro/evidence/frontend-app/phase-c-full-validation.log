@@ -1,0 +1,105 @@
+# Phase C + Task 31 full-phase validation — architect, 2026-07-14
+# Owner-requested re-validation of all Phase C work and the Task 31 session
+# ("let's make sure we got everything green passed and per architecture").
+# Method: 3 parallel audit agents (frontend↔schema contract, resolvers↔
+# migrations, process/evidence/i18n) + independent on-disk verification of
+# every agent finding + full gate re-execution + live cloud readbacks.
+# Nothing was accepted from any report (agent or human) without re-execution.
+
+## Verdict
+
+Phase C frontend work and the Task 31 closure were process-clean (rules 7/8
+exemplary, i18n parity perfect, SHAs verify against git), but the validation
+found REAL runtime defects concentrated in two places: (1) all four M2
+mutations in m2.ts were still written against the stale/draft schema — the
+dd605b0 round fixed M3/M4 only and m2.ts was outside its blast radius;
+(2) four frontend GraphQL contract violations in the M2/M3/M4 views that
+tsc and hermetic (client-mocked) tests structurally cannot catch. All fixed,
+tested, deployed, and live-verified this round except one item deliberately
+BLOCKED-ON-OWNER (getDocumentVersionDiff — see below).
+
+## Findings fixed this round
+
+| # | Sev | Where | Defect | Fix |
+|---|-----|-------|--------|-----|
+| C1 | CRITICAL | m2.ts recordRootCause | UPDATEd nonexistent root_cause/root_cause_method columns on m2.nonconformities; read draft input fields (nonconformityId/rootCause); return type RootCauseAnalysis! unsatisfiable → failed every call | INSERT into m2.root_cause_analyses per migration 003; RecordRootCauseInput fields; method normalized to CHECK vocab; NC advanced open→in_progress same-txn |
+| C2 | CRITICAL | m2.ts closeCapa | SET nonexistent closed_at/closed_by; read input.capaId (field is id) | status='closed' only; closureNotes preserved in audit payload |
+| C3 | CRITICAL | m2.ts verifyEffectiveness | SET 4 nonexistent effectiveness_* columns on corrective_actions; read draft input fields; CapaEffectivenessCheck! unsatisfiable | INSERT into m2.capa_effectiveness_checks; CA→'verified' when effective (same txn) |
+| C4 | CRITICAL | m2.ts createCorrectiveAction | INSERT into nonexistent nonconformity_id column (real: nc_id — worse than the audit agent reported, which called the SQL clean); read input.nonconformityId (field is ncId); containmentFlag silently dropped | nc_id + ncId + containment_flag wired |
+| F1 | CRITICAL | NCDetail.tsx | getNonconformity selected phantom rootCauseId → AppSync rejects document → NC detail permanently ErrorState | field removed; timeline stage derives from NC status (backend now advances it) |
+| F2 | CRITICAL | m3/page.tsx | year sent as string into CreateAuditProgrammeInput.year: Int! → every submission failed | Number(values.year) |
+| F3 | HIGH | m3/page.tsx | standard optional in drawer but ScheduleAuditInput.standard: Standard! | required:true, no `\|\| undefined` |
+| F4 | HIGH | m4/page.tsx | same for RegisterRecordInput.standard | same |
+| H1 | HIGH | m5.ts getCrossRegisterRiskView | declared standard/category args ignored → M5 filter bar a live no-op (same class as the earlier m1.listDocuments fix) | conditional WHERE over the SECURITY DEFINER accessor |
+| H2 | HIGH | m3.ts recordFinding | :checklistId bound as VARCHAR into UUID column (42804 whenever provided) | ::uuid cast |
+| H3 | HIGH | shared.ts | CAPA status values never reverse-mapped → invalid CAPAStatus enum output on every M2 read | merged doc+CAPA reverse map (value sets disjoint) |
+| L1-L3 | LOW | m2/m3 audit payloads | scheduledDate→plannedDate, nonconformityId→ncId, phantom severity→clauseRef | payload keys corrected |
+| L4 | LOW | NCDetail.tsx | root-cause method free-text vs DB CHECK ('5why','fishbone','fta') | select w/ 3 options; i18n keys m2.method5why/methodFishbone/methodFta ×3 catalogs |
+
+## BLOCKED-ON-OWNER (reported, not coded around)
+
+- getDocumentVersionDiff (m1.ts) returns {v1Ref, v2Ref} but type Diff requires
+  additions:Int!/deletions:Int!/content:String! → non-null error on every call.
+  Real fix needs S3 read grant for ResolverM1Fn (new IAM) + content-format
+  decision. Recorded as a second BLOCKED-ON-OWNER box under Task 26.
+
+## Spec-level bookkeeping corrected
+
+- tasks.md Completion Criteria: all nine ACC ✓ marks were template artifacts
+  present verbatim since file generation (2ecc7c7) — six ACCs' backing tasks
+  have zero ticked boxes. Section rewritten to actual status: ACC-3 ✓,
+  ACC-9 ✓, ACC-4 partial, ACC-1/2/5/6/7/8 NOT RUN.
+- task-31-settings.log timestamps corrected to true UTC (were -0400 local
+  mislabeled with a Z suffix).
+- OPEN FOR OWNER DISPOSITION (not corrected here): Task 12 has 5 unchecked
+  boxes and NO evidence log, yet Task 15 claims FrontendStack CREATE_COMPLETE
+  and the SPA is live; Task 13 similar (5/7 unchecked incl. [REQUIRES-HUMAN]).
+
+## Gates (all re-executed this round, after fixes)
+
+| Gate | Command | Exit | Result |
+|------|---------|------|--------|
+| Services+infra suite | `vitest run` (root) | 0 | 594 passed, 3 skipped, 55 files (580→594: +14 new m2-fixes tests) |
+| Frontend suite | `npx vitest run` (frontend/) | 0 | 77 passed, 12 files |
+| TypeScript | `npx tsc --noEmit` (frontend/) | 0 | clean |
+| i18n | `npm run i18n:check` | 0 | no violations |
+| Build | `npx next build` | 0 | 13 static pages; /m2 4.35 kB, /m3 2.68 kB, /m4 2.69 kB |
+
+New hermetic tests: services/api/__tests__/resolvers/m2-fixes.test.ts —
+14 SQL/param-asserting regressions covering every fix above (incl. negative
+assertions on the stale column names).
+
+## Deploy + live readback (tenant-a, direct Lambda invoke, profile cumplify-dev-admin)
+
+Deploy: `cdk deploy CumplifyPipeline/Dev/ApiStack --exclusively` — exit 0,
+UPDATE_COMPLETE, 70.14s, stack arn ...stack/Dev-ApiStack/242b0cd0.
+
+Every step below was a guaranteed runtime failure before this deploy.
+
+| Step | Result | Timestamp (UTC) |
+|------|--------|-----------------|
+| raiseNonconformity | 200/None; NC 1d70e80f… status "OPEN" (uppercase = H3 map live) | 14:05:14Z |
+| recordRootCause | 200/None; RootCauseAnalysis row c4c9fafa… (ncId/method/findings/rootCauseSummary all present) | 14:05:32Z |
+| getNonconformity | 200/None; status IN_PROGRESS (advance fired) | 14:05:33Z |
+| createCorrectiveAction | 200/None; CA b5fedcc3… ncId correct, containmentFlag true | 14:05:46Z |
+| verifyEffectiveness | 200/None; check row 49f4848a… (correctiveActionId/verificationMethod/verifiedBy/verifiedAt/effective) | 14:06:03Z |
+| listCorrectiveActions | 200/None; CA status VERIFIED | 14:06:04Z |
+| closeCapa | 200/None; status CLOSED | 14:06:05Z |
+| riskView standard=ISO9001 | 200/None; 1 row | 14:06:42Z |
+| riskView standard=ISO14001 | 200/None; 0 rows (filter actually filters) | 14:06:42Z |
+| riskView category=QUALITY | 200/None; 1 row | 14:06:42Z |
+| riskView no filter | 200/None; 1 row | 14:06:23Z |
+
+Outputs SHA (sha256 over all 10 readback response bodies, first 16): a52775b3f44e3f4f
+
+Process errors during validation, reported per doctrine: (1) architect's first
+listCalibrationsDue invoke used arg name withinDays (schema: windowDays) —
+invocation error, not a code bug; (2) the resolvers↔migrations audit agent
+called createCorrectiveAction's SQL "column-correct" — it was not (nonconformity_id);
+caught during independent re-verification of the agent's findings; (3) a shell
+quoting bug produced 3 failed M5 invokes before the successful matrix above.
+
+## D-rung
+
+D3 for this fix round — deployed + live behavior verified. The spec's D5
+still requires: SPA deploy to Dev-FrontendStack + ACC-1/2/5/6/7/8 execution.

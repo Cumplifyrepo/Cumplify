@@ -1,6 +1,9 @@
 # Task 31 — Settings → Organization
 # Evidence log (rule 7/8: evidence + checkbox in same commit)
-# Timestamp: 2026-07-14T09:19:00Z (Kiro delivery); amended 2026-07-14T09:31:00Z (architect validation + fix-in-passing)
+# Timestamp: 2026-07-14T13:19:00Z (Kiro delivery); amended 2026-07-14T13:31:00Z (architect validation + fix-in-passing)
+# (Timestamp correction 2026-07-14: original stamps were -0400 local mislabeled
+#  with a Z suffix — a true 09:19Z would predate the base commit below, which
+#  landed 13:09:33Z. Corrected to true UTC.)
 # Base commit: 02944fcbffeded336fbbb0e3a548add4f8c05c41
 
 ## Gates executed

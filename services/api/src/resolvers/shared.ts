@@ -255,7 +255,7 @@ export { TABLE_NAME, BUS_NAME, CLUSTER_ARN, Logger };
 import {
   RISK_CATEGORY_MAP, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP,
   NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP,
-  FINDING_TYPE_MAP,
+  FINDING_TYPE_MAP, CAPA_STATUS_MAP,
 } from './enum-mappings.js';
 
 /** Reverse maps: DB lowercase → GraphQL UPPERCASE */
@@ -268,7 +268,12 @@ function invertMap(map: Record<string, string>): Record<string, string> {
 const REVERSE_ENUMS: Record<string, Record<string, string>> = {
   category: invertMap(RISK_CATEGORY_MAP),
   doc_type: invertMap(DOC_TYPE_MAP),
-  status: invertMap(DOC_STATUS_MAP), // overloaded — works for docs; CAPA status needs separate
+  // Overloaded `status` column: doc values (draft/in_review/approved/obsolete)
+  // and CAPA values (open/in_progress/closed/verified) are disjoint, so one
+  // merged reverse map serves both DocumentStatus! and CAPAStatus! fields.
+  // FIXED 2026-07-14 (architect): CAPA values previously passed through
+  // lowercase → invalid enum serialization on every M2 NC/CA read.
+  status: { ...invertMap(DOC_STATUS_MAP), ...invertMap(CAPA_STATUS_MAP) },
   decision: invertMap(APPROVAL_DECISION_MAP),
   source: invertMap(NC_SOURCE_MAP),
   nc_type: invertMap(NC_TYPE_MAP),

@@ -144,7 +144,7 @@ export default function M4RecordsPage() {
 
   // FormDrawer field definitions
   const registerFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: false, options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
+    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
     { name: 'recordType', label: t('fieldRecordType'), type: 'text', required: true },
     { name: 'sourceModule', label: t('fieldSourceModule'), type: 'text', required: true },
     { name: 'retentionClass', label: t('fieldRetentionClass'), type: 'text' },
@@ -169,7 +169,8 @@ export default function M4RecordsPage() {
     try {
       await mutate(REGISTER_RECORD_MUTATION, {
         input: {
-          standard: values.standard || undefined,
+          // RegisterRecordInput.standard is Standard! — required, never undefined
+          standard: values.standard,
           recordType: values.recordType,
           sourceModule: values.sourceModule,
           retentionClass: values.retentionClass || undefined,

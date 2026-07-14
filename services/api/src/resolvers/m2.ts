@@ -7,7 +7,7 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
-import { mapEnum, NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP } from './enum-mappings.js';
+import { mapEnum, NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP, RCA_METHOD_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m2' });
 
@@ -72,24 +72,43 @@ async function raiseNonconformity(event: AppSyncEvent, tenantId: string, actor: 
 }
 
 async function recordRootCause(event: AppSyncEvent, tenantId: string, actor: string) {
+  // FIXED 2026-07-14 (architect): previous SQL updated root_cause/root_cause_method
+  // on m2.nonconformities — neither column exists; the ratified table is
+  // m2.root_cause_analyses (migration 003). Input fields were also read from a
+  // draft shape (nonconformityId/rootCause) — RecordRootCauseInput is
+  // { ncId, method, findings, rootCauseSummary }. Return type RootCauseAnalysis!.
   const input = event.arguments.input as Record<string, unknown>;
+  // method is String! in the schema; the DB CHECK allows ('5why','fishbone','fta').
+  const method = RCA_METHOD_MAP[(input.method as string).toUpperCase()] ?? (input.method as string);
   const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(
-      `UPDATE m2.nonconformities SET root_cause = :rootCause, root_cause_method = :method, updated_at = NOW()
-       WHERE id = :id::uuid RETURNING *`,
+      `INSERT INTO m2.root_cause_analyses (tenant_id, nc_id, method, findings, root_cause_summary, created_by)
+       VALUES (:tenantId, :ncId::uuid, :method, :findings, :rootCauseSummary, :actor)
+       RETURNING *`,
       [
-        { name: 'id', value: { stringValue: input.nonconformityId as string } },
-        { name: 'rootCause', value: { stringValue: input.rootCause as string } },
-        { name: 'method', value: { stringValue: (input.method as string) ?? '5-why' } },
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'ncId', value: { stringValue: input.ncId as string } },
+        { name: 'method', value: { stringValue: method } },
+        { name: 'findings', value: { stringValue: input.findings as string } },
+        { name: 'rootCauseSummary', value: { stringValue: input.rootCauseSummary as string } },
+        { name: 'actor', value: { stringValue: actor } },
       ],
+    );
+    // Recording a root cause moves the NC into analysis: open → in_progress.
+    // The M2 CAPA timeline derives its root-cause stage from NC status — there is
+    // no read surface for root_cause_analyses rows.
+    await txn.execute(
+      `UPDATE m2.nonconformities SET status = 'in_progress', updated_at = NOW()
+       WHERE id = :ncId::uuid AND status = 'open'`,
+      [{ name: 'ncId', value: { stringValue: input.ncId as string } }],
     );
     await txn.commit();
     await publishAuditEvent({
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.RootCauseRecorded', source: 'cumplify.m2.capa',
-      payload: { nonconformityId: input.nonconformityId, rootCause: input.rootCause },
+      payload: { ncId: input.ncId, method },
     });
     return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
@@ -99,16 +118,21 @@ async function createCorrectiveAction(event: AppSyncEvent, tenantId: string, act
   const input = event.arguments.input as Record<string, unknown>;
   const txn = await beginTenantTransaction(tenantId);
   try {
+    // FIXED 2026-07-14 (architect): column is nc_id, not nonconformity_id (the
+    // listOpenCAPAs join had the same stale name and was fixed earlier — the
+    // INSERT was missed); input field is ncId per CreateCorrectiveActionInput;
+    // containmentFlag was silently dropped.
     const result = await txn.execute(
-      `INSERT INTO m2.corrective_actions (tenant_id, nonconformity_id, action_desc, owner_id, due_date, status, created_by)
-       VALUES (:tenantId, :ncId::uuid, :actionDesc, :ownerId, :dueDate::timestamptz, 'open', :actor)
+      `INSERT INTO m2.corrective_actions (tenant_id, nc_id, action_desc, owner_id, due_date, status, containment_flag, created_by)
+       VALUES (:tenantId, :ncId::uuid, :actionDesc, :ownerId, :dueDate::timestamptz, 'open', :containmentFlag, :actor)
        RETURNING *`,
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'ncId', value: { stringValue: input.nonconformityId as string } },
+        { name: 'ncId', value: { stringValue: input.ncId as string } },
         { name: 'actionDesc', value: { stringValue: input.actionDesc as string } },
         { name: 'ownerId', value: { stringValue: (input.ownerId as string) ?? actor } },
         { name: 'dueDate', value: { stringValue: input.dueDate as string } },
+        { name: 'containmentFlag', value: { booleanValue: input.containmentFlag === true } },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
@@ -117,7 +141,7 @@ async function createCorrectiveAction(event: AppSyncEvent, tenantId: string, act
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.Opened', source: 'cumplify.m2.capa',
-      payload: { nonconformityId: input.nonconformityId, input },
+      payload: { ncId: input.ncId, input },
     });
     logger.info('Corrective action created', { tenantId });
     return marshalOne(result);
@@ -128,12 +152,14 @@ async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as Record<string, unknown>;
   const txn = await beginTenantTransaction(tenantId);
   try {
+    // FIXED 2026-07-14 (architect): closed_at/closed_by columns do not exist on
+    // m2.corrective_actions (migration 003); input field is id per CloseCapaInput.
+    // closureNotes has no column — it is preserved in the audit-trail payload.
     const result = await txn.execute(
-      `UPDATE m2.corrective_actions SET status = 'closed', closed_at = NOW(), closed_by = :actor, updated_at = NOW()
+      `UPDATE m2.corrective_actions SET status = 'closed', updated_at = NOW()
        WHERE id = :id::uuid RETURNING *`,
       [
-        { name: 'id', value: { stringValue: input.capaId as string } },
-        { name: 'actor', value: { stringValue: actor } },
+        { name: 'id', value: { stringValue: input.id as string } },
       ],
     );
     await txn.commit();
@@ -141,7 +167,7 @@ async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.Closed', source: 'cumplify.m2.capa',
-      payload: { capaId: input.capaId },
+      payload: { correctiveActionId: input.id, closureNotes: (input.closureNotes as string) ?? null },
     });
     return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
@@ -151,21 +177,38 @@ async function verifyEffectiveness(event: AppSyncEvent, tenantId: string, actor:
   const input = event.arguments.input as Record<string, unknown>;
   const txn = await beginTenantTransaction(tenantId);
   try {
+    // FIXED 2026-07-14 (architect): previous SQL set effectiveness_* columns that
+    // do not exist on m2.corrective_actions; the ratified home for verification
+    // is m2.capa_effectiveness_checks (migration 003). Input fields per
+    // VerifyEffectivenessInput { correctiveActionId, verificationMethod, effective };
+    // return type CapaEffectivenessCheck!. An effective check also advances the
+    // CA to 'verified' (CHECK includes it; the M2 timeline derives from CA status).
+    const effective = input.effective === true;
     const result = await txn.execute(
-      `UPDATE m2.corrective_actions SET effectiveness_verified = true, effectiveness_notes = :notes, verified_by = :actor, verified_at = NOW(), updated_at = NOW()
-       WHERE id = :id::uuid RETURNING *`,
+      `INSERT INTO m2.capa_effectiveness_checks (tenant_id, corrective_action_id, verification_method, verified_by, verified_at, effective, created_by)
+       VALUES (:tenantId, :caId::uuid, :method, :actor, NOW(), :effective, :actor)
+       RETURNING *`,
       [
-        { name: 'id', value: { stringValue: input.capaId as string } },
-        { name: 'notes', value: { stringValue: (input.notes as string) ?? '' } },
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'caId', value: { stringValue: input.correctiveActionId as string } },
+        { name: 'method', value: { stringValue: input.verificationMethod as string } },
+        { name: 'effective', value: { booleanValue: effective } },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
+    if (effective) {
+      await txn.execute(
+        `UPDATE m2.corrective_actions SET status = 'verified', updated_at = NOW()
+         WHERE id = :caId::uuid AND status <> 'closed'`,
+        [{ name: 'caId', value: { stringValue: input.correctiveActionId as string } }],
+      );
+    }
     await txn.commit();
     await publishAuditEvent({
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.EffectivenessVerified', source: 'cumplify.m2.capa',
-      payload: { capaId: input.capaId, notes: input.notes },
+      payload: { correctiveActionId: input.correctiveActionId, effective },
     });
     return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
@@ -192,7 +235,7 @@ async function disposeNonconformingOutput(event: AppSyncEvent, tenantId: string,
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 8.7', standard: 'ISO9001',
       detailType: 'CAPA.OutputDisposed', source: 'cumplify.m2.capa',
-      payload: { nonconformityId: input.nonconformityId, disposition: input.disposition },
+      payload: { ncId: input.ncId, disposition: input.disposition },
     });
     return marshalOne(result);
   } catch (err) { await txn.rollback(); throw err; }
