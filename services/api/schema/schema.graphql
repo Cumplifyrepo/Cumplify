@@ -547,6 +547,11 @@ type Query {
   # new fields live in the base type (live failure 2x: field 404 on resolver create)
   listPendingHitlItems(pagination: PaginationInput): HitlItemConnection! @aws_lambda
   getProfile: UserProfile @aws_lambda
+
+  # Architect additive 2026-07-14 (Task 31 Settings unblock, AM-3 read-only
+  # side): tenant name + tenant default document-locale, read-only. Write
+  # path is a named carry to the settings-ui spec — no mutation here.
+  getTenantSettings: TenantSettings @aws_lambda
 }
 
 # ─── Mutations ────────────────────────────────────────────────────────────────
@@ -706,6 +711,11 @@ type UserProfile @aws_lambda {
 
 input UpdateProfileInput {
   locale: String!
+}
+
+type TenantSettings @aws_lambda {
+  tenantName: String!
+  documentLocale: String!
 }
 
 

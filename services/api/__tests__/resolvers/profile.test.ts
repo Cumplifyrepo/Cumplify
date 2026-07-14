@@ -133,6 +133,32 @@ describe('profile resolver — updateProfile', () => {
   });
 });
 
+describe('profile resolver — getTenantSettings', () => {
+  it('returns tenant name + document locale when the ORG item exists', async () => {
+    const { marshall } = await import('@aws-sdk/util-dynamodb');
+    mockDdbSend.mockResolvedValueOnce({
+      Item: marshall({
+        PK: 'TENANT#tenant-001#META',
+        SK: 'ORG',
+        tenantName: 'Acme Manufacturing',
+        documentLocale: 'es',
+      }),
+    });
+
+    const result = await handler(makeEvent('getTenantSettings'));
+    expect(result).toEqual({ tenantName: 'Acme Manufacturing', documentLocale: 'es' });
+    const [call] = mockDdbSend.mock.calls[0];
+    expect(call.input.Key).toEqual({ PK: { S: 'TENANT#tenant-001#META' }, SK: { S: 'ORG' } });
+  });
+
+  it('defaults gracefully (tenantId as name, en locale) when no ORG item exists yet', async () => {
+    mockDdbSend.mockResolvedValueOnce({ Item: undefined });
+
+    const result = await handler(makeEvent('getTenantSettings'));
+    expect(result).toEqual({ tenantName: 'tenant-001', documentLocale: 'en' });
+  });
+});
+
 describe('profile resolver — error handling', () => {
   it('throws on unknown field', async () => {
     await expect(handler(makeEvent('unknownField'))).rejects.toThrow('Unknown field: unknownField');

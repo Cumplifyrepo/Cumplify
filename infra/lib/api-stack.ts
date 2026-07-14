@@ -663,6 +663,9 @@ export class ApiStack extends cdk.Stack {
     // Query resolvers (Spec 9)
     const listHitlResolver = hitlQueryDS.createResolver('ListPendingHitlItems', { typeName: 'Query', fieldName: 'listPendingHitlItems' });
     const getProfileResolver = profileDS.createResolver('GetProfile', { typeName: 'Query', fieldName: 'getProfile' });
+    // New field 2026-07-14 (Task 31 Settings unblock) — MUST carry the schema
+    // dependency below (9d9c90a1 lesson).
+    const getTenantSettingsResolver = profileDS.createResolver('GetTenantSettings', { typeName: 'Query', fieldName: 'getTenantSettings' });
 
     // Mutation resolvers (Spec 9)
     const approveHitlResolver = hitlApprovalDS.createResolver('ApproveHitlItem', { typeName: 'Mutation', fieldName: 'approveHitlItem' });
@@ -685,7 +688,7 @@ export class ApiStack extends cdk.Stack {
     for (const r of [
       listHitlResolver, getProfileResolver, approveHitlResolver, updateProfileResolver, subHitlResolver,
       listDocVersionsResolver, listNcResolver, listCaResolver,
-      registerMeasuringResourceResolver,
+      registerMeasuringResourceResolver, getTenantSettingsResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }

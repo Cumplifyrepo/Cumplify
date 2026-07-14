@@ -27,8 +27,39 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
   switch (event.info.fieldName) {
     case 'getProfile': return getProfile(tenantId, sub);
     case 'updateProfile': return updateProfile(event, tenantId, sub);
+    case 'getTenantSettings': return getTenantSettings(tenantId);
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
+}
+
+/**
+ * getTenantSettings — read-only tenant name + default document-locale
+ * (Task 31 Settings → Organization panel, AM-3 read side only). Item lives
+ * at TENANT#<tenantId>#META / SK=ORG, a sibling of the entitlement item the
+ * authorizer reads (SK=PLAN) — see authorizer.ts getEntitlementStamp for the
+ * precedent. No writer exists yet (tenant provisioning is out of scope here,
+ * NAMED CARRY to settings-ui) — defaults gracefully like getEntitlementStamp
+ * does, rather than erroring, so this works before any tenant has an ORG item.
+ */
+async function getTenantSettings(tenantId: string) {
+  const ddb = await getTenantDdbClient(tenantId);
+  const result = await ddb.send(new GetItemCommand({
+    TableName: TABLE_NAME,
+    Key: marshall({
+      PK: `TENANT#${tenantId}#META`,
+      SK: 'ORG',
+    }),
+  }));
+
+  if (!result.Item) {
+    return { tenantName: tenantId, documentLocale: 'en' };
+  }
+
+  const item = unmarshall(result.Item);
+  return {
+    tenantName: (item.tenantName as string) ?? tenantId,
+    documentLocale: (item.documentLocale as string) ?? 'en',
+  };
 }
 
 async function getProfile(tenantId: string, sub: string) {
