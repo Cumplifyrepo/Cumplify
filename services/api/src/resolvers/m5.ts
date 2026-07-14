@@ -71,6 +71,15 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
+
+    // Architect fix 2026-07-14 (migration 010): risk_register_view was refreshed
+    // once at migration-008 time WITH NO DATA and never again — app_role can't
+    // REFRESH the view directly (REVOKE-ALL'd in migration 009, SECURITY DEFINER
+    // isolation design), so this goes through the same narrow SECURITY DEFINER
+    // accessor pattern already used for reads (get_risk_register_view()). Same
+    // transaction as the INSERT — the register reflects the write atomically.
+    await txn.execute(`SELECT m5_views.refresh_risk_register_view()`);
+
     await txn.commit();
 
     const risk = marshalOne(result);
@@ -82,15 +91,6 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
       detailType: 'Risk.Created', source: 'cumplify.m5.risk',
       payload: { riskId: risk?.id, category, description: input.description },
     });
-
-    // KNOWN GAP (migration 008's own named follow-up, unresolved): risk_register_view
-    // is refreshed once at migration time, WITH NO DATA, and never again — new risks
-    // won't appear in getCrossRegisterRiskView until it's refreshed. app_role has been
-    // deliberately REVOKE-ALL'd on the view (migration 009) as part of the SECURITY
-    // DEFINER isolation design, so this resolver cannot refresh it itself — that needs
-    // a separate component running with the migration/master role (the view's actual
-    // owner), event-driven off Risk.* or on a schedule, per migration 008's comment.
-    // Flagged, not coded around — see BLOCKED-ON-OWNER-3.
 
     logger.info('Risk created', { tenantId, riskId: risk?.id });
     return risk;

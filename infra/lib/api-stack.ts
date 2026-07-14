@@ -458,6 +458,9 @@ export class ApiStack extends cdk.Stack {
     m3DS.createResolver('CompleteAudit', { typeName: 'Mutation', fieldName: 'completeAudit' });
     // M4
     m4DS.createResolver('RegisterRecord', { typeName: 'Mutation', fieldName: 'registerRecord' });
+    // New field 2026-07-14 (architect follow-up, M4 calibration unblock) — MUST
+    // carry the schema dependency below (9d9c90a1 lesson).
+    const registerMeasuringResourceResolver = m4DS.createResolver('RegisterMeasuringResource', { typeName: 'Mutation', fieldName: 'registerMeasuringResource' });
     m4DS.createResolver('RecordCalibration', { typeName: 'Mutation', fieldName: 'recordCalibration' });
     m4DS.createResolver('CreateRetentionPolicy', { typeName: 'Mutation', fieldName: 'createRetentionPolicy' });
     // M5
@@ -682,6 +685,7 @@ export class ApiStack extends cdk.Stack {
     for (const r of [
       listHitlResolver, getProfileResolver, approveHitlResolver, updateProfileResolver, subHitlResolver,
       listDocVersionsResolver, listNcResolver, listCaResolver,
+      registerMeasuringResourceResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }

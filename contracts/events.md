@@ -55,7 +55,7 @@ Consumers validate `detailType` (string) and ET-4 fields on `.detail`.
 | Document | `Document.Approved`, `Document.Published`, `Policy.Updated`, `Scope.Changed` |
 | CAPA | `NC.Raised`, `CAPA.Opened`, `CAPA.Closed`, `CAPA.EffectivenessVerified`, `CAPA.ActionRequiresDocChange` |
 | Audit | `Audit.Scheduled`, `Audit.FindingRaised`, `Audit.Completed`, `Readiness.Scored` |
-| Records | `Record.Registered`, `Calibration.Due`, `Calibration.Recorded`, `AuditEvent.Appended` |
+| Records | `Record.Registered`, `MeasuringResource.Registered`, `Calibration.Due`, `Calibration.Recorded`, `AuditEvent.Appended` |
 | Risk | `Risk.Created`, `Risk.Escalated`, `Change.Planned` |
 | Context | `Context.Updated`, `InterestedParty.Identified`, `Communication.Planned` |
 | Objectives | `Objectives.Updated`, `Objectives.OffTrack` |
@@ -139,6 +139,7 @@ raised, evaluated) belong in the immutable audit trail.
 | `Audit.Completed` | true | State transition: audit concluded |
 | `Readiness.Scored` | false | Advisory: agent-computed score, not a controlled decision |
 | `Record.Registered` | true | State transition: record enters retention control |
+| `MeasuringResource.Registered` | true | State transition: measuring/monitoring equipment enters the calibration register |
 | `Calibration.Due` | false | Advisory: upcoming deadline notification |
 | `Calibration.Recorded` | true | State transition: calibration evidence captured |
 | `AuditEvent.Appended` | true | The audit event itself (self-referential; sealed by definition) |

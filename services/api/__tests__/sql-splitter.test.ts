@@ -164,7 +164,7 @@ $$ LANGUAGE plpgsql;`;
       const files = ['001_create_schemas.sql', '002_m1_document_studio.sql',
         '003_m2_capa.sql', '004_m3_audit_studio.sql', '005_m4_records_management.sql',
         '006_m5_risk_management.sql', '007_rls_policies.sql',
-        '008_risk_register_view.sql', '009_app_role.sql'];
+        '008_risk_register_view.sql', '009_app_role.sql', '010_risk_register_refresh.sql'];
 
       for (const file of files) {
         const sql = readMigration(file);

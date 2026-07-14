@@ -413,6 +413,11 @@ input RegisterRecordInput {
   s3ObjectRef: String
 }
 
+input RegisterMeasuringResourceInput {
+  assetTag: String!
+  description: String!
+}
+
 input RecordCalibrationInput {
   measuringResourceId: ID!
   standardUsed: String!
@@ -571,6 +576,7 @@ type Mutation {
 
   # M4 — Records Management (user-facing)
   registerRecord(input: RegisterRecordInput!): Record! @aws_lambda
+  registerMeasuringResource(input: RegisterMeasuringResourceInput!): MeasuringResource! @aws_lambda
   recordCalibration(input: RecordCalibrationInput!): CalibrationRecord! @aws_lambda
   createRetentionPolicy(input: CreateRetentionPolicyInput!): RetentionPolicy! @aws_lambda
 

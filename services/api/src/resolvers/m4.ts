@@ -25,6 +25,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
 
   switch (event.info.fieldName) {
     case 'registerRecord': return registerRecord(event, tenantId, sub);
+    case 'registerMeasuringResource': return registerMeasuringResource(event, tenantId, sub);
     case 'recordCalibration': return recordCalibration(event, tenantId, sub);
     case 'createRetentionPolicy': return createRetentionPolicy(event, tenantId, sub);
     case 'getRecord': return getRecord(event, tenantId);
@@ -64,13 +65,35 @@ async function registerRecord(event: AppSyncEvent, tenantId: string, actor: stri
   } catch (err) { await txn.rollback(); throw err; }
 }
 
+async function registerMeasuringResource(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as Record<string, unknown>;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `INSERT INTO m4.measuring_resources (tenant_id, asset_tag, description, created_by)
+       VALUES (:tenantId, :assetTag, :description, :actor)
+       RETURNING *`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'assetTag', value: { stringValue: input.assetTag as string } },
+        { name: 'description', value: { stringValue: input.description as string } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
+    await txn.commit();
+    const resource = marshalOne(result);
+    await publishAuditEvent({
+      tenantId, actor, module: 'M4',
+      clauseRef: 'ISO 9001 7.1.5.1', standard: 'ISO9001',
+      detailType: 'MeasuringResource.Registered', source: 'cumplify.m4.records',
+      payload: { resourceId: resource?.id, assetTag: input.assetTag },
+    });
+    logger.info('Measuring resource registered', { tenantId });
+    return resource;
+  } catch (err) { await txn.rollback(); throw err; }
+}
+
 async function recordCalibration(event: AppSyncEvent, tenantId: string, actor: string) {
-  // NOTE (architect 2026-07-14): measuring_resource_id is FK-constrained to
-  // m4.measuring_resources(id) (migrations/005:33-43), and there is currently
-  // NO mutation anywhere in the schema to create a measuring_resources row.
-  // This call will throw a foreign-key violation until either a
-  // registerMeasuringResource mutation is added, or resources are seeded
-  // out-of-band. Flagged, not coded around (BLOCKED-ON-OWNER-2).
   const input = event.arguments.input as Record<string, unknown>;
   const txn = await beginTenantTransaction(tenantId);
   try {

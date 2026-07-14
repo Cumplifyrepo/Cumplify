@@ -90,4 +90,7 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   // --- Spec 9 (frontend-app): HITL approval events ---
   'Hitl.Approved': true,
   'Hitl.SentBack': true,
+
+  // --- Architect follow-up 2026-07-14 (Phase C checkpoint, M4 unblock) ---
+  'MeasuringResource.Registered': true,
 };

@@ -41,6 +41,7 @@ vi.mock('@aws-lambda-powertools/logger', () => ({
 
 import { handler as m3Handler } from '../../src/resolvers/m3.js';
 import { handler as m4Handler } from '../../src/resolvers/m4.js';
+import { handler as m5Handler } from '../../src/resolvers/m5.js';
 
 const EMPTY_RESULT = { records: undefined, columnMetadata: undefined };
 
@@ -201,5 +202,35 @@ describe('m4 getAuditTrail — data-store + argument-shape fix regression', () =
     expect(ddbCall.input.ExpressionAttributeValues[':pk']).toEqual({ S: 'TENANT#tenant-test#AUDITLOG' });
     expect(result).toHaveLength(1);
     expect(result[0].eventId).toBe('evt-1');
+  });
+});
+
+describe('m4 registerMeasuringResource — new mutation (unblocks recordCalibration)', () => {
+  it('inserts into m4.measuring_resources with assetTag/description', async () => {
+    await m4Handler(makeEvent('registerMeasuringResource', {
+      input: { assetTag: 'CAL-001', description: 'Digital caliper' },
+    }));
+    const [sql, params] = mockExecute.mock.calls[0];
+    expect(sql).toContain('INSERT INTO m4.measuring_resources');
+    expect(sql).toContain('asset_tag');
+    expect(params).toContainEqual({ name: 'assetTag', value: { stringValue: 'CAL-001' } });
+    expect(params).toContainEqual({ name: 'description', value: { stringValue: 'Digital caliper' } });
+  });
+});
+
+describe('m5 createRisk — register-refresh fix regression', () => {
+  it('refreshes m5_views.risk_register_view via the SECURITY DEFINER accessor, in the same transaction as the INSERT', async () => {
+    await m5Handler(makeEvent('createRisk', {
+      input: { standard: 'ISO9001', category: 'QUALITY', description: 'Test risk', likelihood: 3, severity: 3 },
+    }));
+
+    expect(mockExecute).toHaveBeenCalledTimes(2);
+    const [insertSql] = mockExecute.mock.calls[0];
+    const [refreshSql] = mockExecute.mock.calls[1];
+    expect(insertSql).toContain('INSERT INTO m5.risks');
+    expect(refreshSql).toContain('m5_views.refresh_risk_register_view()');
+    // Refresh happens BEFORE commit — same transaction, atomic with the write.
+    expect(mockCommit).toHaveBeenCalledTimes(1);
+    expect(mockExecute.mock.invocationCallOrder[1]).toBeLessThan(mockCommit.mock.invocationCallOrder[0]);
   });
 });
