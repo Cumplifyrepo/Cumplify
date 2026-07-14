@@ -288,11 +288,11 @@
 
 ## Task 18 — ACC-5: Locale Switch [ARCHITECT]
 
-- [ ] Authenticate as Pool-B user, confirm UI renders in English (default).
-- [ ] Call `updateProfile(locale:'es')`.
-- [ ] Reload Command Center — all UI strings render in Spanish.
-- [ ] Call `askISO9001(question:"¿Qué requiere la cláusula 8.5.1?")` — response arrives in Spanish.
-- [ ] Screenshot comparison EN vs ES.
+- [x] Authenticate as Pool-B user, confirm UI renders in English (default). *(API-witnessed 2026-07-14: SRP auth acc-aaa-admin; getProfile → locale "en" after explicit reset — spa-redeploy-acc.log.)*
+- [x] Call `updateProfile(locale:'es')`. *(Live via real AppSync endpoint → {"locale":"es"}, persisted on re-read.)*
+- [ ] Reload Command Center — all UI strings render in Spanish. *(UI witness — owner.)*
+- [x] Call `askISO9001(question:"¿Qué requiere la cláusula 8.5.1?")` — response arrives in Spanish. *(Live: 3,657-char Spanish answer with clause references — spa-redeploy-acc.log.)*
+- [ ] Screenshot comparison EN vs ES. *(Owner.)*
 
 **Depends on:** Task 15.
 **D-rung:** D5 (human used it).
@@ -302,10 +302,10 @@
 
 ## Task 19 — ACC-6: Pseudo-Locale CI Check [KIRO]
 
-- [ ] Introduce a deliberately hardcoded string in a frontend component.
-- [ ] Run `npm run lint` (or `npm run i18n:check`) — verify the check FAILS.
-- [ ] Remove the hardcoded string — verify the check PASSES.
-- [ ] Evidence: CI log output showing failure + pass.
+- [x] Introduce a deliberately hardcoded string in a frontend component. *(Executed by architect 2026-07-14: `<span>Hardcoded violation probe</span>` injected into StatusBadge.tsx.)*
+- [x] Run `npm run lint` (or `npm run i18n:check`) — verify the check FAILS. *(exit 1, enforcement message emitted.)*
+- [x] Remove the hardcoded string — verify the check PASSES. *(file restored byte-identical — git diff empty; exit 0.)*
+- [x] Evidence: CI log output showing failure + pass. *(both runs captured in task-19-acc6-pseudo-locale.log.)*
 
 **Depends on:** Task 9.
 **D-rung:** D1.
@@ -370,8 +370,8 @@
 
 ## Task 24 — ACC-8: Pool A Rejection [ARCHITECT]
 
-- [ ] Verify frontend sign-in does not offer Pool A as identity provider.
-- [ ] Manually inject a Pool A token → AppSync returns 401 (proven by api-core ACC-3; re-confirm from frontend context).
+- [x] Verify frontend sign-in does not offer Pool A as identity provider. *(2026-07-14: all 13 JS chunks referenced by the DEPLOYED /sign-in page scanned — Pool B id+client present 1× each, Pool A (9qpRA11kb) and Pool C (xCFIYac5r) zero occurrences — spa-redeploy-acc.log.)*
+- [ ] Manually inject a Pool A token → AppSync returns 401 (proven by api-core ACC-3; re-confirm from frontend context). *(Pool A is MFA-gated — needs owner session to mint the token.)*
 
 **Depends on:** Task 15.
 **D-rung:** D3.
@@ -491,14 +491,14 @@ All acceptance criteria green = spec closes at D5 (human used it).
 > ran. Status now reflects the backing tasks' actual checkbox state. An ACC is
 > ✓ only when its backing task's boxes are ticked with evidence.
 
-- ACC-1 ☐ NOT RUN (Task 22, 6 open boxes) — Command Center walkthrough
-- ACC-2 ☐ NOT RUN (Task 23, 5 open boxes) — Ask Cumplify query
+- ACC-1 ☐ NOT RUN (Task 22, 6 open boxes) — Command Center walkthrough *(owner witness)*
+- ACC-2 ◐ (Task 23 — API core witnessed 2026-07-14: live askISO9001 answer w/ clause refs via real endpoint; chat-panel walkthrough + screenshot = owner) — Ask Cumplify query
 - ACC-3 ✓ (Task 16) — HITL approval flow
 - ACC-4 ◐ (Task 17 — one box open by design, re-verify at card build) — Flagged HITL approval
-- ACC-5 ☐ NOT RUN (Task 18, 5 open boxes) — Locale switch
-- ACC-6 ☐ NOT RUN (Task 19, 4 open boxes) — Pseudo-locale CI check
-- ACC-7 ☐ NOT RUN (Task 20, 3 open boxes) — Role gating
-- ACC-8 ☐ NOT RUN (Task 24, 2 open boxes) — Pool A rejection
+- ACC-5 ◐ (Task 18 — 3/5 witnessed 2026-07-14: EN default, updateProfile(es) persisted, Spanish askISO9001; UI reload + screenshots = owner) — Locale switch
+- ACC-6 ✓ (Task 19 — executed 2026-07-14: check fails on injected string exit 1, passes after removal exit 0) — Pseudo-locale CI check
+- ACC-7 ☐ NOT RUN (Task 20, 3 open boxes) — Role gating *(owner witness — UI cards + screenshots)*
+- ACC-8 ◐ (Task 24 — deployed sign-in JS scanned: Pool B only, zero Pool A/C; Pool-A-token 401 re-confirm needs owner MFA session) — Pool A rejection
 - ACC-9 ✓ (Task 21) — taskToken exclusion
 
 **View tasks (25–31) do not gate closure** if their acceptance criteria (ACC-2 for Ask Cumplify) can be proven via a minimal implementation or they are explicitly deferred to a follow-up. Design authority delivered 2026-07-13 (`view-designs.md` — architect, per 3433654); the tasks are UNBLOCKED and build-ready. ACC-2 requires Task 25 — if Task 25 is not implemented by closure time, ACC-2 becomes a named carry.

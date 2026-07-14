@@ -1,0 +1,63 @@
+# SPA redeploy + executable ACC pass — architect, 2026-07-14 (owner: "go")
+# Scope: redeploy the static export carrying the 574afce frontend fixes
+# (the live SPA predated them — the deployed M2 detail still had the
+# phantom-field bug), then execute every ACC assertion runnable without a
+# human-witnessed browser session.
+
+## Redeploy
+
+| Step | Result | Timestamp (UTC) |
+|------|--------|-----------------|
+| Env verify | .env.local === cdk-outputs.json (GraphqlApiUrl, PoolBId cmiNNOAst, PoolBClientId 662fm2…) — exact match | 14:24Z |
+| Clean build | rm -rf out .next; next build exit 0; 11 route pages incl. NEW settings.html | 14:25Z |
+| S3 sync | aws s3 sync out/ s3://cumplify-frontend-dev-697114252993 --delete — exit 0 | 14:25:42Z |
+| Invalidation | E2OONZTQOGYLSD I4JCZF2MMJHPB1TW3R7SSXLFAW → Completed | 14:31:20Z |
+
+## HTTP readback (content, not status codes)
+
+| Assertion | Result | Timestamp |
+|-----------|--------|-----------|
+| GET /settings | 200, title renders (new route live) | 14:26:15Z |
+| Export contains rootCauseId | 0 files (pre-sync grep over out/) | 14:26Z |
+| Deployed m2 chunk page-db55fa6cc06deb45.js | 14,114 bytes; getNonconformity ×1, rootCauseId ×0 — the FIXED query is what CloudFront serves | 14:26:15Z |
+
+## ACC executions (real AppSync endpoint, Pool-B SRP ID token)
+
+Token: acc-aaa-admin@example.com, fresh temp password via admin-set-user-
+password (architect-held, not committed — same precedent as Task 15),
+pycognito SRP; claims verified custom:tenantId=tenant-AAA,
+custom:role=QualityManager, token_use=id.
+
+### ACC-6 (Task 19) — COMPLETE
+Injected `<span>Hardcoded violation probe</span>` into StatusBadge.tsx →
+i18n:check exit 1 with enforcement message; removed (file byte-identical,
+git diff empty) → exit 0. Full logs: task-19-acc6-pseudo-locale.log. 14:26:58Z
+
+### ACC-5 (Task 18) — 3/5 boxes witnessed
+| Box | Result | Timestamp |
+|-----|--------|-----------|
+| EN default | getProfile → {"locale":"en"} (after explicit reset — fixture carried stale 'es' from a prior session, reset first so the EN state was genuinely witnessed) | 14:28:39Z |
+| updateProfile(es) | {"data":{"updateProfile":{"locale":"es"}}}; persisted on re-read | 14:28:39Z |
+| Spanish askISO9001 | 3,657-char Spanish answer ("La norma **ISO 9001:2015**… información documentada…", clause refs present) | 14:29:25Z |
+Remaining: UI reload renders Spanish + EN/ES screenshots — owner witness.
+Fixture locale reset to 'en' afterwards (clean state for the owner walkthrough).
+
+### ACC-2 (Task 23) — API core witnessed, boxes left unticked
+The live askISO9001 call above traverses authorizer → guru resolver →
+Bedrock and returns a real clause-referenced answer; no queryVector sent
+(frontend never sends it — contract-audited). Task 23's boxes are
+UI-shaped (chat panel, chip render, screenshot+trace) so none were ticked;
+the backend half is pre-witnessed for the owner's walkthrough. 14:29:25Z
+
+### ACC-8 (Task 24) — 1/2 boxes witnessed
+All 13 JS chunks referenced by the DEPLOYED /sign-in page fetched and
+scanned: Pool B id (cmiNNOAst) ×1 + Pool B client (662fm2…) ×1;
+Pool A (9qpRA11kb) ×0; Pool C (xCFIYac5r) ×0. 14:30:08Z
+Remaining: Pool-A-token → 401 re-confirm — Pool A is MFA-gated, needs an
+owner session to mint the token.
+
+## Still owner-witnessed (D5 items)
+ACC-1 (Task 22) Command Center walkthrough; ACC-7 (Task 20) role-gating
+cards + screenshots; ACC-5 UI-reload + screenshots; ACC-2 chat-panel
+walkthrough; ACC-8 Pool-A-token probe. The SPA now serving at
+d1tw2kanxo5wnt.cloudfront.net is current with all 574afce fixes.

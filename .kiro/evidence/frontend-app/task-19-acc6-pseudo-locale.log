@@ -1,0 +1,26 @@
+# Task 19 — ACC-6: Pseudo-Locale CI Check
+# Executed by architect 2026-07-14 (~14:27Z), owner-directed ('go').
+# Probe: <span>Hardcoded violation probe</span> injected into
+# frontend/src/components/shared/StatusBadge.tsx, then removed
+# (file restored byte-identical — git diff empty post-restore).
+
+## Run 1 — WITH violation (expect FAIL) — exit code 1
+
+> cumplify-frontend@0.1.0 i18n:check
+> node scripts/check-hardcoded-strings.mjs
+
+
+❌ HARDCODED STRINGS DETECTED (1 violations):
+
+  src/components/shared/StatusBadge.tsx:48 — "Hardcoded violation probe"
+
+All user-facing strings must use next-intl (useTranslations/getTranslations).
+See: .kiro/steering/17-i18n.md
+
+
+## Run 2 — violation removed (expect PASS) — exit code 0
+
+> cumplify-frontend@0.1.0 i18n:check
+> node scripts/check-hardcoded-strings.mjs
+
+✓ No hardcoded user-facing strings detected.
