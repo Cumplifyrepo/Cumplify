@@ -62,6 +62,15 @@
     "locale": "Display Language",
     "localeDescription": "Choose your preferred language for the interface"
   },
+  "settings": {
+    "title": "Settings",
+    "organizationTitle": "Organization",
+    "tenantName": "Organization Name",
+    "tenantLocale": "Document Locale",
+    "tenantLocaleReadOnly": "The document locale is set at the organization level and determines the default language for generated documents. Contact your administrator to change it.",
+    "myProfileTitle": "My Profile",
+    "loading": "Loading..."
+  },
   "ask": {
     "title": "Ask Cumplify",
     "placeholder": "Ask a question about your IMS...",

@@ -457,9 +457,9 @@
 ### Task 31 — Settings → Organization [KIRO] [ARCHITECT-DESIGN]
 
 - [x] Design authority confirmed: `view-designs.md` §10 (SDK inventory 2026-07-13 — page absent; architect design per 3433654).
-- [ ] Settings nav entry (Pool B only, per `custom:role`).
-- [ ] Organization section: tenant `document-locale` field rendered **READ-ONLY** (displays the tenant default locale). The `updateProfile` mutation writes the per-USER locale only — it must NOT be used for the tenant document-locale. The tenant-settings write surface is a **NAMED CARRY to the settings spec**.
-- [ ] All strings via `next-intl`.
+- [x] Settings nav entry (Pool B only, per `custom:role`).
+- [x] Organization section: tenant `document-locale` field rendered **READ-ONLY** (displays the tenant default locale). The `updateProfile` mutation writes the per-USER locale only — it must NOT be used for the tenant document-locale. The tenant-settings write surface is a **NAMED CARRY to the settings spec**.
+- [x] All strings via `next-intl`.
 
 **Binds to:** `view-designs.md` §10 (architect design authority).
 **Named carry:** tenant document-locale write → `settings-ui` spec.

@@ -62,6 +62,15 @@
     "locale": "Idioma de Visualización",
     "localeDescription": "Elige tu idioma preferido para la interfaz"
   },
+  "settings": {
+    "title": "Configuración",
+    "organizationTitle": "Organización",
+    "tenantName": "Nombre de la Organización",
+    "tenantLocale": "Idioma de Documentos",
+    "tenantLocaleReadOnly": "El idioma de documentos se establece a nivel de organización y determina el idioma predeterminado para los documentos generados. Contacte a su administrador para cambiarlo.",
+    "myProfileTitle": "Mi Perfil",
+    "loading": "Cargando..."
+  },
   "ask": {
     "title": "Preguntar a Cumplify",
     "placeholder": "Haz una pregunta sobre tu SGI...",

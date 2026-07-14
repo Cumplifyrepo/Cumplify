@@ -1,0 +1,63 @@
+# Task 31 — Settings → Organization
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T09:19:00Z (Kiro delivery); amended 2026-07-14T09:31:00Z (architect validation + fix-in-passing)
+# Base commit: 02944fcbffeded336fbbb0e3a548add4f8c05c41
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 77 tests pass, 12 files |
+| i18n check | `npm run i18n:check` | 0 | No violations |
+| Build | `npx next build` | 0 | /settings route 1.95 kB |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/app/(authenticated)/settings/page.tsx` | Settings page: route guard + Organization panel (read-only) + My Profile panel (LocaleSwitcher) |
+| `frontend/src/app/(authenticated)/settings/page.module.css` | Page styles |
+| `frontend/src/app/(authenticated)/settings/page.test.tsx` | 8 hermetic tests: success/error/route-guard |
+| `frontend/messages/en.json` | settings namespace (EN) |
+| `frontend/messages/es.json` | settings namespace (ES) |
+| `frontend/messages/pt.json` | settings namespace (PT) |
+
+## Verification summary
+
+- Route guard: `canSeeAdmin(normalizeRole(role))` — non-admin roles (employee, contractor) render null.
+- Organization panel: read-only display of `tenantName` and `documentLocale` from `getTenantSettings` query.
+- No write mutation used for tenant document-locale (AM-3 compliance).
+- My Profile panel: mounts existing `<LocaleSwitcher />` (one component, two mounts — §10).
+- ErrorState: renders on fetch failure with retry callback.
+- i18n: all user-visible strings via next-intl `settings` namespace; EN/ES/PT complete.
+
+## Named carry
+
+- Tenant document-locale WRITE surface → `settings-ui` spec (not implemented; intentionally read-only per design.md:307).
+
+## Architect validation (independent re-execution, not a re-read of this log)
+
+Re-ran all 4 gates from scratch post-fix: tsc 0, vitest 77/12 0, i18n:check 0,
+next build 0 (/settings 1.95 kB, unchanged). Cross-checked role-matrix.ts,
+Sidebar.tsx, LocaleSwitcher.tsx, and the getTenantSettings resolver against
+the claims above — all confirmed accurate. Base commit SHA verified via
+`git rev-parse 02944fc`.
+
+Two amendments applied (fix-in-passing, low severity, found during
+validation — not present in Kiro's original delivery claims):
+
+1. `page.tsx` — `useEffect` called `fetchSettings()` unconditionally before
+   the `canSeeAdmin` guard ran, so Employee/Contractor roles issued a live
+   `getTenantSettings` query even though the page renders `null` for them.
+   Not a security issue (resolver has no role check; data isn't sensitive)
+   but a wasted round-trip. Fixed: gate the effect on `canSeeSettings`.
+2. `page.test.tsx` — the retry test drove the retry button with a raw DOM
+   `.click()` instead of `fireEvent.click()`, causing React `act()` warnings
+   (state updates outside act). Fixed: swapped to `fireEvent.click()`.
+
+Both re-verified clean post-fix (act() warnings gone, all gates still green).
+
+## D-rung
+
+D2 — code + tests + build pass. Not deployed (no infra dependency for this pure-frontend route).
