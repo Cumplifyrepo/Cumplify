@@ -83,6 +83,15 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
       payload: { riskId: risk?.id, category, description: input.description },
     });
 
+    // KNOWN GAP (migration 008's own named follow-up, unresolved): risk_register_view
+    // is refreshed once at migration time, WITH NO DATA, and never again — new risks
+    // won't appear in getCrossRegisterRiskView until it's refreshed. app_role has been
+    // deliberately REVOKE-ALL'd on the view (migration 009) as part of the SECURITY
+    // DEFINER isolation design, so this resolver cannot refresh it itself — that needs
+    // a separate component running with the migration/master role (the view's actual
+    // owner), event-driven off Risk.* or on a schedule, per migration 008's comment.
+    // Flagged, not coded around — see BLOCKED-ON-OWNER-3.
+
     logger.info('Risk created', { tenantId, riskId: risk?.id });
     return risk;
   } catch (err) {

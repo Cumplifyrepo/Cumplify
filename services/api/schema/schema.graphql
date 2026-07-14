@@ -281,6 +281,7 @@ type AuditEvent @aws_lambda @aws_iam {
   timestamp: AWSDateTime!
   payloadHash: String!
   prevHash: String
+  payload: AWSJSON
 }
 
 # ─── M5: Risk Management Types ───────────────────────────────────────────────
