@@ -107,6 +107,28 @@ export class AiStack extends cdk.Stack {
       },
     });
 
+    // ─── Doc-gen CfnGuardrail (spec-40 BC-5, owner-approved 2026-07-14) ───
+    // The agent guardrail anonymizes NAME/EMAIL/PHONE. Applied to document
+    // generation it would redact the tenant's own company name and quality
+    // manager out of their manual — the doc-gen seat gets its own guardrail:
+    // PROMPT_ATTACK and SSN/card BLOCK retained, PII anonymization off.
+    const docGenGuardrail = new bedrock.CfnGuardrail(this, 'DocGenGuardrail', {
+      name: `cumplify-docgen-guardrail-${envConfig.envName}`,
+      blockedInputMessaging: 'Request blocked by content policy.',
+      blockedOutputsMessaging: 'Response blocked by content policy.',
+      contentPolicyConfig: {
+        filtersConfig: [
+          { type: 'PROMPT_ATTACK', inputStrength: 'HIGH', outputStrength: 'NONE' },
+        ],
+      },
+      sensitiveInformationPolicyConfig: {
+        piiEntitiesConfig: [
+          { type: 'US_SOCIAL_SECURITY_NUMBER', action: 'BLOCK' },
+          { type: 'CREDIT_DEBIT_CARD_NUMBER', action: 'BLOCK' },
+        ],
+      },
+    });
+
     // ─── AI Invoker Lambda (the ONE DOOR) ──────────────────────────────────
     const aiInvoker = new NodejsFunction(this, 'AiInvokerFn', {
       entry: 'services/ai-invoker/src/index.ts',
@@ -121,6 +143,8 @@ export class AiStack extends cdk.Stack {
         BUS_NAME: props.busName,
         GUARDRAIL_ID: guardrail.attrGuardrailId,
         GUARDRAIL_VERSION: guardrail.attrVersion,
+        DOCGEN_GUARDRAIL_ID: docGenGuardrail.attrGuardrailId,
+        DOCGEN_GUARDRAIL_VERSION: docGenGuardrail.attrVersion,
         POWERTOOLS_SERVICE_NAME: 'ai-invoker',
       },
     });
@@ -970,6 +994,8 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'AiInvokerRoleArn', { value: aiInvoker.role!.roleArn });
     new cdk.CfnOutput(this, 'GuardrailId', { value: guardrail.attrGuardrailId });
     new cdk.CfnOutput(this, 'GuardrailVersion', { value: guardrail.attrVersion });
+    new cdk.CfnOutput(this, 'DocGenGuardrailId', { value: docGenGuardrail.attrGuardrailId });
+    new cdk.CfnOutput(this, 'DocGenGuardrailVersion', { value: docGenGuardrail.attrVersion });
     new cdk.CfnOutput(this, 'HitlStateMachineArn', { value: hitlStateMachine.stateMachineArn });
 
     new cdk.CfnOutput(this, 'DocStudioQueueUrl', { value: docStudioQueue.queueUrl });

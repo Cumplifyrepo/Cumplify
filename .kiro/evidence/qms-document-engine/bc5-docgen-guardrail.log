@@ -1,0 +1,47 @@
+# BC-5 — Dedicated doc-gen Bedrock guardrail (spec 40, OQ-2)
+
+Executor: architect (Claude). Owner approval: "validate, then proceed" 2026-07-14 —
+explicit yes on the one remaining [REQUIRES-HUMAN] item (loosening PII anonymization
+for the doc-gen seat only).
+
+## Why
+
+The agent guardrail (`cumplify-agent-guardrail-dev`) anonymizes NAME/EMAIL/PHONE.
+Pointed at document generation it would redact the tenant's own company name and
+quality manager out of their Quality Manual — destroying the one property (named,
+specific prose) that makes the artifact credible. Spec-40 ACC-9 requires the
+generated manual to carry those names unredacted AND the doc-gen guardrail to be a
+distinct resource from the agent guardrail.
+
+## What shipped
+
+- `infra/lib/ai-stack.ts` — new `CfnGuardrail` `DocGenGuardrail`
+  (`cumplify-docgen-guardrail-${env}`): PROMPT_ATTACK input HIGH retained,
+  US_SOCIAL_SECURITY_NUMBER + CREDIT_DEBIT_CARD_NUMBER BLOCK retained,
+  NO ANONYMIZE entries. Agent guardrail untouched.
+- AI Invoker env: `DOCGEN_GUARDRAIL_ID` / `DOCGEN_GUARDRAIL_VERSION` (seat routing
+  inside the invoker is spec-40 Task work — the ONE DOOR stays the one door).
+- CfnOutputs: `DocGenGuardrailId` / `DocGenGuardrailVersion`.
+- `infra/lib/ai-stack.unit.test.ts` — 4 new tripwires: exactly two named guardrails;
+  docgen has ZERO ANONYMIZE actions but keeps SSN/card BLOCK + PROMPT_ATTACK;
+  agent guardrail STILL anonymizes NAME/EMAIL/PHONE (the loosening must not leak);
+  invoker env carries both seats.
+
+## Verification
+
+| Step | Timestamp (UTC) | Command | Exit | Result |
+|------|-----------------|---------|------|--------|
+| Unit suite | 2026-07-14T17:14:21 | `npx vitest run infra/lib/ai-stack.unit.test.ts` | 0 | 56 passed (52 prior + 4 new) |
+| Deploy | 2026-07-14T17:16 | `AWS_PROFILE=cumplify-dev-admin npx cdk deploy CumplifyPipeline/Dev/AiStack --exclusively --require-approval never` | 0 | 71.67s; `DocGenGuardrailId=g8sg61low9xn` |
+| Live readback (docgen) | 2026-07-14T17:17:06 | `aws bedrock get-guardrail --guardrail-identifier g8sg61low9xn` | 0 | status READY; pii = SSN BLOCK + card BLOCK ONLY (zero ANONYMIZE); PROMPT_ATTACK HIGH |
+| Live readback (agent) | 2026-07-14T17:17:06 | `aws bedrock get-guardrail --guardrail-identifier yq8xe6y2iqbs` | 0 | status READY; EMAIL/PHONE/NAME ANONYMIZE all still present — unchanged |
+| Invoker env | 2026-07-14T17:17:06 | `aws lambda get-function-configuration` (AiInvoker) | 0 | `GUARDRAIL_ID=yq8xe6y2iqbs`, `DOCGEN_GUARDRAIL_ID=g8sg61low9xn`, `DOCGEN_GUARDRAIL_VERSION=DRAFT` |
+
+Readback profile: cumplify-dev-readonly (dev 697114252993). The two guardrail IDs
+differ — ACC-9's "distinct resource" half is live-proven. The "names unredacted in a
+generated manual" half lands with the generation pipeline (spec-40 tasks).
+
+## Remaining for full ACC-9
+
+- Invoker routes the doc-composer seat to DOCGEN_GUARDRAIL_* (spec-40 task, architect).
+- Live generation output containing the tenant's org + QM names unredacted (ACC-3/ACC-9 readback).

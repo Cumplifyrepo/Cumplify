@@ -137,7 +137,7 @@ The competitor answers it in one button: a ~9,200-word, 69-section manual mapped
 
 | ID | Question | Status |
 |----|----------|--------|
-| OQ-1 | EvidenceVault Object-Lock: COMPLIANCE vs GOVERNANCE, and env-parameterized retention (BC-10). Blocks all sealing tasks. | **OPEN — [REQUIRES-HUMAN]** |
-| OQ-2 | Doc-gen guardrail config (BC-5) — confirm NAME/EMAIL/PHONE anonymization OFF for this seat only. | **OPEN — [REQUIRES-HUMAN]** |
+| OQ-1 | EvidenceVault Object-Lock: COMPLIANCE vs GOVERNANCE, and env-parameterized retention (BC-10). Blocks all sealing tasks. | **RESOLVED 2026-07-14** — owner override; see BC-10 (commit `bd9b6f2`, deployed + live-verified) |
+| OQ-2 | Doc-gen guardrail config (BC-5) — confirm NAME/EMAIL/PHONE anonymization OFF for this seat only. | **RESOLVED 2026-07-14** — owner "proceed"; dedicated `DocGenGuardrail` in `ai-stack.ts` (PROMPT_ATTACK + SSN/card BLOCK retained, anonymization off; agent guardrail untouched, tripwire-tested) |
 | OQ-3 | Process diagrams (turtle diagrams, process interaction map, org chart) — competitor ships 6/6. In scope for v1 or a fast-follow? Requires a diagram-generation approach decision. | **OPEN** |
 | OQ-4 | Tenant-uploaded licensed standard as a *premium* grounding enhancement (per-tenant KB) — explicitly OUT of v1 scope (BC-1 makes it unnecessary). Confirm deferral. | Proposed: defer |

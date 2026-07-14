@@ -115,6 +115,67 @@ describe('AiStack', () => {
     });
   });
 
+  describe('DocGen guardrail (spec-40 BC-5 / ACC-9)', () => {
+    // The agent guardrail anonymizes NAME/EMAIL/PHONE; pointed at document
+    // generation it would redact the tenant's own company name out of their
+    // manual. These assertions keep the two guardrails distinct and keep PII
+    // anonymization OFF the doc-gen seat (owner-approved 2026-07-14).
+    function guardrailsByName() {
+      const resources = template.findResources('AWS::Bedrock::Guardrail');
+      const byName: Record<string, any> = {};
+      for (const res of Object.values(resources)) {
+        byName[(res as any).Properties.Name] = (res as any).Properties;
+      }
+      return byName;
+    }
+
+    it('is a distinct resource from the agent guardrail', () => {
+      const byName = guardrailsByName();
+      expect(Object.keys(byName).sort()).toEqual([
+        'cumplify-agent-guardrail-dev',
+        'cumplify-docgen-guardrail-dev',
+      ]);
+    });
+
+    it('docgen guardrail has ZERO ANONYMIZE actions but keeps SSN/card BLOCK + PROMPT_ATTACK', () => {
+      const docgen = guardrailsByName()['cumplify-docgen-guardrail-dev'];
+      const pii = docgen.SensitiveInformationPolicyConfig.PiiEntitiesConfig;
+      expect(pii.filter((e: any) => e.Action === 'ANONYMIZE')).toHaveLength(0);
+      expect(pii).toEqual(
+        expect.arrayContaining([
+          { Type: 'US_SOCIAL_SECURITY_NUMBER', Action: 'BLOCK' },
+          { Type: 'CREDIT_DEBIT_CARD_NUMBER', Action: 'BLOCK' },
+        ]),
+      );
+      expect(docgen.ContentPolicyConfig.FiltersConfig).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ Type: 'PROMPT_ATTACK', InputStrength: 'HIGH' }),
+        ]),
+      );
+    });
+
+    it('agent guardrail STILL anonymizes NAME/EMAIL/PHONE (loosening must not leak)', () => {
+      const agent = guardrailsByName()['cumplify-agent-guardrail-dev'];
+      const anonymized = agent.SensitiveInformationPolicyConfig.PiiEntitiesConfig
+        .filter((e: any) => e.Action === 'ANONYMIZE')
+        .map((e: any) => e.Type)
+        .sort();
+      expect(anonymized).toEqual(['EMAIL', 'NAME', 'PHONE']);
+    });
+
+    it('AI Invoker carries both guardrail seats in its environment', () => {
+      template.hasResourceProperties('AWS::Lambda::Function', {
+        Environment: {
+          Variables: Match.objectLike({
+            GUARDRAIL_ID: Match.anyValue(),
+            DOCGEN_GUARDRAIL_ID: Match.anyValue(),
+            DOCGEN_GUARDRAIL_VERSION: Match.anyValue(),
+          }),
+        },
+      });
+    });
+  });
+
   describe('SQS Queues', () => {
     it('creates 3 standard queues with enforceSSL + DLQ', () => {
       // Count standard queues (non-DLQ) — should have at least 3
