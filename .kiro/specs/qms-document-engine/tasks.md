@@ -1,0 +1,124 @@
+# QMS Document Engine — Tasks
+
+**Spec:** `qms-document-engine` (spec 40)
+**Design approved:** R1 (this commit)
+**Convention:** `[KIRO]` = Kiro executes. `[ARCHITECT]` = architect executes (generation core, infra, deploys, readbacks). `[REQUIRES-HUMAN]` = owner reviews before merge.
+**Evidence contract:** Rule 7 — checkbox edits ONLY in the same commit as the evidence log. Rule 8 — readback rows carry timestamp + exit code + outputs SHA. Evidence path: `.kiro/evidence/qms-document-engine/`.
+**Standing rules:** SCHEMA-5 (no tenantId in user mutation inputs). Never `extend type`; new resolvers need explicit schema node dependency. Hermetic unit lane. Steering 19 §9: blocked = reported, never coded around. i18n en/es/pt same commit.
+
+---
+
+## Task 0 — DONE before task list: BC-5 guardrail [ARCHITECT]
+
+- [x] `DocGenGuardrail` provisioned, deployed, live-verified distinct from agent guardrail; invoker env carries both seats. Evidence: `bc5-docgen-guardrail.log` (commit `543ed78`).
+
+---
+
+## Task 1 — Migration `011_qms_engine.sql` + BC-6 [KIRO, ARCHITECT deploys]
+
+- [ ] Author migration per design §2: `qms` schema; `clause_registry` (tenant-less, SELECT-only for `app_role`); `org_profiles` + `org_profile_versions`; `clause_applicability` (CHECK: not-applicable requires justification); `generation_runs`; `generation_sections` (`UNIQUE(run_id, harmonization_key)`); `assertion_ledger`; `m1.document_versions` += `content_sha256 TEXT`; `m4.records` CHECK += `'IMS'`.
+- [ ] RLS on EVERY tenant table: ENABLE + FORCE + tenant policy + `app_role` grant (follow `007_rls_policies.sql` pattern).
+- [ ] Extend the cross-tenant denial test to all new tenant tables (ACC-2).
+- [ ] `schema.graphql`: `enum Standard` += `IMS`; widen `PublishAuditEventOptions.standard`; regression test — a `Standard.IMS` document round-trips `createDocumentDraft → getDocument` (design §2.6).
+- [ ] [ARCHITECT] Review migration, apply to dev via Data API, live-verify table + policy existence (`pg_policies`), run denial test against live dev.
+
+**Depends on:** nothing. **D-rung:** D3. **Evidence:** `task-1-migration.log`
+
+## Task 2 — Clause registry seed + integrity (BC-7, CLR-1..4) [KIRO]
+
+- [ ] Parser over `docs/architecture/iso-coverage-matrix.md` + `iso-requirements-map.md`: extract (standard, clause_no, title, intent paraphrase, annex_sl_mode, harmonization_key, doc_type, required_sources); skip the 3 Grand-Total rows; dedupe rollups (`6.1` vs `6.1.2`/`6.1.3`).
+- [ ] Correct the corpus map's self-disagreeing tallies IN THE SAME COMMIT (BC-7).
+- [ ] Seed SQL generated from the parse; integrity test asserts seeded set == reconciled parsed set (never a line count).
+- [ ] CLR-3 test: zero "shall"-form sentences and zero standard-text fragments in `intent_paraphrase` rows.
+
+**Depends on:** Task 1. **D-rung:** D2 ([ARCHITECT] applies seed with Task 1 deploy). **Evidence:** `task-2-clause-registry.log`
+
+## Task 3 — SDL + resolver scaffolds + org profile [KIRO]
+
+- [ ] Append design §6 SDL verbatim to `schema.graphql`; wire data sources + resolvers in `api-stack.ts` with explicit schema node dependency.
+- [ ] `qms.ts` resolver: `getOrgProfile`, `saveOrgProfile` (zod-validated payload, versioned write per design §2.2), `listClauseRegistry`, `listClauseApplicability`, `setClauseApplicability`, `getGenerationRun`, `listGenerationRuns`.
+- [ ] Hermetic tests: SQL/param-asserting per resolver (the M2 lesson: tests assert real column names against the migration), zod rejection cases, SCHEMA-5 (resolver injects tenant).
+
+**Depends on:** Task 1. **D-rung:** D2. **Evidence:** `task-3-org-profile.log`
+
+## Task 4 — `doc-composer` seat + guardrail routing [ARCHITECT]
+
+- [ ] `SeatId` += `'doc-composer'`; registry entry + `MODELWEIGHT#` seed row; structured output schema `{sentences:[{text, factRefs[]}]}`.
+- [ ] `guardrail.ts`: route `doc-composer` → `DOCGEN_GUARDRAIL_*`, all other seats unchanged; unit tests both routes + default.
+- [ ] Metering smoke: seat invocation emits `telemetry.credits.consumed`.
+
+**Depends on:** Task 0. **D-rung:** D3 (live invoke via invoker). **Evidence:** `task-4-seat.log`
+
+## Task 5 — DocGenStateMachine: Seed + Compose + checker [ARCHITECT]
+
+- [ ] SFN (design §4.1): SeedSections (harmonization grouping — GEN-3 by construction; N/A → `na_justified`; idempotent ON CONFLICT), Map MaxConcurrency 4, FinalizeManual stub.
+- [ ] ComposeSection: GAP-before-model-call (design §4.2, $0 on empty registers); fact assembly (pinned profile version + registers via SECURITY DEFINER accessors); invoker call; **deterministic checker** (assertion coverage BC-4, house style BC-2, standard-text screen CLR-3); one retry then `failed`; S3 write + ledger rows + audit event.
+- [ ] `publishGenerationEvent` per section (GEN-5).
+- [ ] Hermetic tests: grouping matrix (shared/forked/standard_only × in-scope sets), GAP decision table, checker positive/negative fixtures (incl. unmapped-sentence FAILS), idempotent re-seed.
+
+**Depends on:** Tasks 1, 2, 4. **D-rung:** D3 (live run on seeded dev tenant). **Evidence:** `task-5-generation-core.log`
+
+## Task 6 — FinalizeManual: m1 writes, matrix, master list (GEN-4, GEN-8, BC-8) [ARCHITECT]
+
+- [ ] Assemble manual content JSON (front matter incl. BC-1 disclaimer + ISO purchase link); write manual + per-section clause documents to `m1.documents`/`m1.document_versions` with REAL `content_ref` + `content_sha256`.
+- [ ] Derive Standards Correlation Matrix + Documented-Information Master List (data, not prose) as two generated documents.
+- [ ] Tripwire: no writer leaves `content_ref=''` (repo-wide test; `execute-writeback.ts:330` updated or explicitly exempted with tracked TODO).
+- [ ] Run-complete event + audit event; `generation_runs.status` terminal semantics (`partial` when any section failed).
+
+**Depends on:** Task 5. **D-rung:** D3. **Evidence:** `task-6-finalize.log`
+
+## Task 7 — Subscription + diff [KIRO]
+
+- [ ] `onGenerationProgress` None-DS subscription with C-6 tenantId auth (copy `onDocumentStatusChanged` pattern) — explicit schema node dependency.
+- [ ] `getDocumentVersionDiff` resolver per design §3: S3 loads, section alignment by `harmonizationKey`, sentence LCS → existing `Diff` type. **Closes the standing BLOCKED item.**
+- [ ] Hermetic tests: diff fixtures (add/remove/change section; identical → 0/0), subscription auth denial.
+
+**Depends on:** Tasks 3, 6. **D-rung:** D2 → D3 at ACC-6 readback. **Evidence:** `task-7-sub-diff.log`
+
+## Task 8 — Approval integrity (BC-11, APR-1..3) [KIRO]
+
+- [ ] `submitDocumentForApproval` preconditions: all sections reviewed (`UNREVIEWED_SECTIONS`), zero gap/failed sections (`UNRESOLVED_GAPS`).
+- [ ] `markSectionReviewed` mutation (role-gated).
+- [ ] `approveDocumentVersion` SoD: approver ≠ `created_by` → block, write nothing, publish `Security.SodViolationBlocked`.
+- [ ] Hermetic tests incl. negative paths (ACC-7 shape).
+
+**Depends on:** Task 3. **D-rung:** D2. **Evidence:** `task-8-approval.log`
+
+## Task 9 — PDF render + ZIP export + sealing (STO-3..5) [ARCHITECT]
+
+- [ ] `PdfRenderFn` (puppeteer-core + @sparticuz/chromium, x86_64): controlled-document HTML template from `design-tokens.ts` (branded header, CONTROLLED stamp, QMS info block). **Gate:** if bundle/cold-start fails readback → container-image fallback, STOP and re-evidence.
+- [ ] `requestImsExport` → ZIP (manual + clause docs + matrix + master list) → presigned URL (15 min).
+- [ ] Sealing on `publishControlledDocument`: per-object `ObjectLockRetainUntilDate` from tenant `m4.retention_policies` (seed default policy row if absent); write the `m4.records` pointer row (`retain_until`, `object_lock_until`, `s3_object_ref`). Bucket default stays safety-net only (BC-10 residue).
+
+**Depends on:** Task 6. **D-rung:** D3. **Evidence:** `task-9-pdf-export-seal.log`
+
+## Task 10 — Frontend: Org Profile wizard + registry/applicability UI [KIRO]
+
+- [ ] Multi-step wizard per ORG-1 field list (shared zod contract from Task 3); versioned save; industry-neutral taxonomy.
+- [ ] Clause applicability UI: exclude-with-justification only (ORG-4); "N/A — justified" rendering.
+- [ ] Named-gap surfacing (ORG-3): missing required-source fields shown per clause.
+- [ ] i18n `qms.*` namespaces en/es/pt same commit; view-designs.md governs layout; no hardcoded strings.
+
+**Depends on:** Task 3. **D-rung:** D2. **Evidence:** `task-10-org-wizard.log`
+
+## Task 11 — Frontend: generation + document viewer + review [KIRO]
+
+- [ ] Generate action → run view with live per-section progress (`onGenerationProgress`), section states (prose/gap/na/failed), gap CTA links.
+- [ ] Document viewer: sections in clause order, GAP blocks visibly distinct (never prose-styled), BC-1 disclaimer block, review action per section, submit-for-approval gated by APR-1/3 errors surfaced honestly.
+- [ ] Diff view on version history (Task 7); export button → presigned ZIP.
+- [ ] i18n same commit.
+
+**Depends on:** Tasks 7, 8, 10. **D-rung:** D2. **Evidence:** `task-11-doc-ui.log`
+
+## Task 12 — Quality harness: golden-set eval + style validator (NFR-3, ACC-10) [ARCHITECT]
+
+- [ ] Golden set (≥10 org profiles across industries/sizes/standard mixes); eval rubric; mean ≥ 4.0/5, zero low scores.
+- [ ] House-style validator as standalone CI check over generated fixtures (no "shall"/bullets/placeholders, org-as-subject).
+
+**Depends on:** Task 5. **D-rung:** D2 (harness) → D3 (live eval run). **Evidence:** `task-12-quality.log`
+
+## Task 13 — ACC readback pass [ARCHITECT, ACC-3/ACC-9 witnessed by owner → D5]
+
+- [ ] ACC-1..ACC-10 executed live per requirements §4, each row: timestamp + exit code + outputs SHA. ACC-4 (honest gaps) and ACC-9 (names unredacted) are the headline demos.
+
+**Depends on:** all. **D-rung:** D3/D5. **Evidence:** `acc-readback.log`
