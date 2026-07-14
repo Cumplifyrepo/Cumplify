@@ -176,30 +176,42 @@
 
 ## Task 12 — FrontendStack CDK Infrastructure (S3+CloudFront) [KIRO]
 
-- [ ] Create new `infra/lib/frontend-stack.ts` (FrontendStack — own lifecycle, keeps ApiStack lean): private S3 bucket (SSE-S3, block all public access) + CloudFront Distribution (OAC origin, custom error responses 403/404 → /index.html for SPA routing, HTTPS redirect).
-- [ ] CfnOutputs: bucket name, distribution ID, distribution domain name.
-- [ ] Wire FrontendStack into `infra/lib/cumplify-stage.ts` with addDependency on ApiStack (needs API URL output for build-time env vars).
-- [ ] `cdk synth` passes, CDK Nag zero non-compliant.
-- [ ] Template-assertion test: S3 bucket (BlockPublicAccess=BLOCK_ALL) + CloudFront distribution (OAC, error responses) exist.
+- [x] Create new `infra/lib/frontend-stack.ts` (FrontendStack — own lifecycle, keeps ApiStack lean): private S3 bucket (SSE-S3, block all public access) + CloudFront Distribution (OAC origin, custom error responses 403/404 → /index.html for SPA routing, HTTPS redirect).
+- [x] CfnOutputs: bucket name, distribution ID, distribution domain name.
+- [x] Wire FrontendStack into `infra/lib/cumplify-stage.ts` with addDependency on ApiStack (needs API URL output for build-time env vars).
+- [x] `cdk synth` passes, CDK Nag zero non-compliant.
+- [x] Template-assertion test: S3 bucket (BlockPublicAccess=BLOCK_ALL) + CloudFront distribution (OAC, error responses) exist.
+
+> **Book-closed retroactively 2026-07-14 (architect, owner-directed).** The work
+> was delivered and deployed 2026-07-11 (Task 15) with owner sign-off recorded
+> in Task 14 (bundle item 6), but the boxes were never ticked and no evidence
+> log was written — found by the full-phase validation. Every box re-verified
+> against disk AND live cloud before ticking.
 
 **Depends on:** Task 1 CLOSED (hosting decision resolved).
-**D-rung:** D1.
+**D-rung:** D1 declared; actual state D3 (deployed, live-verified — see evidence).
 **Evidence:** `.kiro/evidence/frontend-app/task-12-frontend-infra.log`
 
 ---
 
 ## Task 13 — HITL-10 SFN Amendment + Carry #3 [KIRO] [REQUIRES-HUMAN]
 
-- [ ] Amend the WaitForApproval task Parameters: add `"sfnExecutionArn.$": "$$.Execution.Id"` to the payload passed to store-token.
+- [x] Amend the WaitForApproval task Parameters: add `"sfnExecutionArn.$": "$$.Execution.Id"` to the payload passed to store-token.
 - [x] Amend `services/agents/shared/store-token.ts`: add `sfnExecutionArn` to the UpdateItem SET expression (from `input.sfnExecutionArn`).
-- [ ] Add Catch on WaitForApproval: `{"ErrorEquals":["SENT_BACK"],"Next":"HandleSendBack"}`.
-- [ ] Add `HandleSendBack` state: Pass state logging the send-back (downstream re-draft logic owned by `agents-existing-8`).
-- [ ] `cdk synth` passes, CDK Nag zero non-compliant.
+- [x] Add Catch on WaitForApproval: `{"ErrorEquals":["SENT_BACK"],"Next":"HandleSendBack"}`.
+- [x] Add `HandleSendBack` state: Pass state logging the send-back (downstream re-draft logic owned by `agents-existing-8`).
+- [x] `cdk synth` passes, CDK Nag zero non-compliant.
 - [x] Unit test: store-token writes sfnExecutionArn field.
-- [ ] **[REQUIRES-HUMAN]** — AiStack state machine amendment. Owner reviews diff.
+- [x] **[REQUIRES-HUMAN]** — AiStack state machine amendment. Owner reviews diff. *(Sign-off recorded in Task 14, bundle item 2: 2026-07-11 "Approve — deploy to dev", `.kiro/evidence/frontend-app/task-14-requires-human.md`.)*
+
+> **Book-closed retroactively 2026-07-14 (architect, owner-directed).** The
+> amendment was deployed 2026-07-11 (Task 15) under the Task 14 sign-off, but
+> five boxes were never ticked — found by the full-phase validation. All three
+> state-machine amendments re-verified against the LIVE deployed definition
+> before ticking (see evidence log).
 
 **Depends on:** nothing.
-**D-rung:** D1.
+**D-rung:** D1 declared; actual state D3 (deployed, live-verified — see evidence).
 **Evidence:** `.kiro/evidence/frontend-app/task-13-hitl10-sfn.log`
 
 ---
@@ -392,7 +404,7 @@
 - [x] Real-time via `onDocumentStatusChanged`. Visible provenance links (MOD-9).
 - [x] All strings via `next-intl`.
 - [ ] **BLOCKED-ON-OWNER:** updatePolicy + updateImsScope drawers require getPolicy/getImsScope read surface (no query in schema; m1.policies/m1.ims_scope are independent tables with own UUIDs).
-- [ ] **BLOCKED-ON-OWNER** (found 2026-07-14 full-phase validation): version compare is live-broken — `getDocumentVersionDiff` returns `{v1Ref, v2Ref}` but the schema type `Diff` requires `additions: Int!, deletions: Int!, content: String!` → non-null serialization error on every call. A real diff needs the version content: S3 read grant for ResolverM1Fn (new IAM) + a content-format decision. Not coded around (a zeroed fake diff = fabrication). Compare UI errors cleanly via its existing catch → ErrorState.
+- [ ] **BLOCKED-ON-OWNER** (found 2026-07-14 full-phase validation; root cause re-scoped same day): version compare is live-broken — `getDocumentVersionDiff` returns `{v1Ref, v2Ref}` but the schema type `Diff` requires `additions: Int!, deletions: Int!, content: String!` → non-null serialization error on every call. **Deeper than an IAM grant:** recon for the fix found that document-content persistence does not exist anywhere in the platform — `contentRef` is produced by NO code path (the only writer, execute-writeback DocVersionControl, defaults it to `''`; the only S3 writer in all of services is the audit-trail sealer), and tenant-a has zero documents/versions live. A real diff requires the agents pipeline to first persist draft content (S3 object at draft time + contentRef threaded through the writeback contract) — a cross-spec design item (agents-existing-8 / api-core), then the S3 read grant + diff resolver. Not coded around (a diff over empty refs = fabrication). Compare UI errors cleanly via its existing catch → ErrorState.
 
 **Binds to:** `view-designs.md` §5 (architect design authority).
 **D-rung:** D2.

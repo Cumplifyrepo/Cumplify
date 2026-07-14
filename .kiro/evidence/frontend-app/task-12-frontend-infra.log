@@ -1,0 +1,32 @@
+# Task 12 — FrontendStack CDK Infrastructure (S3+CloudFront)
+# RETROACTIVE book-closing (architect, owner-directed, 2026-07-14).
+# The stack was built and deployed 2026-07-11 under the Task 14 consolidated
+# sign-off (bundle item 6) and Task 15 deploy, but the task was never
+# book-closed: zero ticked boxes and no evidence log — found by the
+# full-phase validation (see phase-c-full-validation.log). Every box was
+# re-verified against BOTH the repo and the live cloud before ticking.
+
+## Verification executed 2026-07-14 (~14:15Z), profile cumplify-dev-readonly
+
+| Box | Verification | Result |
+|-----|--------------|--------|
+| frontend-stack.ts | On disk: BlockPublicAccess.BLOCK_ALL (frontend-stack.ts:57), S3BucketOrigin.withOriginAccessControl (:71), errorResponses 403+404 → /index.html (:83-93) | PASS |
+| CfnOutputs | Live stack outputs: FrontendBucketName=cumplify-frontend-dev-697114252993, FrontendDistributionId=E2OONZTQOGYLSD, FrontendDistributionDomain=d1tw2kanxo5wnt.cloudfront.net (4 outputs total) | PASS |
+| Stage wiring | cumplify-stage.ts:162-167 — new FrontendStack(...) + frontendStack.addDependency(apiStack), apiUrl passed | PASS |
+| synth + Nag | Full stage synthesized during today's ApiStack deploy (cdk deploy exit 0); AwsSolutionsChecks applied at stage level (cumplify-stage.ts:174) | PASS |
+| Template test | infra/lib/frontend-stack.unit.test.ts — asserts BLOCK_ALL (:14) + CustomErrorResponses (:36); part of today's 594-green suite | PASS |
+
+## Live state
+
+Dev-FrontendStack: UPDATE_COMPLETE, LastUpdated 2026-07-11T14:20:59Z.
+SPA serving at d1tw2kanxo5wnt.cloudfront.net (Task 15 readback).
+
+## Attribution
+
+Owner sign-off: Task 14 bundle item 6, 2026-07-11 "Approve — deploy to dev"
+(.kiro/evidence/frontend-app/task-14-requires-human.md). Deploy record:
+task-15-deploy-readback.md (outputs blob sha256 e83f79b4beaceb90).
+
+## D-rung
+
+Declared D1; actual state D3 (deployed + live-verified).

@@ -20,3 +20,28 @@
 #
 # Test result at HEAD: 522/522 pass
 # tsc --noEmit: 0 errors
+
+# ────────────────────────────────────────────────────────────────────────────
+# RETROACTIVE CLOSE (architect, owner-directed, 2026-07-14)
+#
+# The three OPEN ASL amendments above were in fact built and deployed
+# 2026-07-11 under the Task 14 consolidated sign-off (bundle item 2) and the
+# Task 15 deploy ("AiStack SFN amendment live") — but this log was never
+# updated and the tasks.md boxes never ticked. Found by the full-phase
+# validation (phase-c-full-validation.log).
+#
+# All three amendments re-verified against the LIVE deployed definition
+# (not the CDK source) 2026-07-14T14:17:16Z, profile cumplify-dev-readonly,
+# describe-state-machine on
+# arn:aws:states:us-east-1:697114252993:stateMachine:HitlStateMachine1F6B4EA3-NaXnao6slsM8
+# — definition parsed and asserted programmatically:
+#
+# | Box | Live assertion | Result |
+# |-----|----------------|--------|
+# | WaitForApproval sfnExecutionArn.$ | "sfnExecutionArn.$" present in WaitForApproval.Parameters | PASS |
+# | Catch SENT_BACK | [{"ErrorEquals":["SENT_BACK"],"ResultPath":"$.sendBackError","Next":"HandleSendBack"}] | PASS |
+# | HandleSendBack state | exists, Type=Pass | PASS |
+# | synth + Nag | full stage synthesized clean during today's ApiStack deploy (exit 0); AwsSolutionsChecks at stage level | PASS |
+# | [REQUIRES-HUMAN] | owner sign-off recorded in Task 14 bundle item 2, 2026-07-11 "Approve — deploy to dev" | PASS |
+#
+# D-rung: declared D1; actual state D3 (deployed + live definition verified).
