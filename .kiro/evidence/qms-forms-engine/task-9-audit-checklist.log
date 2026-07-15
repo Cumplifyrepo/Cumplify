@@ -1,7 +1,20 @@
-# Task 9 — Internal Audit checklist generator (OQ-1 resolution)
+# Task 9 — Internal Audit checklist generator (OQ-1 resolution) — REDESIGN
 # Evidence log (rule 7/8: evidence + checkbox in same commit)
-# Timestamp: 2026-07-15T10:00:00Z
-# Base commit: 787dca6 (Task 7 accepted) + 3b0fbeb (wave deploy)
+# Timestamp: 2026-07-15T10:15:00Z
+# Base commit: 3b0fbeb (wave deploy)
+
+## Prior rejection (9bf4360) — reverted in this commit
+
+Forms-based approach was fundamentally wrong:
+- Catalog is SELECT-only for app_role → no place to store a generated template
+- Fallback to NCR template polluted the NCR register (maps_to='m2_ncr' fires on submit)
+- LIMIT-1 field_id hack bypassed BC-2 relation probes
+- Correct response was BLOCKED-ON-DESIGN per steering 19, not code-around
+
+## Redesign: M3-native
+
+The Internal Audit checklist is NOT a form record — it's native M3 data
+(m3.audit_checklists rows). Findings already link via m3.audit_findings.checklist_id.
 
 ## Gates executed
 
@@ -14,41 +27,42 @@
 
 | File | Purpose |
 |------|---------|
-| `services/api/src/resolvers/forms.ts` | generateAuditChecklist function + RELATION_TARGET_TABLE += finding |
-| `services/api/schema/schema.graphql` | generateAuditChecklist(standard: Standard!): FormRecord! @aws_lambda |
-| `services/api/migrations/015_add_finding_relation_target.sql` | ALTER CHECK: adds 'finding' to relation_target allowlist |
-| `services/api/__tests__/resolvers/forms.test.ts` | 4 new tests (53 total forms tests) |
-| `infra/lib/api-stack.ts` | GenerateAuditChecklist resolver wired + schema dependency |
-| `infra/lib/api-stack.unit.test.ts` | Resolver count 70→71 |
+| `services/api/src/resolvers/m3.ts` | generateAuditChecklist(auditId) function |
+| `services/api/schema/schema.graphql` | generateAuditChecklist(auditId: ID!): [AuditChecklist!]! @aws_lambda |
+| `services/api/migrations/015_audit_checklist_unique.sql` | UNIQUE(audit_id, clause_ref) for idempotency |
+| `services/api/__tests__/resolvers/m3-m4-m5-fixes.test.ts` | 4 new tests |
+| `infra/lib/api-stack.ts` | GenerateAuditChecklist resolver on m3DS (count 70→71) |
 
-## Implementation summary
+## Implementation
 
-**generateAuditChecklist(standard):**
-1. Queries `qms.clause_registry WHERE standard = :standard ORDER BY sort_order`
-2. Per clause generates 3 fields:
-   - `conformity_<clause_no>`: select (conforming/nonconforming/not_applicable/opportunity)
-   - `evidence_<clause_no>`: textarea (audit evidence)
-   - `finding_<clause_no>`: relation → M3 (m3.audit_findings, target 'finding')
-3. Creates a FormRecord in draft, stores generated structure as JSONB
-4. Returns record with computed completion: `fieldsTotal = clauseCount × 3`
-5. Publishes `Audit.ChecklistGenerated` (already registered, auditTrail: false)
+`generateAuditChecklist(auditId: ID!)` in m3.ts:
+1. Validate audit exists (`WHERE id = :id::uuid` — tenant txn, RLS)
+2. Read `audit.standard` from the row
+3. Query `qms.clause_registry WHERE standard = :standard ORDER BY sort_order`
+4. Per clause: INSERT `m3.audit_checklists` (tenant_id, audit_id::uuid, clause_ref=clause_no,
+   question="Does the organization <intent_paraphrase>?", expected_evidence=required_sources joined)
+5. Idempotent: `ON CONFLICT (audit_id, clause_ref) DO NOTHING` (migration 015 UNIQUE constraint)
+6. Fetch all checklist rows for the audit, return as `[AuditChecklist!]!`
+7. Publish `Audit.ChecklistGenerated` (already registered, auditTrail: false)
 
-**Standards filter:** 9001-only tenant gets only 9001 clause rows (WHERE clause in SQL).
-**Counts computed:** `_meta.clauseCount` and `_meta.totalFields` from the query result length, never literal.
+**Findings link**: via existing `m3.audit_findings.checklist_id` FK — no new relation plumbing.
+**Counts computed**: from registry query result length (never literal).
+**Standards filter**: audit's standard drives the clause registry WHERE clause.
 
-## Migration 015
+## Tests pinned
 
-Adds 'finding' to `forms.template_fields` relation_target CHECK constraint.
-`RELATION_TARGET_TABLE` in forms.ts extended: `finding → m3.audit_findings`.
-Never edits applied migrations — new ALTER in a new file.
+1. Audit validation ::uuid cast + registry WHERE standard filter
+2. INSERT with ::uuid cast + ON CONFLICT idempotency
+3. AUDIT_NOT_FOUND on missing audit + rollback
+4. Question wraps intent_paraphrase; expected_evidence from required_sources
+5. Idempotent: second call returns same rows (ON CONFLICT skips)
 
-## Lessons applied (from wave readback)
+## Reverted from forms.ts
 
-1. **Event registration**: `Audit.ChecklistGenerated` already exists in `contracts/events.md`
-   (auditTrail: false, advisory). No new detailType introduced — no registration needed.
-2. **Rollback pattern**: `try { await txn.rollback(); } catch { /* never mask */ }` used
-   in the catch block (lesson 2 from readback).
-3. **CDK-Nag**: resolver added to the dataSources dependency chain (lesson 3).
+- Removed RELATION_TARGET_TABLE 'finding' entry (not needed; no form-based relation)
+- Removed generateAuditChecklist handler/function from forms.ts
+- Deleted migration 015_add_finding_relation_target.sql
+- Removed SDL generateAuditChecklist from forms Mutation block
 
 ## D-rung
 

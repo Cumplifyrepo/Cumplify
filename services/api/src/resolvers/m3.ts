@@ -29,6 +29,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'completeAudit': return completeAudit(event, tenantId, sub);
     case 'getAudit': return getAudit(event, tenantId);
     case 'getAuditReadiness': return getAuditReadiness(event, tenantId);
+    case 'generateAuditChecklist': return generateAuditChecklist(event, tenantId, sub);
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
@@ -165,4 +166,106 @@ async function getAuditReadiness(event: AppSyncEvent, tenantId: string) {
     await txn.commit();
     return marshalMany(result);
   } catch (err) { await txn.rollback(); throw err; }
+}
+
+/**
+ * generateAuditChecklist(auditId) — M3-native checklist generator (spec 41, Task 9).
+ *
+ * Validates audit exists (::uuid, tenant txn), reads audit.standard, queries
+ * qms.clause_registry for that standard, INSERTs one m3.audit_checklists row per clause.
+ * Idempotent: ON CONFLICT (audit_id, clause_ref) DO NOTHING (migration 015).
+ * Findings link via existing m3.audit_findings.checklist_id — no new relation plumbing.
+ *
+ * clause_ref = clause_no from registry.
+ * question = "Does the organization ... ?" wrapper around intent_paraphrase.
+ * expected_evidence = required_sources tokens joined.
+ */
+async function generateAuditChecklist(event: AppSyncEvent, tenantId: string, actor: string) {
+  const auditId = event.arguments.auditId as string;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    // 1. Validate audit exists and get its standard
+    const auditResult = await txn.execute(
+      `SELECT id, standard FROM m3.audits WHERE id = :id::uuid`,
+      [{ name: 'id', value: { stringValue: auditId } }],
+    );
+    if (!auditResult.records || auditResult.records.length === 0) {
+      throw new Error('AUDIT_NOT_FOUND');
+    }
+    const auditRow = auditResult.records[0];
+    const standardIdx = auditResult.columnMetadata!.findIndex(c => c.name === 'standard');
+    const auditStandard = (auditRow[standardIdx] as { stringValue?: string }).stringValue!;
+
+    // 2. Query clause registry for that standard
+    const clauseResult = await txn.execute(`
+      SELECT id, clause_no, clause_title, intent_paraphrase, required_sources
+      FROM qms.clause_registry
+      WHERE standard = :standard
+      ORDER BY sort_order
+    `, [{ name: 'standard', value: { stringValue: auditStandard } }]);
+
+    if (!clauseResult.records || clauseResult.records.length === 0) {
+      throw new Error('NO_CLAUSES_FOR_STANDARD');
+    }
+
+    // 3. INSERT one m3.audit_checklists row per clause (idempotent: ON CONFLICT skip)
+    let insertedCount = 0;
+    for (const row of clauseResult.records) {
+      const clauseNo = (row[1] as { stringValue?: string }).stringValue!;
+      const intentParaphrase = (row[3] as { stringValue?: string }).stringValue!;
+      const requiredSourcesRaw = (row[4] as { stringValue?: string }).stringValue ?? '[]';
+
+      // question: "Does the organization ...?" wrapper around our own paraphrase
+      const question = `Does the organization ${intentParaphrase.charAt(0).toLowerCase()}${intentParaphrase.slice(1)}`;
+      // expected_evidence: join required_sources tokens
+      let expectedEvidence: string;
+      try {
+        const sources = JSON.parse(requiredSourcesRaw) as string[];
+        expectedEvidence = sources.length > 0 ? sources.join(', ') : null as unknown as string;
+      } catch {
+        expectedEvidence = null as unknown as string;
+      }
+
+      const insertResult = await txn.execute(`
+        INSERT INTO m3.audit_checklists (tenant_id, audit_id, clause_ref, question, expected_evidence, created_by)
+        VALUES (:tenantId, :auditId::uuid, :clauseRef, :question, :expectedEvidence, :actor)
+        ON CONFLICT (audit_id, clause_ref) DO NOTHING
+        RETURNING id
+      `, [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'auditId', value: { stringValue: auditId } },
+        { name: 'clauseRef', value: { stringValue: clauseNo } },
+        { name: 'question', value: { stringValue: question } },
+        { name: 'expectedEvidence', value: expectedEvidence ? { stringValue: expectedEvidence } : { isNull: true } },
+        { name: 'actor', value: { stringValue: actor } },
+      ]);
+      if (insertResult.records && insertResult.records.length > 0) {
+        insertedCount++;
+      }
+    }
+
+    // 4. Fetch all checklist rows for this audit (includes pre-existing + newly inserted)
+    const checklistResult = await txn.execute(`
+      SELECT id, audit_id, clause_ref, question, expected_evidence
+      FROM m3.audit_checklists
+      WHERE audit_id = :auditId::uuid
+      ORDER BY clause_ref
+    `, [{ name: 'auditId', value: { stringValue: auditId } }]);
+
+    await txn.commit();
+
+    // 5. Publish advisory event (Audit.ChecklistGenerated already registered, auditTrail: false)
+    await publishAuditEvent({
+      tenantId, actor, module: 'M3',
+      clauseRef: '9.2', standard: auditStandard as 'ISO9001' | 'ISO14001' | 'ISO45001',
+      detailType: 'Audit.ChecklistGenerated', source: 'cumplify.m3.audit-studio',
+      payload: { auditId, standard: auditStandard, clauseCount: clauseResult.records.length, insertedCount },
+    });
+
+    logger.info('Audit checklist generated', { tenantId, auditId, standard: auditStandard, clauseCount: clauseResult.records.length });
+    return marshalMany(checklistResult);
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
 }

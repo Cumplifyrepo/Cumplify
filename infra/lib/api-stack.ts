@@ -456,6 +456,7 @@ export class ApiStack extends cdk.Stack {
     m3DS.createResolver('ScheduleAudit', { typeName: 'Mutation', fieldName: 'scheduleAudit' });
     m3DS.createResolver('RecordFinding', { typeName: 'Mutation', fieldName: 'recordFinding' });
     m3DS.createResolver('CompleteAudit', { typeName: 'Mutation', fieldName: 'completeAudit' });
+    m3DS.createResolver('GenerateAuditChecklist', { typeName: 'Mutation', fieldName: 'generateAuditChecklist' });
     // M4
     m4DS.createResolver('RegisterRecord', { typeName: 'Mutation', fieldName: 'registerRecord' });
     // New field 2026-07-14 (architect follow-up, M4 calibration unblock) — MUST
@@ -726,7 +727,6 @@ export class ApiStack extends cdk.Stack {
     const approveFormRecordResolver = formsDS.createResolver('ApproveFormRecord', { typeName: 'Mutation', fieldName: 'approveFormRecord' });
     const reopenFormRecordResolver = formsDS.createResolver('ReopenFormRecord', { typeName: 'Mutation', fieldName: 'reopenFormRecord' });
     const exportFormRecordPdfResolver = formsDS.createResolver('ExportFormRecordPdf', { typeName: 'Mutation', fieldName: 'exportFormRecordPdf' });
-    const generateAuditChecklistResolver = formsDS.createResolver('GenerateAuditChecklist', { typeName: 'Mutation', fieldName: 'generateAuditChecklist' });
 
     // Subscription resolver (Spec 9, C-6 tenant verification via VTL)
     const subHitlResolver = noneDS.createResolver('SubOnHitlItemResolved', {
@@ -749,7 +749,6 @@ export class ApiStack extends cdk.Stack {
       listFormTemplatesResolver, getFormTemplateResolver, listFormRecordsResolver, getFormRecordResolver,
       createFormRecordResolver, saveFormRecordValuesResolver, submitFormRecordResolver,
       approveFormRecordResolver, reopenFormRecordResolver, exportFormRecordPdfResolver,
-      generateAuditChecklistResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }

@@ -234,3 +234,123 @@ describe('m5 createRisk — register-refresh fix regression', () => {
     expect(mockExecute.mock.invocationCallOrder[1]).toBeLessThan(mockCommit.mock.invocationCallOrder[0]);
   });
 });
+
+// ─── Task 9: generateAuditChecklist (M3-native, OQ-1) ────────────────────────
+
+describe('generateAuditChecklist — M3-native clause-registry checklist', () => {
+  it('validates audit exists with ::uuid cast, reads standard, queries registry', async () => {
+    // Call 1: audit fetch
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'audit-1' }, { stringValue: 'ISO9001' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'standard' }],
+    });
+    // Call 2: clause registry query (2 clauses)
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'c-1' }, { stringValue: '4.1' }, { stringValue: 'Context' }, { stringValue: 'understand the organization and its context' }, { stringValue: '["documented context analysis"]' }],
+        [{ stringValue: 'c-2' }, { stringValue: '4.2' }, { stringValue: 'Interested parties' }, { stringValue: 'determine interested parties and their requirements' }, { stringValue: '["stakeholder register"]' }],
+      ],
+      columnMetadata: [{ name: 'id' }, { name: 'clause_no' }, { name: 'clause_title' }, { name: 'intent_paraphrase' }, { name: 'required_sources' }],
+    });
+    // Call 3+4: INSERT per clause (with RETURNING)
+    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'chk-1' }]], columnMetadata: [{ name: 'id' }] });
+    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'chk-2' }]], columnMetadata: [{ name: 'id' }] });
+    // Call 5: fetch all checklist rows
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'chk-1' }, { stringValue: 'audit-1' }, { stringValue: '4.1' }, { stringValue: 'Does the organization understand the organization and its context' }, { stringValue: 'documented context analysis' }],
+        [{ stringValue: 'chk-2' }, { stringValue: 'audit-1' }, { stringValue: '4.2' }, { stringValue: 'Does the organization determine interested parties and their requirements' }, { stringValue: 'stakeholder register' }],
+      ],
+      columnMetadata: [{ name: 'id' }, { name: 'audit_id' }, { name: 'clause_ref' }, { name: 'question' }, { name: 'expected_evidence' }],
+    });
+
+    const result = await m3Handler(makeEvent('generateAuditChecklist', { auditId: 'audit-1' })) as Record<string, unknown>[];
+
+    // Audit validation with ::uuid cast
+    const [auditSql] = mockExecute.mock.calls[0];
+    expect(auditSql).toContain('FROM m3.audits');
+    expect(auditSql).toContain(':id::uuid');
+
+    // Clause registry query filtered by standard
+    const [clauseSql, clauseParams] = mockExecute.mock.calls[1];
+    expect(clauseSql).toContain('FROM qms.clause_registry');
+    expect(clauseSql).toContain('WHERE standard = :standard');
+    expect(clauseParams).toContainEqual({ name: 'standard', value: { stringValue: 'ISO9001' } });
+
+    // INSERT with ::uuid cast and ON CONFLICT
+    const [insertSql] = mockExecute.mock.calls[2];
+    expect(insertSql).toContain('INSERT INTO m3.audit_checklists');
+    expect(insertSql).toContain(':auditId::uuid');
+    expect(insertSql).toContain('ON CONFLICT (audit_id, clause_ref) DO NOTHING');
+
+    // Returns checklist rows (count = 2, from registry)
+    expect(result).toHaveLength(2);
+    expect(mockCommit).toHaveBeenCalled();
+  });
+
+  it('idempotent: second call returns same rows without duplicate inserts', async () => {
+    // Call 1: audit fetch
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'audit-1' }, { stringValue: 'ISO14001' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'standard' }],
+    });
+    // Call 2: clause registry (1 clause)
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'c-1' }, { stringValue: '6.1.2' }, { stringValue: 'Aspects' }, { stringValue: 'determine environmental aspects' }, { stringValue: '[]' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'clause_no' }, { name: 'clause_title' }, { name: 'intent_paraphrase' }, { name: 'required_sources' }],
+    });
+    // Call 3: INSERT → ON CONFLICT DO NOTHING (returns empty = already existed)
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'id' }] });
+    // Call 4: fetch all (1 pre-existing row)
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'chk-existing' }, { stringValue: 'audit-1' }, { stringValue: '6.1.2' }, { stringValue: 'Q' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'audit_id' }, { name: 'clause_ref' }, { name: 'question' }, { name: 'expected_evidence' }],
+    });
+
+    const result = await m3Handler(makeEvent('generateAuditChecklist', { auditId: 'audit-1' })) as Record<string, unknown>[];
+
+    // Still returns 1 row (idempotent — no duplicates)
+    expect(result).toHaveLength(1);
+    expect(mockCommit).toHaveBeenCalled();
+  });
+
+  it('AUDIT_NOT_FOUND when audit does not exist', async () => {
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'id' }, { name: 'standard' }] });
+
+    await expect(
+      m3Handler(makeEvent('generateAuditChecklist', { auditId: 'nonexistent' })),
+    ).rejects.toThrow('AUDIT_NOT_FOUND');
+
+    expect(mockRollback).toHaveBeenCalled();
+  });
+
+  it('question wraps intent_paraphrase with "Does the organization ..."', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'a-1' }, { stringValue: 'ISO45001' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'standard' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'c-1' }, { stringValue: '5.4' }, { stringValue: 'Participation' }, { stringValue: 'Ensure worker consultation and participation' }, { stringValue: '["meeting minutes"]' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'clause_no' }, { name: 'clause_title' }, { name: 'intent_paraphrase' }, { name: 'required_sources' }],
+    });
+    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'chk-1' }]], columnMetadata: [{ name: 'id' }] });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'chk-1' }, { stringValue: 'a-1' }, { stringValue: '5.4' }, { stringValue: 'Does the organization ensure worker consultation and participation' }, { stringValue: 'meeting minutes' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'audit_id' }, { name: 'clause_ref' }, { name: 'question' }, { name: 'expected_evidence' }],
+    });
+
+    await m3Handler(makeEvent('generateAuditChecklist', { auditId: 'a-1' }));
+
+    // INSERT params contain the wrapped question
+    const [, insertParams] = mockExecute.mock.calls[2];
+    expect(insertParams).toContainEqual(expect.objectContaining({
+      name: 'question',
+      value: { stringValue: 'Does the organization ensure worker consultation and participation' },
+    }));
+    // expected_evidence from required_sources
+    expect(insertParams).toContainEqual(expect.objectContaining({
+      name: 'expectedEvidence',
+      value: { stringValue: 'meeting minutes' },
+    }));
+  });
+});

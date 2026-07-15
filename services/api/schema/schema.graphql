@@ -585,6 +585,7 @@ type Mutation {
   scheduleAudit(input: ScheduleAuditInput!): Audit! @aws_lambda
   recordFinding(input: RecordFindingInput!): AuditFinding! @aws_lambda
   completeAudit(id: ID!): Audit! @aws_lambda
+  generateAuditChecklist(auditId: ID!): [AuditChecklist!]! @aws_lambda
 
   # M4 — Records Management (user-facing)
   registerRecord(input: RegisterRecordInput!): Record! @aws_lambda
@@ -623,7 +624,6 @@ type Mutation {
   approveFormRecord(input: ApproveFormRecordInput!): FormRecord! @aws_lambda
   reopenFormRecord(input: ReopenFormRecordInput!): FormRecord! @aws_lambda
   exportFormRecordPdf(recordId: ID!): ExportResult! @aws_lambda
-  generateAuditChecklist(standard: Standard!): FormRecord! @aws_lambda
 }
 
 # ─── Subscriptions ────────────────────────────────────────────────────────────
