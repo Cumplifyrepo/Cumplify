@@ -69,3 +69,62 @@ This CLOSES the standing frontend-app BLOCKED diff item (same precedent as listF
 ## D-rung
 
 D2 — hermetic tests pass. Live execution requires CONTENT_BUCKET env to be plumbed (deploy-time prop).
+
+## Round history (architect validation)
+
+- **Round 1 (906833a): REJECTED.** (1) LCS compared sentence elements with
+  `===` — production sentences are `{text, factRefs}` OBJECTS (derive.ts
+  spreads compose-section output verbatim); demonstrated against the LIVE
+  manual content JSON: same version diffed vs itself → 45 additions /
+  45 deletions (expected 0/0). Fixtures pinned plain strings — an invented
+  shape. (2) CONTENT_BUCKET read from process.env at SYNTH time → ''
+  baked into the Lambda; loadContentJson degraded silently → every live
+  diff 0/0 (facade as deployed). (3) s3:GetObject on resources:['*'] with
+  "when ready" comment — coded-around + missing kms:Decrypt on the SSE-KMS
+  bucket. (4) Load failure / empty ref returned 0/0 — indistinguishable
+  from "identical". (5) SQL allowed cross-document version pairs.
+  (6) "subscription auth denial" checkbox claimed a test that was not added.
+  Architect contributing miss (owned): the Task 7 go never pinned the
+  sentence element shape.
+- **Round 2 (28df9e9): ACCEPTED.** LCS on sentence.text via
+  extractSentenceTexts; kind transitions (gap→prose) reported as
+  kindChange; ApiStackProps += generalBucketName/Arn/s3GeneralKey plumbed
+  from DataStack/SecurityStack exports (AiStack pattern); grant scoped to
+  `${generalBucketArn}/tenants/*` + grantDecrypt; typed CONTENT_UNAVAILABLE
+  / VERSION_MISMATCH (no silent fallback); fixtures use the real
+  {text, factRefs} shape. Gates re-executed by architect: 804 backend +
+  85 frontend, tsc 0.
+
+## Architect live readback (2026-07-15, deploy + behavior)
+
+Deploy: `cdk deploy CumplifyPipeline/Dev/ApiStack` 21:50–21:51 UTC, exit 0,
+47.2s — SubonGenerationProgress resolver CREATED, ResolverM1Fn policy+env
+updated.
+
+| # | UTC | Step | Exit | Outputs SHA (first 20) | Result |
+|---|-----|------|------|------------------------|--------|
+| 0 | 21:32 | OFFLINE: fixed diff fns (m1.ts:348-472 verbatim, esbuild type-strip) vs LIVE manual v1.json ×2 | 0 | input 97b9216620fcdb1fd3cd | same-version → **0/0** (round-1 code: 45/45); synthetic 1-sentence mutation + 1 section removed → 1 add / 2 del |
+| 1 | 21:51 | ResolverM1Fn env CONTENT_BUCKET | 0 | — | `dev-datastack-generalbucketad391c6e-lbcsvfej9hap` (real bucket, from props — not synth-env) |
+| 2 | 21:52 | LIVE getDocumentVersionDiff manual v1 (49adf9ed…) vs itself | 0 | 0cbce00037b0236b7dec | `{"additions":0,"deletions":0,"content":"{}"}` — full pipeline: RLS SQL → scoped S3 GetObject → KMS decrypt → parse → diff |
+| 3 | 21:52 | LIVE diff manual version vs matrix version (cross-document) | 0 (typed error) | 9e3195cfeac5f1a336e2 | `VERSION_MISMATCH` thrown — same-document constraint live |
+| 4 | 21:52 | appsync get-resolver Subscription/onGenerationProgress | 0 | — | NoneDataSource; request VTL = `#if($ctx.identity.resolverContext.tenantId != $ctx.args.tenantId) $util.unauthorized()` — C-6 live |
+
+Manual v1.json fetched fresh for probe 0 hashes 97b9216620fcdb1fd3cd — byte-identical
+to the Task 6 readback sha (S3 content stable since finalize).
+
+## D-rung & carries
+
+- getDocumentVersionDiff: **D3** (deployed + live-verified above).
+  onGenerationProgress: resolver live with C-6 VTL; publisher live since
+  Task 5 (~37 IAM mutations). End-to-end WebSocket fan-out delivery remains
+  for Task 11 / ACC-6 (needs a ws client) — carried, not claimed.
+- CARRY-FORWARD (accepted, reported): same-kind gap/naJustification CONTENT
+  changes are not compared (kind transitions are). Live gap content is
+  `{missingSources:[...]}` — a same-kind source-list change between versions
+  will not surface in the diff. Surface is empty today (no document has a
+  v2 until regenerateSection ships); folds into the regenerateSection wave
+  together with fixing the inert `gap?: string` type annotation
+  (actual shape: object).
+- Live real-content diff (non-zero) was proven OFFLINE against live bytes
+  (probe 0); a live non-zero probe needs a second version of the same
+  document — arrives with regenerateSection.
