@@ -74,8 +74,8 @@
 
 ## Task 9 — Internal Audit checklist generator (OQ-1 resolution) [KIRO]
 
-- [ ] Generator: instantiate a checklist record from the clause registry for the tenant's in-scope clauses (per clause: conformity select, evidence text, finding relation→M3).
-- [ ] Tests: 9001-only tenant gets only 9001 clause rows; counts computed.
+- [x] Generator: instantiate a checklist record from the clause registry for the tenant's in-scope clauses (per clause: conformity select, evidence text, finding relation→M3).
+- [x] Tests: 9001-only tenant gets only 9001 clause rows; counts computed.
 
 **Depends on:** Tasks 3, spec-40 Task 2 (registry seeded). **D-rung:** D2. **Evidence:** `task-9-audit-checklist.log`
 

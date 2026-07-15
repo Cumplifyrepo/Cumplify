@@ -726,6 +726,7 @@ export class ApiStack extends cdk.Stack {
     const approveFormRecordResolver = formsDS.createResolver('ApproveFormRecord', { typeName: 'Mutation', fieldName: 'approveFormRecord' });
     const reopenFormRecordResolver = formsDS.createResolver('ReopenFormRecord', { typeName: 'Mutation', fieldName: 'reopenFormRecord' });
     const exportFormRecordPdfResolver = formsDS.createResolver('ExportFormRecordPdf', { typeName: 'Mutation', fieldName: 'exportFormRecordPdf' });
+    const generateAuditChecklistResolver = formsDS.createResolver('GenerateAuditChecklist', { typeName: 'Mutation', fieldName: 'generateAuditChecklist' });
 
     // Subscription resolver (Spec 9, C-6 tenant verification via VTL)
     const subHitlResolver = noneDS.createResolver('SubOnHitlItemResolved', {
@@ -748,6 +749,7 @@ export class ApiStack extends cdk.Stack {
       listFormTemplatesResolver, getFormTemplateResolver, listFormRecordsResolver, getFormRecordResolver,
       createFormRecordResolver, saveFormRecordValuesResolver, submitFormRecordResolver,
       approveFormRecordResolver, reopenFormRecordResolver, exportFormRecordPdfResolver,
+      generateAuditChecklistResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }

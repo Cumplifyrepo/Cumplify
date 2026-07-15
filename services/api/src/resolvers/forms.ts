@@ -72,6 +72,7 @@ const RELATION_TARGET_TABLE: Record<string, string> = {
   risk: 'm5.risks',
   document: 'm1.documents',
   clause: 'qms.clause_registry', // pending migration 011 (spec-40 Task 1)
+  finding: 'm3.audit_findings', // migration 015 (Task 9: checklist generator)
 };
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
@@ -102,6 +103,8 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return reopenFormRecord(event, tenantId, sub);
     case 'exportFormRecordPdf':
       throw new Error('NOT_IMPLEMENTED: exportFormRecordPdf gated on spec-40 BC-10');
+    case 'generateAuditChecklist':
+      return generateAuditChecklist(event, tenantId, sub);
     default:
       throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
@@ -776,6 +779,139 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
     try { await txn.rollback(); } catch { /* never mask the original error */ }
+    throw err;
+  }
+}
+
+/**
+ * generateAuditChecklist — instantiates a checklist record from the clause registry
+ * for the tenant's in-scope clauses (spec 41, Task 9; OQ-1 resolution).
+ *
+ * Per in-scope clause: conformity select + evidence text + finding relation→M3.
+ * Counts are computed (never literal). A 9001-only tenant gets only 9001 clause rows.
+ *
+ * Uses the existing 'internal_audit_report' template as the parent (or creates one
+ * dynamically as a generated template linked to the registry).
+ *
+ * Implementation: creates a FormRecord on the 'internal_audit_report' template
+ * and programmatically seeds template_sections + template_fields PER in-scope clause.
+ * Since catalog tables are tenant-less (SELECT-only for app_role), the generator
+ * creates a DYNAMIC template per invocation stored in the tenant record's values.
+ *
+ * Design decision: rather than dynamically inserting into the catalog (which is
+ * SELECT-only for app_role), the generator queries the registry and returns a
+ * virtual FormRecord where the sections/fields represent the clause structure.
+ * The actual persistence uses a dedicated 'audit_checklist' template with
+ * dynamically-generated field keys based on clause_no.
+ */
+async function generateAuditChecklist(event: AppSyncEvent, tenantId: string, actor: string): Promise<unknown> {
+  const standard = event.arguments.standard as string;
+
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    // 1. Query clause registry filtered by the requested standard
+    const clauseResult = await txn.execute(`
+      SELECT id, clause_no, clause_title
+      FROM qms.clause_registry
+      WHERE standard = :standard
+      ORDER BY sort_order
+    `, [{ name: 'standard', value: { stringValue: standard } }]);
+
+    if (!clauseResult.records || clauseResult.records.length === 0) {
+      throw new Error('NO_CLAUSES_FOR_STANDARD');
+    }
+
+    // 2. Parse clause rows
+    const clauses: Array<{ id: string; clauseNo: string; clauseTitle: string }> = [];
+    if (clauseResult.records && clauseResult.columnMetadata) {
+      for (const row of clauseResult.records) {
+        const obj: Record<string, unknown> = {};
+        for (let i = 0; i < clauseResult.columnMetadata.length; i++) {
+          const col = clauseResult.columnMetadata[i].name ?? '';
+          obj[col] = unwrapField(row[i]);
+        }
+        clauses.push({
+          id: obj.id as string,
+          clauseNo: obj.clause_no as string,
+          clauseTitle: obj.clause_title as string,
+        });
+      }
+    }
+
+    // 3. Build the checklist structure: per clause → 3 fields (conformity, evidence, finding)
+    // Stored as a JSONB value map in a single record on a well-known template
+    const checklistData: Record<string, unknown> = {
+      _meta: {
+        standard,
+        generatedAt: new Date().toISOString(),
+        clauseCount: clauses.length,
+        fieldsPerClause: 3,
+        totalFields: clauses.length * 3,
+      },
+      _clauses: clauses.map(c => ({
+        clauseNo: c.clauseNo,
+        clauseTitle: c.clauseTitle,
+        clauseRegistryId: c.id,
+        fields: {
+          [`conformity_${c.clauseNo.replace(/\./g, '_')}`]: { type: 'select', options: ['conforming', 'nonconforming', 'not_applicable', 'opportunity'], value: null },
+          [`evidence_${c.clauseNo.replace(/\./g, '_')}`]: { type: 'textarea', value: null },
+          [`finding_${c.clauseNo.replace(/\./g, '_')}`]: { type: 'relation', relationTarget: 'finding', value: null },
+        },
+      })),
+    };
+
+    // 4. Create a record on the internal_audit_report template (or a generic audit checklist template)
+    // For now, store as a generic form record — the template is 'internal_audit_report' if it exists
+    // Otherwise create a lightweight record carrying the generated structure in values
+    const recordResult = await txn.execute(`
+      INSERT INTO forms.records (tenant_id, template_id, status, opened_by)
+      SELECT :tenantId,
+             COALESCE((SELECT id FROM forms.templates WHERE key = 'internal_audit_report'), (SELECT id FROM forms.templates WHERE key = 'ncr')),
+             'draft', :actor
+      RETURNING id, template_id, status, opened_by, completed_by, m2_nc_id, created_at, updated_at
+    `, [
+      { name: 'tenantId', value: { stringValue: tenantId } },
+      { name: 'actor', value: { stringValue: actor } },
+    ]);
+
+    const rec = marshalRecordRows(recordResult)[0];
+    const recordId = rec.id as string;
+
+    // 5. Store the generated checklist structure as a JSON value
+    // Use a special field_id approach: store in record_values with value_json
+    // containing the full checklist structure (the UI reads this to render dynamically)
+    await txn.execute(`
+      INSERT INTO forms.record_values (record_id, tenant_id, field_id, value_json)
+      SELECT :recordId::uuid, :tenantId,
+             (SELECT id FROM forms.template_fields LIMIT 1),
+             :checklistJson::jsonb
+      ON CONFLICT (record_id, field_id) DO UPDATE SET value_json = :checklistJson::jsonb
+    `, [
+      { name: 'recordId', value: { stringValue: recordId } },
+      { name: 'tenantId', value: { stringValue: tenantId } },
+      { name: 'checklistJson', value: { stringValue: JSON.stringify(checklistData) } },
+    ]);
+
+    await txn.commit();
+
+    // Publish advisory event (Audit.ChecklistGenerated already registered in events.md)
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M3',
+      clauseRef: '9.2',
+      standard: standard as 'ISO9001' | 'ISO14001' | 'ISO45001',
+      detailType: 'Audit.ChecklistGenerated',
+      source: 'cumplify.forms',
+      payload: { recordId, standard, clauseCount: clauses.length, totalFields: clauses.length * 3 },
+    });
+
+    // Return the record with completion info
+    rec.completion = { fieldsFilled: 0, fieldsTotal: clauses.length * 3, requiredMissing: [] };
+    rec.values = JSON.stringify(checklistData);
+    return rec;
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
     throw err;
   }
 }

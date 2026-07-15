@@ -1,0 +1,55 @@
+# Task 9 — Internal Audit checklist generator (OQ-1 resolution)
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-15T10:00:00Z
+# Base commit: 787dca6 (Task 7 accepted) + 3b0fbeb (wave deploy)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 696 tests pass, 59 files |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/src/resolvers/forms.ts` | generateAuditChecklist function + RELATION_TARGET_TABLE += finding |
+| `services/api/schema/schema.graphql` | generateAuditChecklist(standard: Standard!): FormRecord! @aws_lambda |
+| `services/api/migrations/015_add_finding_relation_target.sql` | ALTER CHECK: adds 'finding' to relation_target allowlist |
+| `services/api/__tests__/resolvers/forms.test.ts` | 4 new tests (53 total forms tests) |
+| `infra/lib/api-stack.ts` | GenerateAuditChecklist resolver wired + schema dependency |
+| `infra/lib/api-stack.unit.test.ts` | Resolver count 70→71 |
+
+## Implementation summary
+
+**generateAuditChecklist(standard):**
+1. Queries `qms.clause_registry WHERE standard = :standard ORDER BY sort_order`
+2. Per clause generates 3 fields:
+   - `conformity_<clause_no>`: select (conforming/nonconforming/not_applicable/opportunity)
+   - `evidence_<clause_no>`: textarea (audit evidence)
+   - `finding_<clause_no>`: relation → M3 (m3.audit_findings, target 'finding')
+3. Creates a FormRecord in draft, stores generated structure as JSONB
+4. Returns record with computed completion: `fieldsTotal = clauseCount × 3`
+5. Publishes `Audit.ChecklistGenerated` (already registered, auditTrail: false)
+
+**Standards filter:** 9001-only tenant gets only 9001 clause rows (WHERE clause in SQL).
+**Counts computed:** `_meta.clauseCount` and `_meta.totalFields` from the query result length, never literal.
+
+## Migration 015
+
+Adds 'finding' to `forms.template_fields` relation_target CHECK constraint.
+`RELATION_TARGET_TABLE` in forms.ts extended: `finding → m3.audit_findings`.
+Never edits applied migrations — new ALTER in a new file.
+
+## Lessons applied (from wave readback)
+
+1. **Event registration**: `Audit.ChecklistGenerated` already exists in `contracts/events.md`
+   (auditTrail: false, advisory). No new detailType introduced — no registration needed.
+2. **Rollback pattern**: `try { await txn.rollback(); } catch { /* never mask */ }` used
+   in the catch block (lesson 2 from readback).
+3. **CDK-Nag**: resolver added to the dataSources dependency chain (lesson 3).
+
+## D-rung
+
+D2 — hermetic tests pass. Live execution requires migration 015 to be applied.

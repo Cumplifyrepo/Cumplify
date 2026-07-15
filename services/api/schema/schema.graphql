@@ -623,6 +623,7 @@ type Mutation {
   approveFormRecord(input: ApproveFormRecordInput!): FormRecord! @aws_lambda
   reopenFormRecord(input: ReopenFormRecordInput!): FormRecord! @aws_lambda
   exportFormRecordPdf(recordId: ID!): ExportResult! @aws_lambda
+  generateAuditChecklist(standard: Standard!): FormRecord! @aws_lambda
 }
 
 # ─── Subscriptions ────────────────────────────────────────────────────────────
