@@ -26,6 +26,8 @@ import {
 } from './shared.js';
 import type { SqlParameter } from '@aws-sdk/client-rds-data';
 
+import { z } from 'zod';
+
 const logger = new Logger({ serviceName: 'resolver-qms' });
 
 interface AppSyncEvent {
@@ -34,27 +36,26 @@ interface AppSyncEvent {
   identity?: { resolverContext?: Record<string, string> };
 }
 
-// ─── Zod-lite payload validation (no zod dep — inline schema check) ──────────
-// Design §2.2: org profile payload is JSONB with standardsInScope required.
-function validateOrgProfilePayload(payload: unknown): { standardsInScope: string[]; [k: string]: unknown } {
-  if (typeof payload !== 'object' || payload === null) {
-    throw new Error('INVALID_PAYLOAD: must be a JSON object');
-  }
-  const obj = payload as Record<string, unknown>;
-  if (!Array.isArray(obj.standardsInScope)) {
-    throw new Error('INVALID_PAYLOAD: standardsInScope must be an array');
-  }
-  const validStandards = new Set(['ISO9001', 'ISO14001', 'ISO45001']);
-  for (const s of obj.standardsInScope) {
-    if (typeof s !== 'string' || !validStandards.has(s)) {
-      throw new Error(`INVALID_PAYLOAD: invalid standard '${s}'`);
-    }
-  }
-  if (obj.standardsInScope.length === 0) {
-    throw new Error('INVALID_PAYLOAD: standardsInScope must not be empty');
-  }
-  return obj as { standardsInScope: string[]; [k: string]: unknown };
-}
+// ─── ORG-1 Org Profile Schema (zod — full design §2.2) ──────────────────────
+// Consumed by saveOrgProfile AND the org-profile wizard (Task 10).
+const VALID_STANDARDS = ['ISO9001', 'ISO14001', 'ISO45001'] as const;
+
+export const OrgProfileSchema = z.object({
+  legalName: z.string().min(1, 'legalName is required'),
+  sites: z.array(z.object({
+    name: z.string().min(1),
+    address: z.string().optional(),
+    headcount: z.number().int().positive().optional(),
+  })).min(1, 'at least one site required'),
+  employeeCount: z.number().int().positive(),
+  industry: z.string().min(1, 'industry is required'),
+  productsServices: z.string().min(1, 'productsServices is required'),
+  coreProcesses: z.array(z.string().min(1)).min(1, 'at least one core process required'),
+  designResponsibility: z.boolean(),
+  standardsInScope: z.array(z.enum(VALID_STANDARDS)).min(1, 'at least one standard required'),
+  managementRep: z.string().min(1, 'managementRep is required'),
+  targetCertDate: z.string().optional(),
+}).passthrough(); // Allow additional fields for extensibility
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
@@ -198,7 +199,13 @@ async function listGenerationRuns(event: AppSyncEvent, tenantId: string) {
 async function saveOrgProfile(event: AppSyncEvent, tenantId: string, actor: string) {
   const input = event.arguments.input as { payload: string };
   const payloadRaw = JSON.parse(input.payload);
-  const payload = validateOrgProfilePayload(payloadRaw);
+
+  // Zod validation (full ORG-1 schema — also consumed by wizard Task 10)
+  const parseResult = OrgProfileSchema.safeParse(payloadRaw);
+  if (!parseResult.success) {
+    throw new Error(`INVALID_PAYLOAD: ${parseResult.error.message}`);
+  }
+  const payload = parseResult.data;
 
   const txn = await beginTenantTransaction(tenantId);
   try {

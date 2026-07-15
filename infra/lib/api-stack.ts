@@ -899,7 +899,7 @@ export class ApiStack extends cdk.Stack {
     // xray:PutTraceSegments + xray:PutTelemetryRecords with Resource:* (AWS-managed behavior).
     // IAM5[Resource::<FnArn>:*] from AppSync data source service roles — lambda:InvokeFunction
     // on <fnArn>:* for versioned invocation (CDK-generated, cannot scope further).
-    const dataSources = [m1DS, m2DS, m3DS, m4DS, m5DS, hitlApprovalDS, hitlQueryDS, profileDS, formsDS];
+    const dataSources = [m1DS, m2DS, m3DS, m4DS, m5DS, hitlApprovalDS, hitlQueryDS, profileDS, formsDS, qmsDS];
     for (const ds of dataSources) {
       NagSuppressions.addResourceSuppressions(ds, [
         {

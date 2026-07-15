@@ -103,7 +103,7 @@ describe('saveOrgProfile', () => {
     // Call 3: UPDATE current_version
     mockExecute.mockResolvedValueOnce(EMPTY_RESULT);
 
-    const payload = JSON.stringify({ standardsInScope: ['ISO9001', 'ISO14001'], orgName: 'Acme' });
+    const payload = JSON.stringify({ legalName: 'Acme Corp', sites: [{ name: 'Main Plant', address: '123 St' }], employeeCount: 200, industry: 'Manufacturing', productsServices: 'Precision widgets', coreProcesses: ['machining', 'assembly', 'testing'], designResponsibility: true, standardsInScope: ['ISO9001', 'ISO14001'], managementRep: 'Jane Doe' });
     await handler(makeEvent('saveOrgProfile', { input: { payload } }));
 
     // UPSERT profile
@@ -133,22 +133,22 @@ describe('saveOrgProfile', () => {
     }));
   });
 
-  it('rejects invalid payload: missing standardsInScope', async () => {
-    const payload = JSON.stringify({ orgName: 'Acme' });
+  it('rejects invalid payload: missing legalName (zod ORG-1 schema)', async () => {
+    const payload = JSON.stringify({ standardsInScope: ['ISO9001'], sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Mfg', productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: true, managementRep: 'Jane' });
     await expect(
       handler(makeEvent('saveOrgProfile', { input: { payload } })),
     ).rejects.toThrow('INVALID_PAYLOAD');
   });
 
-  it('rejects invalid payload: empty standardsInScope', async () => {
-    const payload = JSON.stringify({ standardsInScope: [] });
+  it('rejects invalid payload: empty standardsInScope (zod)', async () => {
+    const payload = JSON.stringify({ legalName: 'Acme', standardsInScope: [], sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Mfg', productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: true, managementRep: 'Jane' });
     await expect(
       handler(makeEvent('saveOrgProfile', { input: { payload } })),
     ).rejects.toThrow('INVALID_PAYLOAD');
   });
 
-  it('rejects invalid payload: invalid standard value', async () => {
-    const payload = JSON.stringify({ standardsInScope: ['ISO99999'] });
+  it('rejects invalid payload: invalid standard value (zod enum)', async () => {
+    const payload = JSON.stringify({ legalName: 'Acme', standardsInScope: ['ISO99999'], sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Mfg', productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: true, managementRep: 'Jane' });
     await expect(
       handler(makeEvent('saveOrgProfile', { input: { payload } })),
     ).rejects.toThrow('INVALID_PAYLOAD');
@@ -252,7 +252,7 @@ describe('SCHEMA-5: tenantId from resolverContext only', () => {
 
     await handler({
       info: { fieldName: 'saveOrgProfile' },
-      arguments: { input: { payload: JSON.stringify({ standardsInScope: ['ISO9001'] }), tenantId: 'evil' } },
+      arguments: { input: { payload: JSON.stringify({ legalName: 'X', sites: [{ name: 'A' }], employeeCount: 10, industry: 'Tech', productsServices: 'SW', coreProcesses: ['dev'], designResponsibility: false, standardsInScope: ['ISO9001'], managementRep: 'Bob' }), tenantId: 'evil' } },
       identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test' } },
     });
 

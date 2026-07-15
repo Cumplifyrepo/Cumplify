@@ -670,6 +670,11 @@ type Subscription {
   onHitlItemResolved(tenantId: ID!): HitlApprovalResult
     @aws_subscribe(mutations: ["approveHitlItem"])
     @aws_lambda
+
+  # Spec 40 (qms-document-engine) — Task 7 wires the auth resolver
+  onGenerationProgress(tenantId: ID!): GenerationEvent
+    @aws_subscribe(mutations: ["publishGenerationEvent"])
+    @aws_lambda
 }
 
 # ─── Spec 9 (frontend-app): HITL + Profile Schema Surface ─────────────────────
@@ -922,6 +927,7 @@ input MarkSectionReviewedInput {
 
 input PublishGenerationEventInput {
   runId: ID!
+  tenantId: ID!
   type: String!
   harmonizationKey: String
   kind: SectionKind

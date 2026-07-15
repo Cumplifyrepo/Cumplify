@@ -63,9 +63,17 @@ describe('schema-guard: schema.graphql invariants', () => {
     expect(extendMatches).toEqual([]);
   });
 
-  it('2. SCHEMA-5: no input type carries a tenantId field', () => {
+  it('2. SCHEMA-5: no input type carries a tenantId field (except @aws_iam agent-path allowlist)', () => {
+    // Allowlist: inputs used ONLY by @aws_iam mutations where no resolverContext exists
+    // and FORCE RLS forbids deriving tenant from a related row. These carry tenantId
+    // because the agent's IAM principal tag IS the tenant identity on that path.
+    const TENANT_ID_ALLOWLIST = new Set([
+      'PublishGenerationEventInput', // @aws_iam passthrough; None-DS result = input; GenerationEvent.tenantId non-null
+    ]);
+
     const offenders = inputBlocks()
       .filter(([, body]) => /^\s*tenantId\s*:/m.test(body))
+      .filter(([name]) => !TENANT_ID_ALLOWLIST.has(name))
       .map(([name]) => name);
     expect(offenders).toEqual([]);
   });

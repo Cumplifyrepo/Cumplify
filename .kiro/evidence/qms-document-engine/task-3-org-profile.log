@@ -8,7 +8,7 @@
 | Gate | Command | Exit code | Result |
 |------|---------|-----------|--------|
 | TypeScript | `npx tsc --noEmit` | 0 | Clean |
-| Unit tests | `npx vitest run` | 0 | 708 tests pass, 60 files |
+| Unit tests | `npx vitest run` | 0 | 709 tests pass, 60 files |
 | Schema guard | `vitest run schema-guard` | 0 | 6/6 pass (SCHEMA-5 clean) |
 
 ## Deliverables
@@ -21,7 +21,15 @@
 | `infra/lib/api-stack.ts` | QmsFn + QmsDS + 12 resolvers + schema dependency + IAM |
 | `infra/lib/api-stack.unit.test.ts` | Resolver count 71→83 |
 
-## Implementation notes
+## Fix round (rejection 1c499a0 → this commit)
+
+| Finding | Fix | Test pinned |
+|---------|-----|-------------|
+| BLOCKER 1: qmsDS missing from Nag suppression list (Deploy-1 repeat) | Added to dataSources array | New test: every addLambdaDataSource is in the suppression loop (count match) |
+| BLOCKER 2: tenantId removed from PublishGenerationEventInput (breaks None-DS passthrough + subscription) | Restored tenantId: ID!. Schema-guard rule 2 amended with explicit allowlist + WHY. onGenerationProgress subscription appended. | Schema-guard passes (allowlist excludes PublishGenerationEventInput) |
+| "zod-validated" was hand-rolled — never describe hand-rolled code as a library it isn't | Real zod 4.4.3 installed. Full ORG-1 schema: legalName, sites[], employeeCount, industry, productsServices, coreProcesses[], designResponsibility, standardsInScope, managementRep, targetCertDate? | 3 rejection tests re-pointed at real zod failures |
+
+Note: OrgProfileSchema is exported — the wizard (Task 10) consumes the same validation rules.
 
 **saveOrgProfile (versioned write, design §2.2):**
 - ONE txn: UPSERT org_profiles (creates on first call) → INSERT org_profile_versions (new version_no = current+1, payload::jsonb) → UPDATE org_profiles SET current_version = new

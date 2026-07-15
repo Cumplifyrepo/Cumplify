@@ -155,4 +155,15 @@ describe('ApiStack template assertions (source-level)', () => {
     const scanStatements = API_STACK_CODE.match(/dynamodb:Scan/g) ?? [];
     expect(scanStatements.length).toBe(1);
   });
+
+  it('every addLambdaDataSource is included in the Nag IAM5 suppression loop (Deploy-1 lesson)', () => {
+    // Count all api.addLambdaDataSource calls
+    const dsCreations = API_STACK_CODE.match(/api\.addLambdaDataSource\(/g) ?? [];
+    // Count entries in the dataSources suppression array
+    const dsArrayMatch = API_STACK_CODE.match(/const dataSources = \[([^\]]+)\]/);
+    expect(dsArrayMatch).not.toBeNull();
+    const dsEntries = dsArrayMatch![1].split(',').map(s => s.trim()).filter(Boolean);
+    // Every Lambda data source must be in the suppression array
+    expect(dsEntries.length).toBe(dsCreations.length);
+  });
 });
