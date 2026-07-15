@@ -1,0 +1,57 @@
+# Task 5 — Submit lifecycle + NCR→M2 mapping (BC-3)
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T08:36:00Z
+# Base commit: 5e34819 (Task 4 accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 664 tests pass, 57 files |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/src/resolvers/forms.ts` | submitFormRecord (BC-3 mapping) + reopenFormRecord (audit-logged) |
+| `services/api/__tests__/resolvers/forms.test.ts` | 12 new tests (40 total): negative path FIRST + positive path + reopen |
+
+## BC-3 anti-facade verification
+
+**NEGATIVE PATH (proven first):**
+- MAPPING_INCOMPLETE when `severity` unfilled → rollback, zero m2 rows, zero status change
+- MAPPING_INCOMPLETE when `clause_ref` unfilled → rollback
+- MAPPING_INCOMPLETE when `corrective_action_desc` (action_desc) unfilled → rollback
+- No audit event published on failure
+- ZERO hardcoded defaults for clause_ref/severity/source/standard/nc_type under ANY code path
+
+**POSITIVE PATH (single tenant transaction):**
+1. Validate all maps_to_column required fields filled → else MAPPING_INCOMPLETE
+2. Resolve clause_ref UUID → clause_no TEXT from qms.clause_registry (pending 011)
+3. INSERT m2.nonconformities (standard, source, nc_type, description, clause_ref, severity, raised_by, created_by) — real 003 column names
+4. INSERT m2.corrective_actions (nc_id::uuid from step 3, action_desc, owner_id, due_date::timestamptz, containment_flag, created_by) — real 003 column names
+5. Stamp forms.records.m2_nc_id::uuid + status='complete' + completed_by + completed_at
+6. Commit + publishAuditEvent (FormRecord.Submitted)
+
+**m2.corrective_actions NOT NULL columns (required mapped):**
+- action_desc ← corrective_action_desc (required, maps_to='action_desc')
+- owner_id ← ca_owner (required, maps_to='owner_id')
+- due_date ← ca_due_date (required, maps_to='due_date')
+
+## reopenFormRecord (BC-5)
+
+- Justification required (empty → JUSTIFICATION_REQUIRED)
+- Only complete/approved can reopen (others → REOPEN_INVALID_STATUS)
+- Status → 'reopened', clears completed_by/completed_at
+- publishAuditEvent (FormRecord.Reopened) with justification in payload
+
+## Pending-011 note
+
+clause_ref resolution queries `qms.clause_registry` (SELECT clause_no WHERE id = :id::uuid).
+This table lands in migration 011 (spec-40 Task 1, same deploy wave).
+Test asserts the SQL string; live execution blocked until wave deploys.
+
+## D-rung
+
+D2 — code + tests pass gates. D3 at ACC-4 readback (live NCR submit creates real m2 rows).

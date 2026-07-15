@@ -43,10 +43,10 @@
 
 ## Task 5 — Submit lifecycle + NCR→M2 mapping (BC-3) [KIRO]
 
-- [ ] `submitFormRecord`: full validation → `complete`; for `maps_to='m2_ncr'`: single-transaction INSERT `m2.nonconformities` + `m2.corrective_actions` from mapped values (design §3), stamp `m2_nc_id`.
-- [ ] Negative path FIRST: any unmapped required field → `MAPPING_INCOMPLETE`, zero rows written (ACC-4). **No default values for `clause_ref`/`severity`/`source` under any circumstances.**
-- [ ] `reopenFormRecord` (justification required, audit-logged); audit event on every transition (BC-5).
-- [ ] Hermetic tests incl. transaction-atomicity assertions and negative-path coverage.
+- [x] `submitFormRecord`: full validation → `complete`; for `maps_to='m2_ncr'`: single-transaction INSERT `m2.nonconformities` + `m2.corrective_actions` from mapped values (design §3), stamp `m2_nc_id`.
+- [x] Negative path FIRST: any unmapped required field → `MAPPING_INCOMPLETE`, zero rows written (ACC-4). **No default values for `clause_ref`/`severity`/`source` under any circumstances.**
+- [x] `reopenFormRecord` (justification required, audit-logged); audit event on every transition (BC-5).
+- [x] Hermetic tests incl. transaction-atomicity assertions and negative-path coverage.
 
 **Depends on:** Task 3. **D-rung:** D2 → D3 at ACC-4 readback. **Evidence:** `task-5-submit-mapping.log`
 
