@@ -49,3 +49,19 @@
 ## D-rung
 
 D2 — hermetic tests pass. Not deployed.
+
+## Round history (architect addendum, 2026-07-15)
+
+Round 1 (e29893e) REJECTED: (1) review-semantics inversion — RUN_TERMINAL
+rejected 'complete' runs, but review happens post-FinalizeManual when the run
+IS complete; generated manuals could never be approved. Root cause SHARED —
+the architect task framing said "rejects on terminal run states"; design §7
+never asked for a run-status guard. (2) "role-gated" checkbox claimed
+enforcement that did not exist in code (comment only).
+
+Round 2 (cb6a467) ACCEPTED: allows complete/partial, rejects running/failed
+as RUN_NOT_REVIEWABLE (happy path re-pinned on a 'complete' run);
+canApprove(role,'M1') gates all three mutations, denial tests assert zero SQL,
+role-matrix exercised UNMOCKED. Architect re-ran gates: 754 passed, tsc 0.
+Related architect-lane fix in the same window: d11d803 (qms enum reverse-maps
++ Data-API array unwrap — Task 3 acceptance miss found during this review).
