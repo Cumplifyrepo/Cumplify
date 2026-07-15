@@ -671,6 +671,62 @@ export class ApiStack extends cdk.Stack {
     const approveHitlResolver = hitlApprovalDS.createResolver('ApproveHitlItem', { typeName: 'Mutation', fieldName: 'approveHitlItem' });
     const updateProfileResolver = profileDS.createResolver('UpdateProfile', { typeName: 'Mutation', fieldName: 'updateProfile' });
 
+    // ─── Spec 41: QMS Forms & Records Engine ──────────────────────────────────
+
+    const formsFn = new NodejsFunction(this, 'FormsFn', {
+      entry: 'services/api/src/resolvers/forms.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        CLUSTER_ARN: props.clusterArn,
+        APP_ROLE_SECRET_ARN: appRoleSecret.secretArn,
+        TABLE_NAME: props.tableName,
+        BUS_NAME: props.busName,
+        TENANT_DATA_ROLE_ARN: tenantDataRole.roleArn,
+        REGION: cdk.Stack.of(this).region,
+        POWERTOOLS_SERVICE_NAME: 'resolver-forms',
+      },
+    });
+
+    // IAM: RDS Data API + EventBridge + STS
+    formsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['rds-data:ExecuteStatement', 'rds-data:BeginTransaction', 'rds-data:CommitTransaction', 'rds-data:RollbackTransaction'],
+      resources: [props.clusterArn],
+    }));
+    formsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['secretsmanager:GetSecretValue'],
+      resources: [appRoleSecret.secretArn],
+    }));
+    formsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['events:PutEvents'],
+      resources: [props.busArn],
+    }));
+    formsFn.role!.addToPrincipalPolicy(new iam.PolicyStatement({
+      actions: ['sts:AssumeRole', 'sts:TagSession'],
+      resources: [tenantDataRole.roleArn],
+    }));
+    props.dynamodbKey.grantDecrypt(formsFn);
+
+    const formsDS = api.addLambdaDataSource('FormsDataSource', formsFn);
+
+    // Query resolvers (Spec 41)
+    const listFormTemplatesResolver = formsDS.createResolver('ListFormTemplates', { typeName: 'Query', fieldName: 'listFormTemplates' });
+    const getFormTemplateResolver = formsDS.createResolver('GetFormTemplate', { typeName: 'Query', fieldName: 'getFormTemplate' });
+    const listFormRecordsResolver = formsDS.createResolver('ListFormRecords', { typeName: 'Query', fieldName: 'listFormRecords' });
+    const getFormRecordResolver = formsDS.createResolver('GetFormRecord', { typeName: 'Query', fieldName: 'getFormRecord' });
+
+    // Mutation resolvers (Spec 41)
+    const createFormRecordResolver = formsDS.createResolver('CreateFormRecord', { typeName: 'Mutation', fieldName: 'createFormRecord' });
+    const saveFormRecordValuesResolver = formsDS.createResolver('SaveFormRecordValues', { typeName: 'Mutation', fieldName: 'saveFormRecordValues' });
+    const submitFormRecordResolver = formsDS.createResolver('SubmitFormRecord', { typeName: 'Mutation', fieldName: 'submitFormRecord' });
+    const approveFormRecordResolver = formsDS.createResolver('ApproveFormRecord', { typeName: 'Mutation', fieldName: 'approveFormRecord' });
+    const reopenFormRecordResolver = formsDS.createResolver('ReopenFormRecord', { typeName: 'Mutation', fieldName: 'reopenFormRecord' });
+    const exportFormRecordPdfResolver = formsDS.createResolver('ExportFormRecordPdf', { typeName: 'Mutation', fieldName: 'exportFormRecordPdf' });
+
     // Subscription resolver (Spec 9, C-6 tenant verification via VTL)
     const subHitlResolver = noneDS.createResolver('SubOnHitlItemResolved', {
       typeName: 'Subscription',
@@ -689,6 +745,9 @@ export class ApiStack extends cdk.Stack {
       listHitlResolver, getProfileResolver, approveHitlResolver, updateProfileResolver, subHitlResolver,
       listDocVersionsResolver, listNcResolver, listCaResolver,
       registerMeasuringResourceResolver, getTenantSettingsResolver,
+      listFormTemplatesResolver, getFormTemplateResolver, listFormRecordsResolver, getFormRecordResolver,
+      createFormRecordResolver, saveFormRecordValuesResolver, submitFormRecordResolver,
+      approveFormRecordResolver, reopenFormRecordResolver, exportFormRecordPdfResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }

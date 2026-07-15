@@ -1,0 +1,57 @@
+# Task 3 — SDL + template/record resolvers
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T07:48:00Z
+# Base commit: cc98015 (Tasks 1-2 accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 640 tests pass, 57 files |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/schema/schema.graphql` | SDL: FormRecordStatus enum, FormTemplate/Section/Field types, FormRecord, FormCompletion, inputs, ExportResult, 4 Query + 6 Mutation fields |
+| `services/api/src/resolvers/forms.ts` | Resolver: listFormTemplates, getFormTemplate, listFormRecords, getFormRecord (server-computed completion), createFormRecord, saveFormRecordValues (typed dispatch + immutability guard), stubs for submit/approve/reopen/export |
+| `services/api/__tests__/resolvers/forms.test.ts` | 16 hermetic tests: SQL assertions against real 012 column names, BC-1 COUNT, FormCompletion server-compute, typed dispatch per field_type, immutability guard negative tests, SCHEMA-5 |
+| `infra/lib/api-stack.ts` | FormsFn Lambda + FormsDataSource + 10 resolvers (4Q+6M) + schema dependency + IAM |
+| `infra/lib/api-stack.unit.test.ts` | Resolver count updated 60→70 |
+
+## Key design compliance
+
+1. **SDL from design §5** — appended verbatim. No `extend type`. All fields @aws_lambda.
+2. **FormCompletion is SERVER-COMPUTED** — SQL COUNT over record_values joined to
+   template_fields. Client receives {fieldsFilled, fieldsTotal, requiredMissing}.
+   Test asserts the SQL references forms.record_values + forms.template_fields.
+3. **saveFormRecordValues typed dispatch** — FIELD_TYPE_COLUMN map:
+   text/textarea/select/radio/user → value_text, number → value_number,
+   date → value_date, checkbox → value_bool, relation → value_uuid,
+   multiselect → value_json. Upsert nulls all other columns on conflict.
+4. **Immutability guard** — IMMUTABLE_STATUSES = {COMPLETE, APPROVED}.
+   Negative test: write on complete → RECORD_IMMUTABLE + rollback + no upsert.
+   Negative test: write on approved → same.
+5. **Schema node dependency** — explicit comment in forms.ts header +
+   all 10 resolvers added to schemaResource dependency list in api-stack.ts.
+6. **SCHEMA-5** — tenantId from resolverContext only; test proves client-supplied
+   tenantId in arguments is ignored.
+
+## Note: listFormRecords closes standing BLOCKED item
+
+`listFormRecords(templateId, status)` provides the record register listing that
+was blocked in frontend-app Task 29 (`m4.recordsBlocked` — "Record listing
+requires listRecords query"). This is now available as a schema field.
+
+## Stubs (Task 5/6 scope)
+
+- submitFormRecord → Task 5 (full validation + NCR→M2 mapping)
+- approveFormRecord → Task 6 (SoD enforcement)
+- reopenFormRecord → Task 5 (justification + audit event)
+- exportFormRecordPdf → Task 8 (gated on spec-40 BC-10)
+
+## D-rung
+
+D2 — SDL + resolver + tests + infra wiring pass gates. Not deployed (blocked
+on 011+012+013 migration wave). Live ACC readback at Task 11.

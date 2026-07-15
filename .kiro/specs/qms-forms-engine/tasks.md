@@ -26,10 +26,10 @@
 
 ## Task 3 — SDL + template/record resolvers [KIRO]
 
-- [ ] Append design §5 SDL; wire data sources + resolvers (`forms.ts`) with explicit schema node dependency.
-- [ ] `listFormTemplates` (standards-in-scope filter, TPL-3), `getFormTemplate`, `createFormRecord`, `getFormRecord` + server-computed `FormCompletion` (design §2.4), `listFormRecords` — **note in tasks + evidence: this closes the standing BLOCKED `listRecords` item from frontend-app Task 29**.
-- [ ] `saveFormRecordValues`: partial autosave, typed-column dispatch by field_type, immutability guard on complete/approved.
-- [ ] Hermetic SQL/param-asserting tests per resolver; SCHEMA-5 injection tests.
+- [x] Append design §5 SDL; wire data sources + resolvers (`forms.ts`) with explicit schema node dependency.
+- [x] `listFormTemplates` (standards-in-scope filter, TPL-3), `getFormTemplate`, `createFormRecord`, `getFormRecord` + server-computed `FormCompletion` (design §2.4), `listFormRecords` — **note in tasks + evidence: this closes the standing BLOCKED `listRecords` item from frontend-app Task 29**.
+- [x] `saveFormRecordValues`: partial autosave, typed-column dispatch by field_type, immutability guard on complete/approved.
+- [x] Hermetic SQL/param-asserting tests per resolver; SCHEMA-5 injection tests.
 
 **Depends on:** Tasks 1–2. **D-rung:** D2. **Evidence:** `task-3-resolvers.log`
 

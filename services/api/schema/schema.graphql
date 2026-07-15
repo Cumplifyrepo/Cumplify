@@ -552,6 +552,12 @@ type Query {
   # side): tenant name + tenant default document-locale, read-only. Write
   # path is a named carry to the settings-ui spec — no mutation here.
   getTenantSettings: TenantSettings @aws_lambda
+
+  # Spec 41 — QMS Forms & Records Engine
+  listFormTemplates: [FormTemplate!]! @aws_lambda
+  getFormTemplate(id: ID!): FormTemplate @aws_lambda
+  listFormRecords(templateId: ID!, status: FormRecordStatus): [FormRecord!]! @aws_lambda
+  getFormRecord(id: ID!): FormRecord @aws_lambda
 }
 
 # ─── Mutations ────────────────────────────────────────────────────────────────
@@ -608,6 +614,14 @@ type Mutation {
   # Spec 9 (frontend-app)
   approveHitlItem(input: ApproveHitlItemInput!): HitlApprovalResult! @aws_lambda
   updateProfile(input: UpdateProfileInput!): UserProfile! @aws_lambda
+
+  # Spec 41 — QMS Forms & Records Engine
+  createFormRecord(templateId: ID!): FormRecord! @aws_lambda
+  saveFormRecordValues(input: SaveFormRecordValuesInput!): FormRecord! @aws_lambda
+  submitFormRecord(input: SubmitFormRecordInput!): FormRecord! @aws_lambda
+  approveFormRecord(input: ApproveFormRecordInput!): FormRecord! @aws_lambda
+  reopenFormRecord(input: ReopenFormRecordInput!): FormRecord! @aws_lambda
+  exportFormRecordPdf(recordId: ID!): ExportResult! @aws_lambda
 }
 
 # ─── Subscriptions ────────────────────────────────────────────────────────────
@@ -716,6 +730,90 @@ input UpdateProfileInput {
 type TenantSettings @aws_lambda {
   tenantName: String!
   documentLocale: String!
+}
+
+# ─── Spec 41: QMS Forms & Records Engine ──────────────────────────────────────
+
+enum FormRecordStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETE
+  APPROVED
+  REOPENED
+}
+
+type FormTemplate @aws_lambda {
+  id: ID!
+  key: String!
+  titleKey: String!
+  descriptionKey: String!
+  category: String!
+  clauseRefs: [String!]!
+  standards: [Standard!]!
+  requiresApproval: Boolean!
+  sectionCount: Int!
+  fieldCount: Int!
+  sections: [FormTemplateSection!]!
+}
+
+type FormTemplateSection @aws_lambda {
+  id: ID!
+  sectionKey: String!
+  titleKey: String!
+  fields: [FormTemplateField!]!
+}
+
+type FormTemplateField @aws_lambda {
+  id: ID!
+  fieldKey: String!
+  labelKey: String!
+  fieldType: String!
+  required: Boolean!
+  options: AWSJSON
+  relationTarget: String
+  validation: AWSJSON
+}
+
+type FormRecord @aws_lambda {
+  id: ID!
+  templateId: ID!
+  status: FormRecordStatus!
+  completion: FormCompletion!
+  values: AWSJSON!
+  openedBy: String!
+  completedBy: String
+  m2NcId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type FormCompletion @aws_lambda {
+  fieldsFilled: Int!
+  fieldsTotal: Int!
+  requiredMissing: [String!]!
+}
+
+input SaveFormRecordValuesInput {
+  recordId: ID!
+  values: AWSJSON!
+}
+
+input SubmitFormRecordInput {
+  recordId: ID!
+}
+
+input ApproveFormRecordInput {
+  recordId: ID!
+}
+
+input ReopenFormRecordInput {
+  recordId: ID!
+  justification: String!
+}
+
+type ExportResult @aws_lambda {
+  url: String!
+  expiresAt: AWSDateTime!
 }
 
 
