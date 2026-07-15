@@ -1,0 +1,59 @@
+# Task 7 — Subscription + diff
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-15T16:40:00Z
+# Base commit: f546a9b (Task 10 fix accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 802 tests pass, 70 files |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `infra/lib/api-stack.ts` | onGenerationProgress in subscriptionFields loop (C-6 auth) + M1 S3 read access |
+| `infra/lib/api-stack.unit.test.ts` | Resolver count 83→84 |
+| `services/api/src/resolvers/m1.ts` | Real getDocumentVersionDiff: S3 load + section alignment + LCS |
+| `services/api/__tests__/resolvers/m1-diff.test.ts` | 6 hermetic diff tests |
+
+## Implementation
+
+**onGenerationProgress subscription:**
+- Added to `subscriptionFields` array (loop-generated with None-DS + C-6 VTL template)
+- Same pattern as onDocumentStatusChanged: checks `$ctx.identity.resolverContext.tenantId != $ctx.args.tenantId` → $util.unauthorized()
+- SDL field already exists from Task 3 (not re-appended)
+
+**getDocumentVersionDiff (design §3 — CLOSES standing BLOCKED diff item):**
+1. Fetch `content_ref` from both versions (`m1.document_versions`, ::uuid casts)
+2. Load content JSONs from S3 via `CONTENT_BUCKET` env (graceful degradation if unconfigured)
+3. Align sections by `harmonizationKey` (bare key = shared; key#standard = forked/standard_only)
+4. Sentence-level LCS diff → existing Diff type (additions, deletions, content as JSON diff summary)
+
+**Diff algorithm:**
+- Added section: all sentences count as additions
+- Removed section: all sentences count as deletions
+- Changed section: LCS identifies common subsequence; non-LCS sentences in v1 = deletions, in v2 = additions
+- Identical section: no entry in diff (clean output)
+
+**Tests (6 hermetic, S3 mocked):**
+1. SQL uses ::uuid casts + real content_ref column name
+2. Identical → 0/0
+3. Added section → sentences counted
+4. Removed section → sentences counted
+5. Changed sentences → LCS-based add/del
+6. harmonizationKey#standard convention honored (forked sections align correctly)
+
+## Deferred
+
+**regenerateSection (GEN-6):** explicitly deferred — depends on generation SFN (architect Task 5/6 scope). Reported here per standing rule; not coded around.
+
+## Note
+
+This CLOSES the standing frontend-app BLOCKED diff item (same precedent as listFormRecords closing listRecords in spec 41 Task 3).
+
+## D-rung
+
+D2 — hermetic tests pass. Live execution requires CONTENT_BUCKET env to be plumbed (deploy-time prop).

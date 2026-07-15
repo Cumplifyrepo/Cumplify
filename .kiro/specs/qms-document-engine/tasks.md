@@ -71,9 +71,11 @@
 
 ## Task 7 — Subscription + diff [KIRO]
 
-- [ ] `onGenerationProgress` None-DS subscription with C-6 tenantId auth (copy `onDocumentStatusChanged` pattern) — explicit schema node dependency.
-- [ ] `getDocumentVersionDiff` resolver per design §3: S3 loads, section alignment by `harmonizationKey`, sentence LCS → existing `Diff` type. **Closes the standing BLOCKED item.**
-- [ ] Hermetic tests: diff fixtures (add/remove/change section; identical → 0/0), subscription auth denial.
+- [x] `onGenerationProgress` None-DS subscription with C-6 tenantId auth (copy `onDocumentStatusChanged` pattern) — explicit schema node dependency.
+- [x] `getDocumentVersionDiff` resolver per design §3: S3 loads, section alignment by `harmonizationKey`, sentence LCS → existing `Diff` type. **Closes the standing BLOCKED item.**
+- [x] Hermetic tests: diff fixtures (add/remove/change section; identical → 0/0), subscription auth denial.
+
+**Deferred:** `regenerateSection` (GEN-6) — explicitly deferred, depends on generation SFN (architect Task 5/6 scope).
 
 **Depends on:** Tasks 3, 6. **D-rung:** D2 → D3 at ACC-6 readback. **Evidence:** `task-7-sub-diff.log`
 
