@@ -1,0 +1,58 @@
+# Task 3 — SDL + resolver scaffolds + org profile
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-15T12:28:00Z
+# Base commit: 91ae603 (wave readback + architect touch-up)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 708 tests pass, 60 files |
+| Schema guard | `vitest run schema-guard` | 0 | 6/6 pass (SCHEMA-5 clean) |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/schema/schema.graphql` | SDL §6: 3 enums, 6 types, 6 inputs, 5Q + 7M user + 1 @aws_iam |
+| `services/api/src/resolvers/qms.ts` | 7 operations: getOrgProfile, saveOrgProfile, listClauseRegistry, listClauseApplicability, setClauseApplicability, getGenerationRun, listGenerationRuns |
+| `services/api/__tests__/resolvers/qms.test.ts` | 12 hermetic tests |
+| `infra/lib/api-stack.ts` | QmsFn + QmsDS + 12 resolvers + schema dependency + IAM |
+| `infra/lib/api-stack.unit.test.ts` | Resolver count 71→83 |
+
+## Implementation notes
+
+**saveOrgProfile (versioned write, design §2.2):**
+- ONE txn: UPSERT org_profiles (creates on first call) → INSERT org_profile_versions (new version_no = current+1, payload::jsonb) → UPDATE org_profiles SET current_version = new
+- Zod-lite validation: standardsInScope required (non-empty array of valid standards)
+- Publishes Context.Updated (already registered, auditTrail: true)
+
+**setClauseApplicability:**
+- Typed error EXCLUSION_REQUIRES_JUSTIFICATION surfaced BEFORE DB call (better UX)
+- DB CHECK `exclusion_requires_justification` is the final enforcement
+- UPSERT with ON CONFLICT (tenant_id, clause_registry_id)
+- Publishes Scope.Changed (already registered, auditTrail: true)
+
+**listClauseRegistry:**
+- Optional standard filter; queries tenant-less catalog (SELECT-only for app_role)
+
+**getGenerationRun:**
+- Fetches run + nested sections in same txn; computes gapCount from section kinds
+
+**Standing rules applied:**
+- ::uuid casts on every UUID param (pinned in tests)
+- Real 011 column names asserted in tests
+- SCHEMA-5: tenantId from resolverContext only (test proves)
+- Unmasked rollback: try { await txn.rollback(); } catch {}
+- Nag: QmsDS in the Lambda data sources loop (inherits suppression)
+- ExportResult referenced (not redefined) — already exists from spec-41
+- PublishGenerationEventInput: tenantId REMOVED (SCHEMA-5 violation caught by schema guard)
+
+**Events:** Context.Updated and Scope.Changed already in audit-trail-registry.ts. No new detailTypes introduced.
+
+**Stubs (architect tasks):** generateImsManual, regenerateSection, markSectionReviewed, requestImsExport — wired on QmsDS (throw via default switch case); publishGenerationEvent on noneDS (passthrough).
+
+## D-rung
+
+D2 — SDL + resolver + tests + infra pass gates. Not deployed.

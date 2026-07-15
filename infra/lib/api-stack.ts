@@ -728,6 +728,68 @@ export class ApiStack extends cdk.Stack {
     const reopenFormRecordResolver = formsDS.createResolver('ReopenFormRecord', { typeName: 'Mutation', fieldName: 'reopenFormRecord' });
     const exportFormRecordPdfResolver = formsDS.createResolver('ExportFormRecordPdf', { typeName: 'Mutation', fieldName: 'exportFormRecordPdf' });
 
+    // ─── Spec 40: QMS Document Engine ─────────────────────────────────────────
+
+    const qmsFn = new NodejsFunction(this, 'QmsFn', {
+      entry: 'services/api/src/resolvers/qms.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        CLUSTER_ARN: props.clusterArn,
+        APP_ROLE_SECRET_ARN: appRoleSecret.secretArn,
+        TABLE_NAME: props.tableName,
+        BUS_NAME: props.busName,
+        TENANT_DATA_ROLE_ARN: tenantDataRole.roleArn,
+        REGION: cdk.Stack.of(this).region,
+        POWERTOOLS_SERVICE_NAME: 'resolver-qms',
+      },
+    });
+
+    qmsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['rds-data:ExecuteStatement', 'rds-data:BeginTransaction', 'rds-data:CommitTransaction', 'rds-data:RollbackTransaction'],
+      resources: [props.clusterArn],
+    }));
+    qmsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['secretsmanager:GetSecretValue'],
+      resources: [appRoleSecret.secretArn],
+    }));
+    qmsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['events:PutEvents'],
+      resources: [props.busArn],
+    }));
+    qmsFn.role!.addToPrincipalPolicy(new iam.PolicyStatement({
+      actions: ['sts:AssumeRole', 'sts:TagSession'],
+      resources: [tenantDataRole.roleArn],
+    }));
+    props.dynamodbKey.grantDecrypt(qmsFn);
+
+    const qmsDS = api.addLambdaDataSource('QmsDataSource', qmsFn);
+
+    // Query resolvers (Spec 40)
+    const getOrgProfileResolver = qmsDS.createResolver('GetOrgProfile', { typeName: 'Query', fieldName: 'getOrgProfile' });
+    const listClauseRegistryResolver = qmsDS.createResolver('ListClauseRegistry', { typeName: 'Query', fieldName: 'listClauseRegistry' });
+    const listClauseApplicabilityResolver = qmsDS.createResolver('ListClauseApplicability', { typeName: 'Query', fieldName: 'listClauseApplicability' });
+    const getGenerationRunResolver = qmsDS.createResolver('GetGenerationRun', { typeName: 'Query', fieldName: 'getGenerationRun' });
+    const listGenerationRunsResolver = qmsDS.createResolver('ListGenerationRuns', { typeName: 'Query', fieldName: 'listGenerationRuns' });
+
+    // Mutation resolvers (Spec 40 — user-facing)
+    const saveOrgProfileResolver = qmsDS.createResolver('SaveOrgProfile', { typeName: 'Mutation', fieldName: 'saveOrgProfile' });
+    const setClauseApplicabilityResolver = qmsDS.createResolver('SetClauseApplicability', { typeName: 'Mutation', fieldName: 'setClauseApplicability' });
+    const generateImsManualResolver = qmsDS.createResolver('GenerateImsManual', { typeName: 'Mutation', fieldName: 'generateImsManual' });
+    const regenerateSectionResolver = qmsDS.createResolver('RegenerateSection', { typeName: 'Mutation', fieldName: 'regenerateSection' });
+    const markSectionReviewedResolver = qmsDS.createResolver('MarkSectionReviewed', { typeName: 'Mutation', fieldName: 'markSectionReviewed' });
+    const requestImsExportResolver = qmsDS.createResolver('RequestImsExport', { typeName: 'Mutation', fieldName: 'requestImsExport' });
+    // @aws_iam — publishGenerationEvent routed through None DS (passthrough)
+    noneDS.createResolver('PublishGenerationEvent', {
+      typeName: 'Mutation', fieldName: 'publishGenerationEvent',
+      requestMappingTemplate: passthroughRequestMapping,
+      responseMappingTemplate: passthroughResponseMapping,
+    });
+
     // Subscription resolver (Spec 9, C-6 tenant verification via VTL)
     const subHitlResolver = noneDS.createResolver('SubOnHitlItemResolved', {
       typeName: 'Subscription',
@@ -749,6 +811,11 @@ export class ApiStack extends cdk.Stack {
       listFormTemplatesResolver, getFormTemplateResolver, listFormRecordsResolver, getFormRecordResolver,
       createFormRecordResolver, saveFormRecordValuesResolver, submitFormRecordResolver,
       approveFormRecordResolver, reopenFormRecordResolver, exportFormRecordPdfResolver,
+      getOrgProfileResolver, listClauseRegistryResolver, listClauseApplicabilityResolver,
+      getGenerationRunResolver, listGenerationRunsResolver,
+      saveOrgProfileResolver, setClauseApplicabilityResolver,
+      generateImsManualResolver, regenerateSectionResolver,
+      markSectionReviewedResolver, requestImsExportResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }

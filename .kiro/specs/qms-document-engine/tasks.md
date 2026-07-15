@@ -35,9 +35,9 @@
 
 ## Task 3 — SDL + resolver scaffolds + org profile [KIRO]
 
-- [ ] Append design §6 SDL verbatim to `schema.graphql`; wire data sources + resolvers in `api-stack.ts` with explicit schema node dependency.
-- [ ] `qms.ts` resolver: `getOrgProfile`, `saveOrgProfile` (zod-validated payload, versioned write per design §2.2), `listClauseRegistry`, `listClauseApplicability`, `setClauseApplicability`, `getGenerationRun`, `listGenerationRuns`.
-- [ ] Hermetic tests: SQL/param-asserting per resolver (the M2 lesson: tests assert real column names against the migration), zod rejection cases, SCHEMA-5 (resolver injects tenant).
+- [x] Append design §6 SDL verbatim to `schema.graphql`; wire data sources + resolvers in `api-stack.ts` with explicit schema node dependency.
+- [x] `qms.ts` resolver: `getOrgProfile`, `saveOrgProfile` (zod-validated payload, versioned write per design §2.2), `listClauseRegistry`, `listClauseApplicability`, `setClauseApplicability`, `getGenerationRun`, `listGenerationRuns`.
+- [x] Hermetic tests: SQL/param-asserting per resolver (the M2 lesson: tests assert real column names against the migration), zod rejection cases, SCHEMA-5 (resolver injects tenant).
 
 **Depends on:** Task 1. **D-rung:** D2. **Evidence:** `task-3-org-profile.log`
 

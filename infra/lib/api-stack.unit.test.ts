@@ -133,7 +133,9 @@ describe('ApiStack template assertions (source-level)', () => {
     // 2026-07-14: +1 (getTenantSettings — Task 31 Settings unblock)
     // 2026-07-14: +10 (spec 41 forms engine: 4 Query + 6 Mutation)
     // 2026-07-15: +1 (spec 41 Task 9: generateAuditChecklist on M3)
-    expect(queryCount + mutationCount + subLoopCount + individualSubCount).toBe(71);
+    // 2026-07-15: +7 (spec 40 Task 3: 5 Query + 2 Mutation on QmsDS)
+    // 2026-07-15: +5 (spec 40 Task 3: remaining mutations wired as stubs on QmsDS + noneDS)
+    expect(queryCount + mutationCount + subLoopCount + individualSubCount).toBe(83);
   });
 
   it('subscription resolvers enforce C-6 tenant-claim check via $util.unauthorized()', () => {

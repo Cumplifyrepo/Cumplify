@@ -1,0 +1,303 @@
+/**
+ * QMS Document Engine resolver (spec 40, Task 3).
+ *
+ * Schema node dependency: OrgProfile, ClauseRegistryEntry, ClauseApplicability,
+ * GenerationRun, GenerationSection, AnnexSlMode, SectionKind, GenerationRunStatus,
+ * SaveOrgProfileInput, SetClauseApplicabilityInput.
+ *
+ * Key invariants:
+ * - saveOrgProfile: zod-validated JSONB payload, versioned write (new version row +
+ *   bump current_version in ONE txn).
+ * - setClauseApplicability: exclusion REQUIRES justification — the DB CHECK enforces
+ *   it; surface typed error EXCLUSION_REQUIRES_JUSTIFICATION.
+ * - SCHEMA-5: tenantId from resolverContext only.
+ * - C-2: set_config FIRST in every transaction.
+ * - ::uuid casts on every UUID param (M3 lesson).
+ * - Unmasked rollback: try { await txn.rollback(); } catch { /- never mask -/ }
+ */
+
+import { Logger } from '@aws-lambda-powertools/logger';
+import {
+  extractContext,
+  beginTenantTransaction,
+  publishAuditEvent,
+  marshalOne,
+  marshalMany,
+} from './shared.js';
+import type { SqlParameter } from '@aws-sdk/client-rds-data';
+
+const logger = new Logger({ serviceName: 'resolver-qms' });
+
+interface AppSyncEvent {
+  info: { fieldName: string };
+  arguments: Record<string, unknown>;
+  identity?: { resolverContext?: Record<string, string> };
+}
+
+// ─── Zod-lite payload validation (no zod dep — inline schema check) ──────────
+// Design §2.2: org profile payload is JSONB with standardsInScope required.
+function validateOrgProfilePayload(payload: unknown): { standardsInScope: string[]; [k: string]: unknown } {
+  if (typeof payload !== 'object' || payload === null) {
+    throw new Error('INVALID_PAYLOAD: must be a JSON object');
+  }
+  const obj = payload as Record<string, unknown>;
+  if (!Array.isArray(obj.standardsInScope)) {
+    throw new Error('INVALID_PAYLOAD: standardsInScope must be an array');
+  }
+  const validStandards = new Set(['ISO9001', 'ISO14001', 'ISO45001']);
+  for (const s of obj.standardsInScope) {
+    if (typeof s !== 'string' || !validStandards.has(s)) {
+      throw new Error(`INVALID_PAYLOAD: invalid standard '${s}'`);
+    }
+  }
+  if (obj.standardsInScope.length === 0) {
+    throw new Error('INVALID_PAYLOAD: standardsInScope must not be empty');
+  }
+  return obj as { standardsInScope: string[]; [k: string]: unknown };
+}
+
+// ─── Handler ─────────────────────────────────────────────────────────────────
+
+export async function handler(event: AppSyncEvent): Promise<unknown> {
+  const ctx = extractContext(event);
+  const { tenantId, sub } = ctx;
+  logger.appendKeys({ tenantId, requestField: event.info.fieldName });
+
+  switch (event.info.fieldName) {
+    case 'getOrgProfile': return getOrgProfile(tenantId);
+    case 'saveOrgProfile': return saveOrgProfile(event, tenantId, sub);
+    case 'listClauseRegistry': return listClauseRegistry(event, tenantId);
+    case 'listClauseApplicability': return listClauseApplicability(tenantId);
+    case 'setClauseApplicability': return setClauseApplicability(event, tenantId, sub);
+    case 'getGenerationRun': return getGenerationRun(event, tenantId);
+    case 'listGenerationRuns': return listGenerationRuns(event, tenantId);
+    default: throw new Error(`Unknown field: ${event.info.fieldName}`);
+  }
+}
+
+// ─── Queries ─────────────────────────────────────────────────────────────────
+
+async function getOrgProfile(tenantId: string) {
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    // Fetch profile + latest version payload in one go
+    const result = await txn.execute(`
+      SELECT p.id, p.current_version, pv.payload, p.updated_at
+      FROM qms.org_profiles p
+      LEFT JOIN qms.org_profile_versions pv
+        ON pv.profile_id = p.id AND pv.version_no = p.current_version
+      LIMIT 1
+    `);
+    await txn.commit();
+    const row = marshalOne(result);
+    if (!row) return null;
+    // payload is JSONB — returned as stringified JSON from Data API
+    return row;
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+async function listClauseRegistry(event: AppSyncEvent, tenantId: string) {
+  const standard = event.arguments.standard as string | undefined;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    let sql = `
+      SELECT id, standard, clause_no, clause_title, intent_paraphrase,
+             annex_sl_mode, harmonization_key, required_sources, sort_order
+      FROM qms.clause_registry
+    `;
+    const params: SqlParameter[] = [];
+    if (standard) {
+      sql += ` WHERE standard = :standard`;
+      params.push({ name: 'standard', value: { stringValue: standard } });
+    }
+    sql += ` ORDER BY sort_order`;
+
+    const result = await txn.execute(sql, params);
+    await txn.commit();
+    return marshalMany(result);
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+async function listClauseApplicability(tenantId: string) {
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(`
+      SELECT id, clause_registry_id, applicable, justification
+      FROM qms.clause_applicability
+    `);
+    await txn.commit();
+    return marshalMany(result);
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+async function getGenerationRun(event: AppSyncEvent, tenantId: string) {
+  const runId = event.arguments.id as string;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const runResult = await txn.execute(`
+      SELECT id, status, standards, manual_document_id, started_at, finished_at
+      FROM qms.generation_runs WHERE id = :id::uuid
+    `, [{ name: 'id', value: { stringValue: runId } }]);
+
+    const sectionsResult = await txn.execute(`
+      SELECT id, harmonization_key, status AS kind, clause_registry_ids AS clause_refs,
+             content_sha256, reviewed_by, reviewed_at, error
+      FROM qms.generation_sections WHERE run_id = :runId::uuid ORDER BY harmonization_key
+    `, [{ name: 'runId', value: { stringValue: runId } }]);
+
+    await txn.commit();
+
+    const run = marshalOne(runResult);
+    if (!run) return null;
+    const sections = marshalMany(sectionsResult);
+
+    // Compute gapCount from sections
+    const gapCount = sections.filter(s => s.kind === 'gap' || s.kind === 'GAP').length;
+
+    return { ...run, sections, gapCount };
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+async function listGenerationRuns(event: AppSyncEvent, tenantId: string) {
+  const limit = (event.arguments.limit as number) || 20;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(`
+      SELECT id, status, standards, manual_document_id, started_at, finished_at
+      FROM qms.generation_runs
+      ORDER BY started_at DESC
+      LIMIT :lim
+    `, [{ name: 'lim', value: { longValue: limit } }]);
+    await txn.commit();
+    // Return without nested sections (lightweight list)
+    return marshalMany(result).map(r => ({ ...r, sections: [], gapCount: 0 }));
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+// ─── Mutations ───────────────────────────────────────────────────────────────
+
+/**
+ * saveOrgProfile — zod-validated JSONB payload, versioned write (design §2.2).
+ * In ONE txn: UPSERT org_profiles + INSERT new version row + bump current_version.
+ */
+async function saveOrgProfile(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as { payload: string };
+  const payloadRaw = JSON.parse(input.payload);
+  const payload = validateOrgProfilePayload(payloadRaw);
+
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    // UPSERT the profile row (creates if first time, else gets id + current_version)
+    const upsertResult = await txn.execute(`
+      INSERT INTO qms.org_profiles (tenant_id, current_version, created_by)
+      VALUES (:tenantId, 0, :actor)
+      ON CONFLICT (tenant_id) DO UPDATE SET updated_at = NOW()
+      RETURNING id, current_version
+    `, [
+      { name: 'tenantId', value: { stringValue: tenantId } },
+      { name: 'actor', value: { stringValue: actor } },
+    ]);
+
+    const profileRow = marshalOne(upsertResult)!;
+    const profileId = profileRow.id as string;
+    const currentVersion = profileRow.currentVersion as number;
+    const newVersion = currentVersion + 1;
+
+    // INSERT new version row
+    await txn.execute(`
+      INSERT INTO qms.org_profile_versions (profile_id, tenant_id, version_no, payload, created_by)
+      VALUES (:profileId::uuid, :tenantId, :versionNo, :payload::jsonb, :actor)
+    `, [
+      { name: 'profileId', value: { stringValue: profileId } },
+      { name: 'tenantId', value: { stringValue: tenantId } },
+      { name: 'versionNo', value: { longValue: newVersion } },
+      { name: 'payload', value: { stringValue: JSON.stringify(payload) } },
+      { name: 'actor', value: { stringValue: actor } },
+    ]);
+
+    // Bump current_version
+    await txn.execute(`
+      UPDATE qms.org_profiles SET current_version = :newVersion, updated_at = NOW()
+      WHERE id = :id::uuid
+    `, [
+      { name: 'newVersion', value: { longValue: newVersion } },
+      { name: 'id', value: { stringValue: profileId } },
+    ]);
+
+    await txn.commit();
+
+    // Audit event: Context.Updated (already registered)
+    await publishAuditEvent({
+      tenantId, actor, module: 'M1',
+      clauseRef: '4.1', standard: 'ISO9001',
+      detailType: 'Context.Updated', source: 'cumplify.qms.document-engine',
+      payload: { profileId, version: newVersion },
+    });
+
+    return { id: profileId, currentVersion: newVersion, payload: JSON.stringify(payload), updatedAt: new Date().toISOString() };
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+/**
+ * setClauseApplicability — exclusion REQUIRES justification (DB CHECK enforces;
+ * surface typed error before hitting the DB for better UX).
+ */
+async function setClauseApplicability(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as { clauseRegistryId: string; applicable: boolean; justification?: string };
+
+  // Surface typed error before hitting DB CHECK
+  if (!input.applicable && (!input.justification || input.justification.trim().length === 0)) {
+    throw new Error('EXCLUSION_REQUIRES_JUSTIFICATION');
+  }
+
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(`
+      INSERT INTO qms.clause_applicability (tenant_id, clause_registry_id, applicable, justification, decided_by, created_by)
+      VALUES (:tenantId, :clauseId::uuid, :applicable, :justification, :actor, :actor)
+      ON CONFLICT (tenant_id, clause_registry_id)
+      DO UPDATE SET applicable = :applicable, justification = :justification,
+                    decided_by = :actor, decided_at = NOW(), updated_at = NOW()
+      RETURNING id, clause_registry_id, applicable, justification
+    `, [
+      { name: 'tenantId', value: { stringValue: tenantId } },
+      { name: 'clauseId', value: { stringValue: input.clauseRegistryId } },
+      { name: 'applicable', value: { booleanValue: input.applicable } },
+      { name: 'justification', value: input.justification ? { stringValue: input.justification } : { isNull: true } },
+      { name: 'actor', value: { stringValue: actor } },
+    ]);
+
+    await txn.commit();
+
+    // Audit event: Scope.Changed (already registered)
+    await publishAuditEvent({
+      tenantId, actor, module: 'M1',
+      clauseRef: '4.3', standard: 'ISO9001',
+      detailType: 'Scope.Changed', source: 'cumplify.qms.document-engine',
+      payload: { clauseRegistryId: input.clauseRegistryId, applicable: input.applicable },
+    });
+
+    return marshalOne(result);
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}

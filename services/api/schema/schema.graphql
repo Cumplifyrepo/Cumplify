@@ -559,6 +559,13 @@ type Query {
   getFormTemplate(id: ID!): FormTemplate @aws_lambda
   listFormRecords(templateId: ID!, status: FormRecordStatus): [FormRecord!]! @aws_lambda
   getFormRecord(id: ID!): FormRecord @aws_lambda
+
+  # Spec 40 — QMS Document Engine
+  getOrgProfile: OrgProfile @aws_lambda
+  listClauseRegistry(standard: Standard): [ClauseRegistryEntry!]! @aws_lambda
+  listClauseApplicability: [ClauseApplicability!]! @aws_lambda
+  getGenerationRun(id: ID!): GenerationRun @aws_lambda
+  listGenerationRuns(limit: Int): [GenerationRun!]! @aws_lambda
 }
 
 # ─── Mutations ────────────────────────────────────────────────────────────────
@@ -606,6 +613,7 @@ type Mutation {
   agentScoreReadiness(standard: Standard!): [ReadinessScore!]! @aws_iam
   agentAssessRisk(input: AgentAssessRiskInput!): Risk! @aws_iam
   appendAuditEvent(input: AppendAuditEventInput!): AuditEvent! @aws_iam
+  publishGenerationEvent(input: PublishGenerationEventInput!): GenerationEvent @aws_iam
 
   # Subscription triggers (None data source, @aws_iam)
   publishDocumentEvent(input: DocumentEventInput!): Document @aws_iam
@@ -624,6 +632,14 @@ type Mutation {
   approveFormRecord(input: ApproveFormRecordInput!): FormRecord! @aws_lambda
   reopenFormRecord(input: ReopenFormRecordInput!): FormRecord! @aws_lambda
   exportFormRecordPdf(recordId: ID!): ExportResult! @aws_lambda
+
+  # Spec 40 — QMS Document Engine
+  saveOrgProfile(input: SaveOrgProfileInput!): OrgProfile! @aws_lambda
+  setClauseApplicability(input: SetClauseApplicabilityInput!): ClauseApplicability! @aws_lambda
+  generateImsManual(input: GenerateImsManualInput): GenerationRun! @aws_lambda
+  regenerateSection(input: RegenerateSectionInput!): GenerationSection! @aws_lambda
+  markSectionReviewed(input: MarkSectionReviewedInput!): GenerationSection! @aws_lambda
+  requestImsExport(documentId: ID!): ExportResult! @aws_lambda
 }
 
 # ─── Subscriptions ────────────────────────────────────────────────────────────
@@ -816,6 +832,100 @@ input ReopenFormRecordInput {
 type ExportResult @aws_lambda {
   url: String!
   expiresAt: AWSDateTime!
+}
+
+# ─── Spec 40: QMS Document Engine ─────────────────────────────────────────────
+
+enum AnnexSlMode { SHARED FORKED STANDARD_ONLY }
+enum SectionKind { PROSE GAP NA_JUSTIFIED FAILED PENDING }
+enum GenerationRunStatus { RUNNING COMPLETE FAILED PARTIAL }
+
+type ClauseRegistryEntry @aws_lambda {
+  id: ID!
+  standard: Standard!
+  clauseNo: String!
+  clauseTitle: String!
+  intentParaphrase: String!
+  annexSlMode: AnnexSlMode!
+  harmonizationKey: String!
+  requiredSources: AWSJSON!
+  sortOrder: Int!
+}
+
+type OrgProfile @aws_lambda {
+  id: ID!
+  currentVersion: Int!
+  payload: AWSJSON!
+  updatedAt: AWSDateTime!
+}
+
+type ClauseApplicability @aws_lambda {
+  id: ID!
+  clauseRegistryId: ID!
+  applicable: Boolean!
+  justification: String
+}
+
+type GenerationSection @aws_lambda {
+  id: ID!
+  harmonizationKey: String!
+  kind: SectionKind!
+  clauseRefs: AWSJSON!
+  contentSha256: String
+  reviewedBy: String
+  reviewedAt: AWSDateTime
+  error: String
+}
+
+type GenerationRun @aws_lambda {
+  id: ID!
+  status: GenerationRunStatus!
+  standards: [Standard!]!
+  sections: [GenerationSection!]!
+  manualDocumentId: ID
+  gapCount: Int!
+  startedAt: AWSDateTime!
+  finishedAt: AWSDateTime
+}
+
+type GenerationEvent @aws_lambda @aws_iam {
+  runId: ID!
+  tenantId: ID!
+  type: String!
+  harmonizationKey: String
+  kind: SectionKind
+  summary: AWSJSON
+}
+
+input SaveOrgProfileInput {
+  payload: AWSJSON!
+}
+
+input SetClauseApplicabilityInput {
+  clauseRegistryId: ID!
+  applicable: Boolean!
+  justification: String
+}
+
+input GenerateImsManualInput {
+  standards: [Standard!]
+}
+
+input RegenerateSectionInput {
+  runId: ID!
+  harmonizationKey: String!
+}
+
+input MarkSectionReviewedInput {
+  sectionId: ID!
+}
+
+input PublishGenerationEventInput {
+  runId: ID!
+  type: String!
+  harmonizationKey: String
+  kind: SectionKind
+  summary: AWSJSON
 }
 
 
