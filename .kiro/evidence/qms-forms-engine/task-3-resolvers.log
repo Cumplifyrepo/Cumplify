@@ -1,14 +1,29 @@
 # Task 3 — SDL + template/record resolvers
 # Evidence log (rule 7/8: evidence + checkbox in same commit)
-# Timestamp: 2026-07-14T07:48:00Z
-# Base commit: cc98015 (Tasks 1-2 accepted)
+# Timestamp: 2026-07-14T08:01:00Z
+# Base commit: 05dd67a (Task 3 initial, rejected)
 
 ## Gates executed
 
 | Gate | Command | Exit code | Result |
 |------|---------|-----------|--------|
 | TypeScript | `npx tsc --noEmit` | 0 | Clean |
-| Unit tests | `npx vitest run` | 0 | 640 tests pass, 57 files |
+| Unit tests | `npx vitest run` | 0 | 647 tests pass, 57 files |
+
+## Fix round (rejection 05dd67a → this commit)
+
+| Finding | Fix | Test pinned |
+|---------|-----|-------------|
+| BLOCKER: zero SQL type casts → live uuid=varchar failure | Added ::uuid on every WHERE/INSERT/ON CONFLICT UUID param; VALUE_COLUMN_CAST map for ::timestamptz/::jsonb/::numeric/::uuid | 7 tests assert `:id::uuid`, `:templateId::uuid`, `:recordId::uuid`, `:fieldId::uuid`, `:val::uuid/timestamptz/jsonb/numeric` |
+| BUG-1: createFormRecord returned hardcoded {0,0,[]} | Calls computeCompletion before commit | Test asserts fieldsTotal=3 from catalog + requiredMissing populated |
+| BUG-2: null value stored as literal 'null' string | null/undefined → DELETE FROM record_values row | Test asserts DELETE SQL, not INSERT |
+| Silent unknown fieldKey skip | logger.warn on unknown fieldKey | — |
+
+## Note: listFormRecords completion is N+1
+
+listFormRecords calls computeCompletion per record (N+1 query pattern).
+Accepted for now — revisited at Task 10 (load test: 10k records × 30 fields
+under FORCE RLS, target p95 < 500 ms). If miss → batch completion query.
 
 ## Deliverables
 

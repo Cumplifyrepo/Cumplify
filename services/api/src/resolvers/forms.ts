@@ -52,6 +52,14 @@ const FIELD_TYPE_COLUMN: Record<string, string> = {
 // Immutable statuses — writes rejected on these (after marshal: uppercased)
 const IMMUTABLE_STATUSES = new Set(['COMPLETE', 'APPROVED']);
 
+// Value column → SQL type cast (M3 lesson: RDS Data API binds stringValue as varchar)
+const VALUE_COLUMN_CAST: Record<string, string> = {
+  value_uuid: '::uuid',
+  value_date: '::timestamptz',
+  value_json: '::jsonb',
+  value_number: '::numeric',
+};
+
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
 export async function handler(event: AppSyncEvent): Promise<unknown> {
@@ -128,13 +136,13 @@ async function getFormTemplate(event: AppSyncEvent): Promise<unknown> {
              (SELECT COUNT(*) FROM forms.template_fields f
               JOIN forms.template_sections s2 ON f.section_id = s2.id
               WHERE s2.template_id = t.id) AS field_count
-      FROM forms.templates t WHERE t.id = :id
+      FROM forms.templates t WHERE t.id = :id::uuid
     `, [{ name: 'id', value: { stringValue: templateId } }]);
 
     const sectionsResult = await txn.execute(`
       SELECT s.id, s.section_key, s.title_key, s.sort_order
       FROM forms.template_sections s
-      WHERE s.template_id = :id ORDER BY s.sort_order
+      WHERE s.template_id = :id::uuid ORDER BY s.sort_order
     `, [{ name: 'id', value: { stringValue: templateId } }]);
 
     const fieldsResult = await txn.execute(`
@@ -142,7 +150,7 @@ async function getFormTemplate(event: AppSyncEvent): Promise<unknown> {
              f.required, f.options, f.relation_target, f.validation, f.sort_order
       FROM forms.template_fields f
       JOIN forms.template_sections s ON f.section_id = s.id
-      WHERE s.template_id = :id ORDER BY s.sort_order, f.sort_order
+      WHERE s.template_id = :id::uuid ORDER BY s.sort_order, f.sort_order
     `, [{ name: 'id', value: { stringValue: templateId } }]);
 
     await txn.commit();
@@ -167,7 +175,7 @@ async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<u
       SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
              r.m2_nc_id, r.created_at, r.updated_at
       FROM forms.records r
-      WHERE r.template_id = :templateId
+      WHERE r.template_id = :templateId::uuid
     `;
     const params: SqlParameter[] = [
       { name: 'templateId', value: { stringValue: templateId } },
@@ -205,7 +213,7 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
     const recResult = await txn.execute(`
       SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
              r.m2_nc_id, r.created_at, r.updated_at
-      FROM forms.records r WHERE r.id = :id
+      FROM forms.records r WHERE r.id = :id::uuid
     `, [{ name: 'id', value: { stringValue: recordId } }]);
 
     const rows = marshalRecordRows(recResult);
@@ -218,7 +226,7 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
              rv.value_bool, rv.value_uuid, rv.value_json
       FROM forms.record_values rv
       JOIN forms.template_fields f ON rv.field_id = f.id
-      WHERE rv.record_id = :id
+      WHERE rv.record_id = :id::uuid
     `, [{ name: 'id', value: { stringValue: recordId } }]);
 
     rec.values = JSON.stringify(marshalValues(valResult));
@@ -243,17 +251,18 @@ async function createFormRecord(event: AppSyncEvent, tenantId: string, actor: st
   try {
     const result = await txn.execute(`
       INSERT INTO forms.records (tenant_id, template_id, status, opened_by)
-      VALUES (:tenantId, :templateId, 'draft', :actor)
+      VALUES (:tenantId, :templateId::uuid, 'draft', :actor)
       RETURNING id, template_id, status, opened_by, completed_by, m2_nc_id, created_at, updated_at
     `, [
       { name: 'tenantId', value: { stringValue: tenantId } },
       { name: 'templateId', value: { stringValue: templateId } },
       { name: 'actor', value: { stringValue: actor } },
     ]);
-    await txn.commit();
     const rec = marshalRecordRows(result)[0];
-    rec.completion = { fieldsFilled: 0, fieldsTotal: 0, requiredMissing: [] };
+    // BUG-1 fix: compute real completion from catalog (not hardcoded 0/0/[])
+    rec.completion = await computeCompletion(txn, rec.id as string, templateId);
     rec.values = '{}';
+    await txn.commit();
     return rec;
   } catch (err) {
     await txn.rollback();
@@ -275,7 +284,7 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
   try {
     // Check record status — immutability guard
     const statusResult = await txn.execute(
-      `SELECT status, template_id FROM forms.records WHERE id = :id`,
+      `SELECT status, template_id FROM forms.records WHERE id = :id::uuid`,
       [{ name: 'id', value: { stringValue: recordId } }],
     );
     const statusRows = marshalRecordRows(statusResult);
@@ -291,7 +300,7 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
     // Update status to in_progress if still draft
     if (currentStatus === 'DRAFT') {
       await txn.execute(
-        `UPDATE forms.records SET status = 'in_progress', updated_at = NOW() WHERE id = :id`,
+        `UPDATE forms.records SET status = 'in_progress', updated_at = NOW() WHERE id = :id::uuid`,
         [{ name: 'id', value: { stringValue: recordId } }],
       );
     }
@@ -301,7 +310,7 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
       SELECT f.id, f.field_key, f.field_type
       FROM forms.template_fields f
       JOIN forms.template_sections s ON f.section_id = s.id
-      WHERE s.template_id = :templateId
+      WHERE s.template_id = :templateId::uuid
     `, [{ name: 'templateId', value: { stringValue: templateId } }]);
 
     const fieldMeta = marshalFieldMeta(fieldsResult);
@@ -309,7 +318,22 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
     // Upsert each value with typed-column dispatch
     for (const [fieldKey, value] of Object.entries(values)) {
       const meta = fieldMeta.get(fieldKey);
-      if (!meta) continue; // Unknown field key — skip silently
+      if (!meta) {
+        logger.warn('Unknown fieldKey in saveFormRecordValues — skipping', { fieldKey, recordId });
+        continue;
+      }
+
+      // BUG-2 fix: null value → DELETE the row (clearing a field)
+      if (value === null || value === undefined) {
+        await txn.execute(`
+          DELETE FROM forms.record_values
+          WHERE record_id = :recordId::uuid AND field_id = :fieldId::uuid
+        `, [
+          { name: 'recordId', value: { stringValue: recordId } },
+          { name: 'fieldId', value: { stringValue: meta.fieldId } },
+        ]);
+        continue;
+      }
 
       const valueColumn = FIELD_TYPE_COLUMN[meta.fieldType];
       if (!valueColumn) continue;
@@ -317,11 +341,13 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
       const param = buildValueParam(valueColumn, value);
 
       // Upsert: INSERT ON CONFLICT UPDATE the appropriate column, null others
+      // Type casts: uuid columns need ::uuid, date needs ::timestamptz, json needs ::jsonb, number needs ::numeric
+      const valueCast = VALUE_COLUMN_CAST[valueColumn] ?? '';
       await txn.execute(`
         INSERT INTO forms.record_values (record_id, tenant_id, field_id, ${valueColumn})
-        VALUES (:recordId, :tenantId, :fieldId, :val)
+        VALUES (:recordId::uuid, :tenantId, :fieldId::uuid, :val${valueCast})
         ON CONFLICT (record_id, field_id)
-        DO UPDATE SET ${valueColumn} = :val,
+        DO UPDATE SET ${valueColumn} = :val${valueCast},
           ${nullOtherColumns(valueColumn)}
       `, [
         { name: 'recordId', value: { stringValue: recordId } },
@@ -333,7 +359,7 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
 
     // Update record timestamp
     await txn.execute(
-      `UPDATE forms.records SET updated_at = NOW() WHERE id = :id`,
+      `UPDATE forms.records SET updated_at = NOW() WHERE id = :id::uuid`,
       [{ name: 'id', value: { stringValue: recordId } }],
     );
 
@@ -381,7 +407,7 @@ async function computeCompletion(
     SELECT f.field_key, f.required
     FROM forms.template_fields f
     JOIN forms.template_sections s ON f.section_id = s.id
-    WHERE s.template_id = :templateId
+    WHERE s.template_id = :templateId::uuid
   `, [{ name: 'templateId', value: { stringValue: templateId } }]);
 
   // Filled fields for this record
@@ -389,7 +415,7 @@ async function computeCompletion(
     SELECT f.field_key
     FROM forms.record_values rv
     JOIN forms.template_fields f ON rv.field_id = f.id
-    WHERE rv.record_id = :recordId
+    WHERE rv.record_id = :recordId::uuid
   `, [{ name: 'recordId', value: { stringValue: recordId } }]);
 
   const allFields = extractFieldKeys(totalsResult);
@@ -412,7 +438,7 @@ async function getFormRecordById(recordId: string, tenantId: string): Promise<un
     const result = await txn.execute(`
       SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
              r.m2_nc_id, r.created_at, r.updated_at
-      FROM forms.records r WHERE r.id = :id
+      FROM forms.records r WHERE r.id = :id::uuid
     `, [{ name: 'id', value: { stringValue: recordId } }]);
     const rows = marshalRecordRows(result);
     if (rows.length === 0) throw new Error('RECORD_NOT_FOUND');
@@ -424,7 +450,7 @@ async function getFormRecordById(recordId: string, tenantId: string): Promise<un
              rv.value_bool, rv.value_uuid, rv.value_json
       FROM forms.record_values rv
       JOIN forms.template_fields f ON rv.field_id = f.id
-      WHERE rv.record_id = :id
+      WHERE rv.record_id = :id::uuid
     `, [{ name: 'id', value: { stringValue: recordId } }]);
     rec.values = JSON.stringify(marshalValues(valResult));
 

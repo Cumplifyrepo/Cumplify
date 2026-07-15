@@ -115,7 +115,8 @@ describe('getFormTemplate', () => {
 // ─── createFormRecord ─────────────────────────────────────────────────────────
 
 describe('createFormRecord', () => {
-  it('inserts into forms.records with real column names from 012', async () => {
+  it('inserts into forms.records with real column names from 012 and computes completion from catalog', async () => {
+    // Call 1: INSERT RETURNING
     mockExecute.mockResolvedValueOnce({
       records: [[
         { stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'draft' },
@@ -128,8 +129,22 @@ describe('createFormRecord', () => {
         { name: 'created_at' }, { name: 'updated_at' },
       ],
     });
+    // Call 2: computeCompletion totals (3 fields, 2 required)
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'ncr_number' }, { booleanValue: true }],
+        [{ stringValue: 'severity' }, { booleanValue: true }],
+        [{ stringValue: 'department' }, { booleanValue: false }],
+      ],
+      columnMetadata: [{ name: 'field_key' }, { name: 'required' }],
+    });
+    // Call 3: computeCompletion filled (empty — fresh record)
+    mockExecute.mockResolvedValueOnce({
+      records: [],
+      columnMetadata: [{ name: 'field_key' }],
+    });
 
-    const result = await handler(makeEvent('createFormRecord', { templateId: 'tpl-1' }));
+    const result = await handler(makeEvent('createFormRecord', { templateId: 'tpl-1' })) as Record<string, unknown>;
     const [sql, params] = mockExecute.mock.calls[0];
 
     expect(sql).toContain('INSERT INTO forms.records');
@@ -137,10 +152,17 @@ describe('createFormRecord', () => {
     expect(sql).toContain('template_id');
     expect(sql).toContain('opened_by');
     expect(sql).toContain("'draft'");
+    expect(sql).toContain(':templateId::uuid');
     // SCHEMA-5: tenantId from resolverContext
     expect(params).toContainEqual({ name: 'tenantId', value: { stringValue: 'tenant-test' } });
     expect(params).toContainEqual({ name: 'actor', value: { stringValue: 'user-test' } });
     expect(result).toHaveProperty('id', 'rec-1');
+
+    // BUG-1 fix: completion computed from catalog, not hardcoded
+    const completion = result.completion as Record<string, unknown>;
+    expect(completion.fieldsTotal).toBe(3);
+    expect(completion.fieldsFilled).toBe(0);
+    expect(completion.requiredMissing).toEqual(['ncr_number', 'severity']);
   });
 });
 
@@ -399,6 +421,7 @@ describe('saveFormRecordValues — immutability guard', () => {
 
 describe('SCHEMA-5: tenantId injection', () => {
   it('createFormRecord passes tenantId from resolverContext, not from arguments', async () => {
+    // Call 1: INSERT RETURNING
     mockExecute.mockResolvedValueOnce({
       records: [[
         { stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'draft' },
@@ -411,6 +434,9 @@ describe('SCHEMA-5: tenantId injection', () => {
         { name: 'created_at' }, { name: 'updated_at' },
       ],
     });
+    // Call 2+3: computeCompletion (totals + filled)
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'field_key' }, { name: 'required' }] });
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'field_key' }] });
 
     // Even if client passes a tenantId in args, it's ignored
     await handler({
@@ -423,5 +449,166 @@ describe('SCHEMA-5: tenantId injection', () => {
     // Only the resolverContext tenantId is used
     expect(params).toContainEqual({ name: 'tenantId', value: { stringValue: 'tenant-test' } });
     expect(params).not.toContainEqual(expect.objectContaining({ value: { stringValue: 'evil-tenant' } }));
+  });
+});
+
+// ─── UUID type casts (M3 lesson — RDS Data API stringValue→varchar mismatch) ─
+
+describe('UUID type casts in SQL', () => {
+  it('getFormTemplate casts :id::uuid in all three queries', async () => {
+    await handler(makeEvent('getFormTemplate', { id: 'tpl-1' }));
+    for (let i = 0; i < 3; i++) {
+      const [sql] = mockExecute.mock.calls[i];
+      expect(sql).toContain(':id::uuid');
+    }
+  });
+
+  it('getFormRecord casts :id::uuid', async () => {
+    // record row
+    mockExecute.mockResolvedValueOnce({
+      records: [[
+        { stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'draft' },
+        { stringValue: 'user-test' }, { isNull: true }, { isNull: true },
+        { stringValue: '2026-07-14T00:00:00Z' }, { stringValue: '2026-07-14T00:00:00Z' },
+      ]],
+      columnMetadata: [
+        { name: 'id' }, { name: 'template_id' }, { name: 'status' },
+        { name: 'opened_by' }, { name: 'completed_by' }, { name: 'm2_nc_id' },
+        { name: 'created_at' }, { name: 'updated_at' },
+      ],
+    });
+    // values, totals, filled
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [{ name: 'field_key' }, { name: 'required' }] });
+
+    await handler(makeEvent('getFormRecord', { id: 'rec-1' })).catch(() => {});
+    const [recSql] = mockExecute.mock.calls[0];
+    expect(recSql).toContain(':id::uuid');
+  });
+
+  it('listFormRecords casts :templateId::uuid', async () => {
+    await handler(makeEvent('listFormRecords', { templateId: 'tpl-1' }));
+    const [sql] = mockExecute.mock.calls[0];
+    expect(sql).toContain(':templateId::uuid');
+  });
+
+  it('createFormRecord casts :templateId::uuid in INSERT', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[
+        { stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'draft' },
+        { stringValue: 'user-test' }, { isNull: true }, { isNull: true },
+        { stringValue: '2026-07-14T00:00:00Z' }, { stringValue: '2026-07-14T00:00:00Z' },
+      ]],
+      columnMetadata: [
+        { name: 'id' }, { name: 'template_id' }, { name: 'status' },
+        { name: 'opened_by' }, { name: 'completed_by' }, { name: 'm2_nc_id' },
+        { name: 'created_at' }, { name: 'updated_at' },
+      ],
+    });
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [{ name: 'field_key' }, { name: 'required' }] });
+
+    await handler(makeEvent('createFormRecord', { templateId: 'tpl-1' }));
+    const [sql] = mockExecute.mock.calls[0];
+    expect(sql).toContain(':templateId::uuid');
+  });
+
+  it('saveFormRecordValues casts :id::uuid in status check and :recordId::uuid/:fieldId::uuid in upsert', async () => {
+    mockExecute.mockReset();
+    // status check
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'in_progress' }, { stringValue: 'tpl-1' }]],
+      columnMetadata: [{ name: 'status' }, { name: 'template_id' }],
+    });
+    // field metadata
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'f-1' }, { stringValue: 'ncr_number' }, { stringValue: 'text' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }],
+    });
+    // upsert + timestamp + getFormRecordById calls
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('saveFormRecordValues', {
+      input: { recordId: 'rec-1', values: JSON.stringify({ ncr_number: 'NCR-001' }) },
+    })).catch(() => {});
+
+    // Status check has :id::uuid
+    const statusSql = mockExecute.mock.calls[0][0] as string;
+    expect(statusSql).toContain(':id::uuid');
+
+    // Field metadata has :templateId::uuid
+    const metaSql = mockExecute.mock.calls[1][0] as string;
+    expect(metaSql).toContain(':templateId::uuid');
+
+    // Upsert has :recordId::uuid and :fieldId::uuid
+    const upsertSql = mockExecute.mock.calls[2][0] as string;
+    expect(upsertSql).toContain(':recordId::uuid');
+    expect(upsertSql).toContain(':fieldId::uuid');
+  });
+
+  it('saveFormRecordValues applies value casts: relation→::uuid, date→::timestamptz, json→::jsonb, number→::numeric', async () => {
+    mockExecute.mockReset();
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'in_progress' }, { stringValue: 'tpl-1' }]],
+      columnMetadata: [{ name: 'status' }, { name: 'template_id' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'f-uuid' }, { stringValue: 'clause_ref' }, { stringValue: 'relation' }],
+        [{ stringValue: 'f-date' }, { stringValue: 'date_raised' }, { stringValue: 'date' }],
+        [{ stringValue: 'f-json' }, { stringValue: 'standards' }, { stringValue: 'multiselect' }],
+        [{ stringValue: 'f-num' }, { stringValue: 'quantity' }, { stringValue: 'number' }],
+      ],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }],
+    });
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('saveFormRecordValues', {
+      input: { recordId: 'rec-1', values: JSON.stringify({
+        clause_ref: 'a1b2c3d4-0000-4000-8000-000000000001',
+        date_raised: '2026-07-14T00:00:00Z',
+        standards: ['ISO9001'],
+        quantity: 42,
+      }) },
+    })).catch(() => {});
+
+    // Find the upsert calls (starting at index 2)
+    const upsertCalls = mockExecute.mock.calls.slice(2);
+    const sqls = upsertCalls.map(c => c[0] as string);
+    // At least one contains ::uuid for the value
+    expect(sqls.some(s => s.includes(':val::uuid'))).toBe(true);
+    expect(sqls.some(s => s.includes(':val::timestamptz'))).toBe(true);
+    expect(sqls.some(s => s.includes(':val::jsonb'))).toBe(true);
+    expect(sqls.some(s => s.includes(':val::numeric'))).toBe(true);
+  });
+});
+
+// ─── Null value → DELETE (BUG-2 fix) ─────────────────────────────────────────
+
+describe('saveFormRecordValues — null value clears field (DELETE)', () => {
+  it('null value triggers DELETE FROM record_values, not an INSERT of "null"', async () => {
+    mockExecute.mockReset();
+    // status check
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'in_progress' }, { stringValue: 'tpl-1' }]],
+      columnMetadata: [{ name: 'status' }, { name: 'template_id' }],
+    });
+    // field metadata
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'f-1' }, { stringValue: 'ncr_number' }, { stringValue: 'text' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }],
+    });
+    // DELETE + timestamp + getFormRecordById calls
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('saveFormRecordValues', {
+      input: { recordId: 'rec-1', values: JSON.stringify({ ncr_number: null }) },
+    })).catch(() => {});
+
+    // The call after field metadata should be DELETE, not INSERT
+    const deleteSql = mockExecute.mock.calls[2][0] as string;
+    expect(deleteSql).toContain('DELETE FROM forms.record_values');
+    expect(deleteSql).toContain(':recordId::uuid');
+    expect(deleteSql).toContain(':fieldId::uuid');
+    // Must NOT contain 'INSERT' or the literal string 'null'
+    expect(deleteSql).not.toContain('INSERT');
   });
 });
