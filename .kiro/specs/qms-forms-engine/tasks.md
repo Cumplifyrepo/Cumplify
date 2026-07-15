@@ -77,7 +77,7 @@
 - [x] Generator: instantiate a checklist from the clause registry per in-scope clauses via M3-native INSERT into m3.audit_checklists (per clause: question from intent_paraphrase, expected_evidence from required_sources, clause_ref from clause_no). Findings link via existing m3.audit_findings.checklist_id.
 - [x] Tests: 9001-only audit gets only 9001 clause rows; idempotent regenerate; counts computed; ::uuid casts pinned.
 
-**Depends on:** Tasks 3, spec-40 Task 2 (registry seeded). **D-rung:** D2. **Evidence:** `task-9-audit-checklist.log`
+**Depends on:** Tasks 3, spec-40 Task 2 (registry seeded). **D-rung:** D3 ✓ (redesigned M3-native after first-round reject; live: 28/28 rows + idempotent — see evidence addendum). **Evidence:** `task-9-audit-checklist.log`
 
 ## Task 10 — RLS load test (OQ-2 gate) [ARCHITECT]
 

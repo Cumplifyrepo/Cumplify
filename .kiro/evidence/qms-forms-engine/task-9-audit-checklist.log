@@ -67,3 +67,25 @@ The Internal Audit checklist is NOT a form record — it's native M3 data
 ## D-rung
 
 D2 — hermetic tests pass. Live execution requires migration 015 to be applied.
+
+## ARCHITECT ACCEPTANCE + LIVE READBACK (2026-07-15)
+
+First submission 9bf4360 REJECTED: no internal_audit_report template exists, so the
+COALESCE fallback created checklists ON THE NCR TEMPLATE (maps_to='m2_ncr' would fire
+on submit); JSONB stored against (SELECT id FROM template_fields LIMIT 1) — an
+arbitrary field; completion hardcoded. Root tension acknowledged as a spec framing
+error (task was written in forms terms; the catalog is SELECT-only by BC-1). Redesign
+directive: M3-native over the EXISTING m3.audit_checklists table. ba41cfc delivered
+it; 91ae603 = architect touch-up (question ends '?', test updated).
+
+| Step | Timestamp (UTC) | Exit | Result |
+|------|-----------------|------|--------|
+| Gates re-executed | 16:08 | 0 | tsc 0; suite 696+81 |
+| Deploy ApiStack (migration 015 UNIQUE(audit_id,clause_ref) + resolver) | 16:10:44 | 0 | migrator applied 015; resolver live |
+| Fixture | 16:10 | 0 | programme + audit 3ee5c914-…-6f3ffcb6446d (tenant-AAA, ISO9001, created via app_role + set_config) |
+| Live invoke 1 | 16:11:05 | 0 | 28 rows returned — exact ISO9001 registry count; question format "Does the organization …?" verified |
+| Live invoke 2 (idempotency) | 16:11 | 0 | 28 rows — ON CONFLICT skipped all, zero duplicates |
+| DB cross-check | 16:11 | 0 | 28 rows in m3.audit_checklists; 28/28 clause_refs join back to qms.clause_registry ISO9001 clause_nos |
+
+Task 9 D-rung: **D3**. Synthetic fixtures (programme/audit/checklists, created_by=
+architect-readback) join the purge list with the Task-5 readback NCR.
