@@ -1,0 +1,125 @@
+# Task 11 — Frontend: generation + document viewer + review
+# Evidence log — executed 2026-07-15 (round 2 — fixes per architect review)
+# Branch: develop (commit pending, amends 8b173b7)
+
+## Gate Results
+
+| Gate | Result | Detail |
+|------|--------|--------|
+| tsc --noEmit | PASS | 0 errors |
+| vitest run | PASS | 17 files, 121 tests, 0 failures |
+| npm run i18n:check | PASS | 0 hardcoded strings |
+| next build | PASS | 15 pages generated, compiled successfully |
+
+## Surfaces Delivered
+
+### A. Generate + Run View
+- Mutation: generateImsManual(input: {}) — no tenantId (SCHEMA-5)
+- Typed errors: ORG_PROFILE_REQUIRED (message + link), NO_STANDARDS_IN_SCOPE, GENERATION_UNAVAILABLE
+- Run view: listGenerationRuns(limit:10), section states (PROSE/GAP/NA_JUSTIFIED/FAILED/PENDING)
+  - NOTE: GenerationRun.sections use UPPERCASE kinds (schema enum); this is correct
+    for the run view. The document content JSON (derive.ts) uses lowercase — the
+    document-viewer handles that mapping.
+- Section headers: clauseRefs resolved via registryMap (passed from page.tsx) to
+  display `${standard} ${clauseNo}` from the clause_registry table.
+- GAP CTA: keyed off requiredSources from the registry entry matching the
+  section's clauseRefs UUIDs. Links to /m5 (risk), /m3 (audit), /m2 (CAPA),
+  /m4 (records), /forms (training, legal, objectives). Behavioral test asserts
+  a GAP section with register.risk_assessments renders "Risk Management" link.
+- Section review: markSectionReviewed(input:{sectionId}) — gated by canApprove(role,'M1')
+- WebSocket: onGenerationProgress(tenantId:$tenantId) via useTenantSubscription
+  - Event types: Generation.SectionComposed / SectionFailed / RunCompleted
+  - Updates section states in real-time; refetches on RunCompleted
+- Polling fallback: setInterval(refetchActiveRun, 10_000) while activeRun.status==='RUNNING'
+  — covers subscribe race and honest degradation if WSS fails.
+
+### WebSocket delivery observation (§3A mandate):
+- Subscription wired via useTenantSubscription hook (proven pattern from m5/page.tsx).
+- Enabled ONLY when activeRun.status === 'RUNNING'.
+- 10s polling fallback active independently of subscription events — refetchActiveRun
+  runs on interval regardless of whether onData fires.
+- Architect confirmed live WSS delivery works end-to-end (positive + C-6 negative).
+  The poll covers subscribe race / reconnect gaps.
+
+### B. Document Viewer (derive.ts contract — round 2 fix)
+- Content contract: `assembleManualContent` output from services/qms-generation/src/derive.ts
+- frontMatter.purpose = BC-1 disclaimer text (ALWAYS rendered in .disclaimer block)
+- frontMatter.normativeRefs[0].source = ISO store link (rendered as <a>)
+- Sections use LOWERCASE kind: 'prose' | 'gap' | 'na_justified' | 'failed'
+- clauseRefs = [{standard, clauseNo}] — rendered as `${c.standard} ${c.clauseNo}`
+- prose sections: sentences[].text joined as paragraph spans
+- gap sections: gap.missingSources rendered as named list items (NO sentences field)
+- na_justified: naJustification string rendered with N/A label
+- failed: explicit "Failed" marker (no body content in derive.ts output)
+- Review state: NOT in content JSON. Joined via listGenerationRuns → find run
+  where manualDocumentId === documentId → map run.sections by harmonizationKey →
+  get sectionId + reviewedBy + reviewedAt per content section.
+- Review action: markSectionReviewed(input:{sectionId}) — sectionId from the
+  run section join, not from content. Button gated by canApprove(role,'M1')
+  AND section.kind === 'prose' AND runSection exists.
+- Submit for approval: submitDocumentForApproval(id)
+  - UNREVIEWED_SECTIONS → t('unreviewedSections') (dedicated i18n key)
+  - UNRESOLVED_GAPS → t('unresolvedGaps')
+  - SoD violation → t('sodViolation')
+  - Success → t('submitSuccess') visible in success banner
+- CONTENT_UNAVAILABLE → graceful t('diffUnavailable') state
+
+### C. Diff View
+- getDocumentVersionDiff(v1, v2) → Diff { additions, deletions, content }
+- Version picker: checkboxes on version list, compare button when 2 selected
+- Content parsed: { [harmonizationKey]: { added[], removed[], kindChange? } }
+- Added lines: green tint bg; removed lines: red tint + strikethrough; monospace
+- CONTENT_UNAVAILABLE → "diff unavailable" state
+- Single-version / empty states: first-class (no document has v2 yet)
+- Retry: fetchDiff extracted to useCallback, used by both the [v1,v2] effect
+  AND the ErrorState onRetry prop (no infinite spinner).
+
+### D. Export Button
+- requestImsExport(documentId) wired
+- Backend returns "Unknown field" (architect Task 9 in flight)
+- GRACEFUL STATE: t('exportBlocked') — "Export not yet available (awaiting backend)"
+- BLOCKED-ON-ARCHITECT-TASK-9: export wired, awaiting backend resolver
+
+## Item 0 — Industry free-text debt test
+- 2 behavioral tests in page.test.tsx:
+  1. Select "Other" → text input appears → typed value lands in saveOrgProfile payload
+  2. Selecting a taxonomy value hides the free-text input
+- Both assert mutation variables (not expect(true))
+
+## i18n (all keys in en/es/pt, same commit)
+- qms.generation: +7 keys (sectionFailed, gapLinkTraining, gapLinkRisk,
+  gapLinkAudit, gapLinkRecords, gapLinkCapa, gapLinkLegal, gapLinkObjectives)
+- qms.docViewer: +4 keys (unreviewedSections, submitSuccess, versionLabel,
+  selectVersionForDiff) — total docViewer namespace now 19 keys
+- Zero hardcoded user-facing strings (i18n:check confirms)
+
+## BLOCKED items
+- Export: BLOCKED-ON-ARCHITECT-TASK-9 (requestImsExport resolver not deployed)
+- WebSocket live delivery: architect-verified; polling fallback active
+
+## Test coverage (behavioral, zero expect(true))
+- page.test.tsx: 6 tests (wizard fields, industry free-text, registry gaps)
+- generation-view.test.tsx: 12 tests (generate mutation, 3 error states,
+  section states, reviewed label, review button gating, markSectionReviewed
+  variables, failed error text, view-manual button, clause numbers from
+  registry, GAP CTA from requiredSources)
+- document-viewer.test.tsx: 14 tests (BC-1 from purpose, ISO link from
+  normativeRefs, prose sentences, clauseRefs as "standard clauseNo", GAP
+  missingSources, N/A justification, failed marker, CONTENT_UNAVAILABLE,
+  review button from run.sections join, markSectionReviewed with run sectionId,
+  UNREVIEWED_SECTIONS i18n, SoD i18n, submit success, export-blocked, nav)
+- diff-view.test.tsx: 4 tests (summary, per-section diff, kindChange, errors)
+
+## Files modified (12)
+- frontend/src/app/(authenticated)/qms/generation-view.tsx (REWRITTEN)
+- frontend/src/app/(authenticated)/qms/document-viewer.tsx (REWRITTEN)
+- frontend/src/app/(authenticated)/qms/diff-view.tsx (REWRITTEN)
+- frontend/src/app/(authenticated)/qms/generation-view.test.tsx (REWRITTEN)
+- frontend/src/app/(authenticated)/qms/document-viewer.test.tsx (REWRITTEN)
+- frontend/src/app/(authenticated)/qms/diff-view.test.tsx (unchanged from r1)
+- frontend/src/app/(authenticated)/qms/page.tsx (registryMap + tab fetch)
+- frontend/src/app/(authenticated)/qms/page.test.tsx (unchanged from r1)
+- frontend/src/app/(authenticated)/qms/page.module.css (+successMsg, gapSources)
+- frontend/messages/en.json (+11 new keys)
+- frontend/messages/es.json (+11 new keys)
+- frontend/messages/pt.json (+11 new keys)

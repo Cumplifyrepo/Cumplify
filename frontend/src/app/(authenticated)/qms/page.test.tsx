@@ -13,7 +13,7 @@ vi.mock('@/lib/auth-context', () => ({
 vi.mock('next-intl', () => {
   const t: Record<string, Record<string, string>> = {
     qms: { title: 'QMS', tabWizard: 'Profile', tabRegistry: 'Registry' },
-    'qms.wizard': { title: 'Org Profile', loading: 'Loading...', legalName: 'Legal Name', industry: 'Industry', productsServices: 'Products', employeeCount: 'Employees', managementRep: 'Rep', standardsInScope: 'Standards', designResponsibility: 'Design', coreProcesses: 'Processes', siteName: 'Site', save: 'Save', saving: 'Saving', targetCertDate: 'Cert Date', stepBasic: 'Basic', stepSites: 'Sites', stepScope: 'Scope', prev: 'Prev', next: 'Next', yearFounded: 'Year', supplyChainShape: 'Supply Chain', existingCertifications: 'Certs', manualExists: 'Manual?', outsourcedProcesses: 'Outsourced', siteAddress: 'Address', siteCity: 'City', siteState: 'State', siteCountry: 'Country', siteHeadcount: 'Headcount', addSite: 'Add Site', removeSite: 'Remove' },
+    'qms.wizard': { title: 'Org Profile', loading: 'Loading...', legalName: 'Legal Name', industry: 'Industry', industryOther: 'Specify your industry...', productsServices: 'Products', employeeCount: 'Employees', managementRep: 'Rep', standardsInScope: 'Standards', designResponsibility: 'Design', coreProcesses: 'Processes', siteName: 'Site', save: 'Save', saving: 'Saving', targetCertDate: 'Cert Date', stepBasic: 'Basic', stepSites: 'Sites', stepScope: 'Scope', prev: 'Prev', next: 'Next', yearFounded: 'Year', supplyChainShape: 'Supply Chain', existingCertifications: 'Certs', manualExists: 'Manual?', outsourcedProcesses: 'Outsourced', siteAddress: 'Address', siteCity: 'City', siteState: 'State', siteCountry: 'Country', siteHeadcount: 'Headcount', addSite: 'Add Site', removeSite: 'Remove' },
     'qms.registry': { loading: 'Loading...', namedGaps: 'Missing evidence', requiresRegisterData: 'Requires {register} data', naJustified: 'N/A justified', markApplicable: 'Applicable', markExcluded: 'Exclude', justificationPlaceholder: 'Justify', showAll: 'Show all' },
   };
   return { useTranslations: (ns: string) => { const fn = (k: string) => t[ns]?.[k] ?? `${ns}.${k}`; fn.has = (k: string) => !!(t[ns]?.[k]); return fn; } };
@@ -26,6 +26,12 @@ vi.mock('@/components/shared', () => ({
   SecondaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...p}>{children}</button>,
   ErrorState: ({ onRetry }: { onRetry: () => void }) => <button onClick={onRetry}>retry-action</button>,
 }));
+
+const DEFAULT_PROFILE_FILLED = {
+  legalName: 'Acme', sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Manufacturing',
+  productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: false,
+  standardsInScope: ['ISO9001'], managementRep: 'Jane',
+};
 
 const mockClauses = [
   { id: 'c-1', standard: 'ISO9001', clauseNo: '4.1', clauseTitle: 'Context', intentParaphrase: 'Understand context', requiredSources: '["org_profile.legalName","org_profile.industry"]', sortOrder: 1 },
@@ -69,6 +75,56 @@ describe('QMS Registry — ORG-4: exclude button disabled without justification'
 
     // Now the button should be enabled
     expect(excludeBtn.disabled).toBe(false);
+  });
+});
+
+describe('QMS Wizard — Industry free-text flow (T11 Item 0)', () => {
+  it('selecting Other reveals text input; typed value lands in saveOrgProfile payload', async () => {
+    mockQuery.mockImplementation((q: string) => {
+      if (q.includes('getOrgProfile')) return Promise.resolve({ getOrgProfile: { payload: JSON.stringify({ ...DEFAULT_PROFILE_FILLED, industry: 'Manufacturing' }) } });
+      return Promise.resolve({});
+    });
+    mockMutate.mockResolvedValue({ saveOrgProfile: { id: '1', currentVersion: 2, payload: '{}', updatedAt: '2026-07-15' } });
+
+    render(<QmsPage />);
+    await waitFor(() => expect(screen.getByDisplayValue('Manufacturing')).toBeInTheDocument());
+
+    // Select "Other" from dropdown
+    const select = screen.getByDisplayValue('Manufacturing');
+    fireEvent.change(select, { target: { value: 'Other' } });
+
+    // Text input should appear for custom industry
+    const customInput = await waitFor(() => screen.getByPlaceholderText('Specify your industry...'));
+    expect(customInput).toBeInTheDocument();
+
+    // Type a custom industry
+    fireEvent.change(customInput, { target: { value: 'Renewable Energy' } });
+
+    // Click save
+    fireEvent.click(screen.getByText('Save'));
+
+    await waitFor(() => expect(mockMutate).toHaveBeenCalled());
+    const mutateCall = mockMutate.mock.calls[0];
+    const payload = JSON.parse(mutateCall[1].input.payload);
+    expect(payload.industry).toBe('Renewable Energy');
+  });
+
+  it('selecting a taxonomy value hides the free-text input', async () => {
+    mockQuery.mockImplementation((q: string) => {
+      if (q.includes('getOrgProfile')) return Promise.resolve({ getOrgProfile: { payload: JSON.stringify({ ...DEFAULT_PROFILE_FILLED, industry: 'Custom stuff' }) } });
+      return Promise.resolve({});
+    });
+
+    render(<QmsPage />);
+    // Profile has non-taxonomy industry → shows Other in dropdown + text input visible
+    await waitFor(() => expect(screen.getByPlaceholderText('Specify your industry...')).toBeInTheDocument());
+
+    // Select a taxonomy value
+    const select = screen.getByDisplayValue('Other');
+    fireEvent.change(select, { target: { value: 'Healthcare' } });
+
+    // The free-text input should disappear
+    expect(screen.queryByPlaceholderText('Specify your industry...')).not.toBeInTheDocument();
   });
 });
 

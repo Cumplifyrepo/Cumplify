@@ -107,10 +107,12 @@
 
 ## Task 11 — Frontend: generation + document viewer + review [KIRO]
 
-- [ ] Generate action → run view with live per-section progress (`onGenerationProgress`), section states (prose/gap/na/failed), gap CTA links.
-- [ ] Document viewer: sections in clause order, GAP blocks visibly distinct (never prose-styled), BC-1 disclaimer block, review action per section, submit-for-approval gated by APR-1/3 errors surfaced honestly.
-- [ ] Diff view on version history (Task 7); export button → presigned ZIP.
-- [ ] i18n same commit.
+- [x] Generate action → run view with live per-section progress (`onGenerationProgress`), section states (prose/gap/na/failed), gap CTA links.
+- [x] Document viewer: sections in clause order, GAP blocks visibly distinct (never prose-styled), BC-1 disclaimer block, review action per section, submit-for-approval gated by APR-1/3 errors surfaced honestly.
+- [x] Diff view on version history (Task 7); export button → presigned ZIP.
+- [x] i18n same commit.
+
+**Note:** Export BLOCKED-ON-ARCHITECT-TASK-9 (requestImsExport wired, UI shows graceful "not yet available" state; backend resolver not yet deployed). WebSocket live delivery unverified in hermetic tests; refetch fallback active — architect to verify live WSS with tenant-arch-smoke.
 
 **Depends on:** Tasks 7, 8, 10. **D-rung:** D2. **Evidence:** `task-11-doc-ui.log`
 

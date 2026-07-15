@@ -4,6 +4,9 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { PageHeader, Panel, PrimaryButton, SecondaryButton, ErrorState } from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
+import { GenerationView } from './generation-view';
+import { DocumentViewer } from './document-viewer';
+import { DiffView } from './diff-view';
 import styles from './page.module.css';
 
 /**
@@ -44,9 +47,11 @@ export default function QmsPage() {
   const t = useTranslations('qms');
   const tWizard = useTranslations('qms.wizard');
   const tRegistry = useTranslations('qms.registry');
+  const tGen = useTranslations('qms.generation');
+  const tViewer = useTranslations('qms.docViewer');
   const { query, mutate } = useGraphQL();
 
-  const [tab, setTab] = useState<'wizard' | 'registry'>('wizard');
+  const [tab, setTab] = useState<'wizard' | 'registry' | 'generation' | 'viewer' | 'diff'>('wizard');
   const [profile, setProfile] = useState<OrgProfile>(DEFAULT_PROFILE);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -57,6 +62,11 @@ export default function QmsPage() {
   const [applicability, setApplicability] = useState<Map<string, Applicability>>(new Map());
   const [registryLoading, setRegistryLoading] = useState(false);
   const [showAllStandards, setShowAllStandards] = useState(false);
+
+  // Document viewer / diff state
+  const [viewDocumentId, setViewDocumentId] = useState<string | null>(null);
+  const [diffV1, setDiffV1] = useState<string | null>(null);
+  const [diffV2, setDiffV2] = useState<string | null>(null);
 
   // ─── Wizard: Load profile ──────────────────────────────────────────────────
   const fetchProfile = useCallback(async () => {
@@ -90,7 +100,7 @@ export default function QmsPage() {
     } catch { setError(true); } finally { setRegistryLoading(false); }
   }, [query]);
 
-  useEffect(() => { if (tab === 'registry') fetchRegistry(); }, [tab, fetchRegistry]);
+  useEffect(() => { if (tab === 'registry' || tab === 'generation') fetchRegistry(); }, [tab, fetchRegistry]);
 
   async function handleSetApplicability(clauseId: string, applicable: boolean, justification?: string) {
     try {
@@ -130,8 +140,50 @@ export default function QmsPage() {
     return clauses.filter(c => profile.standardsInScope.includes(c.standard));
   }, [clauses, profile.standardsInScope, showAllStandards]);
 
+  // Registry map by id for GenerationView GAP CTA resolution
+  const registryMapById = useMemo(() => {
+    const map = new Map<string, { id: string; standard: string; clauseNo: string; clauseTitle: string; requiredSources: string }>();
+    for (const c of clauses) map.set(c.id, c);
+    return map;
+  }, [clauses]);
+
   // ─── Render ────────────────────────────────────────────────────────────────
   if (error && !loading) return <ErrorState onRetry={fetchProfile} />;
+
+  // Navigation helpers
+  function handleViewDocument(documentId: string) {
+    setViewDocumentId(documentId);
+    setTab('viewer');
+  }
+  function handleDiff(docId: string, v1: string, v2: string) {
+    setViewDocumentId(docId);
+    setDiffV1(v1);
+    setDiffV2(v2);
+    setTab('diff');
+  }
+
+  // Viewer/Diff sub-views render without the full tab chrome
+  if (tab === 'viewer' && viewDocumentId) {
+    return (
+      <>
+        <PageHeader title={tViewer('title')} />
+        <DocumentViewer
+          documentId={viewDocumentId}
+          onBack={() => setTab('generation')}
+          onDiff={(docId, v1, v2) => handleDiff(docId, v1, v2)}
+        />
+      </>
+    );
+  }
+
+  if (tab === 'diff' && diffV1 && diffV2) {
+    return (
+      <>
+        <PageHeader title={tViewer('diffTitle')} />
+        <DiffView v1={diffV1} v2={diffV2} onBack={() => { setTab('viewer'); }} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -139,6 +191,7 @@ export default function QmsPage() {
       <div className={styles.tabs}>
         <button type="button" className={`${styles.tab} ${tab === 'wizard' ? styles.tabActive : ''}`} onClick={() => setTab('wizard')}>{t('tabWizard')}</button>
         <button type="button" className={`${styles.tab} ${tab === 'registry' ? styles.tabActive : ''}`} onClick={() => setTab('registry')}>{t('tabRegistry')}</button>
+        <button type="button" className={`${styles.tab} ${tab === 'generation' ? styles.tabActive : ''}`} onClick={() => setTab('generation')} data-testid="tab-generation">{tGen('title')}</button>
       </div>
 
       {tab === 'wizard' && (loading ? <p className={styles.loading}>{tWizard('loading')}</p> : (
@@ -253,6 +306,10 @@ export default function QmsPage() {
           </div>
         </>
       ))}
+
+      {tab === 'generation' && (
+        <GenerationView onViewDocument={handleViewDocument} registryMap={registryMapById} />
+      )}
     </>
   );
 
@@ -266,7 +323,7 @@ export default function QmsPage() {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+function getNestedValue(obj: unknown, path: string): unknown {
   const parts = path.split('.');
   let current: unknown = obj;
   for (const p of parts) {
