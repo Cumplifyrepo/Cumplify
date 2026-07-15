@@ -191,6 +191,11 @@ function buildConverseInput(params: ConverseParams): ConverseCommandInput {
 function toBedrockMessage(msg: ConversationMessage): Message {
   const content = msg.content.map((block) => {
     if ('text' in block) return { text: block.text } as const;
+    // Selective guardrail evaluation: only guardContent blocks are input-evaluated
+    // when present (types.ts ContentBlock.guardedText).
+    if ('guardedText' in block) {
+      return { guardContent: { text: { text: block.guardedText } } } as const;
+    }
     if ('toolUse' in block) {
       return {
         toolUse: {

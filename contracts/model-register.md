@@ -175,6 +175,21 @@ form declined + margin-fail at credit pricing).
 
 ---
 
+### Doc-Composer (spec-40 QMS Document Engine)
+
+| Field | Value |
+|-------|-------|
+| **Seat** | Doc-Composer (IMS manual + clause document generation — spec 40) |
+| **Assigned Model** | `us.amazon.nova-pro-v1:0` |
+| **Status** | PROVISIONAL (golden-set eval ≥4.0/5 at spec-40 Task 12 — owner ratifies there) |
+| **Justification** | Same Pro-class model as Workhorse/Editor-AI, whose evals already cover fact-grounded prose + structured output at the quality bar. Output contract `{sentences:[{text,factRefs[]}]}` enforced twice: invoker schema-retry (shape) + ComposeSection deterministic checker (fact resolution, house style — code, not model). Routes to the dedicated DocGenGuardrail (BC-5, owner-approved 2026-07-14): NO PII anonymization — ACC-9 requires the tenant's own names unredacted in their manual; SSN/card BLOCK and PROMPT_ATTACK retained. All other seats keep the agent guardrail. |
+| **Eval Evidence** | pending — spec-40 Task 12 golden set (`.kiro/evidence/qms-document-engine/task-12-quality.log`); seat provisioning evidence `task-4-seat.log` |
+| **$/task P50** | measured from the live meter at spec-40 ACC readback (NFR-2 — meter-read, not estimated) |
+| **Margin at credit pricing** | carries the workhorse weights row (same modelId — MODELWEIGHT# is keyed by model, not seat); seat-shape margin measured at Task 12 |
+| **Expiry** | 2026-10-06 (nova-pro cohort re-validation date) |
+
+---
+
 ## Campaign Summary
 
 | Metric | Value |

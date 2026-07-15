@@ -1,0 +1,76 @@
+# Task 4 — `doc-composer` seat + guardrail routing (spec 40, design §4.4)
+
+Executor: architect (Claude). D-rung: D3 (live invoke via deployed invoker).
+
+## What shipped
+
+- `services/ai-invoker/src/types.ts` — `SeatId`/`SeatTier` += `'doc-composer'`;
+  `SEAT_DEFAULTS['doc-composer'] = { temperature: 0.2, maxTokens: 4096 }`;
+  `ContentBlock` += `{ guardedText }` (see live defect below).
+- `services/ai-invoker/src/doc-composer-schema.ts` — `DOC_COMPOSER_OUTPUT_SCHEMA`
+  `{sentences:[{text, factRefs[]}]}` + `DocComposerOutput` type, exported from the
+  invoker index for ComposeSection (Task 5). Shape only — fact RESOLUTION stays in
+  the deterministic checker (BC-4: the model never grades itself).
+- `services/ai-invoker/src/guardrail.ts` — `buildGuardrailConfig(seat)`:
+  `doc-composer` → `DOCGEN_GUARDRAIL_*`, every other seat → agent guardrail.
+  If `DOCGEN_GUARDRAIL_ID` is unset the seat gets NO guardrail rather than
+  falling back to the agent guardrail (a fallback would silently anonymize
+  tenant names out of generated manuals — the exact ACC-9 failure).
+- Register ×3 in lockstep (drift test enforces): `contracts/model-register.md`
+  appended Doc-Composer entry (`us.amazon.nova-pro-v1:0`, PROVISIONAL — golden-set
+  eval ≥4.0/5 at Task 12, owner ratifies there); `compile-register.ts` SEAT_MAP;
+  `register-compiled.json` regenerated (11 seats); drift-test SEAT_NAME_TO_ID.
+- MODELWEIGHT#: keyed by modelId, NOT seat — nova-pro row pre-exists (workhorse/
+  editor-ai). No new row needed; pinned by test so a future model change without
+  a weights row fails the suite before it fails `loadWeights` in production.
+- `schema-retry.ts` — validator deepened from top-level-only to recursive
+  (type/required/properties/items/minItems/minLength/additionalProperties:false).
+  The old check silently PASSED sentences missing factRefs — caught by the new
+  rejection tests. No existing caller regressed (no agent declares an
+  outputSchema today; tool-loop passes it through).
+- Tests: `guardrail.test.ts` (routing pinned BOTH directions incl. all 10 agent
+  seats), `doc-composer-seat.test.ts` (register entry, defaults, weights row,
+  schema accept/reject ×5), converse guardContent mapping test.
+
+## Live defect found & fixed (the reason readbacks exercise behavior)
+
+First live invoke: `guardrail_intervened`, text "Request blocked by content
+policy.", credits 0. Isolation (exp1/exp2): plain prose request PASSES with
+names intact; adding the strict JSON-format instruction ("Respond with ONLY a
+JSON object … and nothing else") trips PROMPT_ATTACK at input HIGH. Every
+production doc-composer prompt needs a format instruction → seat would be
+unusable at HIGH; lowering the filter was rejected (the injection surface —
+tenant-entered field values — is exactly what it must keep guarding).
+
+Fix: Bedrock **selective guardrail evaluation** — new `guardedText` content
+block mapped to Converse `guardContent`. When present, input policies evaluate
+ONLY those blocks: our scaffolding (format instruction) rides unevaluated,
+tenant-sourced facts stay fully guarded, PROMPT_ATTACK stays HIGH.
+**Task 5 contract: ComposeSection MUST wrap every tenant-sourced fact in
+`guardedText` and keep its own scaffolding in plain `text` blocks.**
+
+## Readback (profile cumplify-dev-admin unless noted; fn Dev-AiStack-AiInvokerFnB11B59B3-qcKES9iF6ddc)
+
+| # | Timestamp (UTC) | Step | Exit | Output SHA (16) | Result |
+|---|-----------------|------|------|-----------------|--------|
+| 1 | 2026-07-15T17:22 | AiStack deploy #1 (seat+routing) | 0 | — | 70.3s clean |
+| 2 | 2026-07-15T17:23:12 | invoke doc-composer + schema | 0 (FunctionError) | 91a4d8aa8ebce340 | SCHEMA_VALIDATION_ERROR after retry — led to discovery |
+| 3 | 2026-07-15T17:24–25 | isolation exp1 (plain prose) | 0 | fbdf88f97ac72e5d | end_turn; "MB Design & Remodel LLC"/"Julio Medrano" UNREDACTED via docgen route |
+| 4 | 2026-07-15T17:24–25 | isolation exp2 (+JSON instruction) | 0 | — | guardrail_intervened → trigger = format instruction × PROMPT_ATTACK HIGH |
+| 5 | 2026-07-15T17:26 | AiStack deploy #2 (guardContent) | 0 | — | 65.4s clean |
+| 6 | 2026-07-15T17:27:55 | invoke doc-composer, guarded facts + schema | 0 | e3180a1e90bad181 | end_turn; schema-valid; 2 sentences, factRefs [F1,F2]/[F2,F3]; names UNREDACTED; credits 0.4912; 126in/122out |
+| 7 | 2026-07-15T17:28:13 | control: workhorse, same NAME+EMAIL | 0 | 807683404bf5642e | guardrail_intervened→masked: "{NAME}"/"{EMAIL}" — agent guardrail STILL anonymizes; routing proven both directions |
+| 8 | 2026-07-15T17:28:27 | DDB meter TENANT#tenant-arch-smoke#METER MONTH#202607 | 0 | — | creditsUsed 0.932, lastUpdated 17:28:15Z |
+| 9 | 2026-07-15T17:28 | invoker logs, 6-min window | 0 | — | 0 × "Failed to emit credits telemetry"; 2 × "Invocation complete" carrying seat + credits; detail contract (`telemetry.credits.consumed` w/ seat + numeric credits) pinned by metering.test.ts |
+
+Gates at commit: full backend suite + typecheck exit 0.
+
+## Notes
+
+- ACC-9 first half CLOSED here live (names unredacted through doc-composer;
+  agent seats unaffected — control row 7). Second half (full manual demo) at
+  ACC readback with owner.
+- Synthetic residue: meter row `TENANT#tenant-arch-smoke#METER / MONTH#202607`
+  (0.932 credits) — added to the purge list before owner walkthroughs.
+- $/task P50 for the register is METER-READ at spec-40 ACC readback (NFR-2),
+  not estimated from this single smoke.

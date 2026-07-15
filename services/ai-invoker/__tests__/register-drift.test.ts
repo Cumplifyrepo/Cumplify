@@ -69,6 +69,7 @@ const SEAT_NAME_TO_ID: Record<string, string> = {
   'Editor-AI (ISO document drafting/completion — policies, procedures, CAPA records, work instructions)': 'editor-ai',
   'Pain-distiller (customer feedback extraction + synthesis)': 'pain-distiller',
   'LegalLedger (statutory/legal-text interpretation — 14001 6.1.3, 45001 6.1.3, 9.1.2)': 'legal-ledger',
+  'Doc-Composer (IMS manual + clause document generation — spec 40)': 'doc-composer',
 };
 
 describe('register-drift (CI gate, F-4)', () => {

@@ -11,11 +11,72 @@ import { InvokeError } from './types.js';
 
 const logger = new Logger({ serviceName: 'ai-invoker-schema-retry' });
 
+/** JSON-Schema-style type name for a parsed value */
+function typeOf(v: unknown): string {
+  if (v === null) return 'null';
+  if (Array.isArray(v)) return 'array';
+  return typeof v;
+}
+
+/**
+ * Recursive structural validation. Covers exactly the keywords the in-house
+ * output contracts use: type, required, properties, items, minItems,
+ * minLength, additionalProperties:false. NOT full JSON Schema — AJV stays
+ * deliberately out of the Lambda bundle; add keywords here WITH tests when
+ * a contract needs them.
+ */
+function validateNode(
+  value: unknown,
+  schema: Record<string, unknown>,
+  path: string,
+  errors: string[],
+): void {
+  if (schema.type) {
+    const actual = typeOf(value);
+    const expected = schema.type as string;
+    if (actual !== expected && !(expected === 'integer' && actual === 'number')) {
+      errors.push(`Property '${path || '(root)'}' expected type '${expected}', got '${actual}'`);
+      return; // deeper checks are meaningless on the wrong type
+    }
+  }
+
+  if (typeOf(value) === 'object') {
+    const obj = value as Record<string, unknown>;
+    const prefix = path ? `${path}.` : '';
+    for (const key of (schema.required as string[]) ?? []) {
+      if (!(key in obj)) errors.push(`Missing required property: '${prefix}${key}'`);
+    }
+    const properties = (schema.properties as Record<string, Record<string, unknown>>) ?? {};
+    for (const [key, propSchema] of Object.entries(properties)) {
+      if (key in obj) validateNode(obj[key], propSchema, `${prefix}${key}`, errors);
+    }
+    if (schema.additionalProperties === false) {
+      for (const key of Object.keys(obj)) {
+        if (!(key in properties)) errors.push(`Unexpected property: '${prefix}${key}'`);
+      }
+    }
+  } else if (typeOf(value) === 'array') {
+    const arr = value as unknown[];
+    if (typeof schema.minItems === 'number' && arr.length < schema.minItems) {
+      errors.push(`Property '${path || '(root)'}' expected at least ${schema.minItems} items, got ${arr.length}`);
+    }
+    if (schema.items) {
+      arr.forEach((item, i) =>
+        validateNode(item, schema.items as Record<string, unknown>, `${path}[${i}]`, errors));
+    }
+  } else if (typeof value === 'string') {
+    if (typeof schema.minLength === 'number' && value.length < schema.minLength) {
+      errors.push(`Property '${path || '(root)'}' expected minLength ${schema.minLength}, got ${value.length}`);
+    }
+  }
+}
+
 /**
  * Validate a JSON response string against a declared schema.
- * Uses a lightweight structural check (type/required fields).
- * For production, this should use AJV or similar — currently checks
- * that the response is valid JSON and matches top-level required keys.
+ * Recursive structural check (see validateNode) — deepened for spec-40 Task 4:
+ * the doc-composer contract is nested (factRefs per sentence), and the
+ * previous top-level-only check silently passed malformed sentences through
+ * to the deterministic checker.
  */
 export function validateSchema(
   responseText: string,
@@ -37,25 +98,8 @@ export function validateSchema(
     return { valid: false, errors };
   }
 
-  // Step 2: check required properties if declared in schema
-  const required = (schema.required as string[]) ?? [];
-  const obj = parsed as Record<string, unknown>;
-  for (const key of required) {
-    if (!(key in obj)) {
-      errors.push(`Missing required property: '${key}'`);
-    }
-  }
-
-  // Step 3: check top-level property types if properties declared
-  const properties = (schema.properties as Record<string, { type?: string }>) ?? {};
-  for (const [key, propSchema] of Object.entries(properties)) {
-    if (key in obj && propSchema.type) {
-      const actualType = Array.isArray(obj[key]) ? 'array' : typeof obj[key];
-      if (actualType !== propSchema.type && !(propSchema.type === 'integer' && typeof obj[key] === 'number')) {
-        errors.push(`Property '${key}' expected type '${propSchema.type}', got '${actualType}'`);
-      }
-    }
-  }
+  // Step 2: recursive structural validation
+  validateNode(parsed, schema, '', errors);
 
   return { valid: errors.length === 0, errors };
 }

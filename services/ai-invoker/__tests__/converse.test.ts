@@ -156,6 +156,26 @@ describe('converse', () => {
     });
   });
 
+  it('maps guardedText blocks to Bedrock guardContent (selective evaluation, spec-40 Task 4)', async () => {
+    mockSend.mockResolvedValueOnce(successResponse());
+
+    await converse(baseParams({
+      messages: [{
+        role: 'user',
+        content: [
+          { text: 'Format instruction scaffolding.' },
+          { guardedText: 'F1: tenant-entered fact.' },
+        ],
+      }],
+    }));
+
+    const cmd = mockSend.mock.calls[0][0];
+    expect(cmd.input.messages[0].content).toEqual([
+      { text: 'Format instruction scaffolding.' },
+      { guardContent: { text: { text: 'F1: tenant-entered fact.' } } },
+    ]);
+  });
+
   it('extracts tool_use blocks from response', async () => {
     mockSend.mockResolvedValueOnce({
       output: {

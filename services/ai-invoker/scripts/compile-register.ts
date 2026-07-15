@@ -45,6 +45,9 @@ const SEAT_MAP: Record<SeatId, { modelId: string; status: RegisterStatus; expiry
   'editor-ai': { modelId: 'us.amazon.nova-pro-v1:0', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.854, tier: 'editor-ai' },
   'pain-distiller': { modelId: 'qwen.qwen3-next-80b-a3b', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.978, tier: 'pain-distiller' },
   'legal-ledger': { modelId: 'zai.glm-5', status: 'ASSIGNED', expiry: '2026-10-08', marginHeadroom: 0.853, tier: 'legal-ledger' },
+  // spec-40 §4.4: same Pro-class model as workhorse (weights row shared by modelId);
+  // PROVISIONAL until the Task-12 golden-set eval (≥4.0/5) — owner ratifies there.
+  'doc-composer': { modelId: 'us.amazon.nova-pro-v1:0', status: 'PROVISIONAL', expiry: '2026-10-06', marginHeadroom: 0.948, tier: 'doc-composer' },
 };
 
 function main(): void {

@@ -21,6 +21,8 @@ const logger = new Logger({ serviceName: 'ai-invoker' });
 export type { InvokeRequest, InvokeResponse } from './types.js';
 export { InvokeError } from './types.js';
 export type { SeatId, CompiledRegister, ModelWeight } from './types.js';
+export { DOC_COMPOSER_OUTPUT_SCHEMA } from './doc-composer-schema.js';
+export type { DocComposerOutput } from './doc-composer-schema.js';
 
 /**
  * Invoke a model through the one-door serving path.
@@ -47,7 +49,8 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   const maxTokens = request.maxTokens ?? defaults.maxTokens;
 
   // Step 3+4: Build params and call Converse (with optional schema-retry)
-  const guardrailConfig = buildGuardrailConfig();
+  // Seat-routed (spec-40 §4.4): doc-composer → DocGenGuardrail, else agent guardrail
+  const guardrailConfig = buildGuardrailConfig(seat);
   const converseParams = {
     modelId,
     messages: request.messages,

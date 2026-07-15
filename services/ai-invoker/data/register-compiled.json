@@ -79,8 +79,16 @@
       "marginHeadroom": 0.853,
       "tier": "legal-ledger",
       "cachingSupported": false
+    },
+    "doc-composer": {
+      "modelId": "us.amazon.nova-pro-v1:0",
+      "status": "PROVISIONAL",
+      "expiry": "2026-10-06",
+      "marginHeadroom": 0.948,
+      "tier": "doc-composer",
+      "cachingSupported": true
     }
   },
-  "compiledAt": "2026-07-10T01:07:47.369Z",
-  "sourceCommit": "9432b3d"
+  "compiledAt": "2026-07-15T17:18:05.455Z",
+  "sourceCommit": "d11d803"
 }

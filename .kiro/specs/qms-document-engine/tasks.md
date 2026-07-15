@@ -43,11 +43,12 @@
 
 ## Task 4 — `doc-composer` seat + guardrail routing [ARCHITECT]
 
-- [ ] `SeatId` += `'doc-composer'`; registry entry + `MODELWEIGHT#` seed row; structured output schema `{sentences:[{text, factRefs[]}]}`.
-- [ ] `guardrail.ts`: route `doc-composer` → `DOCGEN_GUARDRAIL_*`, all other seats unchanged; unit tests both routes + default.
-- [ ] Metering smoke: seat invocation emits `telemetry.credits.consumed`.
+- [x] `SeatId` += `'doc-composer'`; registry entry (register ×3 in lockstep, drift-tested) + `MODELWEIGHT#` row (keyed by modelId — nova-pro row pre-exists, pinned by test); structured output schema `{sentences:[{text, factRefs[]}]}` exported for Task 5.
+- [x] `guardrail.ts`: route `doc-composer` → `DOCGEN_GUARDRAIL_*`, all other seats unchanged; unit tests both routes + default + no-fallback-to-agent-guardrail.
+- [x] Metering smoke: live invoke metered credits 0.4912, DDB meter row written, telemetry emitted (readback rows 6/8/9).
+- [x] LIVE FINDING fixed in-lane: PROMPT_ATTACK HIGH blocks JSON-format instructions → `guardedText`/guardContent selective evaluation (HIGH retained; **Task 5 must wrap tenant facts in guardedText**). Schema-retry validator deepened to recursive (was top-level-only — passed factRef-less sentences).
 
-**Depends on:** Task 0. **D-rung:** D3 (live invoke via invoker). **Evidence:** `task-4-seat.log`
+**Depends on:** Task 0. **D-rung:** D3 ✓ (names-unredacted proven live BOTH directions — evidence rows 6-7). **Evidence:** `task-4-seat.log`
 
 ## Task 5 — DocGenStateMachine: Seed + Compose + checker [ARCHITECT]
 

@@ -14,10 +14,11 @@ export type SeatId =
   | 'snapshot'
   | 'editor-ai'
   | 'pain-distiller'
-  | 'legal-ledger';
+  | 'legal-ledger'
+  | 'doc-composer';
 
 /** Tier grouping for seat-specific logic (schema-retry, caching) */
-export type SeatTier = 'workhorse' | 'lightweight' | 'guru' | 'micro' | 'snapshot' | 'editor-ai' | 'pain-distiller' | 'legal-ledger';
+export type SeatTier = 'workhorse' | 'lightweight' | 'guru' | 'micro' | 'snapshot' | 'editor-ai' | 'pain-distiller' | 'legal-ledger' | 'doc-composer';
 
 /** Register entry status */
 export type RegisterStatus = 'ASSIGNED' | 'PROVISIONAL' | 'EXPIRED' | 'UNASSIGNED';
@@ -78,7 +79,16 @@ export interface ConversationMessage {
 export type ContentBlock =
   | { text: string }
   | { toolUse: { toolUseId: string; name: string; input: unknown } }
-  | { toolResult: { toolUseId: string; content: ContentBlock[]; status?: 'success' | 'error' } };
+  | { toolResult: { toolUseId: string; content: ContentBlock[]; status?: 'success' | 'error' } }
+  /**
+   * Selective guardrail evaluation (Bedrock guardContent): when ANY guardedText
+   * block is present, input guardrail policies evaluate ONLY those blocks.
+   * Callers wrap UNTRUSTED content (tenant-entered field values) in guardedText
+   * and keep their own scaffolding (format instructions) in plain text blocks —
+   * live-proven 2026-07-15: PROMPT_ATTACK HIGH blocks strict JSON-format
+   * instructions when the whole prompt is evaluated (doc-composer seat).
+   */
+  | { guardedText: string };
 
 /** Tool configuration for Converse API */
 export interface ToolConfig {
@@ -147,4 +157,6 @@ export const SEAT_DEFAULTS: Record<SeatTier, SeatDefaults> = {
   'editor-ai': { temperature: 0.4, maxTokens: 4096 },
   'pain-distiller': { temperature: 0.2, maxTokens: 2048 },
   'legal-ledger': { temperature: 0.2, maxTokens: 4096 },
+  // spec-40: fact-grounded prose — low temperature, full-section budget
+  'doc-composer': { temperature: 0.2, maxTokens: 4096 },
 };
