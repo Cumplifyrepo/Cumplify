@@ -1,0 +1,42 @@
+# Task 1 — Migration 012_qms_forms.sql
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T14:26:00Z
+# Base commit: feb52141becd9509047494185e4f8594236d0803
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 624 tests pass, 56 files (14.23s) |
+| i18n check | `npm run i18n:check` | 0 | No violations |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/migrations/012_qms_forms.sql` | DDL: forms schema, 3 catalog tables (templates, template_sections, template_fields), 2 tenant tables (records, record_values), CHECKs, indexes, RLS, grants |
+| `services/api/__tests__/qms-forms-catalog.test.ts` | 22 hermetic tests: migration structural checks, BC-1/BC-3 assertions against real m2 column names |
+| `services/api/__tests__/cross-tenant-denial.int.test.ts` | Extended: 6 new probes for forms.records + forms.record_values (same pattern as m5.risks) |
+
+## Migration summary
+
+- Schema: `forms`
+- Catalog tables (tenant-less, SELECT-only for app_role):
+  - `forms.templates` (key UNIQUE, standards CHECK ⊆ {ISO9001,ISO14001,ISO45001,IMS}, maps_to CHECK)
+  - `forms.template_sections` (template_id FK, sort_order)
+  - `forms.template_fields` (section_id FK, field_type CHECK 10 types, relation_requires_target CHECK, maps_to_column, sort_order)
+- Tenant tables (full DML under RLS):
+  - `forms.records` (tenant_id, template_id FK, status CHECK 5 states, opened_by, completed_by/at, approved_by/at, m2_nc_id, m4_record_id)
+  - `forms.record_values` (record_id FK, tenant_id, field_id FK, exactly_one_value CHECK, UNIQUE(record_id, field_id), partial indexes on value_uuid/value_date)
+- RLS: ENABLE + FORCE + tenant_isolation policy on records + record_values
+- Grants: USAGE on schema; SELECT on catalog; SIDUD on tenant tables
+
+## D-rung
+
+D2 — authored, tested, gates pass. Awaiting [ARCHITECT] review + live apply (D3).
+
+## Architect handoff
+
+Migration deploys in the same wave as spec-40 Task 1 (011_qms_engine.sql).
+Architect action: review SQL, apply to dev via Data API, live-verify pg_policies + denial test.

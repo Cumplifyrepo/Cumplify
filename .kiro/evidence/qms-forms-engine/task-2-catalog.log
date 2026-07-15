@@ -1,0 +1,70 @@
+# Task 2 — Template catalog seed (TPL-4, TPL-5, BC-3)
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T14:26:00Z
+# Base commit: feb52141becd9509047494185e4f8594236d0803
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 624 tests pass, 56 files |
+| i18n check | `npm run i18n:check` | 0 | No violations |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/migrations/013_qms_forms_seed.sql` | Seed: 15 templates with sections + typed fields |
+| `frontend/messages/en.json` | forms.* i18n namespace (EN) |
+| `frontend/messages/es.json` | forms.* i18n namespace (ES) |
+| `frontend/messages/pt.json` | forms.* i18n namespace (PT) |
+| `services/api/__tests__/qms-forms-catalog.test.ts` | 22 hermetic tests (shared with Task 1 evidence) |
+
+## Catalog summary
+
+15 templates seeded (TPL-4):
+1. NCR (8.7/10.2) — 6 sections, 35 fields, maps_to='m2_ncr', requires_approval
+2. Management Review (9.3) — 3 sections, 19 fields, requires_approval
+3. Risk & Opportunity (6.1) — 3 sections, 13 fields
+4. Env. Aspects & Impacts (6.1.2, 14001) — 2 sections, 9 fields
+5. Legal Obligations (6.1.3, 14001/45001) — 2 sections, 10 fields
+6. HIRA (6.1.2, 45001) — 3 sections, 12 fields
+7. Incident Investigation (10.2, 45001) — 3 sections, 14 fields, requires_approval
+8. Emergency Preparedness (8.2) — 2 sections, 9 fields
+9. Worker Consultation (5.4, 45001) — 2 sections, 7 fields
+10. Competence & Training (7.2) — 2 sections, 10 fields
+11. Supplier Evaluation (8.4.1, 9001) — 2 sections, 10 fields
+12. Calibration Log (7.1.5, 9001) — 2 sections, 11 fields
+13. Document Change Request (7.5) — 2 sections, 10 fields, requires_approval
+14. Objectives & Improvement (6.2) — 2 sections, 10 fields
+15. Interested Parties (4.2) — 2 sections, 9 fields
+
+**Totals: 38 sections · 188 fields** (computed from rows, never hardcoded — BC-1).
+
+## BC-3 verification (NCR → M2 mapping)
+
+Required mapped fields proven by test:
+| Field key | maps_to_column | Target table | Required? |
+|-----------|----------------|--------------|-----------|
+| standard | standard | m2.nonconformities | ✓ YES |
+| source | source | m2.nonconformities | ✓ YES |
+| nc_type | nc_type | m2.nonconformities | ✓ YES |
+| clause_ref | clause_ref | m2.nonconformities | ✓ YES (relation→clause) |
+| severity | severity | m2.nonconformities | ✓ YES |
+| nc_description | description | m2.nonconformities | ✓ YES |
+| raised_by | raised_by | m2.nonconformities | ✓ YES |
+| corrective_action_desc | action_desc | m2.corrective_actions | ✓ YES |
+| ca_owner | owner_id | m2.corrective_actions | ✓ YES |
+| ca_due_date | due_date | m2.corrective_actions | ✓ YES |
+| containment_flag | containment_flag | m2.corrective_actions | NO (optional) |
+
+Zero hardcoded defaults. Unmapped submit → MAPPING_INCOMPLETE (tested in Task 5).
+
+## D-rung
+
+D2 — seed authored + tested. Applies with Task 1 deploy.
+
+## Named carry
+
+Internal Audit Report (407 fields) → Task 9 (generator over clause registry, per OQ-1 resolution).

@@ -287,5 +287,84 @@
     "fieldDueDate": "Due date",
     "fieldChangeDesc": "Change description",
     "fieldImpactAssessment": "Impact assessment"
+  },
+  "forms": {
+    "tpl": {
+      "ncr": { "title": "Nonconformity & Corrective Action (NCR)", "desc": "Record nonconformities, containment, disposition, root cause analysis, and corrective actions per Clause 8.7 / 10.2" },
+      "mgmtReview": { "title": "Management Review Minutes", "desc": "Document management review inputs (9.3.2) and outputs (9.3.3) across all standards in scope" },
+      "riskOpp": { "title": "Risk & Opportunity Register", "desc": "Identify, assess, and treat risks and opportunities per Clause 6.1" },
+      "aspects": { "title": "Environmental Aspects & Impacts Register", "desc": "Identify environmental aspects, evaluate significance, and define controls per ISO 14001 Clause 6.1.2" },
+      "legalObl": { "title": "Legal & Compliance Obligations Register", "desc": "Track compliance obligations and evaluation status per ISO 14001/45001 Clause 6.1.3" },
+      "hira": { "title": "Hazard Identification & Risk Assessment (HIRA)", "desc": "Identify hazards, assess OH&S risks, and determine controls per ISO 45001 Clause 6.1.2" },
+      "incident": { "title": "Incident Investigation", "desc": "Investigate workplace incidents, identify root causes, and assign corrective actions per ISO 45001 Clause 10.2" },
+      "emergency": { "title": "Emergency Preparedness & Response", "desc": "Plan and document emergency scenarios, response procedures, and drill records per Clause 8.2" },
+      "workerConsult": { "title": "Worker Consultation & Participation", "desc": "Record consultation activities and outcomes per ISO 45001 Clause 5.4" },
+      "competence": { "title": "Competence & Training Matrix", "desc": "Track employee competence, training records, and qualification evidence per Clause 7.2" },
+      "supplier": { "title": "Supplier/External Provider Evaluation", "desc": "Evaluate and rate external providers per Clause 8.4.1" },
+      "calibration": { "title": "Calibration & Measuring Equipment Log", "desc": "Track measurement equipment calibration status and traceability per Clause 7.1.5" },
+      "docChange": { "title": "Document Change Request", "desc": "Request, assess, and approve changes to controlled documents per Clause 7.5" },
+      "objectives": { "title": "Objectives & Improvement Plan", "desc": "Define measurable quality/environmental/OH&S objectives and track progress per Clause 6.2" },
+      "intParties": { "title": "Interested Parties & Context Analysis", "desc": "Identify interested parties, their needs, expectations, and monitoring methods per Clause 4.2" }
+    },
+    "ncr": {
+      "sec": { "info": "NCR Information", "description": "Nonconformity Description", "containment": "Containment", "disposition": "Disposition", "rootCause": "Root Cause Analysis", "closure": "Closure" },
+      "field": { "ncrNumber": "NCR Number", "dateRaised": "Date Raised", "raisedBy": "Raised By", "standard": "Standard", "source": "Source", "ncType": "NC Type", "clauseRef": "Clause Reference", "severity": "Severity", "department": "Department", "productService": "Product/Service", "ncDescription": "Description of Nonconformity", "whereDiscovered": "Where Discovered", "quantityAffected": "Quantity Affected", "lotSerial": "Lot/Serial Number", "evidenceRef": "Evidence Reference", "relatedDocument": "Related Document", "containmentRequired": "Containment Required?", "containmentAction": "Containment Action", "containmentOwner": "Containment Owner", "containmentDate": "Containment Due Date", "containmentFlag": "Mark as Containment Action", "dispositionDecision": "Disposition Decision", "dispositionAuthority": "Authorized By", "dispositionJustification": "Justification", "customerNotification": "Customer Notification Required?", "concessionRef": "Concession Reference", "rcaMethod": "Root Cause Analysis Method", "rootCauseDesc": "Root Cause Description", "correctiveActionDesc": "Corrective Action Description", "caOwner": "Corrective Action Owner", "caDueDate": "Corrective Action Due Date", "verificationMethod": "Verification Method", "effectivenessVerified": "Effectiveness Verified?", "closureNotes": "Closure Notes", "linkedCapa": "Linked CAPA" }
+    },
+    "mgmtReview": {
+      "sec": { "info": "Review Information", "inputs": "Review Inputs (9.3.2)", "outputs": "Review Outputs (9.3.3)" },
+      "field": { "reviewDate": "Review Date", "chairperson": "Chairperson", "attendees": "Attendees", "standardsReviewed": "Standards Reviewed", "prevActionsStatus": "Previous Actions Status", "customerFeedback": "Customer Feedback", "objectivesProgress": "Objectives Progress", "processPerformance": "Process Performance", "ncCapaStatus": "NC/CAPA Status", "auditResults": "Audit Results", "extProviderPerf": "External Provider Performance", "resourceAdequacy": "Resource Adequacy", "riskOppChanges": "Changes to Risks & Opportunities", "improvementOpps": "Improvement Opportunities", "decisionsActions": "Decisions & Actions", "resourceNeeds": "Resource Needs", "improvementActions": "Improvement Actions", "nextReviewDate": "Next Review Date", "actionOwners": "Action Owners" }
+    },
+    "riskOpp": {
+      "sec": { "info": "Risk/Opportunity Information", "assessment": "Assessment", "treatment": "Treatment" },
+      "field": { "title": "Title", "category": "Category", "standard": "Standard", "description": "Description", "owner": "Owner", "likelihood": "Likelihood (1-5)", "severity": "Severity (1-5)", "rating": "Risk Rating", "existingControls": "Existing Controls", "treatmentPlan": "Treatment Plan", "treatmentOwner": "Treatment Owner", "treatmentDue": "Treatment Due Date", "linkedRisk": "Linked Risk (M5)" }
+    },
+    "aspects": {
+      "sec": { "identification": "Aspect Identification", "evaluation": "Impact Evaluation" },
+      "field": { "activity": "Activity/Process", "aspectDesc": "Environmental Aspect", "impactDesc": "Environmental Impact", "condition": "Operating Condition", "lifecycleStage": "Lifecycle Stage", "significanceRating": "Significance Rating", "isSignificant": "Significant?", "controlMeasures": "Control Measures", "legalRequirement": "Related Legal Requirement" }
+    },
+    "legalObl": {
+      "sec": { "info": "Obligation Information", "evaluation": "Compliance Evaluation" },
+      "field": { "title": "Obligation Title", "type": "Obligation Type", "sourceAuthority": "Source/Authority", "applicableStandard": "Applicable Standard(s)", "requirementsSummary": "Requirements Summary", "effectiveDate": "Effective Date", "complianceStatus": "Compliance Status", "lastEvaluated": "Last Evaluated", "evalNotes": "Evaluation Notes", "actionRequired": "Action Required" }
+    },
+    "hira": {
+      "sec": { "identification": "Hazard Identification", "assessment": "Risk Assessment", "controls": "Controls" },
+      "field": { "location": "Location/Area", "activity": "Activity/Task", "hazardDesc": "Hazard Description", "hazardType": "Hazard Type", "personsAtRisk": "Persons at Risk", "likelihood": "Likelihood (1-5)", "severity": "Severity (1-5)", "riskLevel": "Risk Level", "existingControls": "Existing Controls", "hierarchyOfControls": "Hierarchy of Controls", "additionalControls": "Additional Controls Needed", "residualRisk": "Residual Risk Level" }
+    },
+    "incident": {
+      "sec": { "info": "Incident Information", "investigation": "Investigation", "actions": "Actions" },
+      "field": { "date": "Incident Date", "time": "Incident Time", "location": "Location", "type": "Incident Type", "description": "Description", "personsInvolved": "Persons Involved", "severityClass": "Severity Classification", "immediateCauses": "Immediate Causes", "rootCauses": "Root Causes", "contributingFactors": "Contributing Factors", "correctiveActions": "Corrective Actions", "actionOwner": "Action Owner", "actionDue": "Action Due Date", "reportable": "Externally Reportable?" }
+    },
+    "emergency": {
+      "sec": { "scenario": "Emergency Scenario", "responsePlan": "Response Plan" },
+      "field": { "scenarioDesc": "Scenario Description", "scenarioType": "Scenario Type", "likelihood": "Likelihood", "potentialImpact": "Potential Impact", "responseProcedure": "Response Procedure", "responsiblePerson": "Responsible Person", "drillFrequency": "Drill Frequency", "lastDrillDate": "Last Drill Date", "drillFindings": "Drill Findings" }
+    },
+    "workerConsult": {
+      "sec": { "info": "Consultation Information", "outcomes": "Outcomes" },
+      "field": { "date": "Consultation Date", "topic": "Topic", "participants": "Participants", "method": "Method", "keyConcerns": "Key Concerns Raised", "actionsAgreed": "Actions Agreed", "feedbackProvided": "Feedback Provided to Workers?" }
+    },
+    "competence": {
+      "sec": { "personInfo": "Person Information", "record": "Competence Record" },
+      "field": { "employeeName": "Employee Name", "rolePosition": "Role/Position", "department": "Department", "competenceArea": "Competence Area", "trainingType": "Training Type", "trainingDate": "Training Date", "expiryDate": "Expiry Date", "competenceLevel": "Competence Level", "evidenceRef": "Evidence Reference", "assessedBy": "Assessed By" }
+    },
+    "supplier": {
+      "sec": { "info": "Supplier Information", "evaluation": "Evaluation" },
+      "field": { "name": "Supplier Name", "productService": "Product/Service Provided", "criticality": "Criticality Level", "certifications": "Certifications", "qualityScore": "Quality Score", "deliveryScore": "Delivery Score", "overallRating": "Overall Rating", "evalDate": "Evaluation Date", "nextReview": "Next Review Date", "evalNotes": "Evaluation Notes" }
+    },
+    "calibration": {
+      "sec": { "equipment": "Equipment Information", "record": "Calibration Record" },
+      "field": { "assetTag": "Asset Tag", "description": "Equipment Description", "manufacturer": "Manufacturer", "serialNumber": "Serial Number", "location": "Location", "calibrationDate": "Calibration Date", "nextDue": "Next Due Date", "standardUsed": "Standard/Reference Used", "result": "Result", "calibratedBy": "Calibrated By", "traceabilityRef": "Traceability Reference" }
+    },
+    "docChange": {
+      "sec": { "request": "Change Request", "assessment": "Assessment & Decision" },
+      "field": { "documentRef": "Document Reference", "requestedBy": "Requested By", "requestDate": "Request Date", "changeReason": "Reason for Change", "changeDescription": "Description of Change", "urgency": "Urgency", "impactAssessment": "Impact Assessment", "reviewer": "Reviewer", "decision": "Decision", "decisionNotes": "Decision Notes" }
+    },
+    "objectives": {
+      "sec": { "info": "Objective Information", "planning": "Planning" },
+      "field": { "title": "Objective Title", "standard": "Applicable Standard(s)", "measurableTarget": "Measurable Target", "kpi": "KPI/Indicator", "baseline": "Baseline Value", "actionsPlanned": "Actions Planned", "responsible": "Responsible Person", "targetDate": "Target Date", "resourcesNeeded": "Resources Needed", "progressStatus": "Progress Status" }
+    },
+    "intParties": {
+      "sec": { "info": "Party Information", "needs": "Needs & Expectations" },
+      "field": { "name": "Party Name", "type": "Party Type", "relevance": "Relevance", "influence": "Influence Level", "needsDesc": "Needs", "expectationsDesc": "Expectations", "applicableStandards": "Applicable Standards", "monitoringMethod": "Monitoring Method", "reviewFrequency": "Review Frequency" }
+    }
   }
 }

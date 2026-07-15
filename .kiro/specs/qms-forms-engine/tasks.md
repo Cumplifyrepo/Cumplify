@@ -10,17 +10,17 @@
 
 ## Task 1 — Migration `012_qms_forms.sql` [KIRO, ARCHITECT deploys]
 
-- [ ] Author per design §2: `forms.templates` / `template_sections` / `template_fields` (tenant-less catalog, SELECT-only for `app_role`, CHECK constraints incl. relation_target rule); `forms.records` + `forms.record_values` (typed value columns, `UNIQUE(record_id, field_id)`, exactly-one-value CHECK, partial indexes).
-- [ ] RLS ENABLE + FORCE + tenant policy + `app_role` grant on `forms.records` + `forms.record_values`; cross-tenant denial test extended.
+- [x] Author per design §2: `forms.templates` / `template_sections` / `template_fields` (tenant-less catalog, SELECT-only for `app_role`, CHECK constraints incl. relation_target rule); `forms.records` + `forms.record_values` (typed value columns, `UNIQUE(record_id, field_id)`, exactly-one-value CHECK, partial indexes).
+- [x] RLS ENABLE + FORCE + tenant policy + `app_role` grant on `forms.records` + `forms.record_values`; cross-tenant denial test extended.
 - [ ] [ARCHITECT] Review, apply to dev, live-verify `pg_policies` + denial test.
 
 **Depends on:** spec-40 Task 1 (same migration wave; `IMS` enum + clause registry land there). **D-rung:** D3. **Evidence:** `task-1-migration.log`
 
 ## Task 2 — Template catalog seed (TPL-4, TPL-5, BC-3) [KIRO]
 
-- [ ] Seed the wave-1 catalog (design §6, 15 templates) as data rows: sections, typed fields, i18n label keys (en/es/pt catalogs same commit), clause_refs, standards arrays.
-- [ ] NCR template: competitor-parity spine (≥30 fields; disposition as SELECT with Use-As-Is/Rework/Repair/Scrap/Return options — not text) PLUS the BC-3 required mapped fields (`standard`, `source` restricted to the four legal values, `nc_type`, `clause_ref` relation→clause registry, `severity`).
-- [ ] Tests: counts computed from rows (a literal "30 fields" string anywhere = reject); every `maps_to_column` on the NCR resolves to a real `m2.nonconformities`/`m2.corrective_actions` column (asserted against migration 003 names); TPL-3 filter fixtures.
+- [x] Seed the wave-1 catalog (design §6, 15 templates) as data rows: sections, typed fields, i18n label keys (en/es/pt catalogs same commit), clause_refs, standards arrays.
+- [x] NCR template: competitor-parity spine (≥30 fields; disposition as SELECT with Use-As-Is/Rework/Repair/Scrap/Return options — not text) PLUS the BC-3 required mapped fields (`standard`, `source` restricted to the four legal values, `nc_type`, `clause_ref` relation→clause registry, `severity`).
+- [x] Tests: counts computed from rows (a literal "30 fields" string anywhere = reject); every `maps_to_column` on the NCR resolves to a real `m2.nonconformities`/`m2.corrective_actions` column (asserted against migration 003 names); TPL-3 filter fixtures.
 
 **Depends on:** Task 1. **D-rung:** D2 (seed applies with Task 1 deploy). **Evidence:** `task-2-catalog.log`
 

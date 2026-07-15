@@ -188,6 +188,40 @@ describe.skipIf(!LIVE)('C-7 #3: RDS RLS cross-tenant denial (app_role, NOBYPASSR
   }, 120_000);
 });
 
+// ─── #3b RDS RLS denial — forms.* tables (spec 41) — LIVE ───────────────────
+describe.skipIf(!LIVE)('C-7 #3b: RDS RLS cross-tenant denial — forms.records + forms.record_values', () => {
+  it('forms.records: no tenant context → zero rows (fail-closed)', () => {
+    const rows = rlsQuery(null, 'SELECT count(*) FROM forms.records');
+    expect(Number((rows[0] as { longValue: number }[])[0].longValue)).toBe(0);
+  }, 120_000);
+  it('forms.records: tenant-AAA session sees ONLY tenant-AAA rows', () => {
+    const rows = rlsQuery(TENANT_A, 'SELECT DISTINCT tenant_id::text FROM forms.records');
+    const tenants = rows.map((r) => (r as { stringValue: string }[])[0].stringValue);
+    for (const t of tenants) expect(t).toBe(TENANT_A);
+    expect(tenants).not.toContain(TENANT_B);
+  }, 120_000);
+  it('forms.records: tenant-BBB session never sees tenant-AAA rows', () => {
+    const rows = rlsQuery(TENANT_B, 'SELECT DISTINCT tenant_id::text FROM forms.records');
+    const tenants = rows.map((r) => (r as { stringValue: string }[])[0].stringValue);
+    expect(tenants).not.toContain(TENANT_A);
+  }, 120_000);
+  it('forms.record_values: no tenant context → zero rows (fail-closed)', () => {
+    const rows = rlsQuery(null, 'SELECT count(*) FROM forms.record_values');
+    expect(Number((rows[0] as { longValue: number }[])[0].longValue)).toBe(0);
+  }, 120_000);
+  it('forms.record_values: tenant-AAA session sees ONLY tenant-AAA rows', () => {
+    const rows = rlsQuery(TENANT_A, 'SELECT DISTINCT tenant_id::text FROM forms.record_values');
+    const tenants = rows.map((r) => (r as { stringValue: string }[])[0].stringValue);
+    for (const t of tenants) expect(t).toBe(TENANT_A);
+    expect(tenants).not.toContain(TENANT_B);
+  }, 120_000);
+  it('forms.record_values: tenant-BBB session never sees tenant-AAA rows', () => {
+    const rows = rlsQuery(TENANT_B, 'SELECT DISTINCT tenant_id::text FROM forms.record_values');
+    const tenants = rows.map((r) => (r as { stringValue: string }[])[0].stringValue);
+    expect(tenants).not.toContain(TENANT_A);
+  }, 120_000);
+});
+
 // ─── #4 Materialized-view denial — LIVE ──────────────────────────────────────
 describe.skipIf(!LIVE)('C-7 #4: materialized-view denial (app_role)', () => {
   it('get_risk_register_view() accessor is tenant-scoped (no error under a tenant)', () => {
