@@ -46,6 +46,9 @@ export const OrgProfileSchema = z.object({
   sites: z.array(z.object({
     name: z.string().min(1),
     address: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    country: z.string().optional(),
     headcount: z.number().int().positive().optional(),
   })).min(1, 'at least one site required'),
   employeeCount: z.number().int().positive(),
@@ -56,6 +59,12 @@ export const OrgProfileSchema = z.object({
   standardsInScope: z.array(z.enum(VALID_STANDARDS)).min(1, 'at least one standard required'),
   managementRep: z.string().min(1, 'managementRep is required'),
   targetCertDate: z.string().optional(),
+  // Extended ORG-1 fields (all optional — absence is a GAP for the generator, never a validation error)
+  yearFounded: z.number().int().optional(),
+  outsourcedProcesses: z.array(z.string()).optional(),
+  supplyChainShape: z.string().optional(),
+  existingCertifications: z.array(z.string()).optional(),
+  manualExists: z.boolean().optional(),
 }).passthrough(); // Allow additional fields for extensibility
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
