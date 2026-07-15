@@ -25,6 +25,7 @@ import {
   marshalMany,
 } from './shared.js';
 import type { SqlParameter } from '@aws-sdk/client-rds-data';
+import { canApprove } from '../permissions/role-matrix.js';
 
 import { z } from 'zod';
 
@@ -61,20 +62,28 @@ export const OrgProfileSchema = z.object({
 
 export async function handler(event: AppSyncEvent): Promise<unknown> {
   const ctx = extractContext(event);
-  const { tenantId, sub } = ctx;
+  const { tenantId, sub, role } = ctx;
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
 
   switch (event.info.fieldName) {
     case 'getOrgProfile': return getOrgProfile(tenantId);
-    case 'saveOrgProfile': return saveOrgProfile(event, tenantId, sub);
+    case 'saveOrgProfile': return requireM1Role(role, () => saveOrgProfile(event, tenantId, sub));
     case 'listClauseRegistry': return listClauseRegistry(event, tenantId);
     case 'listClauseApplicability': return listClauseApplicability(tenantId);
-    case 'setClauseApplicability': return setClauseApplicability(event, tenantId, sub);
+    case 'setClauseApplicability': return requireM1Role(role, () => setClauseApplicability(event, tenantId, sub));
     case 'getGenerationRun': return getGenerationRun(event, tenantId);
     case 'listGenerationRuns': return listGenerationRuns(event, tenantId);
-    case 'markSectionReviewed': return markSectionReviewed(event, tenantId, sub);
+    case 'markSectionReviewed': return requireM1Role(role, () => markSectionReviewed(event, tenantId, sub));
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
+}
+
+/** Role gate: M1 authoring family (design §6). */
+function requireM1Role<T>(role: string, fn: () => T): T {
+  if (!canApprove(role, 'M1')) {
+    throw new Error('UNAUTHORIZED');
+  }
+  return fn();
 }
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
@@ -336,8 +345,11 @@ async function markSectionReviewed(event: AppSyncEvent, tenantId: string, actor:
     // Check run status — reject on terminal states
     const runStatusIdx = sectionResult.columnMetadata!.findIndex(c => c.name === 'run_status');
     const runStatus = (sectionResult.records[0][runStatusIdx] as { stringValue?: string }).stringValue;
-    if (runStatus === 'complete' || runStatus === 'failed') {
-      throw new Error('RUN_TERMINAL');
+    // Review happens AFTER generation (document exists post-FinalizeManual).
+    // ALLOW: complete, partial (content is final).
+    // REJECT: running (retry could replace content), failed (nothing to review).
+    if (runStatus === 'running' || runStatus === 'failed') {
+      throw new Error('RUN_NOT_REVIEWABLE');
     }
 
     // Stamp reviewed_by/reviewed_at

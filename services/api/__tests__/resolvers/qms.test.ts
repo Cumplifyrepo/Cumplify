@@ -253,7 +253,7 @@ describe('SCHEMA-5: tenantId from resolverContext only', () => {
     await handler({
       info: { fieldName: 'saveOrgProfile' },
       arguments: { input: { payload: JSON.stringify({ legalName: 'X', sites: [{ name: 'A' }], employeeCount: 10, industry: 'Tech', productsServices: 'SW', coreProcesses: ['dev'], designResponsibility: false, standardsInScope: ['ISO9001'], managementRep: 'Bob' }), tenantId: 'evil' } },
-      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test' } },
+      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'QualityManager' } },
     });
 
     const [, params] = mockExecute.mock.calls[0];
@@ -265,9 +265,9 @@ describe('SCHEMA-5: tenantId from resolverContext only', () => {
 // ─── Task 8: markSectionReviewed ──────────────────────────────────────────────
 
 describe('markSectionReviewed', () => {
-  it('stamps reviewed_by/reviewed_at with ::uuid cast on sectionId', async () => {
+  it('stamps reviewed_by/reviewed_at with ::uuid cast on sectionId (run status = complete)', async () => {
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'running' }]],
+      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'complete' }]],
       columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
     });
     mockExecute.mockResolvedValueOnce({
@@ -289,13 +289,74 @@ describe('markSectionReviewed', () => {
     expect(mockCommit).toHaveBeenCalled();
   });
 
-  it('RUN_TERMINAL when parent run is complete', async () => {
+  it('RUN_NOT_REVIEWABLE when parent run is running (content not final)', async () => {
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'complete' }]],
+      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'running' }]],
       columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
     });
 
-    await expect(handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }))).rejects.toThrow('RUN_TERMINAL');
+    await expect(handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }))).rejects.toThrow('RUN_NOT_REVIEWABLE');
     expect(mockRollback).toHaveBeenCalled();
+  });
+
+  it('RUN_NOT_REVIEWABLE when parent run is failed', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'failed' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
+    });
+
+    await expect(handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }))).rejects.toThrow('RUN_NOT_REVIEWABLE');
+  });
+
+  it('UNAUTHORIZED when role lacks M1 approval permission', async () => {
+    const event = {
+      info: { fieldName: 'markSectionReviewed' },
+      arguments: { input: { sectionId: 'sec-1' } },
+      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' } },
+    };
+
+    await expect(handler(event)).rejects.toThrow('UNAUTHORIZED');
+    // No SQL executed
+    expect(mockExecute).not.toHaveBeenCalled();
+  });
+});
+
+// ─── Role gate: canApprove(role, 'M1') ────────────────────────────────────────
+
+describe('canApprove role gate on QMS mutations', () => {
+  it('saveOrgProfile: UNAUTHORIZED for Employee role, no SQL executed', async () => {
+    const event = {
+      info: { fieldName: 'saveOrgProfile' },
+      arguments: { input: { payload: '{}' } },
+      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' } },
+    };
+
+    await expect(handler(event)).rejects.toThrow('UNAUTHORIZED');
+    expect(mockExecute).not.toHaveBeenCalled();
+  });
+
+  it('setClauseApplicability: UNAUTHORIZED for Employee role, no SQL executed', async () => {
+    const event = {
+      info: { fieldName: 'setClauseApplicability' },
+      arguments: { input: { clauseRegistryId: 'c-1', applicable: true } },
+      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' } },
+    };
+
+    await expect(handler(event)).rejects.toThrow('UNAUTHORIZED');
+    expect(mockExecute).not.toHaveBeenCalled();
+  });
+
+  it('saveOrgProfile: QualityManager role passes gate (M1 in write modules)', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'p-1' }, { longValue: 0 }]],
+      columnMetadata: [{ name: 'id' }, { name: 'current_version' }],
+    });
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    const payload = JSON.stringify({ legalName: 'X', sites: [{ name: 'A' }], employeeCount: 10, industry: 'Tech', productsServices: 'SW', coreProcesses: ['dev'], designResponsibility: false, standardsInScope: ['ISO9001'], managementRep: 'Bob' });
+    await handler(makeEvent('saveOrgProfile', { input: { payload } }));
+
+    // SQL executed (gate passed)
+    expect(mockExecute).toHaveBeenCalled();
   });
 });

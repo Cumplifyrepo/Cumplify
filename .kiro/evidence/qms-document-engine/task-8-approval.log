@@ -8,7 +8,7 @@
 | Gate | Command | Exit code | Result |
 |------|---------|-----------|--------|
 | TypeScript | `npx tsc --noEmit` | 0 | Clean |
-| Unit tests | `npx vitest run` | 0 | 718 tests pass, 61 files |
+| Unit tests | `npx vitest run` | 0 | 754 tests pass, 64 files |
 
 ## Deliverables
 
