@@ -612,3 +612,122 @@ describe('saveFormRecordValues — null value clears field (DELETE)', () => {
     expect(deleteSql).not.toContain('INSERT');
   });
 });
+
+// ─── Task 4: Relation fields (BC-2) ──────────────────────────────────────────
+
+describe('BC-2: relation field existence probe', () => {
+  function setupRelationSave(probeResult: { records: unknown[] }) {
+    mockExecute.mockReset();
+    // Call 1: status check → in_progress
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'in_progress' }, { stringValue: 'tpl-1' }]],
+      columnMetadata: [{ name: 'status' }, { name: 'template_id' }],
+    });
+    // Call 2: field metadata (includes relation_target)
+    mockExecute.mockResolvedValueOnce({
+      records: [[
+        { stringValue: 'f-clause' }, { stringValue: 'clause_ref' },
+        { stringValue: 'relation' }, { stringValue: 'clause' },
+      ]],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }, { name: 'relation_target' }],
+    });
+    // Call 3: existence probe result
+    mockExecute.mockResolvedValueOnce(probeResult);
+    // Remaining calls (upsert + timestamp + getFormRecordById)
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+  }
+
+  it('probes the allowlisted table with :uuid::uuid cast inside the tenant transaction', async () => {
+    setupRelationSave({ records: [[{ longValue: 1 }]] }); // probe returns 1 row = exists
+
+    await handler(makeEvent('saveFormRecordValues', {
+      input: { recordId: 'rec-1', values: JSON.stringify({ clause_ref: 'a1b2c3d4-0000-4000-8000-000000000001' }) },
+    })).catch(() => {});
+
+    // Call 3 is the probe
+    const [probeSql, probeParams] = mockExecute.mock.calls[2];
+    // Must reference the allowlisted table (code constant, not from data)
+    expect(probeSql).toContain('qms.clause_registry');
+    // Must cast the UUID param
+    expect(probeSql).toContain(':uuid::uuid');
+    // Param value is the UUID
+    expect(probeParams).toContainEqual({ name: 'uuid', value: { stringValue: 'a1b2c3d4-0000-4000-8000-000000000001' } });
+  });
+
+  it('LINK_TARGET_NOT_FOUND when probe returns zero rows — entire save rolls back', async () => {
+    setupRelationSave({ records: [] }); // probe returns 0 rows = missing
+
+    await expect(
+      handler(makeEvent('saveFormRecordValues', {
+        input: { recordId: 'rec-1', values: JSON.stringify({ clause_ref: 'deadbeef-0000-4000-8000-000000000099' }) },
+      })),
+    ).rejects.toThrow('LINK_TARGET_NOT_FOUND');
+
+    // Rollback called — no partial writes survive
+    expect(mockRollback).toHaveBeenCalled();
+    // No upsert was attempted after the probe (probe is call 3, no call 4 upsert)
+    const callsAfterProbe = mockExecute.mock.calls.slice(3);
+    const upsertCalls = callsAfterProbe.filter(c => (c[0] as string).includes('INSERT INTO forms.record_values'));
+    expect(upsertCalls).toHaveLength(0);
+  });
+
+  it('valid target proceeds to upsert without error', async () => {
+    setupRelationSave({ records: [[{ longValue: 1 }]] }); // exists
+
+    await handler(makeEvent('saveFormRecordValues', {
+      input: { recordId: 'rec-1', values: JSON.stringify({ clause_ref: 'a1b2c3d4-0000-4000-8000-000000000001' }) },
+    })).catch(() => {}); // getFormRecordById will fail on empty mock — we only care probe succeeded
+
+    // Upsert was attempted after the probe (call 4 or later)
+    const callsAfterProbe = mockExecute.mock.calls.slice(3);
+    const upsertCalls = callsAfterProbe.filter(c => (c[0] as string).includes('INSERT INTO forms.record_values'));
+    expect(upsertCalls.length).toBeGreaterThan(0);
+    // Commit was called (save transaction succeeded before getFormRecordById)
+    expect(mockCommit).toHaveBeenCalled();
+  });
+
+  it('probes m2.nonconformities for relation_target=nonconformity', async () => {
+    mockExecute.mockReset();
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'in_progress' }, { stringValue: 'tpl-1' }]],
+      columnMetadata: [{ name: 'status' }, { name: 'template_id' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[
+        { stringValue: 'f-nc' }, { stringValue: 'linked_nc' },
+        { stringValue: 'relation' }, { stringValue: 'nonconformity' },
+      ]],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }, { name: 'relation_target' }],
+    });
+    mockExecute.mockResolvedValueOnce({ records: [[{ longValue: 1 }]] }); // probe hit
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('saveFormRecordValues', {
+      input: { recordId: 'rec-1', values: JSON.stringify({ linked_nc: 'nc-uuid-here' }) },
+    })).catch(() => {});
+
+    const [probeSql] = mockExecute.mock.calls[2];
+    expect(probeSql).toContain('m2.nonconformities');
+    expect(probeSql).toContain(':uuid::uuid');
+  });
+
+  it('field metadata query includes relation_target column', async () => {
+    mockExecute.mockReset();
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'in_progress' }, { stringValue: 'tpl-1' }]],
+      columnMetadata: [{ name: 'status' }, { name: 'template_id' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'f-1' }, { stringValue: 'ncr_number' }, { stringValue: 'text' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }, { name: 'relation_target' }],
+    });
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('saveFormRecordValues', {
+      input: { recordId: 'rec-1', values: JSON.stringify({ ncr_number: 'NCR-001' }) },
+    })).catch(() => {});
+
+    const [metaSql] = mockExecute.mock.calls[1];
+    expect(metaSql).toContain('f.relation_target');
+  });
+});

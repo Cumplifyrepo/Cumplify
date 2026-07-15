@@ -35,8 +35,8 @@
 
 ## Task 4 — Relation fields (BC-2) [KIRO]
 
-- [ ] Code allowlist map `relation_target → table` (never SQL from data); existence probe inside the tenant transaction; typed `LINK_TARGET_NOT_FOUND`.
-- [ ] Hermetic tests: probe SQL asserted; missing target rolls back the whole save.
+- [x] Code allowlist map `relation_target → table` (never SQL from data); existence probe inside the tenant transaction; typed `LINK_TARGET_NOT_FOUND`.
+- [x] Hermetic tests: probe SQL asserted; missing target rolls back the whole save.
 - [ ] [ARCHITECT] Live ACC-3 readback: cross-tenant UUID denied by RLS (probe returns zero rows), real in-tenant UUID links.
 
 **Depends on:** Task 3. **D-rung:** D3. **Evidence:** `task-4-relations.log`

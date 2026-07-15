@@ -1,0 +1,54 @@
+# Task 4 — Relation fields (BC-2)
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T08:23:00Z
+# Base commit: 375fce8 (Task 3 fix accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 652 tests pass, 57 files |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/src/resolvers/forms.ts` | RELATION_TARGET_TABLE allowlist + existence probe logic |
+| `services/api/__tests__/resolvers/forms.test.ts` | 5 new BC-2 tests (28 total forms resolver tests) |
+
+## BC-2 implementation
+
+**Allowlist (code constant, never from data):**
+| relation_target | Table |
+|-----------------|-------|
+| nonconformity | m2.nonconformities |
+| corrective_action | m2.corrective_actions |
+| audit | m3.audits |
+| risk | m5.risks |
+| document | m1.documents |
+| clause | qms.clause_registry (pending migration 011) |
+
+**Probe:** `SELECT 1 FROM <allowlisted_table> WHERE id = :uuid::uuid`
+- Runs INSIDE the record's tenant transaction (C-2: set_config already applied)
+- RLS makes cross-tenant lookups return zero rows (no resolver vigilance needed)
+- Zero rows → `LINK_TARGET_NOT_FOUND`, transaction rolls back (entire save)
+- Target table name comes from the CODE constant, never interpolated from data
+
+**Tests pinned:**
+1. Probe SQL contains allowlisted table name + `:uuid::uuid` cast
+2. LINK_TARGET_NOT_FOUND on zero rows + rollback (no partial writes)
+3. Valid target proceeds to upsert + commit
+4. Different targets probe their allowlisted tables (clause→qms.clause_registry, nonconformity→m2.nonconformities)
+5. Field metadata query includes `relation_target` column
+
+## Pending-011 note
+
+`clause` → `qms.clause_registry` depends on migration 011 (spec-40 Task 1).
+The code references this table; the hermetic test asserts the SQL string.
+Live ACC-3 readback (cross-tenant UUID denied by RLS) is [ARCHITECT] scope
+after the 011+012+013 wave deploys.
+
+## D-rung
+
+D2 — code + hermetic tests pass gates. Live ACC-3 readback at Task 11.

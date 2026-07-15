@@ -60,6 +60,19 @@ const VALUE_COLUMN_CAST: Record<string, string> = {
   value_number: '::numeric',
 };
 
+// ─── BC-2: Relation target → table allowlist (CODE constant, never from data) ─
+// The target table name is NEVER interpolated from a catalog row or user input.
+// 'user' is excluded — user references are stored as text (sub claim), not FK-probed.
+// 'clause' → qms.clause_registry (lands in migration 011, same deploy wave).
+const RELATION_TARGET_TABLE: Record<string, string> = {
+  nonconformity: 'm2.nonconformities',
+  corrective_action: 'm2.corrective_actions',
+  audit: 'm3.audits',
+  risk: 'm5.risks',
+  document: 'm1.documents',
+  clause: 'qms.clause_registry', // pending migration 011 (spec-40 Task 1)
+};
+
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
 export async function handler(event: AppSyncEvent): Promise<unknown> {
@@ -307,7 +320,7 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
 
     // Resolve field metadata for typed dispatch
     const fieldsResult = await txn.execute(`
-      SELECT f.id, f.field_key, f.field_type
+      SELECT f.id, f.field_key, f.field_type, f.relation_target
       FROM forms.template_fields f
       JOIN forms.template_sections s ON f.section_id = s.id
       WHERE s.template_id = :templateId::uuid
@@ -337,6 +350,21 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
 
       const valueColumn = FIELD_TYPE_COLUMN[meta.fieldType];
       if (!valueColumn) continue;
+
+      // BC-2: Relation existence probe — inside the tenant transaction (RLS-enforced)
+      if (meta.fieldType === 'relation' && meta.relationTarget) {
+        const targetTable = RELATION_TARGET_TABLE[meta.relationTarget];
+        if (!targetTable) {
+          throw new Error(`INVALID_RELATION_TARGET: ${meta.relationTarget}`);
+        }
+        const probeResult = await txn.execute(
+          `SELECT 1 FROM ${targetTable} WHERE id = :uuid::uuid`,
+          [{ name: 'uuid', value: { stringValue: String(value) } }],
+        );
+        if (!probeResult.records || probeResult.records.length === 0) {
+          throw new Error('LINK_TARGET_NOT_FOUND');
+        }
+      }
 
       const param = buildValueParam(valueColumn, value);
 
@@ -600,21 +628,22 @@ function marshalValues(result: DataApiResult): Record<string, unknown> {
   return obj;
 }
 
-interface FieldMeta { fieldId: string; fieldType: string }
+interface FieldMeta { fieldId: string; fieldType: string; relationTarget: string | null }
 
 function marshalFieldMeta(result: DataApiResult): Map<string, FieldMeta> {
   const map = new Map<string, FieldMeta>();
   if (!result.records || !result.columnMetadata) return map;
   for (const row of result.records) {
-    let id = '', key = '', type = '';
+    let id = '', key = '', type = '', relTarget: string | null = null;
     for (let i = 0; i < result.columnMetadata.length; i++) {
       const col = result.columnMetadata[i].name ?? '';
       const v = unwrapField(row[i]);
       if (col === 'id') id = v as string;
       if (col === 'field_key') key = v as string;
       if (col === 'field_type') type = v as string;
+      if (col === 'relation_target') relTarget = v as string | null;
     }
-    if (key) map.set(key, { fieldId: id, fieldType: type });
+    if (key) map.set(key, { fieldId: id, fieldType: type, relationTarget: relTarget });
   }
   return map;
 }
