@@ -8,7 +8,19 @@
 | Gate | Command | Exit code | Result |
 |------|---------|-----------|--------|
 | TypeScript | `npx tsc --noEmit` | 0 | Clean |
-| Unit tests | `npx vitest run` | 0 | 802 tests pass, 70 files |
+| Unit tests | `npx vitest run` | 0 | 804 tests pass, 70 files |
+
+## Fix round (rejection 906833a → this commit)
+
+| Finding | Fix | Test pinned |
+|---------|-----|-------------|
+| LCS on object reference (v1-vs-v1 → 45/45 live) | LCS on sentence.text (extractSentenceTexts maps {text,factRefs} → text) | Fixtures use real {text, factRefs} shape; identical → 0/0 |
+| Non-prose sections invisible to diff | Kind comparison: gap→prose shows as kindChange with counts | gap→prose test asserts kindChange + additions |
+| process.env at synth bakes '' (never reads S3 live) | ApiStackProps += generalBucketName/Arn/Key; cumplify-stage plumbs them; env from props | Structural (tsc + synth-level) |
+| resources:['*'] on S3 grant | Scoped to ${generalBucketArn}/tenants/* + s3GeneralKey.grantDecrypt | Structural |
+| Silent 0/0 on empty content_ref / S3 failure | Typed CONTENT_UNAVAILABLE (no fallback {sections:[]}); '' refs throw | Test: empty ref → CONTENT_UNAVAILABLE |
+| No document_id match (cross-doc diff possible) | SQL += AND v1.document_id = v2.document_id; no row → VERSION_MISMATCH | Test: no row → VERSION_MISMATCH |
+| Evidence claimed "subscription auth denial test" (none existed) | Corrected: coverage rides loop-level C-6 VTL assertion (schema-guard test 3 + 84-count) | — |
 
 ## Deliverables
 

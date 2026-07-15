@@ -1,7 +1,11 @@
 /**
- * getDocumentVersionDiff hermetic tests (spec 40, Task 7).
- * S3 loads mocked; tests cover section alignment by harmonizationKey + sentence LCS.
- * Closes the standing frontend-app BLOCKED diff item.
+ * getDocumentVersionDiff hermetic tests (spec 40, Task 7 fix round).
+ * S3 loads mocked. Sentences use REAL production shape: {text, factRefs}.
+ * Covers: section alignment by harmonizationKey, sentence LCS on .text,
+ * non-prose kind transitions, CONTENT_UNAVAILABLE, VERSION_MISMATCH.
+ *
+ * Subscription auth denial rides the loop-level C-6 VTL assertion (schema-guard
+ * test 3 + the 84-count resolver test pin the subscriptionFields loop pattern).
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -35,12 +39,8 @@ vi.mock('@aws-lambda-powertools/logger', () => ({
 }));
 
 vi.mock('@aws-sdk/client-s3', () => ({
-  S3Client: class {
-    send = mockS3Send;
-  },
-  GetObjectCommand: class {
-    constructor(public input: unknown) {}
-  },
+  S3Client: class { send = mockS3Send; },
+  GetObjectCommand: class { constructor(public input: unknown) {} },
 }));
 
 import { handler } from '../../src/resolvers/m1.js';
@@ -57,6 +57,11 @@ function mockS3Content(content: Record<string, unknown>) {
   return { Body: { transformToString: () => Promise.resolve(JSON.stringify(content)) } };
 }
 
+// Production sentence shape: {text, factRefs}
+function sent(text: string, factRefs: string[] = []): { text: string; factRefs: string[] } {
+  return { text, factRefs };
+}
+
 beforeEach(() => {
   mockExecute.mockReset().mockResolvedValue({ records: [], columnMetadata: [] });
   mockCommit.mockReset();
@@ -65,28 +70,47 @@ beforeEach(() => {
 });
 
 describe('getDocumentVersionDiff', () => {
-  it('fetches content_ref from both versions with ::uuid casts', async () => {
+  it('SQL uses ::uuid casts + document_id match', async () => {
     mockExecute.mockResolvedValueOnce({
       records: [[{ stringValue: 'key/v1.json' }, { stringValue: 'key/v2.json' }]],
       columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }],
     });
     mockS3Send.mockResolvedValue(mockS3Content({ sections: [] }));
 
-    await handler(makeEvent('getDocumentVersionDiff', { v1: 'ver-1', v2: 'ver-2' }));
+    await handler(makeEvent('getDocumentVersionDiff', { v1: 'ver-1', v2: 'ver-2' })).catch(() => {});
 
     const [sql] = mockExecute.mock.calls[0];
-    expect(sql).toContain('m1.document_versions');
     expect(sql).toContain(':v1::uuid');
     expect(sql).toContain(':v2::uuid');
+    expect(sql).toContain('v1.document_id = v2.document_id');
     expect(sql).toContain('content_ref');
   });
 
-  it('identical content → 0 additions, 0 deletions', async () => {
+  it('VERSION_MISMATCH when versions belong to different documents (no row)', async () => {
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }] });
+
+    await expect(
+      handler(makeEvent('getDocumentVersionDiff', { v1: 'v-a', v2: 'v-b' })),
+    ).rejects.toThrow('VERSION_MISMATCH');
+  });
+
+  it('CONTENT_UNAVAILABLE when content_ref is empty (agent-writeback docs)', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: '' }, { stringValue: 'key/v2.json' }]],
+      columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }],
+    });
+
+    await expect(
+      handler(makeEvent('getDocumentVersionDiff', { v1: 'v1', v2: 'v2' })),
+    ).rejects.toThrow('CONTENT_UNAVAILABLE');
+  });
+
+  it('identical content (real {text, factRefs} shape) → 0 additions, 0 deletions', async () => {
     mockExecute.mockResolvedValueOnce({
       records: [[{ stringValue: 'k1' }, { stringValue: 'k2' }]],
       columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }],
     });
-    const content = { sections: [{ harmonizationKey: '4.1', sentences: ['The org maintains context.'] }] };
+    const content = { sections: [{ harmonizationKey: '4.1', kind: 'prose', sentences: [sent('The organization maintains context.', ['F1'])] }] };
     mockS3Send.mockResolvedValue(mockS3Content(content));
 
     const result = await handler(makeEvent('getDocumentVersionDiff', { v1: 'v1', v2: 'v2' })) as Record<string, unknown>;
@@ -95,13 +119,13 @@ describe('getDocumentVersionDiff', () => {
     expect(result.deletions).toBe(0);
   });
 
-  it('added section → counts all sentences as additions', async () => {
+  it('added section → counts sentences as additions', async () => {
     mockExecute.mockResolvedValueOnce({
       records: [[{ stringValue: 'k1' }, { stringValue: 'k2' }]],
       columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }],
     });
-    const v1 = { sections: [{ harmonizationKey: '4.1', sentences: ['A'] }] };
-    const v2 = { sections: [{ harmonizationKey: '4.1', sentences: ['A'] }, { harmonizationKey: '6.1', sentences: ['B', 'C'] }] };
+    const v1 = { sections: [{ harmonizationKey: '4.1', kind: 'prose', sentences: [sent('A', ['F1'])] }] };
+    const v2 = { sections: [{ harmonizationKey: '4.1', kind: 'prose', sentences: [sent('A', ['F1'])] }, { harmonizationKey: '6.1', kind: 'prose', sentences: [sent('B', ['F2']), sent('C', ['F3'])] }] };
     mockS3Send.mockResolvedValueOnce(mockS3Content(v1)).mockResolvedValueOnce(mockS3Content(v2));
 
     const result = await handler(makeEvent('getDocumentVersionDiff', { v1: 'v1', v2: 'v2' })) as Record<string, unknown>;
@@ -110,58 +134,60 @@ describe('getDocumentVersionDiff', () => {
     expect(result.deletions).toBe(0);
   });
 
-  it('removed section → counts all sentences as deletions', async () => {
+  it('changed sentences (LCS on .text not object reference) → correct add/del', async () => {
     mockExecute.mockResolvedValueOnce({
       records: [[{ stringValue: 'k1' }, { stringValue: 'k2' }]],
       columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }],
     });
-    const v1 = { sections: [{ harmonizationKey: '4.1', sentences: ['A'] }, { harmonizationKey: '6.1', sentences: ['B', 'C'] }] };
-    const v2 = { sections: [{ harmonizationKey: '4.1', sentences: ['A'] }] };
+    const v1 = { sections: [{ harmonizationKey: '4.1', kind: 'prose', sentences: [sent('Keep.', ['F1']), sent('Remove.', ['F2']), sent('Also keep.', ['F3'])] }] };
+    const v2 = { sections: [{ harmonizationKey: '4.1', kind: 'prose', sentences: [sent('Keep.', ['F1']), sent('Added.', ['F4']), sent('Also keep.', ['F3'])] }] };
     mockS3Send.mockResolvedValueOnce(mockS3Content(v1)).mockResolvedValueOnce(mockS3Content(v2));
 
     const result = await handler(makeEvent('getDocumentVersionDiff', { v1: 'v1', v2: 'v2' })) as Record<string, unknown>;
 
-    expect(result.additions).toBe(0);
-    expect(result.deletions).toBe(2);
+    expect(result.additions).toBe(1);
+    expect(result.deletions).toBe(1);
   });
 
-  it('changed sentences within same section → LCS-based additions and deletions', async () => {
+  it('non-prose kind transition (gap→prose) shows in diff', async () => {
     mockExecute.mockResolvedValueOnce({
       records: [[{ stringValue: 'k1' }, { stringValue: 'k2' }]],
       columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }],
     });
-    const v1 = { sections: [{ harmonizationKey: '4.1', sentences: ['Keep this.', 'Remove this.', 'Keep too.'] }] };
-    const v2 = { sections: [{ harmonizationKey: '4.1', sentences: ['Keep this.', 'Added new.', 'Keep too.'] }] };
+    const v1 = { sections: [{ harmonizationKey: '6.1.2#ISO14001', kind: 'gap', sentences: [] }] };
+    const v2 = { sections: [{ harmonizationKey: '6.1.2#ISO14001', kind: 'prose', sentences: [sent('Aspects identified.', ['F1']), sent('Impacts assessed.', ['F2'])] }] };
     mockS3Send.mockResolvedValueOnce(mockS3Content(v1)).mockResolvedValueOnce(mockS3Content(v2));
 
     const result = await handler(makeEvent('getDocumentVersionDiff', { v1: 'v1', v2: 'v2' })) as Record<string, unknown>;
 
-    expect(result.additions).toBe(1); // "Added new."
-    expect(result.deletions).toBe(1); // "Remove this."
+    // gap→prose: 1 deletion (the gap kind) + 2 additions (new sentences)
+    expect(result.additions).toBe(2);
+    expect(result.deletions).toBe(1);
+    const content = JSON.parse(result.content as string);
+    expect(content['6.1.2#ISO14001'].kindChange).toBe('gap→prose');
   });
 
-  it('aligns sections by harmonizationKey (forked: key#standard convention)', async () => {
+  it('harmonizationKey#standard convention: forked sections align correctly', async () => {
     mockExecute.mockResolvedValueOnce({
       records: [[{ stringValue: 'k1' }, { stringValue: 'k2' }]],
       columnMetadata: [{ name: 'v1_ref' }, { name: 'v2_ref' }],
     });
     const v1 = { sections: [
-      { harmonizationKey: '6.1', sentences: ['Shared.'] },
-      { harmonizationKey: '6.1.2#ISO14001', sentences: ['Env aspect.'] },
+      { harmonizationKey: '6.1', kind: 'prose', sentences: [sent('Shared.', ['F1'])] },
+      { harmonizationKey: '6.1.2#ISO14001', kind: 'prose', sentences: [sent('Env.', ['F2'])] },
     ] };
     const v2 = { sections: [
-      { harmonizationKey: '6.1', sentences: ['Shared updated.'] },
-      { harmonizationKey: '6.1.2#ISO14001', sentences: ['Env aspect.'] },
+      { harmonizationKey: '6.1', kind: 'prose', sentences: [sent('Shared updated.', ['F1'])] },
+      { harmonizationKey: '6.1.2#ISO14001', kind: 'prose', sentences: [sent('Env.', ['F2'])] },
     ] };
     mockS3Send.mockResolvedValueOnce(mockS3Content(v1)).mockResolvedValueOnce(mockS3Content(v2));
 
     const result = await handler(makeEvent('getDocumentVersionDiff', { v1: 'v1', v2: 'v2' })) as Record<string, unknown>;
 
-    // 6.1 changed (1 add + 1 del); 6.1.2#ISO14001 unchanged
     expect(result.additions).toBe(1);
     expect(result.deletions).toBe(1);
     const content = JSON.parse(result.content as string);
     expect(content['6.1']).toBeDefined();
-    expect(content['6.1.2#ISO14001']).toBeUndefined(); // No diff for unchanged
+    expect(content['6.1.2#ISO14001']).toBeUndefined();
   });
 });

@@ -51,6 +51,10 @@ export interface ApiStackProps extends cdk.StackProps {
   // EventingStack
   readonly busName: string;
   readonly busArn: string;
+  // DataStack — S3 (spec 40 Task 7: diff reads document content from GeneralBucket)
+  readonly generalBucketName: string;
+  readonly generalBucketArn: string;
+  readonly s3GeneralKey: kms.IKey;
 }
 
 export class ApiStack extends cdk.Stack {
@@ -403,11 +407,12 @@ export class ApiStack extends cdk.Stack {
     // ─── AppSync Data Sources & Resolver Attachments (BLOCK-1) ────────────────
 
     // M1 resolver needs S3 read for getDocumentVersionDiff (spec 40, Task 7)
-    resolverFns[0].addEnvironment('CONTENT_BUCKET', process.env.CONTENT_BUCKET ?? '');
+    resolverFns[0].addEnvironment('CONTENT_BUCKET', props.generalBucketName);
     resolverFns[0].addToRolePolicy(new iam.PolicyStatement({
       actions: ['s3:GetObject'],
-      resources: ['*'], // Scoped at deploy — generalBucket ARN plumbed via props when ready
+      resources: [`${props.generalBucketArn}/tenants/*`],
     }));
+    props.s3GeneralKey.grantDecrypt(resolverFns[0]);
 
     // Lambda data sources — one per module
     const m1DS = api.addLambdaDataSource('M1DataSource', resolverFns[0]);

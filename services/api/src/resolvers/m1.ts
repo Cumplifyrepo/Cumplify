@@ -293,11 +293,11 @@ async function listDocumentVersions(event: AppSyncEvent, tenantId: string) {
 async function getDocumentVersionDiff(event: AppSyncEvent, tenantId: string) {
   const txn = await beginTenantTransaction(tenantId);
   try {
-    // Fetch content_ref for both versions
+    // Fetch content_ref for both versions + verify same document
     const result = await txn.execute(
       `SELECT v1.content_ref as v1_ref, v2.content_ref as v2_ref
        FROM m1.document_versions v1, m1.document_versions v2
-       WHERE v1.id = :v1::uuid AND v2.id = :v2::uuid`,
+       WHERE v1.id = :v1::uuid AND v2.id = :v2::uuid AND v1.document_id = v2.document_id`,
       [
         { name: 'v1', value: { stringValue: event.arguments.v1 as string } },
         { name: 'v2', value: { stringValue: event.arguments.v2 as string } },
@@ -306,19 +306,22 @@ async function getDocumentVersionDiff(event: AppSyncEvent, tenantId: string) {
     await txn.commit();
 
     const row = marshalOne(result);
-    if (!row || !row.v1Ref || !row.v2Ref) {
-      return { additions: 0, deletions: 0, content: '{}' };
-    }
+    if (!row) throw new Error('VERSION_MISMATCH');
+
+    const v1Ref = row.v1Ref as string;
+    const v2Ref = row.v2Ref as string;
+
+    // Empty/missing content_ref → typed error (agent-writeback docs have no content plane)
+    if (!v1Ref || !v2Ref) throw new Error('CONTENT_UNAVAILABLE');
 
     // Load content JSONs from S3
     const [content1, content2] = await Promise.all([
-      loadContentJson(row.v1Ref as string),
-      loadContentJson(row.v2Ref as string),
+      loadContentJson(v1Ref),
+      loadContentJson(v2Ref),
     ]);
 
-    // Align sections by harmonizationKey and compute sentence-level LCS diff
-    const diff = computeSectionDiff(content1, content2);
-    return diff;
+    // Align sections by harmonizationKey and compute diff
+    return computeSectionDiff(content1, content2);
   } catch (err) {
     try { await txn.rollback(); } catch { /* never mask */ }
     throw err;
@@ -328,25 +331,29 @@ async function getDocumentVersionDiff(event: AppSyncEvent, tenantId: string) {
 // ─── S3 content loading ──────────────────────────────────────────────────────
 
 async function loadContentJson(key: string): Promise<ContentJson> {
-  if (!CONTENT_BUCKET) {
-    logger.warn('CONTENT_BUCKET not configured — returning empty content');
-    return { sections: [] };
-  }
+  if (!CONTENT_BUCKET) throw new Error('CONTENT_UNAVAILABLE');
   try {
     const resp = await s3.send(new GetObjectCommand({ Bucket: CONTENT_BUCKET, Key: key }));
     const body = await resp.Body?.transformToString('utf-8');
-    return body ? JSON.parse(body) : { sections: [] };
+    if (!body) throw new Error('CONTENT_UNAVAILABLE');
+    return JSON.parse(body);
   } catch (err) {
+    if ((err as Error).message === 'CONTENT_UNAVAILABLE') throw err;
     logger.warn('Failed to load content from S3', { key, error: (err as Error).message });
-    return { sections: [] };
+    throw new Error('CONTENT_UNAVAILABLE');
   }
 }
 
 // ─── Diff computation (section alignment by harmonizationKey + sentence LCS) ──
 
+interface Sentence { text: string; factRefs?: string[] }
+
 interface ContentSection {
   harmonizationKey: string;
-  sentences?: string[];
+  kind?: string; // prose, gap, na_justified, etc.
+  sentences?: Sentence[];
+  gap?: string;
+  naJustification?: string;
   [key: string]: unknown;
 }
 
@@ -358,6 +365,7 @@ interface ContentJson {
 /**
  * Align sections by harmonizationKey, then compute sentence-level LCS diff.
  * Convention: bare key for shared sections, "key#standard" for forked/standard_only.
+ * Non-prose sections: compare kind + gap + naJustification; gap→prose shows in diff.
  */
 function computeSectionDiff(v1: ContentJson, v2: ContentJson): { additions: number; deletions: number; content: string } {
   const v1Map = new Map(v1.sections.map(s => [s.harmonizationKey, s]));
@@ -365,32 +373,51 @@ function computeSectionDiff(v1: ContentJson, v2: ContentJson): { additions: numb
 
   let totalAdditions = 0;
   let totalDeletions = 0;
-  const sectionDiffs: Record<string, { added: string[]; removed: string[] }> = {};
+  const sectionDiffs: Record<string, { added: string[]; removed: string[]; kindChange?: string }> = {};
 
   // Sections in v2 but not v1 (added)
   for (const [key, sec] of v2Map) {
     if (!v1Map.has(key)) {
-      const sentences = sec.sentences ?? [];
-      totalAdditions += sentences.length;
-      sectionDiffs[key] = { added: sentences, removed: [] };
+      const texts = extractSentenceTexts(sec);
+      totalAdditions += texts.length || 1; // At least 1 for non-prose sections
+      sectionDiffs[key] = { added: texts.length > 0 ? texts : [sec.kind ?? 'added'], removed: [] };
     }
   }
 
   // Sections in v1 but not v2 (removed)
   for (const [key, sec] of v1Map) {
     if (!v2Map.has(key)) {
-      const sentences = sec.sentences ?? [];
-      totalDeletions += sentences.length;
-      sectionDiffs[key] = { added: [], removed: sentences };
+      const texts = extractSentenceTexts(sec);
+      totalDeletions += texts.length || 1;
+      sectionDiffs[key] = { added: [], removed: texts.length > 0 ? texts : [sec.kind ?? 'removed'] };
     }
   }
 
-  // Sections in both — sentence-level LCS diff
+  // Sections in both — check for kind changes then sentence-level LCS
   for (const [key, sec1] of v1Map) {
     const sec2 = v2Map.get(key);
     if (!sec2) continue;
-    const s1 = sec1.sentences ?? [];
-    const s2 = sec2.sentences ?? [];
+
+    // Non-prose transition detection (gap→prose, na→prose, etc.)
+    const kind1 = sec1.kind ?? 'prose';
+    const kind2 = sec2.kind ?? 'prose';
+    if (kind1 !== kind2) {
+      // Kind changed — entire section counts as a change
+      const removed = extractSentenceTexts(sec1);
+      const added = extractSentenceTexts(sec2);
+      totalDeletions += removed.length || 1;
+      totalAdditions += added.length || 1;
+      sectionDiffs[key] = {
+        added: added.length > 0 ? added : [kind2],
+        removed: removed.length > 0 ? removed : [kind1],
+        kindChange: `${kind1}→${kind2}`,
+      };
+      continue;
+    }
+
+    // Same kind — sentence-level LCS diff (on .text property)
+    const s1 = extractSentenceTexts(sec1);
+    const s2 = extractSentenceTexts(sec2);
     const { added, removed } = sentenceLcsDiff(s1, s2);
     if (added.length > 0 || removed.length > 0) {
       totalAdditions += added.length;
@@ -406,9 +433,15 @@ function computeSectionDiff(v1: ContentJson, v2: ContentJson): { additions: numb
   };
 }
 
+/** Extract sentence text strings from a section (handles {text, factRefs} objects). */
+function extractSentenceTexts(section: ContentSection): string[] {
+  if (!section.sentences || section.sentences.length === 0) return [];
+  return section.sentences.map(s => typeof s === 'string' ? s : s.text);
+}
+
 /**
  * Sentence-level diff using LCS (Longest Common Subsequence).
- * Returns sentences added in v2 and removed from v1.
+ * Compares on text content (not object reference).
  */
 function sentenceLcsDiff(v1: string[], v2: string[]): { added: string[]; removed: string[] } {
   const m = v1.length;

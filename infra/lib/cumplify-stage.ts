@@ -119,6 +119,9 @@ export class CumplifyStage extends cdk.Stage {
       regionalWafArn: securityStack.outputs.regionalWaf.attrArn,
       busName: eventingStack.busName,
       busArn: eventingStack.busArn,
+      generalBucketName: dataStack.generalBucketName,
+      generalBucketArn: dataStack.generalBucketArn,
+      s3GeneralKey: securityStack.outputs.s3GeneralKey,
     });
     apiStack.addDependency(dataStack);
     apiStack.addDependency(identityStack);
