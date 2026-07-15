@@ -1,0 +1,45 @@
+# Task 6 — Approval + SoD (BC-4)
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T09:05:00Z
+# Base commit: 9f3120c (Task 5 fix accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 673 tests pass, 57 files |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/src/resolvers/forms.ts` | approveFormRecord + SoD + validation reorder + literal removal |
+| `services/api/__tests__/resolvers/forms.test.ts` | 5 new approval tests (49 total forms tests) |
+
+## approveFormRecord (BC-4)
+
+- **requires_approval guard**: APPROVAL_NOT_REQUIRED if template.requires_approval is false
+- **Status guard**: APPROVE_INVALID_STATUS if status ≠ COMPLETE
+- **SoD (BC-4)**: approver ≠ completed_by AND approver ≠ opened_by
+  - Violation → publish `Security.SodViolationBlocked` + rollback + `SOD_VIOLATION` throw
+  - No status change, no writes survive
+- **Success path**: status → approved, approved_by + approved_at stamped, `FormRecord.Approved` audit event
+- **Audit event**: dynamic standard/clauseRef from template metadata (TEMPLATE_METADATA_MISSING on impossible path)
+
+## Cleanup (a): Validation reorder
+
+MAPPING_INCOMPLETE now fires BEFORE VALIDATION_INCOMPLETE. The BC-3 signal is reachable:
+- Mapped+required field unfilled → MAPPING_INCOMPLETE
+- Non-mapped required field unfilled → VALIDATION_INCOMPLETE
+Three BC-3 negative tests re-pointed to MAPPING_INCOMPLETE; non-mapped test stays on VALIDATION_INCOMPLETE.
+
+## Cleanup (b): Literal fallback removal
+
+Replaced `?? 'ISO9001'` and `?? '7.5'` fallbacks in submit (non-mapped path) and reopen
+with `throw new Error('TEMPLATE_METADATA_MISSING')`. Zero literal standard strings remain.
+Impossible paths now fail loudly.
+
+## D-rung
+
+D2 — hermetic tests pass. Live ACC-5 (SoD witnessed) at Task 11 readback.

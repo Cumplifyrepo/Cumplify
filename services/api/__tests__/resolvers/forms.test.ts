@@ -776,7 +776,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
     });
   }
 
-  it('VALIDATION_INCOMPLETE when severity (mapped+required) is unfilled — writes NOTHING, rolls back', async () => {
+  it('MAPPING_INCOMPLETE when severity (mapped+required) is unfilled — writes NOTHING, rolls back', async () => {
     setupSubmitMocks({
       mapsTo: 'm2_ncr',
       fieldsMeta: [
@@ -809,7 +809,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
 
     await expect(
       handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
-    ).rejects.toThrow('VALIDATION_INCOMPLETE');
+    ).rejects.toThrow('MAPPING_INCOMPLETE');
 
     // Rollback — NOTHING written
     expect(mockRollback).toHaveBeenCalled();
@@ -823,7 +823,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
     expect(mockPublishAuditEvent).not.toHaveBeenCalled();
   });
 
-  it('VALIDATION_INCOMPLETE when clause_ref (mapped+required) is unfilled — zero defaults allowed', async () => {
+  it('MAPPING_INCOMPLETE when clause_ref (mapped+required) is unfilled — zero defaults allowed', async () => {
     setupSubmitMocks({
       mapsTo: 'm2_ncr',
       fieldsMeta: [
@@ -856,12 +856,12 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
 
     await expect(
       handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
-    ).rejects.toThrow('VALIDATION_INCOMPLETE');
+    ).rejects.toThrow('MAPPING_INCOMPLETE');
 
     expect(mockRollback).toHaveBeenCalled();
   });
 
-  it('VALIDATION_INCOMPLETE when corrective_action_desc (action_desc mapped+required) is unfilled', async () => {
+  it('MAPPING_INCOMPLETE when corrective_action_desc (action_desc mapped+required) is unfilled', async () => {
     setupSubmitMocks({
       mapsTo: 'm2_ncr',
       fieldsMeta: [
@@ -889,7 +889,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
 
     await expect(
       handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
-    ).rejects.toThrow('VALIDATION_INCOMPLETE');
+    ).rejects.toThrow('MAPPING_INCOMPLETE');
   });
 });
 
@@ -1320,5 +1320,136 @@ describe('submitFormRecord — F3: VALIDATION_INCOMPLETE for non-mapped required
     expect(mockCommit).not.toHaveBeenCalled();
     const allSqls = mockExecute.mock.calls.map(c => c[0] as string);
     expect(allSqls.filter(s => s.includes('INSERT INTO m2.'))).toHaveLength(0);
+  });
+});
+
+// ─── Task 6: approveFormRecord + SoD (BC-4) ──────────────────────────────────
+
+describe('approveFormRecord — SoD enforcement (BC-4)', () => {
+  it('SoD violation (approver === completed_by) → Security.SodViolationBlocked + rollback + no status change', async () => {
+    mockExecute.mockReset();
+    mockCommit.mockReset();
+    mockRollback.mockReset();
+    mockPublishAuditEvent.mockReset().mockResolvedValue('evt-test');
+
+    // record: completed_by = 'user-test' (same as actor from resolverContext)
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'complete' }, { stringValue: 'other-user' }, { stringValue: 'user-test' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'completed_by' }],
+    });
+    // template: requires_approval = true
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ booleanValue: true }, { arrayValue: { stringValues: ['ISO9001'] } }, { arrayValue: { stringValues: ['8.7'] } }]],
+      columnMetadata: [{ name: 'requires_approval' }, { name: 'standards' }, { name: 'clause_refs' }],
+    });
+
+    await expect(
+      handler(makeEvent('approveFormRecord', { input: { recordId: 'rec-1' } })),
+    ).rejects.toThrow('SOD_VIOLATION');
+
+    // Security.SodViolationBlocked event published
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
+      detailType: 'Security.SodViolationBlocked',
+      payload: expect.objectContaining({ attemptedBy: 'user-test', completedBy: 'user-test' }),
+    }));
+    // Rollback called, no commit
+    expect(mockRollback).toHaveBeenCalled();
+    expect(mockCommit).not.toHaveBeenCalled();
+    // No status update to approved
+    const allSqls = mockExecute.mock.calls.map(c => c[0] as string);
+    expect(allSqls.filter(s => s.includes("status = 'approved'"))).toHaveLength(0);
+  });
+
+  it('SoD violation (approver === opened_by) → SOD_VIOLATION', async () => {
+    mockExecute.mockReset();
+    mockCommit.mockReset();
+    mockRollback.mockReset();
+    mockPublishAuditEvent.mockReset().mockResolvedValue('evt-test');
+
+    // record: opened_by = 'user-test' (same as actor)
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'complete' }, { stringValue: 'user-test' }, { stringValue: 'other-completer' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'completed_by' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ booleanValue: true }, { arrayValue: { stringValues: ['ISO9001'] } }, { arrayValue: { stringValues: ['8.7'] } }]],
+      columnMetadata: [{ name: 'requires_approval' }, { name: 'standards' }, { name: 'clause_refs' }],
+    });
+
+    await expect(
+      handler(makeEvent('approveFormRecord', { input: { recordId: 'rec-1' } })),
+    ).rejects.toThrow('SOD_VIOLATION');
+  });
+
+  it('second-user approval commits: status approved, approved_by stamped, audit event', async () => {
+    mockExecute.mockReset();
+    mockCommit.mockReset();
+    mockRollback.mockReset();
+    mockPublishAuditEvent.mockReset().mockResolvedValue('evt-test');
+
+    // record: opened_by and completed_by are DIFFERENT from actor
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'complete' }, { stringValue: 'opener' }, { stringValue: 'completer' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'completed_by' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ booleanValue: true }, { arrayValue: { stringValues: ['ISO45001'] } }, { arrayValue: { stringValues: ['10.2'] } }]],
+      columnMetadata: [{ name: 'requires_approval' }, { name: 'standards' }, { name: 'clause_refs' }],
+    });
+    // UPDATE status = approved
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [] });
+    // getFormRecordById calls
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('approveFormRecord', { input: { recordId: 'rec-1' } })).catch(() => {});
+
+    // Update SQL stamps approved
+    const [approveSql] = mockExecute.mock.calls[2];
+    expect(approveSql).toContain("status = 'approved'");
+    expect(approveSql).toContain('approved_by');
+    expect(approveSql).toContain('approved_at');
+    expect(approveSql).toContain('WHERE id = :id::uuid');
+
+    // Commit called
+    expect(mockCommit).toHaveBeenCalled();
+
+    // Audit event with dynamic standard
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
+      detailType: 'FormRecord.Approved',
+      standard: 'ISO45001',
+      clauseRef: '10.2',
+    }));
+  });
+
+  it('APPROVAL_NOT_REQUIRED when template does not require approval', async () => {
+    mockExecute.mockReset();
+    mockRollback.mockReset().mockResolvedValue(undefined);
+
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'complete' }, { stringValue: 'opener' }, { stringValue: 'completer' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'completed_by' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ booleanValue: false }, { arrayValue: { stringValues: ['ISO9001'] } }, { arrayValue: { stringValues: ['7.2'] } }]],
+      columnMetadata: [{ name: 'requires_approval' }, { name: 'standards' }, { name: 'clause_refs' }],
+    });
+
+    await expect(
+      handler(makeEvent('approveFormRecord', { input: { recordId: 'rec-1' } })),
+    ).rejects.toThrow('APPROVAL_NOT_REQUIRED');
+  });
+
+  it('APPROVE_INVALID_STATUS when record is not COMPLETE', async () => {
+    mockExecute.mockReset();
+    mockRollback.mockReset().mockResolvedValue(undefined);
+
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'in_progress' }, { stringValue: 'opener' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'completed_by' }],
+    });
+
+    await expect(
+      handler(makeEvent('approveFormRecord', { input: { recordId: 'rec-1' } })),
+    ).rejects.toThrow('APPROVE_INVALID_STATUS');
   });
 });

@@ -465,16 +465,7 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     const currentValues = marshalValues(valuesResult);
     const fieldsMeta = marshalFieldMetaFull(fieldMetaResult);
 
-    // F3: Full validation (REC-3) — ALL required fields must be filled
-    const allRequired = fieldsMeta.filter(f => f.required);
-    for (const field of allRequired) {
-      const value = currentValues[field.fieldKey];
-      if (value === null || value === undefined || value === '') {
-        throw new Error('VALIDATION_INCOMPLETE');
-      }
-    }
-
-    // BC-3: Validate mapped fields (MAPPING_INCOMPLETE if any mapped required is empty)
+    // BC-3: Validate mapped fields FIRST (MAPPING_INCOMPLETE is the BC-3 signal)
     if (mapsTo === 'm2_ncr') {
       const mappedFields = fieldsMeta.filter(f => f.mapsToColumn !== null);
       const requiredMapped = mappedFields.filter(f => f.required);
@@ -485,6 +476,19 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
           throw new Error('MAPPING_INCOMPLETE');
         }
       }
+    }
+
+    // F3: Full validation (REC-3) — ALL required fields must be filled
+    const allRequired = fieldsMeta.filter(f => f.required);
+    for (const field of allRequired) {
+      const value = currentValues[field.fieldKey];
+      if (value === null || value === undefined || value === '') {
+        throw new Error('VALIDATION_INCOMPLETE');
+      }
+    }
+
+    // NCR→M2 mapping path
+    if (mapsTo === 'm2_ncr') {
 
       // Resolve clause_ref UUID → clause_no TEXT from qms.clause_registry (pending 011)
       const clauseRefUuid = currentValues['clause_ref'] as string;
@@ -587,16 +591,17 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
       await txn.commit();
 
-      // F2: Audit event — standard/clauseRef from template metadata (no literals)
+      // Audit event — standard/clauseRef from template metadata (impossible path fails loudly)
       // TODO-011: once IMS enum lands (spec-40), multi-standard templates use 'IMS'
-      const auditStandard = (tplStandards?.[0] ?? 'ISO9001') as 'ISO9001' | 'ISO14001' | 'ISO45001';
-      const auditClauseRef = tplClauseRefs?.[0] ?? '7.5';
+      if (!tplStandards?.[0] || !tplClauseRefs?.[0]) {
+        throw new Error('TEMPLATE_METADATA_MISSING');
+      }
       await publishAuditEvent({
         tenantId,
         actor,
         module: 'M4',
-        clauseRef: auditClauseRef,
-        standard: auditStandard,
+        clauseRef: tplClauseRefs[0],
+        standard: tplStandards[0] as 'ISO9001' | 'ISO14001' | 'ISO45001',
         detailType: 'FormRecord.Submitted',
         source: 'cumplify.forms',
         payload: { recordId, templateId, mapsTo },
@@ -611,10 +616,99 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 }
 
 /**
- * approveFormRecord — stub for Task 6 (SoD enforcement).
+ * approveFormRecord — SoD enforcement (BC-4).
+ * Only for requires_approval templates, only from COMPLETE status.
+ * SoD: approver ≠ completed_by AND approver ≠ opened_by.
+ * Violation → Security.SodViolationBlocked, writes NOTHING.
  */
-async function approveFormRecord(_event: AppSyncEvent, _tenantId: string, _actor: string): Promise<unknown> {
-  throw new Error('NOT_IMPLEMENTED: approveFormRecord ships in Task 6');
+async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: string): Promise<unknown> {
+  const input = event.arguments.input as { recordId: string };
+  const recordId = input.recordId;
+
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    // Fetch record
+    const recResult = await txn.execute(`
+      SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by
+      FROM forms.records r WHERE r.id = :id::uuid
+    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    const recRows = marshalRecordRows(recResult);
+    if (recRows.length === 0) throw new Error('RECORD_NOT_FOUND');
+    const rec = recRows[0];
+    const templateId = rec.templateId as string;
+    const currentStatus = rec.status as string;
+    const openedBy = rec.openedBy as string;
+    const completedBy = rec.completedBy as string | null;
+
+    // Status guard: approve only from COMPLETE
+    if (currentStatus !== 'COMPLETE') {
+      throw new Error('APPROVE_INVALID_STATUS');
+    }
+
+    // Template guard: only requires_approval templates
+    const tplResult = await txn.execute(`
+      SELECT requires_approval, standards, clause_refs FROM forms.templates WHERE id = :id::uuid
+    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    const tplRows = marshalRecordRows(tplResult);
+    const requiresApproval = tplRows[0]?.requiresApproval;
+    const tplStandards = tplRows[0]?.standards as string[] | null;
+    const tplClauseRefs = tplRows[0]?.clauseRefs as string[] | null;
+
+    if (!requiresApproval) {
+      throw new Error('APPROVAL_NOT_REQUIRED');
+    }
+
+    // BC-4: SoD — approver ≠ completed_by AND approver ≠ opened_by
+    if (actor === completedBy || actor === openedBy) {
+      // Publish Security.SodViolationBlocked, write NOTHING
+      await txn.rollback();
+      await publishAuditEvent({
+        tenantId,
+        actor,
+        module: 'M4',
+        clauseRef: tplClauseRefs?.[0] ?? (() => { throw new Error('TEMPLATE_METADATA_MISSING'); })(),
+        standard: (tplStandards?.[0] ?? (() => { throw new Error('TEMPLATE_METADATA_MISSING'); })()) as 'ISO9001' | 'ISO14001' | 'ISO45001',
+        detailType: 'Security.SodViolationBlocked',
+        source: 'cumplify.forms',
+        payload: { recordId, attemptedBy: actor, openedBy, completedBy, reason: 'approver must differ from opened_by and completed_by' },
+      });
+      throw new Error('SOD_VIOLATION');
+    }
+
+    // Approve: stamp approved_by/approved_at, status → approved
+    await txn.execute(`
+      UPDATE forms.records
+      SET status = 'approved', approved_by = :actor, approved_at = NOW(), updated_at = NOW()
+      WHERE id = :id::uuid
+    `, [
+      { name: 'actor', value: { stringValue: actor } },
+      { name: 'id', value: { stringValue: recordId } },
+    ]);
+
+    await txn.commit();
+
+    // Audit event — dynamic standard/clauseRef from template
+    if (!tplStandards?.[0] || !tplClauseRefs?.[0]) {
+      throw new Error('TEMPLATE_METADATA_MISSING');
+    }
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M4',
+      clauseRef: tplClauseRefs[0],
+      standard: tplStandards[0] as 'ISO9001' | 'ISO14001' | 'ISO45001',
+      detailType: 'FormRecord.Approved',
+      source: 'cumplify.forms',
+      payload: { recordId, templateId, approvedBy: actor },
+    });
+
+    return getFormRecordById(recordId, tenantId);
+  } catch (err) {
+    if ((err as Error).message !== 'SOD_VIOLATION') {
+      await txn.rollback().catch(() => {});
+    }
+    throw err;
+  }
 }
 
 /**
@@ -663,16 +757,17 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
     await txn.commit();
 
-    // F2: Audit event — standard/clauseRef from template metadata (no literals)
+    // Audit event — standard/clauseRef from template metadata (impossible path fails loudly)
     // TODO-011: once IMS enum lands (spec-40), multi-standard templates use 'IMS'
-    const auditStandard = (tplStandards?.[0] ?? 'ISO9001') as 'ISO9001' | 'ISO14001' | 'ISO45001';
-    const auditClauseRef = tplClauseRefs?.[0] ?? '7.5';
+    if (!tplStandards?.[0] || !tplClauseRefs?.[0]) {
+      throw new Error('TEMPLATE_METADATA_MISSING');
+    }
     await publishAuditEvent({
       tenantId,
       actor,
       module: 'M4',
-      clauseRef: auditClauseRef,
-      standard: auditStandard,
+      clauseRef: tplClauseRefs[0],
+      standard: tplStandards[0] as 'ISO9001' | 'ISO14001' | 'ISO45001',
       detailType: 'FormRecord.Reopened',
       source: 'cumplify.forms',
       payload: { recordId, justification },

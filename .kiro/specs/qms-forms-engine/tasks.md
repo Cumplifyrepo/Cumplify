@@ -52,8 +52,8 @@
 
 ## Task 6 — Approval + SoD (BC-4) [KIRO]
 
-- [ ] `approveFormRecord` for `requires_approval` templates: approver ≠ completed_by ≠ opened_by; violation publishes `Security.SodViolationBlocked`, writes nothing; second-user approval commits (ACC-5 shape).
-- [ ] Hermetic tests both paths.
+- [x] `approveFormRecord` for `requires_approval` templates: approver ≠ completed_by ≠ opened_by; violation publishes `Security.SodViolationBlocked`, writes nothing; second-user approval commits (ACC-5 shape).
+- [x] Hermetic tests both paths.
 
 **Depends on:** Task 5. **D-rung:** D2. **Evidence:** `task-6-sod.log`
 
