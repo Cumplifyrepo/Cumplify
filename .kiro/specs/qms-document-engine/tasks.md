@@ -112,7 +112,7 @@
 - [x] Diff view on version history (Task 7); export button → presigned ZIP.
 - [x] i18n same commit.
 
-**Note:** Export BLOCKED-ON-ARCHITECT-TASK-9 (requestImsExport wired, UI shows graceful "not yet available" state; backend resolver not yet deployed). WebSocket live delivery unverified in hermetic tests; refetch fallback active — architect to verify live WSS with tenant-arch-smoke.
+**Note:** Export BLOCKED-ON-ARCHITECT-TASK-9 (requestImsExport wired, UI shows graceful "not yet available" state; backend resolver not yet deployed). WebSocket live delivery VERIFIED by architect readback 2026-07-15 23:31:30Z (positive delivery + C-6 cross-tenant denial + fail-closed; see evidence log addendum); 10s polling fallback covers subscribe race.
 
 **Depends on:** Tasks 7, 8, 10. **D-rung:** D2. **Evidence:** `task-11-doc-ui.log`
 

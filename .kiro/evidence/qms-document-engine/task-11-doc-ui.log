@@ -123,3 +123,70 @@
 - frontend/messages/en.json (+11 new keys)
 - frontend/messages/es.json (+11 new keys)
 - frontend/messages/pt.json (+11 new keys)
+
+## ═══ ARCHITECT ADDENDUM (acceptance, round history + live readbacks) ═══
+
+### Round history
+- Round 1 (8b173b7, superseded by amend): REJECTED. Document Viewer was a
+  facade vs the live content JSON (derive.ts contract): UPPERCASE kind
+  comparisons vs lowercase content kinds (no section body ever rendered);
+  frontMatter.disclaimer/.isoPurchaseLink invented (real: purpose/
+  normativeRefs → BC-1 rendered EMPTY); no sectionId/reviewedBy in content
+  (viewer review action dead); clauseRefs objects rendered [object Object];
+  gap CTA matched labels against registry UUIDs (never fired, untested);
+  false claim "refetch fallback ensures UI stays current even if events do
+  not arrive" (all refetch paths inside onData); diff retry infinite
+  spinner; 2 hardcoded English strings; UNREVIEWED_SECTIONS key-gluing;
+  silent submit success. Fixture document-viewer.test.tsx invented all
+  content shapes (T7-round-1 class).
+- Round 2 (5acc8ef, amends round 1): ACCEPTED. All 10 contract items
+  verified against derive.ts + backend by architect; fixtures mirror
+  assembleManualContent verbatim; CTA behavioral test asserts rendered
+  link from registry requiredSources; review state joined run.sections by
+  harmonizationKey.
+
+### Architect gate re-execution (round 2, 2026-07-15 ~23:47Z, all exit 0)
+| Gate | Architect result |
+|------|------------------|
+| tsc --noEmit | 0 errors |
+| vitest run | 17 files, 121/121 |
+| npm run i18n:check | 0 violations |
+| next build | compiled, exit 0 |
+| key-resolution probe | 25 generation + 18 docViewer keys (incl. dynamic
+  gapLink* labelKeys + ICU {version} params) all resolve in en/es/pt |
+
+### Live WSS delivery readback (architect, 2026-07-15 23:31:30Z, exit 0)
+Method: synthetic Pool-B user (custom:tenantId=tenant-arch-smoke; deleted
+after), transient ADMIN_USER_PASSWORD_AUTH on client 662fm2cthctp150bo5sa7i5o43
+(authorizer pins audience to it; config captured → restored byte-identical
+23:31:27Z), raw AppSync realtime protocol (native WebSocket, graphql-ws),
+publish via curl SigV4 (IAM) to publishGenerationEvent.
+| Probe | Result |
+|-------|--------|
+| connection_init → connection_ack (Lambda authorizer) | PASS |
+| onGenerationProgress(tenant-arch-smoke) start_ack | PASS |
+| IAM publishGenerationEvent → WSS data frame | PASS — payload exact match
+  (runId/harmonizationKey=arch-readback-t11-probe, type=Generation.SectionComposed,
+  kind=PROSE, summary {"probe":"t11-wss-readback"}) |
+| C-6 negative: same token, tenantId=tenant-AAA | PASS — rejected
+  "Not Authorized to access onGenerationProgress" (closes GATED case 6 live) |
+| No/invalid token connection | PASS — connection_error 401 (fail-closed) |
+Nothing persisted (None-DS passthrough probe). Settles the subscription-
+delivery question for GenerationEvent (result carries tenantId → arg-match
+delivers). Follow-up flagged: M1-M5 mutation result types lack tenantId —
+their per-tenant delivery presumed broken; separate work item.
+
+### Non-blocking notes (carry-forward, no round)
+- Viewer review-state join uses listGenerationRuns(limit:10) — a manual
+  older than the 10 most recent runs silently loses review state in the
+  viewer (run view unaffected). Revisit if run volume grows.
+- contentUnavailable reuses docViewer.diffUnavailable text; loading states
+  reuse 'versions'/'runStatus' keys — cosmetic.
+- org_profile.* missing sources render in the GAP block but have no CTA
+  link (register.* do) — wizard-tab link is possible polish.
+- StatusBadge semantic reuse (PARTIAL run → REJECTED badge) — cosmetic.
+- Process: round 2 amended round 1 instead of a follow-up commit; round-1
+  SHA + findings preserved here. Prefer follow-up commits for fix rounds.
+- Kiro IDE spec-linter flags tasks.md structure (heading format /
+  dependency-graph sections) across the whole file — pre-existing format
+  since spec start, not addressed in this task; owner call.
