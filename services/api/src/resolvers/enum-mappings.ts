@@ -103,6 +103,23 @@ export const RISK_CATEGORY_MAP: Record<string, string> = {
   OPPORTUNITY: 'opportunity',
 };
 
+/** CHECK (status IN ('running', 'complete', 'failed', 'partial')) — qms.generation_runs (migration 011) */
+export const GENERATION_RUN_STATUS_MAP: Record<string, string> = {
+  RUNNING: 'running',
+  COMPLETE: 'complete',
+  FAILED: 'failed',
+  PARTIAL: 'partial',
+};
+
+/** CHECK (status IN ('pending', 'prose', 'gap', 'na_justified', 'failed')) — qms.generation_sections (011); SDL enum SectionKind */
+export const SECTION_KIND_MAP: Record<string, string> = {
+  PENDING: 'pending',
+  PROSE: 'prose',
+  GAP: 'gap',
+  NA_JUSTIFIED: 'na_justified',
+  FAILED: 'failed',
+};
+
 // ─── Shared helper ───────────────────────────────────────────────────────────
 
 /**

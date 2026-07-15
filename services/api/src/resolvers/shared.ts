@@ -255,7 +255,7 @@ export { TABLE_NAME, BUS_NAME, CLUSTER_ARN, Logger };
 import {
   RISK_CATEGORY_MAP, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP,
   NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP,
-  FINDING_TYPE_MAP, CAPA_STATUS_MAP,
+  FINDING_TYPE_MAP, CAPA_STATUS_MAP, GENERATION_RUN_STATUS_MAP, SECTION_KIND_MAP,
 } from './enum-mappings.js';
 
 /** Reverse maps: DB lowercase → GraphQL UPPERCASE */
@@ -268,12 +268,23 @@ function invertMap(map: Record<string, string>): Record<string, string> {
 const REVERSE_ENUMS: Record<string, Record<string, string>> = {
   category: invertMap(RISK_CATEGORY_MAP),
   doc_type: invertMap(DOC_TYPE_MAP),
-  // Overloaded `status` column: doc values (draft/in_review/approved/obsolete)
-  // and CAPA values (open/in_progress/closed/verified) are disjoint, so one
-  // merged reverse map serves both DocumentStatus! and CAPAStatus! fields.
+  // Overloaded `status` column: doc values (draft/in_review/approved/obsolete),
+  // CAPA values (open/in_progress/closed/verified), qms run values
+  // (running/complete/failed/partial), and section-kind values
+  // (pending/prose/gap/na_justified/failed) are pairwise disjoint except
+  // 'failed', which maps to FAILED in both qms maps — so one merged reverse
+  // map serves DocumentStatus!, CAPAStatus!, GenerationRunStatus!, and
+  // `status AS kind` aliases regardless of whether Data API reports the
+  // alias or the underlying column name.
   // FIXED 2026-07-14 (architect): CAPA values previously passed through
   // lowercase → invalid enum serialization on every M2 NC/CA read.
-  status: { ...invertMap(DOC_STATUS_MAP), ...invertMap(CAPA_STATUS_MAP) },
+  // FIXED 2026-07-15 (architect): same class, qms values — GenerationRun/
+  // GenerationSection reads would have failed enum serialization on deploy.
+  status: {
+    ...invertMap(DOC_STATUS_MAP), ...invertMap(CAPA_STATUS_MAP),
+    ...invertMap(GENERATION_RUN_STATUS_MAP), ...invertMap(SECTION_KIND_MAP),
+  },
+  kind: invertMap(SECTION_KIND_MAP),
   decision: invertMap(APPROVAL_DECISION_MAP),
   source: invertMap(NC_SOURCE_MAP),
   nc_type: invertMap(NC_TYPE_MAP),
@@ -287,6 +298,18 @@ function snakeToCamel(s: string): string {
   return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
+/**
+ * Data API wraps array columns as {stringValues|longValues|doubleValues|
+ * booleanValues|arrayValues} — unwrap to a plain array (recursive for
+ * nested arrays) or GraphQL list/AWSJSON fields serialize the wrapper.
+ */
+function unwrapArray(av: Record<string, unknown>): unknown[] {
+  if (Array.isArray(av.arrayValues)) {
+    return (av.arrayValues as Record<string, unknown>[]).map(unwrapArray);
+  }
+  return (av.stringValues ?? av.longValues ?? av.doubleValues ?? av.booleanValues ?? []) as unknown[];
+}
+
 /** Unwrap a Data API field value */
 function unwrapField(field: Record<string, unknown>): unknown {
   if (field.stringValue !== undefined) return field.stringValue;
@@ -294,7 +317,7 @@ function unwrapField(field: Record<string, unknown>): unknown {
   if (field.doubleValue !== undefined) return field.doubleValue;
   if (field.booleanValue !== undefined) return field.booleanValue;
   if (field.isNull) return null;
-  if (field.arrayValue !== undefined) return field.arrayValue;
+  if (field.arrayValue !== undefined) return unwrapArray(field.arrayValue as Record<string, unknown>);
   // Blob or other — return as-is
   return Object.values(field)[0] ?? null;
 }
