@@ -46,6 +46,7 @@ export function Sidebar() {
           <NavItem href="/m2" label={t('capa')} />
           <NavItem href="/m3" label={t('auditStudio')} />
           <NavItem href="/m4" label={t('records')} />
+          <NavItem href="/m4/forms" label={t('forms')} />
           <NavItem href="/m5" label={t('risk')} />
         </NavSection>
 

@@ -10,6 +10,7 @@
     "capa": "CAPA",
     "auditStudio": "Estúdio de Auditoria",
     "records": "Registros",
+    "forms": "Formulários",
     "risk": "Risco",
     "settings": "Configurações"
   },
@@ -365,6 +366,9 @@
     "intParties": {
       "sec": { "info": "Informações da Parte", "needs": "Necessidades e Expectativas" },
       "field": { "name": "Nome da Parte", "type": "Tipo de Parte", "relevance": "Relevância", "influence": "Nível de Influência", "needsDesc": "Necessidades", "expectationsDesc": "Expectativas", "applicableStandards": "Normas Aplicáveis", "monitoringMethod": "Método de Monitoramento", "reviewFrequency": "Frequência de Revisão" }
-    }
+    },
+    "catalog": { "title": "Modelos de Formulários", "filterAll": "Todos", "loading": "Carregando...", "sections": "seções", "fields": "campos" },
+    "register": { "colStatus": "Status", "colCompletion": "Conclusão", "colOpenedBy": "Aberto Por", "colUpdated": "Atualizado", "newRecord": "Novo Registro", "backToCatalog": "Voltar", "loading": "Carregando...", "empty": "Sem registros ainda" },
+    "form": { "loading": "Carregando...", "back": "Voltar", "submit": "Enviar", "approve": "Aprovar", "reopen": "Reabrir", "reopenTitle": "Reabrir Registro", "justification": "Justificativa", "mappingIncomplete": "Os campos de mapeamento obrigatórios estão incompletos", "validationIncomplete": "Os campos obrigatórios estão incompletos", "submitInvalidStatus": "O registro não pode ser enviado no status atual", "recordImmutable": "O registro está bloqueado", "linkTargetNotFound": "Destino vinculado não encontrado", "fieldRequired": "Este campo é obrigatório" }
   }
 }

@@ -1,0 +1,58 @@
+# Task 7 — Frontend: catalog + register + form
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-14T09:48:00Z
+# Base commit: db78285 (Task 6 accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests (root) | `npx vitest run` | 0 | 673 tests pass, 57 files |
+| Unit tests (frontend) | `npx vitest run` (frontend/) | 0 | 81 tests pass, 13 files |
+| i18n check | `npm run i18n:check` | 0 | No violations |
+| Build | `npx next build` | 0 | /m4/forms route at 4.94 kB |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/app/(authenticated)/m4/forms/page.tsx` | Template catalog + record register (view 1 + 2) |
+| `frontend/src/app/(authenticated)/m4/forms/page.module.css` | Catalog cards, filters, completion bar styles |
+| `frontend/src/app/(authenticated)/m4/forms/_detail/FormRecordDetail.tsx` | Sectioned form view + autosave + submit/approve/reopen (view 3) |
+| `frontend/src/app/(authenticated)/m4/forms/_detail/FormRecordDetail.module.css` | Form field styles, completion bar, error states |
+| `frontend/src/app/(authenticated)/m4/forms/page.test.tsx` | 4 hermetic tests |
+| `frontend/src/components/shell/Sidebar.tsx` | Nav entry for /m4/forms |
+| `frontend/messages/{en,es,pt}.json` | forms.catalog/register/form + nav.forms keys |
+
+## Gate compliance
+
+1. **BC-1 (counts from API)**: Catalog card chips render `tpl.sectionCount` and `tpl.fieldCount`
+   from the listFormTemplates API response — never counted client-side, never a literal.
+   Test asserts: "6 sections" and "35 fields" appear from mock API data.
+
+2. **Server completion counter**: FormRecordDetail displays `record.completion.fieldsFilled`
+   / `record.completion.fieldsTotal` from the server — client never computes it.
+   The completion bar width is `(fieldsFilled/fieldsTotal)*100%`.
+
+3. **Autosave + null→DELETE**: Debounced 1.5s into saveFormRecordValues with partial
+   {fieldKey: value} map. Cleared fields (empty string / undefined) send null (triggers
+   the server-side DELETE path from Task 5 fix).
+
+4. **RelationPicker**: Stores UUID in the field value. On LINK_TARGET_NOT_FOUND from
+   the server, surfaces the error on the triggering field (fieldErrors set), not a toast.
+
+5. **Submit error mapping**: MAPPING_INCOMPLETE / VALIDATION_INCOMPLETE → per-field
+   errors from `record.completion.requiredMissing`. SUBMIT_INVALID_STATUS and
+   RECORD_IMMUTABLE render as honest error states.
+
+6. **Immutable view**: When status ∈ {COMPLETE, APPROVED}, all field inputs are
+   readOnly/disabled. Reopen action available (justification modal via FormDrawer).
+   Approve button gated behind `canApprove(role, 'M4')`.
+
+7. **i18n**: forms.catalog/register/form + nav.forms keys in en/es/pt same commit.
+   view-designs.md design tokens govern all CSS.
+
+## D-rung
+
+D2 — frontend code + tests + build pass gates. Not deployed.

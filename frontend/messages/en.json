@@ -10,6 +10,7 @@
     "capa": "CAPA",
     "auditStudio": "Audit Studio",
     "records": "Records",
+    "forms": "Forms",
     "risk": "Risk",
     "settings": "Settings"
   },
@@ -365,6 +366,9 @@
     "intParties": {
       "sec": { "info": "Party Information", "needs": "Needs & Expectations" },
       "field": { "name": "Party Name", "type": "Party Type", "relevance": "Relevance", "influence": "Influence Level", "needsDesc": "Needs", "expectationsDesc": "Expectations", "applicableStandards": "Applicable Standards", "monitoringMethod": "Monitoring Method", "reviewFrequency": "Review Frequency" }
-    }
+    },
+    "catalog": { "title": "Form Templates", "filterAll": "All", "loading": "Loading...", "sections": "sections", "fields": "fields" },
+    "register": { "colStatus": "Status", "colCompletion": "Completion", "colOpenedBy": "Opened By", "colUpdated": "Updated", "newRecord": "New Record", "backToCatalog": "Back", "loading": "Loading...", "empty": "No records yet" },
+    "form": { "loading": "Loading...", "back": "Back", "submit": "Submit", "approve": "Approve", "reopen": "Reopen", "reopenTitle": "Reopen Record", "justification": "Justification", "mappingIncomplete": "Required mapping fields are incomplete", "validationIncomplete": "Required fields are incomplete", "submitInvalidStatus": "Record cannot be submitted in current status", "recordImmutable": "Record is locked", "linkTargetNotFound": "Linked target not found", "fieldRequired": "This field is required" }
   }
 }

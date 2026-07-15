@@ -59,10 +59,10 @@
 
 ## Task 7 — Frontend: catalog + register + form [KIRO]
 
-- [ ] Template catalog view: clause-tagged cards, computed `N sections · M fields` chips, standards filter (TPL-2/3).
-- [ ] Record register per template: DataTable (status, completion, opened/completed by), empty state, row → record (REC-1).
-- [ ] Sectioned form: server counter, autosave, typed field widgets (select/radio/date/number/multiselect/user), **RelationPicker** (search target register, stores UUID), submit with validation errors surfaced per field, immutable complete view, reopen action.
-- [ ] i18n `forms.*` namespaces en/es/pt same commit; view-designs.md + design tokens govern.
+- [x] Template catalog view: clause-tagged cards, computed `N sections · M fields` chips, standards filter (TPL-2/3).
+- [x] Record register per template: DataTable (status, completion, opened/completed by), empty state, row → record (REC-1).
+- [x] Sectioned form: server counter, autosave, typed field widgets (select/radio/date/number/multiselect/user), **RelationPicker** (search target register, stores UUID), submit with validation errors surfaced per field, immutable complete view, reopen action.
+- [x] i18n `forms.*` namespaces en/es/pt same commit; view-designs.md + design tokens govern.
 
 **Depends on:** Tasks 3–5. **D-rung:** D2. **Evidence:** `task-7-ui.log`
 

@@ -10,6 +10,7 @@
     "capa": "CAPA",
     "auditStudio": "Estudio de Auditoría",
     "records": "Registros",
+    "forms": "Formularios",
     "risk": "Riesgo",
     "settings": "Configuración"
   },
@@ -365,6 +366,9 @@
     "intParties": {
       "sec": { "info": "Información de la Parte", "needs": "Necesidades y Expectativas" },
       "field": { "name": "Nombre de la Parte", "type": "Tipo de Parte", "relevance": "Relevancia", "influence": "Nivel de Influencia", "needsDesc": "Necesidades", "expectationsDesc": "Expectativas", "applicableStandards": "Normas Aplicables", "monitoringMethod": "Método de Seguimiento", "reviewFrequency": "Frecuencia de Revisión" }
-    }
+    },
+    "catalog": { "title": "Plantillas de Formularios", "filterAll": "Todos", "loading": "Cargando...", "sections": "secciones", "fields": "campos" },
+    "register": { "colStatus": "Estado", "colCompletion": "Completado", "colOpenedBy": "Abierto Por", "colUpdated": "Actualizado", "newRecord": "Nuevo Registro", "backToCatalog": "Volver", "loading": "Cargando...", "empty": "Sin registros aún" },
+    "form": { "loading": "Cargando...", "back": "Volver", "submit": "Enviar", "approve": "Aprobar", "reopen": "Reabrir", "reopenTitle": "Reabrir Registro", "justification": "Justificación", "mappingIncomplete": "Los campos de mapeo requeridos están incompletos", "validationIncomplete": "Los campos requeridos están incompletos", "submitInvalidStatus": "El registro no puede enviarse en el estado actual", "recordImmutable": "El registro está bloqueado", "linkTargetNotFound": "Destino vinculado no encontrado", "fieldRequired": "Este campo es requerido" }
   }
 }
