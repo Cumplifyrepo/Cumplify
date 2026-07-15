@@ -1,0 +1,90 @@
+# Task 5 — DocGenStateMachine: Seed + Compose + checker (spec 40, design §4)
+
+Executor: architect (Claude). D-rung: D3 — full live run on seeded dev tenant.
+
+## What shipped
+
+- `services/qms-generation/` — NEW service:
+  - `grouping.ts` — GEN-3 by construction (shared → one merged section across
+    in-scope standards; forked/standard_only → per-standard, section key
+    `<hk>#<standard>`; exclusions → `na_justified` carrying justification).
+  - `gap.ts` — GAP decided in CODE before any model call; REGISTER_TABLE_MAP
+    maps register sources to real tables; unbuilt modules (aspects, hazards,
+    competence, …) are null → definitionally empty → always gap, $0. Unknown
+    source scheme fails toward GAP, never invention.
+  - `checker.ts` — deterministic post-pass: assertion coverage (≥1 factRef,
+    all resolve), house style (no shall/bullets/placeholders/second-person,
+    org-as-subject), CLR-3 banned-fragment screen (curated list — official
+    standards not in repo by licensing; "shall" check catches the dominant
+    class).
+  - `facts.ts` — citable facts ONLY from tenant data (profile + register
+    rows); absent fields produce NO fact, so invention fails the checker.
+  - `appsync-publish.ts` — FIRST real Lambda→AppSync IAM publisher in the
+    codebase (SigV4 'appsync', NodeSha256 reused from the AOSS client);
+    best-effort by design (audit trail is the durable record).
+  - `seed-sections.ts` / `compose-section.ts` / `finalize-manual.ts` (stub:
+    terminal status semantics + run_complete; m1 writes = Task 6).
+- `qms.ts` — `generateImsManual` (M1-role-gated): pinned profile version, run
+  row commits BEFORE StartExecution; StartExecution failure marks the run
+  'failed' + throws GENERATION_UNAVAILABLE (never a running row with no
+  execution). `regenerateSection` DEFERRED to Task 6/7 wave (needs
+  FinalizeManual's m1 writes) — reported, not omitted.
+- Infra: DocGenStateMachine (AiStack, Standard, 2h timeout, Map
+  MaxConcurrency 4) named DETERMINISTICALLY `cumplify-docgen-<env>` — QmsFn
+  (ApiStack) constructs the ARN by name; no CFN cycle (AiStack already
+  depends on ApiStack). GeneralBucket newly exported from DataStack.
+- detailTypes registered SAME COMMIT (the BC-5 lesson):
+  Generation.SectionComposed / SectionFailed / RunCompleted (+ events.md).
+- Tests: grouping matrix (8), GAP decision table + checker fixtures incl.
+  the mandated unmapped-sentence-FAILS case (17), handler tests — idempotent
+  re-seed SQL pins, GAP-path-ZERO-invoker-calls, pending-guard skip (4),
+  infra pins — deterministic SM name, MaxConcurrency 4, compose role has
+  lambda:InvokeFunction and ZERO bedrock:* actions (one door) (3).
+
+## Live defects found & fixed during deploy/readback (both in-lane)
+
+1. **Cross-stack export ordering**: first AiStack deploy rolled back — the new
+   GeneralBucket export didn't exist until DataStack deployed. Fix: deploy
+   DataStack (outputs only) first. Lesson: new cross-stack refs = producer
+   stack deploys first.
+2. **Wrong CMK for the app-role secret**: granted dbSecretKey (master-secret
+   key); the app-role secret is encrypted with the dynamodb/secrets CMK
+   (api-stack.ts AppRoleSecret) → KMS denial at first SeedSections run.
+   Fixed grant + WHY comment; the failed execution then became the GEN-5
+   resume test (below).
+
+## Live run (dev, tenant-arch-smoke, profile v1, ISO9001+ISO14001, 8.3 excluded, 2 m5.risks rows seeded)
+
+| # | Timestamp (UTC) | Step | Exit | Output SHA / value | Result |
+|---|-----------------|------|------|--------------------|--------|
+| 1 | 19:27:03 | saveOrgProfile via QmsFn | 0 | version 1 | full ORG-1 payload accepted (zod) |
+| 2 | 19:27:49 | setClauseApplicability 8.3 exclude | 0 | 76505593… | justification stored |
+| 3 | 19:30:29 | generateImsManual | 0 | run ae134c91… | status RUNNING (UPPERCASE — d11d803 enum fix live), standards plain array (unwrap fix live) |
+| 4 | 19:31:01 | execution r1 | — | — | FAILED: KMS denial (defect 2) — fixed, redeployed 71.5s |
+| 5 | 19:33:24 | execution r2 (SAME run — GEN-5 resume) | 0 | — | SUCCEEDED in 24s |
+| 6 | 19:33:48 | run summary | 0 | — | **prose 12, gap 23, na_justified 1, failed 0, pending 0; run status 'complete'** |
+| 7 | 19:34 | getGenerationRun via QmsFn | 0 | — | COMPLETE, 36 sections, gapCount 23, kinds UPPERCASE, `4.4` SHARED section carries clause ids from BOTH standards; `6.1#ISO9001`+`6.1#ISO14001` forked pair (GEN-3 LIVE); `8.3#ISO9001` NA |
+| 8 | 19:35 | S3 4.4.json + sha verify | 0 | cc999be427db3b45 | S3 bytes sha256 == DB content_sha256; integrated EMS+QMS prose; every sentence fact-cited; "MB Design & Remodel LLC"/"Julio Medrano" named (unredacted) |
+| 9 | 19:35 | NA + GAP contents | 0 | — | NA carries "No design activity — build-to-print…"; GAP names `register.aspects` (ACC-4 shape: empty register ⇒ zero aspect prose, $0) |
+| 10 | 19:36 | assertion ledger | 0 | — | 106 rows / 12 sections / 14 fact sources incl. register.risks[count]+[sample] ×2 sections — seeded risks cited AND ledgered |
+| 11 | 19:36 | DDB AUDITLOG | 0 | — | 38 items EXACT (2 profile events + 35 SectionComposed [12 prose + 23 gap] + 1 RunCompleted), hash-chained SKs |
+| 12 | 19:36 | publishGenerationEvent path | 0 | — | 0 rejected/failed in compose logs across ~37 IAM-signed mutations — the @aws_iam publish path works live |
+| 13 | 19:36 | meter | 0 | — | 17.58 credits total (~16.6 for the run ≈ $0.017 raw) — doc-composer seat metered per section |
+
+## Notes & carries
+
+- **Subscription delivery**: the PUBLISH side is now proven live (row 12).
+  Actual WebSocket fan-out to onGenerationProgress subscribers is Task 7/11
+  territory (needs a ws client). The standing M1-M5 question narrows:
+  GenerationEvent's RESULT carries tenantId (arg-matching can work); the
+  older M1-M5 mutations' result types still lack it — carried.
+- NA sections are seeded, not composed → no SectionComposed event by design
+  (they appear in the run summary counts).
+- Task 6 contract: FinalizeManual reads all section content JSONs from
+  `tenants/<t>/generation/<runId>/sections/` and writes m1 documents.
+- Synthetic residue (purge list): tenant-arch-smoke org profile + run
+  ae134c91… + 36 sections + 106 ledger rows + S3 prefix + 2 m5.risks rows +
+  meter rows. AUDITLOG partition is append-only (hash chain) — purge =
+  whole-tenant partition removal, never row deletion.
+- Gates at commit: full suite + typecheck exit 0; REAL stage synth exit 0
+  for BOTH stacks.

@@ -103,4 +103,10 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   'FormRecord.Reopened': true,
   'FormRecord.Approved': true,
   'Security.SodViolationBlocked': true,
+
+  // spec-40 generation pipeline (Task 5) — every section outcome and run
+  // terminus is ledgered (GEN-7); registered same-commit as the publisher.
+  'Generation.SectionComposed': true,
+  'Generation.SectionFailed': true,
+  'Generation.RunCompleted': true,
 };

@@ -52,12 +52,13 @@
 
 ## Task 5 — DocGenStateMachine: Seed + Compose + checker [ARCHITECT]
 
-- [ ] SFN (design §4.1): SeedSections (harmonization grouping — GEN-3 by construction; N/A → `na_justified`; idempotent ON CONFLICT), Map MaxConcurrency 4, FinalizeManual stub.
-- [ ] ComposeSection: GAP-before-model-call (design §4.2, $0 on empty registers); fact assembly (pinned profile version + registers via SECURITY DEFINER accessors); invoker call; **deterministic checker** (assertion coverage BC-4, house style BC-2, standard-text screen CLR-3); one retry then `failed`; S3 write + ledger rows + audit event.
-- [ ] `publishGenerationEvent` per section (GEN-5).
-- [ ] Hermetic tests: grouping matrix (shared/forked/standard_only × in-scope sets), GAP decision table, checker positive/negative fixtures (incl. unmapped-sentence FAILS), idempotent re-seed.
+- [x] SFN (design §4.1): SeedSections (harmonization grouping — GEN-3 by construction; N/A → `na_justified` w/ justification in S3 content; idempotent ON CONFLICT), Map MaxConcurrency 4, FinalizeManual stub (terminal status + run_complete). SM named `cumplify-docgen-<env>` — QmsFn starts it BY NAME (no CFN cycle).
+- [x] ComposeSection: GAP-before-model-call live-proven (23 gaps at $0 on this tenant; empty/unbuilt registers → gap naming the source); fact assembly (pinned profile version; registers read RLS-scoped in-txn — SECURITY DEFINER only needed where direct SELECT is revoked, i.e. the m5 matview); one-door invoke w/ guardedText facts; deterministic checker; one retry then `failed`; S3 + 106 ledger rows + audit events (3 detailTypes registered same commit).
+- [x] `publishGenerationEvent` per section (GEN-5) — FIRST live Lambda→AppSync IAM publisher; ~37 mutations, 0 rejects.
+- [x] Hermetic tests: grouping matrix, GAP decision table, checker fixtures (incl. unmapped-sentence FAILS), idempotent re-seed SQL pins, GAP-path-zero-invoker, one-door IAM pin (compose role: zero bedrock:* actions).
+- [x] `regenerateSection` (GEN-6) DEFERRED to Task 6/7 wave (needs FinalizeManual m1 writes) — reported, not omitted.
 
-**Depends on:** Tasks 1, 2, 4. **D-rung:** D3 (live run on seeded dev tenant). **Evidence:** `task-5-generation-core.log`
+**Depends on:** Tasks 1, 2, 4. **D-rung:** D3 ✓ (live run ae134c91: prose 12 / gap 23 / na 1 / failed 0 in 24s; GEN-5 resume exercised for real after the KMS defect; sha-verified content; 38 hash-chained audit items). **Evidence:** `task-5-generation-core.log`
 
 ## Task 6 — FinalizeManual: m1 writes, matrix, master list (GEN-4, GEN-8, BC-8) [ARCHITECT]
 

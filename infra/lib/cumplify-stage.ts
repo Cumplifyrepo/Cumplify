@@ -152,6 +152,9 @@ export class CumplifyStage extends cdk.Stage {
       isoKbCollectionEndpoint: dataStack.isoKbCollectionEndpoint,
       graphqlApiId: apiStack.graphqlApiId,
       graphqlApiUrl: apiStack.graphqlApiUrl,
+      generalBucketName: dataStack.generalBucketName,
+      generalBucketArn: dataStack.generalBucketArn,
+      s3GeneralKey: securityStack.outputs.s3GeneralKey,
     });
     aiStack.addDependency(dataStack);
     aiStack.addDependency(apiStack);

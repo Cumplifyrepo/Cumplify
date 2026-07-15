@@ -207,3 +207,6 @@ raised, evaluated) belong in the immutable audit trail.
 | `FormRecord.Reopened` | true | State transition: immutable record explicitly reopened with justification (REC-4) |
 | `FormRecord.Approved` | true | State transition: SoD-checked approval stamped (BC-4) |
 | `Security.SodViolationBlocked` | true | Security event: self-approval attempt blocked — the attempt is ledgered, the write is not |
+| `Generation.SectionComposed` | true | spec-40: section composed (prose/gap/na) — kind + assertion summary ledgered (GEN-7) |
+| `Generation.SectionFailed` | true | spec-40: deterministic checker rejected the section after retry — violations ledgered, content NOT shipped |
+| `Generation.RunCompleted` | true | spec-40: generation run terminal state (complete/partial) + section-status summary |

@@ -58,6 +58,9 @@ function createTestStack(): Template {
     isoKbCollectionArn: 'arn:aws:aoss:us-east-1:123456789012:collection/mockisokb123',
     isoKbCollectionEndpoint: 'https://mockisokb123.us-east-1.aoss.amazonaws.com',
     graphqlApiId: 'test-api-id-123',
+    generalBucketName: 'mock-general-bucket',
+    generalBucketArn: 'arn:aws:s3:::mock-general-bucket',
+    s3GeneralKey: mockKey,
     graphqlApiUrl: 'https://test-api.appsync-api.us-east-1.amazonaws.com/graphql',
     env: { account: envConfig.account, region: envConfig.region },
   });
@@ -587,8 +590,9 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
       const env = ((resource as any).Properties?.Environment?.Variables) ?? {};
       return env.AI_INVOKER_ARN !== undefined;
     });
-    // Should have 8 agent handler Lambdas with AI_INVOKER_ARN
-    expect(handlerLambdas.length).toBe(8);
+    // 8 agent handler Lambdas + ComposeSectionFn (spec-40 Task 5 — the
+    // generation plane reaches Bedrock through the same one door)
+    expect(handlerLambdas.length).toBe(9);
   });
 
   it('SQS Event Source Mappings exist for consumer handlers', () => {
@@ -773,5 +777,41 @@ describe('COND-4 credit-cap alerts (owner-ratified 2026-07-10, $25/mo alert-only
       const env = (fn as any).Properties?.Environment?.Variables ?? {};
       expect(Object.keys(env).join(',')).not.toMatch(/CAP|BUDGET/i);
     }
+  });
+});
+
+describe('spec-40 DocGen generation plane (Task 5)', () => {
+  const template = createTestStack();
+
+  it('DocGenStateMachine has the DETERMINISTIC name QmsFn constructs by convention', () => {
+    template.hasResourceProperties('AWS::StepFunctions::StateMachine', {
+      StateMachineName: 'cumplify-docgen-dev',
+    });
+  });
+
+  it('Map runs at MaxConcurrency 4 over $.sections (design §4.1)', () => {
+    const machines = template.findResources('AWS::StepFunctions::StateMachine');
+    const docgen = Object.values(machines).find(
+      m => (m.Properties as { StateMachineName?: string }).StateMachineName === 'cumplify-docgen-dev',
+    )!;
+    // DefinitionString is an Fn::Join with escaped quotes — normalize first
+    const def = JSON.stringify((docgen.Properties as { DefinitionString: unknown }).DefinitionString)
+      .replace(/\\"/g, '"');
+    expect(def).toContain('"MaxConcurrency":4');
+    expect(def).toContain('$.sections');
+  });
+
+  it('ComposeSection reaches Bedrock ONLY via the invoker (one door): lambda:InvokeFunction granted, no bedrock:InvokeModel on its role', () => {
+    const policies = template.findResources('AWS::IAM::Policy');
+    const composePolicies = Object.entries(policies).filter(([name]) => name.startsWith('ComposeSectionFn'));
+    expect(composePolicies.length).toBeGreaterThan(0);
+    // Inspect ACTIONS only — resource ARN refs (e.g. the invoker fn ref) may
+    // textually embed unrelated logical IDs.
+    const actions = composePolicies.flatMap(([, pol]) =>
+      ((pol as any).Properties.PolicyDocument.Statement as Array<{ Action: string | string[] }>)
+        .flatMap(st => (Array.isArray(st.Action) ? st.Action : [st.Action])),
+    );
+    expect(actions).toContain('lambda:InvokeFunction');
+    expect(actions.filter(a => a.startsWith('bedrock:'))).toEqual([]);
   });
 });

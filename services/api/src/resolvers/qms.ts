@@ -17,6 +17,7 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
+import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import {
   extractContext,
   beginTenantTransaction,
@@ -26,6 +27,8 @@ import {
 } from './shared.js';
 import type { SqlParameter } from '@aws-sdk/client-rds-data';
 import { canApprove } from '../permissions/role-matrix.js';
+
+const sfnClient = new SFNClient({});
 
 import { z } from 'zod';
 
@@ -83,6 +86,10 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'getGenerationRun': return getGenerationRun(event, tenantId);
     case 'listGenerationRuns': return listGenerationRuns(event, tenantId);
     case 'markSectionReviewed': return requireM1Role(role, () => markSectionReviewed(event, tenantId, sub));
+    case 'generateImsManual': return requireM1Role(role, () => generateImsManual(event, tenantId, sub));
+    // regenerateSection (GEN-6): deferred to the Task 6/7 wave — it creates a
+    // new document version on the affected docs, which needs FinalizeManual's
+    // m1 writes. Deferred = reported here + in Task-5 evidence, not omitted.
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
@@ -379,4 +386,98 @@ async function markSectionReviewed(event: AppSyncEvent, tenantId: string, actor:
     try { await txn.rollback(); } catch { /* never mask */ }
     throw err;
   }
+}
+
+/**
+ * generateImsManual (spec-40 Task 5) — inserts the run row with the PINNED
+ * profile version, then starts DocGenStateMachine (ARN by deterministic name,
+ * env DOCGEN_SFN_ARN — no CFN cross-stack cycle).
+ *
+ * Ordering: run row COMMITS first (the state machine reads it), then
+ * StartExecution, then a best-effort UPDATE stamps sfn_execution_arn.
+ * StartExecution failure marks the run 'failed' and throws
+ * GENERATION_UNAVAILABLE — a run row must never sit 'running' with no
+ * execution behind it.
+ */
+async function generateImsManual(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = (event.arguments.input ?? {}) as { standards?: string[] };
+  const sfnArn = process.env.DOCGEN_SFN_ARN;
+  if (!sfnArn) throw new Error('GENERATION_UNAVAILABLE');
+
+  const txn = await beginTenantTransaction(tenantId);
+  let run: Record<string, unknown>;
+  try {
+    const profileResult = await txn.execute(
+      `SELECT op.current_version, opv.payload
+       FROM qms.org_profiles op
+       JOIN qms.org_profile_versions opv
+         ON opv.profile_id = op.id AND opv.version_no = op.current_version`,
+    );
+    if (!profileResult.records?.length) throw new Error('ORG_PROFILE_REQUIRED');
+    const currentVersion = Number((profileResult.records[0][0] as { longValue?: number }).longValue ?? 0);
+    if (currentVersion < 1) throw new Error('ORG_PROFILE_REQUIRED');
+    const payload = JSON.parse(
+      (profileResult.records[0][1] as { stringValue?: string }).stringValue ?? '{}',
+    ) as { standardsInScope?: string[] };
+
+    const standards = input.standards?.length ? input.standards : (payload.standardsInScope ?? []);
+    if (standards.length === 0) throw new Error('NO_STANDARDS_IN_SCOPE');
+
+    const runResult = await txn.execute(
+      `INSERT INTO qms.generation_runs
+         (tenant_id, profile_version, standards, status, requested_by, created_by)
+       VALUES (:tenantId, :pv::integer, :standards::text[], 'running', :actor, :actor)
+       RETURNING id, status, standards, manual_document_id, started_at, finished_at`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'pv', value: { longValue: currentVersion } },
+        { name: 'standards', value: { stringValue: `{${standards.join(',')}}` } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
+    run = marshalOne(runResult)!;
+    await txn.commit();
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+
+  const runId = run.id as string;
+  try {
+    const exec = await sfnClient.send(new StartExecutionCommand({
+      stateMachineArn: sfnArn,
+      name: `run-${runId}`,
+      input: JSON.stringify({ runId, tenantId }),
+    }));
+    const stamp = await beginTenantTransaction(tenantId);
+    try {
+      await stamp.execute(
+        `UPDATE qms.generation_runs SET sfn_execution_arn = :arn, updated_at = NOW() WHERE id = :id::uuid`,
+        [
+          { name: 'arn', value: { stringValue: exec.executionArn! } },
+          { name: 'id', value: { stringValue: runId } },
+        ],
+      );
+      await stamp.commit();
+    } catch (err) {
+      try { await stamp.rollback(); } catch { /* never mask */ }
+      logger.warn('Failed to stamp sfn_execution_arn (run continues)', { runId });
+    }
+  } catch (err) {
+    // Never leave a 'running' row with no execution behind it
+    const mark = await beginTenantTransaction(tenantId);
+    try {
+      await mark.execute(
+        `UPDATE qms.generation_runs SET status = 'failed', finished_at = NOW(), updated_at = NOW() WHERE id = :id::uuid`,
+        [{ name: 'id', value: { stringValue: runId } }],
+      );
+      await mark.commit();
+    } catch (markErr) {
+      try { await mark.rollback(); } catch { /* never mask */ }
+    }
+    logger.error('StartExecution failed', { runId, error: (err as Error).message });
+    throw new Error('GENERATION_UNAVAILABLE');
+  }
+
+  return run;
 }

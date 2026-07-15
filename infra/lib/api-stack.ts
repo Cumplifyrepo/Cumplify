@@ -730,6 +730,16 @@ export class ApiStack extends cdk.Stack {
 
     // ─── Spec 40: QMS Document Engine ─────────────────────────────────────────
 
+    // DocGenStateMachine lives in AiStack, which depends on THIS stack — the
+    // ARN is constructed from its DETERMINISTIC name (no CFN cycle). QmsFn
+    // throws GENERATION_UNAVAILABLE until AiStack's machine exists.
+    const docGenSfnArn = cdk.Stack.of(this).formatArn({
+      service: 'states',
+      resource: 'stateMachine',
+      resourceName: `cumplify-docgen-${props.envConfig.envName}`,
+      arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
+    });
+
     const qmsFn = new NodejsFunction(this, 'QmsFn', {
       entry: 'services/api/src/resolvers/qms.ts',
       handler: 'handler',
@@ -745,9 +755,15 @@ export class ApiStack extends cdk.Stack {
         BUS_NAME: props.busName,
         TENANT_DATA_ROLE_ARN: tenantDataRole.roleArn,
         REGION: cdk.Stack.of(this).region,
+        DOCGEN_SFN_ARN: docGenSfnArn,
         POWERTOOLS_SERVICE_NAME: 'resolver-qms',
       },
     });
+
+    qmsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['states:StartExecution'],
+      resources: [docGenSfnArn],
+    }));
 
     qmsFn.addToRolePolicy(new iam.PolicyStatement({
       actions: ['rds-data:ExecuteStatement', 'rds-data:BeginTransaction', 'rds-data:CommitTransaction', 'rds-data:RollbackTransaction'],

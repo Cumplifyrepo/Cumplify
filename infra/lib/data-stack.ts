@@ -47,6 +47,9 @@ export class DataStack extends cdk.Stack {
   public readonly clusterArn: string;
   public readonly dbSecretArn: string;
   public readonly evidenceBucketArn: string;
+  /** GeneralBucket (working data) — consumed by AiStack's generation plane (spec 40) */
+  public readonly generalBucketName: string;
+  public readonly generalBucketArn: string;
   /** iso-kb AOSS collection (spec 1) — imported by AiStack (spec 4) */
   public readonly isoKbCollectionArn: string;
   public readonly isoKbCollectionEndpoint: string;
@@ -436,6 +439,8 @@ export class DataStack extends cdk.Stack {
       serverAccessLogsBucket: accessLogsBucket,
       serverAccessLogsPrefix: 'general-bucket/',
     });
+    this.generalBucketName = generalBucket.bucketName;
+    this.generalBucketArn = generalBucket.bucketArn;
 
     // -----------------------------------------------------------------------
     // CDK Nag suppressions

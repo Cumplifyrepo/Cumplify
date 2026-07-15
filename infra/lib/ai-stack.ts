@@ -20,6 +20,7 @@ import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
+import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cwActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as logs from 'aws-cdk-lib/aws-logs';
@@ -69,6 +70,10 @@ export interface AiStackProps extends cdk.StackProps {
   // AppSync API (from ApiStack) — guru resolver wiring
   readonly graphqlApiId: string;
   readonly graphqlApiUrl: string;
+  // spec 40 — generation plane working storage (GeneralBucket, CMK)
+  readonly generalBucketName: string;
+  readonly generalBucketArn: string;
+  readonly s3GeneralKey: kms.IKey;
 }
 
 export class AiStack extends cdk.Stack {
@@ -748,6 +753,154 @@ export class AiStack extends cdk.Stack {
       typeName: 'Query',
       fieldName: 'askISO45001',
     });
+
+    // ─── Spec 40: DocGen generation plane (design §4.1) ────────────────────
+    // SeedSections → Map(ComposeSection, MaxConcurrency 4) → FinalizeManual.
+    // State machine name is DETERMINISTIC (`cumplify-docgen-<env>`): QmsFn in
+    // ApiStack constructs the ARN by name — no CFN cross-stack cycle
+    // (AiStack already depends on ApiStack for the AppSync URL).
+    const genEnv = {
+      CLUSTER_ARN: props.clusterArn,
+      APP_ROLE_SECRET_ARN: props.appRoleSecretArn,
+      TABLE_NAME: props.tableName,
+      BUS_NAME: props.busName,
+      GENERAL_BUCKET: props.generalBucketName,
+      APPSYNC_URL: props.graphqlApiUrl,
+    };
+
+    const seedSectionsFn = new NodejsFunction(this, 'SeedSectionsFn', {
+      entry: 'services/qms-generation/src/seed-sections.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(60),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: { ...genEnv, POWERTOOLS_SERVICE_NAME: 'qms-seed-sections' },
+    });
+
+    const composeSectionFn = new NodejsFunction(this, 'ComposeSectionFn', {
+      entry: 'services/qms-generation/src/compose-section.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      // one-door invoke is 90s; compose may call twice (checker retry)
+      timeout: cdk.Duration.seconds(240),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        ...genEnv,
+        AI_INVOKER_ARN: aiInvoker.functionArn,
+        POWERTOOLS_SERVICE_NAME: 'qms-compose-section',
+      },
+    });
+
+    const finalizeManualFn = new NodejsFunction(this, 'FinalizeManualFn', {
+      entry: 'services/qms-generation/src/finalize-manual.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(60),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: { ...genEnv, POWERTOOLS_SERVICE_NAME: 'qms-finalize-manual' },
+    });
+
+    const publishGenerationEventArn = cdk.Stack.of(this).formatArn({
+      service: 'appsync',
+      resource: 'apis',
+      resourceName: `${props.graphqlApiId}/types/Mutation/fields/publishGenerationEvent`,
+    });
+
+    for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn]) {
+      fn.addToRolePolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'rds-data:ExecuteStatement', 'rds-data:BeginTransaction',
+          'rds-data:CommitTransaction', 'rds-data:RollbackTransaction',
+        ],
+        resources: [props.clusterArn],
+      }));
+      fn.addToRolePolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [props.appRoleSecretArn],
+      }));
+      fn.addToRolePolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['events:PutEvents'],
+        resources: [props.busArn],
+      }));
+      // The app-role secret is encrypted with the dynamodb/secrets CMK
+      // (api-stack.ts AppRoleSecret encryptionKey) — NOT the master-secret
+      // key. Live-proven 2026-07-15: dbSecretKey grant alone → KMS denial.
+      props.dynamodbKey.grantDecrypt(fn);
+    }
+
+    // Working content lives under tenants/* only — no bucket-wide access
+    for (const fn of [seedSectionsFn, composeSectionFn]) {
+      fn.addToRolePolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['s3:PutObject', 's3:GetObject'],
+        resources: [`${props.generalBucketArn}/tenants/*`],
+      }));
+      props.s3GeneralKey.grantEncryptDecrypt(fn);
+    }
+
+    // GEN-5 progress events: compose + finalize publish the @aws_iam mutation
+    for (const fn of [composeSectionFn, finalizeManualFn]) {
+      fn.addToRolePolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['appsync:GraphQL'],
+        resources: [publishGenerationEventArn],
+      }));
+    }
+
+    // ONE DOOR: ComposeSection reaches Bedrock only via the invoker Lambda
+    aiInvoker.grantInvoke(composeSectionFn);
+
+    const seedTask = new tasks.LambdaInvoke(this, 'SeedSections', {
+      lambdaFunction: seedSectionsFn,
+      outputPath: '$.Payload',
+    });
+    seedTask.addRetry({ errors: ['States.ALL'], maxAttempts: 2, interval: cdk.Duration.seconds(10), backoffRate: 2 });
+
+    const composeTask = new tasks.LambdaInvoke(this, 'ComposeSection', {
+      lambdaFunction: composeSectionFn,
+      outputPath: '$.Payload',
+    });
+    composeTask.addRetry({ errors: ['States.ALL'], maxAttempts: 2, interval: cdk.Duration.seconds(15), backoffRate: 2 });
+
+    const composeMap = new sfn.Map(this, 'ComposeSections', {
+      maxConcurrency: 4,
+      itemsPath: '$.sections',
+      itemSelector: {
+        runId: sfn.JsonPath.stringAt('$.runId'),
+        tenantId: sfn.JsonPath.stringAt('$.tenantId'),
+        sectionId: sfn.JsonPath.stringAt('$$.Map.Item.Value.sectionId'),
+        sectionKey: sfn.JsonPath.stringAt('$$.Map.Item.Value.sectionKey'),
+      },
+      resultPath: sfn.JsonPath.DISCARD, // {runId, tenantId} flows on to Finalize
+    });
+    composeMap.itemProcessor(composeTask);
+
+    const finalizeTask = new tasks.LambdaInvoke(this, 'FinalizeManual', {
+      lambdaFunction: finalizeManualFn,
+      outputPath: '$.Payload',
+    });
+    finalizeTask.addRetry({ errors: ['States.ALL'], maxAttempts: 2, interval: cdk.Duration.seconds(10), backoffRate: 2 });
+
+    const docGenStateMachine = new sfn.StateMachine(this, 'DocGenStateMachine', {
+      stateMachineName: `cumplify-docgen-${envConfig.envName}`,
+      definitionBody: sfn.DefinitionBody.fromChainable(seedTask.next(composeMap).next(finalizeTask)),
+      stateMachineType: sfn.StateMachineType.STANDARD,
+      timeout: cdk.Duration.hours(2),
+    });
+
+    new cdk.CfnOutput(this, 'DocGenStateMachineArn', { value: docGenStateMachine.stateMachineArn });
+    new cdk.CfnOutput(this, 'SeedSectionsFnArn', { value: seedSectionsFn.functionArn });
+    new cdk.CfnOutput(this, 'ComposeSectionFnArn', { value: composeSectionFn.functionArn });
+    new cdk.CfnOutput(this, 'FinalizeManualFnArn', { value: finalizeManualFn.functionArn });
 
     // ─── CfnOutputs for IAM roles ──────────────────────────────────────────
     new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackLambda.role!.roleArn });
