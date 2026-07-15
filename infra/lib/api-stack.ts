@@ -432,6 +432,8 @@ export class ApiStack extends cdk.Stack {
     // schema dependency below, or CFN races the schema update (BUG at 9d9c90a1).
     const listDocVersionsResolver = m1DS.createResolver('ListDocumentVersions', { typeName: 'Query', fieldName: 'listDocumentVersions' });
     m1DS.createResolver('GetDocumentVersionDiff', { typeName: 'Query', fieldName: 'getDocumentVersionDiff' });
+    // New field 2026-07-15 (spec-40 Task 11 viewer read surface)
+    const getDocumentContentResolver = m1DS.createResolver('GetDocumentContent', { typeName: 'Query', fieldName: 'getDocumentContent' });
     // M2
     m2DS.createResolver('GetNonconformity', { typeName: 'Query', fieldName: 'getNonconformity' });
     const listNcResolver = m2DS.createResolver('ListNonconformities', { typeName: 'Query', fieldName: 'listNonconformities' });
@@ -845,6 +847,7 @@ export class ApiStack extends cdk.Stack {
       saveOrgProfileResolver, setClauseApplicabilityResolver,
       generateImsManualResolver, regenerateSectionResolver,
       markSectionReviewedResolver, requestImsExportResolver,
+      getDocumentContentResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }

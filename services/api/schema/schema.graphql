@@ -520,6 +520,7 @@ type Query {
   listDocuments(standard: Standard, status: DocumentStatus): [Document!]! @aws_lambda
   listDocumentVersions(documentId: ID!): [DocumentVersion!]! @aws_lambda
   getDocumentVersionDiff(v1: ID!, v2: ID!): Diff @aws_lambda
+  getDocumentContent(versionId: ID!): AWSJSON @aws_lambda
 
   # M2 — CAPA
   getNonconformity(id: ID!): Nonconformity @aws_lambda

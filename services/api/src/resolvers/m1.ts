@@ -36,6 +36,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'listDocuments': return listDocuments(event, tenantId);
     case 'listDocumentVersions': return listDocumentVersions(event, tenantId);
     case 'getDocumentVersionDiff': return getDocumentVersionDiff(event, tenantId);
+    case 'getDocumentContent': return getDocumentContent(event, tenantId);
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
@@ -322,6 +323,32 @@ async function getDocumentVersionDiff(event: AppSyncEvent, tenantId: string) {
 
     // Align sections by harmonizationKey and compute diff
     return computeSectionDiff(content1, content2);
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+// Read surface for the Task 11 document viewer (architect-lane unblock, same
+// precedent as getTenantSettings before Task 31). Returns the version's content
+// JSON (design §3) as an AWSJSON string; RLS confines the version lookup to the
+// caller's tenant, and the S3 key comes only from the row — never from input.
+async function getDocumentContent(event: AppSyncEvent, tenantId: string) {
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT content_ref FROM m1.document_versions WHERE id = :versionId::uuid`,
+      [{ name: 'versionId', value: { stringValue: event.arguments.versionId as string } }],
+    );
+    await txn.commit();
+
+    const row = marshalOne(result);
+    if (!row) throw new Error('VERSION_NOT_FOUND');
+    const ref = row.contentRef as string;
+    if (!ref) throw new Error('CONTENT_UNAVAILABLE');
+
+    const content = await loadContentJson(ref);
+    return JSON.stringify(content);
   } catch (err) {
     try { await txn.rollback(); } catch { /* never mask */ }
     throw err;

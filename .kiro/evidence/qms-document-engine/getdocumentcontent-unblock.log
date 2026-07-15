@@ -1,0 +1,26 @@
+# getDocumentContent — Task 11 viewer read surface (architect-lane unblock)
+
+Precedent: getTenantSettings before Task 31 (02944fc). The Task 11 document
+viewer must render version content (sections in clause order, GAP blocks,
+BC-1 disclaimer), but DocumentVersion only exposes contentRef — an S3 key the
+browser cannot read (private SSE-KMS bucket). No content query existed.
+Shipped `getDocumentContent(versionId: ID!): AWSJSON` on the M1 resolver,
+which already carries the scoped tenants/* S3 grant + KMS decrypt from
+Task 7 — zero new IAM.
+
+Semantics match the diff resolver: RLS-scoped lookup (a version outside the
+caller's tenant is invisible → VERSION_NOT_FOUND), S3 key comes only from the
+row, '' content_ref or S3 failure → typed CONTENT_UNAVAILABLE (never a silent
+empty). 5 hermetic tests appended to m1-diff.test.ts; resolver carries the
+schema node dependency (9d9c90a1 rule); count pin 84→85.
+
+## Live readback (2026-07-15, Dev)
+
+| # | UTC | Step | Exit | Result |
+|---|-----|------|------|--------|
+| 1 | 22:20 | cdk deploy Dev/ApiStack | 0 | UPDATE_COMPLETE; Query.getDocumentContent live on M1DataSource |
+| 2 | 22:21 | getDocumentContent(manual v1 49adf9ed…) as tenant-arch-smoke | 0 | 36 sections, front matter present; parsed-EQUAL to the Task-6 sha-verified manual JSON (97b9216620fcdb1fd3cd) |
+| 3 | 22:21 | random uuid | 0 (typed) | VERSION_NOT_FOUND |
+| 4 | 22:21 | REAL version id, tenant-AAA context | 0 (typed) | VERSION_NOT_FOUND — RLS hides the row; tenant isolation live-proven |
+
+Gates at commit: 809 backend + 85 frontend, tsc 0.

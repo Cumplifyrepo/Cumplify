@@ -191,3 +191,72 @@ describe('getDocumentVersionDiff', () => {
     expect(content['6.1.2#ISO14001']).toBeUndefined();
   });
 });
+
+describe('getDocumentContent (Task 11 viewer read surface)', () => {
+  it('SQL selects content_ref by ::uuid-cast version id', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'tenants/t/documents/d/v1.json' }]],
+      columnMetadata: [{ name: 'content_ref' }],
+    });
+    mockS3Send.mockResolvedValue(mockS3Content({ sections: [] }));
+
+    await handler(makeEvent('getDocumentContent', { versionId: 'ver-1' }));
+
+    const [sql, params] = mockExecute.mock.calls[0];
+    expect(sql).toContain(':versionId::uuid');
+    expect(sql).toContain('content_ref');
+    expect(params[0]).toEqual({ name: 'versionId', value: { stringValue: 'ver-1' } });
+  });
+
+  it('returns the content JSON as a string (AWSJSON) loaded from the row content_ref', async () => {
+    const content = {
+      schemaVersion: 1,
+      sections: [{ harmonizationKey: '4.4', kind: 'prose', sentences: [sent('The org maintains a QMS.', ['F1'])] }],
+    };
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'tenants/t/documents/d/v1.json' }]],
+      columnMetadata: [{ name: 'content_ref' }],
+    });
+    mockS3Send.mockResolvedValue(mockS3Content(content));
+
+    const result = await handler(makeEvent('getDocumentContent', { versionId: 'ver-1' }));
+
+    expect(typeof result).toBe('string');
+    expect(JSON.parse(result as string)).toEqual(content);
+    const s3Key = (mockS3Send.mock.calls[0][0] as { input: { Key: string } }).input.Key;
+    expect(s3Key).toBe('tenants/t/documents/d/v1.json');
+  });
+
+  it('VERSION_NOT_FOUND when the id matches no row in tenant scope', async () => {
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'content_ref' }] });
+
+    await expect(
+      handler(makeEvent('getDocumentContent', { versionId: 'nope' })),
+    ).rejects.toThrow('VERSION_NOT_FOUND');
+    expect(mockS3Send).not.toHaveBeenCalled();
+  });
+
+  it('CONTENT_UNAVAILABLE when content_ref is empty (agent-writeback docs) — no S3 call', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: '' }]],
+      columnMetadata: [{ name: 'content_ref' }],
+    });
+
+    await expect(
+      handler(makeEvent('getDocumentContent', { versionId: 'ver-1' })),
+    ).rejects.toThrow('CONTENT_UNAVAILABLE');
+    expect(mockS3Send).not.toHaveBeenCalled();
+  });
+
+  it('CONTENT_UNAVAILABLE when the S3 load fails (never a silent empty)', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'tenants/t/documents/d/v1.json' }]],
+      columnMetadata: [{ name: 'content_ref' }],
+    });
+    mockS3Send.mockRejectedValue(new Error('AccessDenied'));
+
+    await expect(
+      handler(makeEvent('getDocumentContent', { versionId: 'ver-1' })),
+    ).rejects.toThrow('CONTENT_UNAVAILABLE');
+  });
+});
