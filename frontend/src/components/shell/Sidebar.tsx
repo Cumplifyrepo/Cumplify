@@ -48,6 +48,7 @@ export function Sidebar() {
           <NavItem href="/m4" label={t('records')} />
           <NavItem href="/m4/forms" label={t('forms')} />
           <NavItem href="/m5" label={t('risk')} />
+          <NavItem href="/qms" label={t('qmsEngine')} />
         </NavSection>
 
         {canSeeAdmin(role) && (

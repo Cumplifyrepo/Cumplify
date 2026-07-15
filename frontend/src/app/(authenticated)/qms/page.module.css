@@ -1,0 +1,29 @@
+.loading { font-size: 14px; color: var(--color-text-muted); }
+
+.tabs { display: flex; gap: var(--space-xs); margin-bottom: var(--space-xl); }
+.tab { padding: var(--space-sm) var(--space-lg); font-size: 13px; color: var(--color-text-secondary); border-radius: var(--radius-pill); border: 1px solid var(--color-border-subtle); transition: all 0.15s; }
+.tab:hover { background: var(--color-surface-hover); }
+.tabActive { background: var(--color-accent); color: var(--color-text-on-accent); border-color: var(--color-accent); }
+
+.wizardSteps { display: flex; flex-direction: column; gap: var(--space-xl); }
+.fieldGroup { display: flex; flex-direction: column; gap: var(--space-md); }
+.field { display: flex; flex-direction: column; gap: var(--space-xs); }
+.fieldLabel { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); }
+.fieldRequired { color: var(--color-danger); margin-left: 2px; }
+.fieldInput { padding: var(--space-sm) var(--space-md); font-size: 14px; color: var(--color-text-heading); background: var(--color-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-control); outline: none; }
+.fieldInput:focus { border-color: var(--color-accent); }
+.fieldError { font-size: 12px; color: var(--color-danger); }
+
+.clauseList { display: flex; flex-direction: column; gap: var(--space-md); }
+.clauseCard { background: var(--color-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-card); padding: var(--space-lg); }
+.clauseHeader { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm); }
+.clauseNo { font-size: 14px; font-weight: 600; color: var(--color-accent); min-width: 48px; }
+.clauseTitle { font-size: 14px; color: var(--color-text-heading); }
+.clauseIntent { font-size: 13px; color: var(--color-text-secondary); margin-bottom: var(--space-md); line-height: 1.4; }
+.clauseGaps { font-size: 12px; color: var(--color-warning); margin-bottom: var(--space-sm); }
+.clauseGapItem { padding-left: var(--space-md); }
+.clauseApplicability { display: flex; align-items: center; gap: var(--space-md); }
+.naJustified { font-size: 12px; color: var(--color-text-muted); font-style: italic; }
+.justificationInput { margin-top: var(--space-sm); font-size: 13px; }
+
+.actions { display: flex; gap: var(--space-sm); margin-top: var(--space-xl); }

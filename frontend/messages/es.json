@@ -12,6 +12,7 @@
     "records": "Registros",
     "forms": "Formularios",
     "risk": "Riesgo",
+    "qmsEngine": "Motor QMS",
     "settings": "Configuración"
   },
   "shell": {
@@ -370,5 +371,12 @@
     "catalog": { "title": "Plantillas de Formularios", "filterAll": "Todos", "loading": "Cargando...", "sections": "secciones", "fields": "campos" },
     "register": { "colStatus": "Estado", "colCompletion": "Completado", "colOpenedBy": "Abierto Por", "colUpdated": "Actualizado", "newRecord": "Nuevo Registro", "backToCatalog": "Volver", "loading": "Cargando...", "empty": "Sin registros aún" },
     "form": { "loading": "Cargando...", "back": "Volver", "submit": "Enviar", "approve": "Aprobar", "reopen": "Reabrir", "reopenTitle": "Reabrir Registro", "justification": "Justificación", "mappingIncomplete": "Los campos de mapeo requeridos están incompletos", "validationIncomplete": "Los campos requeridos están incompletos", "submitInvalidStatus": "El registro no puede enviarse en el estado actual", "recordImmutable": "El registro está bloqueado", "linkTargetNotFound": "Destino vinculado no encontrado", "fieldRequired": "Este campo es requerido" }
+  },
+  "qms": {
+    "title": "Motor de Documentos QMS",
+    "tabWizard": "Perfil de la Organización",
+    "tabRegistry": "Registro de Cláusulas",
+    "wizard": { "title": "Perfil de la Organización", "loading": "Cargando...", "legalName": "Razón Social", "industry": "Industria", "productsServices": "Productos / Servicios", "employeeCount": "Número de Empleados", "managementRep": "Representante de la Dirección", "targetCertDate": "Fecha Meta de Certificación", "standardsInScope": "Normas en Alcance", "designResponsibility": "Responsabilidad de Diseño", "coreProcesses": "Procesos Centrales (separados por coma)", "siteName": "Nombre del Sitio Principal", "save": "Guardar Perfil", "saving": "Guardando..." },
+    "registry": { "loading": "Cargando...", "requiredSources": "Fuentes de evidencia requeridas", "naJustified": "N/A — justificado", "markApplicable": "Marcar aplicable", "markExcluded": "Marcar N/A", "justificationPlaceholder": "Justificación para exclusión (requerida)" }
   }
 }

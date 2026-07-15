@@ -95,10 +95,10 @@
 
 ## Task 10 — Frontend: Org Profile wizard + registry/applicability UI [KIRO]
 
-- [ ] Multi-step wizard per ORG-1 field list (shared zod contract from Task 3); versioned save; industry-neutral taxonomy.
-- [ ] Clause applicability UI: exclude-with-justification only (ORG-4); "N/A — justified" rendering.
-- [ ] Named-gap surfacing (ORG-3): missing required-source fields shown per clause.
-- [ ] i18n `qms.*` namespaces en/es/pt same commit; view-designs.md governs layout; no hardcoded strings.
+- [x] Multi-step wizard per ORG-1 field list (shared zod contract from Task 3); versioned save; industry-neutral taxonomy.
+- [x] Clause applicability UI: exclude-with-justification only (ORG-4); "N/A — justified" rendering.
+- [x] Named-gap surfacing (ORG-3): missing required-source fields shown per clause.
+- [x] i18n `qms.*` namespaces en/es/pt same commit; view-designs.md governs layout; no hardcoded strings.
 
 **Depends on:** Task 3. **D-rung:** D2. **Evidence:** `task-10-org-wizard.log`
 

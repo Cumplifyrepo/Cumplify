@@ -1,0 +1,45 @@
+# Task 10 — Frontend: Org Profile wizard + registry/applicability UI
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-15T13:00:00Z
+# Base commit: cb6a467 (Task 8 fix accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 754 tests pass, 64 files |
+| i18n check | `npm run i18n:check` | 0 | No violations |
+| Build | `npx next build` | 0 | /qms route at 2.94 kB |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/app/(authenticated)/qms/page.tsx` | Org wizard + clause registry/applicability |
+| `frontend/src/app/(authenticated)/qms/page.module.css` | Styles |
+| `frontend/src/app/(authenticated)/qms/page.test.tsx` | 2 hermetic tests |
+| `frontend/src/components/shell/Sidebar.tsx` | Nav entry /qms |
+| `frontend/messages/{en,es,pt}.json` | qms.wizard/registry + nav.qmsEngine |
+
+## Gate compliance
+
+1. **OrgProfileSchema contract (ORG-1):** Wizard fields mirror the exported zod schema
+   from qms.ts (legalName, sites, employeeCount, industry, productsServices,
+   coreProcesses, designResponsibility, standardsInScope, managementRep, targetCertDate).
+   One schema, two consumers — server validates, UI provides the form.
+
+2. **ORG-4 exclusion with justification ONLY:** The "Mark N/A" button is `disabled`
+   until `justification.trim()` is non-empty. The UI does NOT offer un-justified
+   exclusion. Excluded clauses render "N/A — justified" with the justification text.
+
+3. **ORG-3 named-gap surfacing:** Per clause, the `requiredSources` array is parsed
+   from the API response and displayed by name under "Required evidence sources:".
+   Never a generic "incomplete" — each source field is named individually.
+
+4. **i18n:** qms.wizard.* / qms.registry.* in en/es/pt same commit. No hardcoded
+   strings (pseudo-locale check passes).
+
+## D-rung
+
+D2 — frontend code + tests + build pass gates. Not deployed.

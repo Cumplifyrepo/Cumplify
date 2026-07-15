@@ -12,6 +12,7 @@
     "records": "Records",
     "forms": "Forms",
     "risk": "Risk",
+    "qmsEngine": "QMS Engine",
     "settings": "Settings"
   },
   "shell": {
@@ -370,5 +371,12 @@
     "catalog": { "title": "Form Templates", "filterAll": "All", "loading": "Loading...", "sections": "sections", "fields": "fields" },
     "register": { "colStatus": "Status", "colCompletion": "Completion", "colOpenedBy": "Opened By", "colUpdated": "Updated", "newRecord": "New Record", "backToCatalog": "Back", "loading": "Loading...", "empty": "No records yet" },
     "form": { "loading": "Loading...", "back": "Back", "submit": "Submit", "approve": "Approve", "reopen": "Reopen", "reopenTitle": "Reopen Record", "justification": "Justification", "mappingIncomplete": "Required mapping fields are incomplete", "validationIncomplete": "Required fields are incomplete", "submitInvalidStatus": "Record cannot be submitted in current status", "recordImmutable": "Record is locked", "linkTargetNotFound": "Linked target not found", "fieldRequired": "This field is required" }
+  },
+  "qms": {
+    "title": "QMS Document Engine",
+    "tabWizard": "Organization Profile",
+    "tabRegistry": "Clause Registry",
+    "wizard": { "title": "Organization Profile", "loading": "Loading...", "legalName": "Legal Name", "industry": "Industry", "productsServices": "Products / Services", "employeeCount": "Employee Count", "managementRep": "Management Representative", "targetCertDate": "Target Certification Date", "standardsInScope": "Standards in Scope", "designResponsibility": "Design Responsibility", "coreProcesses": "Core Processes (comma-separated)", "siteName": "Primary Site Name", "save": "Save Profile", "saving": "Saving..." },
+    "registry": { "loading": "Loading...", "requiredSources": "Required evidence sources", "naJustified": "N/A \u2014 justified", "markApplicable": "Mark applicable", "markExcluded": "Mark N/A", "justificationPlaceholder": "Justification for exclusion (required)" }
   }
 }

@@ -12,6 +12,7 @@
     "records": "Registros",
     "forms": "Formulários",
     "risk": "Risco",
+    "qmsEngine": "Motor QMS",
     "settings": "Configurações"
   },
   "shell": {
@@ -370,5 +371,12 @@
     "catalog": { "title": "Modelos de Formulários", "filterAll": "Todos", "loading": "Carregando...", "sections": "seções", "fields": "campos" },
     "register": { "colStatus": "Status", "colCompletion": "Conclusão", "colOpenedBy": "Aberto Por", "colUpdated": "Atualizado", "newRecord": "Novo Registro", "backToCatalog": "Voltar", "loading": "Carregando...", "empty": "Sem registros ainda" },
     "form": { "loading": "Carregando...", "back": "Voltar", "submit": "Enviar", "approve": "Aprovar", "reopen": "Reabrir", "reopenTitle": "Reabrir Registro", "justification": "Justificativa", "mappingIncomplete": "Os campos de mapeamento obrigatórios estão incompletos", "validationIncomplete": "Os campos obrigatórios estão incompletos", "submitInvalidStatus": "O registro não pode ser enviado no status atual", "recordImmutable": "O registro está bloqueado", "linkTargetNotFound": "Destino vinculado não encontrado", "fieldRequired": "Este campo é obrigatório" }
+  },
+  "qms": {
+    "title": "Motor de Documentos QMS",
+    "tabWizard": "Perfil da Organização",
+    "tabRegistry": "Registro de Cláusulas",
+    "wizard": { "title": "Perfil da Organização", "loading": "Carregando...", "legalName": "Razão Social", "industry": "Indústria", "productsServices": "Produtos / Serviços", "employeeCount": "Número de Funcionários", "managementRep": "Representante da Direção", "targetCertDate": "Data Alvo de Certificação", "standardsInScope": "Normas no Escopo", "designResponsibility": "Responsabilidade de Projeto", "coreProcesses": "Processos Centrais (separados por vírgula)", "siteName": "Nome do Site Principal", "save": "Salvar Perfil", "saving": "Salvando..." },
+    "registry": { "loading": "Carregando...", "requiredSources": "Fontes de evidência necessárias", "naJustified": "N/A — justificado", "markApplicable": "Marcar aplicável", "markExcluded": "Marcar N/A", "justificationPlaceholder": "Justificativa para exclusão (obrigatória)" }
   }
 }
