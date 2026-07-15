@@ -1,0 +1,51 @@
+# Task 8 — Approval integrity (BC-11, APR-1..3)
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-15T12:40:00Z
+# Base commit: ab2da1d (Task 3 fix accepted)
+
+## Gates executed
+
+| Gate | Command | Exit code | Result |
+|------|---------|-----------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | Clean |
+| Unit tests | `npx vitest run` | 0 | 718 tests pass, 61 files |
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/src/resolvers/m1.ts` | submitDocumentForApproval preconditions + approveDocumentVersion SoD |
+| `services/api/src/resolvers/qms.ts` | markSectionReviewed (role-gated, rejects terminal runs) |
+| `services/api/__tests__/resolvers/m1-approval-integrity.test.ts` | 7 tests (negative first) |
+| `services/api/__tests__/resolvers/qms.test.ts` | 2 new markSectionReviewed tests |
+
+## Implementation
+
+**submitDocumentForApproval (APR-1/APR-3):**
+- Same transaction: checks if doc has a generation_runs row (manual_document_id = :docId::uuid)
+- If run exists: COUNT unreviewed (reviewed_at IS NULL) → UNREVIEWED_SECTIONS if > 0
+- If run exists: COUNT gap/failed (status IN ('gap','failed')) → UNRESOLVED_GAPS if > 0
+- Non-generated documents (no run) pass through unchanged — existing M1 flow preserved
+
+**markSectionReviewed:**
+- In qms.ts: validates section exists, checks parent run not terminal (complete/failed → RUN_TERMINAL)
+- Stamps reviewed_by = actor, reviewed_at = NOW()
+
+**approveDocumentVersion (BC-11 SoD):**
+- Fetches version created_by; if actor === created_by → rollback BEFORE publish
+- Publishes Security.SodViolationBlocked (already registered, auditTrail: true)
+- Throws SOD_VIOLATION — no approval row written
+- Second-user approval proceeds normally
+
+**Tests (negative first, ACC-7 shape):**
+1. UNREVIEWED_SECTIONS → rollback, no status change
+2. UNRESOLVED_GAPS → rollback
+3. Non-generated doc submits normally (2 execute calls only, no section queries)
+4. Precondition SQL: real 011 columns (manual_document_id, reviewed_at, status), ::uuid casts
+5. SOD_VIOLATION: rollback + Security.SodViolationBlocked + no approval INSERT
+6. Second-user approval: commit + Document.Approved
+7. SoD check: ::uuid cast on versionId
+
+## D-rung
+
+D2 — hermetic tests pass. Not deployed.

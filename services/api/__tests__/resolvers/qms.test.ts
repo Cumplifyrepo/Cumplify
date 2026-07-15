@@ -261,3 +261,41 @@ describe('SCHEMA-5: tenantId from resolverContext only', () => {
     expect(params).not.toContainEqual(expect.objectContaining({ value: { stringValue: 'evil' } }));
   });
 });
+
+// ─── Task 8: markSectionReviewed ──────────────────────────────────────────────
+
+describe('markSectionReviewed', () => {
+  it('stamps reviewed_by/reviewed_at with ::uuid cast on sectionId', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'running' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'sec-1' }, { stringValue: 'hk-1' }, { stringValue: 'prose' }, { stringValue: '[]' }, { isNull: true }, { stringValue: 'user-test' }, { stringValue: '2026-07-15T00:00:00Z' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'harmonization_key' }, { name: 'kind' }, { name: 'clause_refs' }, { name: 'content_sha256' }, { name: 'reviewed_by' }, { name: 'reviewed_at' }, { name: 'error' }],
+    });
+
+    await handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }));
+
+    const [fetchSql] = mockExecute.mock.calls[0];
+    expect(fetchSql).toContain(':sectionId::uuid');
+    expect(fetchSql).toContain('qms.generation_sections');
+    expect(fetchSql).toContain('qms.generation_runs');
+
+    const [updateSql] = mockExecute.mock.calls[1];
+    expect(updateSql).toContain('reviewed_by');
+    expect(updateSql).toContain('reviewed_at');
+    expect(updateSql).toContain(':sectionId::uuid');
+    expect(mockCommit).toHaveBeenCalled();
+  });
+
+  it('RUN_TERMINAL when parent run is complete', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'complete' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
+    });
+
+    await expect(handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }))).rejects.toThrow('RUN_TERMINAL');
+    expect(mockRollback).toHaveBeenCalled();
+  });
+});

@@ -72,6 +72,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'setClauseApplicability': return setClauseApplicability(event, tenantId, sub);
     case 'getGenerationRun': return getGenerationRun(event, tenantId);
     case 'listGenerationRuns': return listGenerationRuns(event, tenantId);
+    case 'markSectionReviewed': return markSectionReviewed(event, tenantId, sub);
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
@@ -302,6 +303,56 @@ async function setClauseApplicability(event: AppSyncEvent, tenantId: string, act
       payload: { clauseRegistryId: input.clauseRegistryId, applicable: input.applicable },
     });
 
+    return marshalOne(result);
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+}
+
+/**
+ * markSectionReviewed — stamps reviewed_by/reviewed_at on a generation section.
+ * Role-gated to M1 authoring family (canApprove(role,'M1') — enforced server-side).
+ * Rejects if the parent run is in a terminal state (complete/failed).
+ */
+async function markSectionReviewed(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as { sectionId: string };
+  const sectionId = input.sectionId;
+
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    // Fetch section + parent run status
+    const sectionResult = await txn.execute(`
+      SELECT gs.id, gs.run_id, gs.reviewed_at, gr.status AS run_status
+      FROM qms.generation_sections gs
+      JOIN qms.generation_runs gr ON gr.id = gs.run_id
+      WHERE gs.id = :sectionId::uuid
+    `, [{ name: 'sectionId', value: { stringValue: sectionId } }]);
+
+    if (!sectionResult.records || sectionResult.records.length === 0) {
+      throw new Error('SECTION_NOT_FOUND');
+    }
+
+    // Check run status — reject on terminal states
+    const runStatusIdx = sectionResult.columnMetadata!.findIndex(c => c.name === 'run_status');
+    const runStatus = (sectionResult.records[0][runStatusIdx] as { stringValue?: string }).stringValue;
+    if (runStatus === 'complete' || runStatus === 'failed') {
+      throw new Error('RUN_TERMINAL');
+    }
+
+    // Stamp reviewed_by/reviewed_at
+    const result = await txn.execute(`
+      UPDATE qms.generation_sections
+      SET reviewed_by = :actor, reviewed_at = NOW(), updated_at = NOW()
+      WHERE id = :sectionId::uuid
+      RETURNING id, harmonization_key, status AS kind, clause_registry_ids AS clause_refs,
+                content_sha256, reviewed_by, reviewed_at, error
+    `, [
+      { name: 'actor', value: { stringValue: actor } },
+      { name: 'sectionId', value: { stringValue: sectionId } },
+    ]);
+
+    await txn.commit();
     return marshalOne(result);
   } catch (err) {
     try { await txn.rollback(); } catch { /* never mask */ }

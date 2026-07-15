@@ -77,10 +77,10 @@
 
 ## Task 8 — Approval integrity (BC-11, APR-1..3) [KIRO]
 
-- [ ] `submitDocumentForApproval` preconditions: all sections reviewed (`UNREVIEWED_SECTIONS`), zero gap/failed sections (`UNRESOLVED_GAPS`).
-- [ ] `markSectionReviewed` mutation (role-gated).
-- [ ] `approveDocumentVersion` SoD: approver ≠ `created_by` → block, write nothing, publish `Security.SodViolationBlocked`.
-- [ ] Hermetic tests incl. negative paths (ACC-7 shape).
+- [x] `submitDocumentForApproval` preconditions: all sections reviewed (`UNREVIEWED_SECTIONS`), zero gap/failed sections (`UNRESOLVED_GAPS`).
+- [x] `markSectionReviewed` mutation (role-gated).
+- [x] `approveDocumentVersion` SoD: approver ≠ `created_by` → block, write nothing, publish `Security.SodViolationBlocked`.
+- [x] Hermetic tests incl. negative paths (ACC-7 shape).
 
 **Depends on:** Task 3. **D-rung:** D2. **Evidence:** `task-8-approval.log`
 

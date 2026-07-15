@@ -68,6 +68,42 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
   const id = event.arguments.id as string;
   const txn = await beginTenantTransaction(tenantId);
   try {
+    // APR-1/APR-3: preconditions — only for documents with an associated generation run.
+    // Non-generated documents (hand-authored M1 drafts) pass through unchanged.
+    const runResult = await txn.execute(`
+      SELECT gr.id, gr.status
+      FROM qms.generation_runs gr
+      WHERE gr.manual_document_id = :docId::uuid
+      ORDER BY gr.started_at DESC LIMIT 1
+    `, [{ name: 'docId', value: { stringValue: id } }]);
+
+    const hasRun = runResult.records && runResult.records.length > 0;
+
+    if (hasRun) {
+      const runId = (runResult.records![0][0] as { stringValue?: string }).stringValue!;
+
+      // APR-1: every section must have reviewed_at IS NOT NULL
+      const unreviewedResult = await txn.execute(`
+        SELECT COUNT(*) AS cnt FROM qms.generation_sections
+        WHERE run_id = :runId::uuid AND reviewed_at IS NULL
+      `, [{ name: 'runId', value: { stringValue: runId } }]);
+      const unreviewedCount = (unreviewedResult.records![0][0] as { longValue?: number }).longValue ?? 0;
+      if (unreviewedCount > 0) {
+        throw new Error('UNREVIEWED_SECTIONS');
+      }
+
+      // APR-3: zero sections with status IN ('gap', 'failed')
+      const gapFailedResult = await txn.execute(`
+        SELECT COUNT(*) AS cnt FROM qms.generation_sections
+        WHERE run_id = :runId::uuid AND status IN ('gap', 'failed')
+      `, [{ name: 'runId', value: { stringValue: runId } }]);
+      const gapFailedCount = (gapFailedResult.records![0][0] as { longValue?: number }).longValue ?? 0;
+      if (gapFailedCount > 0) {
+        throw new Error('UNRESOLVED_GAPS');
+      }
+    }
+
+    // Status transition: draft → in_review
     const result = await txn.execute(
       `UPDATE m1.documents SET status = 'in_review', updated_at = NOW() WHERE id = :id::uuid RETURNING *`,
       [{ name: 'id', value: { stringValue: id } }],
@@ -79,7 +115,10 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
       payload: { documentId: id },
     });
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
 }
 
 async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -87,6 +126,25 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
   const decision = mapEnum(APPROVAL_DECISION_MAP, input.decision as string, 'decision');
   const txn = await beginTenantTransaction(tenantId);
   try {
+    // BC-11 SoD: approver sub ≠ version created_by
+    const versionResult = await txn.execute(
+      `SELECT created_by FROM m1.document_versions WHERE id = :versionId::uuid`,
+      [{ name: 'versionId', value: { stringValue: input.versionId as string } }],
+    );
+    if (versionResult.records && versionResult.records.length > 0) {
+      const createdBy = (versionResult.records[0][0] as { stringValue?: string }).stringValue;
+      if (createdBy === actor) {
+        // Rollback BEFORE publishing (lesson: attempt is logged, write is not)
+        await txn.rollback();
+        await publishAuditEvent({
+          tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
+          detailType: 'Security.SodViolationBlocked', source: 'cumplify.m1.document-studio',
+          payload: { versionId: input.versionId, attemptedBy: actor, createdBy },
+        });
+        throw new Error('SOD_VIOLATION');
+      }
+    }
+
     const result = await txn.execute(
       `INSERT INTO m1.document_approvals (tenant_id, document_version_id, approver_id, decision, approved_at, created_by)
        VALUES (:tenantId, :versionId::uuid, :actor, :decision, NOW(), :actor) RETURNING *`,
@@ -104,7 +162,12 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
       payload: { versionId: input.versionId, decision: input.decision },
     });
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    if ((err as Error).message !== 'SOD_VIOLATION') {
+      try { await txn.rollback(); } catch { /* never mask */ }
+    }
+    throw err;
+  }
 }
 
 async function publishControlledDocument(event: AppSyncEvent, tenantId: string, actor: string) {
