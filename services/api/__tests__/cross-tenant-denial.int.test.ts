@@ -222,6 +222,47 @@ describe.skipIf(!LIVE)('C-7 #3b: RDS RLS cross-tenant denial — forms.records +
   }, 120_000);
 });
 
+// ─── #3c RDS RLS denial — qms.* tenant tables (spec 40) — LIVE ───────────────
+const QMS_TENANT_TABLES = [
+  'qms.org_profiles',
+  'qms.org_profile_versions',
+  'qms.clause_applicability',
+  'qms.generation_runs',
+  'qms.generation_sections',
+  'qms.assertion_ledger',
+];
+
+describe.skipIf(!LIVE)('C-7 #3c: RDS RLS cross-tenant denial — qms tenant tables', () => {
+  for (const table of QMS_TENANT_TABLES) {
+    it(`${table}: no tenant context → zero rows (fail-closed)`, () => {
+      const rows = rlsQuery(null, `SELECT count(*) FROM ${table}`);
+      expect(Number((rows[0] as { longValue: number }[])[0].longValue)).toBe(0);
+    }, 120_000);
+    it(`${table}: tenant-BBB session never sees tenant-AAA rows`, () => {
+      const rows = rlsQuery(TENANT_B, `SELECT DISTINCT tenant_id::text FROM ${table}`);
+      const tenants = rows.map((r) => (r as { stringValue: string }[])[0].stringValue);
+      expect(tenants).not.toContain(TENANT_A);
+    }, 120_000);
+  }
+
+  it('qms.clause_registry is tenant-less reference data: readable under any tenant, but INSERT is denied for app_role', () => {
+    const rows = rlsQuery(TENANT_B, 'SELECT count(*) FROM qms.clause_registry');
+    expect(Number((rows[0] as { longValue: number }[])[0].longValue)).toBeGreaterThan(0);
+    expect(() =>
+      rlsQuery(
+        TENANT_B,
+        `INSERT INTO qms.clause_registry (standard, clause_no, clause_title, intent_paraphrase, annex_sl_mode, harmonization_key, doc_type, sort_order) VALUES ('ISO9001', '99.9', 'x', 'x', 'shared', '99.9', 'procedure', 9999)`,
+      ),
+    ).toThrow(/permission denied/i);
+  }, 120_000);
+
+  it('qms.assertion_ledger is append-only: UPDATE is denied for app_role', () => {
+    expect(() =>
+      rlsQuery(TENANT_B, `UPDATE qms.assertion_ledger SET fact_key = 'tampered'`),
+    ).toThrow(/permission denied/i);
+  }, 120_000);
+});
+
 // ─── #4 Materialized-view denial — LIVE ──────────────────────────────────────
 describe.skipIf(!LIVE)('C-7 #4: materialized-view denial (app_role)', () => {
   it('get_risk_register_view() accessor is tenant-scoped (no error under a tenant)', () => {

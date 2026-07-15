@@ -44,7 +44,7 @@ Existing agents (built): ControlTower, DocStudio, LeadAuditor, CAPAGuru, Records
 | ISO 9001:2015 | 10.2 Nonconformity and corrective action | M2 CAPA | CAPAGuru | FULL |
 | ISO 9001:2015 | 10.3 Continual improvement | M2 CAPA | CAPAGuru | FULL |
 
-**ISO 9001:2015 tally (27 clauses):** FULL = 15 · PARTIAL = 0 · ROADMAP = 12
+**ISO 9001:2015 tally (28 clauses):** FULL = 16 · PARTIAL = 0 · ROADMAP = 12
 
 ---
 
@@ -77,7 +77,7 @@ Existing agents (built): ControlTower, DocStudio, LeadAuditor, CAPAGuru, Records
 | ISO 14001:2015 | 10.2 Nonconformity and corrective action | M2 CAPA | CAPAGuru | FULL |
 | ISO 14001:2015 | 10.3 Continual improvement | M2 CAPA | CAPAGuru | FULL |
 
-**ISO 14001:2015 tally (24 clauses):** FULL = 12 · PARTIAL = 0 · ROADMAP = 12
+**ISO 14001:2015 tally (24 clauses):** FULL = 11 · PARTIAL = 0 · ROADMAP = 13
 
 ---
 
@@ -114,7 +114,7 @@ Existing agents (built): ControlTower, DocStudio, LeadAuditor, CAPAGuru, Records
 | ISO 45001:2018 | 10.2 Incident, nonconformity and corrective action (NOTE: 45001 adds "Incident") | M2 CAPA / M10 Safety Operations | IncidentInvestigator → CAPAGuru | PARTIAL |
 | ISO 45001:2018 | 10.3 Continual improvement | M2 CAPA | CAPAGuru | FULL |
 
-**ISO 45001:2018 tally (28 clauses):** FULL = 12 · PARTIAL = 1 · ROADMAP = 15
+**ISO 45001:2018 tally (28 clauses):** FULL = 10 · PARTIAL = 1 · ROADMAP = 17
 
 ---
 
@@ -122,10 +122,17 @@ Existing agents (built): ControlTower, DocStudio, LeadAuditor, CAPAGuru, Records
 
 | Standard | Total clauses | FULL | PARTIAL | ROADMAP |
 |---|---|---|---|---|
-| ISO 9001:2015 | 27 | 15 | 0 | 12 |
-| ISO 14001:2015 | 24 | 12 | 0 | 12 |
-| ISO 45001:2018 | 28 | 12 | 1 | 15 |
-| **IMS TOTAL** | **79** | **39** | **1** | **39** |
+| ISO 9001:2015 | 28 | 16 | 0 | 12 |
+| ISO 14001:2015 | 24 | 11 | 0 | 13 |
+| ISO 45001:2018 | 28 | 10 | 1 | 17 |
+| **IMS TOTAL** | **80** | **37** | **1** | **42** |
+
+> Tally correction 2026-07-15 (spec-40 BC-7): every tally above is now MACHINE-COUNTED
+> from the table rows (grep over `^| ISO ... |` data rows by coverage column). The
+> previous hand-maintained tallies were wrong in all three sections (27/15 vs actual
+> 28/16; 12/12 vs 11/13; 12/15 vs 10/17) and the grand total said 79 where the tables
+> hold 80 rows. The clause registry seed (migration 014) is integrity-tested against
+> the PARSED rows of this file, never against these tallies.
 
 **Notes on status assignments:**
 - **FULL** clauses are served today by an existing module and an existing (built, PHASE-14) agent: DocStudio (M1: 4.3, 5.2, 7.5, and 9001 operational clauses 8.2/8.3/8.5/8.6), ControlTower (4.4, 5.1, 5.3), RecordsVault (7.1 / 7.1.5), LeadAuditor (9.2 all 3), CAPAGuru (8.7, 10.1, 10.2, 10.3).

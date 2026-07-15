@@ -13,6 +13,7 @@ enum Standard {
   ISO9001
   ISO14001
   ISO45001
+  IMS
 }
 
 enum DocumentStatus {

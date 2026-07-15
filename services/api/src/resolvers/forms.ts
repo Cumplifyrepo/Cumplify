@@ -130,7 +130,7 @@ async function listFormTemplates(_tenantId: string): Promise<unknown[]> {
     await txn.commit();
     return marshalTemplates(result);
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -170,7 +170,7 @@ async function getFormTemplate(event: AppSyncEvent): Promise<unknown> {
     await txn.commit();
     return marshalTemplateDetail(tplResult, sectionsResult, fieldsResult);
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -212,7 +212,7 @@ async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<u
     await txn.commit();
     return records;
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -249,7 +249,7 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
     await txn.commit();
     return rec;
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -279,7 +279,7 @@ async function createFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     await txn.commit();
     return rec;
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -397,7 +397,7 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
     // Return refreshed record
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -610,7 +610,7 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -661,7 +661,7 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
     // BC-4: SoD — approver ≠ completed_by AND approver ≠ opened_by
     if (actor === completedBy || actor === openedBy) {
       // Publish Security.SodViolationBlocked, write NOTHING
-      await txn.rollback();
+      try { await txn.rollback(); } catch { /* never mask the original error */ }
       await publishAuditEvent({
         tenantId,
         actor,
@@ -705,7 +705,7 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
     if ((err as Error).message !== 'SOD_VIOLATION') {
-      await txn.rollback().catch(() => {});
+      try { await txn.rollback(); } catch { /* never mask the original error */ }
     }
     throw err;
   }
@@ -775,7 +775,7 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }
@@ -843,7 +843,7 @@ async function getFormRecordById(recordId: string, tenantId: string): Promise<un
     await txn.commit();
     return rec;
   } catch (err) {
-    await txn.rollback();
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
 }

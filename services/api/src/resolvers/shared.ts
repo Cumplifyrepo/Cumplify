@@ -196,7 +196,7 @@ export interface PublishAuditEventOptions {
   actor: string;
   module: string;
   clauseRef: string;
-  standard: 'ISO9001' | 'ISO14001' | 'ISO45001';
+  standard: 'ISO9001' | 'ISO14001' | 'ISO45001' | 'IMS';
   detailType: string;
   source: string;
   payload: Record<string, unknown>;

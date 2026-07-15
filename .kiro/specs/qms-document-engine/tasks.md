@@ -14,24 +14,24 @@
 
 ---
 
-## Task 1 — Migration `011_qms_engine.sql` + BC-6 [KIRO, ARCHITECT deploys]
+## Task 1 — Migration `011_qms_engine.sql` + BC-6 [ARCHITECT — pulled from Kiro 2026-07-15, wave was the cross-spec bottleneck]
 
-- [ ] Author migration per design §2: `qms` schema; `clause_registry` (tenant-less, SELECT-only for `app_role`); `org_profiles` + `org_profile_versions`; `clause_applicability` (CHECK: not-applicable requires justification); `generation_runs`; `generation_sections` (`UNIQUE(run_id, harmonization_key)`); `assertion_ledger`; `m1.document_versions` += `content_sha256 TEXT`; `m4.records` CHECK += `'IMS'`.
-- [ ] RLS on EVERY tenant table: ENABLE + FORCE + tenant policy + `app_role` grant (follow `007_rls_policies.sql` pattern).
-- [ ] Extend the cross-tenant denial test to all new tenant tables (ACC-2).
-- [ ] `schema.graphql`: `enum Standard` += `IMS`; widen `PublishAuditEventOptions.standard`; regression test — a `Standard.IMS` document round-trips `createDocumentDraft → getDocument` (design §2.6).
-- [ ] [ARCHITECT] Review migration, apply to dev via Data API, live-verify table + policy existence (`pg_policies`), run denial test against live dev.
+- [x] Author migration per design §2: `qms` schema; `clause_registry` (tenant-less, SELECT-only for `app_role`); `org_profiles` + `org_profile_versions`; `clause_applicability` (CHECK: not-applicable requires justification); `generation_runs`; `generation_sections` (`UNIQUE(run_id, harmonization_key)`); `assertion_ledger` (append-only for app_role); `m1.document_versions` += `content_sha256 TEXT`; `m4.records` CHECK += `'IMS'`.
+- [x] RLS on EVERY tenant table: ENABLE + FORCE + tenant policy + `app_role` grant (follow `007_rls_policies.sql` pattern).
+- [x] Extend the cross-tenant denial test to all new tenant tables (ACC-2) — +14 probes incl. registry INSERT-denied + ledger UPDATE-denied.
+- [x] `schema.graphql`: `enum Standard` += `IMS`; widened `PublishAuditEventOptions.standard` AND the downstream envelope unions (`eventing/types.ts`, `audit-trail/{types,appender}.ts`); `ims-standard.test.ts` pins the chain (design §2.6).
+- [x] [ARCHITECT] Applied to dev via migrator custom resource (ApiStack deploy), live-verified `_migrations` ledger + `pg_policies` + FORCE flags, denial int suite 38 passed live.
 
-**Depends on:** nothing. **D-rung:** D3. **Evidence:** `task-1-migration.log`
+**Depends on:** nothing. **D-rung:** D3 ✓. **Evidence:** `task-1-2-migration-registry.log`
 
-## Task 2 — Clause registry seed + integrity (BC-7, CLR-1..4) [KIRO]
+## Task 2 — Clause registry seed + integrity (BC-7, CLR-1..4) [ARCHITECT — pulled with Task 1]
 
-- [ ] Parser over `docs/architecture/iso-coverage-matrix.md` + `iso-requirements-map.md`: extract (standard, clause_no, title, intent paraphrase, annex_sl_mode, harmonization_key, doc_type, required_sources); skip the 3 Grand-Total rows; dedupe rollups (`6.1` vs `6.1.2`/`6.1.3`).
-- [ ] Correct the corpus map's self-disagreeing tallies IN THE SAME COMMIT (BC-7).
-- [ ] Seed SQL generated from the parse; integrity test asserts seeded set == reconciled parsed set (never a line count).
-- [ ] CLR-3 test: zero "shall"-form sentences and zero standard-text fragments in `intent_paraphrase` rows.
+- [x] Seed `014_qms_registry_seed.sql`: 80 rows (28/24/28) from the corpus maps; Grand-Total rows skipped; BC-7 dedup narrowing on 14001/45001 `6.1` (→6.1.1+6.1.4) and 45001 `8.1` (→8.1.1); concept-split keys `6.1.2-aspects`/`6.1.2-hazards` and `8.2-9001`/`8.2-emergency`.
+- [x] Corrected the corpus map's tallies IN THE SAME COMMIT (BC-7) — ALL THREE section tallies were wrong (27/15→28/16; 12/12→11/13; 12/15→10/17) + grand total 79→80; now machine-counted with a correction note.
+- [x] `qms-registry.test.ts` (14 tests): parse-set equality both directions (never a line count), harmonization invariants, doc_type counts, required_sources shape.
+- [x] CLR-3: zero "shall" in `intent_paraphrase` (test + independent grep).
 
-**Depends on:** Task 1. **D-rung:** D2 ([ARCHITECT] applies seed with Task 1 deploy). **Evidence:** `task-2-clause-registry.log`
+**Depends on:** Task 1. **D-rung:** D3 ✓ (80 rows live-counted per standard). **Evidence:** `task-1-2-migration-registry.log`
 
 ## Task 3 — SDL + resolver scaffolds + org profile [KIRO]
 

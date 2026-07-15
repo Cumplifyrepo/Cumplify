@@ -1,0 +1,85 @@
+# Spec-40 Tasks 1+2 — migration 011 + clause registry seed 014 + wave deploy
+# Executor: ARCHITECT (tasks pulled from Kiro 2026-07-15 — Kiro's spec-41 runway
+# ended at Task 7; the wave deploy was the hard bottleneck for both specs).
+# Evidence contract: rule 7/8. Readback rows carry timestamp + exit code.
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/migrations/011_qms_engine.sql` | qms schema: clause_registry (tenant-less, SELECT-only), org_profiles + versions, clause_applicability (exclusion needs justification), generation_runs/sections (UNIQUE(run_id,harmonization_key) idempotency spine), assertion_ledger (append-only for app_role: SELECT+INSERT, no UPDATE/DELETE). BC-6: m4.records CHECK += 'IMS'. BC-8: m1.document_versions += content_sha256. RLS ENABLE+FORCE+policy on all 6 tenant tables. |
+| `services/api/migrations/014_qms_registry_seed.sql` | 80 clause rows (28/24/28), deterministic UUIDs d0000001-000{1,2,3}-*, ON CONFLICT idempotent. Architect-authored paraphrases from iso-requirements-map (b)-lines — zero "shall". Harmonization: 52 shared / 15 forked / 13 standard_only; 14001 6.1.2→'6.1.2-aspects' vs 45001 6.1.2→'6.1.2-hazards' (concept split); 9001 8.2→'8.2-9001' vs 14001+45001 8.2→'8.2-emergency'. BC-7 dedup narrowing on 14001/45001 6.1 (→6.1.1+6.1.4 only) and 45001 8.1 (→8.1.1 only). |
+| `services/api/__tests__/qms-registry.test.ts` | 14 hermetic tests: BC-7 parse-set equality (corpus rows ↔ seed rows, both directions), CLR-3 zero-shall, harmonization invariants, doc_type counts, required_sources shape. |
+| `services/api/__tests__/ims-standard.test.ts` | 5 tests pinning the IMS widening chain (enum, 002 CHECK, 011 CHECK rewrite, PublishAuditEventOptions type, no STANDARD_MAP reverse-strip). |
+| `services/api/__tests__/cross-tenant-denial.int.test.ts` | +14 int-lane probes: 6 qms tenant tables (fail-closed + A/B isolation) + registry SELECT-allowed/INSERT-denied + ledger UPDATE-denied. |
+| `services/api/schema/schema.graphql` | enum Standard += IMS. |
+| `services/api/src/resolvers/shared.ts`, `services/eventing/src/types.ts`, `services/audit-trail/src/{types,appender}.ts` | standard union widened to include 'IMS' end-to-end (publish → envelope → sealed ledger item). |
+| `docs/architecture/iso-coverage-matrix.md` | BC-7 tally corrections — ALL THREE section tallies were wrong (27/15→28/16; 12/12→11/13; 12/15/1→10/17/1) and grand total 79→80. Now machine-counted; correction note added. |
+| `infra/lib/api-stack.ts` | formsDS added to the CDK-Nag data-source suppression list (see Deploy-1 failure below). |
+
+## Independent verification of the seed (architect re-parse, not the test)
+
+| Check | Result |
+|-------|--------|
+| Corpus rows ↔ seed rows (own python parse, both directions) | 80 = 80, zero diff either direction |
+| Rows per standard | 28 / 24 / 28 |
+| "shall" occurrences in seed | 0 |
+| Mixed annex_sl_mode per harmonization_key | NONE |
+| 6.1.2 aspects/hazards key split · 8.2 concept split | verified |
+| doc_type: policy=3, scope=3 | verified |
+
+## Gates (D2)
+
+| Gate | Command | Exit | Result |
+|------|---------|------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | clean (after widening eventing + audit-trail unions — first run exposed narrow unions at consumer.ts:26) |
+| Unit suite | `npm run test` | 0 | 692 services + 81 frontend (+19 new: 14 registry + 5 IMS) |
+
+## Deploy
+
+| Step | Timestamp (UTC) | Result |
+|------|-----------------|--------|
+| Deploy-1 `cdk deploy CumplifyPipeline/Dev/ApiStack --exclusively` | 2026-07-15T14:39:04 | **FAILED at synth** — CDK-Nag AwsSolutions-IAM5 on FormsDataSource service role: Kiro's Task 3 added formsDS but not to the suppression list. Invisible to D2 gates (Nag runs at stage synth only). Fixed: formsDS added to dataSources loop. |
+| Deploy-2 same command | 2026-07-15T14:40 | exit 0, 127.98s — migrator custom resource applied the wave; 23 new resources (FormsFn + FormsDataSource + 10 forms resolvers + IMS enum schema update) |
+| Deploy-3 same command | 2026-07-15T14:53:19 → 14:54:21 | exit 0, 62s — ships the two readback-found fixes (below) |
+
+## TWO LIVE DEFECTS FOUND DURING READBACK (both fixed + redeployed + re-proven)
+
+1. **BC-5 was non-functional — all four forms detailTypes UNREGISTERED.**
+   `publish()` throws on unregistered detailType (`audit-trail-registry.ts` contract);
+   `FormRecord.Submitted/Reopened/Approved` and `Security.SodViolationBlocked` were
+   never added by spec-41 Tasks 5/6. Every audit publish from forms.ts threw —
+   invisible to hermetic tests (publishAuditEvent mocked), and masked live by defect 2.
+   FIX: 4 registry entries + contracts/events.md rows (parity test green).
+2. **Rollback-after-commit masked the true error.** submit's catch ran a raw
+   `txn.rollback()` after a post-commit failure → `TransactionNotFoundException`
+   replaced the real error (the unregistered-detailType throw). The Task-6 approve
+   guard existed but not elsewhere. FIX: all 12 rollback sites in forms.ts are now
+   `try { rollback } catch { /* never mask the original error */ }` (mock-agnostic form).
+   NOTE: the failed submit was still ATOMIC — record complete + m2 rows all committed;
+   only the error report was wrong.
+
+## Consolidated live readback (all via cumplify-dev-admin; dev 697114252993)
+
+| # | Check | Timestamp (UTC) | Exit | Result |
+|---|-------|-----------------|------|--------|
+| 1 | `public._migrations` ledger | 14:43:32 | 0 | 011@14:42:09, 012@14:42:12, 013@14:42:13, 014@14:42:15 — in order |
+| 2 | Registry counts live | 14:43:57 | 0 | ISO9001=28, ISO14001=24, ISO45001=28 (=80); forms.templates=15; template_fields=188 |
+| 3 | pg_policies + FORCE RLS | 14:43:57 | 0 | tenant_isolation policy on all 8 tenant tables (6 qms + 2 forms); relrowsecurity+relforcerowsecurity TRUE on all 8; catalog tables (registry, templates×3) correctly FALSE |
+| 4 | createFormRecord live | 14:44:42 | 0 | completion 0/35 + requiredMissing from catalog (Task-3 BUG-1 fix live-proven) |
+| 5 | **ACC-3 negative** (spec-41 T4) | 14:45:04 | throw | clause_ref := random UUID → `LINK_TARGET_NOT_FOUND` |
+| 6 | **ACC-3 positive** | 14:45:05 | 0 | clause_ref := registry 8.7 UUID (d0000001-0001-…-022) → saved, 1/35, IN_PROGRESS |
+| 7 | **ACC-4 negative** (spec-41 T5) | 14:45:24 | throw | submit w/ 15 of 16 required unfilled → `MAPPING_INCOMPLETE`; NC rows by this actor = 0; record status unchanged (in_progress) |
+| 8 | **ACC-4 positive** | 14:45:53 | 0* | full NCR submit → m2.nonconformities row `[ISO9001, process, nc, 8.7, high, open]` — **clause_ref stored as TEXT '8.7' dereferenced from the registry UUID** — + m2.corrective_actions row (owner, containment false, open); record complete + m2_nc_id stamped. *Invoke reported the masked error (defect 2) but the transaction was fully atomic |
+| 9 | reopen → resubmit (T5 F1 live) | 14:54:45–48 | 0 | REOPENED → COMPLETE; **NC rows = 1, CA rows = 1** — UPDATE-not-INSERT proven live, no duplicates after the full cycle |
+| 10 | **BC-5 hash-chained ledger** | 14:55:10 | 0 | DDB `TENANT#tenant-AAA#AUDITLOG`: `FormRecord.Reopened` EVENT#14:54:48.618 + `FormRecord.Submitted` EVENT#14:54:48.746 — audit events exist in the sealed trail for the first time |
+| 11 | Denial int suite LIVE | 14:55:36 | 0 | `npm run test:int` — 38 passed, 3 skipped (C-6 subscription probes, witnessed lane); includes all 14 new qms/forms probes: fail-closed zero-context, A/B isolation both directions, registry INSERT denied, assertion-ledger UPDATE denied |
+
+## D-rung outcomes
+
+- spec-40 Task 1 (migration 011 + BC-6/BC-8) — **D3**.
+- spec-40 Task 2 (clause registry seed) — **D3** (80 rows live, integrity test parse-based).
+- spec-41 Task 1 [ARCHITECT] apply step — **closed** (this log is the shared evidence).
+- spec-41 Task 4 ACC-3 readback — **closed** (rows 5–6).
+- spec-41 Tasks 3/5 core paths — **live-proven** (rows 4, 7–9); formal spec-41 ACC pass remains Task 11.
+- Kiro unblocked for spec-41 Task 9 (registry live).

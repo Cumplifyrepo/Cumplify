@@ -199,3 +199,11 @@ raised, evaluated) belong in the immutable audit trail.
 | detailType | auditTrail | Rationale |
 |-----------|------------|-----------|
 | `Agent.WritebackCommitted` | true | State transition: HITL-approved agent mutation committed to RDS — sealed for audit completeness |
+
+### QMS Forms & Records Events (spec 41 — registered at the 2026-07-15 wave readback)
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `FormRecord.Submitted` | true | State transition: record completed; NCR templates also materialize m2 rows (BC-3) |
+| `FormRecord.Reopened` | true | State transition: immutable record explicitly reopened with justification (REC-4) |
+| `FormRecord.Approved` | true | State transition: SoD-checked approval stamped (BC-4) |
+| `Security.SodViolationBlocked` | true | Security event: self-approval attempt blocked — the attempt is ledgered, the write is not |

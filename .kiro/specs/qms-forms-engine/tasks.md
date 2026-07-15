@@ -12,7 +12,7 @@
 
 - [x] Author per design §2: `forms.templates` / `template_sections` / `template_fields` (tenant-less catalog, SELECT-only for `app_role`, CHECK constraints incl. relation_target rule); `forms.records` + `forms.record_values` (typed value columns, `UNIQUE(record_id, field_id)`, exactly-one-value CHECK, partial indexes).
 - [x] RLS ENABLE + FORCE + tenant policy + `app_role` grant on `forms.records` + `forms.record_values`; cross-tenant denial test extended.
-- [ ] [ARCHITECT] Review, apply to dev, live-verify `pg_policies` + denial test.
+- [x] [ARCHITECT] Reviewed (2 reject rounds, cc98015 accepted), applied to dev 2026-07-15 with the 011+014 wave (migrator custom resource, `_migrations` ledger verified), `pg_policies` + FORCE flags live-verified on both tables, denial int suite 38 passed live. Evidence: `../qms-document-engine/task-1-2-migration-registry.log`.
 
 **Depends on:** spec-40 Task 1 (same migration wave; `IMS` enum + clause registry land there). **D-rung:** D3. **Evidence:** `task-1-migration.log`
 
@@ -37,7 +37,7 @@
 
 - [x] Code allowlist map `relation_target → table` (never SQL from data); existence probe inside the tenant transaction; typed `LINK_TARGET_NOT_FOUND`.
 - [x] Hermetic tests: probe SQL asserted; missing target rolls back the whole save.
-- [ ] [ARCHITECT] Live ACC-3 readback: cross-tenant UUID denied by RLS (probe returns zero rows), real in-tenant UUID links.
+- [x] [ARCHITECT] Live ACC-3 readback 2026-07-15: random UUID → `LINK_TARGET_NOT_FOUND` thrown; real clause-registry UUID → saved (1/35, IN_PROGRESS). Evidence rows 5–6 in `../qms-document-engine/task-1-2-migration-registry.log`.
 
 **Depends on:** Task 3. **D-rung:** D3. **Evidence:** `task-4-relations.log`
 

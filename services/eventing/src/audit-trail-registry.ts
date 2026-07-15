@@ -93,4 +93,14 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
 
   // --- Architect follow-up 2026-07-14 (Phase C checkpoint, M4 unblock) ---
   'MeasuringResource.Registered': true,
+
+  // --- Spec 41 (qms-forms-engine): record lifecycle + SoD (BC-4/BC-5).
+  // Found UNREGISTERED at the 2026-07-15 wave readback: forms.ts published
+  // these since Tasks 5/6 but publish() threw 'Unregistered detailType' on
+  // every call — masked live by a rollback-after-commit error. Registered by
+  // architect; all four are audit-trail events (hash-chained).
+  'FormRecord.Submitted': true,
+  'FormRecord.Reopened': true,
+  'FormRecord.Approved': true,
+  'Security.SodViolationBlocked': true,
 };

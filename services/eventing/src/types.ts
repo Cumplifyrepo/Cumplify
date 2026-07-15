@@ -9,7 +9,7 @@ export interface CumplifyEvent<T = Record<string, unknown>> {
   actor: string; // cognito sub or agentName
   module: string; // M1..M13
   clauseRef: string; // ISO clause string
-  standard: 'ISO9001' | 'ISO14001' | 'ISO45001';
+  standard: 'ISO9001' | 'ISO14001' | 'ISO45001' | 'IMS'; // IMS = integrated-manual artifacts (spec-40 BC-6)
   auditTrail: boolean; // true = routes to audit-sink (R-3)
   payload: T;
 }
