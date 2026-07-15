@@ -405,12 +405,10 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
 /**
  * submitFormRecord — full validation + NCR→M2 mapping (BC-3 core, design §3).
  *
- * For maps_to='m2_ncr' templates, in ONE tenant transaction:
- * 1. Assert every maps_to_column field is filled → else MAPPING_INCOMPLETE, write nothing.
- * 2. Resolve clause_ref UUID → clause_no text from qms.clause_registry (pending 011).
- * 3. INSERT m2.nonconformities from mapped values.
- * 4. INSERT m2.corrective_actions (nc_id from step 3, action_desc/owner_id/due_date/containment_flag).
- * 5. Stamp forms.records.m2_nc_id; mark complete; publish audit event.
+ * Status guard: only DRAFT/IN_PROGRESS/REOPENED can submit (else SUBMIT_INVALID_STATUS).
+ * Full validation (REC-3): ALL required fields must be filled (VALIDATION_INCOMPLETE).
+ * Mapped validation (BC-3): all maps_to_column required fields filled (MAPPING_INCOMPLETE).
+ * Resubmit-after-reopen: if m2_nc_id already set, UPDATE existing NC row (not INSERT).
  *
  * ZERO hardcoded defaults for clause_ref/severity/source/standard/nc_type.
  */
@@ -422,20 +420,30 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
   try {
     // 1. Fetch record + template metadata
     const recResult = await txn.execute(`
-      SELECT r.id, r.template_id, r.status, r.opened_by
+      SELECT r.id, r.template_id, r.status, r.opened_by, r.m2_nc_id
       FROM forms.records r WHERE r.id = :id::uuid
     `, [{ name: 'id', value: { stringValue: recordId } }]);
     const recRows = marshalRecordRows(recResult);
     if (recRows.length === 0) throw new Error('RECORD_NOT_FOUND');
     const rec = recRows[0];
     const templateId = rec.templateId as string;
+    const currentStatus = rec.status as string;
+    const existingNcId = rec.m2NcId as string | null;
 
-    // Check template maps_to
+    // F1: Status guard — submit only from DRAFT/IN_PROGRESS/REOPENED
+    const SUBMITTABLE_STATUSES = new Set(['DRAFT', 'IN_PROGRESS', 'REOPENED']);
+    if (!SUBMITTABLE_STATUSES.has(currentStatus)) {
+      throw new Error('SUBMIT_INVALID_STATUS');
+    }
+
+    // Check template maps_to + standards + clause_refs
     const tplResult = await txn.execute(`
-      SELECT maps_to FROM forms.templates WHERE id = :id::uuid
+      SELECT maps_to, standards, clause_refs FROM forms.templates WHERE id = :id::uuid
     `, [{ name: 'id', value: { stringValue: templateId } }]);
     const tplRows = marshalRecordRows(tplResult);
     const mapsTo = tplRows[0]?.mapsTo as string | null;
+    const tplStandards = tplRows[0]?.standards as string[] | null;
+    const tplClauseRefs = tplRows[0]?.clauseRefs as string[] | null;
 
     // Fetch all field metadata with maps_to_column
     const fieldMetaResult = await txn.execute(`
@@ -457,7 +465,16 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     const currentValues = marshalValues(valuesResult);
     const fieldsMeta = marshalFieldMetaFull(fieldMetaResult);
 
-    // 2. Validate mapped fields (BC-3: MAPPING_INCOMPLETE if any unmapped required field is empty)
+    // F3: Full validation (REC-3) — ALL required fields must be filled
+    const allRequired = fieldsMeta.filter(f => f.required);
+    for (const field of allRequired) {
+      const value = currentValues[field.fieldKey];
+      if (value === null || value === undefined || value === '') {
+        throw new Error('VALIDATION_INCOMPLETE');
+      }
+    }
+
+    // BC-3: Validate mapped fields (MAPPING_INCOMPLETE if any mapped required is empty)
     if (mapsTo === 'm2_ncr') {
       const mappedFields = fieldsMeta.filter(f => f.mapsToColumn !== null);
       const requiredMapped = mappedFields.filter(f => f.required);
@@ -469,7 +486,7 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
         }
       }
 
-      // 3. Resolve clause_ref UUID → clause_no TEXT from qms.clause_registry (pending 011)
+      // Resolve clause_ref UUID → clause_no TEXT from qms.clause_registry (pending 011)
       const clauseRefUuid = currentValues['clause_ref'] as string;
       const clauseResult = await txn.execute(`
         SELECT clause_no FROM qms.clause_registry WHERE id = :id::uuid
@@ -478,40 +495,62 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
       if (clauseRows.length === 0) throw new Error('LINK_TARGET_NOT_FOUND');
       const clauseNoText = clauseRows[0].clauseNo as string;
 
-      // 4. INSERT m2.nonconformities (real column names from migration 003)
-      const ncResult = await txn.execute(`
-        INSERT INTO m2.nonconformities (tenant_id, standard, source, nc_type, description, clause_ref, severity, raised_by, created_by)
-        VALUES (:tenantId, :standard, :source, :ncType, :description, :clauseRef, :severity, :raisedBy, :actor)
-        RETURNING id
-      `, [
-        { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'standard', value: { stringValue: currentValues['standard'] as string } },
-        { name: 'source', value: { stringValue: currentValues['source'] as string } },
-        { name: 'ncType', value: { stringValue: currentValues['nc_type'] as string } },
-        { name: 'description', value: { stringValue: currentValues['nc_description'] as string } },
-        { name: 'clauseRef', value: { stringValue: clauseNoText } },
-        { name: 'severity', value: { stringValue: currentValues['severity'] as string } },
-        { name: 'raisedBy', value: { stringValue: currentValues['raised_by'] as string } },
-        { name: 'actor', value: { stringValue: actor } },
-      ]);
-      const ncId = unwrapField((ncResult.records![0] as Array<Record<string, unknown>>)[0]) as string;
+      // F1: Resubmit-after-reopen — if m2_nc_id already set, UPDATE existing NC (not INSERT)
+      let ncId: string;
+      if (existingNcId) {
+        // UPDATE existing m2.nonconformities mapped columns (do NOT touch CA row — its lifecycle belongs to M2)
+        await txn.execute(`
+          UPDATE m2.nonconformities
+          SET standard = :standard, source = :source, nc_type = :ncType,
+              description = :description, clause_ref = :clauseRef, severity = :severity,
+              updated_at = NOW()
+          WHERE id = :ncId::uuid
+        `, [
+          { name: 'standard', value: { stringValue: currentValues['standard'] as string } },
+          { name: 'source', value: { stringValue: currentValues['source'] as string } },
+          { name: 'ncType', value: { stringValue: currentValues['nc_type'] as string } },
+          { name: 'description', value: { stringValue: currentValues['nc_description'] as string } },
+          { name: 'clauseRef', value: { stringValue: clauseNoText } },
+          { name: 'severity', value: { stringValue: currentValues['severity'] as string } },
+          { name: 'ncId', value: { stringValue: existingNcId } },
+        ]);
+        ncId = existingNcId;
+      } else {
+        // First submit: INSERT m2.nonconformities (real column names from migration 003)
+        const ncResult = await txn.execute(`
+          INSERT INTO m2.nonconformities (tenant_id, standard, source, nc_type, description, clause_ref, severity, raised_by, created_by)
+          VALUES (:tenantId, :standard, :source, :ncType, :description, :clauseRef, :severity, :raisedBy, :actor)
+          RETURNING id
+        `, [
+          { name: 'tenantId', value: { stringValue: tenantId } },
+          { name: 'standard', value: { stringValue: currentValues['standard'] as string } },
+          { name: 'source', value: { stringValue: currentValues['source'] as string } },
+          { name: 'ncType', value: { stringValue: currentValues['nc_type'] as string } },
+          { name: 'description', value: { stringValue: currentValues['nc_description'] as string } },
+          { name: 'clauseRef', value: { stringValue: clauseNoText } },
+          { name: 'severity', value: { stringValue: currentValues['severity'] as string } },
+          { name: 'raisedBy', value: { stringValue: currentValues['raised_by'] as string } },
+          { name: 'actor', value: { stringValue: actor } },
+        ]);
+        ncId = unwrapField((ncResult.records![0] as Array<Record<string, unknown>>)[0]) as string;
 
-      // 5. INSERT m2.corrective_actions (nc_id from step 4; action_desc/owner_id/due_date NOT NULL)
-      const containmentFlag = currentValues['containment_flag'] === true || currentValues['containment_flag'] === 'true';
-      await txn.execute(`
-        INSERT INTO m2.corrective_actions (tenant_id, nc_id, action_desc, owner_id, due_date, containment_flag, created_by)
-        VALUES (:tenantId, :ncId::uuid, :actionDesc, :ownerId, :dueDate::timestamptz, :containmentFlag, :actor)
-      `, [
-        { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'ncId', value: { stringValue: ncId } },
-        { name: 'actionDesc', value: { stringValue: currentValues['corrective_action_desc'] as string } },
-        { name: 'ownerId', value: { stringValue: currentValues['ca_owner'] as string } },
-        { name: 'dueDate', value: { stringValue: currentValues['ca_due_date'] as string } },
-        { name: 'containmentFlag', value: { booleanValue: containmentFlag } },
-        { name: 'actor', value: { stringValue: actor } },
-      ]);
+        // INSERT m2.corrective_actions (nc_id from INSERT; action_desc/owner_id/due_date NOT NULL)
+        const containmentFlag = currentValues['containment_flag'] === true || currentValues['containment_flag'] === 'true';
+        await txn.execute(`
+          INSERT INTO m2.corrective_actions (tenant_id, nc_id, action_desc, owner_id, due_date, containment_flag, created_by)
+          VALUES (:tenantId, :ncId::uuid, :actionDesc, :ownerId, :dueDate::timestamptz, :containmentFlag, :actor)
+        `, [
+          { name: 'tenantId', value: { stringValue: tenantId } },
+          { name: 'ncId', value: { stringValue: ncId } },
+          { name: 'actionDesc', value: { stringValue: currentValues['corrective_action_desc'] as string } },
+          { name: 'ownerId', value: { stringValue: currentValues['ca_owner'] as string } },
+          { name: 'dueDate', value: { stringValue: currentValues['ca_due_date'] as string } },
+          { name: 'containmentFlag', value: { booleanValue: containmentFlag } },
+          { name: 'actor', value: { stringValue: actor } },
+        ]);
+      }
 
-      // 6. Stamp forms.records.m2_nc_id + mark complete
+      // Stamp forms.records.m2_nc_id + mark complete
       await txn.execute(`
         UPDATE forms.records
         SET m2_nc_id = :ncId::uuid, status = 'complete', completed_by = :actor, completed_at = NOW(), updated_at = NOW()
@@ -521,6 +560,20 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
         { name: 'actor', value: { stringValue: actor } },
         { name: 'id', value: { stringValue: recordId } },
       ]);
+
+      await txn.commit();
+
+      // F2: Audit event — standard + clauseRef from mapped values (no literals)
+      await publishAuditEvent({
+        tenantId,
+        actor,
+        module: 'M4',
+        clauseRef: clauseNoText,
+        standard: currentValues['standard'] as 'ISO9001' | 'ISO14001' | 'ISO45001',
+        detailType: 'FormRecord.Submitted',
+        source: 'cumplify.forms',
+        payload: { recordId, templateId, mapsTo, ncId },
+      });
     } else {
       // Non-mapping template: just mark complete (no m2 writes)
       await txn.execute(`
@@ -531,21 +584,24 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
         { name: 'actor', value: { stringValue: actor } },
         { name: 'id', value: { stringValue: recordId } },
       ]);
+
+      await txn.commit();
+
+      // F2: Audit event — standard/clauseRef from template metadata (no literals)
+      // TODO-011: once IMS enum lands (spec-40), multi-standard templates use 'IMS'
+      const auditStandard = (tplStandards?.[0] ?? 'ISO9001') as 'ISO9001' | 'ISO14001' | 'ISO45001';
+      const auditClauseRef = tplClauseRefs?.[0] ?? '7.5';
+      await publishAuditEvent({
+        tenantId,
+        actor,
+        module: 'M4',
+        clauseRef: auditClauseRef,
+        standard: auditStandard,
+        detailType: 'FormRecord.Submitted',
+        source: 'cumplify.forms',
+        payload: { recordId, templateId, mapsTo },
+      });
     }
-
-    await txn.commit();
-
-    // BC-5: audit event on submit transition
-    await publishAuditEvent({
-      tenantId,
-      actor,
-      module: 'M4',
-      clauseRef: mapsTo === 'm2_ncr' ? '8.7' : '7.5',
-      standard: 'ISO9001' as const,
-      detailType: 'FormRecord.Submitted',
-      source: 'cumplify.forms',
-      payload: { recordId, templateId, mapsTo },
-    });
 
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
@@ -588,6 +644,16 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
       throw new Error('REOPEN_INVALID_STATUS');
     }
 
+    const templateId = recRows[0].templateId as string;
+
+    // Fetch template metadata for audit event (no literal standards)
+    const tplResult = await txn.execute(`
+      SELECT standards, clause_refs FROM forms.templates WHERE id = :id::uuid
+    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    const tplRows = marshalRecordRows(tplResult);
+    const tplStandards = tplRows[0]?.standards as string[] | null;
+    const tplClauseRefs = tplRows[0]?.clauseRefs as string[] | null;
+
     // Transition to reopened
     await txn.execute(`
       UPDATE forms.records
@@ -597,13 +663,16 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
     await txn.commit();
 
-    // BC-5: audit event on reopen transition (includes justification)
+    // F2: Audit event — standard/clauseRef from template metadata (no literals)
+    // TODO-011: once IMS enum lands (spec-40), multi-standard templates use 'IMS'
+    const auditStandard = (tplStandards?.[0] ?? 'ISO9001') as 'ISO9001' | 'ISO14001' | 'ISO45001';
+    const auditClauseRef = tplClauseRefs?.[0] ?? '7.5';
     await publishAuditEvent({
       tenantId,
       actor,
       module: 'M4',
-      clauseRef: '7.5',
-      standard: 'ISO9001' as const,
+      clauseRef: auditClauseRef,
+      standard: auditStandard,
       detailType: 'FormRecord.Reopened',
       source: 'cumplify.forms',
       payload: { recordId, justification },

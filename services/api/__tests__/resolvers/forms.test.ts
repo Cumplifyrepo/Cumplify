@@ -743,15 +743,15 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
     mockRollback.mockReset();
     mockPublishAuditEvent.mockReset().mockResolvedValue('evt-test');
 
-    // Call 1: record fetch
+    // Call 1: record fetch (includes m2_nc_id)
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'in_progress' }, { stringValue: 'user-test' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }],
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'in_progress' }, { stringValue: 'user-test' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'm2_nc_id' }],
     });
-    // Call 2: template maps_to
+    // Call 2: template maps_to (+ standards + clause_refs)
     mockExecute.mockResolvedValueOnce({
-      records: [[opts.mapsTo ? { stringValue: opts.mapsTo } : { isNull: true }]],
-      columnMetadata: [{ name: 'maps_to' }],
+      records: [[opts.mapsTo ? { stringValue: opts.mapsTo } : { isNull: true }, { arrayValue: { stringValues: ['ISO9001'] } }, { arrayValue: { stringValues: ['8.7'] } }]],
+      columnMetadata: [{ name: 'maps_to' }, { name: 'standards' }, { name: 'clause_refs' }],
     });
     // Call 3: field metadata (id, field_key, field_type, required, maps_to_column, relation_target)
     const metaRecords = opts.fieldsMeta.map(([key, type, required, mapsTo]) => [
@@ -776,10 +776,11 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
     });
   }
 
-  it('MAPPING_INCOMPLETE when severity is unfilled — writes NOTHING, rolls back', async () => {
+  it('VALIDATION_INCOMPLETE when severity (mapped+required) is unfilled — writes NOTHING, rolls back', async () => {
     setupSubmitMocks({
       mapsTo: 'm2_ncr',
       fieldsMeta: [
+        ['ncr_number', 'text', true, null],
         ['standard', 'select', true, 'standard'],
         ['source', 'select', true, 'source'],
         ['nc_type', 'select', true, 'nc_type'],
@@ -792,11 +793,12 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
         ['ca_due_date', 'date', true, 'due_date'],
       ],
       valuesMap: {
+        ncr_number: 'NCR-001',
         standard: 'ISO9001',
         source: 'audit',
         nc_type: 'nc',
         clause_ref: 'clause-uuid-1',
-        // severity: MISSING — this triggers MAPPING_INCOMPLETE
+        // severity: MISSING — required field unfilled
         nc_description: 'A defect',
         raised_by: 'user-1',
         corrective_action_desc: 'Fix it',
@@ -807,7 +809,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
 
     await expect(
       handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
-    ).rejects.toThrow('MAPPING_INCOMPLETE');
+    ).rejects.toThrow('VALIDATION_INCOMPLETE');
 
     // Rollback — NOTHING written
     expect(mockRollback).toHaveBeenCalled();
@@ -821,10 +823,11 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
     expect(mockPublishAuditEvent).not.toHaveBeenCalled();
   });
 
-  it('MAPPING_INCOMPLETE when clause_ref is unfilled — zero defaults allowed', async () => {
+  it('VALIDATION_INCOMPLETE when clause_ref (mapped+required) is unfilled — zero defaults allowed', async () => {
     setupSubmitMocks({
       mapsTo: 'm2_ncr',
       fieldsMeta: [
+        ['ncr_number', 'text', true, null],
         ['standard', 'select', true, 'standard'],
         ['source', 'select', true, 'source'],
         ['nc_type', 'select', true, 'nc_type'],
@@ -837,6 +840,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
         ['ca_due_date', 'date', true, 'due_date'],
       ],
       valuesMap: {
+        ncr_number: 'NCR-001',
         standard: 'ISO9001',
         source: 'audit',
         nc_type: 'nc',
@@ -852,15 +856,16 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
 
     await expect(
       handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
-    ).rejects.toThrow('MAPPING_INCOMPLETE');
+    ).rejects.toThrow('VALIDATION_INCOMPLETE');
 
     expect(mockRollback).toHaveBeenCalled();
   });
 
-  it('MAPPING_INCOMPLETE when corrective_action_desc (action_desc) is unfilled', async () => {
+  it('VALIDATION_INCOMPLETE when corrective_action_desc (action_desc mapped+required) is unfilled', async () => {
     setupSubmitMocks({
       mapsTo: 'm2_ncr',
       fieldsMeta: [
+        ['ncr_number', 'text', true, null],
         ['standard', 'select', true, 'standard'],
         ['source', 'select', true, 'source'],
         ['nc_type', 'select', true, 'nc_type'],
@@ -873,6 +878,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
         ['ca_due_date', 'date', true, 'due_date'],
       ],
       valuesMap: {
+        ncr_number: 'NCR-001',
         standard: 'ISO9001', source: 'audit', nc_type: 'nc',
         clause_ref: 'clause-uuid-1', severity: 'high',
         nc_description: 'A defect', raised_by: 'user-1',
@@ -883,7 +889,7 @@ describe('submitFormRecord — NEGATIVE PATH FIRST (BC-3)', () => {
 
     await expect(
       handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
-    ).rejects.toThrow('MAPPING_INCOMPLETE');
+    ).rejects.toThrow('VALIDATION_INCOMPLETE');
   });
 });
 
@@ -894,15 +900,15 @@ describe('submitFormRecord — POSITIVE PATH (NCR→M2 mapping)', () => {
     mockRollback.mockReset();
     mockPublishAuditEvent.mockReset().mockResolvedValue('evt-test');
 
-    // Call 1: record fetch
+    // Call 1: record fetch (now includes m2_nc_id)
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'in_progress' }, { stringValue: 'user-test' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }],
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'in_progress' }, { stringValue: 'user-test' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'm2_nc_id' }],
     });
-    // Call 2: template maps_to = m2_ncr
+    // Call 2: template maps_to = m2_ncr (+ standards + clause_refs)
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'm2_ncr' }]],
-      columnMetadata: [{ name: 'maps_to' }],
+      records: [[{ stringValue: 'm2_ncr' }, { arrayValue: { stringValues: ['ISO9001'] } }, { arrayValue: { stringValues: ['8.7', '10.2'] } }]],
+      columnMetadata: [{ name: 'maps_to' }, { name: 'standards' }, { name: 'clause_refs' }],
     });
     // Call 3: field metadata
     mockExecute.mockResolvedValueOnce({
@@ -1054,7 +1060,12 @@ describe('reopenFormRecord', () => {
       records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'complete' }]],
       columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }],
     });
-    // Call 2: UPDATE status = reopened
+    // Call 2: template metadata for audit event
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ arrayValue: { stringValues: ['ISO14001'] } }, { arrayValue: { stringValues: ['6.1.2'] } }]],
+      columnMetadata: [{ name: 'standards' }, { name: 'clause_refs' }],
+    });
+    // Call 3: UPDATE status = reopened
     mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [] });
     // Remaining: getFormRecordById
     mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
@@ -1064,13 +1075,15 @@ describe('reopenFormRecord', () => {
     })).catch(() => {});
 
     // Status update SQL
-    const [updateSql] = mockExecute.mock.calls[1];
+    const [updateSql] = mockExecute.mock.calls[2];
     expect(updateSql).toContain("status = 'reopened'");
     expect(updateSql).toContain('WHERE id = :id::uuid');
 
-    // Audit event with justification
+    // Audit event with dynamic standard/clauseRef from template (not literals)
     expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
       detailType: 'FormRecord.Reopened',
+      standard: 'ISO14001',
+      clauseRef: '6.1.2',
       payload: expect.objectContaining({ justification: 'Found additional evidence' }),
     }));
 
@@ -1097,5 +1110,215 @@ describe('reopenFormRecord', () => {
     ).rejects.toThrow('REOPEN_INVALID_STATUS');
 
     expect(mockRollback).toHaveBeenCalled();
+  });
+});
+
+// ─── Task 5 fix: F1 status guard + resubmit, F2 dynamic audit, F3 VALIDATION_INCOMPLETE ─
+
+describe('submitFormRecord — F1: status guard', () => {
+  it('SUBMIT_INVALID_STATUS when record is already complete', async () => {
+    mockExecute.mockReset();
+    mockCommit.mockReset();
+    mockRollback.mockReset();
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'complete' }, { stringValue: 'user-test' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'm2_nc_id' }],
+    });
+
+    await expect(
+      handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
+    ).rejects.toThrow('SUBMIT_INVALID_STATUS');
+
+    expect(mockRollback).toHaveBeenCalled();
+    expect(mockCommit).not.toHaveBeenCalled();
+  });
+});
+
+describe('submitFormRecord — F1: resubmit after reopen UPDATEs existing NC (no duplicate)', () => {
+  it('when m2_nc_id is set, issues UPDATE m2.nonconformities (not INSERT) and does NOT touch CA', async () => {
+    mockExecute.mockReset();
+    mockCommit.mockReset();
+    mockRollback.mockReset();
+    mockPublishAuditEvent.mockReset().mockResolvedValue('evt-test');
+
+    // Call 1: record fetch — status=REOPENED, m2_nc_id already set
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'reopened' }, { stringValue: 'user-test' }, { stringValue: 'nc-existing-1' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'm2_nc_id' }],
+    });
+    // Call 2: template
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'm2_ncr' }, { arrayValue: { stringValues: ['ISO9001'] } }, { arrayValue: { stringValues: ['8.7', '10.2'] } }]],
+      columnMetadata: [{ name: 'maps_to' }, { name: 'standards' }, { name: 'clause_refs' }],
+    });
+    // Call 3: field metadata (only mapped required for this test)
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'f-1' }, { stringValue: 'standard' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'standard' }, { isNull: true }],
+        [{ stringValue: 'f-2' }, { stringValue: 'source' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'source' }, { isNull: true }],
+        [{ stringValue: 'f-3' }, { stringValue: 'nc_type' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'nc_type' }, { isNull: true }],
+        [{ stringValue: 'f-4' }, { stringValue: 'clause_ref' }, { stringValue: 'relation' }, { booleanValue: true }, { stringValue: 'clause_ref' }, { stringValue: 'clause' }],
+        [{ stringValue: 'f-5' }, { stringValue: 'severity' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'severity' }, { isNull: true }],
+        [{ stringValue: 'f-6' }, { stringValue: 'nc_description' }, { stringValue: 'textarea' }, { booleanValue: true }, { stringValue: 'description' }, { isNull: true }],
+        [{ stringValue: 'f-7' }, { stringValue: 'raised_by' }, { stringValue: 'user' }, { booleanValue: true }, { stringValue: 'raised_by' }, { isNull: true }],
+        [{ stringValue: 'f-8' }, { stringValue: 'corrective_action_desc' }, { stringValue: 'textarea' }, { booleanValue: true }, { stringValue: 'action_desc' }, { isNull: true }],
+        [{ stringValue: 'f-9' }, { stringValue: 'ca_owner' }, { stringValue: 'user' }, { booleanValue: true }, { stringValue: 'owner_id' }, { isNull: true }],
+        [{ stringValue: 'f-10' }, { stringValue: 'ca_due_date' }, { stringValue: 'date' }, { booleanValue: true }, { stringValue: 'due_date' }, { isNull: true }],
+      ],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }, { name: 'required' }, { name: 'maps_to_column' }, { name: 'relation_target' }],
+    });
+    // Call 4: current values (all filled)
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'standard' }, { stringValue: 'ISO45001' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'source' }, { stringValue: 'incident' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'nc_type' }, { stringValue: 'incident' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'clause_ref' }, { stringValue: 'clause-uuid-1' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'severity' }, { stringValue: 'critical' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'nc_description' }, { stringValue: 'Updated description' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'raised_by' }, { stringValue: 'user-1' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'corrective_action_desc' }, { stringValue: 'New action' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'ca_owner' }, { stringValue: 'user-2' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'ca_due_date' }, { stringValue: '2026-09-01T00:00:00Z' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+      ],
+      columnMetadata: [{ name: 'field_key' }, { name: 'value_text' }, { name: 'value_number' }, { name: 'value_date' }, { name: 'value_bool' }, { name: 'value_uuid' }, { name: 'value_json' }],
+    });
+    // Call 5: clause resolution
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: '10.2' }]],
+      columnMetadata: [{ name: 'clause_no' }],
+    });
+    // Call 6: UPDATE m2.nonconformities (NOT INSERT)
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [] });
+    // Call 7: UPDATE forms.records (stamp)
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [] });
+    // Remaining: getFormRecordById
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })).catch(() => {});
+
+    // Call 6 should be UPDATE (not INSERT) to m2.nonconformities
+    const [ncSql, ncParams] = mockExecute.mock.calls[5];
+    expect(ncSql).toContain('UPDATE m2.nonconformities');
+    expect(ncSql).not.toContain('INSERT INTO m2.nonconformities');
+    expect(ncSql).toContain('WHERE id = :ncId::uuid');
+    expect(ncParams).toContainEqual({ name: 'ncId', value: { stringValue: 'nc-existing-1' } });
+    expect(ncParams).toContainEqual({ name: 'severity', value: { stringValue: 'critical' } });
+
+    // No INSERT INTO m2.corrective_actions (CA lifecycle belongs to M2)
+    const allSqls = mockExecute.mock.calls.map(c => c[0] as string);
+    expect(allSqls.filter(s => s.includes('INSERT INTO m2.corrective_actions'))).toHaveLength(0);
+
+    // Commit succeeded
+    expect(mockCommit).toHaveBeenCalled();
+  });
+});
+
+describe('submitFormRecord — F2: dynamic audit event params', () => {
+  it('audit event uses mapped standard and resolved clauseRef (not literals)', async () => {
+    mockExecute.mockReset();
+    mockCommit.mockReset();
+    mockPublishAuditEvent.mockReset().mockResolvedValue('evt-test');
+
+    // Same setup as positive path but with ISO45001 standard
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'in_progress' }, { stringValue: 'user-test' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'm2_nc_id' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'm2_ncr' }, { arrayValue: { stringValues: ['ISO45001'] } }, { arrayValue: { stringValues: ['10.2'] } }]],
+      columnMetadata: [{ name: 'maps_to' }, { name: 'standards' }, { name: 'clause_refs' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'f-1' }, { stringValue: 'standard' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'standard' }, { isNull: true }],
+        [{ stringValue: 'f-2' }, { stringValue: 'source' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'source' }, { isNull: true }],
+        [{ stringValue: 'f-3' }, { stringValue: 'nc_type' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'nc_type' }, { isNull: true }],
+        [{ stringValue: 'f-4' }, { stringValue: 'clause_ref' }, { stringValue: 'relation' }, { booleanValue: true }, { stringValue: 'clause_ref' }, { stringValue: 'clause' }],
+        [{ stringValue: 'f-5' }, { stringValue: 'severity' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'severity' }, { isNull: true }],
+        [{ stringValue: 'f-6' }, { stringValue: 'nc_description' }, { stringValue: 'textarea' }, { booleanValue: true }, { stringValue: 'description' }, { isNull: true }],
+        [{ stringValue: 'f-7' }, { stringValue: 'raised_by' }, { stringValue: 'user' }, { booleanValue: true }, { stringValue: 'raised_by' }, { isNull: true }],
+        [{ stringValue: 'f-8' }, { stringValue: 'corrective_action_desc' }, { stringValue: 'textarea' }, { booleanValue: true }, { stringValue: 'action_desc' }, { isNull: true }],
+        [{ stringValue: 'f-9' }, { stringValue: 'ca_owner' }, { stringValue: 'user' }, { booleanValue: true }, { stringValue: 'owner_id' }, { isNull: true }],
+        [{ stringValue: 'f-10' }, { stringValue: 'ca_due_date' }, { stringValue: 'date' }, { booleanValue: true }, { stringValue: 'due_date' }, { isNull: true }],
+      ],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }, { name: 'required' }, { name: 'maps_to_column' }, { name: 'relation_target' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'standard' }, { stringValue: 'ISO45001' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'source' }, { stringValue: 'incident' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'nc_type' }, { stringValue: 'incident' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'clause_ref' }, { stringValue: 'clause-uuid-2' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'severity' }, { stringValue: 'high' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'nc_description' }, { stringValue: 'Incident' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'raised_by' }, { stringValue: 'u1' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'corrective_action_desc' }, { stringValue: 'Act' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'ca_owner' }, { stringValue: 'u2' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'ca_due_date' }, { stringValue: '2026-09-01T00:00:00Z' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+      ],
+      columnMetadata: [{ name: 'field_key' }, { name: 'value_text' }, { name: 'value_number' }, { name: 'value_date' }, { name: 'value_bool' }, { name: 'value_uuid' }, { name: 'value_json' }],
+    });
+    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: '10.2' }]], columnMetadata: [{ name: 'clause_no' }] });
+    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'nc-new-2' }]], columnMetadata: [{ name: 'id' }] });
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [] }); // CA insert
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [] }); // stamp
+    mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
+
+    await handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })).catch(() => {});
+
+    // Audit event uses ISO45001 (from mapped values) and 10.2 (resolved clause_no)
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
+      standard: 'ISO45001',
+      clauseRef: '10.2',
+    }));
+  });
+});
+
+describe('submitFormRecord — F3: VALIDATION_INCOMPLETE for non-mapped required fields', () => {
+  it('throws VALIDATION_INCOMPLETE when non-mapped required field is unfilled', async () => {
+    mockExecute.mockReset();
+    mockCommit.mockReset();
+    mockRollback.mockReset();
+    mockPublishAuditEvent.mockReset();
+
+    // record fetch
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'in_progress' }, { stringValue: 'user-test' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' }, { name: 'm2_nc_id' }],
+    });
+    // template
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'm2_ncr' }, { arrayValue: { stringValues: ['ISO9001'] } }, { arrayValue: { stringValues: ['8.7'] } }]],
+      columnMetadata: [{ name: 'maps_to' }, { name: 'standards' }, { name: 'clause_refs' }],
+    });
+    // field metadata: ncr_number is REQUIRED but NOT mapped
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'f-0' }, { stringValue: 'ncr_number' }, { stringValue: 'text' }, { booleanValue: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'f-1' }, { stringValue: 'standard' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'standard' }, { isNull: true }],
+        [{ stringValue: 'f-5' }, { stringValue: 'severity' }, { stringValue: 'select' }, { booleanValue: true }, { stringValue: 'severity' }, { isNull: true }],
+      ],
+      columnMetadata: [{ name: 'id' }, { name: 'field_key' }, { name: 'field_type' }, { name: 'required' }, { name: 'maps_to_column' }, { name: 'relation_target' }],
+    });
+    // current values: ncr_number is MISSING (all mapped fields filled)
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'standard' }, { stringValue: 'ISO9001' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        [{ stringValue: 'severity' }, { stringValue: 'high' }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }, { isNull: true }],
+        // ncr_number NOT in values → unfilled
+      ],
+      columnMetadata: [{ name: 'field_key' }, { name: 'value_text' }, { name: 'value_number' }, { name: 'value_date' }, { name: 'value_bool' }, { name: 'value_uuid' }, { name: 'value_json' }],
+    });
+
+    await expect(
+      handler(makeEvent('submitFormRecord', { input: { recordId: 'rec-1' } })),
+    ).rejects.toThrow('VALIDATION_INCOMPLETE');
+
+    // Rollback, no writes
+    expect(mockRollback).toHaveBeenCalled();
+    expect(mockCommit).not.toHaveBeenCalled();
+    const allSqls = mockExecute.mock.calls.map(c => c[0] as string);
+    expect(allSqls.filter(s => s.includes('INSERT INTO m2.'))).toHaveLength(0);
   });
 });

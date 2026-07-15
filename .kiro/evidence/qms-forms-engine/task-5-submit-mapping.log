@@ -8,7 +8,7 @@
 | Gate | Command | Exit code | Result |
 |------|---------|-----------|--------|
 | TypeScript | `npx tsc --noEmit` | 0 | Clean |
-| Unit tests | `npx vitest run` | 0 | 664 tests pass, 57 files |
+| Unit tests | `npx vitest run` | 0 | 668 tests pass, 57 files |
 
 ## Deliverables
 
@@ -17,7 +17,13 @@
 | `services/api/src/resolvers/forms.ts` | submitFormRecord (BC-3 mapping) + reopenFormRecord (audit-logged) |
 | `services/api/__tests__/resolvers/forms.test.ts` | 12 new tests (40 total): negative path FIRST + positive path + reopen |
 
-## BC-3 anti-facade verification
+## Fix round (rejection 33e993f → this commit)
+
+| Finding | Fix | Test pinned |
+|---------|-----|-------------|
+| F1: No status guard; resubmit creates duplicate m2 rows | SUBMITTABLE_STATUSES guard (DRAFT/IN_PROGRESS/REOPENED); if m2_nc_id set → UPDATE existing NC (not INSERT), do NOT touch CA | submit-on-complete → SUBMIT_INVALID_STATUS; resubmit → UPDATE not INSERT, zero CA inserts |
+| F2: Hardcoded 'ISO9001' + '8.7'/'7.5' in audit events | Mapped: standard=currentValues, clauseRef=clauseNoText. Non-mapped + reopen: template standards[0] + clause_refs[0] with TODO-011 | ISO45001 NCR audit event asserts standard='ISO45001', clauseRef='10.2'; reopen asserts 'ISO14001'/'6.1.2' |
+| F3: Submit validates only mapped required fields | F3 check runs BEFORE mapping check: all required fields validated, else VALIDATION_INCOMPLETE | Non-mapped required unfilled → VALIDATION_INCOMPLETE, rollback, zero m2 writes |
 
 **NEGATIVE PATH (proven first):**
 - MAPPING_INCOMPLETE when `severity` unfilled → rollback, zero m2 rows, zero status change
