@@ -156,10 +156,18 @@ export default function QmsPage() {
                 <WizardField label={tWizard('legalName')} required value={profile.legalName} onChange={v => setProfile(p => ({ ...p, legalName: v }))} />
                 <div className={styles.field}>
                   <label className={styles.fieldLabel}>{tWizard('industry')}<span className={styles.fieldRequired}>*</span></label>
-                  <select className={styles.fieldInput} value={profile.industry} onChange={e => setProfile(p => ({ ...p, industry: e.target.value }))}>
+                  <select className={styles.fieldInput}
+                    value={INDUSTRY_TAXONOMY.includes(profile.industry as typeof INDUSTRY_TAXONOMY[number]) ? profile.industry : (profile.industry ? 'Other' : '')}
+                    onChange={e => setProfile(p => ({ ...p, industry: e.target.value === 'Other' ? '' : e.target.value }))}>
                     <option value="">—</option>
                     {INDUSTRY_TAXONOMY.map(i => <option key={i} value={i}>{i}</option>)}
                   </select>
+                  {(profile.industry === '' || !INDUSTRY_TAXONOMY.includes(profile.industry as typeof INDUSTRY_TAXONOMY[number])) && (
+                    <input type="text" className={styles.fieldInput} placeholder={tWizard('industryOther')}
+                      value={INDUSTRY_TAXONOMY.includes(profile.industry as typeof INDUSTRY_TAXONOMY[number]) ? '' : profile.industry}
+                      onChange={e => setProfile(p => ({ ...p, industry: e.target.value }))}
+                      style={{ marginTop: 'var(--space-xs)' }} />
+                  )}
                 </div>
                 <WizardField label={tWizard('productsServices')} required value={profile.productsServices} onChange={v => setProfile(p => ({ ...p, productsServices: v }))} />
                 <WizardField label={tWizard('employeeCount')} required value={String(profile.employeeCount || '')} onChange={v => setProfile(p => ({ ...p, employeeCount: Number(v) || 0 }))} type="number" />
