@@ -18,6 +18,10 @@ export const DOC_TYPE_MAP: Record<string, string> = {
   WORK_INSTRUCTION: 'work_instruction',
   POLICY: 'policy',
   SCOPE: 'scope',
+  // spec-40 Task 6 (migration 016): DERIVED documents — registry × section
+  // state, never model-authored. Not offered in the hand-create form.
+  CORRELATION_MATRIX: 'correlation_matrix',
+  MASTER_LIST: 'master_list',
 };
 
 /** CHECK (status IN ('draft', 'in_review', 'approved', 'obsolete')) */

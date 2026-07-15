@@ -327,6 +327,11 @@ async function executeDocVersionControl(
     parameters: [
       { name: 'docId', value: { stringValue: args.docId as string } },
       { name: 'versionNo', value: { stringValue: String(args.newVersion ?? '1') } },
+      // TRACKED-TODO(content-ref-tripwire): the agent HITL writeback has no
+      // content plane yet — '' is the DOCUMENTED exemption pinned by
+      // content-ref-tripwire.test.ts (spec-40 Task 6, BC-8). Closes when the
+      // agent drafting flow writes real S3 content refs (DocStudio content
+      // plane follow-up). Every OTHER writer must set a real content_ref.
       { name: 'contentRef', value: { stringValue: (args.contentRef as string) ?? '' } },
       { name: 'changeSummary', value: { stringValue: args.changeDescription as string } },
       { name: 'authorId', value: { stringValue: actor } },

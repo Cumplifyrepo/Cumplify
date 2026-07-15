@@ -35,8 +35,11 @@ describe('Enum mappings match DB CHECK constraints', () => {
   const m004 = readMigration('004_m3_audit_studio.sql');
   const m006 = readMigration('006_m5_risk_management.sql');
 
-  it('DOC_TYPE_MAP values ⊆ doc_type CHECK (002)', () => {
-    const allowed = extractCheckValues(m002, 'doc_type');
+  it('DOC_TYPE_MAP values ⊆ doc_type CHECK (016 supersedes 002)', () => {
+    // Migration 016 DROPs and re-ADDs the doc_type CHECK (spec-40 Task 6:
+    // correlation_matrix + master_list) — the LATEST definition governs.
+    const m016 = readMigration('016_document_types.sql');
+    const allowed = extractCheckValues(m016, 'doc_type');
     expect(allowed.length).toBeGreaterThan(0);
     for (const val of Object.values(DOC_TYPE_MAP)) {
       expect(allowed).toContain(val);

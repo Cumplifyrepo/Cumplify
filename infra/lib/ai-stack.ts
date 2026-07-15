@@ -801,7 +801,8 @@ export class AiStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       architecture: lambda.Architecture.ARM_64,
       memorySize: 512,
-      timeout: cdk.Duration.seconds(60),
+      // Task 6: ~40 document writes (S3 get+put per section/doc) in one run
+      timeout: cdk.Duration.seconds(120),
       bundling: { externalModules: [], target: 'node22' },
       environment: { ...genEnv, POWERTOOLS_SERVICE_NAME: 'qms-finalize-manual' },
     });
@@ -837,8 +838,9 @@ export class AiStack extends cdk.Stack {
       props.dynamodbKey.grantDecrypt(fn);
     }
 
-    // Working content lives under tenants/* only — no bucket-wide access
-    for (const fn of [seedSectionsFn, composeSectionFn]) {
+    // Working content lives under tenants/* only — no bucket-wide access.
+    // Finalize reads section JSONs AND writes document JSONs (Task 6).
+    for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn]) {
       fn.addToRolePolicy(new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['s3:PutObject', 's3:GetObject'],

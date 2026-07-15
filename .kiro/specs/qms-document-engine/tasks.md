@@ -62,12 +62,12 @@
 
 ## Task 6 — FinalizeManual: m1 writes, matrix, master list (GEN-4, GEN-8, BC-8) [ARCHITECT]
 
-- [ ] Assemble manual content JSON (front matter incl. BC-1 disclaimer + ISO purchase link); write manual + per-section clause documents to `m1.documents`/`m1.document_versions` with REAL `content_ref` + `content_sha256`.
-- [ ] Derive Standards Correlation Matrix + Documented-Information Master List (data, not prose) as two generated documents.
-- [ ] Tripwire: no writer leaves `content_ref=''` (repo-wide test; `execute-writeback.ts:330` updated or explicitly exempted with tracked TODO).
-- [ ] Run-complete event + audit event; `generation_runs.status` terminal semantics (`partial` when any section failed).
+- [x] Manual content JSON (BC-1 disclaimer + ISO purchase link as FIXED front matter; every section in clause order, gap/na IN the manual, failed = explicit marker); manual + per-section clause docs (failed sections ship NOTHING) with REAL `content_ref` + `content_sha256` — 39 docs live, 0 empty refs.
+- [x] Correlation Matrix + Master List DERIVED (derive.ts, registry × section state) — migration 016 adds honest doc_type values (constraint name live-verified before authoring); SDL + DOC_TYPE_MAP in lockstep.
+- [x] Tripwire test: only ONE documented ''-writer (execute-writeback agent HITL path, pinned to its TRACKED-TODO marker); finalize pins content_ref+sha both set.
+- [x] Run-complete + audit events; terminal semantics; `manual_document_id` stamped — **T8 APR-1 live-proven**: submit of the generated manual → UNREVIEWED_SECTIONS; markSectionReviewed works on the complete run (cb6a467 semantics live). Idempotent re-entry: r6 created 0 docs.
 
-**Depends on:** Task 5. **D-rung:** D3. **Evidence:** `task-6-finalize.log`
+**Depends on:** Task 5. **D-rung:** D3 ✓ (39 documents, sha-verified manual, 2 in-lane defects found+fixed: finalize S3 grant; REVERSE_ENUMS uppercase → SQL writer — normalization + test pin). **Evidence:** `task-6-finalize.log`
 
 ## Task 7 — Subscription + diff [KIRO]
 

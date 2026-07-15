@@ -29,6 +29,8 @@ enum DocumentType {
   WORK_INSTRUCTION
   POLICY
   SCOPE
+  CORRELATION_MATRIX
+  MASTER_LIST
 }
 
 enum NCType {

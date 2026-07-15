@@ -1,0 +1,70 @@
+# Task 6 — FinalizeManual: m1 writes, matrix, master list (GEN-4, GEN-8, BC-8)
+
+Executor: architect (Claude). D-rung: D3 — finalized the Task-5 live run.
+
+## What shipped
+
+- Migration `016_document_types.sql`: doc_type CHECK += `correlation_matrix`,
+  `master_list` (honest labeling for DERIVED documents; constraint name
+  verified against live pg_constraint before authoring). SDL `DocumentType`
+  += both; DOC_TYPE_MAP += both (REVERSE_ENUMS coverage follows
+  automatically). Frontend unaffected: list rendering is generic
+  (`replace(/_/g,' ')`); the hand-create form correctly does NOT offer them.
+- `derive.ts` (pure): BC-1 disclaimer + ISO purchase link as FIXED front
+  matter; manual assembly (every section in clause order — gap and na are IN
+  the manual, failed appears as an explicit marker); correlation matrix
+  (registry × section state); master list (7.5 register of what the run
+  produced); GEN-4 standard rule (IMS iff >1 standard).
+- `finalize-manual.ts` (full, replacing the stub): ONE txn writes manual +
+  one clause doc per non-failed section (doc_type from registry) + matrix +
+  master list — every version row with REAL `content_ref`
+  (`tenants/<t>/documents/<docId>/v1.json`, design §3) + `content_sha256`;
+  stamps `generation_runs.manual_document_id` (Task 8's approval
+  preconditions find the run through this) + terminal status. Idempotency:
+  manual_document_id set ⇒ zero writes. Failed sections ship NO clause doc
+  (checker-rejected prose is not shipped anywhere).
+- content_ref tripwire (`content-ref-tripwire.test.ts`): every writer that
+  INSERTs m1.document_versions must not default content_ref to '' — exactly
+  ONE documented exemption (`execute-writeback.ts`, agent HITL writeback, no
+  content plane yet) pinned to its `TRACKED-TODO(content-ref-tripwire)`
+  marker. A new '' writer fails the suite.
+- `regenerateSection` remains deferred to the Task 7 wave (now unblocked by
+  this task's m1 writes) — carried, not omitted.
+
+## Live defects found & fixed during readback (both in-lane)
+
+1. **FinalizeManualFn had no S3 grant** (it was a stub when Task 5's grants
+   were written; Task 6 made it the heaviest S3 user) → AccessDenied at r3.
+   Added to the tenants/* grant loop.
+2. **REVERSE_ENUMS uppercasing bit the WRITER side** (r4): marshalMany
+   returned doc_type 'PROCEDURE' → CHECK violation. Same class as the status
+   normalization; fixed at the boundary + test now pins that every docType
+   param is DB-cased. Lesson recorded: reverse-mapped columns must be
+   normalized wherever marshalled values flow back into SQL.
+
+## Readback (run ae134c91, tenant-arch-smoke)
+
+| # | Timestamp (UTC) | Step | Exit | Output SHA / value | Result |
+|---|-----------------|------|------|--------------------|--------|
+| 1 | 20:07 | migration 016 live | 0 | — | `_migrations` tail = 016; pg constraint def carries both new values |
+| 2 | 20:07:39 | execution r3 | — | — | FAILED AccessDenied s3:GetObject (defect 1) — fixed, deploy 66.2s |
+| 3 | 20:10:13 | execution r4 | — | — | FAILED doc_type CHECK 'PROCEDURE' (defect 2) — fixed + test pin, deploy 60.9s |
+| 4 | 20:13:40 | execution r5 | 0 | — | **SUCCEEDED: documentsCreated 39** (1 manual + 36 clause + matrix + master list), manualDocumentId 061116ca…, run 'complete' |
+| 5 | 20:14 | m1.documents by type | 0 | — | correlation_matrix 1, manual 1, master_list 1, policy 2, procedure 33, scope 1 = 39 |
+| 6 | 20:14 | version rows | 0 | — | 39 rows: content_ref '' count = 0, content_sha256 on ALL 39 (BC-8) |
+| 7 | 20:14 | manual S3 + sha | 0 | 97b9216620fcdb1fd3cd | S3 bytes == DB sha; 36 sections (prose 12/gap 23/na 1); BC-1 disclaimer + iso.org/store link; scope carries org + both standards; na justification intact |
+| 8 | 20:15 | execution r6 (idempotency) | 0 | — | SUCCEEDED, documentsCreated 0, same manualDocumentId — re-entry is a no-op |
+| 9 | 20:15:03 | **T8 APR-1 LIVE**: submitDocumentForApproval(manual) | 0 (typed error) | — | `UNREVIEWED_SECTIONS` — Kiro's Task-8 preconditions found the run via manual_document_id and BLOCKED the unreviewed manual. Task 8 core path promoted to live-proven. |
+| 10 | 20:16 | markSectionReviewed(4.4) on the COMPLETE run | 0 | — | reviewedBy stamped — cb6a467's corrected RUN_NOT_REVIEWABLE semantics live-proven |
+
+Gates at commit: full suite + typecheck exit 0.
+
+## Notes & carries
+
+- Task 7 (Kiro) unblocked: getDocumentVersionDiff has real content JSONs to
+  diff; onGenerationProgress has a proven publisher.
+- Task 9 (architect): PDF render consumes these content JSONs.
+- Synthetic residue += 39 m1 documents/versions + S3 documents/ prefix for
+  tenant-arch-smoke (whole-tenant purge before owner walkthroughs).
+- markSectionReviewed of 4.4 left ONE reviewed section on the run —
+  remembered for ACC readbacks (submit still blocks on the other 35).
