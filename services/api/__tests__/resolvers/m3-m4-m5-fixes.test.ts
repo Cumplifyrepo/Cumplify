@@ -345,7 +345,7 @@ describe('generateAuditChecklist — M3-native clause-registry checklist', () =>
     const [, insertParams] = mockExecute.mock.calls[2];
     expect(insertParams).toContainEqual(expect.objectContaining({
       name: 'question',
-      value: { stringValue: 'Does the organization ensure worker consultation and participation' },
+      value: { stringValue: 'Does the organization ensure worker consultation and participation?' },
     }));
     // expected_evidence from required_sources
     expect(insertParams).toContainEqual(expect.objectContaining({

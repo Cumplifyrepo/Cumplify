@@ -216,7 +216,7 @@ async function generateAuditChecklist(event: AppSyncEvent, tenantId: string, act
       const requiredSourcesRaw = (row[4] as { stringValue?: string }).stringValue ?? '[]';
 
       // question: "Does the organization ...?" wrapper around our own paraphrase
-      const question = `Does the organization ${intentParaphrase.charAt(0).toLowerCase()}${intentParaphrase.slice(1)}`;
+      const question = `Does the organization ${intentParaphrase.charAt(0).toLowerCase()}${intentParaphrase.slice(1)}`.replace(/[.\s]*$/, '?');
       // expected_evidence: join required_sources tokens
       let expectedEvidence: string;
       try {
