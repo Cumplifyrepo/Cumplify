@@ -159,6 +159,14 @@ export class NetworkStack extends cdk.Stack {
       { id: 'KmsEndpoint', service: ec2.InterfaceVpcEndpointAwsService.KMS },
       { id: 'BedrockRuntimeEndpoint', service: ec2.InterfaceVpcEndpointAwsService.BEDROCK_RUNTIME },
       { id: 'ExecuteApiEndpoint', service: ec2.InterfaceVpcEndpointAwsService.APIGATEWAY },
+      {
+        // FIX-T20-3 (spec-35): guru handlers are VPC-placed so the AOSS
+        // network policy (VPCE-only, AllowFromPublic:false) admits their KB
+        // queries. This VPC has zero NAT, so in-VPC handlers can only reach
+        // the Lambda API (invoke-transport → AI invoker) through this endpoint.
+        id: 'LambdaEndpoint',
+        service: ec2.InterfaceVpcEndpointAwsService.LAMBDA,
+      },
     ];
 
     for (const ep of interfaceEndpoints) {

@@ -868,3 +868,39 @@ describe('spec-40 DocGen generation plane (Task 5)', () => {
     expect(actions.filter((a) => a.startsWith('bedrock:'))).toEqual([]);
   });
 });
+
+describe('spec-35 FIX-T20-3: guru handlers VPC-placed for AOSS data-plane access', () => {
+  // The iso-kb network policy is VPCE-only (AllowFromPublic:false): a handler
+  // outside the VPC gets 401 from the AOSS data plane regardless of IAM or
+  // data-access policy grants (proven live 2026-07-16, fix-t20-3.log). The
+  // VPC has zero NAT, so the guru→invoker lambda:Invoke hop rides the
+  // LambdaEndpoint interface endpoint pinned in network-stack.unit.test.ts.
+  const template = createTestStack();
+
+  function fnByService(service: string) {
+    const fns = template.findResources('AWS::Lambda::Function');
+    const hit = Object.values(fns).find(
+      (f) =>
+        (f.Properties as { Environment?: { Variables?: Record<string, unknown> } }).Environment
+          ?.Variables?.POWERTOOLS_SERVICE_NAME === service,
+    );
+    expect(hit, `no Lambda with POWERTOOLS_SERVICE_NAME=${service}`).toBeDefined();
+    return hit!;
+  }
+
+  it.each(['agent-guru-9001', 'agent-guru-14001', 'agent-guru-45001'])(
+    '%s runs inside the VPC on both private subnets',
+    (service) => {
+      const vpcConfig = (fnByService(service).Properties as { VpcConfig?: { SubnetIds: string[] } })
+        .VpcConfig;
+      expect(vpcConfig).toBeDefined();
+      expect(vpcConfig!.SubnetIds).toEqual(['subnet-aaa', 'subnet-bbb']);
+    },
+  );
+
+  it('SQS consumer handlers stay OUT of the VPC (their endpoint set — states, rds-data — does not exist yet)', () => {
+    for (const service of ['agent-capa-guru', 'agent-records-vault']) {
+      expect((fnByService(service).Properties as { VpcConfig?: unknown }).VpcConfig).toBeUndefined();
+    }
+  });
+});

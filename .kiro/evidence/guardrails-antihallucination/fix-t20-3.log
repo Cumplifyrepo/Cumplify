@@ -65,3 +65,36 @@ The IAM layer is also correct:
 Architect to apply Option A or B in ai-stack.ts (VPC placement for
 agent handlers) and re-deploy. Once deployed, the full-chain grounded
 proof re-probe (guru→embed→AOSS→invoke) should succeed.
+
+## ARCHITECT FIX (2026-07-16 19:56 ET) — Option B-scoped, plus the missing half
+Kiro's diagnosis VERIFIED LIVE before implementing (validation log):
+Guru9001Fn VpcConfig=null vs ApplyTemplateFn in vpc-067b2b0b8e1693b6d;
+cumplify-iso-kb-net live policy AllowFromPublic:false,
+SourceVPCEs:[vpce-089b26b4a26fc80f5].
+
+ADDENDUM the diagnosis missed: network-stack.ts pins natGateways:0 and had
+NO Lambda interface endpoint — Option A/B as written would have broken the
+guru→invoker lambda:Invoke transport (invoke-transport.ts) the moment the
+handlers entered the VPC. Fix therefore has two halves:
+1. network-stack.ts: + LambdaEndpoint (com.amazonaws.<region>.lambda)
+   interface endpoint on the existing endpoint SG/subnets.
+2. ai-stack.ts: createAgentHandler gains opts.vpcPlaced → vpc +
+   privateSubnets; set for Guru9001/14001/45001 ONLY. SQS consumers
+   (capa-guru etc.) share the 401 defect class for their retrieval legs but
+   also call SFN (hitl) — VPC-placing them needs a states endpoint first;
+   scoped out, flagged to owner.
+
+Guru runtime egress audit (why this set is sufficient): guru handlers import
+retrieval (AOSS data-plane VPCE ✓), invoke-transport (Lambda API — new
+endpoint ✓); DDB/S3 ride existing gateway endpoints; logs/traces are
+out-of-band of customer ENIs. No SFN/RDS-Data/EventBridge calls in the guru
+import graph (events are published invoker-side).
+
+Evidence at this commit:
+- npx tsc --noEmit → exit 0
+- npx vitest run (ROOT) → 999 passed | 4 skipped, 0 failures
+  (+8 new pins: 3 guru-in-VPC, 1 consumers-out, 4 network endpoint set in
+  new network-stack.unit.test.ts)
+- npx cdk synth --all → exit 0
+Deploy + live full-chain re-probe follow via pipeline (next commit push).
+F-B stays OPEN until the grounded round-trip is evidenced live.

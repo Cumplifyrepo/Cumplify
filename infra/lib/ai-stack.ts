@@ -694,7 +694,7 @@ export class AiStack extends cdk.Stack {
       id: string,
       entry: string,
       env: Record<string, string>,
-      _opts?: { fifo?: boolean },
+      opts?: { fifo?: boolean; vpcPlaced?: boolean },
     ) => {
       const fn = new NodejsFunction(this, id, {
         entry,
@@ -705,6 +705,17 @@ export class AiStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(60),
         bundling: { externalModules: [], target: 'node22' },
         environment: { ...agentHandlerBaseEnv, ...env },
+        // FIX-T20-3 (spec-35): the AOSS network policy is VPCE-only
+        // (AllowFromPublic:false), so a handler that queries a KB collection
+        // gets 401 from the data plane unless it runs inside the VPC —
+        // IAM and data-access policy grants cannot compensate. The zero-NAT
+        // VPC reaches the Lambda API via the LambdaEndpoint interface
+        // endpoint (network-stack). SQS consumers stay out of the VPC until
+        // their endpoint set (states, rds-data) exists.
+        ...(opts?.vpcPlaced && {
+          vpc: props.vpc,
+          vpcSubnets: { subnets: props.privateSubnets },
+        }),
       });
       fn.role!.addManagedPolicy(agentHandlerPolicy);
       return fn;
@@ -810,6 +821,7 @@ export class AiStack extends cdk.Stack {
         AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
         POWERTOOLS_SERVICE_NAME: 'agent-guru-9001',
       },
+      { vpcPlaced: true },
     );
 
     // 7. ISO14001Guru
@@ -820,6 +832,7 @@ export class AiStack extends cdk.Stack {
         AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
         POWERTOOLS_SERVICE_NAME: 'agent-guru-14001',
       },
+      { vpcPlaced: true },
     );
 
     // 8. ISO45001Guru
@@ -830,6 +843,7 @@ export class AiStack extends cdk.Stack {
         AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
         POWERTOOLS_SERVICE_NAME: 'agent-guru-45001',
       },
+      { vpcPlaced: true },
     );
 
     // Collect all handler role ARNs for AOSS data-access amendment
