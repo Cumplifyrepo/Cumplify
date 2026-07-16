@@ -91,8 +91,11 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   // Seat-routed (spec-35 §1.2): doc-composer→DocGen, record-write→RecordWrite, else→Agent
   const guardrailConfig = buildGuardrailConfig(seat, feature);
 
-  // L4 (§7.2): Wrap base system prompt with shared instruction blocks
-  const systemPrompt = request.system ? buildSystemPrompt(request.system) : undefined;
+  // L4 (§7.2): Wrap base system prompt with shared instruction blocks.
+  // FIX-W-2: unconditional — even when request.system is absent, the four
+  // shared blocks (structural-honesty, licensed-uncertainty, retrieval-first,
+  // relative-date) are injected. L4-1 uniformity mandate.
+  const systemPrompt = buildSystemPrompt(request.system ?? '');
 
   const converseParams = {
     modelId,

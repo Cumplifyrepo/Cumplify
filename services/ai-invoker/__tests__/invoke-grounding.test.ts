@@ -324,4 +324,27 @@ describe('invoke() grounding orchestration (Task 13)', () => {
     };
     expect(converseCmd.input.inferenceConfig.temperature).toBe(0.3);
   });
+
+  it('FIX-W-2: injects shared prompt blocks even when request.system is absent', async () => {
+    mockConverseSend.mockResolvedValueOnce(mockConverseResponse('answer'));
+
+    await invoke({
+      seat: 'workhorse',
+      // NO system prompt provided
+      messages: [{ role: 'user', content: [{ text: 'hi' }] }],
+      tenantId: 't1', agent: 'test', module: 'M1', feature: 'advisory',
+    });
+
+    // The converse call should still have a system prompt with the four shared blocks
+    const converseCmd = mockConverseSend.mock.calls[0][0] as {
+      input: { system?: Array<{ text?: string }> };
+    };
+    expect(converseCmd.input.system).toBeDefined();
+    expect(converseCmd.input.system!.length).toBeGreaterThanOrEqual(1);
+    const systemText = converseCmd.input.system![0].text ?? '';
+    expect(systemText).toContain('Structural Honesty');
+    expect(systemText).toContain('Licensed Uncertainty');
+    expect(systemText).toContain('Retrieval-First');
+    expect(systemText).toContain('Relative Date');
+  });
 });

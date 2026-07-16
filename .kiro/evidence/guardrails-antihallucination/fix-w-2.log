@@ -1,0 +1,19 @@
+# FIX-W-2 — Make prompt-library wrap unconditional
+# Executed: 2026-07-16T23:32Z | exit 0
+
+## Fix
+invoke() now always calls buildSystemPrompt(request.system ?? ''), injecting
+the four shared instruction blocks (structural-honesty, licensed-uncertainty,
+retrieval-first, relative-date) even when request.system is absent. L4-1
+uniformity: every model call gets the anti-hallucination preamble.
+
+## Evidence
+- tsc --noEmit: exit 0
+- npx vitest run: 981 passed / 0 failed (92 files + 1 skipped)
+
+### New test
+'FIX-W-2: injects shared prompt blocks even when request.system is absent'
+- invoke() called without a system prompt
+- Asserts: converse command input.system is defined
+- Asserts: system text contains all four block titles (Structural Honesty,
+  Licensed Uncertainty, Retrieval-First, Relative Date)
