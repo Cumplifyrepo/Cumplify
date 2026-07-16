@@ -46,16 +46,18 @@ const {
 
 describe('isAgentRoutingTool', () => {
   it('recognizes registered agent-routing tool names', () => {
-    expect(isAgentRoutingTool('route_to_agent')).toBe(true);
-    expect(isAgentRoutingTool('delegate_to_agent')).toBe(true);
-    expect(isAgentRoutingTool('invoke_agent')).toBe(true);
-    expect(isAgentRoutingTool('call_agent')).toBe(true);
+    expect(isAgentRoutingTool('route-to-agent')).toBe(true);
+    expect(isAgentRoutingTool('delegate-to-agent')).toBe(true);
+    expect(isAgentRoutingTool('invoke-agent')).toBe(true);
+    expect(isAgentRoutingTool('call-agent')).toBe(true);
   });
 
   it('rejects non-routing tool names', () => {
     expect(isAgentRoutingTool('search_kb')).toBe(false);
     expect(isAgentRoutingTool('create_document')).toBe(false);
     expect(isAgentRoutingTool('unknown')).toBe(false);
+    // Underscore variants are wire-encoded — domain names use hyphens
+    expect(isAgentRoutingTool('route_to_agent')).toBe(false);
   });
 });
 
@@ -76,7 +78,7 @@ describe('checkHopPayload', () => {
   const baseParams = {
     guardrailConfig: { guardrailIdentifier: 'agent-gid', guardrailVersion: '1' },
     toolInput: { targetAgent: 'guru-9001', instruction: 'What is clause 4.1?' },
-    toolName: 'route_to_agent',
+    toolName: 'route-to-agent',
     sourceAgent: 'ControlTower',
     targetAgent: 'guru-9001',
     tenantId: 't1',

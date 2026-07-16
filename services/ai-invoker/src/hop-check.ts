@@ -49,12 +49,17 @@ const MAX_PAYLOAD_SUMMARY_CHARS = 500;
  * Agent-routing tool names that trigger hop screening.
  * A tool_use call whose name is in this set represents an inter-agent hop
  * and must pass the guardrail before execution.
+ *
+ * Names are in DOMAIN form (hyphens) — matching the decoded output from
+ * fromWireToolName() in converse.ts. The model outputs underscore-encoded
+ * wire names (Nova can't emit hyphens), which are decoded before reaching
+ * this check in invoke().
  */
 export const AGENT_ROUTING_TOOLS: ReadonlySet<string> = new Set([
-  'route_to_agent',
-  'delegate_to_agent',
-  'invoke_agent',
-  'call_agent',
+  'route-to-agent',
+  'delegate-to-agent',
+  'invoke-agent',
+  'call-agent',
 ]);
 
 /**

@@ -1,0 +1,28 @@
+# FIX-W-1 — Meter converse usage before HOP_BLOCKED throw
+# Executed: 2026-07-16T23:30Z | exit 0
+
+## Fix
+invoke() now wraps the hop-check in try/catch. On HOP_BLOCKED, it meters
+the consumed converse usage (computeCredits + incrementMeter + emitCreditsTelemetry)
+before re-throwing. This closes the billing integrity leak where a blocked hop
+lost unmetered spend.
+
+## Bonus fix (dormant bug)
+AGENT_ROUTING_TOOLS now uses DOMAIN names (hyphens: 'route-to-agent') instead
+of wire-encoded names (underscores: 'route_to_agent'). The invoke() path
+applies fromWireToolName() before checking isAgentRoutingTool() — the previous
+underscore names could never match the decoded tool names. The hop check in
+invoke() was structurally unreachable. Fixed by aligning the registry to the
+decoded form.
+
+## Evidence
+- tsc --noEmit: exit 0
+- npx vitest run: 980 passed / 0 failed (92 files + 1 skipped)
+
+### New test
+'FIX-W-1: meters converse usage before HOP_BLOCKED throw propagates'
+- Converse returns tool_use with route_to_agent (decoded to route-to-agent)
+- Hop-check ApplyGuardrail → GUARDRAIL_INTERVENED (PROMPT_ATTACK)
+- Asserts: invoke rejects with { code: 'HOP_BLOCKED' }
+- Asserts: DDB UpdateItem (incrementMeter) called with creditsUsed
+- Asserts: telemetry.credits.consumed event emitted

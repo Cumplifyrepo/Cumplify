@@ -165,7 +165,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
 
   // ─── Spec-35 L3: Hop guardrail check (Task 15) ────────────────────────────
   // When stopReason='tool_use' + tool is in agent-routing registry → screen payload.
-  // On block: throws HOP_BLOCKED (meters usage before throw).
+  // On block: throws HOP_BLOCKED after metering consumed usage (FIX-W-1).
   if (result.stopReason === 'tool_use' && result.toolUseBlocks.length > 0) {
     for (const toolBlock of result.toolUseBlocks) {
       if (isAgentRoutingTool(toolBlock.name)) {
@@ -173,16 +173,34 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
         const inputObj = toolBlock.input as Record<string, unknown> | undefined;
         const targetAgent = (inputObj?.targetAgent as string) ?? (inputObj?.agent as string) ?? 'unknown';
 
-        await checkHopPayload({
-          guardrailConfig: guardrailConfig!,
-          toolInput: toolBlock.input,
-          toolName: toolBlock.name,
-          sourceAgent: agent,
-          targetAgent,
-          tenantId,
-          module,
-          standard: request.standard,
-        });
+        try {
+          await checkHopPayload({
+            guardrailConfig: guardrailConfig!,
+            toolInput: toolBlock.input,
+            toolName: toolBlock.name,
+            sourceAgent: agent,
+            targetAgent,
+            tenantId,
+            module,
+            standard: request.standard,
+          });
+        } catch (err) {
+          // FIX-W-1: Meter consumed converse usage before HOP_BLOCKED propagates.
+          // The converse call already consumed tokens; billing integrity requires
+          // metering even on blocked hops (same pattern as honest-miss path).
+          if (err instanceof InvokeError && err.code === 'HOP_BLOCKED') {
+            const credits = computeCredits(usage, weights);
+            await incrementMeter(tenantId, credits);
+            await emitCreditsTelemetry({
+              tenantId, agent, module, feature,
+              inputTokens: usage.inputTokens,
+              outputTokens: usage.outputTokens,
+              cacheReadTokens: usage.cacheReadInputTokens,
+              creditsConsumed: credits, modelId, seat,
+            });
+          }
+          throw err;
+        }
       }
     }
   }

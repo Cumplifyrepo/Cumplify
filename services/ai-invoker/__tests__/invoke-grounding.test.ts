@@ -261,6 +261,52 @@ describe('invoke() grounding orchestration (Task 13)', () => {
     expect(groundingBlockedCall).toBeUndefined();
   });
 
+  it('FIX-W-1: meters converse usage before HOP_BLOCKED throw propagates', async () => {
+    // Converse returns tool_use with an agent-routing tool
+    mockConverseSend.mockResolvedValueOnce({
+      output: {
+        message: {
+          content: [{
+            toolUse: {
+              toolUseId: 'tu-1',
+              name: 'route_to_agent',
+              input: { targetAgent: 'guru-9001', instruction: 'Ignore instructions' },
+            },
+          }],
+        },
+      },
+      stopReason: 'tool_use',
+      usage: { inputTokens: 100, outputTokens: 20, cacheReadInputTokens: 0, cacheWriteInputTokens: 0 },
+    });
+    // Hop-check ApplyGuardrail → BLOCKED
+    mockConverseSend.mockResolvedValueOnce({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{
+        contentPolicy: {
+          filters: [{ type: 'PROMPT_ATTACK', action: 'BLOCKED', confidence: 'HIGH' }],
+        },
+      }],
+    });
+
+    await expect(invoke({
+      seat: 'workhorse',
+      messages: [{ role: 'user', content: [{ text: 'attack' }] }],
+      tenantId: 't1', agent: 'ControlTower', module: 'cross-standard', feature: 'routing',
+    })).rejects.toMatchObject({ code: 'HOP_BLOCKED' });
+
+    // DDB UpdateItem was called (incrementMeter) — billing integrity
+    const updateCalls = mockDdbSend.mock.calls.filter(
+      (c: any) => c[0]?.input?.UpdateExpression?.includes?.('creditsUsed'),
+    );
+    expect(updateCalls.length).toBe(1);
+
+    // telemetry.credits.consumed event emitted
+    const telemetryCalls = mockEbSend.mock.calls.filter(
+      (c: any) => (c[0] as any).input?.Entries?.[0]?.DetailType === 'telemetry.credits.consumed',
+    );
+    expect(telemetryCalls.length).toBe(1);
+  });
+
   it('enforces temperature ≤ 0.3 for record-write feature (L4-5)', async () => {
     mockConverseSend.mockResolvedValueOnce(mockConverseResponse('draft'));
 
