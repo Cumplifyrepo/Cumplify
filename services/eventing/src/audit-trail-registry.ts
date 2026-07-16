@@ -109,4 +109,8 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   'Generation.SectionComposed': true,
   'Generation.SectionFailed': true,
   'Generation.RunCompleted': true,
+
+  // spec-40 GEN-6 (regenerateSection wave) — single-section regeneration with
+  // new document versions; registered same-commit as the publisher.
+  'Generation.SectionRegenerated': true,
 };

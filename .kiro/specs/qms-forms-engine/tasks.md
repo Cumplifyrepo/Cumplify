@@ -87,6 +87,6 @@
 
 ## Task 11 — ACC readback pass [ARCHITECT; ACC-4/ACC-5 witnessed → D5]
 
-- [ ] ACC-1..ACC-7 executed live per requirements §3; rows carry timestamp + exit code + outputs SHA.
+- [ ] ACC-1..ACC-7 executed live per requirements §3; rows carry timestamp + exit code + outputs SHA. PREP COMPLETE 2026-07-16: TPL-3/ACC-1 scope filter implemented + live-proven (the resolver claimed the filter in a comment while returning all templates — facade caught in runbook prep); runbook + committed probe script at `.kiro/evidence/qms-forms-engine/acc-runbook.md`.
 
 **Depends on:** all. **D-rung:** D3/D5. **Evidence:** `acc-readback.log`

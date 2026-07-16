@@ -136,12 +136,16 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
 /**
- * listFormTemplates — returns all templates (tenant-less catalog).
- * TPL-3: filters by the tenant's standards in scope (falls back to all until
- * an org profile exists). sectionCount/fieldCount are COUNTs over rows (BC-1).
+ * listFormTemplates — the tenant-less catalog, scoped to the tenant.
+ * TPL-3 (ACC-1): filtered by the tenant's standards in scope from the
+ * spec-40 org profile — a 9001-only tenant never sees 14001/45001-only
+ * registers. Falls back to ALL templates until a profile exists (design §5).
+ * The 'IMS' marker in seed standards[] is integration metadata, not a scope —
+ * overlap is computed on CONCRETE standards only.
+ * sectionCount/fieldCount are COUNTs over rows (BC-1).
  */
-async function listFormTemplates(_tenantId: string): Promise<unknown[]> {
-  const txn = await beginTenantTransaction(_tenantId);
+async function listFormTemplates(tenantId: string): Promise<unknown[]> {
+  const txn = await beginTenantTransaction(tenantId);
   try {
     const result = await txn.execute(`
       SELECT t.id, t.key, t.title_key, t.description_key, t.category,
@@ -153,8 +157,26 @@ async function listFormTemplates(_tenantId: string): Promise<unknown[]> {
       FROM forms.templates t
       ORDER BY t.sort_order
     `);
+    // Tenant scope (RLS-confined read; profile may not exist yet)
+    const profileResult = await txn.execute(`
+      SELECT opv.payload
+      FROM qms.org_profiles op
+      JOIN qms.org_profile_versions opv ON opv.profile_id = op.id AND opv.version_no = op.current_version
+      LIMIT 1
+    `);
     await txn.commit();
-    return marshalTemplates(result);
+
+    const templates = marshalTemplates(result);
+    const payloadRaw = profileResult.records?.[0]?.[0] as { stringValue?: string } | undefined;
+    if (!payloadRaw?.stringValue) return templates; // no profile → all (design §5)
+    const scope = (JSON.parse(payloadRaw.stringValue) as { standardsInScope?: string[] }).standardsInScope ?? [];
+    if (scope.length === 0) return templates;
+
+    const scopeSet = new Set(scope);
+    return templates.filter(t => {
+      const concrete = ((t.standards as string[]) ?? []).filter(s => s !== 'IMS');
+      return concrete.some(s => scopeSet.has(s));
+    });
   } catch (err) {
     try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;

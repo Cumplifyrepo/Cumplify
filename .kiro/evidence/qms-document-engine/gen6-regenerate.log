@@ -1,0 +1,86 @@
+# GEN-6 — regenerateSection wave (spec-40, ACC/T13 prep) [ARCHITECT]
+# Evidence log. Timestamp: 2026-07-16T13:50:00Z. Base commit: b669db1.
+# WHY NOW: T13's ACC-6 requires "non-zero diff after a regenerateSection" —
+# the mutation was deferred at T5 ("Task 6/7 wave") and never landed; the SDL
+# field + CDK resolver existed while qms.ts threw Unknown field. Found during
+# runbook prep; implemented, deployed, live-proven the same day.
+
+## What shipped
+
+`RegenerateSectionFn` (`services/qms-generation/src/regenerate-section.ts`,
+AiStack, DETERMINISTIC name `cumplify-docgen-regen-<env>` — the state
+machine's no-cycle pattern) invoked synchronously by QmsFn's
+`regenerateSection` case (requestImsExport→ExportFn dispatch pattern, M1-role
+gated). Compose runs IN-PROCESS via the ComposeSection handler import — the
+one door to Bedrock is unchanged (fn added to the one-door count pin, now 10).
+
+Flow: guards (`RUN_NOT_FOUND` / `RUN_NOT_FINALIZED` / `SECTION_NOT_FOUND`) →
+section reset to 'pending' with REVIEW STATE CLEARED (APR-1 is not
+inheritable) → standard compose path (GAP-before-model-call, guardedText,
+checker+retry, honest failed) → version writeback in ONE txn:
+- NEW manual version (MAX+1, `v<n>.json`, assembled from ALL current sections)
+- NEW clause-doc version for the section — or the clause document CREATED
+  when the section was previously failed and shipped none (regeneration is
+  the PARTIAL-run repair path); STILL-failed ships no clause version
+- correlation-matrix version when the section kind changed
+- master-list version with EVERY entry re-pointed at its latest version —
+  closes the Task-9 carry-forward (exports pinned clause docs at v1)
+- run status recomputed (failed>0 → partial, else complete)
+Audit: `Generation.SectionRegenerated` registered in audit-trail-registry +
+contracts/events.md (standing lesson) same commit. Assertion ledger stays
+append-only: new sentences append; prior rows remain the v(n-1) history.
+
+## Gates
+
+| Gate | Exit | Result |
+|---|---|---|
+| `npx tsc --noEmit` | 0 | clean |
+| `npx vitest run` | 0 | 887 passed, 3 skipped (6 new regenerate tests + one-door pin 9→10 + 4 TPL-3 tests) |
+| synth ApiStack+AiStack (Nag) | 0 | 0 findings |
+| deploy ApiStack+AiStack | 0 | 209.78s |
+| deploy ApiStack (TPL-3) | 0 | follow-up, exit 0 |
+
+## Live probe (script: `acc-scripts/gen6-diff-probe.mjs`, exit 0)
+
+Run `ae134c91-076d-47cd-aa54-bb07957ef048` (tenant-arch-smoke, finalized T6),
+section `4.4`, manual `061116ca-ca4d-463e-92c1-7965d29a538b`:
+
+```
+PASS  unknown run → RUN_NOT_FOUND  2026-07-16T13:43:26.730Z
+PASS  unknown section → SECTION_NOT_FOUND  2026-07-16T13:43:27.021Z
+PASS  regenerateSection returns the section  2026-07-16T13:43:36.429Z kind=PROSE sha=2309f5b5541f 9408ms
+PASS  review state cleared (APR-1 not inheritable)  reviewedBy=null
+PASS  manual has a NEW version  versions=1,2 newRef=…/061116ca…/v2.json author=architect-readback summary="Section 4.4 regenerated"
+PASS  master list re-versioned (entries refreshed — Task-9 carry-forward closed)  [{"id":"9da36a50…","vmax":2}]
+PASS  getDocumentVersionDiff(v1, vNew) NON-ZERO keyed by the section  additions=3 deletions=3 keys=4.4
+PASS  same-version diff stays 0/0 (control)  0/0
+```
+
+ACC-6's second clause is now live-provable end-to-end; the T7 carry-forward
+("live non-zero diff probe needs regenerateSection") closes. 9.4s e2e fits
+the AppSync 30s resolver cap.
+
+## Also in this wave: spec-41 TPL-3/ACC-1 filter (found in the same prep)
+
+`listFormTemplates` CLAIMED the standards-in-scope filter in its doc comment
+but returned everything — an ACC-1 facade caught before the witnessed pass.
+Implemented per design §5: org-profile `standardsInScope` overlap on CONCRETE
+standards ('IMS' seed marker is metadata, never a match), fall back to all
+until a profile exists. 4 hermetic pins. LIVE 2026-07-16T13:49Z: arch-smoke
+(9001+14001) sees 12 of 15 — `hira`, `incident_investigation`,
+`worker_consultation` (45001-only) hidden; no-profile tenant sees 15. PASS.
+
+## Notes / carry-forwards
+
+- Regenerated content on tenant-arch-smoke: manual + master list now at v2
+  (4.4 re-reviewed state cleared — the T6 "1/36 reviewed" note is now 0/36).
+- Ledger rows for 4.4 v1 remain (append-only by design; documented).
+- ACC runbooks committed: `qms-forms-engine/acc-runbook.md` (T11) and
+  `qms-document-engine/acc-runbook.md` (T13) + committed probe scripts under
+  `acc-scripts/` — the witnessed session is fully staged.
+
+## Purge additions (tenant-arch-smoke)
+
+Manual v2 + clause-doc 4.4 v2 + master-list v2 rows and their S3
+`documents/*/v2.json` objects; +1 AUDITLOG item (Generation.SectionRegenerated);
+regen model spend ~0.5 credits on the meter row.

@@ -210,3 +210,4 @@ raised, evaluated) belong in the immutable audit trail.
 | `Generation.SectionComposed` | true | spec-40: section composed (prose/gap/na) — kind + assertion summary ledgered (GEN-7) |
 | `Generation.SectionFailed` | true | spec-40: deterministic checker rejected the section after retry — violations ledgered, content NOT shipped |
 | `Generation.RunCompleted` | true | spec-40: generation run terminal state (complete/partial) + section-status summary |
+| `Generation.SectionRegenerated` | true | spec-40 GEN-6: single section recomposed — new manual/clause-doc versions + refreshed master list; review state cleared (APR-1) |

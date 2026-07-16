@@ -83,6 +83,57 @@ describe('listFormTemplates', () => {
     expect(sql).not.toMatch(/section_count\s*=\s*\d/);
     expect(sql).not.toMatch(/field_count\s*=\s*\d/);
   });
+
+  // TPL-3 / ACC-1: catalog scoped by the tenant's org-profile standards
+  const templateRows = {
+    records: [
+      // NCR: all three concrete standards + IMS marker
+      [{ stringValue: 'tpl-ncr' }, { stringValue: 'ncr' }, { arrayValue: { stringValues: ['ISO9001', 'ISO14001', 'ISO45001', 'IMS'] } }],
+      // Aspects & Impacts: 14001-only
+      [{ stringValue: 'tpl-aspects' }, { stringValue: 'aspects_impacts' }, { arrayValue: { stringValues: ['ISO14001', 'IMS'] } }],
+      // HIRA: 45001-only
+      [{ stringValue: 'tpl-hira' }, { stringValue: 'hira' }, { arrayValue: { stringValues: ['ISO45001', 'IMS'] } }],
+    ],
+    columnMetadata: [{ name: 'id' }, { name: 'key' }, { name: 'standards' }],
+  };
+  const profileRow = (standards: string[]) => ({
+    records: [[{ stringValue: JSON.stringify({ standardsInScope: standards }) }]],
+    columnMetadata: [{ name: 'payload' }],
+  });
+
+  it('TPL-3: a 9001-only tenant sees zero 14001/45001-only registers', async () => {
+    mockExecute
+      .mockResolvedValueOnce(templateRows)
+      .mockResolvedValueOnce(profileRow(['ISO9001']));
+    const result = await handler(makeEvent('listFormTemplates')) as Array<Record<string, unknown>>;
+    expect(result.map(t => t.key)).toEqual(['ncr']);
+  });
+
+  it('TPL-3: an IMS tenant (all standards in scope) sees all templates', async () => {
+    mockExecute
+      .mockResolvedValueOnce(templateRows)
+      .mockResolvedValueOnce(profileRow(['ISO9001', 'ISO14001', 'ISO45001']));
+    const result = await handler(makeEvent('listFormTemplates')) as Array<Record<string, unknown>>;
+    expect(result.map(t => t.key)).toEqual(['ncr', 'aspects_impacts', 'hira']);
+  });
+
+  it('TPL-3: no org profile yet → falls back to ALL templates (design §5)', async () => {
+    mockExecute
+      .mockResolvedValueOnce(templateRows)
+      .mockResolvedValueOnce({ records: [], columnMetadata: [] });
+    const result = await handler(makeEvent('listFormTemplates')) as Array<Record<string, unknown>>;
+    expect(result).toHaveLength(3);
+  });
+
+  it("TPL-3: the 'IMS' seed marker is metadata, never a scope match by itself", async () => {
+    mockExecute
+      .mockResolvedValueOnce(templateRows)
+      .mockResolvedValueOnce(profileRow(['ISO45001']));
+    const result = await handler(makeEvent('listFormTemplates')) as Array<Record<string, unknown>>;
+    // hira (45001) + ncr (includes 45001) — aspects (14001-only) hidden even
+    // though its standards[] carries the 'IMS' marker
+    expect(result.map(t => t.key)).toEqual(['ncr', 'hira']);
+  });
 });
 
 // ─── getFormTemplate ──────────────────────────────────────────────────────────

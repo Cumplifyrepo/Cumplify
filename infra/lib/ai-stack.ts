@@ -807,13 +807,36 @@ export class AiStack extends cdk.Stack {
       environment: { ...genEnv, POWERTOOLS_SERVICE_NAME: 'qms-finalize-manual' },
     });
 
+    // RegenerateSectionFn (GEN-6): single-section recompose + version
+    // writeback, invoked synchronously by QmsFn's regenerateSection case.
+    // DETERMINISTIC NAME — ApiStack constructs the ARN by name (the SFN's
+    // no-cycle pattern; AiStack depends on ApiStack). Compose runs
+    // IN-PROCESS (compose-section handler import), so this function carries
+    // compose's env + grants; timeout matches ComposeSectionFn (one-door
+    // invoke is 90s and compose may call twice).
+    const regenerateSectionFn = new NodejsFunction(this, 'RegenerateSectionFn', {
+      entry: 'services/qms-generation/src/regenerate-section.ts',
+      handler: 'handler',
+      functionName: `cumplify-docgen-regen-${envConfig.envName}`,
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(240),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        ...genEnv,
+        AI_INVOKER_ARN: aiInvoker.functionArn,
+        POWERTOOLS_SERVICE_NAME: 'qms-regenerate-section',
+      },
+    });
+
     const publishGenerationEventArn = cdk.Stack.of(this).formatArn({
       service: 'appsync',
       resource: 'apis',
       resourceName: `${props.graphqlApiId}/types/Mutation/fields/publishGenerationEvent`,
     });
 
-    for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn]) {
+    for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn, regenerateSectionFn]) {
       fn.addToRolePolicy(new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: [
@@ -840,7 +863,7 @@ export class AiStack extends cdk.Stack {
 
     // Working content lives under tenants/* only — no bucket-wide access.
     // Finalize reads section JSONs AND writes document JSONs (Task 6).
-    for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn]) {
+    for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn, regenerateSectionFn]) {
       fn.addToRolePolicy(new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['s3:PutObject', 's3:GetObject'],
@@ -850,7 +873,7 @@ export class AiStack extends cdk.Stack {
     }
 
     // GEN-5 progress events: compose + finalize publish the @aws_iam mutation
-    for (const fn of [composeSectionFn, finalizeManualFn]) {
+    for (const fn of [composeSectionFn, finalizeManualFn, regenerateSectionFn]) {
       fn.addToRolePolicy(new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['appsync:GraphQL'],
@@ -860,6 +883,7 @@ export class AiStack extends cdk.Stack {
 
     // ONE DOOR: ComposeSection reaches Bedrock only via the invoker Lambda
     aiInvoker.grantInvoke(composeSectionFn);
+    aiInvoker.grantInvoke(regenerateSectionFn); // compose runs in-process (GEN-6)
 
     const seedTask = new tasks.LambdaInvoke(this, 'SeedSections', {
       lambdaFunction: seedSectionsFn,
@@ -903,6 +927,7 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'SeedSectionsFnArn', { value: seedSectionsFn.functionArn });
     new cdk.CfnOutput(this, 'ComposeSectionFnArn', { value: composeSectionFn.functionArn });
     new cdk.CfnOutput(this, 'FinalizeManualFnArn', { value: finalizeManualFn.functionArn });
+    new cdk.CfnOutput(this, 'RegenerateSectionFnArn', { value: regenerateSectionFn.functionArn });
 
     // ─── CfnOutputs for IAM roles ──────────────────────────────────────────
     new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackLambda.role!.roleArn });

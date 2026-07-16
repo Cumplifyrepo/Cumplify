@@ -32,6 +32,9 @@ import { canApprove } from '../permissions/role-matrix.js';
 const sfnClient = new SFNClient({});
 const lambdaClient = new LambdaClient({});
 const EXPORT_FN = process.env.EXPORT_FN ?? '';
+// GEN-6: RegenerateSectionFn lives in AiStack — referenced by DETERMINISTIC
+// name (same no-cycle pattern as DOCGEN_SFN_ARN).
+const REGEN_FN = process.env.REGEN_FN ?? '';
 
 import { z } from 'zod';
 
@@ -91,9 +94,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'markSectionReviewed': return requireM1Role(role, () => markSectionReviewed(event, tenantId, sub));
     case 'generateImsManual': return requireM1Role(role, () => generateImsManual(event, tenantId, sub));
     case 'requestImsExport': return requestImsExport(event, tenantId);
-    // regenerateSection (GEN-6): deferred to the Task 6/7 wave — it creates a
-    // new document version on the affected docs, which needs FinalizeManual's
-    // m1 writes. Deferred = reported here + in Task-5 evidence, not omitted.
+    case 'regenerateSection': return requireM1Role(role, () => regenerateSection(event, tenantId, sub));
     default: throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
@@ -557,4 +558,36 @@ async function requestImsExport(event: AppSyncEvent, tenantId: string) {
     }
   }
   return JSON.parse(new TextDecoder().decode(invoke.Payload)) as { url: string; expiresAt: string };
+}
+
+/**
+ * regenerateSection (GEN-6) — thin dispatch to RegenerateSectionFn (AiStack,
+ * deterministic name; requestImsExport→ExportFn pattern). The worker resets
+ * the section (review state cleared — APR-1), re-composes through the one
+ * door, and writes NEW versions on the affected documents; it returns the
+ * section in the GraphQL GenerationSection shape verbatim.
+ */
+async function regenerateSection(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as { runId: string; harmonizationKey: string };
+  if (!input?.runId || !input?.harmonizationKey) throw new Error('BAD_REQUEST: runId and harmonizationKey required');
+  if (!REGEN_FN) throw new Error('REGENERATE_NOT_AVAILABLE');
+
+  const invoke = await lambdaClient.send(new InvokeCommand({
+    FunctionName: REGEN_FN,
+    Payload: JSON.stringify({ tenantId, runId: input.runId, harmonizationKey: input.harmonizationKey, actor }),
+  }));
+  if (invoke.FunctionError) {
+    const raw = new TextDecoder().decode(invoke.Payload);
+    logger.error('RegenerateSectionFn failed', { raw });
+    // Relay the worker's typed errors (RUN_NOT_FOUND, RUN_NOT_FINALIZED,
+    // SECTION_NOT_FOUND, ...) to the client
+    try {
+      const parsed = JSON.parse(raw) as { errorMessage?: string };
+      throw new Error(parsed.errorMessage ?? 'REGENERATE_FAILED');
+    } catch (e) {
+      if (e instanceof Error && e.message !== raw) throw e;
+      throw new Error('REGENERATE_FAILED');
+    }
+  }
+  return JSON.parse(new TextDecoder().decode(invoke.Payload));
 }

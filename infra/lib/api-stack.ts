@@ -877,6 +877,16 @@ export class ApiStack extends cdk.Stack {
       arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
     });
 
+    // GEN-6: RegenerateSectionFn — same deterministic-name pattern as the
+    // state machine (AiStack fn, ARN constructed by name; no CFN cycle).
+    const regenFnName = `cumplify-docgen-regen-${props.envConfig.envName}`;
+    const regenFnArn = cdk.Stack.of(this).formatArn({
+      service: 'lambda',
+      resource: 'function',
+      resourceName: regenFnName,
+      arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
+    });
+
     const qmsFn = new NodejsFunction(this, 'QmsFn', {
       entry: 'services/api/src/resolvers/qms.ts',
       handler: 'handler',
@@ -893,6 +903,7 @@ export class ApiStack extends cdk.Stack {
         TENANT_DATA_ROLE_ARN: tenantDataRole.roleArn,
         REGION: cdk.Stack.of(this).region,
         DOCGEN_SFN_ARN: docGenSfnArn,
+        REGEN_FN: regenFnName,
         POWERTOOLS_SERVICE_NAME: 'resolver-qms',
       },
     });
@@ -900,6 +911,10 @@ export class ApiStack extends cdk.Stack {
     qmsFn.addToRolePolicy(new iam.PolicyStatement({
       actions: ['states:StartExecution'],
       resources: [docGenSfnArn],
+    }));
+    qmsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['lambda:InvokeFunction'],
+      resources: [regenFnArn],
     }));
 
     qmsFn.addToRolePolicy(new iam.PolicyStatement({

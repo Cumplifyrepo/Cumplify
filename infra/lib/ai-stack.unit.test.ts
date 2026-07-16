@@ -590,9 +590,10 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
       const env = ((resource as any).Properties?.Environment?.Variables) ?? {};
       return env.AI_INVOKER_ARN !== undefined;
     });
-    // 8 agent handler Lambdas + ComposeSectionFn (spec-40 Task 5 — the
-    // generation plane reaches Bedrock through the same one door)
-    expect(handlerLambdas.length).toBe(9);
+    // 8 agent handler Lambdas + ComposeSectionFn (spec-40 Task 5) +
+    // RegenerateSectionFn (GEN-6 — compose runs in-process) — the whole
+    // generation plane reaches Bedrock through the same one door
+    expect(handlerLambdas.length).toBe(10);
   });
 
   it('SQS Event Source Mappings exist for consumer handlers', () => {

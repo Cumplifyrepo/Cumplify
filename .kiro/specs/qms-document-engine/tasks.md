@@ -125,6 +125,6 @@
 
 ## Task 13 — ACC readback pass [ARCHITECT, ACC-3/ACC-9 witnessed by owner → D5]
 
-- [ ] ACC-1..ACC-10 executed live per requirements §4, each row: timestamp + exit code + outputs SHA. ACC-4 (honest gaps) and ACC-9 (names unredacted) are the headline demos.
+- [ ] ACC-1..ACC-10 executed live per requirements §4, each row: timestamp + exit code + outputs SHA. ACC-4 (honest gaps) and ACC-9 (names unredacted) are the headline demos. PREP COMPLETE 2026-07-16: `regenerateSection` (GEN-6) implemented + live-proven — ACC-6's non-zero-diff clause was unprovable before (the mutation was deferred at T5 and never landed; qms.ts threw Unknown field); runbook + committed probe scripts at `.kiro/evidence/qms-document-engine/acc-runbook.md` (one tenant-AAA wizard→generate→export flow covers ACC-3/4/5/7/8/9).
 
 **Depends on:** all. **D-rung:** D3/D5. **Evidence:** `acc-readback.log`
