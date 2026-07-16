@@ -29,19 +29,24 @@
   - **Evidence:** JSON valid, computeCredits unit test passes
   - **ACC mapping:** EMB-3
 
-- [ ] **Task 3 — Implement embed() + invoker entry dispatch** [KIRO] D2
+- [ ] **Task 3 — Implement embed() + invoker entry dispatch + CDK binding** [KIRO] D2
   - Create `services/ai-invoker/src/embed.ts`:
     - `embed(req: EmbedRequest): Promise<EmbedResult>`
     - Calls bedrock:InvokeModel on `amazon.titan-embed-text-v2:0` ({inputText, dimensions:1024})
     - Reads inputTextTokenCount, loads weights, computes credits, meters, emits telemetry
     - Returns {embedding, tokenCount, credits}
   - Extend `services/ai-invoker/src/index.ts` entry:
-    - Dispatch on `event.op`: `'embed'` → embed.ts; absent/`'invoke'` → existing invoke path
+    - Add `export async function handler(event: InvokeRequest | EmbedOp)` — dispatches on
+      `event.op`: `'embed'` → embed(); absent/`'invoke'` → existing invoke() path
+    - `invoke()` STAYS exported (tests + type consumers)
     - Back-compatible: no op field = invoke (all existing callers unchanged)
+  - **F-1 CDK binding:** In `infra/lib/ai-stack.ts`, change AiInvokerFn `handler: 'invoke'`
+    → `handler: 'handler'` so the Lambda runtime calls the dispatch entry
   - Add `EmbedRequest`, `EmbedResult`, `EmbedOp` to `services/ai-invoker/src/types.ts`
   - NOT exported from package index (EMB-2: executes inside invoker Lambda only)
   - Does NOT implement AOSS retry/backoff (EMB-5)
-  - **Evidence:** Unit tests: dispatch routes correctly; embed mocked-Bedrock passes; metering verified
+  - **Evidence:** Unit tests: dispatch routes correctly; embed mocked-Bedrock passes;
+    metering verified; cdk synth passes with handler binding change
   - **ACC mapping:** EMB-1, EMB-2, EMB-4, EMB-5
 
 - [ ] **Task 4 — Embed transport in invoke-transport.ts** [KIRO] D2

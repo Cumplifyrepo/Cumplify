@@ -195,10 +195,15 @@ in `invoke-transport.ts`). This preserves C-1 (one-door), handler IAM minimality
 └────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.2 Invoker Entry Dispatch
+### 2.2 Invoker Entry Dispatch (F-1: Lambda binding)
+
+The invoker Lambda entry point is `handler` (not `invoke`). `ai-stack.ts` binds
+`handler: 'handler'`. The existing `invoke()` function STAYS exported (tests + type
+consumers use it directly), but the Lambda runtime calls `handler()`.
 
 ```typescript
-// services/ai-invoker/src/index.ts (extended entry)
+// services/ai-invoker/src/index.ts
+// Lambda entry — dispatches on op discriminator
 export async function handler(event: InvokeRequest | EmbedOp): Promise<InvokeResponse | EmbedResult> {
   if ('op' in event && event.op === 'embed') {
     return embed(event);  // routes to embed.ts
@@ -206,7 +211,12 @@ export async function handler(event: InvokeRequest | EmbedOp): Promise<InvokeRes
   // Default: existing invoke path (back-compat — no op field = invoke)
   return invoke(event as InvokeRequest);
 }
+
+// invoke() stays exported for tests and type consumers
+export async function invoke(request: InvokeRequest): Promise<InvokeResponse> { ... }
 ```
+
+**CDK binding (ai-stack.ts):** `handler: 'handler'` (changed from `'invoke'`).
 
 ### 2.3 Transport Extension
 
@@ -534,7 +544,50 @@ Via `services/eventing/src/publisher.ts` `publish()` directly (agent-writeback p
 
 ### 9.3 Event Payloads
 
-Same as D2 §9.3 (GuardrailCheckedPayload, GroundingBlockedPayload, HopBlockedPayload, ArRejectedPayload).
+```typescript
+// Ai.GuardrailChecked (TEL-1: per-invocation telemetry)
+interface GuardrailCheckedPayload {
+  tenantId: string;
+  agent: string;
+  guardrailPolicy: string;  // 'grounding' | 'relevance' | 'ar:clause-canon' | 'ar:role-permissions' | 'ar:plan-entitlements' | 'hop:prompt-attack'
+  verdict: 'pass' | 'block' | 'flag';
+  score: number | null;     // numeric for grounding/relevance; null for AR/hop
+  latencyMs: number;
+  timestamp: string;
+}
+
+// Ai.GroundingBlocked (TEL-2)
+interface GroundingBlockedPayload {
+  tenantId: string;
+  agent: string;
+  module: string;
+  groundingScore: number;
+  relevanceScore: number;
+  retryAttempted: boolean;
+  finalOutcome: 'honest-miss' | 'hitl-deferred';
+}
+
+// Ai.HopBlocked (TEL-3)
+interface HopBlockedPayload {
+  tenantId: string;
+  sourceAgent: string;
+  targetAgent: string;
+  blockedPolicy: string;  // e.g. 'PROMPT_ATTACK'
+  payload: string;        // sanitized summary, NO PII
+}
+
+// Ai.ArRejected (TEL-4)
+interface ArRejectedPayload {
+  tenantId: string;
+  agent: string;
+  arPolicy: string;       // 'clause-canon' | 'role-permissions' | 'plan-entitlements'
+  invalidClaim: string;
+  reason: string;
+  suggestedCorrection: string;
+  retriedOnce: boolean;
+  finalOutcome: 'corrected' | 'hitl-deferred';
+}
+```
 
 ---
 
