@@ -457,15 +457,6 @@ input CreateChangePlanInput {
   impactAssessment: String
 }
 
-input AppendAuditEventInput {
-  eventType: String!
-  actor: String!
-  module: String!
-  clauseRef: String!
-  standard: Standard!
-  payload: AWSJSON!
-}
-
 input AgentDraftDocumentInput {
   standard: Standard!
   docType: DocumentType!
@@ -616,7 +607,6 @@ type Mutation {
   agentGenerateChecklist(auditId: ID!): [AuditChecklist!]! @aws_iam
   agentScoreReadiness(standard: Standard!): [ReadinessScore!]! @aws_iam
   agentAssessRisk(input: AgentAssessRiskInput!): Risk! @aws_iam
-  appendAuditEvent(input: AppendAuditEventInput!): AuditEvent! @aws_iam
   publishGenerationEvent(input: PublishGenerationEventInput!): GenerationEvent @aws_iam
 
   # Subscription triggers (None data source, @aws_iam)

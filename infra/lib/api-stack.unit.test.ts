@@ -119,7 +119,7 @@ describe('ApiStack template assertions (source-level)', () => {
     expect(API_STACK_CODE).toContain("typeName: 'Subscription'");
   });
 
-  it('total resolver count is 70 (22 Query + 42 Mutation + 6 Subscription)', () => {
+  it('total resolver count is 84 (source-counted; history in comments below)', () => {
     const queryCount = (API_STACK_CODE.match(/typeName: 'Query'/g) ?? []).length;
     const mutationCount = (API_STACK_CODE.match(/typeName: 'Mutation'/g) ?? []).length;
     // Subscription count: 5 fields in subscriptionFields array (loop-generated)
@@ -137,7 +137,8 @@ describe('ApiStack template assertions (source-level)', () => {
     // 2026-07-15: +5 (spec 40 Task 3: remaining mutations wired as stubs on QmsDS + noneDS)
     // 2026-07-15: +1 (spec 40 Task 7: onGenerationProgress subscription in loop)
     // 2026-07-15: +1 (getDocumentContent — Task 11 viewer read surface unblock)
-    expect(queryCount + mutationCount + subLoopCount + individualSubCount).toBe(85);
+    // 2026-07-16: -1 (appendAuditEvent facade removed — no handler case, zero callers; owner-approved)
+    expect(queryCount + mutationCount + subLoopCount + individualSubCount).toBe(84);
   });
 
   it('subscription resolvers enforce C-6 tenant-claim check via $util.unauthorized()', () => {

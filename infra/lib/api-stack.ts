@@ -560,7 +560,9 @@ export class ApiStack extends cdk.Stack {
     m3DS.createResolver('AgentGenerateChecklist', { typeName: 'Mutation', fieldName: 'agentGenerateChecklist' });
     m3DS.createResolver('AgentScoreReadiness', { typeName: 'Mutation', fieldName: 'agentScoreReadiness' });
     m5DS.createResolver('AgentAssessRisk', { typeName: 'Mutation', fieldName: 'agentAssessRisk' });
-    m4DS.createResolver('AppendAuditEvent', { typeName: 'Mutation', fieldName: 'appendAuditEvent' });
+    // appendAuditEvent REMOVED 2026-07-16 (owner-approved): the field+resolver
+    // shipped with no m4.ts handler case and zero callers — every call threw
+    // 'Unknown field'. Agents publish audit events via the eventing publisher.
 
     // ─── Subscription publish mutations (None data source, passthrough) ──────
     const passthroughRequestMapping = appsync.MappingTemplate.fromString('{"version":"2017-02-28","payload":$util.toJson($context.arguments.input)}');
