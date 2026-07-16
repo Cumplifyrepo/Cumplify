@@ -1,0 +1,16 @@
+# Tasks 33-37 — Phase 9 mocked ACC integration tests
+# Executed: 2026-07-16T23:41Z | exit 0
+
+## Test File
+services/ai-invoker/__tests__/acc-integration.test.ts
+
+## Results
+- ACC-1 (Task 33): PASS — grounded response delivered with evidence, no GroundingBlocked
+- ACC-2 (Task 34): PASS — fabricated clause → honest-miss template + Ai.GroundingBlocked
+- ACC-3 (Task 35): SKIPPED — BLOCKED on Tasks 27/28 (ar-check.ts not implemented)
+- ACC-4 (Task 36): PASS — hop injection blocked + Ai.HopBlocked + Ai.GuardrailChecked
+- ACC-5 (Task 37): PASS — traced to hitl-approval.test.ts L5-2 enforcement tests (4 passing)
+
+## Evidence
+- tsc --noEmit: exit 0
+- npx vitest run: 991 passed / 4 skipped / 0 failed (93 files + 1 skipped)
