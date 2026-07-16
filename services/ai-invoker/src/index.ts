@@ -23,6 +23,7 @@ import {
 } from './grounding.js';
 import { checkHopPayload, isAgentRoutingTool } from './hop-check.js';
 import { buildSystemPrompt } from './prompt-library.js';
+import { publish } from '../../eventing/src/publisher.js';
 import { InvokeError, SEAT_DEFAULTS } from './types.js';
 import type {
   InvokeRequest,
@@ -108,6 +109,59 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   let result = await converse(converseParams);
   let usage = result.usage;
   let guardrailEvidence: GuardrailEvidenceData | undefined;
+
+  // ─── FIX-T20-1: Short-circuit on guardrail_intervened (inline input block) ──
+  // When Bedrock's inline guardrail blocks the input (stopReason='guardrail_intervened'),
+  // the response text is the policy message (e.g. "Request blocked by content policy.").
+  // Short-circuit: return the blocked messaging directly — NO grounding check, NO retry,
+  // NO Ai.GroundingBlocked. Emit Ai.GuardrailChecked with policy 'prompt-attack' and
+  // meter whatever usage exists (the model consumed some tokens even on a block).
+  if (result.stopReason === 'guardrail_intervened') {
+    logger.info('Guardrail intervened on input — short-circuiting', { seat, modelId, tenantId });
+
+    // Emit Ai.GuardrailChecked (policy message, not a grounding issue)
+    await publish({
+      busName: process.env.BUS_NAME ?? 'cumplify-events',
+      source: 'cumplify.ai-invoker',
+      detailType: 'Ai.GuardrailChecked',
+      event: {
+        tenantId,
+        timestamp: new Date().toISOString(),
+        actor: agent,
+        module,
+        clauseRef: '',
+        standard: request.standard ?? 'ISO9001',
+        entityId: '',
+        payload: {
+          guardrailPolicy: 'prompt-attack',
+          verdict: 'block',
+          score: null,
+          latencyMs: null,
+        },
+      },
+    });
+
+    // Meter consumed usage (billing integrity — even blocked calls have token cost)
+    const credits = computeCredits(usage, weights);
+    await incrementMeter(tenantId, credits);
+    await emitCreditsTelemetry({
+      tenantId, agent, module, feature,
+      inputTokens: usage.inputTokens,
+      outputTokens: usage.outputTokens,
+      cacheReadTokens: usage.cacheReadInputTokens,
+      creditsConsumed: credits, modelId, seat,
+    });
+
+    return {
+      text: result.text,
+      toolUseBlocks: [],
+      stopReason: 'guardrail_intervened',
+      usage,
+      credits,
+      modelId,
+      seat,
+    };
+  }
 
   // ─── Spec-35 L3: Hop guardrail check (Task 15) ────────────────────────────
   // When stopReason='tool_use' + tool is in agent-routing registry → screen payload.

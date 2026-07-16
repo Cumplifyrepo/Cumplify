@@ -1,0 +1,22 @@
+# FIX-T20-1 — guardrail_intervened short-circuit
+# Executed: 2026-07-16T23:17Z | exit 0
+
+## Fix
+invoke() now detects stopReason='guardrail_intervened' immediately after converse()
+and SHORT-CIRCUITS: returns the blocked messaging directly with NO grounding check,
+NO retry, NO Ai.GroundingBlocked emission. Emits Ai.GuardrailChecked with
+guardrailPolicy:'prompt-attack', verdict:'block', score:null. Meters whatever
+usage exists (billing integrity).
+
+## Evidence
+- tsc --noEmit: exit 0
+- npx vitest run: 976 passed / 0 failed (92 files + 1 skipped)
+
+### New test
+'short-circuits on guardrail_intervened — returns policy message, zero ApplyGuardrail calls (FIX-T20-1)'
+- converse returns guardrail_intervened → policy message returned unchanged
+- zero ApplyGuardrail calls (mockConverseSend called exactly 1 time)
+- Ai.GuardrailChecked emitted with guardrailPolicy:'prompt-attack'
+- NO Ai.GroundingBlocked emitted
+- credits metered (> 0)
+- guardrailEvidence is undefined (grounding never ran)
