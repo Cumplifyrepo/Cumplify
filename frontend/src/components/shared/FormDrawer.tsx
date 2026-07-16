@@ -62,16 +62,11 @@ function toISOValues(
   return result;
 }
 
-export function FormDrawer({
-  open,
-  onClose,
-  title,
-  fields,
-  onSubmit,
-  children,
-}: FormDrawerProps) {
+export function FormDrawer({ open, onClose, title, fields, onSubmit, children }: FormDrawerProps) {
   const t = useTranslations('common');
-  const [values, setValues] = useState<Record<string, string | boolean>>(() => computeDefaults(fields));
+  const [values, setValues] = useState<Record<string, string | boolean>>(() =>
+    computeDefaults(fields),
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -112,7 +107,12 @@ export function FormDrawer({
       <aside className={styles.drawer} aria-label={title}>
         <div className={styles.header}>
           <h2 className={styles.title}>{title}</h2>
-          <button className={styles.closeBtn} onClick={onClose} type="button" aria-label={t('close')}>
+          <button
+            className={styles.closeBtn}
+            onClick={onClose}
+            type="button"
+            aria-label={t('close')}
+          >
             ×
           </button>
         </div>
@@ -133,7 +133,9 @@ export function FormDrawer({
                   >
                     <option value="">&mdash;</option>
                     {field.options?.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
                     ))}
                   </select>
                 ) : field.type === 'textarea' ? (

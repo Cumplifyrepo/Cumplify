@@ -25,7 +25,7 @@ try {
 
   // Extract web pages (navigable routes)
   const pages = await framer.getNodesWithType('WebPageNode');
-  const pageData = pages.map(p => ({
+  const pageData = pages.map((p) => ({
     name: p.name ?? '(unnamed)',
     path: p.path ?? '/',
   }));
@@ -33,7 +33,7 @@ try {
 
   // Extract components
   const components = await framer.getNodesWithType('ComponentNode');
-  const componentData = components.map(c => ({
+  const componentData = components.map((c) => ({
     name: c.name ?? '(unnamed)',
     id: c.id,
   }));
@@ -49,13 +49,21 @@ try {
   // Write framer-pages.json
   writeFileSync(
     resolve(TOKENS_DIR, 'framer-pages.json'),
-    JSON.stringify({ project: info.name, syncedAt: new Date().toISOString(), pages: pageData }, null, 2),
+    JSON.stringify(
+      { project: info.name, syncedAt: new Date().toISOString(), pages: pageData },
+      null,
+      2,
+    ),
   );
 
   // Write framer-components.json
   writeFileSync(
     resolve(TOKENS_DIR, 'framer-components.json'),
-    JSON.stringify({ project: info.name, syncedAt: new Date().toISOString(), components: componentData }, null, 2),
+    JSON.stringify(
+      { project: info.name, syncedAt: new Date().toISOString(), components: componentData },
+      null,
+      2,
+    ),
   );
 
   // Write framer-styles.json (raw color + text styles)

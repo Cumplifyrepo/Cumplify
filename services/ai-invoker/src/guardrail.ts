@@ -24,7 +24,9 @@ export function buildGuardrailConfig(seat: SeatId): GuardrailConfig | undefined 
   const guardrailId =
     seat === 'doc-composer' ? process.env.DOCGEN_GUARDRAIL_ID : process.env.GUARDRAIL_ID;
   const guardrailVersion =
-    (seat === 'doc-composer' ? process.env.DOCGEN_GUARDRAIL_VERSION : process.env.GUARDRAIL_VERSION) ?? 'DRAFT';
+    (seat === 'doc-composer'
+      ? process.env.DOCGEN_GUARDRAIL_VERSION
+      : process.env.GUARDRAIL_VERSION) ?? 'DRAFT';
 
   if (!guardrailId) {
     return undefined;

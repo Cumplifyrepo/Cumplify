@@ -18,32 +18,55 @@ const { mockDdbSend } = vi.hoisted(() => {
 });
 
 vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: class { send = mockDdbSend; },
-  QueryCommand: class { constructor(public input: unknown) {} },
+  DynamoDBClient: class {
+    send = mockDdbSend;
+  },
+  QueryCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-sdk/client-sts', () => ({
-  STSClient: class { send = vi.fn().mockResolvedValue({
-    Credentials: {
-      AccessKeyId: 'AKIA_TEST',
-      SecretAccessKey: 'secret',
-      SessionToken: 'token',
-      Expiration: new Date(Date.now() + 900_000),
-    },
-  }); },
-  AssumeRoleCommand: class { constructor(public input: unknown) {} },
+  STSClient: class {
+    send = vi.fn().mockResolvedValue({
+      Credentials: {
+        AccessKeyId: 'AKIA_TEST',
+        SecretAccessKey: 'secret',
+        SessionToken: 'token',
+        Expiration: new Date(Date.now() + 900_000),
+      },
+    });
+  },
+  AssumeRoleCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-sdk/client-rds-data', () => ({
-  RDSDataClient: class { send = vi.fn(); },
-  BeginTransactionCommand: class { constructor(public input: unknown) {} },
-  CommitTransactionCommand: class { constructor(public input: unknown) {} },
-  RollbackTransactionCommand: class { constructor(public input: unknown) {} },
-  ExecuteStatementCommand: class { constructor(public input: unknown) {} },
+  RDSDataClient: class {
+    send = vi.fn();
+  },
+  BeginTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  CommitTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  RollbackTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  ExecuteStatementCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 vi.mock('../../../../eventing/src/publisher.js', () => ({
@@ -99,7 +122,7 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
       LastEvaluatedKey: undefined,
     });
 
-    const result = await handler(makeEvent('listPendingHitlItems', { pagination: null })) as {
+    const result = (await handler(makeEvent('listPendingHitlItems', { pagination: null }))) as {
       items: Record<string, unknown>[];
       nextToken: string | null;
     };
@@ -126,7 +149,7 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
     delete (raw as Record<string, unknown>).module;
     mockDdbSend.mockResolvedValueOnce({ Items: [raw], LastEvaluatedKey: undefined });
 
-    const result = await handler(makeEvent('listPendingHitlItems', { pagination: null })) as {
+    const result = (await handler(makeEvent('listPendingHitlItems', { pagination: null }))) as {
       items: Record<string, unknown>[];
     };
 
@@ -139,7 +162,7 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
       LastEvaluatedKey: undefined,
     });
 
-    const result = await handler(makeEvent('listPendingHitlItems', { pagination: null })) as {
+    const result = (await handler(makeEvent('listPendingHitlItems', { pagination: null }))) as {
       items: Record<string, unknown>[];
     };
 
@@ -154,7 +177,7 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
       LastEvaluatedKey: undefined,
     });
 
-    const result = await handler(makeEvent('listPendingHitlItems', { pagination: null })) as {
+    const result = (await handler(makeEvent('listPendingHitlItems', { pagination: null }))) as {
       items: Record<string, unknown>[];
       nextToken: string | null;
     };
@@ -170,7 +193,9 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
       LastEvaluatedKey: lastKey,
     });
 
-    const result = await handler(makeEvent('listPendingHitlItems', { pagination: { limit: 1 } })) as {
+    const result = (await handler(
+      makeEvent('listPendingHitlItems', { pagination: { limit: 1 } }),
+    )) as {
       items: Record<string, unknown>[];
       nextToken: string | null;
     };
@@ -190,9 +215,11 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
       LastEvaluatedKey: undefined,
     });
 
-    const result = await handler(makeEvent('listPendingHitlItems', {
-      pagination: { nextToken },
-    })) as { items: Record<string, unknown>[]; nextToken: string | null };
+    const result = (await handler(
+      makeEvent('listPendingHitlItems', {
+        pagination: { nextToken },
+      }),
+    )) as { items: Record<string, unknown>[]; nextToken: string | null };
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].hitlItemId).toBe('hitl-item-200');
@@ -209,7 +236,9 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
 
   it('rejects malformed nextToken', async () => {
     await expect(
-      handler(makeEvent('listPendingHitlItems', { pagination: { nextToken: 'not-valid-base64!!!' } })),
+      handler(
+        makeEvent('listPendingHitlItems', { pagination: { nextToken: 'not-valid-base64!!!' } }),
+      ),
     ).rejects.toThrow('Invalid nextToken');
   });
 
@@ -244,7 +273,7 @@ describe('hitl-query resolver — listPendingHitlItems', () => {
       LastEvaluatedKey: undefined,
     });
 
-    const result = await handler(makeEvent('listPendingHitlItems', { pagination: null })) as {
+    const result = (await handler(makeEvent('listPendingHitlItems', { pagination: null }))) as {
       items: Record<string, unknown>[];
     };
 

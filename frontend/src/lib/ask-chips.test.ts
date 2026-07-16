@@ -5,8 +5,11 @@ import type { Standard } from './ask-store';
 describe('ask-chips', () => {
   describe('deriveTitle', () => {
     it('extracts first sentence, capped at 80 chars', () => {
-      const text = 'Clause 8.5.1 requires documented procedures for production control. This includes work instructions.';
-      expect(deriveTitle(text)).toBe('Clause 8.5.1 requires documented procedures for production control');
+      const text =
+        'Clause 8.5.1 requires documented procedures for production control. This includes work instructions.';
+      expect(deriveTitle(text)).toBe(
+        'Clause 8.5.1 requires documented procedures for production control',
+      );
     });
 
     it('caps at 80 characters', () => {
@@ -20,7 +23,8 @@ describe('ask-chips', () => {
   });
 
   describe('buildChipUrls', () => {
-    const answer = 'You should create a documented procedure for clause 8.5.1 covering production control.';
+    const answer =
+      'You should create a documented procedure for clause 8.5.1 covering production control.';
 
     it('returns three chips for any answer', () => {
       const chips = buildChipUrls('ISO9001', answer);

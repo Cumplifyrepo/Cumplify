@@ -48,7 +48,9 @@ function getSigner(): SignatureV4 {
 }
 
 /** Exported for testing. */
-export function resetSigner(): void { signer = null; }
+export function resetSigner(): void {
+  signer = null;
+}
 
 export async function publishGenerationEvent(input: GenerationEventInput): Promise<void> {
   try {
@@ -77,7 +79,7 @@ export async function publishGenerationEvent(input: GenerationEventInput): Promi
       signal: AbortSignal.timeout(10_000),
     });
 
-    const payload = await response.json() as { errors?: Array<{ message: string }> };
+    const payload = (await response.json()) as { errors?: Array<{ message: string }> };
     if (!response.ok || payload.errors?.length) {
       logger.error('publishGenerationEvent rejected', {
         status: response.status,

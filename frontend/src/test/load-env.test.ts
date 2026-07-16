@@ -23,7 +23,9 @@ describe('load-env.mjs', () => {
     expect(content).toContain('NEXT_PUBLIC_USER_POOL_CLIENT_ID=');
 
     // Values from cdk-outputs.json
-    expect(content).toContain('NEXT_PUBLIC_GRAPHQL_URL=https://42yckio3gbbgphpdkpl7vux3v4.appsync-api.us-east-1.amazonaws.com/graphql');
+    expect(content).toContain(
+      'NEXT_PUBLIC_GRAPHQL_URL=https://42yckio3gbbgphpdkpl7vux3v4.appsync-api.us-east-1.amazonaws.com/graphql',
+    );
     expect(content).toContain('NEXT_PUBLIC_USER_POOL_ID=us-east-1_cmiNNOAst');
     expect(content).toContain('NEXT_PUBLIC_USER_POOL_CLIENT_ID=662fm2cthctp150bo5sa7i5o43');
   });

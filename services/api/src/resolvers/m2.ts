@@ -6,8 +6,21 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
-import { mapEnum, NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP, RCA_METHOD_MAP } from './enum-mappings.js';
+import {
+  extractContext,
+  beginTenantTransaction,
+  publishAuditEvent,
+  marshalOne,
+  marshalMany,
+} from './shared.js';
+import {
+  mapEnum,
+  NC_SOURCE_MAP,
+  NC_TYPE_MAP,
+  SEVERITY_MAP,
+  DISPOSITION_MAP,
+  RCA_METHOD_MAP,
+} from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m2' });
 
@@ -23,17 +36,28 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
 
   switch (event.info.fieldName) {
-    case 'raiseNonconformity': return raiseNonconformity(event, tenantId, sub);
-    case 'recordRootCause': return recordRootCause(event, tenantId, sub);
-    case 'createCorrectiveAction': return createCorrectiveAction(event, tenantId, sub);
-    case 'closeCapa': return closeCapa(event, tenantId, sub);
-    case 'verifyEffectiveness': return verifyEffectiveness(event, tenantId, sub);
-    case 'disposeNonconformingOutput': return disposeNonconformingOutput(event, tenantId, sub);
-    case 'getNonconformity': return getNonconformity(event, tenantId);
-    case 'listNonconformities': return listNonconformities(event, tenantId);
-    case 'listOpenCAPAs': return listOpenCAPAs(event, tenantId);
-    case 'listCorrectiveActions': return listCorrectiveActions(event, tenantId);
-    default: throw new Error(`Unknown field: ${event.info.fieldName}`);
+    case 'raiseNonconformity':
+      return raiseNonconformity(event, tenantId, sub);
+    case 'recordRootCause':
+      return recordRootCause(event, tenantId, sub);
+    case 'createCorrectiveAction':
+      return createCorrectiveAction(event, tenantId, sub);
+    case 'closeCapa':
+      return closeCapa(event, tenantId, sub);
+    case 'verifyEffectiveness':
+      return verifyEffectiveness(event, tenantId, sub);
+    case 'disposeNonconformingOutput':
+      return disposeNonconformingOutput(event, tenantId, sub);
+    case 'getNonconformity':
+      return getNonconformity(event, tenantId);
+    case 'listNonconformities':
+      return listNonconformities(event, tenantId);
+    case 'listOpenCAPAs':
+      return listOpenCAPAs(event, tenantId);
+    case 'listCorrectiveActions':
+      return listCorrectiveActions(event, tenantId);
+    default:
+      throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
 
@@ -62,16 +86,23 @@ async function raiseNonconformity(event: AppSyncEvent, tenantId: string, actor: 
     await txn.commit();
     const nc = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M2',
-      clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
-      detailType: 'NC.Raised', source: 'cumplify.m2.capa',
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      detailType: 'NC.Raised',
+      source: 'cumplify.m2.capa',
       entityId: String(nc?.id ?? ''),
       // F-A fix: agents consuming NC.Raised need the real ncId (was input-only)
       payload: { ncId: nc?.id, input },
     });
     logger.info('Nonconformity raised', { tenantId });
     return nc;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function recordRootCause(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -109,14 +140,21 @@ async function recordRootCause(event: AppSyncEvent, tenantId: string, actor: str
     await txn.commit();
     const rca = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M2',
-      clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
-      detailType: 'CAPA.RootCauseRecorded', source: 'cumplify.m2.capa',
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      detailType: 'CAPA.RootCauseRecorded',
+      source: 'cumplify.m2.capa',
       entityId: String(rca?.id ?? ''), // the RootCauseAnalysis row the mutation returns
       payload: { rootCauseAnalysisId: rca?.id, ncId: input.ncId, method },
     });
     return rca;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function createCorrectiveAction(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -144,15 +182,22 @@ async function createCorrectiveAction(event: AppSyncEvent, tenantId: string, act
     await txn.commit();
     const ca = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M2',
-      clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
-      detailType: 'CAPA.Opened', source: 'cumplify.m2.capa',
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      detailType: 'CAPA.Opened',
+      source: 'cumplify.m2.capa',
       entityId: String(ca?.id ?? ''), // the CorrectiveAction row the mutation returns
       payload: { correctiveActionId: ca?.id, ncId: input.ncId, input },
     });
     logger.info('Corrective action created', { tenantId });
     return ca;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -165,20 +210,28 @@ async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {
     const result = await txn.execute(
       `UPDATE m2.corrective_actions SET status = 'closed', updated_at = NOW()
        WHERE id = :id::uuid RETURNING *`,
-      [
-        { name: 'id', value: { stringValue: input.id as string } },
-      ],
+      [{ name: 'id', value: { stringValue: input.id as string } }],
     );
     await txn.commit();
     await publishAuditEvent({
-      tenantId, actor, module: 'M2',
-      clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
-      detailType: 'CAPA.Closed', source: 'cumplify.m2.capa',
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      detailType: 'CAPA.Closed',
+      source: 'cumplify.m2.capa',
       entityId: input.id as string,
-      payload: { correctiveActionId: input.id, closureNotes: (input.closureNotes as string) ?? null },
+      payload: {
+        correctiveActionId: input.id,
+        closureNotes: (input.closureNotes as string) ?? null,
+      },
     });
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function verifyEffectiveness(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -214,14 +267,25 @@ async function verifyEffectiveness(event: AppSyncEvent, tenantId: string, actor:
     await txn.commit();
     const check = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M2',
-      clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
-      detailType: 'CAPA.EffectivenessVerified', source: 'cumplify.m2.capa',
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      detailType: 'CAPA.EffectivenessVerified',
+      source: 'cumplify.m2.capa',
       entityId: String(check?.id ?? ''), // the CapaEffectivenessCheck row the mutation returns
-      payload: { effectivenessCheckId: check?.id, correctiveActionId: input.correctiveActionId, effective },
+      payload: {
+        effectivenessCheckId: check?.id,
+        correctiveActionId: input.correctiveActionId,
+        effective,
+      },
     });
     return check;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function disposeNonconformingOutput(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -243,26 +307,39 @@ async function disposeNonconformingOutput(event: AppSyncEvent, tenantId: string,
     await txn.commit();
     const output = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M2',
-      clauseRef: 'ISO 9001 8.7', standard: 'ISO9001',
-      detailType: 'CAPA.OutputDisposed', source: 'cumplify.m2.capa',
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 8.7',
+      standard: 'ISO9001',
+      detailType: 'CAPA.OutputDisposed',
+      source: 'cumplify.m2.capa',
       entityId: String(output?.id ?? ''), // the NonconformingOutput row the mutation returns
-      payload: { nonconformingOutputId: output?.id, ncId: input.ncId, disposition: input.disposition },
+      payload: {
+        nonconformingOutputId: output?.id,
+        ncId: input.ncId,
+        disposition: input.disposition,
+      },
     });
     return output;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function getNonconformity(event: AppSyncEvent, tenantId: string) {
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(
-      `SELECT * FROM m2.nonconformities WHERE id = :id::uuid`,
-      [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
-    );
+    const result = await txn.execute(`SELECT * FROM m2.nonconformities WHERE id = :id::uuid`, [
+      { name: 'id', value: { stringValue: event.arguments.id as string } },
+    ]);
     await txn.commit();
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function listOpenCAPAs(event: AppSyncEvent, tenantId: string) {
@@ -280,7 +357,10 @@ async function listOpenCAPAs(event: AppSyncEvent, tenantId: string) {
   }
   if (severity) {
     clauses.push('nc.severity = :severity');
-    params.push({ name: 'severity', value: { stringValue: mapEnum(SEVERITY_MAP, severity, 'severity') } });
+    params.push({
+      name: 'severity',
+      value: { stringValue: mapEnum(SEVERITY_MAP, severity, 'severity') },
+    });
   }
   const txn = await beginTenantTransaction(tenantId);
   try {
@@ -292,7 +372,10 @@ async function listOpenCAPAs(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function listNonconformities(event: AppSyncEvent, tenantId: string) {
@@ -306,7 +389,10 @@ async function listNonconformities(event: AppSyncEvent, tenantId: string) {
   }
   if (severity) {
     clauses.push('severity = :severity');
-    params.push({ name: 'severity', value: { stringValue: mapEnum(SEVERITY_MAP, severity, 'severity') } });
+    params.push({
+      name: 'severity',
+      value: { stringValue: mapEnum(SEVERITY_MAP, severity, 'severity') },
+    });
   }
   const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
   const txn = await beginTenantTransaction(tenantId);
@@ -317,7 +403,10 @@ async function listNonconformities(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function listCorrectiveActions(event: AppSyncEvent, tenantId: string) {
@@ -329,5 +418,8 @@ async function listCorrectiveActions(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }

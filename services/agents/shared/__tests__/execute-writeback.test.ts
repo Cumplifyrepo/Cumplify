@@ -10,16 +10,16 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const WRITEBACK_CODE = readFileSync(
-  resolve(__dirname, '../execute-writeback.ts'), 'utf-8',
-);
+const WRITEBACK_CODE = readFileSync(resolve(__dirname, '../execute-writeback.ts'), 'utf-8');
 
 const MIGRATION_003 = readFileSync(
-  resolve(__dirname, '../../../api/migrations/003_m2_capa.sql'), 'utf-8',
+  resolve(__dirname, '../../../api/migrations/003_m2_capa.sql'),
+  'utf-8',
 );
 
 const MIGRATION_004 = readFileSync(
-  resolve(__dirname, '../../../api/migrations/004_m3_audit_studio.sql'), 'utf-8',
+  resolve(__dirname, '../../../api/migrations/004_m3_audit_studio.sql'),
+  'utf-8',
 );
 
 describe('execute-writeback dispatch: schema pinning', () => {
@@ -75,7 +75,7 @@ describe('execute-writeback dispatch: schema pinning', () => {
   describe('ct-governance-write', () => {
     it('is BLOCKED-ON-DESIGN (no m1.roles_responsibilities in any migration)', () => {
       // Writeback correctly blocks ct-governance-write
-      expect(WRITEBACK_CODE).toContain("BLOCKED-ON-DESIGN");
+      expect(WRITEBACK_CODE).toContain('BLOCKED-ON-DESIGN');
       expect(WRITEBACK_CODE).toMatch(/ct-governance-write[\s\S]*?throw new Error/);
     });
   });
@@ -98,7 +98,7 @@ describe('execute-writeback dispatch: schema pinning', () => {
     });
 
     it('throws on unknown tools (never silently drops)', () => {
-      expect(WRITEBACK_CODE).toContain("Unknown writeback tool:");
+      expect(WRITEBACK_CODE).toContain('Unknown writeback tool:');
     });
   });
 
@@ -128,7 +128,7 @@ describe('execute-writeback dispatch: schema pinning', () => {
       expect(WRITEBACK_CODE).toContain("import { ulid } from 'ulid'");
       expect(WRITEBACK_CODE).toContain('const eventId = ulid()');
       // The eventId assignment should NOT use Date.now() or timestamp patterns
-      const eventIdLine = WRITEBACK_CODE.split('\n').find(l => l.includes('const eventId ='));
+      const eventIdLine = WRITEBACK_CODE.split('\n').find((l) => l.includes('const eventId ='));
       expect(eventIdLine).toContain('ulid()');
       expect(eventIdLine).not.toContain('Date.now');
     });
@@ -159,7 +159,10 @@ describe('execute-writeback approval gate (signed contract — BUG-15)', () => {
   const baseInput = {
     tenantId: 'tenant-gate',
     agentName: 'CAPAGuru',
-    proposedAction: { tool: 'capa-open', args: { ncId: 'nc-1', actionDesc: 'proposed', suggestedOwnerId: 'o', dueDate: '2026-08-01' } },
+    proposedAction: {
+      tool: 'capa-open',
+      args: { ncId: 'nc-1', actionDesc: 'proposed', suggestedOwnerId: 'o', dueDate: '2026-08-01' },
+    },
     hitlItemId: '01GATE',
   };
 

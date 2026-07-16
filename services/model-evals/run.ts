@@ -16,7 +16,13 @@ import { computeEstimate, createBudgetGuard } from './src/budget.js';
 import { invokeCandidate } from './src/runner.js';
 import { scoreCandidate } from './src/scorer.js';
 import { generateReport } from './src/reporter.js';
-import type { EvalSet, CandidateReport, ScoredReport, PriceEntry, EvalResult } from './src/types.js';
+import type {
+  EvalSet,
+  CandidateReport,
+  ScoredReport,
+  PriceEntry,
+  EvalResult,
+} from './src/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -58,14 +64,14 @@ Options:
 
 const seatConfig = SEAT_CONFIGS[values.seat];
 if (!seatConfig) {
-  console.error(`ERROR: Unknown seat '${values.seat}'. Available: ${Object.keys(SEAT_CONFIGS).join(', ')}`);
+  console.error(
+    `ERROR: Unknown seat '${values.seat}'. Available: ${Object.keys(SEAT_CONFIGS).join(', ')}`,
+  );
   process.exit(1);
 }
 
 // Narrow candidates if --candidate specified
-const candidates = values.candidate
-  ? [values.candidate]
-  : seatConfig.candidates;
+const candidates = values.candidate ? [values.candidate] : seatConfig.candidates;
 
 console.log(`[model-evals] Seat: ${values.seat}`);
 console.log(`[model-evals] Candidates: ${candidates.join(', ')}`);
@@ -75,7 +81,9 @@ const evalSetPath = resolve(__dirname, seatConfig.evalSetPath);
 let evalSet: EvalSet;
 try {
   evalSet = JSON.parse(readFileSync(evalSetPath, 'utf-8')) as EvalSet;
-  console.log(`[model-evals] Eval set loaded: ${seatConfig.evalSetPath} (${evalSet.taskCount} tasks)`);
+  console.log(
+    `[model-evals] Eval set loaded: ${seatConfig.evalSetPath} (${evalSet.taskCount} tasks)`,
+  );
 } catch (err) {
   console.error(`ERROR: Failed to load eval set at ${evalSetPath}: ${(err as Error).message}`);
   process.exit(1);
@@ -91,7 +99,9 @@ try {
   pricingSources = pricingResult.sources;
   console.log(`[model-evals] Pricing loaded for ${Object.keys(prices).length} models`);
   for (const [modelId, source] of Object.entries(pricingSources)) {
-    console.log(`  ${modelId}: ${source} ($${prices[modelId].inputPricePerMToken}/$${prices[modelId].outputPricePerMToken} per M tokens in/out)`);
+    console.log(
+      `  ${modelId}: ${source} ($${prices[modelId].inputPricePerMToken}/$${prices[modelId].outputPricePerMToken} per M tokens in/out)`,
+    );
   }
 } catch (err) {
   console.error(`ERROR: Pricing fetch failed: ${(err as Error).message}`);
@@ -99,17 +109,19 @@ try {
 }
 
 // Compute cost estimate
-const estimate = computeEstimate(
-  { ...seatConfig, candidates },
-  evalSet,
-  prices,
-);
+const estimate = computeEstimate({ ...seatConfig, candidates }, evalSet, prices);
 
 console.log('');
 console.log('=== Cost Estimate ===');
-console.log(`| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |`);
-console.log(`|------|-------|-----------|-------------|-------------------|--------------------|----------------------|`);
-console.log(`| ${estimate.seat} | ${estimate.taskCount} | ${estimate.candidateCount} | ${estimate.totalInvocations} | ${estimate.estimatedInputTokens.toLocaleString()} | ${estimate.estimatedOutputTokens.toLocaleString()} | $${estimate.estimatedCostUsd.toFixed(4)} |`);
+console.log(
+  `| Seat | Tasks | Candidates | Invocations | Est. Input Tokens | Est. Output Tokens | Est. Cost (worst-case) |`,
+);
+console.log(
+  `|------|-------|-----------|-------------|-------------------|--------------------|----------------------|`,
+);
+console.log(
+  `| ${estimate.seat} | ${estimate.taskCount} | ${estimate.candidateCount} | ${estimate.totalInvocations} | ${estimate.estimatedInputTokens.toLocaleString()} | ${estimate.estimatedOutputTokens.toLocaleString()} | $${estimate.estimatedCostUsd.toFixed(4)} |`,
+);
 console.log('');
 
 if (values['estimate-only']) {
@@ -121,7 +133,10 @@ if (values['estimate-only']) {
 // --rescore mode: reload raw outputs, re-score with current bars, regenerate report
 if (values.rescore) {
   const rescoreRunId = values.rescore;
-  const rescoreDir = resolve('.kiro/evidence/model-policy-evals/runs', `${values.seat}-${rescoreRunId}`);
+  const rescoreDir = resolve(
+    '.kiro/evidence/model-policy-evals/runs',
+    `${values.seat}-${rescoreRunId}`,
+  );
   const rescoreRawDir = resolve(rescoreDir, 'raw');
   console.log(`[model-evals] Rescore mode: loading raw from ${rescoreRawDir}`);
 
@@ -160,7 +175,7 @@ if (values.rescore) {
     const marginInputsPath = resolve(__dirname, 'data/margin-inputs.json');
     const marginInputs = JSON.parse(readFileSync(marginInputsPath, 'utf-8'));
     const seatMargin = marginInputs.creditPricingPerTask[seatConfig.seat];
-    const margin = seatMargin ? 1 - (costP50 / seatMargin.effectivePricePerTask) : 0;
+    const margin = seatMargin ? 1 - costP50 / seatMargin.effectivePricePerTask : 0;
 
     rescoreCandidateReports.push({
       modelId,
@@ -173,8 +188,10 @@ if (values.rescore) {
       tokenUsage: {
         inputP50: results.sort((a, b) => a.inputTokens - b.inputTokens)[p50Idx]?.inputTokens ?? 0,
         inputP95: results.sort((a, b) => a.inputTokens - b.inputTokens)[p95Idx]?.inputTokens ?? 0,
-        outputP50: results.sort((a, b) => a.outputTokens - b.outputTokens)[p50Idx]?.outputTokens ?? 0,
-        outputP95: results.sort((a, b) => a.outputTokens - b.outputTokens)[p95Idx]?.outputTokens ?? 0,
+        outputP50:
+          results.sort((a, b) => a.outputTokens - b.outputTokens)[p50Idx]?.outputTokens ?? 0,
+        outputP95:
+          results.sort((a, b) => a.outputTokens - b.outputTokens)[p95Idx]?.outputTokens ?? 0,
       },
       rank: null,
     });
@@ -182,7 +199,9 @@ if (values.rescore) {
 
   const passers = rescoreCandidateReports.filter((c) => c.qualityPass && c.marginPass);
   passers.sort((a, b) => a.costPerTaskP50 - b.costPerTaskP50);
-  passers.forEach((c, i) => { c.rank = i + 1; });
+  passers.forEach((c, i) => {
+    c.rank = i + 1;
+  });
   const winner = passers[0]?.modelId ?? null;
 
   const rescoreReport: ScoredReport = {
@@ -221,7 +240,9 @@ if (!values['run-id']) {
 
 const approvedBudget = parseFloat(values['approved-budget']);
 if (estimate.estimatedCostUsd > approvedBudget) {
-  console.error(`ERROR: Estimated cost $${estimate.estimatedCostUsd.toFixed(4)} exceeds approved budget $${approvedBudget.toFixed(2)}`);
+  console.error(
+    `ERROR: Estimated cost $${estimate.estimatedCostUsd.toFixed(4)} exceeds approved budget $${approvedBudget.toFixed(2)}`,
+  );
   process.exit(1);
 }
 
@@ -249,18 +270,25 @@ for (const modelId of candidates) {
 
       // FINDING-G: persist raw output per task per model
       const rawFile = resolve(rawDir, `${task.id}-${modelId.replace(/[/:]/g, '_')}.json`);
-      writeFileSync(rawFile, JSON.stringify({
-        taskId: task.id,
-        modelId,
-        prompt: task.prompt,
-        response: result.response,
-        inputTokens: result.inputTokens,
-        outputTokens: result.outputTokens,
-        latencyMs: result.latencyMs,
-        costUsd: result.costUsd,
-        truncated: result.truncated,
-        invocationError: result.invocationError,
-      }, null, 2));
+      writeFileSync(
+        rawFile,
+        JSON.stringify(
+          {
+            taskId: task.id,
+            modelId,
+            prompt: task.prompt,
+            response: result.response,
+            inputTokens: result.inputTokens,
+            outputTokens: result.outputTokens,
+            latencyMs: result.latencyMs,
+            costUsd: result.costUsd,
+            truncated: result.truncated,
+            invocationError: result.invocationError,
+          },
+          null,
+          2,
+        ),
+      );
 
       process.stdout.write(result.invocationError ? 'E' : result.truncated ? 'T' : '.');
     } catch (err) {
@@ -296,7 +324,7 @@ for (const modelId of candidates) {
   const marginInputs = JSON.parse(readFileSync(marginInputsPath, 'utf-8'));
   const seatMargin = marginInputs.creditPricingPerTask[seatConfig.seat];
   const costP50 = costs[p50Idx] ?? 0;
-  const margin = seatMargin ? 1 - (costP50 / seatMargin.effectivePricePerTask) : 0;
+  const margin = seatMargin ? 1 - costP50 / seatMargin.effectivePricePerTask : 0;
 
   candidateReports.push({
     modelId,
@@ -319,7 +347,9 @@ for (const modelId of candidates) {
 // Rank: quality-pass first, then by costP50 ascending
 const passers = candidateReports.filter((c) => c.qualityPass && c.marginPass);
 passers.sort((a, b) => a.costPerTaskP50 - b.costPerTaskP50);
-passers.forEach((c, i) => { c.rank = i + 1; });
+passers.forEach((c, i) => {
+  c.rank = i + 1;
+});
 
 const winner = passers[0]?.modelId ?? null;
 

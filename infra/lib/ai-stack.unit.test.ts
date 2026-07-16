@@ -7,6 +7,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import * as cdk from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as kms from 'aws-cdk-lib/aws-kms';
@@ -23,7 +25,11 @@ function createTestStack(): Template {
   });
 
   // Import keys within the same stack to avoid cross-environment errors
-  const mockKey = kms.Key.fromKeyArn(stack, 'MockKey', 'arn:aws:kms:us-east-1:123456789012:key/mock-key-id');
+  const mockKey = kms.Key.fromKeyArn(
+    stack,
+    'MockKey',
+    'arn:aws:kms:us-east-1:123456789012:key/mock-key-id',
+  );
 
   // Instantiate AiStack as a nested construct (not a separate stack) to avoid cross-env
   const aiStack = new AiStack(app, 'AiStack', {
@@ -50,11 +56,18 @@ function createTestStack(): Template {
       privateSubnetIds: ['subnet-aaa', 'subnet-bbb'],
     }),
     privateSubnets: [
-      ec2.Subnet.fromSubnetAttributes(stack, 'MockSubnetA', { subnetId: 'subnet-aaa', availabilityZone: 'us-east-1b' }),
-      ec2.Subnet.fromSubnetAttributes(stack, 'MockSubnetB', { subnetId: 'subnet-bbb', availabilityZone: 'us-east-1c' }),
+      ec2.Subnet.fromSubnetAttributes(stack, 'MockSubnetA', {
+        subnetId: 'subnet-aaa',
+        availabilityZone: 'us-east-1b',
+      }),
+      ec2.Subnet.fromSubnetAttributes(stack, 'MockSubnetB', {
+        subnetId: 'subnet-bbb',
+        availabilityZone: 'us-east-1c',
+      }),
     ],
     bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
-    appRoleSecretArn: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
+    appRoleSecretArn:
+      'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
     isoKbCollectionArn: 'arn:aws:aoss:us-east-1:123456789012:collection/mockisokb123',
     isoKbCollectionEndpoint: 'https://mockisokb123.us-east-1.aoss.amazonaws.com',
     graphqlApiId: 'test-api-id-123',
@@ -159,8 +172,9 @@ describe('AiStack', () => {
 
     it('agent guardrail STILL anonymizes NAME/EMAIL/PHONE (loosening must not leak)', () => {
       const agent = guardrailsByName()['cumplify-agent-guardrail-dev'];
-      const anonymized = agent.SensitiveInformationPolicyConfig.PiiEntitiesConfig
-        .filter((e: any) => e.Action === 'ANONYMIZE')
+      const anonymized = agent.SensitiveInformationPolicyConfig.PiiEntitiesConfig.filter(
+        (e: any) => e.Action === 'ANONYMIZE',
+      )
         .map((e: any) => e.Type)
         .sort();
       expect(anonymized).toEqual(['EMAIL', 'NAME', 'PHONE']);
@@ -261,7 +275,8 @@ describe('AiStack', () => {
             Match.objectLike({
               Action: 'secretsmanager:GetSecretValue',
               Effect: 'Allow',
-              Resource: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
+              Resource:
+                'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
             }),
           ]),
         },
@@ -326,10 +341,12 @@ describe('AiStack', () => {
       const policies = template.findResources('AWS::IAM::Policy');
       for (const [policyId, policy] of Object.entries(policies)) {
         const statements = (policy as any).Properties?.PolicyDocument?.Statement ?? [];
-        const allActions = statements.flatMap((s: any) => {
-          const actions = s.Action;
-          return Array.isArray(actions) ? actions : [actions];
-        }).filter(Boolean);
+        const allActions = statements
+          .flatMap((s: any) => {
+            const actions = s.Action;
+            return Array.isArray(actions) ? actions : [actions];
+          })
+          .filter(Boolean);
         const hasBedrockInvoke = allActions.includes('bedrock:InvokeModel');
         const hasRdsWrite = allActions.includes('rds-data:BeginTransaction');
         expect(
@@ -341,14 +358,16 @@ describe('AiStack', () => {
 
     it('NEGATIVE (T-1): AgentHandlerReadOnlyPolicy has NO rds-data or DDB actions (T4R-F1)', () => {
       const policies = template.findResources('AWS::IAM::ManagedPolicy');
-      for (const [_policyId, policy] of Object.entries(policies)) {
+      for (const [, policy] of Object.entries(policies)) {
         const desc: string = (policy as any).Properties?.Description ?? '';
         if (!desc.includes('agent handler')) continue;
         const statements = (policy as any).Properties?.PolicyDocument?.Statement ?? [];
-        const allActions = statements.flatMap((s: any) => {
-          const actions = s.Action;
-          return Array.isArray(actions) ? actions : [actions];
-        }).filter(Boolean);
+        const allActions = statements
+          .flatMap((s: any) => {
+            const actions = s.Action;
+            return Array.isArray(actions) ? actions : [actions];
+          })
+          .filter(Boolean);
         // Zero RDS actions
         expect(allActions.filter((a: string) => a.startsWith('rds-data:'))).toHaveLength(0);
         // Zero DynamoDB actions (T4R-F1: no cross-tenant read risk)
@@ -374,16 +393,19 @@ describe('AiStack', () => {
 
     it('HITL-10: WaitForApproval passes sfnExecutionArn and catches SENT_BACK → HandleSendBack', () => {
       const stateMachines = template.findResources('AWS::StepFunctions::StateMachine');
-      const hitl = Object.entries(stateMachines).find(([id]) => id.startsWith('HitlStateMachine'))?.[1] as any;
+      const hitl = Object.entries(stateMachines).find(([id]) =>
+        id.startsWith('HitlStateMachine'),
+      )?.[1] as any;
       const def = hitl.Properties.DefinitionString;
       // DefinitionString is an Fn::Join of literals + ARN refs — rebuild with
       // placeholders so it parses, then assert on the real state graph. A plain
       // string-contains check passes on the dangling Catch.Next reference alone,
       // which is exactly the defect that reached the pipeline (SFN
       // MISSING_TRANSITION_TARGET: HandleSendBack absent from States).
-      const raw = typeof def === 'string'
-        ? def
-        : def['Fn::Join'][1].map((p: unknown) => (typeof p === 'string' ? p : 'ARN')).join('');
+      const raw =
+        typeof def === 'string'
+          ? def
+          : def['Fn::Join'][1].map((p: unknown) => (typeof p === 'string' ? p : 'ARN')).join('');
       const asl = JSON.parse(raw);
       expect(asl.States.HandleSendBack).toBeDefined();
       expect(asl.States.HandleSendBack.Type).toBe('Pass');
@@ -461,9 +483,10 @@ describe('AiStack', () => {
   describe('AOSS Index Template (R5 carry)', () => {
     it('index-template artifact exists with tenantId as keyword', () => {
       // Verify the committed artifact is parseable and correct
-      const { readFileSync } = require('node:fs');
-      const { resolve } = require('node:path');
-      const templatePath = resolve(__dirname, '../../services/agents/shared/aoss-index-template.json');
+      const templatePath = resolve(
+        __dirname,
+        '../../services/agents/shared/aoss-index-template.json',
+      );
       const content = JSON.parse(readFileSync(templatePath, 'utf-8'));
 
       // knn_vector dimension = 1024 (Titan Embed v2)
@@ -471,9 +494,15 @@ describe('AiStack', () => {
       expect(content.template.mappings.properties.embedding.type).toBe('knn_vector');
 
       // metadata.tenantId MUST be keyword (R5 carry — term filter isolation)
-      expect(content.template.mappings.properties.metadata.properties.tenantId.type).toBe('keyword');
-      expect(content.template.mappings.properties.metadata.properties.standard.type).toBe('keyword');
-      expect(content.template.mappings.properties.metadata.properties.clauseRef.type).toBe('keyword');
+      expect(content.template.mappings.properties.metadata.properties.tenantId.type).toBe(
+        'keyword',
+      );
+      expect(content.template.mappings.properties.metadata.properties.standard.type).toBe(
+        'keyword',
+      );
+      expect(content.template.mappings.properties.metadata.properties.clauseRef.type).toBe(
+        'keyword',
+      );
     });
   });
 });
@@ -486,7 +515,7 @@ describe('HITL State Machine (H-4 Task 8R)', () => {
   it('SFN definition contains NO PLACEHOLDER strings', () => {
     // Parse all state machine definitions from the template
     const smResources = template.findResources('AWS::StepFunctions::StateMachine');
-    for (const [_logicalId, resource] of Object.entries(smResources)) {
+    for (const [, resource] of Object.entries(smResources)) {
       const defString = JSON.stringify(resource);
       expect(defString).not.toContain('PLACEHOLDER');
       expect(defString).not.toContain('PLACEHOLDER_WRITEBACK_LAMBDA');
@@ -496,7 +525,7 @@ describe('HITL State Machine (H-4 Task 8R)', () => {
 
   it('SFN definition does NOT contain EmitAuditEvent state', () => {
     const smResources = template.findResources('AWS::StepFunctions::StateMachine');
-    for (const [_logicalId, resource] of Object.entries(smResources)) {
+    for (const [, resource] of Object.entries(smResources)) {
       const defString = JSON.stringify(resource);
       expect(defString).not.toContain('EmitAuditEvent');
     }
@@ -506,8 +535,8 @@ describe('HITL State Machine (H-4 Task 8R)', () => {
     // The SM role should have invoke permissions on the two Lambdas
     // CDK grantInvoke creates IAM policy statements on the SM role
     const policies = template.findResources('AWS::IAM::Policy');
-    const smRolePolicies = Object.entries(policies).filter(([logicalId]) =>
-      logicalId.includes('HitlStateMachine') || logicalId.includes('StateMachine'),
+    const smRolePolicies = Object.entries(policies).filter(
+      ([logicalId]) => logicalId.includes('HitlStateMachine') || logicalId.includes('StateMachine'),
     );
 
     // At least one policy should exist for the SM role
@@ -517,13 +546,20 @@ describe('HITL State Machine (H-4 Task 8R)', () => {
     const invokeArns: string[] = [];
     for (const [, resource] of smRolePolicies) {
       const statements = (resource as Record<string, unknown>).Properties
-        ? ((resource as Record<string, unknown>).Properties as Record<string, unknown>).PolicyDocument
-          ? (((resource as Record<string, unknown>).Properties as Record<string, unknown>).PolicyDocument as Record<string, unknown>).Statement
+        ? ((resource as Record<string, unknown>).Properties as Record<string, unknown>)
+            .PolicyDocument
+          ? (
+              ((resource as Record<string, unknown>).Properties as Record<string, unknown>)
+                .PolicyDocument as Record<string, unknown>
+            ).Statement
           : []
         : [];
       if (Array.isArray(statements)) {
         for (const stmt of statements) {
-          if (stmt.Action === 'lambda:InvokeFunction' || (Array.isArray(stmt.Action) && stmt.Action.includes('lambda:InvokeFunction'))) {
+          if (
+            stmt.Action === 'lambda:InvokeFunction' ||
+            (Array.isArray(stmt.Action) && stmt.Action.includes('lambda:InvokeFunction'))
+          ) {
             if (Array.isArray(stmt.Resource)) {
               invokeArns.push(...stmt.Resource.map((r: unknown) => JSON.stringify(r)));
             } else {
@@ -574,9 +610,14 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
   it('defines 8 agent handler Lambdas (5 SQS + 3 guru)', () => {
     const lambdas = template.findResources('AWS::Lambda::Function');
     const agentHandlerServices = [
-      'agent-capa-guru', 'agent-doc-studio', 'agent-lead-auditor',
-      'agent-control-tower', 'agent-records-vault',
-      'agent-guru-9001', 'agent-guru-14001', 'agent-guru-45001',
+      'agent-capa-guru',
+      'agent-doc-studio',
+      'agent-lead-auditor',
+      'agent-control-tower',
+      'agent-records-vault',
+      'agent-guru-9001',
+      'agent-guru-14001',
+      'agent-guru-45001',
     ];
     const templateJson = JSON.stringify(lambdas);
     for (const svc of agentHandlerServices) {
@@ -587,7 +628,7 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
   it('all agent handlers have AI_INVOKER_ARN in environment', () => {
     const lambdas = template.findResources('AWS::Lambda::Function');
     const handlerLambdas = Object.entries(lambdas).filter(([, resource]) => {
-      const env = ((resource as any).Properties?.Environment?.Variables) ?? {};
+      const env = (resource as any).Properties?.Environment?.Variables ?? {};
       return env.AI_INVOKER_ARN !== undefined;
     });
     // 8 agent handler Lambdas + ComposeSectionFn (spec-40 Task 5) +
@@ -750,10 +791,13 @@ describe('COND-4 credit-cap alerts (owner-ratified 2026-07-10, $25/mo alert-only
 
   it('both cap alarms notify the CMK-encrypted alert topic; owner email subscribed', () => {
     // Topic: CMK-encrypted (AwsSolutions-SNS2) — KmsMasterKeyId present
-    template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({
-      TopicName: 'cumplify-dev-credit-cap-alerts',
-      KmsMasterKeyId: Match.anyValue(),
-    }));
+    template.hasResourceProperties(
+      'AWS::SNS::Topic',
+      Match.objectLike({
+        TopicName: 'cumplify-dev-credit-cap-alerts',
+        KmsMasterKeyId: Match.anyValue(),
+      }),
+    );
     // Owner email subscription (delivery starts after confirmation click)
     template.hasResourceProperties('AWS::SNS::Subscription', {
       Protocol: 'email',
@@ -793,26 +837,31 @@ describe('spec-40 DocGen generation plane (Task 5)', () => {
   it('Map runs at MaxConcurrency 4 over $.sections (design §4.1)', () => {
     const machines = template.findResources('AWS::StepFunctions::StateMachine');
     const docgen = Object.values(machines).find(
-      m => (m.Properties as { StateMachineName?: string }).StateMachineName === 'cumplify-docgen-dev',
+      (m) =>
+        (m.Properties as { StateMachineName?: string }).StateMachineName === 'cumplify-docgen-dev',
     )!;
     // DefinitionString is an Fn::Join with escaped quotes — normalize first
-    const def = JSON.stringify((docgen.Properties as { DefinitionString: unknown }).DefinitionString)
-      .replace(/\\"/g, '"');
+    const def = JSON.stringify(
+      (docgen.Properties as { DefinitionString: unknown }).DefinitionString,
+    ).replace(/\\"/g, '"');
     expect(def).toContain('"MaxConcurrency":4');
     expect(def).toContain('$.sections');
   });
 
   it('ComposeSection reaches Bedrock ONLY via the invoker (one door): lambda:InvokeFunction granted, no bedrock:InvokeModel on its role', () => {
     const policies = template.findResources('AWS::IAM::Policy');
-    const composePolicies = Object.entries(policies).filter(([name]) => name.startsWith('ComposeSectionFn'));
+    const composePolicies = Object.entries(policies).filter(([name]) =>
+      name.startsWith('ComposeSectionFn'),
+    );
     expect(composePolicies.length).toBeGreaterThan(0);
     // Inspect ACTIONS only — resource ARN refs (e.g. the invoker fn ref) may
     // textually embed unrelated logical IDs.
     const actions = composePolicies.flatMap(([, pol]) =>
-      ((pol as any).Properties.PolicyDocument.Statement as Array<{ Action: string | string[] }>)
-        .flatMap(st => (Array.isArray(st.Action) ? st.Action : [st.Action])),
+      (
+        (pol as any).Properties.PolicyDocument.Statement as Array<{ Action: string | string[] }>
+      ).flatMap((st) => (Array.isArray(st.Action) ? st.Action : [st.Action])),
     );
     expect(actions).toContain('lambda:InvokeFunction');
-    expect(actions.filter(a => a.startsWith('bedrock:'))).toEqual([]);
+    expect(actions.filter((a) => a.startsWith('bedrock:'))).toEqual([]);
   });
 });

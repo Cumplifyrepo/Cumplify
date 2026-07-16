@@ -28,7 +28,12 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
 });
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 import { handler } from '../../src/resolvers/m1.js';
@@ -39,7 +44,9 @@ function makeEvent(fieldName: string, args: Record<string, unknown> = {}) {
   return {
     info: { fieldName },
     arguments: args,
-    identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'QualityManager' } },
+    identity: {
+      resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'QualityManager' },
+    },
   };
 }
 
@@ -65,15 +72,15 @@ describe('submitDocumentForApproval — NEGATIVE PATH FIRST', () => {
       columnMetadata: [{ name: 'cnt' }],
     });
 
-    await expect(
-      handler(makeEvent('submitDocumentForApproval', { id: 'doc-1' })),
-    ).rejects.toThrow('UNREVIEWED_SECTIONS');
+    await expect(handler(makeEvent('submitDocumentForApproval', { id: 'doc-1' }))).rejects.toThrow(
+      'UNREVIEWED_SECTIONS',
+    );
 
     expect(mockRollback).toHaveBeenCalled();
     expect(mockCommit).not.toHaveBeenCalled();
     // No status change written
-    const allSqls = mockExecute.mock.calls.map(c => c[0] as string);
-    expect(allSqls.filter(s => s.includes("status = 'in_review'"))).toHaveLength(0);
+    const allSqls = mockExecute.mock.calls.map((c) => c[0] as string);
+    expect(allSqls.filter((s) => s.includes("status = 'in_review'"))).toHaveLength(0);
   });
 
   it('UNRESOLVED_GAPS when generation run has gap/failed sections', async () => {
@@ -93,16 +100,19 @@ describe('submitDocumentForApproval — NEGATIVE PATH FIRST', () => {
       columnMetadata: [{ name: 'cnt' }],
     });
 
-    await expect(
-      handler(makeEvent('submitDocumentForApproval', { id: 'doc-1' })),
-    ).rejects.toThrow('UNRESOLVED_GAPS');
+    await expect(handler(makeEvent('submitDocumentForApproval', { id: 'doc-1' }))).rejects.toThrow(
+      'UNRESOLVED_GAPS',
+    );
 
     expect(mockRollback).toHaveBeenCalled();
   });
 
   it('non-generated document (no run) submits normally without precondition checks', async () => {
     // Call 1: no generation run for this document
-    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'id' }, { name: 'status' }] });
+    mockExecute.mockResolvedValueOnce({
+      records: [],
+      columnMetadata: [{ name: 'id' }, { name: 'status' }],
+    });
     // Call 2: status update (no precondition queries)
     mockExecute.mockResolvedValueOnce({
       records: [[{ stringValue: 'doc-1' }, { stringValue: 'in_review' }]],
@@ -115,9 +125,11 @@ describe('submitDocumentForApproval — NEGATIVE PATH FIRST', () => {
     expect(mockExecute).toHaveBeenCalledTimes(2);
     expect(mockCommit).toHaveBeenCalled();
     // Audit event published
-    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
-      detailType: 'Document.SubmittedForApproval',
-    }));
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detailType: 'Document.SubmittedForApproval',
+      }),
+    );
   });
 
   it('precondition queries use real 011 column names with ::uuid casts', async () => {
@@ -125,9 +137,18 @@ describe('submitDocumentForApproval — NEGATIVE PATH FIRST', () => {
       records: [[{ stringValue: 'run-1' }, { stringValue: 'running' }]],
       columnMetadata: [{ name: 'id' }, { name: 'status' }],
     });
-    mockExecute.mockResolvedValueOnce({ records: [[{ longValue: 0 }]], columnMetadata: [{ name: 'cnt' }] });
-    mockExecute.mockResolvedValueOnce({ records: [[{ longValue: 0 }]], columnMetadata: [{ name: 'cnt' }] });
-    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'doc-1' }]], columnMetadata: [{ name: 'id' }] });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ longValue: 0 }]],
+      columnMetadata: [{ name: 'cnt' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ longValue: 0 }]],
+      columnMetadata: [{ name: 'cnt' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'doc-1' }]],
+      columnMetadata: [{ name: 'id' }],
+    });
 
     await handler(makeEvent('submitDocumentForApproval', { id: 'doc-1' }));
 
@@ -160,20 +181,24 @@ describe('approveDocumentVersion — BC-11 SoD', () => {
     });
 
     await expect(
-      handler(makeEvent('approveDocumentVersion', { input: { versionId: 'v-1', decision: 'APPROVED' } })),
+      handler(
+        makeEvent('approveDocumentVersion', { input: { versionId: 'v-1', decision: 'APPROVED' } }),
+      ),
     ).rejects.toThrow('SOD_VIOLATION');
 
     // Rollback called (before publish)
     expect(mockRollback).toHaveBeenCalled();
     expect(mockCommit).not.toHaveBeenCalled();
     // Security event published
-    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
-      detailType: 'Security.SodViolationBlocked',
-      payload: expect.objectContaining({ attemptedBy: 'user-test', createdBy: 'user-test' }),
-    }));
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detailType: 'Security.SodViolationBlocked',
+        payload: expect.objectContaining({ attemptedBy: 'user-test', createdBy: 'user-test' }),
+      }),
+    );
     // No approval written
-    const allSqls = mockExecute.mock.calls.map(c => c[0] as string);
-    expect(allSqls.filter(s => s.includes('INSERT INTO m1.document_approvals'))).toHaveLength(0);
+    const allSqls = mockExecute.mock.calls.map((c) => c[0] as string);
+    expect(allSqls.filter((s) => s.includes('INSERT INTO m1.document_approvals'))).toHaveLength(0);
   });
 
   it('second-user approval succeeds when approver !== created_by', async () => {
@@ -184,16 +209,32 @@ describe('approveDocumentVersion — BC-11 SoD', () => {
     });
     // Call 2: INSERT approval
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'approval-1' }, { stringValue: 'v-1' }, { stringValue: 'user-test' }, { stringValue: 'approved' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'document_version_id' }, { name: 'approver_id' }, { name: 'decision' }],
+      records: [
+        [
+          { stringValue: 'approval-1' },
+          { stringValue: 'v-1' },
+          { stringValue: 'user-test' },
+          { stringValue: 'approved' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'document_version_id' },
+        { name: 'approver_id' },
+        { name: 'decision' },
+      ],
     });
 
-    await handler(makeEvent('approveDocumentVersion', { input: { versionId: 'v-1', decision: 'APPROVED' } }));
+    await handler(
+      makeEvent('approveDocumentVersion', { input: { versionId: 'v-1', decision: 'APPROVED' } }),
+    );
 
     expect(mockCommit).toHaveBeenCalled();
-    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
-      detailType: 'Document.Approved',
-    }));
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detailType: 'Document.Approved',
+      }),
+    );
   });
 
   it('SoD check queries version with ::uuid cast', async () => {
@@ -201,9 +242,14 @@ describe('approveDocumentVersion — BC-11 SoD', () => {
       records: [[{ stringValue: 'other-user' }]],
       columnMetadata: [{ name: 'created_by' }],
     });
-    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'a-1' }]], columnMetadata: [{ name: 'id' }] });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'a-1' }]],
+      columnMetadata: [{ name: 'id' }],
+    });
 
-    await handler(makeEvent('approveDocumentVersion', { input: { versionId: 'v-1', decision: 'APPROVED' } }));
+    await handler(
+      makeEvent('approveDocumentVersion', { input: { versionId: 'v-1', decision: 'APPROVED' } }),
+    );
 
     const [sodSql] = mockExecute.mock.calls[0];
     expect(sodSql).toContain('m1.document_versions');

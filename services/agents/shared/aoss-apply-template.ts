@@ -32,8 +32,6 @@ const MAX_ATTEMPTS = 8;
 const BASE_DELAY_MS = 2_000;
 const MAX_DELAY_MS = 30_000;
 
-
-
 function retryable(status: number): boolean {
   // 403: data-access policy still propagating; 404/0: endpoint DNS/activation; 5xx/429: transient
   return status === 403 || status === 404 || status === 429 || status >= 500;
@@ -91,7 +89,9 @@ export async function verifyTemplate(name: string, endpoint: string): Promise<Ve
     throw new Error(`FAIL-CLOSED ${name}: embedding.dimension=${dimension}, expected 1024`);
   }
   if (tenantIdType !== 'keyword') {
-    throw new Error(`FAIL-CLOSED ${name}: metadata.tenantId.type=${tenantIdType}, expected keyword`);
+    throw new Error(
+      `FAIL-CLOSED ${name}: metadata.tenantId.type=${tenantIdType}, expected keyword`,
+    );
   }
   return { collection: name, dimension, tenantIdType };
 }

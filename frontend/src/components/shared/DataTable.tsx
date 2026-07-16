@@ -45,7 +45,11 @@ export function DataTable<T>({
       <thead>
         <tr className={styles.headerRow}>
           {columns.map((col) => (
-            <th key={col.key} className={styles.headerCell} style={col.width ? { width: col.width } : undefined}>
+            <th
+              key={col.key}
+              className={styles.headerCell}
+              style={col.width ? { width: col.width } : undefined}
+            >
               {col.header}
             </th>
           ))}

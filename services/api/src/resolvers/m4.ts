@@ -8,7 +8,15 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { QueryCommand } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany, getTenantDdbClient, TABLE_NAME } from './shared.js';
+import {
+  extractContext,
+  beginTenantTransaction,
+  publishAuditEvent,
+  marshalOne,
+  marshalMany,
+  getTenantDdbClient,
+  TABLE_NAME,
+} from './shared.js';
 
 const logger = new Logger({ serviceName: 'resolver-m4' });
 
@@ -24,14 +32,22 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
 
   switch (event.info.fieldName) {
-    case 'registerRecord': return registerRecord(event, tenantId, sub);
-    case 'registerMeasuringResource': return registerMeasuringResource(event, tenantId, sub);
-    case 'recordCalibration': return recordCalibration(event, tenantId, sub);
-    case 'createRetentionPolicy': return createRetentionPolicy(event, tenantId, sub);
-    case 'getRecord': return getRecord(event, tenantId);
-    case 'listCalibrationsDue': return listCalibrationsDue(event, tenantId);
-    case 'getAuditTrail': return getAuditTrail(event, tenantId);
-    default: throw new Error(`Unknown field: ${event.info.fieldName}`);
+    case 'registerRecord':
+      return registerRecord(event, tenantId, sub);
+    case 'registerMeasuringResource':
+      return registerMeasuringResource(event, tenantId, sub);
+    case 'recordCalibration':
+      return recordCalibration(event, tenantId, sub);
+    case 'createRetentionPolicy':
+      return createRetentionPolicy(event, tenantId, sub);
+    case 'getRecord':
+      return getRecord(event, tenantId);
+    case 'listCalibrationsDue':
+      return listCalibrationsDue(event, tenantId);
+    case 'getAuditTrail':
+      return getAuditTrail(event, tenantId);
+    default:
+      throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
 
@@ -48,23 +64,40 @@ async function registerRecord(event: AppSyncEvent, tenantId: string, actor: stri
         { name: 'standard', value: { stringValue: input.standard as string } },
         { name: 'recordType', value: { stringValue: input.recordType as string } },
         { name: 'sourceModule', value: { stringValue: input.sourceModule as string } },
-        { name: 'retentionClass', value: input.retentionClass ? { stringValue: input.retentionClass as string } : { isNull: true } },
-        { name: 's3ObjectRef', value: input.s3ObjectRef ? { stringValue: input.s3ObjectRef as string } : { isNull: true } },
+        {
+          name: 'retentionClass',
+          value: input.retentionClass
+            ? { stringValue: input.retentionClass as string }
+            : { isNull: true },
+        },
+        {
+          name: 's3ObjectRef',
+          value: input.s3ObjectRef
+            ? { stringValue: input.s3ObjectRef as string }
+            : { isNull: true },
+        },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
     await txn.commit();
     const record = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M4',
-      clauseRef: 'ISO 9001 7.5.3', standard: 'ISO9001',
-      detailType: 'Record.Registered', source: 'cumplify.m4.records',
+      tenantId,
+      actor,
+      module: 'M4',
+      clauseRef: 'ISO 9001 7.5.3',
+      standard: 'ISO9001',
+      detailType: 'Record.Registered',
+      source: 'cumplify.m4.records',
       entityId: String(record?.id ?? ''),
       payload: { recordId: record?.id, input },
     });
     logger.info('Record registered', { tenantId });
     return record;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function registerMeasuringResource(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -85,15 +118,22 @@ async function registerMeasuringResource(event: AppSyncEvent, tenantId: string, 
     await txn.commit();
     const resource = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M4',
-      clauseRef: 'ISO 9001 7.1.5.1', standard: 'ISO9001',
-      detailType: 'MeasuringResource.Registered', source: 'cumplify.m4.records',
+      tenantId,
+      actor,
+      module: 'M4',
+      clauseRef: 'ISO 9001 7.1.5.1',
+      standard: 'ISO9001',
+      detailType: 'MeasuringResource.Registered',
+      source: 'cumplify.m4.records',
       entityId: String(resource?.id ?? ''),
       payload: { resourceId: resource?.id, assetTag: input.assetTag },
     });
     logger.info('Measuring resource registered', { tenantId });
     return resource;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function recordCalibration(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -106,10 +146,18 @@ async function recordCalibration(event: AppSyncEvent, tenantId: string, actor: s
        RETURNING *`,
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'measuringResourceId', value: { stringValue: input.measuringResourceId as string } },
+        {
+          name: 'measuringResourceId',
+          value: { stringValue: input.measuringResourceId as string },
+        },
         { name: 'nextDue', value: { stringValue: input.nextDue as string } },
         { name: 'standardUsed', value: { stringValue: input.standardUsed as string } },
-        { name: 'traceabilityRef', value: input.traceabilityRef ? { stringValue: input.traceabilityRef as string } : { isNull: true } },
+        {
+          name: 'traceabilityRef',
+          value: input.traceabilityRef
+            ? { stringValue: input.traceabilityRef as string }
+            : { isNull: true },
+        },
         { name: 'result', value: { stringValue: input.result as string } },
         { name: 'actor', value: { stringValue: actor } },
       ],
@@ -117,15 +165,26 @@ async function recordCalibration(event: AppSyncEvent, tenantId: string, actor: s
     await txn.commit();
     const calibration = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M4',
-      clauseRef: 'ISO 9001 7.1.5.2', standard: 'ISO9001',
-      detailType: 'Calibration.Recorded', source: 'cumplify.m4.records',
+      tenantId,
+      actor,
+      module: 'M4',
+      clauseRef: 'ISO 9001 7.1.5.2',
+      standard: 'ISO9001',
+      detailType: 'Calibration.Recorded',
+      source: 'cumplify.m4.records',
       entityId: String(calibration?.id ?? ''), // the CalibrationRecord row the mutation returns
-      payload: { calibrationId: calibration?.id, measuringResourceId: input.measuringResourceId, result: input.result },
+      payload: {
+        calibrationId: calibration?.id,
+        measuringResourceId: input.measuringResourceId,
+        result: input.result,
+      },
     });
     logger.info('Calibration recorded', { tenantId });
     return calibration;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function createRetentionPolicy(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -147,26 +206,39 @@ async function createRetentionPolicy(event: AppSyncEvent, tenantId: string, acto
     await txn.commit();
     const policy = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M4',
-      clauseRef: 'ISO 9001 7.5.3', standard: 'ISO9001',
-      detailType: 'Record.RetentionPolicySet', source: 'cumplify.m4.records',
+      tenantId,
+      actor,
+      module: 'M4',
+      clauseRef: 'ISO 9001 7.5.3',
+      standard: 'ISO9001',
+      detailType: 'Record.RetentionPolicySet',
+      source: 'cumplify.m4.records',
       entityId: String(policy?.id ?? ''), // the RetentionPolicy row the mutation returns
-      payload: { retentionPolicyId: policy?.id, recordType: input.recordType, retentionYears: input.retentionYears },
+      payload: {
+        retentionPolicyId: policy?.id,
+        recordType: input.recordType,
+        retentionYears: input.retentionYears,
+      },
     });
     return policy;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function getRecord(event: AppSyncEvent, tenantId: string) {
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(
-      `SELECT * FROM m4.records WHERE id = :id::uuid`,
-      [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
-    );
+    const result = await txn.execute(`SELECT * FROM m4.records WHERE id = :id::uuid`, [
+      { name: 'id', value: { stringValue: event.arguments.id as string } },
+    ]);
     await txn.commit();
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function listCalibrationsDue(event: AppSyncEvent, tenantId: string) {
@@ -181,7 +253,10 @@ async function listCalibrationsDue(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 /**
@@ -220,20 +295,22 @@ async function getAuditTrail(event: AppSyncEvent, tenantId: string) {
   const gsiMatches: Record<string, unknown>[] = [];
   let gsiLastKey: Record<string, unknown> | undefined;
   do {
-    const resp = await ddb.send(new QueryCommand({
-      TableName: TABLE_NAME,
-      IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :gpk', // :gpk = TENANT#<tenantId>#ENTITY#<entityId> (FF-5)
-      // The itemType filter keeps this query audit-ledger-only even if another
-      // item type ever adopts GSI1 (today the ledger is its sole writer).
-      FilterExpression: 'itemType = :audit',
-      ExpressionAttributeValues: {
-        ':gpk': { S: `TENANT#${tenantId}#ENTITY#${entityId}` },
-        ':audit': { S: 'AUDITLOG' },
-      },
-      ScanIndexForward: false,
-      ExclusiveStartKey: gsiLastKey as never,
-    }));
+    const resp = await ddb.send(
+      new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: 'GSI1',
+        KeyConditionExpression: 'GSI1PK = :gpk', // :gpk = TENANT#<tenantId>#ENTITY#<entityId> (FF-5)
+        // The itemType filter keeps this query audit-ledger-only even if another
+        // item type ever adopts GSI1 (today the ledger is its sole writer).
+        FilterExpression: 'itemType = :audit',
+        ExpressionAttributeValues: {
+          ':gpk': { S: `TENANT#${tenantId}#ENTITY#${entityId}` },
+          ':audit': { S: 'AUDITLOG' },
+        },
+        ScanIndexForward: false,
+        ExclusiveStartKey: gsiLastKey as never,
+      }),
+    );
     for (const raw of resp.Items ?? []) {
       gsiMatches.push(shape(unmarshall(raw)));
     }
@@ -250,13 +327,15 @@ async function getAuditTrail(event: AppSyncEvent, tenantId: string) {
   let pages = 0;
 
   do {
-    const resp = await ddb.send(new QueryCommand({
-      TableName: TABLE_NAME,
-      KeyConditionExpression: 'PK = :pk',
-      ExpressionAttributeValues: { ':pk': { S: pk } },
-      ScanIndexForward: false,
-      ExclusiveStartKey: lastKey as never,
-    }));
+    const resp = await ddb.send(
+      new QueryCommand({
+        TableName: TABLE_NAME,
+        KeyConditionExpression: 'PK = :pk',
+        ExpressionAttributeValues: { ':pk': { S: pk } },
+        ScanIndexForward: false,
+        ExclusiveStartKey: lastKey as never,
+      }),
+    );
     for (const raw of resp.Items ?? []) {
       const item = unmarshall(raw);
       if (JSON.stringify(item.payload ?? {}).includes(entityId)) {

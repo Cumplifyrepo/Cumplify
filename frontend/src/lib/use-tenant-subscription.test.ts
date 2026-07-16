@@ -3,9 +3,23 @@ import { renderHook, act } from '@testing-library/react';
 import { useTenantSubscription } from './use-tenant-subscription';
 
 // Mock auth context
-const mockUser = { sub: 'u1', email: 'test@test.com', tenantId: 'T1', role: 'QualityManager', locale: 'en' };
+const mockUser = {
+  sub: 'u1',
+  email: 'test@test.com',
+  tenantId: 'T1',
+  role: 'QualityManager',
+  locale: 'en',
+};
 vi.mock('./auth-context', () => ({
-  useAuth: () => ({ user: mockUser, idToken: 'mock-token', isAuthenticated: true, isLoading: false, signIn: vi.fn(), signOut: vi.fn(), refreshLocale: vi.fn() }),
+  useAuth: () => ({
+    user: mockUser,
+    idToken: 'mock-token',
+    isAuthenticated: true,
+    isLoading: false,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    refreshLocale: vi.fn(),
+  }),
 }));
 
 // Mock fetchAuthSession

@@ -25,13 +25,7 @@ export function Sidebar() {
     <aside className={styles.sidebar}>
       <div className={styles.logoWrap}>
         <Link href="/dashboard" aria-label="Cumplify">
-          <Image
-            src="/brand/cumplify-logo.png"
-            alt="Cumplify"
-            width={120}
-            height={43}
-            priority
-          />
+          <Image src="/brand/cumplify-logo.png" alt="Cumplify" width={120} height={43} priority />
         </Link>
       </div>
 

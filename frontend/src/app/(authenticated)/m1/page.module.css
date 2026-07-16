@@ -17,7 +17,10 @@
   color: var(--color-text-secondary);
   border-radius: var(--radius-pill);
   border: 1px solid var(--color-border-subtle);
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .pill:hover {

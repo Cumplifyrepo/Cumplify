@@ -41,15 +41,25 @@ export function setSelectedStandard(s: Standard) {
 export function addUserMessage(content: string, standard: Standard): string {
   counter += 1;
   const id = `msg-${counter}`;
-  messages = [...messages, { id, role: 'user', content, standard, citations: [], timestamp: Date.now() }];
+  messages = [
+    ...messages,
+    { id, role: 'user', content, standard, citations: [], timestamp: Date.now() },
+  ];
   notify();
   return id;
 }
 
-export function addAssistantMessage(content: string, standard: Standard, citations: string[]): string {
+export function addAssistantMessage(
+  content: string,
+  standard: Standard,
+  citations: string[],
+): string {
   counter += 1;
   const id = `msg-${counter}`;
-  messages = [...messages, { id, role: 'assistant', content, standard, citations, timestamp: Date.now() }];
+  messages = [
+    ...messages,
+    { id, role: 'assistant', content, standard, citations, timestamp: Date.now() },
+  ];
   notify();
   return id;
 }

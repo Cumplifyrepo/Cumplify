@@ -52,15 +52,31 @@ const seed = JSON.parse(
 );
 // Non-seat candidates (Task 14) carry spec-30 live-API prices not in the seed.
 const EXTRA_PRICES: Record<string, PriceEntry> = {
-  'zai.glm-5': { inputPricePerMToken: 1.0, outputPricePerMToken: 3.2, unit: 'M tokens', notes: 'spec-30 task-8 live-API' },
-  'deepseek.v3.2': { inputPricePerMToken: 0.62, outputPricePerMToken: 1.85, unit: 'M tokens', notes: 'spec-30 task-8 live-API' },
+  'zai.glm-5': {
+    inputPricePerMToken: 1.0,
+    outputPricePerMToken: 3.2,
+    unit: 'M tokens',
+    notes: 'spec-30 task-8 live-API',
+  },
+  'deepseek.v3.2': {
+    inputPricePerMToken: 0.62,
+    outputPricePerMToken: 1.85,
+    unit: 'M tokens',
+    notes: 'spec-30 task-8 live-API',
+  },
 };
 
 function priceFor(modelId: string): PriceEntry {
   const w = seed.models[modelId];
-  if (w) return { inputPricePerMToken: w.wIn / 1000, outputPricePerMToken: w.wOut / 1000, unit: 'M tokens' };
+  if (w)
+    return {
+      inputPricePerMToken: w.wIn / 1000,
+      outputPricePerMToken: w.wOut / 1000,
+      unit: 'M tokens',
+    };
   const extra = EXTRA_PRICES[modelId];
-  if (!extra) throw new Error(`No price for ${modelId} — refuse to run unpriced (spec-30 incident #4)`);
+  if (!extra)
+    throw new Error(`No price for ${modelId} — refuse to run unpriced (spec-30 incident #4)`);
   return extra;
 }
 
@@ -72,14 +88,22 @@ interface ProverChunk {
   metadata: Record<string, string>;
 }
 
-async function retrieveChunks(vector: number[]): Promise<{ chunks: ProverChunk[]; latencyMs: number; attempts: number; coldStart: boolean }> {
-  const resp = await lambda.send(new InvokeCommand({
-    FunctionName: PROVER,
-    Payload: JSON.stringify({
-      action: 'query', collection: COLLECTION, indexName: INDEX,
-      tenantId: TENANT, queryVector: vector, topK: TOP_K,
+async function retrieveChunks(
+  vector: number[],
+): Promise<{ chunks: ProverChunk[]; latencyMs: number; attempts: number; coldStart: boolean }> {
+  const resp = await lambda.send(
+    new InvokeCommand({
+      FunctionName: PROVER,
+      Payload: JSON.stringify({
+        action: 'query',
+        collection: COLLECTION,
+        indexName: INDEX,
+        tenantId: TENANT,
+        queryVector: vector,
+        topK: TOP_K,
+      }),
     }),
-  }));
+  );
   if (resp.FunctionError) {
     throw new Error(`Prover retrieval failed: ${Buffer.from(resp.Payload!).toString()}`);
   }
@@ -102,7 +126,9 @@ async function main(): Promise<void> {
   const evalSet = JSON.parse(readFileSync(EVAL_SET, 'utf-8'));
   const tasks: EvalTask[] = evalSet.tasks;
   const queryVectors: Record<string, number[]> = Object.fromEntries(
-    JSON.parse(readFileSync(QUERIES, 'utf-8')).queries.map((q: { id: string; embedding: number[] }) => [q.id, q.embedding]),
+    JSON.parse(readFileSync(QUERIES, 'utf-8')).queries.map(
+      (q: { id: string; embedding: number[] }) => [q.id, q.embedding],
+    ),
   );
   const seatConfig = SEAT_CONFIGS[SEAT];
   if (!seatConfig) throw new Error(`Unknown seat '${SEAT}'`);
@@ -134,34 +160,57 @@ async function main(): Promise<void> {
     const result = await invokeCandidate(MODEL, grounded, seatConfig, price, guard);
     totalCost += result.costUsd;
 
-    const score = AUTO_SCORE ? scoreClauseCitation(result.response, task.expectedClauses ?? []) : undefined;
+    const score = AUTO_SCORE
+      ? scoreClauseCitation(result.response, task.expectedClauses ?? [])
+      : undefined;
     if (score !== undefined) scores.push(score);
 
-    writeFileSync(join(OUT, `${task.id}.json`), JSON.stringify({
-      taskId: task.id, model: MODEL,
-      retrieval: {
-        latencyMs: retrieval.latencyMs, attempts: retrieval.attempts, coldStart: retrieval.coldStart,
-        chunks: retrieval.chunks.map((c) => ({ clauseRef: c.metadata.clauseRef, score: c.score })),
-        recall,
-      },
-      response: result.response,
-      inputTokens: result.inputTokens, outputTokens: result.outputTokens,
-      costUsd: result.costUsd, latencyMs: result.latencyMs, score,
-    }, null, 1));
+    writeFileSync(
+      join(OUT, `${task.id}.json`),
+      JSON.stringify(
+        {
+          taskId: task.id,
+          model: MODEL,
+          retrieval: {
+            latencyMs: retrieval.latencyMs,
+            attempts: retrieval.attempts,
+            coldStart: retrieval.coldStart,
+            chunks: retrieval.chunks.map((c) => ({
+              clauseRef: c.metadata.clauseRef,
+              score: c.score,
+            })),
+            recall,
+          },
+          response: result.response,
+          inputTokens: result.inputTokens,
+          outputTokens: result.outputTokens,
+          costUsd: result.costUsd,
+          latencyMs: result.latencyMs,
+          score,
+        },
+        null,
+        1,
+      ),
+    );
 
     console.log(
       `${task.id}: recall=${recall.toFixed(2)}${score !== undefined ? ` score=${score.toFixed(2)}` : ''} ` +
-      `cost=$${result.costUsd.toFixed(5)} (cum $${totalCost.toFixed(4)})`,
+        `cost=$${result.costUsd.toFixed(5)} (cum $${totalCost.toFixed(4)})`,
     );
   }
 
   const mean = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : NaN;
   const meanRecall = retrievalRecall.reduce((a, b) => a + b, 0) / retrievalRecall.length;
   const summary = {
-    model: MODEL, seat: SEAT, tasks: tasks.length,
+    model: MODEL,
+    seat: SEAT,
+    tasks: tasks.length,
     meanScore: AUTO_SCORE ? Number(mean.toFixed(4)) : 'HUMAN-GRADED',
     bar: seatConfig.qualityBar,
-    pass: AUTO_SCORE && seatConfig.qualityBar != null ? mean >= seatConfig.qualityBar : 'PENDING-HUMAN-GRADING',
+    pass:
+      AUTO_SCORE && seatConfig.qualityBar != null
+        ? mean >= seatConfig.qualityBar
+        : 'PENDING-HUMAN-GRADING',
     meanRetrievalRecall: Number(meanRecall.toFixed(4)),
     retrievalColdStarts,
     totalCostUsd: Number(totalCost.toFixed(4)),

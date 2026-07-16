@@ -31,7 +31,12 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
 });
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 import { handler as m1Handler } from '../../src/resolvers/m1.js';
@@ -86,7 +91,9 @@ describe('m1 listDocumentVersions', () => {
 
   it('rolls back and rethrows on execute failure', async () => {
     mockExecute.mockRejectedValueOnce(new Error('boom'));
-    await expect(m1Handler(makeEvent('listDocumentVersions', { documentId: 'doc-1' }))).rejects.toThrow('boom');
+    await expect(
+      m1Handler(makeEvent('listDocumentVersions', { documentId: 'doc-1' })),
+    ).rejects.toThrow('boom');
     expect(mockRollback).toHaveBeenCalled();
   });
 });
@@ -102,7 +109,9 @@ describe('m2 listNonconformities', () => {
   });
 
   it('severity filter mapped to lowercase CHECK value', async () => {
-    await m2Handler(makeEvent('listNonconformities', { standard: 'ISO9001', severity: 'CRITICAL' }));
+    await m2Handler(
+      makeEvent('listNonconformities', { standard: 'ISO9001', severity: 'CRITICAL' }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('standard = :standard');
     expect(sql).toContain('severity = :severity');

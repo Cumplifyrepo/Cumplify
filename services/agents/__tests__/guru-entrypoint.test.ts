@@ -12,10 +12,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockSend = vi.fn();
 vi.mock('@aws-sdk/client-lambda', () => ({
-  LambdaClient: class { send = mockSend; },
+  LambdaClient: class {
+    send = mockSend;
+  },
   InvokeCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 
@@ -47,13 +51,16 @@ describe('guru AppSync entrypoints', () => {
 
       it('FAIL-CLOSED: throws Unauthorized when resolverContext.tenantId is absent', async () => {
         const { handler } = (await guru.mod()) as { handler: (e: unknown) => Promise<string> };
-        await expect(handler({ arguments: { question: 'What is clause 4.1?' } }))
-          .rejects.toThrow(/Unauthorized/);
+        await expect(handler({ arguments: { question: 'What is clause 4.1?' } })).rejects.toThrow(
+          /Unauthorized/,
+        );
         // tenantId in client ARGUMENTS must not be accepted as identity
-        await expect(handler({
-          arguments: { question: 'q', tenantId: 'tenant-EVIL' },
-          identity: { resolverContext: {} },
-        })).rejects.toThrow(/Unauthorized/);
+        await expect(
+          handler({
+            arguments: { question: 'q', tenantId: 'tenant-EVIL' },
+            identity: { resolverContext: {} },
+          }),
+        ).rejects.toThrow(/Unauthorized/);
         expect(mockSend).not.toHaveBeenCalled();
       });
 

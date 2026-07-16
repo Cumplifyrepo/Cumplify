@@ -71,10 +71,7 @@ export async function loadWeights(modelId: string): Promise<ModelWeight> {
  * Atomically increment the tenant's monthly credit meter.
  * Key: TENANT#<tenantId>#METER / MONTH#<yyyymm>
  */
-export async function incrementMeter(
-  tenantId: string,
-  credits: number,
-): Promise<void> {
+export async function incrementMeter(tenantId: string, credits: number): Promise<void> {
   const yyyymm = new Date().toISOString().slice(0, 7).replace('-', '');
   const pk = `TENANT#${tenantId}#METER`;
   const sk = `MONTH#${yyyymm}`;

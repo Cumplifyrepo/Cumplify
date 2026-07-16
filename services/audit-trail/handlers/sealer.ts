@@ -34,9 +34,7 @@ async function sealRecord(record: DynamoDBRecord): Promise<void> {
     return; // Filter should prevent this, but defend in depth
   }
 
-  const item = unmarshall(
-    record.dynamodb.NewImage as Record<string, AttributeValue>,
-  );
+  const item = unmarshall(record.dynamodb.NewImage as Record<string, AttributeValue>);
   const pk = item.PK as string;
 
   // Defense-in-depth: itemType guard (FIX-4)

@@ -86,9 +86,13 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
 
     // Publish audit event with REAL id from INSERT result (BUG-B fix)
     await publishAuditEvent({
-      tenantId, actor, module: 'M5',
-      clauseRef: 'ISO 9001 6.1', standard: 'ISO9001',
-      detailType: 'Risk.Created', source: 'cumplify.m5.risk',
+      tenantId,
+      actor,
+      module: 'M5',
+      clauseRef: 'ISO 9001 6.1',
+      standard: 'ISO9001',
+      detailType: 'Risk.Created',
+      source: 'cumplify.m5.risk',
       entityId: String(risk?.id ?? ''),
       payload: { riskId: risk?.id, category, description: input.description },
     });
@@ -123,9 +127,13 @@ async function addRiskTreatment(event: AppSyncEvent, tenantId: string, actor: st
 
     const treatment = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M5',
-      clauseRef: 'ISO 9001 6.1', standard: 'ISO9001',
-      detailType: 'Risk.TreatmentAdded', source: 'cumplify.m5.risk',
+      tenantId,
+      actor,
+      module: 'M5',
+      clauseRef: 'ISO 9001 6.1',
+      standard: 'ISO9001',
+      detailType: 'Risk.TreatmentAdded',
+      source: 'cumplify.m5.risk',
       entityId: String(treatment?.id ?? ''), // the RiskTreatment row the mutation returns
       payload: { treatmentId: treatment?.id, riskId: input.riskId, input },
     });
@@ -158,9 +166,13 @@ async function createChangePlan(event: AppSyncEvent, tenantId: string, actor: st
 
     const plan = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M5',
-      clauseRef: 'ISO 9001 6.3', standard: 'ISO9001',
-      detailType: 'Change.Planned', source: 'cumplify.m5.risk',
+      tenantId,
+      actor,
+      module: 'M5',
+      clauseRef: 'ISO 9001 6.3',
+      standard: 'ISO9001',
+      detailType: 'Change.Planned',
+      source: 'cumplify.m5.risk',
       entityId: String(plan?.id ?? ''),
       payload: { changePlanId: plan?.id, input },
     });
@@ -176,10 +188,9 @@ async function getRisk(event: AppSyncEvent, tenantId: string) {
   const id = event.arguments.id as string;
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(
-      `SELECT * FROM m5.risks WHERE id = :id::uuid`,
-      [{ name: 'id', value: { stringValue: id } }],
-    );
+    const result = await txn.execute(`SELECT * FROM m5.risks WHERE id = :id::uuid`, [
+      { name: 'id', value: { stringValue: id } },
+    ]);
     await txn.commit();
     return marshalOne(result);
   } catch (err) {
@@ -204,7 +215,10 @@ async function getCrossRegisterRiskView(event: AppSyncEvent, tenantId: string) {
   }
   if (category) {
     clauses.push('category = :category');
-    params.push({ name: 'category', value: { stringValue: mapEnum(RISK_CATEGORY_MAP, category, 'category') } });
+    params.push({
+      name: 'category',
+      value: { stringValue: mapEnum(RISK_CATEGORY_MAP, category, 'category') },
+    });
   }
   const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
   const txn = await beginTenantTransaction(tenantId);

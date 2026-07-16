@@ -133,7 +133,10 @@ export async function resolveHitlItem(
  * Truncate conversation state to fit within a byte budget (R6-n1).
  * Takes the last N messages; if serialized size exceeds budget, drops oldest.
  */
-function truncateConversation(messages: ConversationMessage[], maxBytes: number): ConversationMessage[] {
+function truncateConversation(
+  messages: ConversationMessage[],
+  maxBytes: number,
+): ConversationMessage[] {
   let slice = messages.slice(-10);
   while (slice.length > 0) {
     const size = Buffer.byteLength(JSON.stringify(slice), 'utf-8');

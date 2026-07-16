@@ -89,9 +89,7 @@ export function AgentsFeedPanel() {
               <li key={evt.id} className={styles.row}>
                 <span className={`${styles.dot} ${isRecent ? styles.pulse : ''}`} />
                 <span className={styles.label}>{t(evt.typeKey)}</span>
-                {evt.clauseRef && (
-                  <ClauseChip standard={evt.standard} clauseRef={evt.clauseRef} />
-                )}
+                {evt.clauseRef && <ClauseChip standard={evt.standard} clauseRef={evt.clauseRef} />}
                 <span className={styles.time}>{formatRelative(evt.timestamp)}</span>
               </li>
             );

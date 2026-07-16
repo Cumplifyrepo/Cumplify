@@ -78,17 +78,29 @@ describe('assertSchemaValid', () => {
   const schema = { required: ['status'], properties: { status: { type: 'string' } } };
 
   it('returns parsed value on valid input', () => {
-    const result = assertSchemaValid('{"status":"ok"}', schema, { seat: 'workhorse', modelId: 'test', attempt: 1 });
+    const result = assertSchemaValid('{"status":"ok"}', schema, {
+      seat: 'workhorse',
+      modelId: 'test',
+      attempt: 1,
+    });
     expect(result).toEqual({ status: 'ok' });
   });
 
   it('throws SCHEMA_VALIDATION_ERROR on invalid input', () => {
     expect(() =>
-      assertSchemaValid('{"wrong":"field"}', schema, { seat: 'workhorse', modelId: 'test', attempt: 1 }),
+      assertSchemaValid('{"wrong":"field"}', schema, {
+        seat: 'workhorse',
+        modelId: 'test',
+        attempt: 1,
+      }),
     ).toThrow(InvokeError);
 
     try {
-      assertSchemaValid('{"wrong":"field"}', schema, { seat: 'workhorse', modelId: 'test', attempt: 1 });
+      assertSchemaValid('{"wrong":"field"}', schema, {
+        seat: 'workhorse',
+        modelId: 'test',
+        attempt: 1,
+      });
     } catch (err) {
       expect((err as InvokeError).code).toBe('SCHEMA_VALIDATION_ERROR');
     }

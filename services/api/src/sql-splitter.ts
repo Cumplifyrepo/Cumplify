@@ -7,7 +7,7 @@
  *   - Dollar-quoted blocks: $$ ... $$ AND tagged $tag$ ... $tag$
  *   - Single-quoted string literals (with '' escapes)
  *   - Line comments (--)
- *   - Block comments (/* ... *​/)
+ *   - Block comments (slash-star ... star-slash)
  *
  * A semicolon inside any of these contexts is NOT a separator.
  * Empty/whitespace-only statements are skipped.

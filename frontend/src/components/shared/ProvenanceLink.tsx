@@ -25,9 +25,7 @@ export function ProvenanceLink({
     return <>{children}</>;
   }
 
-  const href = entityId
-    ? `/m4?trail=${entityId}${auditEventId ? `#${auditEventId}` : ''}`
-    : '#';
+  const href = entityId ? `/m4?trail=${entityId}${auditEventId ? `#${auditEventId}` : ''}` : '#';
 
   return (
     <Link href={href} className={styles.link} title={t('sealed')}>

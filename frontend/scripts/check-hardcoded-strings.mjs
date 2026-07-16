@@ -22,7 +22,7 @@ const SAFE_PATTERNS = [
   /testID=/,
   /href=/,
   /src=/,
-  /alt=""/,  // empty alt is accessibility pattern
+  /alt=""/, // empty alt is accessibility pattern
   /type=/,
   /id=/,
   /name=/,
@@ -59,7 +59,12 @@ for (const file of getAllFiles(SRC_DIR)) {
     const line = lines[i];
 
     // Skip imports, comments, type annotations
-    if (line.trimStart().startsWith('import ') || line.trimStart().startsWith('//') || line.trimStart().startsWith('*')) continue;
+    if (
+      line.trimStart().startsWith('import ') ||
+      line.trimStart().startsWith('//') ||
+      line.trimStart().startsWith('*')
+    )
+      continue;
 
     // Check for JSX string children (text between > and <)
     let match;
@@ -67,7 +72,7 @@ for (const file of getAllFiles(SRC_DIR)) {
     while ((match = JSX_STRING_CHILD.exec(line)) !== null) {
       const text = match[1].trim();
       // Skip if it's in a safe attribute context
-      const isSafe = SAFE_PATTERNS.some(p => p.test(line.slice(0, match.index + 1)));
+      const isSafe = SAFE_PATTERNS.some((p) => p.test(line.slice(0, match.index + 1)));
       if (isSafe) continue;
       // Skip very short strings or code-like strings
       if (text.length < 4 || /^[A-Z_]+$/.test(text) || /^\d/.test(text)) continue;

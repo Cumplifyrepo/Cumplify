@@ -43,7 +43,7 @@ vi.mock('next-intl', () => {
   return {
     useTranslations: (ns: string) => {
       const t = (key: string) => translations[ns]?.[key] ?? `${ns}.${key}`;
-      t.has = (key: string) => !!(translations[ns]?.[key]);
+      t.has = (key: string) => !!translations[ns]?.[key];
       return t;
     },
   };
@@ -96,7 +96,9 @@ describe('SettingsPage', () => {
 
       expect(screen.getByText('Acme Corp')).toBeInTheDocument();
       expect(screen.getByText('ES')).toBeInTheDocument();
-      expect(screen.getByText('The document locale is set at the organization level.')).toBeInTheDocument();
+      expect(
+        screen.getByText('The document locale is set at the organization level.'),
+      ).toBeInTheDocument();
     });
 
     it('renders My Profile panel with LocaleSwitcher', async () => {

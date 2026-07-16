@@ -15,8 +15,24 @@ describe('M1 version-rail id wiring', () => {
     // This test asserts the contract: versionId comes from a DocumentVersion object, not from doc.id
     const doc = { id: 'doc-123', status: 'IN_REVIEW' };
     const versions = [
-      { id: 'ver-1', documentId: 'doc-123', versionNo: 1, contentRef: '', changeSummary: '', authorId: '', createdAt: '' },
-      { id: 'ver-2', documentId: 'doc-123', versionNo: 2, contentRef: '', changeSummary: '', authorId: '', createdAt: '' },
+      {
+        id: 'ver-1',
+        documentId: 'doc-123',
+        versionNo: 1,
+        contentRef: '',
+        changeSummary: '',
+        authorId: '',
+        createdAt: '',
+      },
+      {
+        id: 'ver-2',
+        documentId: 'doc-123',
+        versionNo: 2,
+        contentRef: '',
+        changeSummary: '',
+        authorId: '',
+        createdAt: '',
+      },
     ];
 
     // Correct: approve uses the latest version's id
@@ -40,13 +56,33 @@ describe('M2 timeline CA id wiring', () => {
   it('verifyEffectiveness takes correctiveActionId from a CA row, not nc.id', () => {
     const nc = { id: 'nc-456', status: 'IN_PROGRESS' };
     const cas = [
-      { id: 'ca-001', ncId: 'nc-456', actionDesc: 'Fix valve', ownerId: 'u1', dueDate: '2026-08-01', status: 'OPEN', containmentFlag: false },
-      { id: 'ca-002', ncId: 'nc-456', actionDesc: 'Train staff', ownerId: 'u2', dueDate: '2026-08-15', status: 'OPEN', containmentFlag: false },
+      {
+        id: 'ca-001',
+        ncId: 'nc-456',
+        actionDesc: 'Fix valve',
+        ownerId: 'u1',
+        dueDate: '2026-08-01',
+        status: 'OPEN',
+        containmentFlag: false,
+      },
+      {
+        id: 'ca-002',
+        ncId: 'nc-456',
+        actionDesc: 'Train staff',
+        ownerId: 'u2',
+        dueDate: '2026-08-15',
+        status: 'OPEN',
+        containmentFlag: false,
+      },
     ];
 
     // The user selects CA ca-001 to verify
     const selectedCA = cas[0];
-    const verifyInput = { correctiveActionId: selectedCA.id, verificationMethod: '5W', effective: true };
+    const verifyInput = {
+      correctiveActionId: selectedCA.id,
+      verificationMethod: '5W',
+      effective: true,
+    };
 
     expect(verifyInput.correctiveActionId).toBe('ca-001');
     expect(verifyInput.correctiveActionId).not.toBe(nc.id); // NEVER nc.id

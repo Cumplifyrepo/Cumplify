@@ -7,43 +7,145 @@ const mockMutate = vi.fn();
 
 vi.mock('@/lib/api', () => ({ useGraphQL: () => ({ query: mockQuery, mutate: mockMutate }) }));
 vi.mock('@/lib/auth-context', () => ({
-  useAuth: () => ({ user: { sub: 'u1', tenantId: 'T1', role: 'QualityManager', locale: 'en' }, isAuthenticated: true, isLoading: false, signIn: vi.fn(), signOut: vi.fn(), refreshLocale: vi.fn() }),
+  useAuth: () => ({
+    user: { sub: 'u1', tenantId: 'T1', role: 'QualityManager', locale: 'en' },
+    isAuthenticated: true,
+    isLoading: false,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    refreshLocale: vi.fn(),
+  }),
 }));
 
 vi.mock('next-intl', () => {
   const t: Record<string, Record<string, string>> = {
     qms: { title: 'QMS', tabWizard: 'Profile', tabRegistry: 'Registry' },
-    'qms.wizard': { title: 'Org Profile', loading: 'Loading...', legalName: 'Legal Name', industry: 'Industry', industryOther: 'Specify your industry...', productsServices: 'Products', employeeCount: 'Employees', managementRep: 'Rep', standardsInScope: 'Standards', designResponsibility: 'Design', coreProcesses: 'Processes', siteName: 'Site', save: 'Save', saving: 'Saving', targetCertDate: 'Cert Date', stepBasic: 'Basic', stepSites: 'Sites', stepScope: 'Scope', prev: 'Prev', next: 'Next', yearFounded: 'Year', supplyChainShape: 'Supply Chain', existingCertifications: 'Certs', manualExists: 'Manual?', outsourcedProcesses: 'Outsourced', siteAddress: 'Address', siteCity: 'City', siteState: 'State', siteCountry: 'Country', siteHeadcount: 'Headcount', addSite: 'Add Site', removeSite: 'Remove' },
-    'qms.registry': { loading: 'Loading...', namedGaps: 'Missing evidence', requiresRegisterData: 'Requires {register} data', naJustified: 'N/A justified', markApplicable: 'Applicable', markExcluded: 'Exclude', justificationPlaceholder: 'Justify', showAll: 'Show all' },
+    'qms.wizard': {
+      title: 'Org Profile',
+      loading: 'Loading...',
+      legalName: 'Legal Name',
+      industry: 'Industry',
+      industryOther: 'Specify your industry...',
+      productsServices: 'Products',
+      employeeCount: 'Employees',
+      managementRep: 'Rep',
+      standardsInScope: 'Standards',
+      designResponsibility: 'Design',
+      coreProcesses: 'Processes',
+      siteName: 'Site',
+      save: 'Save',
+      saving: 'Saving',
+      targetCertDate: 'Cert Date',
+      stepBasic: 'Basic',
+      stepSites: 'Sites',
+      stepScope: 'Scope',
+      prev: 'Prev',
+      next: 'Next',
+      yearFounded: 'Year',
+      supplyChainShape: 'Supply Chain',
+      existingCertifications: 'Certs',
+      manualExists: 'Manual?',
+      outsourcedProcesses: 'Outsourced',
+      siteAddress: 'Address',
+      siteCity: 'City',
+      siteState: 'State',
+      siteCountry: 'Country',
+      siteHeadcount: 'Headcount',
+      addSite: 'Add Site',
+      removeSite: 'Remove',
+    },
+    'qms.registry': {
+      loading: 'Loading...',
+      namedGaps: 'Missing evidence',
+      requiresRegisterData: 'Requires {register} data',
+      naJustified: 'N/A justified',
+      markApplicable: 'Applicable',
+      markExcluded: 'Exclude',
+      justificationPlaceholder: 'Justify',
+      showAll: 'Show all',
+    },
   };
-  return { useTranslations: (ns: string) => { const fn = (k: string) => t[ns]?.[k] ?? `${ns}.${k}`; fn.has = (k: string) => !!(t[ns]?.[k]); return fn; } };
+  return {
+    useTranslations: (ns: string) => {
+      const fn = (k: string) => t[ns]?.[k] ?? `${ns}.${k}`;
+      fn.has = (k: string) => !!t[ns]?.[k];
+      return fn;
+    },
+  };
 });
 
 vi.mock('@/components/shared', () => ({
   PageHeader: ({ title }: { title: string }) => <h1 data-testid="header">{title}</h1>,
-  Panel: ({ children, title }: { children: React.ReactNode; title?: string }) => <section data-testid={`panel-${title}`}>{children}</section>,
-  PrimaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...p}>{children}</button>,
-  SecondaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...p}>{children}</button>,
-  ErrorState: ({ onRetry }: { onRetry: () => void }) => <button onClick={onRetry}>retry-action</button>,
+  Panel: ({ children, title }: { children: React.ReactNode; title?: string }) => (
+    <section data-testid={`panel-${title}`}>{children}</section>
+  ),
+  PrimaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button {...p}>{children}</button>
+  ),
+  SecondaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button {...p}>{children}</button>
+  ),
+  ErrorState: ({ onRetry }: { onRetry: () => void }) => (
+    <button onClick={onRetry}>retry-action</button>
+  ),
 }));
 
 const DEFAULT_PROFILE_FILLED = {
-  legalName: 'Acme', sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Manufacturing',
-  productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: false,
-  standardsInScope: ['ISO9001'], managementRep: 'Jane',
+  legalName: 'Acme',
+  sites: [{ name: 'HQ' }],
+  employeeCount: 50,
+  industry: 'Manufacturing',
+  productsServices: 'Widgets',
+  coreProcesses: ['assembly'],
+  designResponsibility: false,
+  standardsInScope: ['ISO9001'],
+  managementRep: 'Jane',
 };
 
 const mockClauses = [
-  { id: 'c-1', standard: 'ISO9001', clauseNo: '4.1', clauseTitle: 'Context', intentParaphrase: 'Understand context', requiredSources: '["org_profile.legalName","org_profile.industry"]', sortOrder: 1 },
-  { id: 'c-2', standard: 'ISO9001', clauseNo: '7.2', clauseTitle: 'Competence', intentParaphrase: 'Ensure competence', requiredSources: '["register.training_records"]', sortOrder: 2 },
+  {
+    id: 'c-1',
+    standard: 'ISO9001',
+    clauseNo: '4.1',
+    clauseTitle: 'Context',
+    intentParaphrase: 'Understand context',
+    requiredSources: '["org_profile.legalName","org_profile.industry"]',
+    sortOrder: 1,
+  },
+  {
+    id: 'c-2',
+    standard: 'ISO9001',
+    clauseNo: '7.2',
+    clauseTitle: 'Competence',
+    intentParaphrase: 'Ensure competence',
+    requiredSources: '["register.training_records"]',
+    sortOrder: 2,
+  },
 ];
 
 beforeEach(() => {
   vi.clearAllMocks();
   mockQuery.mockImplementation((q: string) => {
-    if (q.includes('getOrgProfile')) return Promise.resolve({ getOrgProfile: { payload: JSON.stringify({ legalName: 'Acme', sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Manufacturing', productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: false, standardsInScope: ['ISO9001'], managementRep: 'Jane' }) } });
-    if (q.includes('listClauseRegistry')) return Promise.resolve({ listClauseRegistry: mockClauses });
-    if (q.includes('listClauseApplicability')) return Promise.resolve({ listClauseApplicability: [] });
+    if (q.includes('getOrgProfile'))
+      return Promise.resolve({
+        getOrgProfile: {
+          payload: JSON.stringify({
+            legalName: 'Acme',
+            sites: [{ name: 'HQ' }],
+            employeeCount: 50,
+            industry: 'Manufacturing',
+            productsServices: 'Widgets',
+            coreProcesses: ['assembly'],
+            designResponsibility: false,
+            standardsInScope: ['ISO9001'],
+            managementRep: 'Jane',
+          }),
+        },
+      });
+    if (q.includes('listClauseRegistry'))
+      return Promise.resolve({ listClauseRegistry: mockClauses });
+    if (q.includes('listClauseApplicability'))
+      return Promise.resolve({ listClauseApplicability: [] });
     return Promise.resolve({});
   });
 });
@@ -81,10 +183,17 @@ describe('QMS Registry — ORG-4: exclude button disabled without justification'
 describe('QMS Wizard — Industry free-text flow (T11 Item 0)', () => {
   it('selecting Other reveals text input; typed value lands in saveOrgProfile payload', async () => {
     mockQuery.mockImplementation((q: string) => {
-      if (q.includes('getOrgProfile')) return Promise.resolve({ getOrgProfile: { payload: JSON.stringify({ ...DEFAULT_PROFILE_FILLED, industry: 'Manufacturing' }) } });
+      if (q.includes('getOrgProfile'))
+        return Promise.resolve({
+          getOrgProfile: {
+            payload: JSON.stringify({ ...DEFAULT_PROFILE_FILLED, industry: 'Manufacturing' }),
+          },
+        });
       return Promise.resolve({});
     });
-    mockMutate.mockResolvedValue({ saveOrgProfile: { id: '1', currentVersion: 2, payload: '{}', updatedAt: '2026-07-15' } });
+    mockMutate.mockResolvedValue({
+      saveOrgProfile: { id: '1', currentVersion: 2, payload: '{}', updatedAt: '2026-07-15' },
+    });
 
     render(<QmsPage />);
     await waitFor(() => expect(screen.getByDisplayValue('Manufacturing')).toBeInTheDocument());
@@ -94,7 +203,9 @@ describe('QMS Wizard — Industry free-text flow (T11 Item 0)', () => {
     fireEvent.change(select, { target: { value: 'Other' } });
 
     // Text input should appear for custom industry
-    const customInput = await waitFor(() => screen.getByPlaceholderText('Specify your industry...'));
+    const customInput = await waitFor(() =>
+      screen.getByPlaceholderText('Specify your industry...'),
+    );
     expect(customInput).toBeInTheDocument();
 
     // Type a custom industry
@@ -111,13 +222,20 @@ describe('QMS Wizard — Industry free-text flow (T11 Item 0)', () => {
 
   it('selecting a taxonomy value hides the free-text input', async () => {
     mockQuery.mockImplementation((q: string) => {
-      if (q.includes('getOrgProfile')) return Promise.resolve({ getOrgProfile: { payload: JSON.stringify({ ...DEFAULT_PROFILE_FILLED, industry: 'Custom stuff' }) } });
+      if (q.includes('getOrgProfile'))
+        return Promise.resolve({
+          getOrgProfile: {
+            payload: JSON.stringify({ ...DEFAULT_PROFILE_FILLED, industry: 'Custom stuff' }),
+          },
+        });
       return Promise.resolve({});
     });
 
     render(<QmsPage />);
     // Profile has non-taxonomy industry → shows Other in dropdown + text input visible
-    await waitFor(() => expect(screen.getByPlaceholderText('Specify your industry...')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByPlaceholderText('Specify your industry...')).toBeInTheDocument(),
+    );
 
     // Select a taxonomy value
     const select = screen.getByDisplayValue('Other');

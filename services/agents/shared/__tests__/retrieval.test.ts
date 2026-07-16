@@ -65,7 +65,9 @@ describe('retrieval wrapper', () => {
 
   it('throws TenantFilterMissingError when tenantId is empty (REQ-RET-1)', async () => {
     const client = mockClient([]);
-    await expect(retrieve(baseRequest({ tenantId: '' }), client)).rejects.toThrow(TenantFilterMissingError);
+    await expect(retrieve(baseRequest({ tenantId: '' }), client)).rejects.toThrow(
+      TenantFilterMissingError,
+    );
   });
 
   it('retries on 503 with exponential backoff (cold-start scenario)', async () => {

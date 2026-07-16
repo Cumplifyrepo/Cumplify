@@ -35,9 +35,9 @@ describe('doc-composer register entry', () => {
   });
 
   it("the seat's model has a MODELWEIGHT# seed row (metering cannot silently lack weights)", () => {
-    const seed = JSON.parse(readFileSync(
-      resolve(__dirname, '../data/model-weights-seed.json'), 'utf-8',
-    )) as { models: Record<string, unknown> };
+    const seed = JSON.parse(
+      readFileSync(resolve(__dirname, '../data/model-weights-seed.json'), 'utf-8'),
+    ) as { models: Record<string, unknown> };
     const entry = resolveModel('doc-composer', loadRegister());
     expect(seed.models[entry.modelId], `no weight seed for ${entry.modelId}`).toBeDefined();
   });
@@ -60,7 +60,10 @@ describe('doc-composer output schema via schema-retry', () => {
     ['empty factRefs array', { sentences: [{ text: 'Weakly attributed.', factRefs: [] }] }],
     ['empty sentences array', { sentences: [] }],
     ['missing sentences key', { paragraphs: [] }],
-    ['extra property on sentence', { sentences: [{ text: 'x', factRefs: ['F1'], confidence: 0.9 }] }],
+    [
+      'extra property on sentence',
+      { sentences: [{ text: 'x', factRefs: ['F1'], confidence: 0.9 }] },
+    ],
   ])('rejects %s with SCHEMA_VALIDATION_ERROR', (_label, payload) => {
     try {
       assertSchemaValid(JSON.stringify(payload), DOC_COMPOSER_OUTPUT_SCHEMA, ctx);

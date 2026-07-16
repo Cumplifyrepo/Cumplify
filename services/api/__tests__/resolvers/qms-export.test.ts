@@ -30,11 +30,20 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
   };
 });
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 vi.mock('@aws-sdk/client-lambda', () => ({
-  LambdaClient: class { send = mockLambdaSend; },
-  InvokeCommand: class { constructor(public input: unknown) {} },
+  LambdaClient: class {
+    send = mockLambdaSend;
+  },
+  InvokeCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 import { handler } from '../../src/resolvers/qms.js';
@@ -50,24 +59,45 @@ function makeEvent(documentId?: string) {
 }
 
 const manualRow = {
-  records: [[
-    { stringValue: 'doc-manual' }, { stringValue: 'IMS Manual' }, { stringValue: 'manual' },
-    { stringValue: 'IMS' }, { stringValue: 'ver-manual' }, { longValue: 1 },
-    { stringValue: `tenants/${T}/documents/doc-manual/v1.json` },
-  ]],
+  records: [
+    [
+      { stringValue: 'doc-manual' },
+      { stringValue: 'IMS Manual' },
+      { stringValue: 'manual' },
+      { stringValue: 'IMS' },
+      { stringValue: 'ver-manual' },
+      { longValue: 1 },
+      { stringValue: `tenants/${T}/documents/doc-manual/v1.json` },
+    ],
+  ],
   columnMetadata: [
-    { name: 'document_id' }, { name: 'title' }, { name: 'doc_type' }, { name: 'standard' },
-    { name: 'version_id' }, { name: 'version_no' }, { name: 'content_ref' },
+    { name: 'document_id' },
+    { name: 'title' },
+    { name: 'doc_type' },
+    { name: 'standard' },
+    { name: 'version_id' },
+    { name: 'version_no' },
+    { name: 'content_ref' },
   ],
 };
 const candidateRows = {
-  records: [[
-    { stringValue: 'doc-ml' }, { stringValue: 'Master List' }, { stringValue: 'IMS' },
-    { stringValue: 'ver-ml' }, { longValue: 1 }, { stringValue: `tenants/${T}/documents/doc-ml/v1.json` },
-  ]],
+  records: [
+    [
+      { stringValue: 'doc-ml' },
+      { stringValue: 'Master List' },
+      { stringValue: 'IMS' },
+      { stringValue: 'ver-ml' },
+      { longValue: 1 },
+      { stringValue: `tenants/${T}/documents/doc-ml/v1.json` },
+    ],
+  ],
   columnMetadata: [
-    { name: 'document_id' }, { name: 'title' }, { name: 'standard' },
-    { name: 'version_id' }, { name: 'version_no' }, { name: 'content_ref' },
+    { name: 'document_id' },
+    { name: 'title' },
+    { name: 'standard' },
+    { name: 'version_id' },
+    { name: 'version_no' },
+    { name: 'content_ref' },
   ],
 };
 const emptyRes = { records: [], columnMetadata: [] };
@@ -83,12 +113,15 @@ describe('requestImsExport', () => {
   it('invokes ExportFn with the manual (latest version) + master-list candidates; relays url/expiresAt', async () => {
     mockExecute.mockResolvedValueOnce(manualRow).mockResolvedValueOnce(candidateRows);
     mockLambdaSend.mockResolvedValue({
-      Payload: new TextEncoder().encode(JSON.stringify({
-        url: 'https://signed.example/ims.zip', expiresAt: '2026-07-16T00:15:00Z',
-      })),
+      Payload: new TextEncoder().encode(
+        JSON.stringify({
+          url: 'https://signed.example/ims.zip',
+          expiresAt: '2026-07-16T00:15:00Z',
+        }),
+      ),
     });
 
-    const res = await handler(makeEvent('doc-manual')) as { url: string; expiresAt: string };
+    const res = (await handler(makeEvent('doc-manual'))) as { url: string; expiresAt: string };
     expect(res.url).toBe('https://signed.example/ims.zip');
     expect(res.expiresAt).toBe('2026-07-16T00:15:00Z');
 
@@ -105,12 +138,16 @@ describe('requestImsExport', () => {
     expect(payload).toMatchObject({
       tenantId: T,
       manual: {
-        documentId: 'doc-manual', versionId: 'ver-manual',
-        contentKey: `tenants/${T}/documents/doc-manual/v1.json`, versionNo: 1,
+        documentId: 'doc-manual',
+        versionId: 'ver-manual',
+        contentKey: `tenants/${T}/documents/doc-manual/v1.json`,
+        versionNo: 1,
       },
     });
     expect(payload.masterListCandidates).toHaveLength(1);
-    expect(payload.masterListCandidates[0].contentKey).toBe(`tenants/${T}/documents/doc-ml/v1.json`);
+    expect(payload.masterListCandidates[0].contentKey).toBe(
+      `tenants/${T}/documents/doc-ml/v1.json`,
+    );
   });
 
   it('DOCUMENT_NOT_FOUND when the manual has no row (RLS: other-tenant ids look identical)', async () => {

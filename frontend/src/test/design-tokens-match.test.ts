@@ -31,7 +31,12 @@ describe('globals.css / design-tokens.ts sync', () => {
 
     for (const line of varLines) {
       const varName = line.match(/^(--[\w-]+)/)?.[1];
-      if (varName && (varName.startsWith('--color-') || varName.startsWith('--font-') || varName.startsWith('--radius-'))) {
+      if (
+        varName &&
+        (varName.startsWith('--color-') ||
+          varName.startsWith('--font-') ||
+          varName.startsWith('--radius-'))
+      ) {
         expect(cssVariables).toHaveProperty(varName);
       }
     }

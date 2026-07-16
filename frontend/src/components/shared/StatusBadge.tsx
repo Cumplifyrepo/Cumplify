@@ -44,7 +44,5 @@ export function StatusBadge({ status }: { status: string }) {
   // Fallback to formatted raw string if key not found
   const label = t.has(key) ? t(key) : status.replace(/_/g, ' ');
 
-  return (
-    <span className={`${styles.badge} ${styles[variant]}`}>{label}</span>
-  );
+  return <span className={`${styles.badge} ${styles[variant]}`}>{label}</span>;
 }

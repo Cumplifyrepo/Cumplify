@@ -4,3 +4,9 @@ cdk.out/
 .kiro/evidence/
 docs/
 *.md
+frontend/out/
+frontend/.next/
+coverage/
+# SDL is line-oriented: schema-guard + resolver-count tripwires assert per-line
+# invariants (one field per line, directive on the field's line). Hand-format.
+services/api/schema/schema.graphql

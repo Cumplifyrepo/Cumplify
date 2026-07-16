@@ -8,9 +8,7 @@
     {
       "id": "guru-45001-001",
       "prompt": "Our warehouse crew wants a formal say in how we run the safety program, not just a suggestion box. Which ISO 45001 clause requires us to establish processes for consulting workers and getting them to participate in the OH&S management system?",
-      "expectedClauses": [
-        "ISO 45001 5.4"
-      ],
+      "expectedClauses": ["ISO 45001 5.4"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 5.4 requires processes for consultation and participation of workers at all levels and functions in developing, planning, implementing, evaluating, and improving the OH&S system."
@@ -19,9 +17,7 @@
     {
       "id": "guru-45001-002",
       "prompt": "I'm the new safety manager at a metal fabrication shop and need to draft our top-level safety commitment document. Which ISO 45001 clause requires an OH&S policy and defines what it has to commit to?",
-      "expectedClauses": [
-        "ISO 45001 5.2"
-      ],
+      "expectedClauses": ["ISO 45001 5.2"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 5.2 requires an OH&S policy committing to safe and healthy working conditions, hazard elimination and risk reduction, meeting legal and other requirements, and worker consultation and participation."
@@ -30,9 +26,7 @@
     {
       "id": "guru-45001-003",
       "prompt": "Our auditor said our once-a-year hazard walkthrough isn't enough — we need something ongoing and proactive. Which ISO 45001 clause requires a continuous process for identifying workplace hazards?",
-      "expectedClauses": [
-        "ISO 45001 6.1.2.1"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.2.1"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 6.1.2.1 requires an ongoing, proactive hazard identification process covering routine and non-routine activities, incidents, human factors, and work organization."
@@ -41,9 +35,7 @@
     {
       "id": "guru-45001-004",
       "prompt": "Which ISO 45001 clause requires us to apply the hierarchy of controls when we work to eliminate hazards and reduce OH&S risks?",
-      "expectedClauses": [
-        "ISO 45001 8.1.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.2"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 8.1.2 requires applying the hierarchy of controls: elimination, substitution, engineering controls/reorganization, administrative controls including training, then PPE."
@@ -52,9 +44,7 @@
     {
       "id": "guru-45001-005",
       "prompt": "Which ISO 45001 clause covers being ready for and responding to potential emergencies like fires, chemical spills, or medical events on site?",
-      "expectedClauses": [
-        "ISO 45001 8.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.2"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 8.2 requires processes to prepare for and respond to potential emergency situations, including planned response, drills/tests, and post-test review."
@@ -63,9 +53,7 @@
     {
       "id": "guru-45001-006",
       "prompt": "Before we rearrange the production line layout, which ISO 45001 clause requires us to plan and control changes that could affect OH&S performance?",
-      "expectedClauses": [
-        "ISO 45001 8.1.3"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.3"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 8.1.3 (management of change) requires processes to implement and control planned changes affecting OH&S performance."
@@ -74,9 +62,7 @@
     {
       "id": "guru-45001-007",
       "prompt": "A subcontractor crew is coming to our plant next month to do electrical panel upgrades. Which specific ISO 45001 sub-clause requires us to coordinate hazards with contractors working on our site?",
-      "expectedClauses": [
-        "ISO 45001 8.1.4.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.4.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 8.1.4.2 requires coordinating with contractors on hazards — the contractor-specific sub-clause of procurement."
@@ -85,9 +71,7 @@
     {
       "id": "guru-45001-008",
       "prompt": "We're about to hand our entire janitorial and facilities-upkeep function to an outside firm. Which ISO 45001 sub-clause requires us to make sure outsourced functions and processes stay controlled?",
-      "expectedClauses": [
-        "ISO 45001 8.1.4.3"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.4.3"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 8.1.4.3 requires ensuring outsourced functions and processes are controlled — distinct from procurement of goods (8.1.4.1) and contractors on site (8.1.4.2)."
@@ -96,9 +80,7 @@
     {
       "id": "guru-45001-009",
       "prompt": "We run construction crews across three states with different fall-protection and crane rules. Which ISO 45001 clause requires us to determine and have access to the legal and other requirements that apply to our hazards?",
-      "expectedClauses": [
-        "ISO 45001 6.1.3"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.3"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 6.1.3 requires determining and maintaining access to legal and other requirements applicable to the organization's hazards and OH&S risks."
@@ -107,9 +89,7 @@
     {
       "id": "guru-45001-010",
       "prompt": "Which ISO 45001 clause requires the organization to determine and provide the resources needed to establish, implement, and maintain the OH&S management system?",
-      "expectedClauses": [
-        "ISO 45001 7.1"
-      ],
+      "expectedClauses": ["ISO 45001 7.1"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 7.1 requires determining and providing the resources needed for the OH&S management system."
@@ -118,9 +98,7 @@
     {
       "id": "guru-45001-011",
       "prompt": "Which ISO 45001 clause requires us to run planned internal audits to check that the OH&S management system conforms to requirements and is effectively implemented?",
-      "expectedClauses": [
-        "ISO 45001 9.2"
-      ],
+      "expectedClauses": ["ISO 45001 9.2"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 9.2 requires internal audits at planned intervals (9.2.1) under an audit programme (9.2.2) to verify OH&S system conformity and effectiveness."
@@ -129,9 +107,7 @@
     {
       "id": "guru-45001-012",
       "prompt": "Which ISO 45001 clause requires the organization to continually improve the suitability, adequacy, and effectiveness of the OH&S management system to enhance safety performance?",
-      "expectedClauses": [
-        "ISO 45001 10.3"
-      ],
+      "expectedClauses": ["ISO 45001 10.3"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 10.3 requires continual improvement of the OH&S management system to enhance OH&S performance."
@@ -140,9 +116,7 @@
     {
       "id": "guru-45001-013",
       "prompt": "We score risks from every hazard, but 45001 also asks about the upside. Which sub-clause requires assessing OH&S opportunities that could enhance safety performance?",
-      "expectedClauses": [
-        "ISO 45001 6.1.2.3"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.2.3"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 6.1.2.3 requires assessing OH&S opportunities (and other opportunities) to enhance OH&S performance — separate from risk assessment in 6.1.2.2."
@@ -151,9 +125,7 @@
     {
       "id": "guru-45001-014",
       "prompt": "Which ISO 45001 clause requires us to identify workers and other interested parties, understand their needs and expectations, and decide which of those become legal or other requirements we must meet?",
-      "expectedClauses": [
-        "ISO 45001 4.2"
-      ],
+      "expectedClauses": ["ISO 45001 4.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 4.2 requires determining workers and other interested parties, their needs/expectations, and which of these become legal and other requirements. 45001 explicitly names workers as a party."
@@ -162,9 +134,7 @@
     {
       "id": "guru-45001-015",
       "prompt": "Our org chart changed after a merger and nobody knows who owns lockout-tagout program decisions anymore. Which ISO 45001 clause requires assigning and communicating OH&S roles, responsibilities, and authorities?",
-      "expectedClauses": [
-        "ISO 45001 5.3"
-      ],
+      "expectedClauses": ["ISO 45001 5.3"],
       "metadata": {
         "difficulty": "easy",
         "paraphrasedRequirement": "Clause 5.3 requires assigning and communicating OH&S roles, responsibilities, and authorities, with workers at each level taking responsibility for their part."
@@ -173,9 +143,7 @@
     {
       "id": "guru-45001-016",
       "prompt": "A recordable hand injury happened on our packaging line yesterday. Walk me through what ISO 45001's incident clause actually requires us to do from this point forward.",
-      "expectedClauses": [
-        "ISO 45001 10.2"
-      ],
+      "expectedClauses": ["ISO 45001 10.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 10.2 requires reacting to incidents, investigating them with worker participation, evaluating and eliminating root causes, reviewing corrective-action effectiveness, and retaining records."
@@ -184,9 +152,7 @@
     {
       "id": "guru-45001-017",
       "prompt": "I'm rewriting our safety policy before recertification. What specific commitments does ISO 45001 require the OH&S policy to contain?",
-      "expectedClauses": [
-        "ISO 45001 5.2"
-      ],
+      "expectedClauses": ["ISO 45001 5.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 5.2 mandates commitments to safe/healthy working conditions, prevention of injury and ill health, hazard elimination and OH&S risk reduction, fulfilling legal and other requirements, and worker consultation and participation."
@@ -195,9 +161,7 @@
     {
       "id": "guru-45001-018",
       "prompt": "We're rebuilding our hazard identification process from scratch at a distribution center. What kinds of activities, situations, and factors does ISO 45001 say the process has to take into account?",
-      "expectedClauses": [
-        "ISO 45001 6.1.2.1"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.2.1"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 6.1.2.1 requires hazard identification to cover routine and non-routine activities, past incidents and emergencies, human factors, and how work is organized — on an ongoing, proactive basis."
@@ -206,9 +170,7 @@
     {
       "id": "guru-45001-019",
       "prompt": "Once we've listed our hazards, what does ISO 45001 require about how we actually assess the OH&S risks that come from them?",
-      "expectedClauses": [
-        "ISO 45001 6.1.2.2"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.2.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 6.1.2.2 requires assessing OH&S risks from identified hazards using a defined methodology and criteria (e.g., likelihood/severity scoring)."
@@ -217,9 +179,7 @@
     {
       "id": "guru-45001-020",
       "prompt": "Beyond posting the safety policy in the break room, what does ISO 45001's awareness clause require our warehouse workers to actually be aware of?",
-      "expectedClauses": [
-        "ISO 45001 7.3"
-      ],
+      "expectedClauses": ["ISO 45001 7.3"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 7.3 requires workers to be aware of the OH&S policy, the hazards and risks relevant to them, incidents that concern them, and their ability to remove themselves from dangerous situations."
@@ -228,9 +188,7 @@
     {
       "id": "guru-45001-021",
       "prompt": "Our field service technicians work alone at customer sites. What does ISO 45001's competence clause require us to ensure and document for them?",
-      "expectedClauses": [
-        "ISO 45001 7.2"
-      ],
+      "expectedClauses": ["ISO 45001 7.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 7.2 requires workers to be competent — including able to identify hazards — on the basis of education, training, or experience, with evidence of competence retained."
@@ -239,9 +197,7 @@
     {
       "id": "guru-45001-022",
       "prompt": "Our plant manager's default answer to every risk is 'buy more PPE.' Per ISO 45001, in what order are we supposed to work through control options before PPE becomes acceptable?",
-      "expectedClauses": [
-        "ISO 45001 8.1.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 8.1.2 requires working down the hierarchy: eliminate the hazard, substitute, apply engineering controls or work reorganization, use administrative controls including training, and only then PPE."
@@ -250,9 +206,7 @@
     {
       "id": "guru-45001-023",
       "prompt": "We have an evacuation map on the wall. What else does ISO 45001's emergency preparedness clause require our process to include?",
-      "expectedClauses": [
-        "ISO 45001 8.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 8.2 requires identified emergency scenarios, planned response procedures that account for workers, contractors, and other interested parties, periodic drills/tests, and review after tests and actual incidents."
@@ -261,9 +215,7 @@
     {
       "id": "guru-45001-024",
       "prompt": "What does ISO 45001's communication clause require us to establish for OH&S communications inside and outside the company?",
-      "expectedClauses": [
-        "ISO 45001 7.4"
-      ],
+      "expectedClauses": ["ISO 45001 7.4"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 7.4 requires establishing communication processes (7.4.1), communicating internally including with workers (7.4.2), and communicating externally (7.4.3)."
@@ -272,9 +224,7 @@
     {
       "id": "guru-45001-025",
       "prompt": "I'm building the agenda for our annual OH&S management review. What safety-specific inputs does ISO 45001 expect top management to consider in that review?",
-      "expectedClauses": [
-        "ISO 45001 9.3"
-      ],
+      "expectedClauses": ["ISO 45001 9.3"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 9.3 requires top management review with defined inputs — per the corpus map: incident/nonconformity trends, hazard and risk status, worker consultation and participation results, compliance evaluation, and objectives progress — producing decisions and actions."
@@ -283,9 +233,7 @@
     {
       "id": "guru-45001-026",
       "prompt": "Our safety procedures live in a shared drive with no version control and old revisions still floating around. What does ISO 45001 require for managing OH&S documents and records?",
-      "expectedClauses": [
-        "ISO 45001 7.5"
-      ],
+      "expectedClauses": ["ISO 45001 7.5"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 7.5 requires maintaining the documented information the OH&S system needs and controlling its creation, updating, approval, distribution, protection, and retention."
@@ -294,9 +242,7 @@
     {
       "id": "guru-45001-027",
       "prompt": "We're certifying only two of our five sites to ISO 45001. What does the standard require us to consider and document when we set the boundaries of the OH&S management system?",
-      "expectedClauses": [
-        "ISO 45001 4.3"
-      ],
+      "expectedClauses": ["ISO 45001 4.3"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 4.3 requires determining OH&S system boundaries and applicability considering context, requirements, and work-related activities, documented as controlled information."
@@ -305,9 +251,7 @@
     {
       "id": "guru-45001-028",
       "prompt": "Our executives think signing the safety policy once a year covers them. What does ISO 45001's leadership clause actually require from top management?",
-      "expectedClauses": [
-        "ISO 45001 5.1"
-      ],
+      "expectedClauses": ["ISO 45001 5.1"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 5.1 requires top management to demonstrate leadership and commitment, taking overall responsibility and accountability for worker health and safety — per the corpus map this includes resourcing and protecting workers from reprisal."
@@ -316,9 +260,7 @@
     {
       "id": "guru-45001-029",
       "prompt": "We've got our hazard register, risk scores, and legal register done. What does ISO 45001's planning-action clause require us to do next with all of that?",
-      "expectedClauses": [
-        "ISO 45001 6.1.4"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.4"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 6.1.4 requires planning actions to address risks/opportunities, legal and other requirements, and emergency situations, integrating those actions into OH&S processes and applying the hierarchy of controls."
@@ -327,9 +269,7 @@
     {
       "id": "guru-45001-030",
       "prompt": "Corporate handed us a goal of 'fewer injuries.' What does ISO 45001 require for an OH&S objective to be properly set and planned?",
-      "expectedClauses": [
-        "ISO 45001 6.2"
-      ],
+      "expectedClauses": ["ISO 45001 6.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "Clause 6.2 requires OH&S objectives consistent with the policy (6.2.1) plus planning that defines actions, resources, responsibility, timeframe, and how results will be evaluated (6.2.2)."
@@ -338,10 +278,7 @@
     {
       "id": "guru-45001-031",
       "prompt": "A forklift nearly struck one of our pickers in aisle 7 last night — no contact, no injury, but it was inches away. Which ISO 45001 clauses govern how we respond to this near-miss and what we update afterward?",
-      "expectedClauses": [
-        "ISO 45001 10.2",
-        "ISO 45001 6.1.2.1"
-      ],
+      "expectedClauses": ["ISO 45001 10.2", "ISO 45001 6.1.2.1"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "10.2 requires reacting to and investigating incidents (near-misses included) with worker participation; 6.1.2.1 requires the hazard identification process to take incidents into account, so the hazard register gets updated."
@@ -350,10 +287,7 @@
     {
       "id": "guru-45001-032",
       "prompt": "We've hired a roofing contractor to repair storm damage on our warehouse while operations continue below. Which ISO 45001 clauses apply to bringing their crew on site safely?",
-      "expectedClauses": [
-        "ISO 45001 8.1.4.2",
-        "ISO 45001 6.1.2.1"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.4.2", "ISO 45001 6.1.2.1"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "8.1.4.2 requires coordinating hazards with contractors (both directions — their hazards to us, ours to them); 6.1.2.1 requires identifying hazards from this non-routine work."
@@ -362,10 +296,7 @@
     {
       "id": "guru-45001-033",
       "prompt": "We're retrofitting fixed guards onto our press brakes, replacing what used to be a training-and-signage-only control. Which ISO 45001 clauses govern selecting this control approach and managing the changeover?",
-      "expectedClauses": [
-        "ISO 45001 8.1.2",
-        "ISO 45001 8.1.3"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.2", "ISO 45001 8.1.3"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "8.1.2 governs moving up the hierarchy from administrative controls to engineering controls (guarding); 8.1.3 requires controlling the planned change itself since it affects OH&S performance."
@@ -374,10 +305,7 @@
     {
       "id": "guru-45001-034",
       "prompt": "A new hire starts on our night shift next week operating a shrink-wrap machine she's never used. Which ISO 45001 clauses cover making sure she is ready to work safely before her first solo shift?",
-      "expectedClauses": [
-        "ISO 45001 7.2",
-        "ISO 45001 7.3"
-      ],
+      "expectedClauses": ["ISO 45001 7.2", "ISO 45001 7.3"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "7.2 requires ensuring she is competent (training/experience, evidence retained); 7.3 requires she is aware of the policy, the hazards and risks of her work, relevant incidents, and her right to remove herself from danger."
@@ -386,11 +314,7 @@
     {
       "id": "guru-45001-035",
       "prompt": "One of our field service techs collapsed from heat exhaustion during an outdoor install in July. He recovered, but this is our second heat event this summer. Which ISO 45001 clauses drive our response and prevention updates?",
-      "expectedClauses": [
-        "ISO 45001 10.2",
-        "ISO 45001 6.1.2.1",
-        "ISO 45001 6.1.2.2"
-      ],
+      "expectedClauses": ["ISO 45001 10.2", "ISO 45001 6.1.2.1", "ISO 45001 6.1.2.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "10.2 requires investigating the incident with worker participation and corrective action; 6.1.2.1 requires heat stress to be captured as a hazard (incidents feed hazard identification); 6.1.2.2 requires reassessing the OH&S risk with a defined methodology given the repeat pattern."
@@ -399,9 +323,7 @@
     {
       "id": "guru-45001-036",
       "prompt": "We're outsourcing our entire forklift fleet maintenance to the equipment dealer — their people, their schedule, off our books. Which ISO 45001 sub-clause makes us responsible for keeping that outsourced function under control?",
-      "expectedClauses": [
-        "ISO 45001 8.1.4.3"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.4.3"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "8.1.4.3 requires ensuring outsourced functions and processes are controlled — outsourcing the work does not outsource the OH&S responsibility."
@@ -410,9 +332,7 @@
     {
       "id": "guru-45001-037",
       "prompt": "Our tower crews say the fall-arrest harnesses we issue are so uncomfortable that people loosen them mid-shift. We want the crews involved in selecting the replacements. Which ISO 45001 clauses are in play?",
-      "expectedClauses": [
-        "ISO 45001 5.4"
-      ],
+      "expectedClauses": ["ISO 45001 5.4"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "5.4 requires non-managerial worker input on determining controls; 8.1.2 covers PPE as a hierarchy-of-controls tier whose effectiveness must be maintained (an unworn harness is an ineffective control).",
@@ -422,11 +342,7 @@
     {
       "id": "guru-45001-038",
       "prompt": "Production wants to switch our parts-cleaning line to a new solvent-based degreaser next quarter. Which ISO 45001 clauses govern introducing this change safely?",
-      "expectedClauses": [
-        "ISO 45001 8.1.3",
-        "ISO 45001 6.1.2.1",
-        "ISO 45001 6.1.2.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.3", "ISO 45001 6.1.2.1", "ISO 45001 6.1.2.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "8.1.3 requires managing the planned change; 6.1.2.1 requires identifying the new chemical's hazards before introduction; 6.1.2.2 requires assessing the resulting OH&S risks with defined criteria."
@@ -435,10 +351,7 @@
     {
       "id": "guru-45001-039",
       "prompt": "Our state just enacted stricter fall-protection rules for residential construction, effective January. Which ISO 45001 clauses require us to capture this new rule and then verify we're actually meeting it?",
-      "expectedClauses": [
-        "ISO 45001 6.1.3",
-        "ISO 45001 9.1.2"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.3", "ISO 45001 9.1.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "6.1.3 requires determining and having access to applicable legal requirements (updating the legal register); 9.1.2 requires evaluating fulfilment of those requirements and maintaining knowledge of compliance status."
@@ -447,9 +360,7 @@
     {
       "id": "guru-45001-040",
       "prompt": "Corporate wants proof each site can handle a fire: documented scenarios, response procedures that account for contractors and visitors, scheduled evacuation drills, and lessons-learned reviews afterward. Which ISO 45001 clause covers all of this?",
-      "expectedClauses": [
-        "ISO 45001 8.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.2"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "8.2 requires emergency preparedness and response processes: identified scenarios, response procedures addressing workers/contractors/interested parties, drills and tests, and review after tests or incidents."
@@ -458,10 +369,7 @@
     {
       "id": "guru-45001-041",
       "prompt": "After a laceration injury on the packaging line, our safety committee insists that shop-floor workers sit on the investigation team, not just supervisors. Which ISO 45001 clauses back them up?",
-      "expectedClauses": [
-        "ISO 45001 10.2",
-        "ISO 45001 5.4"
-      ],
+      "expectedClauses": ["ISO 45001 10.2", "ISO 45001 5.4"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "10.2 requires incident investigation with worker participation; 5.4 requires non-managerial worker participation specifically including incident investigation."
@@ -470,9 +378,7 @@
     {
       "id": "guru-45001-042",
       "prompt": "I'm building a site safety dashboard tracking near-miss reporting rates and safety-training completion as leading indicators, plus lost-time injury rates as a lagging indicator, all measured against our annual targets. Which ISO 45001 clause covers this monitoring and evaluation activity?",
-      "expectedClauses": [
-        "ISO 45001 9.1.1"
-      ],
+      "expectedClauses": ["ISO 45001 9.1.1"],
       "metadata": {
         "difficulty": "medium",
         "paraphrasedRequirement": "9.1.1 requires monitoring, measuring, analysing, and evaluating OH&S performance — per the corpus map, leading and lagging indicators tracked against objectives."
@@ -481,9 +387,7 @@
     {
       "id": "guru-45001-043",
       "prompt": "We email a monthly safety bulletin to every employee and log read receipts, and our consultant says that satisfies communication but not consultation. Which ISO 45001 clause requires the two-way process where workers actually influence OH&S decisions before they're made?",
-      "expectedClauses": [
-        "ISO 45001 5.4"
-      ],
+      "expectedClauses": ["ISO 45001 5.4"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Near-miss distinction: 7.4 covers one-way/two-way information flow (communication), but 5.4 is the clause requiring worker consultation and participation in developing and evaluating the OH&S system — a push bulletin cannot satisfy it."
@@ -492,9 +396,7 @@
     {
       "id": "guru-45001-044",
       "prompt": "Our hazard register lists over 200 hazards, but the auditor wrote a finding saying we never scored them for likelihood and severity using a defined methodology. Identification looks solid — which ISO 45001 sub-clause did we actually miss?",
-      "expectedClauses": [
-        "ISO 45001 6.1.2.2"
-      ],
+      "expectedClauses": ["ISO 45001 6.1.2.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Near-miss distinction: 6.1.2.1 covers identifying hazards; 6.1.2.2 is the separate requirement to assess the OH&S risks from those hazards using a defined methodology and criteria — the missing piece here."
@@ -503,9 +405,7 @@
     {
       "id": "guru-45001-045",
       "prompt": "We have documented operating criteria and procedures for every process, but the auditor says that general operational control alone doesn't demonstrate we tried to eliminate hazards before settling on PPE and rules. Which ISO 45001 sub-clause specifically requires working down from elimination?",
-      "expectedClauses": [
-        "ISO 45001 8.1.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Near-miss distinction: 8.1.1 covers general operational planning and control (criteria, documented information); 8.1.2 is the distinct requirement to apply the hierarchy of controls, starting from elimination."
@@ -514,9 +414,7 @@
     {
       "id": "guru-45001-046",
       "prompt": "Purchasing is buying a new bandsaw for the shop. No outside workers will be on our site and nothing is being outsourced — we just need the machine itself to arrive conforming to our OH&S requirements. Which ISO 45001 procurement sub-clause applies?",
-      "expectedClauses": [
-        "ISO 45001 8.1.4.1"
-      ],
+      "expectedClauses": ["ISO 45001 8.1.4.1"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Near-miss distinction within 8.1.4: 8.1.4.1 covers controlling procurement of products/equipment/services so they conform to OH&S requirements; 8.1.4.2 is contractors on site; 8.1.4.3 is outsourced functions. Pure equipment purchase = 8.1.4.1."
@@ -525,9 +423,7 @@
     {
       "id": "guru-45001-047",
       "prompt": "A loaded pallet fell from the top rack yesterday and nobody was hurt. My colleague wants to just log it in the risk-and-opportunity planning register and move on. Since this is an event that already happened, which ISO 45001 clause actually governs our reaction to it?",
-      "expectedClauses": [
-        "ISO 45001 10.2"
-      ],
+      "expectedClauses": ["ISO 45001 10.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Near-miss distinction: 6.1 covers forward-looking planning for risks and opportunities; 10.2 governs reacting to and investigating incidents that have occurred — a falling pallet near-miss is an incident requiring the 10.2 process, which then feeds planning."
@@ -536,9 +432,7 @@
     {
       "id": "guru-45001-048",
       "prompt": "Fire is already in our hazard register with a high risk score, so my plant manager thinks we're covered. Is a register entry sufficient, or which ISO 45001 clause requires standing response plans, drills, and post-drill reviews for events like this?",
-      "expectedClauses": [
-        "ISO 45001 8.2"
-      ],
+      "expectedClauses": ["ISO 45001 8.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Near-miss distinction: 6.1.2.1 identifying fire as a hazard does not satisfy 8.2, which separately requires established emergency preparedness and response processes — scenarios, response procedures, drills/tests, and post-test/post-incident review."
@@ -547,9 +441,7 @@
     {
       "id": "guru-45001-049",
       "prompt": "Our quality manager saw 'evaluation of compliance' on the ISO 45001 audit plan and assumed it meant customer-satisfaction monitoring like in ISO 9001. Which ISO 45001 clause covers evaluation of compliance, and what does it actually require us to evaluate?",
-      "expectedClauses": [
-        "ISO 45001 9.1.2"
-      ],
+      "expectedClauses": ["ISO 45001 9.1.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Cross-standard near-miss: in ISO 45001 (as in 14001), 9.1.2 is evaluation of compliance — processes to evaluate fulfilment of legal and other requirements and maintain knowledge of compliance status — not customer satisfaction, which is the 9001 meaning of the same number."
@@ -558,9 +450,7 @@
     {
       "id": "guru-45001-050",
       "prompt": "For a lost-time injury, our quality team wants to run the exact same nonconformity-and-corrective-action process they use under ISO 9001. Which ISO 45001 clause governs this, and what does the 45001 version add beyond the 9001 process when the trigger is an incident?",
-      "expectedClauses": [
-        "ISO 45001 10.2"
-      ],
+      "expectedClauses": ["ISO 45001 10.2"],
       "metadata": {
         "difficulty": "hard",
         "paraphrasedRequirement": "Cross-standard near-miss: 45001's 10.2 adds 'incident' to nonconformity and corrective action — requiring incident reporting and investigation with worker participation — so the lost-time injury is handled under ISO 45001 10.2, not merely as a generic nonconformity."

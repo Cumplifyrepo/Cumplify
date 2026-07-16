@@ -9,10 +9,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const mockDdbSend = vi.fn();
 
 vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: class { send = mockDdbSend; },
+  DynamoDBClient: class {
+    send = mockDdbSend;
+  },
   UpdateItemCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 
@@ -131,7 +135,9 @@ describe('store-token handler', () => {
     const params = call.input;
 
     // UpdateExpression includes sfnExecutionArn with if_not_exists
-    expect(params.UpdateExpression).toContain('sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)');
+    expect(params.UpdateExpression).toContain(
+      'sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)',
+    );
     // Value is the provided ARN
     expect(params.ExpressionAttributeValues[':sfnArn']).toBe(
       'arn:aws:states:us-east-1:123:execution:hitl-sm:hitl-capa-04GHI',

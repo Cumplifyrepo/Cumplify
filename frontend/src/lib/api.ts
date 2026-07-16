@@ -33,10 +33,7 @@ export function useGraphQL() {
   const { signOut } = useAuth();
 
   const query = useCallback(
-    async <T = unknown>(
-      statement: string,
-      variables?: Record<string, unknown>,
-    ): Promise<T> => {
+    async <T = unknown>(statement: string, variables?: Record<string, unknown>): Promise<T> => {
       let token: string;
       try {
         token = await getFreshToken();
@@ -59,10 +56,7 @@ export function useGraphQL() {
   );
 
   const mutate = useCallback(
-    async <T = unknown>(
-      statement: string,
-      variables?: Record<string, unknown>,
-    ): Promise<T> => {
+    async <T = unknown>(statement: string, variables?: Record<string, unknown>): Promise<T> => {
       let token: string;
       try {
         token = await getFreshToken();

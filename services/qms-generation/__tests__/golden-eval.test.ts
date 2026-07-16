@@ -19,7 +19,12 @@ import { aggregateRubricScores, type RubricScore } from '../../model-evals/grade
 interface ScoresFile {
   round: number;
   system: string;
-  scores: Array<{ index: number; dimensions: Record<string, number>; gradedBy: string; gradedAt: string }>;
+  scores: Array<{
+    index: number;
+    dimensions: Record<string, number>;
+    gradedBy: string;
+    gradedAt: string;
+  }>;
 }
 
 describe('golden-set eval (NFR-3): mean >= 4.0/5, zero low scores', () => {
@@ -27,7 +32,7 @@ describe('golden-set eval (NFR-3): mean >= 4.0/5, zero low scores', () => {
     readFileSync(join(__dirname, 'fixtures', 'golden-eval-scores.json'), 'utf8'),
   ) as ScoresFile;
 
-  const rubricScores: RubricScore[] = file.scores.map(s => ({
+  const rubricScores: RubricScore[] = file.scores.map((s) => ({
     taskId: `section-${s.index}`,
     candidateModelId: 'doc-composer-seat',
     dimensions: s.dimensions,
@@ -38,9 +43,13 @@ describe('golden-set eval (NFR-3): mean >= 4.0/5, zero low scores', () => {
   it('60 sections graded on 5 dimensions each', () => {
     expect(file.scores.length).toBe(60);
     for (const s of file.scores) {
-      expect(Object.keys(s.dimensions).sort()).toEqual(
-        ['clauseIntent', 'coherence', 'grounding', 'specificity', 'voice'],
-      );
+      expect(Object.keys(s.dimensions).sort()).toEqual([
+        'clauseIntent',
+        'coherence',
+        'grounding',
+        'specificity',
+        'voice',
+      ]);
     }
   });
 

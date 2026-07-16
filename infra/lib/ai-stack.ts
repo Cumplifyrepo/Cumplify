@@ -89,7 +89,11 @@ export class AiStack extends cdk.Stack {
       eventBusPolicy: '',
     });
 
-    const deliveryFailureDlq = sqs.Queue.fromQueueArn(this, 'ImportedDeliveryDlq', props.deliveryFailureDlqArn);
+    const deliveryFailureDlq = sqs.Queue.fromQueueArn(
+      this,
+      'ImportedDeliveryDlq',
+      props.deliveryFailureDlqArn,
+    );
 
     // ─── CfnGuardrail (PII + PROMPT_ATTACK) ───────────────────────────────
     const guardrail = new bedrock.CfnGuardrail(this, 'AgentGuardrail', {
@@ -97,9 +101,7 @@ export class AiStack extends cdk.Stack {
       blockedInputMessaging: 'Request blocked by content policy.',
       blockedOutputsMessaging: 'Response blocked by content policy.',
       contentPolicyConfig: {
-        filtersConfig: [
-          { type: 'PROMPT_ATTACK', inputStrength: 'HIGH', outputStrength: 'NONE' },
-        ],
+        filtersConfig: [{ type: 'PROMPT_ATTACK', inputStrength: 'HIGH', outputStrength: 'NONE' }],
       },
       sensitiveInformationPolicyConfig: {
         piiEntitiesConfig: [
@@ -122,9 +124,7 @@ export class AiStack extends cdk.Stack {
       blockedInputMessaging: 'Request blocked by content policy.',
       blockedOutputsMessaging: 'Response blocked by content policy.',
       contentPolicyConfig: {
-        filtersConfig: [
-          { type: 'PROMPT_ATTACK', inputStrength: 'HIGH', outputStrength: 'NONE' },
-        ],
+        filtersConfig: [{ type: 'PROMPT_ATTACK', inputStrength: 'HIGH', outputStrength: 'NONE' }],
       },
       sensitiveInformationPolicyConfig: {
         piiEntitiesConfig: [
@@ -155,31 +155,37 @@ export class AiStack extends cdk.Stack {
     });
 
     // AI Invoker IAM: bedrock:InvokeModel (ONLY role with this permission)
-    aiInvoker.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['bedrock:InvokeModel', 'bedrock:ApplyGuardrail'],
-      resources: ['*'], // Required by Bedrock
-    }));
+    aiInvoker.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['bedrock:InvokeModel', 'bedrock:ApplyGuardrail'],
+        resources: ['*'], // Required by Bedrock
+      }),
+    );
 
     // DynamoDB: TENANT#*#METER read/write + MODELWEIGHT# read
-    aiInvoker.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['dynamodb:GetItem', 'dynamodb:UpdateItem', 'dynamodb:Query'],
-      resources: [props.tableArn, `${props.tableArn}/index/*`],
-      conditions: {
-        'ForAllValues:StringLike': {
-          'dynamodb:LeadingKeys': ['TENANT#*#METER', 'MODELWEIGHT#*', 'TENANT#*#ENTITLEMENT'],
+    aiInvoker.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['dynamodb:GetItem', 'dynamodb:UpdateItem', 'dynamodb:Query'],
+        resources: [props.tableArn, `${props.tableArn}/index/*`],
+        conditions: {
+          'ForAllValues:StringLike': {
+            'dynamodb:LeadingKeys': ['TENANT#*#METER', 'MODELWEIGHT#*', 'TENANT#*#ENTITLEMENT'],
+          },
         },
-      },
-    }));
+      }),
+    );
     props.dynamodbKey.grantEncryptDecrypt(aiInvoker);
 
     // EventBridge: PutEvents for telemetry
-    aiInvoker.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['events:PutEvents'],
-      resources: [props.busArn],
-    }));
+    aiInvoker.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['events:PutEvents'],
+        resources: [props.busArn],
+      }),
+    );
 
     // ─── Store-Token Lambda (T-8d: persists taskToken into DDB HITL item) ──
     const storeTokenLambda = new NodejsFunction(this, 'StoreTokenFn', {
@@ -227,8 +233,8 @@ export class AiStack extends cdk.Stack {
         Resource: 'arn:aws:states:::lambda:invoke.waitForTaskToken',
         Parameters: {
           // T-8d: StoreToken Lambda persists $$.Task.Token into DDB HITL item.
-          'FunctionName': storeTokenLambda.functionArn,
-          'Payload': {
+          FunctionName: storeTokenLambda.functionArn,
+          Payload: {
             'taskToken.$': '$$.Task.Token',
             'input.$': '$',
             // HITL-10 carry #3: SFN execution ARN for tracing
@@ -239,7 +245,11 @@ export class AiStack extends cdk.Stack {
         ResultPath: '$.approvalResult',
         Retry: [
           {
-            ErrorEquals: ['Lambda.ServiceException', 'Lambda.AWSLambdaException', 'Lambda.SdkClientException'],
+            ErrorEquals: [
+              'Lambda.ServiceException',
+              'Lambda.AWSLambdaException',
+              'Lambda.SdkClientException',
+            ],
             IntervalSeconds: 2,
             MaxAttempts: 3,
             BackoffRate: 2,
@@ -255,13 +265,18 @@ export class AiStack extends cdk.Stack {
         Resource: 'arn:aws:states:::lambda:invoke',
         Parameters: {
           // C-2 (Task 8R): wired to the actual ExecuteWriteback Lambda ARN.
-          'FunctionName': executeWritebackLambda.functionArn,
+          FunctionName: executeWritebackLambda.functionArn,
           'Payload.$': '$',
         },
         ResultPath: '$.writebackResult',
         Retry: [
           {
-            ErrorEquals: ['Lambda.ServiceException', 'Lambda.AWSLambdaException', 'Lambda.SdkClientException', 'DatabaseResumingException'],
+            ErrorEquals: [
+              'Lambda.ServiceException',
+              'Lambda.AWSLambdaException',
+              'Lambda.SdkClientException',
+              'DatabaseResumingException',
+            ],
             IntervalSeconds: 5,
             MaxAttempts: 3,
             BackoffRate: 2,
@@ -285,9 +300,7 @@ export class AiStack extends cdk.Stack {
       resultPath: '$.sendBackError',
     });
 
-    const definition = recordProposal
-      .next(waitForApproval)
-      .next(executeWriteback);
+    const definition = recordProposal.next(waitForApproval).next(executeWriteback);
 
     const hitlStateMachine = new sfn.StateMachine(this, 'HitlStateMachine', {
       definitionBody: sfn.DefinitionBody.fromChainable(definition),
@@ -424,8 +437,8 @@ export class AiStack extends cdk.Stack {
 
     const capDailyPaceAlarm = new cloudwatch.Alarm(this, 'LegalLedgerDailyPaceAlarm', {
       alarmDescription:
-        'COND-4: legal-ledger seat spend on pace to exceed the ratified $25/mo cap '
-        + '(≥833 credits ≈ $0.83 in one day). Alert-only — serving is never blocked.',
+        'COND-4: legal-ledger seat spend on pace to exceed the ratified $25/mo cap ' +
+        '(≥833 credits ≈ $0.83 in one day). Alert-only — serving is never blocked.',
       metric: capMetric.with({ period: cdk.Duration.days(1) }),
       threshold: 833,
       evaluationPeriods: 1,
@@ -434,8 +447,8 @@ export class AiStack extends cdk.Stack {
     });
     const capBurnRateAlarm = new cloudwatch.Alarm(this, 'LegalLedgerBurnRateAlarm', {
       alarmDescription:
-        'COND-4: anomalous legal-ledger burn (≥250 credits ≈ 50 tasks in one hour vs '
-        + '~1/hr organic) — runaway loop or abuse. Alert-only.',
+        'COND-4: anomalous legal-ledger burn (≥250 credits ≈ 50 tasks in one hour vs ' +
+        '~1/hr organic) — runaway loop or abuse. Alert-only.',
       metric: capMetric.with({ period: cdk.Duration.hours(1) }),
       threshold: 250,
       evaluationPeriods: 1,
@@ -452,7 +465,11 @@ export class AiStack extends cdk.Stack {
     // principals"). AiStack IMPORTS it (arn+endpoint props) and creates ONLY
     // the two new collections. Duplicate declaration failed live change-set
     // validation ("identifier encryption|cumplify-iso-kb-enc already exists").
-    const collectionNames = ['cumplify-iso-kb', 'cumplify-tenant-docs-kb', 'cumplify-nc-history'] as const;
+    const collectionNames = [
+      'cumplify-iso-kb',
+      'cumplify-tenant-docs-kb',
+      'cumplify-nc-history',
+    ] as const;
     const newCollectionNames = ['cumplify-tenant-docs-kb', 'cumplify-nc-history'] as const;
 
     const aossCollections: Record<string, opensearchserverless.CfnCollection> = {};
@@ -473,15 +490,17 @@ export class AiStack extends cdk.Stack {
       const netPolicy = new opensearchserverless.CfnSecurityPolicy(this, `${name}-net`, {
         name: `${name}-net`,
         type: 'network',
-        policy: JSON.stringify([{
-          Rules: [
-            { ResourceType: 'collection', Resource: [`collection/${name}`] },
-            { ResourceType: 'dashboard', Resource: [`collection/${name}`] },
-          ],
-          AllowFromPublic: false,
-          // SourceVPCEs: AWS::OpenSearchServerless::VpcEndpoint ID (NOT EC2 interface endpoint)
-          SourceVPCEs: [props.aossVpcEndpointId],
-        }]),
+        policy: JSON.stringify([
+          {
+            Rules: [
+              { ResourceType: 'collection', Resource: [`collection/${name}`] },
+              { ResourceType: 'dashboard', Resource: [`collection/${name}`] },
+            ],
+            AllowFromPublic: false,
+            // SourceVPCEs: AWS::OpenSearchServerless::VpcEndpoint ID (NOT EC2 interface endpoint)
+            SourceVPCEs: [props.aossVpcEndpointId],
+          },
+        ]),
       });
 
       // Collection
@@ -554,41 +573,49 @@ export class AiStack extends cdk.Stack {
     // T4-F1 FIX: uses app_role secret (NOT master) → RLS enforced.
     // T4-F5 carry: invoke-permission restricted to HITL state-machine role in Task 8.
     // Role policies attached to the CDK-generated Lambda execution role.
-    executeWritebackLambda.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: [
-        'rds-data:ExecuteStatement',
-        'rds-data:BatchExecuteStatement',
-        'rds-data:BeginTransaction',
-        'rds-data:CommitTransaction',
-        'rds-data:RollbackTransaction',
-      ],
-      resources: [props.clusterArn],
-    }));
-    executeWritebackLambda.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['secretsmanager:GetSecretValue'],
-      resources: [props.appRoleSecretArn],
-    }));
+    executeWritebackLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'rds-data:ExecuteStatement',
+          'rds-data:BatchExecuteStatement',
+          'rds-data:BeginTransaction',
+          'rds-data:CommitTransaction',
+          'rds-data:RollbackTransaction',
+        ],
+        resources: [props.clusterArn],
+      }),
+    );
+    executeWritebackLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [props.appRoleSecretArn],
+      }),
+    );
     props.dynamodbKey.grantDecrypt(executeWritebackLambda);
-    executeWritebackLambda.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['events:PutEvents'],
-      resources: [props.busArn],
-    }));
+    executeWritebackLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['events:PutEvents'],
+        resources: [props.busArn],
+      }),
+    );
 
     // ─── Store-Token Lambda Role (gate c) ──────────────────────────────────
     // Writes ONLY the taskToken field into the DDB HITL item, tenant-scoped.
-    storeTokenLambda.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['dynamodb:UpdateItem'],
-      resources: [props.tableArn],
-      conditions: {
-        'ForAllValues:StringLike': {
-          'dynamodb:LeadingKeys': ['TENANT#*#HITL'],
+    storeTokenLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['dynamodb:UpdateItem'],
+        resources: [props.tableArn],
+        conditions: {
+          'ForAllValues:StringLike': {
+            'dynamodb:LeadingKeys': ['TENANT#*#HITL'],
+          },
         },
-      },
-    }));
+      }),
+    );
     props.dynamodbKey.grantEncryptDecrypt(storeTokenLambda);
 
     // ─── 8 Agent Handler Lambdas + Roles (H-2, Task 8R) ───────────────────
@@ -599,8 +626,16 @@ export class AiStack extends cdk.Stack {
     // The AI Invoker needs an embed() door (Titan Embed v2, 1024-dim) before
     // retrieval-grounding is real. Flagged as design amendment, not faked.
 
-    const capaIntakeQueue = sqs.Queue.fromQueueArn(this, 'ImportedCapaIntakeQueue', props.capaIntakeQueueArn);
-    const recordsQueue = sqs.Queue.fromQueueArn(this, 'ImportedRecordsQueue', props.recordsQueueArn);
+    const capaIntakeQueue = sqs.Queue.fromQueueArn(
+      this,
+      'ImportedCapaIntakeQueue',
+      props.capaIntakeQueueArn,
+    );
+    const recordsQueue = sqs.Queue.fromQueueArn(
+      this,
+      'ImportedRecordsQueue',
+      props.recordsQueueArn,
+    );
 
     // Shared env for all agent handlers
     const agentHandlerBaseEnv = {
@@ -641,82 +676,124 @@ export class AiStack extends cdk.Stack {
     // ── SQS Consumer Handlers ──
 
     // 1. CAPAGuru (FIFO queue: capa-intake)
-    const capaGuruHandler = createAgentHandler('CapaGuruFn', 'services/agents/capa-guru/handler.ts', {
-      ...aossEndpoints,
-      DLQ_URL: props.capaIntakeDlqUrl,
-      POWERTOOLS_SERVICE_NAME: 'agent-capa-guru',
-    });
-    capaGuruHandler.addEventSource(new SqsEventSource(capaIntakeQueue, {
-      batchSize: 1,
-      reportBatchItemFailures: true,
-    }));
+    const capaGuruHandler = createAgentHandler(
+      'CapaGuruFn',
+      'services/agents/capa-guru/handler.ts',
+      {
+        ...aossEndpoints,
+        DLQ_URL: props.capaIntakeDlqUrl,
+        POWERTOOLS_SERVICE_NAME: 'agent-capa-guru',
+      },
+    );
+    capaGuruHandler.addEventSource(
+      new SqsEventSource(capaIntakeQueue, {
+        batchSize: 1,
+        reportBatchItemFailures: true,
+      }),
+    );
 
     // 2. DocStudio (standard queue)
-    const docStudioHandler = createAgentHandler('DocStudioHandlerFn', 'services/agents/doc-studio/handler.ts', {
-      ...aossEndpoints,
-      DOC_STUDIO_DLQ_URL: docStudioDlq.queueUrl,
-      DLQ_URL: docStudioDlq.queueUrl,
-      POWERTOOLS_SERVICE_NAME: 'agent-doc-studio',
-    });
-    docStudioHandler.addEventSource(new SqsEventSource(docStudioQueue, {
-      batchSize: 1,
-      reportBatchItemFailures: true,
-    }));
+    const docStudioHandler = createAgentHandler(
+      'DocStudioHandlerFn',
+      'services/agents/doc-studio/handler.ts',
+      {
+        ...aossEndpoints,
+        DOC_STUDIO_DLQ_URL: docStudioDlq.queueUrl,
+        DLQ_URL: docStudioDlq.queueUrl,
+        POWERTOOLS_SERVICE_NAME: 'agent-doc-studio',
+      },
+    );
+    docStudioHandler.addEventSource(
+      new SqsEventSource(docStudioQueue, {
+        batchSize: 1,
+        reportBatchItemFailures: true,
+      }),
+    );
 
     // 3. LeadAuditor (standard queue)
-    const leadAuditorHandler = createAgentHandler('LeadAuditorHandlerFn', 'services/agents/lead-auditor/handler.ts', {
-      ...aossEndpoints,
-      LEAD_AUDITOR_DLQ_URL: leadAuditorDlq.queueUrl,
-      DLQ_URL: leadAuditorDlq.queueUrl,
-      POWERTOOLS_SERVICE_NAME: 'agent-lead-auditor',
-    });
-    leadAuditorHandler.addEventSource(new SqsEventSource(leadAuditorQueue, {
-      batchSize: 1,
-      reportBatchItemFailures: true,
-    }));
+    const leadAuditorHandler = createAgentHandler(
+      'LeadAuditorHandlerFn',
+      'services/agents/lead-auditor/handler.ts',
+      {
+        ...aossEndpoints,
+        LEAD_AUDITOR_DLQ_URL: leadAuditorDlq.queueUrl,
+        DLQ_URL: leadAuditorDlq.queueUrl,
+        POWERTOOLS_SERVICE_NAME: 'agent-lead-auditor',
+      },
+    );
+    leadAuditorHandler.addEventSource(
+      new SqsEventSource(leadAuditorQueue, {
+        batchSize: 1,
+        reportBatchItemFailures: true,
+      }),
+    );
 
     // 4. ControlTower (standard queue)
-    const controlTowerHandler = createAgentHandler('ControlTowerHandlerFn', 'services/agents/control-tower/handler.ts', {
-      ...aossEndpoints,
-      CONTROL_TOWER_DLQ_URL: controlTowerDlq.queueUrl,
-      DLQ_URL: controlTowerDlq.queueUrl,
-      POWERTOOLS_SERVICE_NAME: 'agent-control-tower',
-    });
-    controlTowerHandler.addEventSource(new SqsEventSource(controlTowerQueue, {
-      batchSize: 1,
-      reportBatchItemFailures: true,
-    }));
+    const controlTowerHandler = createAgentHandler(
+      'ControlTowerHandlerFn',
+      'services/agents/control-tower/handler.ts',
+      {
+        ...aossEndpoints,
+        CONTROL_TOWER_DLQ_URL: controlTowerDlq.queueUrl,
+        DLQ_URL: controlTowerDlq.queueUrl,
+        POWERTOOLS_SERVICE_NAME: 'agent-control-tower',
+      },
+    );
+    controlTowerHandler.addEventSource(
+      new SqsEventSource(controlTowerQueue, {
+        batchSize: 1,
+        reportBatchItemFailures: true,
+      }),
+    );
 
     // 5. RecordsVault (standard queue: records)
-    const recordsVaultHandler = createAgentHandler('RecordsVaultHandlerFn', 'services/agents/records-vault/handler.ts', {
-      RECORDS_VAULT_DLQ_URL: props.recordsDlqUrl,
-      DLQ_URL: props.recordsDlqUrl,
-      POWERTOOLS_SERVICE_NAME: 'agent-records-vault',
-    });
-    recordsVaultHandler.addEventSource(new SqsEventSource(recordsQueue, {
-      batchSize: 1,
-      reportBatchItemFailures: true,
-    }));
+    const recordsVaultHandler = createAgentHandler(
+      'RecordsVaultHandlerFn',
+      'services/agents/records-vault/handler.ts',
+      {
+        RECORDS_VAULT_DLQ_URL: props.recordsDlqUrl,
+        DLQ_URL: props.recordsDlqUrl,
+        POWERTOOLS_SERVICE_NAME: 'agent-records-vault',
+      },
+    );
+    recordsVaultHandler.addEventSource(
+      new SqsEventSource(recordsQueue, {
+        batchSize: 1,
+        reportBatchItemFailures: true,
+      }),
+    );
 
     // ── Guru Handlers (AppSync-invoked, no ESM) ──
 
     // 6. ISO9001Guru
-    const guru9001Handler = createAgentHandler('Guru9001Fn', 'services/agents/guru-9001/handler.ts', {
-      AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
-      POWERTOOLS_SERVICE_NAME: 'agent-guru-9001',
-    });
+    const guru9001Handler = createAgentHandler(
+      'Guru9001Fn',
+      'services/agents/guru-9001/handler.ts',
+      {
+        AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
+        POWERTOOLS_SERVICE_NAME: 'agent-guru-9001',
+      },
+    );
 
     // 7. ISO14001Guru
-    const guru14001Handler = createAgentHandler('Guru14001Fn', 'services/agents/guru-14001/handler.ts', {
-      AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
-      POWERTOOLS_SERVICE_NAME: 'agent-guru-14001',
-    });
+    const guru14001Handler = createAgentHandler(
+      'Guru14001Fn',
+      'services/agents/guru-14001/handler.ts',
+      {
+        AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
+        POWERTOOLS_SERVICE_NAME: 'agent-guru-14001',
+      },
+    );
 
     // 8. ISO45001Guru
-    const guru45001Handler = createAgentHandler('Guru45001Fn', 'services/agents/guru-45001/handler.ts', {
-      AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
-      POWERTOOLS_SERVICE_NAME: 'agent-guru-45001',
-    });
+    const guru45001Handler = createAgentHandler(
+      'Guru45001Fn',
+      'services/agents/guru-45001/handler.ts',
+      {
+        AOSS_ISO_KB_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
+        POWERTOOLS_SERVICE_NAME: 'agent-guru-45001',
+      },
+    );
 
     // Collect all handler role ARNs for AOSS data-access amendment
     const agentHandlerRoleArns = [
@@ -837,24 +914,32 @@ export class AiStack extends cdk.Stack {
     });
 
     for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn, regenerateSectionFn]) {
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: [
-          'rds-data:ExecuteStatement', 'rds-data:BeginTransaction',
-          'rds-data:CommitTransaction', 'rds-data:RollbackTransaction',
-        ],
-        resources: [props.clusterArn],
-      }));
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: ['secretsmanager:GetSecretValue'],
-        resources: [props.appRoleSecretArn],
-      }));
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: ['events:PutEvents'],
-        resources: [props.busArn],
-      }));
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: [
+            'rds-data:ExecuteStatement',
+            'rds-data:BeginTransaction',
+            'rds-data:CommitTransaction',
+            'rds-data:RollbackTransaction',
+          ],
+          resources: [props.clusterArn],
+        }),
+      );
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['secretsmanager:GetSecretValue'],
+          resources: [props.appRoleSecretArn],
+        }),
+      );
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['events:PutEvents'],
+          resources: [props.busArn],
+        }),
+      );
       // The app-role secret is encrypted with the dynamodb/secrets CMK
       // (api-stack.ts AppRoleSecret encryptionKey) — NOT the master-secret
       // key. Live-proven 2026-07-15: dbSecretKey grant alone → KMS denial.
@@ -864,21 +949,25 @@ export class AiStack extends cdk.Stack {
     // Working content lives under tenants/* only — no bucket-wide access.
     // Finalize reads section JSONs AND writes document JSONs (Task 6).
     for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn, regenerateSectionFn]) {
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: ['s3:PutObject', 's3:GetObject'],
-        resources: [`${props.generalBucketArn}/tenants/*`],
-      }));
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['s3:PutObject', 's3:GetObject'],
+          resources: [`${props.generalBucketArn}/tenants/*`],
+        }),
+      );
       props.s3GeneralKey.grantEncryptDecrypt(fn);
     }
 
     // GEN-5 progress events: compose + finalize publish the @aws_iam mutation
     for (const fn of [composeSectionFn, finalizeManualFn, regenerateSectionFn]) {
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: ['appsync:GraphQL'],
-        resources: [publishGenerationEventArn],
-      }));
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['appsync:GraphQL'],
+          resources: [publishGenerationEventArn],
+        }),
+      );
     }
 
     // ONE DOOR: ComposeSection reaches Bedrock only via the invoker Lambda
@@ -889,13 +978,23 @@ export class AiStack extends cdk.Stack {
       lambdaFunction: seedSectionsFn,
       outputPath: '$.Payload',
     });
-    seedTask.addRetry({ errors: ['States.ALL'], maxAttempts: 2, interval: cdk.Duration.seconds(10), backoffRate: 2 });
+    seedTask.addRetry({
+      errors: ['States.ALL'],
+      maxAttempts: 2,
+      interval: cdk.Duration.seconds(10),
+      backoffRate: 2,
+    });
 
     const composeTask = new tasks.LambdaInvoke(this, 'ComposeSection', {
       lambdaFunction: composeSectionFn,
       outputPath: '$.Payload',
     });
-    composeTask.addRetry({ errors: ['States.ALL'], maxAttempts: 2, interval: cdk.Duration.seconds(15), backoffRate: 2 });
+    composeTask.addRetry({
+      errors: ['States.ALL'],
+      maxAttempts: 2,
+      interval: cdk.Duration.seconds(15),
+      backoffRate: 2,
+    });
 
     const composeMap = new sfn.Map(this, 'ComposeSections', {
       maxConcurrency: 4,
@@ -914,11 +1013,18 @@ export class AiStack extends cdk.Stack {
       lambdaFunction: finalizeManualFn,
       outputPath: '$.Payload',
     });
-    finalizeTask.addRetry({ errors: ['States.ALL'], maxAttempts: 2, interval: cdk.Duration.seconds(10), backoffRate: 2 });
+    finalizeTask.addRetry({
+      errors: ['States.ALL'],
+      maxAttempts: 2,
+      interval: cdk.Duration.seconds(10),
+      backoffRate: 2,
+    });
 
     const docGenStateMachine = new sfn.StateMachine(this, 'DocGenStateMachine', {
       stateMachineName: `cumplify-docgen-${envConfig.envName}`,
-      definitionBody: sfn.DefinitionBody.fromChainable(seedTask.next(composeMap).next(finalizeTask)),
+      definitionBody: sfn.DefinitionBody.fromChainable(
+        seedTask.next(composeMap).next(finalizeTask),
+      ),
       stateMachineType: sfn.StateMachineType.STANDARD,
       timeout: cdk.Duration.hours(2),
     });
@@ -930,10 +1036,16 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'RegenerateSectionFnArn', { value: regenerateSectionFn.functionArn });
 
     // ─── CfnOutputs for IAM roles ──────────────────────────────────────────
-    new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', { value: executeWritebackLambda.role!.roleArn });
+    new cdk.CfnOutput(this, 'ExecuteWritebackRoleArn', {
+      value: executeWritebackLambda.role!.roleArn,
+    });
     new cdk.CfnOutput(this, 'StoreTokenRoleArn', { value: storeTokenLambda.role!.roleArn });
-    new cdk.CfnOutput(this, 'AgentHandlerPolicyArn', { value: agentHandlerPolicy.managedPolicyArn });
-    new cdk.CfnOutput(this, 'ExecuteWritebackLambdaArn', { value: executeWritebackLambda.functionArn });
+    new cdk.CfnOutput(this, 'AgentHandlerPolicyArn', {
+      value: agentHandlerPolicy.managedPolicyArn,
+    });
+    new cdk.CfnOutput(this, 'ExecuteWritebackLambdaArn', {
+      value: executeWritebackLambda.functionArn,
+    });
     new cdk.CfnOutput(this, 'StoreTokenLambdaArn', { value: storeTokenLambda.functionArn });
     // Agent handler outputs
     new cdk.CfnOutput(this, 'CapaGuruHandlerArn', { value: capaGuruHandler.functionArn });
@@ -974,22 +1086,26 @@ export class AiStack extends cdk.Stack {
         POWERTOOLS_SERVICE_NAME: 'weight-seeder',
       },
     });
-    weightSeeder.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['dynamodb:PutItem'],
-      resources: [props.tableArn],
-      conditions: {
-        'ForAllValues:StringLike': {
-          'dynamodb:LeadingKeys': ['MODELWEIGHT#*'],
+    weightSeeder.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['dynamodb:PutItem'],
+        resources: [props.tableArn],
+        conditions: {
+          'ForAllValues:StringLike': {
+            'dynamodb:LeadingKeys': ['MODELWEIGHT#*'],
+          },
         },
-      },
-    }));
+      }),
+    );
     props.dynamodbKey.grantEncryptDecrypt(weightSeeder);
 
     // Custom resource trigger (runs on deploy)
     // T3E-F4: incorporate hash of seed file into physicalResourceId so a changed
     // seed file triggers re-seeding. ConditionalCheckFailed is handled (F3).
-    const seedFileHash = cdk.FileSystem.fingerprint('services/ai-invoker/data/model-weights-seed.json');
+    const seedFileHash = cdk.FileSystem.fingerprint(
+      'services/ai-invoker/data/model-weights-seed.json',
+    );
     new cr.AwsCustomResource(this, 'WeightSeederTrigger', {
       onCreate: {
         service: 'Lambda',
@@ -1043,11 +1159,13 @@ export class AiStack extends cdk.Stack {
         POWERTOOLS_SERVICE_NAME: 'aoss-apply-template',
       },
     });
-    applyTemplateFn.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['aoss:APIAccessAll'],
-      resources: collectionArns,
-    }));
+    applyTemplateFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['aoss:APIAccessAll'],
+        resources: collectionArns,
+      }),
+    );
 
     // ─── AOSS Prover Lambda (Task 12, ACC-4, architect ops tool) ──────────
     // VPC-attached, SigV4-signing. Executes the Task-12 proof sequence
@@ -1075,52 +1193,105 @@ export class AiStack extends cdk.Stack {
         POWERTOOLS_SERVICE_NAME: 'aoss-prover',
       },
     });
-    aossProverFn.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['aoss:APIAccessAll'],
-      resources: collectionArns,
-    }));
+    aossProverFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['aoss:APIAccessAll'],
+        resources: collectionArns,
+      }),
+    );
 
     // ─── AOSS Data-Access Policy (assembled post-seeder to avoid forward ref) ──
     // H-2 (Task 8R): READ block amended with exact agent-handler role ARNs.
-    const aossDataAccessPolicy = new opensearchserverless.CfnAccessPolicy(this, 'AiAossDataAccessPolicy', {
-      name: `cumplify-ai-access-${envConfig.envName}`,
-      type: 'data',
-      policy: JSON.stringify([
-        {
-          // READ access: AI Invoker + all 8 agent handler roles
-          Rules: [
-            { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:DescribeCollectionItems'] },
-            { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:DescribeIndex', 'aoss:ReadDocument'] },
-          ],
-          Principal: [aiInvoker.role!.roleArn, ...agentHandlerRoleArns],
-        },
-        {
-          // WRITE access: weight-seeder + apply-template (T-9a exact role ARNs)
-          Rules: [
-            { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:CreateCollectionItems', 'aoss:UpdateCollectionItems', 'aoss:DescribeCollectionItems'] },
-            { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:CreateIndex', 'aoss:UpdateIndex', 'aoss:DescribeIndex', 'aoss:ReadDocument', 'aoss:WriteDocument'] },
-          ],
-          Principal: [weightSeeder.role!.roleArn, applyTemplateFn.role!.roleArn],
-        },
-        {
-          // Task-12 prover: own block because cleanup needs aoss:DeleteIndex,
-          // which the seeder/template principals must NOT gain (live-found:
-          // delete-index 403'd without it). Code-level task1[2-4]- prefix
-          // guard keeps deletes off production indexes.
-          Rules: [
-            { ResourceType: 'collection', Resource: collectionResources, Permission: ['aoss:CreateCollectionItems', 'aoss:UpdateCollectionItems', 'aoss:DescribeCollectionItems'] },
-            { ResourceType: 'index', Resource: indexResources, Permission: ['aoss:CreateIndex', 'aoss:UpdateIndex', 'aoss:DeleteIndex', 'aoss:DescribeIndex', 'aoss:ReadDocument', 'aoss:WriteDocument'] },
-          ],
-          Principal: [aossProverFn.role!.roleArn],
-        },
-      ]),
-    });
+    const aossDataAccessPolicy = new opensearchserverless.CfnAccessPolicy(
+      this,
+      'AiAossDataAccessPolicy',
+      {
+        name: `cumplify-ai-access-${envConfig.envName}`,
+        type: 'data',
+        policy: JSON.stringify([
+          {
+            // READ access: AI Invoker + all 8 agent handler roles
+            Rules: [
+              {
+                ResourceType: 'collection',
+                Resource: collectionResources,
+                Permission: ['aoss:DescribeCollectionItems'],
+              },
+              {
+                ResourceType: 'index',
+                Resource: indexResources,
+                Permission: ['aoss:DescribeIndex', 'aoss:ReadDocument'],
+              },
+            ],
+            Principal: [aiInvoker.role!.roleArn, ...agentHandlerRoleArns],
+          },
+          {
+            // WRITE access: weight-seeder + apply-template (T-9a exact role ARNs)
+            Rules: [
+              {
+                ResourceType: 'collection',
+                Resource: collectionResources,
+                Permission: [
+                  'aoss:CreateCollectionItems',
+                  'aoss:UpdateCollectionItems',
+                  'aoss:DescribeCollectionItems',
+                ],
+              },
+              {
+                ResourceType: 'index',
+                Resource: indexResources,
+                Permission: [
+                  'aoss:CreateIndex',
+                  'aoss:UpdateIndex',
+                  'aoss:DescribeIndex',
+                  'aoss:ReadDocument',
+                  'aoss:WriteDocument',
+                ],
+              },
+            ],
+            Principal: [weightSeeder.role!.roleArn, applyTemplateFn.role!.roleArn],
+          },
+          {
+            // Task-12 prover: own block because cleanup needs aoss:DeleteIndex,
+            // which the seeder/template principals must NOT gain (live-found:
+            // delete-index 403'd without it). Code-level task1[2-4]- prefix
+            // guard keeps deletes off production indexes.
+            Rules: [
+              {
+                ResourceType: 'collection',
+                Resource: collectionResources,
+                Permission: [
+                  'aoss:CreateCollectionItems',
+                  'aoss:UpdateCollectionItems',
+                  'aoss:DescribeCollectionItems',
+                ],
+              },
+              {
+                ResourceType: 'index',
+                Resource: indexResources,
+                Permission: [
+                  'aoss:CreateIndex',
+                  'aoss:UpdateIndex',
+                  'aoss:DeleteIndex',
+                  'aoss:DescribeIndex',
+                  'aoss:ReadDocument',
+                  'aoss:WriteDocument',
+                ],
+              },
+            ],
+            Principal: [aossProverFn.role!.roleArn],
+          },
+        ]),
+      },
+    );
 
     // Apply-template trigger — runs on create AND whenever the committed
     // template artifact changes (fingerprint in physicalResourceId).
     // Policy-propagation timing is additionally covered by in-Lambda retries.
-    const templateFileHash = cdk.FileSystem.fingerprint('services/agents/shared/aoss-index-template.json');
+    const templateFileHash = cdk.FileSystem.fingerprint(
+      'services/agents/shared/aoss-index-template.json',
+    );
     const applyTemplateTrigger = new cr.AwsCustomResource(this, 'ApplyTemplateTrigger', {
       onCreate: {
         service: 'Lambda',
@@ -1156,16 +1327,20 @@ export class AiStack extends cdk.Stack {
     }
 
     // T4-F3 FIX: aoss:APIAccessAll in IAM (data-plane access to AOSS collections)
-    aiInvoker.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['aoss:APIAccessAll'],
-      resources: collectionArns,
-    }));
-    weightSeeder.addToRolePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['aoss:APIAccessAll'],
-      resources: collectionArns,
-    }));
+    aiInvoker.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['aoss:APIAccessAll'],
+        resources: collectionArns,
+      }),
+    );
+    weightSeeder.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['aoss:APIAccessAll'],
+        resources: collectionArns,
+      }),
+    );
 
     // ─── CfnOutputs ────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'ApplyTemplateFnArn', { value: applyTemplateFn.functionArn });
@@ -1193,7 +1368,9 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'ControlTowerRuleName', { value: controlTowerRule.ruleName });
     new cdk.CfnOutput(this, 'CreditCapAlertTopicArn', { value: creditCapAlertTopic.topicArn });
     new cdk.CfnOutput(this, 'LegalLedgerCapRuleName', { value: capRule.ruleName });
-    new cdk.CfnOutput(this, 'LegalLedgerDailyPaceAlarmName', { value: capDailyPaceAlarm.alarmName });
+    new cdk.CfnOutput(this, 'LegalLedgerDailyPaceAlarmName', {
+      value: capDailyPaceAlarm.alarmName,
+    });
     new cdk.CfnOutput(this, 'LegalLedgerBurnRateAlarmName', { value: capBurnRateAlarm.alarmName });
 
     // AOSS collection outputs (iso-kb imported from DataStack; others created here)
@@ -1226,8 +1403,7 @@ export class AiStack extends cdk.Stack {
         },
         {
           id: 'AwsSolutions-L1',
-          reason:
-            'Lambda uses NODEJS_22_X (latest LTS). CDK Nag may not recognize newer runtimes.',
+          reason: 'Lambda uses NODEJS_22_X (latest LTS). CDK Nag may not recognize newer runtimes.',
         },
         {
           id: 'AwsSolutions-SF1',

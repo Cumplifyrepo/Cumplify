@@ -81,9 +81,7 @@ describe('schema-guard: schema.graphql invariants', () => {
   it('3. every Subscription field declares tenantId: ID! (BUG-12 delivery requirement)', () => {
     const body = blockBody('type', 'Subscription');
     expect(body.length).toBeGreaterThan(0);
-    const offenders = fieldLines(body).filter(
-      (l) => !/\(\s*tenantId\s*:\s*ID!\s*\)/.test(l),
-    );
+    const offenders = fieldLines(body).filter((l) => !/\(\s*tenantId\s*:\s*ID!\s*\)/.test(l));
     expect(offenders).toEqual([]);
   });
 

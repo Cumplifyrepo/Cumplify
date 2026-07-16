@@ -1,7 +1,4 @@
-import {
-  EventBridgeClient,
-  PutEventsCommand,
-} from '@aws-sdk/client-eventbridge';
+import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { ulid } from 'ulid';
 import type { CumplifyEvent } from './types.js';

@@ -36,8 +36,8 @@ interface FixtureManual {
 
 function loadFixtures(): Array<{ file: string; manual: FixtureManual }> {
   return readdirSync(FIXTURE_DIR)
-    .filter(f => f.endsWith('.json'))
-    .map(f => ({
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => ({
       file: f,
       manual: JSON.parse(readFileSync(join(FIXTURE_DIR, f), 'utf8')) as FixtureManual,
     }));
@@ -60,7 +60,7 @@ describe('house-style CI validator over generated golden-set manuals (NFR-3/ACC-
       for (const section of manual.sections) {
         if (section.kind !== 'prose' || !section.sentences?.length) continue;
         proseSections++;
-        const factKeys = new Set(section.sentences.flatMap(s => s.factRefs ?? []));
+        const factKeys = new Set(section.sentences.flatMap((s) => s.factRefs ?? []));
         const result = checkSection({ sentences: section.sentences, factKeys, orgName });
         if (!result.pass) {
           failures.push(`${file} ${section.harmonizationKey}: ${result.violations.join('; ')}`);
@@ -87,15 +87,26 @@ describe('house-style CI validator over generated golden-set manuals (NFR-3/ACC-
 describe('house-style checker negative pins (a checker regression fails CI too)', () => {
   const factKeys = new Set(['org_profile.legalName']);
   const orgName = 'Acme Corp';
-  const sentence = (text: string): ComposedSentence => ({ text, factRefs: ['org_profile.legalName'] });
+  const sentence = (text: string): ComposedSentence => ({
+    text,
+    factRefs: ['org_profile.legalName'],
+  });
 
   const cases: Array<[string, string, string]> = [
     ['shall', 'Acme Corp shall maintain documented information.', 'contains "shall"'],
     ['bullet marker', '- Acme Corp maintains records.', 'bullet marker'],
     ['placeholder', 'Acme Corp stores records at {{LOCATION}}.', 'placeholder pattern'],
     ['second person', 'You must keep your records current at Acme Corp.', 'second person'],
-    ['banned fragment', 'Acme Corp follows this International Standard for quality.', 'banned standard-text fragment'],
-    ['inline fact marker', 'Acme Corp reviews requirements before commitment (F1, F3).', 'inline fact-reference marker'],
+    [
+      'banned fragment',
+      'Acme Corp follows this International Standard for quality.',
+      'banned standard-text fragment',
+    ],
+    [
+      'inline fact marker',
+      'Acme Corp reviews requirements before commitment (F1, F3).',
+      'inline fact-reference marker',
+    ],
   ];
 
   for (const [name, text, expected] of cases) {

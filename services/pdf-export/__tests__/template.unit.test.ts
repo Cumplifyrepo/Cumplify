@@ -21,8 +21,10 @@ const manualContent = {
   frontMatter: {
     purpose: 'This manual was generated from the organization’s own recorded data.',
     scope: {
-      organization: 'Acme Corp', standards: ['ISO9001', 'ISO14001'],
-      sites: ['HQ, Austin, TX, US'], managementRepresentative: 'Jane Doe',
+      organization: 'Acme Corp',
+      standards: ['ISO9001', 'ISO14001'],
+      sites: ['HQ, Austin, TX, US'],
+      managementRepresentative: 'Jane Doe',
     },
     normativeRefs: [{ standard: 'ISO9001', source: 'https://www.iso.org/store.html' }],
     terms: [],
@@ -32,7 +34,9 @@ const manualContent = {
       harmonizationKey: '4.1-context',
       clauseRefs: [{ standard: 'ISO9001', clauseNo: '4.1' }],
       kind: 'prose' as const,
-      sentences: [{ text: 'The organization has determined external and internal issues.', factRefs: ['F1'] }],
+      sentences: [
+        { text: 'The organization has determined external and internal issues.', factRefs: ['F1'] },
+      ],
     },
     {
       harmonizationKey: '6.1-risks',
@@ -101,12 +105,14 @@ describe('buildDocumentHtml — sections (manual / clause doc)', () => {
   it('escapes tenant-sourced HTML (no script injection from content)', () => {
     const evil = buildDocumentHtml(meta, {
       ...manualContent,
-      sections: [{
-        harmonizationKey: '4.1-context',
-        clauseRefs: [{ standard: 'ISO9001', clauseNo: '4.1' }],
-        kind: 'prose' as const,
-        sentences: [{ text: '<script>alert(1)</script>' }],
-      }],
+      sections: [
+        {
+          harmonizationKey: '4.1-context',
+          clauseRefs: [{ standard: 'ISO9001', clauseNo: '4.1' }],
+          kind: 'prose' as const,
+          sentences: [{ text: '<script>alert(1)</script>' }],
+        },
+      ],
     });
     expect(evil).not.toContain('<script>alert');
     expect(evil).toContain('&lt;script&gt;');
@@ -119,13 +125,26 @@ describe('buildDocumentHtml — correlation matrix', () => {
     {
       kind: 'correlation_matrix' as const,
       standards: ['ISO9001', 'ISO14001'],
-      rows: [{
-        harmonizationKey: '6.1-risks', sectionKind: 'prose',
-        coverage: [
-          { standard: 'ISO9001', clauseNo: '6.1', clauseTitle: 'Actions to address risks', annexSlMode: 'FORKED' },
-          { standard: 'ISO14001', clauseNo: '6.1', clauseTitle: 'Environmental aspects', annexSlMode: 'FORKED' },
-        ],
-      }],
+      rows: [
+        {
+          harmonizationKey: '6.1-risks',
+          sectionKind: 'prose',
+          coverage: [
+            {
+              standard: 'ISO9001',
+              clauseNo: '6.1',
+              clauseTitle: 'Actions to address risks',
+              annexSlMode: 'FORKED',
+            },
+            {
+              standard: 'ISO14001',
+              clauseNo: '6.1',
+              clauseTitle: 'Environmental aspects',
+              annexSlMode: 'FORKED',
+            },
+          ],
+        },
+      ],
     },
   );
 
@@ -143,10 +162,17 @@ describe('buildDocumentHtml — master list', () => {
     { ...meta, title: 'Documented Information Master List', docType: 'master_list' },
     {
       kind: 'master_list' as const,
-      entries: [{
-        documentId: 'doc-2', title: 'Context of the Organization (4.1-context)', docType: 'procedure',
-        standard: 'ISO9001', clauseRefs: ['4.1'], status: 'draft', versionNo: 1,
-      }],
+      entries: [
+        {
+          documentId: 'doc-2',
+          title: 'Context of the Organization (4.1-context)',
+          docType: 'procedure',
+          standard: 'ISO9001',
+          clauseRefs: ['4.1'],
+          status: 'draft',
+          versionNo: 1,
+        },
+      ],
     },
   );
 

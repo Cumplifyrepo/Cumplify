@@ -42,7 +42,8 @@ const BANNED_FRAGMENTS = [
   'documented information required by',
 ];
 
-const PLACEHOLDER_PATTERN = /\{\{|\bTBD\b|\bTO\s?DO\b|\[company\]|\[organization\]|\[insert\b|lorem ipsum|<[A-Z_]{2,}>/i;
+const PLACEHOLDER_PATTERN =
+  /\{\{|\bTBD\b|\bTO\s?DO\b|\[company\]|\[organization\]|\[insert\b|lorem ipsum|<[A-Z_]{2,}>/i;
 const BULLET_PATTERN = /^\s*[-*•·]\s|\n\s*[-*•·]\s/;
 const SECOND_PERSON = /\byou\b|\byour\b/i;
 // Golden-eval round-1 finding (Task 12): models sometimes echo fact citations
@@ -61,11 +62,15 @@ export function checkSection(input: CheckInput): CheckResult {
   sentences.forEach((s, i) => {
     // 1. Assertion coverage
     if (!s.factRefs || s.factRefs.length === 0) {
-      violations.push(`sentence ${i + 1}: no factRefs — every sentence must cite at least one fact`);
+      violations.push(
+        `sentence ${i + 1}: no factRefs — every sentence must cite at least one fact`,
+      );
     } else {
       for (const ref of s.factRefs) {
         if (!factKeys.has(ref)) {
-          violations.push(`sentence ${i + 1}: factRef '${ref}' does not resolve to a provided fact`);
+          violations.push(
+            `sentence ${i + 1}: factRef '${ref}' does not resolve to a provided fact`,
+          );
         }
       }
     }
@@ -81,10 +86,14 @@ export function checkSection(input: CheckInput): CheckResult {
       violations.push(`sentence ${i + 1}: placeholder pattern — content must be concrete`);
     }
     if (SECOND_PERSON.test(s.text)) {
-      violations.push(`sentence ${i + 1}: second person — the organization is the subject, not "you"`);
+      violations.push(
+        `sentence ${i + 1}: second person — the organization is the subject, not "you"`,
+      );
     }
     if (INLINE_FACT_MARKER.test(s.text)) {
-      violations.push(`sentence ${i + 1}: inline fact-reference marker — citations belong in factRefs, never in the prose`);
+      violations.push(
+        `sentence ${i + 1}: inline fact-reference marker — citations belong in factRefs, never in the prose`,
+      );
     }
 
     // 3. Standard-text screen
@@ -98,7 +107,7 @@ export function checkSection(input: CheckInput): CheckResult {
 
   // Organization-as-subject: the org must be named at least once per section
   const namesOrg = sentences.some(
-    s => s.text.includes(orgName) || /\bthe organization\b/i.test(s.text),
+    (s) => s.text.includes(orgName) || /\bthe organization\b/i.test(s.text),
   );
   if (!namesOrg) {
     violations.push('no sentence names the organization — organization-as-subject (BC-2)');

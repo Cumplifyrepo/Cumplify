@@ -32,7 +32,10 @@ export function scoreExactMatchRaw(response: string, expected: string): number {
 /**
  * Compute F1 score for a set of predictions against ground-truth labels.
  */
-export function computeF1(predictions: string[], groundTruth: string[]): {
+export function computeF1(
+  predictions: string[],
+  groundTruth: string[],
+): {
   precision: number;
   recall: number;
   f1: number;
@@ -64,10 +67,16 @@ export function computeF1(predictions: string[], groundTruth: string[]): {
  */
 export function computeSetF1(predictedStr: string, expectedStr: string): number {
   const predicted = new Set(
-    predictedStr.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
+    predictedStr
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean),
   );
   const expected = new Set(
-    expectedStr.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
+    expectedStr
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean),
   );
 
   if (predicted.size === 0 && expected.size === 0) return 1.0;

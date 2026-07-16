@@ -9,11 +9,7 @@
       "prompt": "Draft a procedure for control of nonconforming outputs at a CNC machining facility. Cover detection methods (in-process inspection, final inspection, customer returns), segregation requirements, disposition authority, rework/re-inspection, and concession process. Align with ISO 9001 clause 8.7.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -32,11 +28,7 @@
       "prompt": "Draft a procedure for management of change in a petrochemical refinery. Include trigger criteria, risk assessment requirements, approval workflow, implementation planning, communication, competency verification, and post-change review. Align with ISO 45001 clause 8.1.3.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -55,11 +47,7 @@
       "prompt": "Draft a procedure for environmental monitoring and measurement at a wastewater treatment plant. Include parameters (BOD, COD, TSS, pH, flow), sampling methodology, frequency, calibration of monitoring equipment, data analysis, exceedance response, and regulatory reporting. Align with ISO 14001 clause 9.1.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -78,11 +66,7 @@
       "prompt": "Analyze this CAPA: NC Description: 'Incorrect torque values applied to wheel bolts on 23 vehicles during assembly on March 12. Torque wrench TW-009 found 15% out of calibration. Vehicles already shipped to dealers.' Determine root cause, immediate containment, corrective actions, and effectiveness verification plan.\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "rootCause",
-          "actions",
-          "evidence"
-        ],
+        "required": ["rootCause", "actions", "evidence"],
         "properties": {
           "rootCause": {
             "type": "string"
@@ -101,11 +85,7 @@
       "prompt": "Analyze this CAPA: NC Description: 'Recurring customer complaints about paint adhesion failure on outdoor furniture. Same defect found in 3 separate batches over 6 weeks. Previous CAPA (CA-2024-067) closed 4 months ago for same issue \u2014 surface preparation procedure updated but defect persists.' Perform 5-Why analysis and propose systemic corrective actions.\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "rootCause",
-          "actions",
-          "evidence"
-        ],
+        "required": ["rootCause", "actions", "evidence"],
         "properties": {
           "rootCause": {
             "type": "string"
@@ -124,12 +104,7 @@
       "prompt": "Assess the risk: A food manufacturer plans to switch from a single-source supplier of a critical allergen-free ingredient to a dual-source strategy. The new supplier is located in a region with less stringent food safety regulations. The ingredient is used in 40% of products marketed as allergen-free.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"
@@ -151,12 +126,7 @@
       "prompt": "Assess the risk: A construction company is introducing autonomous drone inspections to replace manual scaffolding-based inspections of high-rise building facades. Workers previously performed these inspections at heights over 30 meters. The new process eliminates fall risk but introduces battery failure, loss-of-control, and dropped-object hazards.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"
@@ -178,11 +148,7 @@
       "prompt": "Plan an internal audit: Scope: ISO 45001 clause 6.1 (Actions to address risks and opportunities) at a mining operation with underground and surface activities. The operation has 800 workers across 3 shifts, uses permit-to-work systems, and had 2 lost-time injuries in the past quarter. Plan the audit approach, criteria, schedule, and resource needs.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "scope",
-          "criteria",
-          "schedule"
-        ],
+        "required": ["scope", "criteria", "schedule"],
         "properties": {
           "scope": {
             "type": "string"
@@ -201,11 +167,7 @@
       "prompt": "Draft a procedure for handling customer complaints at an electronics contract manufacturer. Include intake channels, severity classification, initial response timelines, investigation methodology, 8D report format, customer communication cadence, systemic trending, and closure criteria. Align with ISO 9001 clauses 8.2.1 and 10.2.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -224,11 +186,7 @@
       "prompt": "Analyze this CAPA: NC Description: 'During ISO 14001 surveillance audit, auditor found that environmental aspects register has not been updated since initial certification 2 years ago. Three new processes added (powder coating, acid etching, solvent degreasing) are not evaluated. No evidence of lifecycle perspective consideration for any aspect.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "rootCause",
-          "actions",
-          "evidence"
-        ],
+        "required": ["rootCause", "actions", "evidence"],
         "properties": {
           "rootCause": {
             "type": "string"
@@ -247,12 +205,7 @@
       "prompt": "Assess the risk: A pharmaceutical company plans to outsource sterile fill-finish operations to a contract manufacturer in another country. The CDMO has FDA and EU GMP approval but has received 2 Form 483 observations in the past year related to environmental monitoring. Product is a high-value biologic with 18-month shelf life.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"
@@ -274,11 +227,7 @@
       "prompt": "Plan an internal audit: Scope: ISO 9001 clause 8.4 (Control of externally provided processes, products, and services) at a medical device company with 45 critical suppliers. The company had 3 supplier-related nonconformities in the last 6 months and one field safety corrective action traced to a supplier component.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "scope",
-          "criteria",
-          "schedule"
-        ],
+        "required": ["scope", "criteria", "schedule"],
         "properties": {
           "scope": {
             "type": "string"
@@ -297,11 +246,7 @@
       "prompt": "Draft a procedure for hazard identification and risk assessment at a multi-story warehouse with automated storage and retrieval systems (AS/RS), forklift traffic, manual picking areas, loading docks, and battery charging stations. Address routine, non-routine, and emergency scenarios. Align with ISO 45001 clause 6.1.2.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -320,11 +265,7 @@
       "prompt": "Analyze this CAPA: NC Description: 'Worker suffered chemical burn to forearm when transfer pump fitting failed during sulfuric acid transfer. Investigation revealed: fitting was incorrect material (carbon steel instead of specified 316SS), spare parts inventory not controlled, last preventive maintenance skipped due to production pressure, worker not wearing required chemical PPE (acid-resistant sleeves).'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "rootCause",
-          "actions",
-          "evidence"
-        ],
+        "required": ["rootCause", "actions", "evidence"],
         "properties": {
           "rootCause": {
             "type": "string"
@@ -343,12 +284,7 @@
       "prompt": "Assess the risk: A logistics company is implementing AI-based route optimization that considers real-time traffic, weather, and delivery windows. The system will override driver-selected routes. Risks include: driver unfamiliarity with AI-selected routes, system failures requiring manual fallback, over-reliance on technology, potential increase in driver fatigue from unfamiliar roads.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"
@@ -370,11 +306,7 @@
       "prompt": "Plan an internal audit: Scope: ISO 14001 clause 8.1 (Operational planning and control) at a paint manufacturing facility. Focus areas: VOC emission controls, hazardous waste management, chemical storage, spill prevention, and wastewater treatment. The facility had a minor spill incident 2 months ago and an EPA inspection is expected this quarter.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "scope",
-          "criteria",
-          "schedule"
-        ],
+        "required": ["scope", "criteria", "schedule"],
         "properties": {
           "scope": {
             "type": "string"
@@ -393,11 +325,7 @@
       "prompt": "Draft a procedure for continual improvement at an aerospace component manufacturer. Include data sources for improvement opportunities (audits, NCs, customer feedback, process data, benchmarking), prioritization methodology, project selection, resource allocation, implementation tracking, and effectiveness measurement. Align with ISO 9001 clause 10.3.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -416,11 +344,7 @@
       "prompt": "Analyze this CAPA: NC Description: 'Internal audit finding: 8 of 12 sampled employees in production could not explain the quality policy or their contribution to QMS effectiveness. Awareness training records show all employees completed annual refresher, but training content is a 45-minute video with no assessment. Supervisors unable to explain quality objectives relevant to their area.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "rootCause",
-          "actions",
-          "evidence"
-        ],
+        "required": ["rootCause", "actions", "evidence"],
         "properties": {
           "rootCause": {
             "type": "string"
@@ -439,12 +363,7 @@
       "prompt": "Assess the risk: A steel fabrication company plans to begin operations with a new robotic welding cell. The cell will perform MIG welding on structural steel components that require certified weld procedures (WPS). Risks include: weld parameter drift, insufficient NDE coverage on robot welds, operator intervention in automated cycle, UV/fume exposure during manual loading, and qualification of robot welds under AWS D1.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"
@@ -466,11 +385,7 @@
       "prompt": "Plan an internal audit: Scope: Integrated audit of ISO 9001 clause 7.1.5 (Monitoring and measuring resources) and ISO 45001 clause 9.1 (Monitoring, measurement, analysis, and evaluation) at a chemical testing laboratory. The lab performs environmental and occupational hygiene analysis with 200+ calibrated instruments. Last external assessment noted 3 findings on calibration traceability.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "scope",
-          "criteria",
-          "schedule"
-        ],
+        "required": ["scope", "criteria", "schedule"],
         "properties": {
           "scope": {
             "type": "string"
@@ -489,11 +404,7 @@
       "prompt": "Draft a procedure for operational control of significant environmental aspects at a concrete batching plant. Aspects include: dust emissions from aggregate handling, stormwater runoff with high pH, noise from batching operations, diesel fuel storage and dispensing, and concrete washout water management. Align with ISO 14001 clause 8.1.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -512,11 +423,7 @@
       "prompt": "Analyze this CAPA: NC Description: 'Customer returned 500 units of electronic control modules with intermittent failure in temperature range -20\u00b0C to -40\u00b0C. Root cause investigation reveals: conformal coating applied at 18\u00b0C (spec requires minimum 22\u00b0C application temperature), production log shows HVAC system was under repair for 5 days, QC accepted units based on visual inspection only \u2014 no functional test at temperature extremes performed.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "rootCause",
-          "actions",
-          "evidence"
-        ],
+        "required": ["rootCause", "actions", "evidence"],
         "properties": {
           "rootCause": {
             "type": "string"
@@ -535,12 +442,7 @@
       "prompt": "Assess the risk: A hospital plans to consolidate sterilization services from 3 satellite locations to one central sterile processing department (CSPD). Risks include: transportation delays affecting surgical schedules, instrument contamination during transport, single point of failure, increased volume straining equipment capacity, staff reduction causing competency gaps in remaining team.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"
@@ -562,11 +464,7 @@
       "prompt": "Plan an internal audit: Scope: ISO 45001 clause 5.4 (Consultation and participation of workers) at a manufacturing plant with 400 workers across 3 shifts, union representation, and a history of low engagement scores. Recent worker survey showed 60% feel their safety concerns are not addressed. Three near-miss reports in the last month cited 'management doesn't listen.'\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "scope",
-          "criteria",
-          "schedule"
-        ],
+        "required": ["scope", "criteria", "schedule"],
         "properties": {
           "scope": {
             "type": "string"
@@ -585,11 +483,7 @@
       "prompt": "Draft a procedure for design and development of new products at a consumer electronics company. Include design inputs (market requirements, regulatory, standards), design stages with gate reviews, verification methods (simulation, prototype testing, HALT), validation with end users, design transfer to manufacturing, and design change control. Align with ISO 9001 clause 8.3.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -608,11 +502,7 @@
       "prompt": "Analyze this CAPA: NC Description: 'Environmental incident: Approximately 200 liters of hydraulic oil released to storm drain during equipment maintenance. Maintenance team disconnected hydraulic line without isolating and depressurizing. Spill kit located 80 meters away. Drain valve was not closed per pre-maintenance checklist. Oil reached local waterway before containment. Regulatory notification required.'\n\nReturn a single JSON object with EXACTLY these fields:\n- rootCause (string): identified root cause of the issue\n- actions (string): corrective and preventive actions\n- evidence (string): evidence required for verification\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "rootCause",
-          "actions",
-          "evidence"
-        ],
+        "required": ["rootCause", "actions", "evidence"],
         "properties": {
           "rootCause": {
             "type": "string"
@@ -631,12 +521,7 @@
       "prompt": "Assess the risk: A food manufacturer is transitioning from manual allergen cleaning verification (visual + ATP swabs) to an automated CIP (clean-in-place) validation system with inline sensors. The transition period requires running both systems in parallel. Risks: sensor calibration drift, false negatives during validation period, operator complacency relying on automated pass, changeover time pressure.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"
@@ -658,11 +543,7 @@
       "prompt": "Plan an internal audit: Scope: ISO 9001 clause 10.2 (Nonconformity and corrective action) across all departments at a multi-product manufacturing site. The site closed 89 CAPAs last year but 22% were reopened due to recurrence. Average CAPA age is 95 days (target: 60). Three major NCs from last external audit related to root cause analysis quality.\n\nReturn a single JSON object with EXACTLY these fields:\n- scope (string): scope of the change or audit\n- criteria (string): audit criteria and standards\n- schedule (string): audit schedule and timeline\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "scope",
-          "criteria",
-          "schedule"
-        ],
+        "required": ["scope", "criteria", "schedule"],
         "properties": {
           "scope": {
             "type": "string"
@@ -681,11 +562,7 @@
       "prompt": "Draft a procedure for communication of OH&S information at a large construction project with multiple subcontractors. Include internal communication (toolbox talks, safety alerts, notice boards), external communication (regulator, public, emergency services), consultation mechanisms, and documentation requirements. Address language barriers and literacy levels. Align with ISO 45001 clause 7.4.\n\nReturn a single JSON object with EXACTLY these fields:\n- document (string): the complete procedure or document text\n- sections (string): structured sections of the document\n- clauseRefs (string): ISO clause references addressed\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "document",
-          "sections",
-          "clauseRefs"
-        ],
+        "required": ["document", "sections", "clauseRefs"],
         "properties": {
           "document": {
             "type": "string"
@@ -704,12 +581,7 @@
       "prompt": "Assess the risk: A chemicals manufacturer is expanding production capacity by 40% by adding a night shift. The expansion means: reduced supervisory coverage (1 supervisor per 20 workers vs 1:10 on day shift), maintenance performed during production rather than during downtime, new hires with less than 6 months experience comprising 50% of night crew, emergency response team reduced to 3 members at night vs 8 during day.\n\nReturn a single JSON object with EXACTLY these fields:\n- riskLevel (string): overall risk level rating\n- likelihood (string): likelihood of the risk occurring\n- impact (string): impact of the issue\n- controls (string): controls to mitigate the risk\n\nEnd your response with exactly one line: ANSWER: <your JSON object>",
       "expectedSchema": {
         "type": "object",
-        "required": [
-          "riskLevel",
-          "likelihood",
-          "impact",
-          "controls"
-        ],
+        "required": ["riskLevel", "likelihood", "impact", "controls"],
         "properties": {
           "riskLevel": {
             "type": "string"

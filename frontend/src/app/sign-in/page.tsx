@@ -71,7 +71,11 @@ export default function SignInPage() {
           required
           autoComplete="current-password"
         />
-        {error && <p className={styles.error} role="alert">{error}</p>}
+        {error && (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        )}
         <PrimaryButton type="submit" disabled={submitting} className={styles.submitBtn}>
           {submitting ? t('signingIn') : t('signIn')}
         </PrimaryButton>

@@ -16,8 +16,13 @@ const REPO_ROOT = resolve(__dirname, '../../..');
 
 function trackedFiles(pattern: string): string[] {
   return execSync(`git grep -l ${JSON.stringify(pattern)} -- '*.ts'`, {
-    cwd: REPO_ROOT, encoding: 'utf8',
-  }).trim().split('\n').filter(Boolean).filter(f => !f.includes('.test.'));
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+  })
+    .trim()
+    .split('\n')
+    .filter(Boolean)
+    .filter((f) => !f.includes('.test.'));
 }
 
 describe('content_ref tripwire (BC-8)', () => {
@@ -42,7 +47,8 @@ describe('content_ref tripwire (BC-8)', () => {
 
   it('the spec-40 finalize writer sets BOTH content_ref and content_sha256', () => {
     const src = readFileSync(
-      resolve(REPO_ROOT, 'services/qms-generation/src/finalize-manual.ts'), 'utf8',
+      resolve(REPO_ROOT, 'services/qms-generation/src/finalize-manual.ts'),
+      'utf8',
     );
     expect(src).toContain('content_ref, content_sha256');
     expect(src).not.toMatch(/contentRef[^\n]*\?\?\s*''/);

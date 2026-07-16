@@ -16,7 +16,16 @@ import { marshall } from '@aws-sdk/util-dynamodb';
 import enMessages from '../../../../frontend/messages/en.json';
 import esMessages from '../../../../frontend/messages/es.json';
 
-const { mockExecute, mockCommit, mockRollback, mockS3Send, mockLambdaSend, mockDdbSend, mockPublishAudit, mockGetSignedUrl } = vi.hoisted(() => {
+const {
+  mockExecute,
+  mockCommit,
+  mockRollback,
+  mockS3Send,
+  mockLambdaSend,
+  mockDdbSend,
+  mockPublishAudit,
+  mockGetSignedUrl,
+} = vi.hoisted(() => {
   process.env.CONTENT_BUCKET = 'test-general-bucket';
   process.env.EVIDENCE_BUCKET = 'test-evidence-vault';
   process.env.EVIDENCE_LOCK_MODE = 'GOVERNANCE';
@@ -48,17 +57,34 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
   };
 });
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 vi.mock('@aws-sdk/client-s3', () => ({
-  S3Client: class { send = mockS3Send; },
-  GetObjectCommand: class { constructor(public input: unknown) {} },
-  PutObjectCommand: class { constructor(public input: unknown) {} },
-  CopyObjectCommand: class { constructor(public input: unknown) {} },
+  S3Client: class {
+    send = mockS3Send;
+  },
+  GetObjectCommand: class {
+    constructor(public input: unknown) {}
+  },
+  PutObjectCommand: class {
+    constructor(public input: unknown) {}
+  },
+  CopyObjectCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 vi.mock('@aws-sdk/client-lambda', () => ({
-  LambdaClient: class { send = mockLambdaSend; },
-  InvokeCommand: class { constructor(public input: unknown) {} },
+  LambdaClient: class {
+    send = mockLambdaSend;
+  },
+  InvokeCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 vi.mock('@aws-sdk/s3-request-presigner', () => ({
   getSignedUrl: mockGetSignedUrl,
@@ -82,14 +108,16 @@ function event(fieldName: string, args: Record<string, unknown>, sub = 'approver
 // ─── Row fixtures (DB casing: lowercase status, snake_case columns) ──────────
 
 const rows = (columns: string[], data: unknown[][]) => ({
-  records: data.map(r => r.map(v => {
-    if (v === null) return { isNull: true };
-    if (typeof v === 'boolean') return { booleanValue: v };
-    if (typeof v === 'number') return { longValue: v };
-    if (Array.isArray(v)) return { arrayValue: { stringValues: v } };
-    return { stringValue: v as string };
-  })),
-  columnMetadata: columns.map(name => ({ name })),
+  records: data.map((r) =>
+    r.map((v) => {
+      if (v === null) return { isNull: true };
+      if (typeof v === 'boolean') return { booleanValue: v };
+      if (typeof v === 'number') return { longValue: v };
+      if (Array.isArray(v)) return { arrayValue: { stringValues: v } };
+      return { stringValue: v as string };
+    }),
+  ),
+  columnMetadata: columns.map((name) => ({ name })),
 });
 const emptyRes = { records: [], columnMetadata: [] };
 
@@ -108,18 +136,63 @@ function wireSql(fx: FixtureState) {
     // buildRecordContent record SELECT (only one selecting approved_by)
     if (sql.includes('r.approved_by')) {
       return rows(
-        ['id', 'template_id', 'status', 'opened_by', 'completed_by', 'completed_at',
-          'approved_by', 'approved_at', 'm2_nc_id', 'version', 'created_at', 'updated_at'],
-        [[RECORD_ID, TEMPLATE_ID, fx.status, 'user-a', 'user-b', '2026-07-16T10:00:00Z',
-          fx.status === 'approved' ? 'approver-1' : null, fx.status === 'approved' ? '2026-07-16T11:00:00Z' : null,
-          null, 1, '2026-07-15T09:00:00Z', '2026-07-16T11:00:00Z']],
+        [
+          'id',
+          'template_id',
+          'status',
+          'opened_by',
+          'completed_by',
+          'completed_at',
+          'approved_by',
+          'approved_at',
+          'm2_nc_id',
+          'version',
+          'created_at',
+          'updated_at',
+        ],
+        [
+          [
+            RECORD_ID,
+            TEMPLATE_ID,
+            fx.status,
+            'user-a',
+            'user-b',
+            '2026-07-16T10:00:00Z',
+            fx.status === 'approved' ? 'approver-1' : null,
+            fx.status === 'approved' ? '2026-07-16T11:00:00Z' : null,
+            null,
+            1,
+            '2026-07-15T09:00:00Z',
+            '2026-07-16T11:00:00Z',
+          ],
+        ],
       );
     }
     // getFormRecordById (post-mutation return read)
     if (sql.includes('r.m2_nc_id, r.created_at')) {
       return rows(
-        ['id', 'template_id', 'status', 'opened_by', 'completed_by', 'm2_nc_id', 'created_at', 'updated_at'],
-        [[RECORD_ID, TEMPLATE_ID, fx.status, 'user-a', 'user-b', null, '2026-07-15T09:00:00Z', '2026-07-16T11:00:00Z']],
+        [
+          'id',
+          'template_id',
+          'status',
+          'opened_by',
+          'completed_by',
+          'm2_nc_id',
+          'created_at',
+          'updated_at',
+        ],
+        [
+          [
+            RECORD_ID,
+            TEMPLATE_ID,
+            fx.status,
+            'user-a',
+            'user-b',
+            null,
+            '2026-07-15T09:00:00Z',
+            '2026-07-16T11:00:00Z',
+          ],
+        ],
       );
     }
     // approveFormRecord initial record SELECT
@@ -144,14 +217,30 @@ function wireSql(fx: FixtureState) {
         [
           ['f-1', 'sec-1', 'ncr_number', 'forms.ncr.field.ncrNumber', 'text', true, null],
           ['f-2', 'sec-1', 'clause_ref', 'forms.ncr.field.clauseRef', 'relation', true, 'clause'],
-          ['f-3', 'sec-1', 'containment_flag', 'forms.ncr.field.containmentFlag', 'checkbox', false, null],
+          [
+            'f-3',
+            'sec-1',
+            'containment_flag',
+            'forms.ncr.field.containmentFlag',
+            'checkbox',
+            false,
+            null,
+          ],
           ['f-4', 'sec-1', 'severity', 'forms.ncr.field.severity', 'select', true, null],
         ],
       );
     }
     if (sql.includes('rv.value_text')) {
       return rows(
-        ['field_key', 'value_text', 'value_number', 'value_date', 'value_bool', 'value_uuid', 'value_json'],
+        [
+          'field_key',
+          'value_text',
+          'value_number',
+          'value_date',
+          'value_bool',
+          'value_uuid',
+          'value_json',
+        ],
         [
           ['ncr_number', 'NCR-001', null, null, null, null, null],
           ['clause_ref', null, null, null, null, CLAUSE_UUID, null],
@@ -161,7 +250,10 @@ function wireSql(fx: FixtureState) {
       );
     }
     if (sql.includes('FROM qms.clause_registry')) {
-      return rows(['standard', 'clause_no', 'clause_title'], [['ISO9001', '8.7', 'Nonconforming outputs']]);
+      return rows(
+        ['standard', 'clause_no', 'clause_title'],
+        [['ISO9001', '8.7', 'Nonconforming outputs']],
+      );
     }
     if (sql.includes('FROM m4.retention_policies')) {
       return fx.policyYears === null ? emptyRes : rows(['retention_years'], [[fx.policyYears]]);
@@ -171,7 +263,15 @@ function wireSql(fx: FixtureState) {
     }
     // computeCompletion totals / filled
     if (sql.includes('f.field_key, f.required')) {
-      return rows(['field_key', 'required'], [['ncr_number', true], ['clause_ref', true], ['containment_flag', false], ['severity', true]]);
+      return rows(
+        ['field_key', 'required'],
+        [
+          ['ncr_number', true],
+          ['clause_ref', true],
+          ['containment_flag', false],
+          ['severity', true],
+        ],
+      );
     }
     if (sql.includes('SELECT f.field_key') && sql.includes('record_values')) {
       return rows(['field_key'], [['ncr_number'], ['clause_ref'], ['containment_flag']]);
@@ -188,13 +288,19 @@ function wireSql(fx: FixtureState) {
 
 function wireRenderOk() {
   mockLambdaSend.mockResolvedValue({
-    Payload: new TextEncoder().encode(JSON.stringify({
-      results: [{
-        documentId: RECORD_ID, versionId: `${RECORD_ID}-v1`,
-        pdfKey: `tenants/${T}/pdf/${RECORD_ID}-abcdef123456.pdf`,
-        sha256: 'abcdef1234567890', cached: false,
-      }],
-    })),
+    Payload: new TextEncoder().encode(
+      JSON.stringify({
+        results: [
+          {
+            documentId: RECORD_ID,
+            versionId: `${RECORD_ID}-v1`,
+            pdfKey: `tenants/${T}/pdf/${RECORD_ID}-abcdef123456.pdf`,
+            sha256: 'abcdef1234567890',
+            cached: false,
+          },
+        ],
+      }),
+    ),
   });
   mockS3Send.mockResolvedValue({});
 }
@@ -215,11 +321,18 @@ beforeEach(() => {
 
 describe('exportFormRecordPdf (REC-7)', () => {
   it('builds the content JSON with catalog-resolved labels, renders via PdfRenderFn, presigns 15 min', async () => {
-    wireSql({ status: 'in_progress', standards: ['ISO9001', 'ISO14001', 'ISO45001', 'IMS'], policyYears: 7 });
+    wireSql({
+      status: 'in_progress',
+      standards: ['ISO9001', 'ISO14001', 'ISO45001', 'IMS'],
+      policyYears: 7,
+    });
     wireRenderOk();
 
     const before = Date.now();
-    const result = await handler(event('exportFormRecordPdf', { recordId: RECORD_ID })) as { url: string; expiresAt: string };
+    const result = (await handler(event('exportFormRecordPdf', { recordId: RECORD_ID }))) as {
+      url: string;
+      expiresAt: string;
+    };
 
     expect(result.url).toBe('https://signed.test/record.pdf');
     const ttlMs = new Date(result.expiresAt).getTime() - before;
@@ -228,8 +341,12 @@ describe('exportFormRecordPdf (REC-7)', () => {
     expect(mockGetSignedUrl.mock.calls[0][2]).toEqual({ expiresIn: 15 * 60 });
 
     // Content JSON: uploaded to the tenant record content plane
-    const put = mockS3Send.mock.calls.find(c => c[0].constructor.name === 'PutObjectCommand')![0].input as {
-      Bucket: string; Key: string; Body: string; ContentType: string;
+    const put = mockS3Send.mock.calls.find((c) => c[0].constructor.name === 'PutObjectCommand')![0]
+      .input as {
+      Bucket: string;
+      Key: string;
+      Body: string;
+      ContentType: string;
     };
     expect(put.Bucket).toBe('test-general-bucket');
     expect(put.Key).toBe(`tenants/${T}/records/${RECORD_ID}.json`);
@@ -242,14 +359,17 @@ describe('exportFormRecordPdf (REC-7)', () => {
     expect(content.template.title).toBe(label(enMessages, 'forms.tpl.ncr.title'));
     expect(content.recordSections[0].title).toBe(label(enMessages, 'forms.ncr.sec.info'));
     const fields = content.recordSections[0].fields as Array<Record<string, unknown>>;
-    expect(fields.map(f => f.label)).toEqual([
+    expect(fields.map((f) => f.label)).toEqual([
       label(enMessages, 'forms.ncr.field.ncrNumber'),
       label(enMessages, 'forms.ncr.field.clauseRef'),
       label(enMessages, 'forms.ncr.field.containmentFlag'),
       label(enMessages, 'forms.ncr.field.severity'),
     ]);
     // Typed display values: clause relation dereferenced, checkbox localized, unfilled honest
-    expect(fields[1]).toMatchObject({ filled: true, display: 'ISO9001 8.7 — Nonconforming outputs' });
+    expect(fields[1]).toMatchObject({
+      filled: true,
+      display: 'ISO9001 8.7 — Nonconforming outputs',
+    });
     expect(fields[2]).toMatchObject({ filled: true, display: label(enMessages, 'forms.pdf.yes') });
     expect(fields[3]).toMatchObject({ filled: false, display: '' });
 
@@ -260,12 +380,19 @@ describe('exportFormRecordPdf (REC-7)', () => {
     );
     expect(mockLambdaSend.mock.calls[0][0].input.FunctionName).toBe('test-pdf-render-fn');
     expect(invokePayload.documents[0]).toMatchObject({
-      documentId: RECORD_ID, docType: 'form_record', standard: 'IMS', versionNo: 1,
+      documentId: RECORD_ID,
+      docType: 'form_record',
+      standard: 'IMS',
+      versionNo: 1,
       contentKey: `tenants/${T}/records/${RECORD_ID}.json`,
     });
 
     // M3 Data-API lesson: every record-plane SELECT carries ::uuid casts
-    const selects = mockExecute.mock.calls.filter(c => (c[0] as string).trimStart().startsWith('\n    SELECT') || (c[0] as string).trimStart().startsWith('SELECT'));
+    const selects = mockExecute.mock.calls.filter(
+      (c) =>
+        (c[0] as string).trimStart().startsWith('\n    SELECT') ||
+        (c[0] as string).trimStart().startsWith('SELECT'),
+    );
     for (const s of selects) expect(s[0]).toContain('::uuid');
   });
 
@@ -276,7 +403,8 @@ describe('exportFormRecordPdf (REC-7)', () => {
 
     await handler(event('exportFormRecordPdf', { recordId: RECORD_ID }));
 
-    const put = mockS3Send.mock.calls.find(c => c[0].constructor.name === 'PutObjectCommand')![0].input as { Body: string };
+    const put = mockS3Send.mock.calls.find((c) => c[0].constructor.name === 'PutObjectCommand')![0]
+      .input as { Body: string };
     const content = JSON.parse(put.Body);
     expect(content.locale).toBe('es');
     expect(content.template.title).toBe(label(esMessages, 'forms.tpl.ncr.title'));
@@ -285,7 +413,9 @@ describe('exportFormRecordPdf (REC-7)', () => {
   it('RECORD_NOT_FOUND rolls back and never touches S3', async () => {
     mockExecute.mockResolvedValue(emptyRes);
 
-    await expect(handler(event('exportFormRecordPdf', { recordId: RECORD_ID }))).rejects.toThrow('RECORD_NOT_FOUND');
+    await expect(handler(event('exportFormRecordPdf', { recordId: RECORD_ID }))).rejects.toThrow(
+      'RECORD_NOT_FOUND',
+    );
     expect(mockRollback).toHaveBeenCalled();
     expect(mockS3Send).not.toHaveBeenCalled();
     expect(mockLambdaSend).not.toHaveBeenCalled();
@@ -299,26 +429,40 @@ describe('exportFormRecordPdf (REC-7)', () => {
       Payload: new TextEncoder().encode('{"errorMessage":"chromium died"}'),
     });
 
-    await expect(handler(event('exportFormRecordPdf', { recordId: RECORD_ID }))).rejects.toThrow('RENDER_FAILED');
+    await expect(handler(event('exportFormRecordPdf', { recordId: RECORD_ID }))).rejects.toThrow(
+      'RENDER_FAILED',
+    );
     expect(mockGetSignedUrl).not.toHaveBeenCalled();
   });
 });
 
 describe('approveFormRecord sealing (REC-7/ACC-7)', () => {
   it('seals with per-object retention from the tenant policy (3y): CopyObject lock + m4 pointer + m4_record_id in SAME txn, audit after commit', async () => {
-    wireSql({ status: 'complete', standards: ['ISO9001', 'ISO14001', 'ISO45001', 'IMS'], policyYears: 3 });
+    wireSql({
+      status: 'complete',
+      standards: ['ISO9001', 'ISO14001', 'ISO45001', 'IMS'],
+      policyYears: 3,
+    });
     wireRenderOk();
 
     const before = Date.now();
     await handler(event('approveFormRecord', { input: { recordId: RECORD_ID } }));
 
     // CopyObject: evidence vault, GOVERNANCE, retain ≈ now + 3y (policy-driven, BC-10)
-    const copy = mockS3Send.mock.calls.find(c => c[0].constructor.name === 'CopyObjectCommand')![0].input as {
-      Bucket: string; Key: string; CopySource: string; ObjectLockMode: string; ObjectLockRetainUntilDate: Date;
+    const copy = mockS3Send.mock.calls.find(
+      (c) => c[0].constructor.name === 'CopyObjectCommand',
+    )![0].input as {
+      Bucket: string;
+      Key: string;
+      CopySource: string;
+      ObjectLockMode: string;
+      ObjectLockRetainUntilDate: Date;
     };
     expect(copy.Bucket).toBe('test-evidence-vault');
     expect(copy.Key).toBe(`tenants/${T}/sealed/records/${RECORD_ID}-abcdef123456.pdf`);
-    expect(decodeURIComponent(copy.CopySource)).toBe(`test-general-bucket/tenants/${T}/pdf/${RECORD_ID}-abcdef123456.pdf`);
+    expect(decodeURIComponent(copy.CopySource)).toBe(
+      `test-general-bucket/tenants/${T}/pdf/${RECORD_ID}-abcdef123456.pdf`,
+    );
     expect(copy.ObjectLockMode).toBe('GOVERNANCE');
     const threeYears = 3 * 365.25 * 24 * 3600 * 1000;
     expect(copy.ObjectLockRetainUntilDate.getTime() - before).toBeGreaterThan(threeYears - 60_000);
@@ -326,51 +470,81 @@ describe('approveFormRecord sealing (REC-7/ACC-7)', () => {
 
     // m4.records pointer: retain_until == object_lock_until (single param bound twice),
     // IMS standard (BC-6), form_record type, 3y class
-    const insertIdx = mockExecute.mock.calls.findIndex(c => (c[0] as string).includes('INSERT INTO m4.records'));
+    const insertIdx = mockExecute.mock.calls.findIndex((c) =>
+      (c[0] as string).includes('INSERT INTO m4.records'),
+    );
     const insert = mockExecute.mock.calls[insertIdx];
-    expect(insert[0]).toContain(":retainUntil::timestamptz, :objectRef, :retainUntil::timestamptz");
+    expect(insert[0]).toContain(':retainUntil::timestamptz, :objectRef, :retainUntil::timestamptz');
     expect(insert[0]).toContain("'form_record'");
-    const params = Object.fromEntries((insert[1] as Array<{ name: string; value: Record<string, unknown> }>)
-      .map(p => [p.name, Object.values(p.value)[0]]));
+    const params = Object.fromEntries(
+      (insert[1] as Array<{ name: string; value: Record<string, unknown> }>).map((p) => [
+        p.name,
+        Object.values(p.value)[0],
+      ]),
+    );
     expect(params.standard).toBe('IMS');
     expect(params.retClass).toBe('3y');
     expect(params.objectRef).toBe(`s3://test-evidence-vault/${copy.Key}`);
 
     // forms.records.m4_record_id stamped in the SAME txn (before the commit)
-    const stampIdx = mockExecute.mock.calls.findIndex(c => (c[0] as string).includes('SET m4_record_id'));
+    const stampIdx = mockExecute.mock.calls.findIndex((c) =>
+      (c[0] as string).includes('SET m4_record_id'),
+    );
     expect(stampIdx).toBeGreaterThan(insertIdx);
-    const stampParams = Object.fromEntries((mockExecute.mock.calls[stampIdx][1] as Array<{ name: string; value: Record<string, unknown> }>)
-      .map(p => [p.name, Object.values(p.value)[0]]));
+    const stampParams = Object.fromEntries(
+      (
+        mockExecute.mock.calls[stampIdx][1] as Array<{
+          name: string;
+          value: Record<string, unknown>;
+        }>
+      ).map((p) => [p.name, Object.values(p.value)[0]]),
+    );
     expect(stampParams.m4Id).toBe('m4-rec-77');
     expect(mockExecute.mock.calls[stampIdx][0]).toContain(':m4Id::uuid');
-    expect(mockExecute.mock.invocationCallOrder[stampIdx])
-      .toBeLessThan(mockCommit.mock.invocationCallOrder[0]);
+    expect(mockExecute.mock.invocationCallOrder[stampIdx]).toBeLessThan(
+      mockCommit.mock.invocationCallOrder[0],
+    );
 
     // Sealed content reflects the APPROVED row (post-flip re-read)
-    const put = mockS3Send.mock.calls.find(c => c[0].constructor.name === 'PutObjectCommand')![0].input as { Body: string };
+    const put = mockS3Send.mock.calls.find((c) => c[0].constructor.name === 'PutObjectCommand')![0]
+      .input as { Body: string };
     expect(JSON.parse(put.Body).record.status).toBe('APPROVED');
 
     // Audit: after commit, carries the seal
-    expect(mockCommit.mock.invocationCallOrder[0])
-      .toBeLessThan(mockPublishAudit.mock.invocationCallOrder[0]);
+    expect(mockCommit.mock.invocationCallOrder[0]).toBeLessThan(
+      mockPublishAudit.mock.invocationCallOrder[0],
+    );
     expect(mockPublishAudit.mock.calls[0][0]).toMatchObject({ detailType: 'FormRecord.Approved' });
     expect(mockPublishAudit.mock.calls[0][0].payload).toMatchObject({
-      sealed: true, m4RecordId: 'm4-rec-77', retentionYears: 3, lockMode: 'GOVERNANCE',
+      sealed: true,
+      m4RecordId: 'm4-rec-77',
+      retentionYears: 3,
+      lockMode: 'GOVERNANCE',
       sealedKey: copy.Key,
     });
   });
 
   it('seeds the default 7y form_record policy when the tenant has none', async () => {
-    wireSql({ status: 'complete', standards: ['ISO9001', 'ISO14001', 'ISO45001', 'IMS'], policyYears: null });
+    wireSql({
+      status: 'complete',
+      standards: ['ISO9001', 'ISO14001', 'ISO45001', 'IMS'],
+      policyYears: null,
+    });
     wireRenderOk();
 
     await handler(event('approveFormRecord', { input: { recordId: RECORD_ID } }));
 
-    const seed = mockExecute.mock.calls.find(c => (c[0] as string).includes('INSERT INTO m4.retention_policies'))!;
+    const seed = mockExecute.mock.calls.find((c) =>
+      (c[0] as string).includes('INSERT INTO m4.retention_policies'),
+    )!;
     expect(seed[0]).toContain("'form_record'");
     expect(seed[0]).toContain("'review_before_disposal'");
-    const seedParams = Object.fromEntries((seed[1] as Array<{ name: string; value: Record<string, unknown> }>)
-      .map(p => [p.name, Object.values(p.value)[0]]));
+    const seedParams = Object.fromEntries(
+      (seed[1] as Array<{ name: string; value: Record<string, unknown> }>).map((p) => [
+        p.name,
+        Object.values(p.value)[0],
+      ]),
+    );
     expect(seedParams.years).toBe(7);
     expect(mockPublishAudit.mock.calls[0][0].payload.retentionYears).toBe(7);
   });
@@ -381,9 +555,15 @@ describe('approveFormRecord sealing (REC-7/ACC-7)', () => {
 
     await handler(event('approveFormRecord', { input: { recordId: RECORD_ID } }));
 
-    const insert = mockExecute.mock.calls.find(c => (c[0] as string).includes('INSERT INTO m4.records'))!;
-    const params = Object.fromEntries((insert[1] as Array<{ name: string; value: Record<string, unknown> }>)
-      .map(p => [p.name, Object.values(p.value)[0]]));
+    const insert = mockExecute.mock.calls.find((c) =>
+      (c[0] as string).includes('INSERT INTO m4.records'),
+    )!;
+    const params = Object.fromEntries(
+      (insert[1] as Array<{ name: string; value: Record<string, unknown> }>).map((p) => [
+        p.name,
+        Object.values(p.value)[0],
+      ]),
+    );
     expect(params.standard).toBe('ISO14001');
   });
 
@@ -395,29 +575,42 @@ describe('approveFormRecord sealing (REC-7/ACC-7)', () => {
       Payload: new TextEncoder().encode('{"errorMessage":"chromium died"}'),
     });
 
-    await expect(handler(event('approveFormRecord', { input: { recordId: RECORD_ID } }))).rejects.toThrow('RENDER_FAILED');
+    await expect(
+      handler(event('approveFormRecord', { input: { recordId: RECORD_ID } })),
+    ).rejects.toThrow('RENDER_FAILED');
     expect(mockCommit).not.toHaveBeenCalled();
     expect(mockRollback).toHaveBeenCalled();
     expect(mockPublishAudit).not.toHaveBeenCalled();
     // No sealed copy, no pointer row
-    expect(mockS3Send.mock.calls.some(c => c[0].constructor.name === 'CopyObjectCommand')).toBe(false);
-    expect(mockExecute.mock.calls.some(c => (c[0] as string).includes('INSERT INTO m4.records'))).toBe(false);
+    expect(mockS3Send.mock.calls.some((c) => c[0].constructor.name === 'CopyObjectCommand')).toBe(
+      false,
+    );
+    expect(
+      mockExecute.mock.calls.some((c) => (c[0] as string).includes('INSERT INTO m4.records')),
+    ).toBe(false);
   });
 
   it('SoD violation (approver == opened_by) with seal env SET: writes nothing, never touches S3', async () => {
     wireSql({ status: 'complete', standards: ['ISO9001', 'IMS'], policyYears: 7 });
     wireRenderOk();
 
-    await expect(handler(event('approveFormRecord', { input: { recordId: RECORD_ID } }, 'user-a')))
-      .rejects.toThrow('SOD_VIOLATION');
+    await expect(
+      handler(event('approveFormRecord', { input: { recordId: RECORD_ID } }, 'user-a')),
+    ).rejects.toThrow('SOD_VIOLATION');
     expect(mockS3Send).not.toHaveBeenCalled();
     expect(mockLambdaSend).not.toHaveBeenCalled();
     expect(mockCommit).not.toHaveBeenCalled();
-    expect(mockPublishAudit.mock.calls[0][0]).toMatchObject({ detailType: 'Security.SodViolationBlocked' });
+    expect(mockPublishAudit.mock.calls[0][0]).toMatchObject({
+      detailType: 'Security.SodViolationBlocked',
+    });
   });
 
   it('unconfigured seal env (hermetic lane): approval commits, audit carries sealed:false + SEAL_NOT_CONFIGURED', async () => {
-    const saved = { c: process.env.CONTENT_BUCKET, e: process.env.EVIDENCE_BUCKET, p: process.env.PDF_RENDER_FN };
+    const saved = {
+      c: process.env.CONTENT_BUCKET,
+      e: process.env.EVIDENCE_BUCKET,
+      p: process.env.PDF_RENDER_FN,
+    };
     process.env.CONTENT_BUCKET = '';
     process.env.EVIDENCE_BUCKET = '';
     process.env.PDF_RENDER_FN = '';
@@ -432,7 +625,8 @@ describe('approveFormRecord sealing (REC-7/ACC-7)', () => {
       expect(mockLambdaSend).not.toHaveBeenCalled();
       expect(mockCommit).toHaveBeenCalled();
       expect(mockPublishAudit.mock.calls[0][0].payload).toMatchObject({
-        sealed: false, reason: 'SEAL_NOT_CONFIGURED',
+        sealed: false,
+        reason: 'SEAL_NOT_CONFIGURED',
       });
     } finally {
       process.env.CONTENT_BUCKET = saved.c;

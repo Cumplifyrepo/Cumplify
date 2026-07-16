@@ -13,15 +13,28 @@ import { buildGuardrailConfig } from '../src/guardrail.js';
 import type { SeatId } from '../src/types.js';
 
 const AGENT_SEATS: SeatId[] = [
-  'workhorse', 'lightweight', 'guru-9001', 'guru-14001', 'guru-45001',
-  'micro', 'snapshot', 'editor-ai', 'pain-distiller', 'legal-ledger',
+  'workhorse',
+  'lightweight',
+  'guru-9001',
+  'guru-14001',
+  'guru-45001',
+  'micro',
+  'snapshot',
+  'editor-ai',
+  'pain-distiller',
+  'legal-ledger',
 ];
 
-const ENV_KEYS = ['GUARDRAIL_ID', 'GUARDRAIL_VERSION', 'DOCGEN_GUARDRAIL_ID', 'DOCGEN_GUARDRAIL_VERSION'] as const;
+const ENV_KEYS = [
+  'GUARDRAIL_ID',
+  'GUARDRAIL_VERSION',
+  'DOCGEN_GUARDRAIL_ID',
+  'DOCGEN_GUARDRAIL_VERSION',
+] as const;
 let savedEnv: Record<string, string | undefined>;
 
 beforeEach(() => {
-  savedEnv = Object.fromEntries(ENV_KEYS.map(k => [k, process.env[k]]));
+  savedEnv = Object.fromEntries(ENV_KEYS.map((k) => [k, process.env[k]]));
   process.env.GUARDRAIL_ID = 'agent-guardrail-id';
   process.env.GUARDRAIL_VERSION = '1';
   process.env.DOCGEN_GUARDRAIL_ID = 'docgen-guardrail-id';

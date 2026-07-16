@@ -22,11 +22,14 @@ describe('signedAossFetch', () => {
     resetSigner();
     capturedInit = undefined;
     capturedUrl = undefined;
-    vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
-      capturedUrl = url;
-      capturedInit = init;
-      return new Response(JSON.stringify({ ok: true }), { status: 200 });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init: RequestInit) => {
+        capturedUrl = url;
+        capturedInit = init;
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }),
+    );
   });
 
   afterEach(() => {
@@ -53,11 +56,14 @@ describe('signedAossFetch', () => {
   });
 
   it("retrieval's DEFAULT client signs its search requests (regression: bare fetch 403'd live)", async () => {
-    vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
-      capturedUrl = url;
-      capturedInit = init;
-      return new Response(JSON.stringify({ hits: { hits: [] } }), { status: 200 });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init: RequestInit) => {
+        capturedUrl = url;
+        capturedInit = init;
+        return new Response(JSON.stringify({ hits: { hits: [] } }), { status: 200 });
+      }),
+    );
 
     // No injected httpClient → exercises defaultAossClient
     const result = await retrieve({
@@ -77,7 +83,10 @@ describe('signedAossFetch', () => {
   });
 
   it('default client surfaces non-2xx as statusCode-tagged errors (retryability contract)', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response('{"error":"forbidden"}', { status: 403 })));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('{"error":"forbidden"}', { status: 403 })),
+    );
 
     await expect(
       retrieve({

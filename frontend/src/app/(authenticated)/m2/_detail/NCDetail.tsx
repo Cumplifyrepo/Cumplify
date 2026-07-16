@@ -75,7 +75,13 @@ const CLOSE_CAPA = `mutation Close($input: CloseCapaInput!) {
 
 type TimelineStage = 'raised' | 'rootCause' | 'correctiveAction' | 'effectiveness' | 'closed';
 
-const STAGES: TimelineStage[] = ['raised', 'rootCause', 'correctiveAction', 'effectiveness', 'closed'];
+const STAGES: TimelineStage[] = [
+  'raised',
+  'rootCause',
+  'correctiveAction',
+  'effectiveness',
+  'closed',
+];
 
 /**
  * Derive stage completion from NC status + presence of root cause + presence of CAs + verified status.
@@ -129,7 +135,9 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
 
   const fetchCAs = useCallback(async () => {
     try {
-      const data = await query<{ listCorrectiveActions: CorrectiveAction[] }>(LIST_CAS, { ncId: id });
+      const data = await query<{ listCorrectiveActions: CorrectiveAction[] }>(LIST_CAS, {
+        ncId: id,
+      });
       setCas(data.listCorrectiveActions);
     } catch {
       // Non-critical — CA list stays empty
@@ -154,38 +162,68 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
     return deriveStageIndex(nc, cas);
   }, [nc, cas]);
 
-  const rootCauseFields: FieldDef[] = useMemo(() => [
-    // DB CHECK allows only these three methods — a free-text field would fail
-    { name: 'method', label: t('fieldMethod'), type: 'select', required: true, options: [
-      { value: '5why', label: t('method5why') },
-      { value: 'fishbone', label: t('methodFishbone') },
-      { value: 'fta', label: t('methodFta') },
-    ]},
-    { name: 'findings', label: t('fieldFindings'), type: 'textarea', required: true },
-    { name: 'rootCauseSummary', label: t('fieldRootCause'), type: 'textarea', required: true },
-  ], [t]);
+  const rootCauseFields: FieldDef[] = useMemo(
+    () => [
+      // DB CHECK allows only these three methods — a free-text field would fail
+      {
+        name: 'method',
+        label: t('fieldMethod'),
+        type: 'select',
+        required: true,
+        options: [
+          { value: '5why', label: t('method5why') },
+          { value: 'fishbone', label: t('methodFishbone') },
+          { value: 'fta', label: t('methodFta') },
+        ],
+      },
+      { name: 'findings', label: t('fieldFindings'), type: 'textarea', required: true },
+      { name: 'rootCauseSummary', label: t('fieldRootCause'), type: 'textarea', required: true },
+    ],
+    [t],
+  );
 
-  const caFields: FieldDef[] = useMemo(() => [
-    { name: 'actionDesc', label: t('fieldActionDesc'), type: 'textarea', required: true },
-    { name: 'ownerId', label: t('fieldOwner'), type: 'text', required: true },
-    { name: 'dueDate', label: t('fieldDueDate'), type: 'date', required: true },
-    { name: 'containmentFlag', label: t('fieldContainment'), type: 'checkbox' },
-  ], [t]);
+  const caFields: FieldDef[] = useMemo(
+    () => [
+      { name: 'actionDesc', label: t('fieldActionDesc'), type: 'textarea', required: true },
+      { name: 'ownerId', label: t('fieldOwner'), type: 'text', required: true },
+      { name: 'dueDate', label: t('fieldDueDate'), type: 'date', required: true },
+      { name: 'containmentFlag', label: t('fieldContainment'), type: 'checkbox' },
+    ],
+    [t],
+  );
 
-  const verifyFields: FieldDef[] = useMemo(() => [
-    { name: 'verificationMethod', label: t('fieldVerifyMethod'), type: 'text', required: true },
-    { name: 'effective', label: t('fieldEffective'), type: 'select', required: true, options: [{ value: 'true', label: t('yes') }, { value: 'false', label: t('no') }] },
-  ], [t]);
+  const verifyFields: FieldDef[] = useMemo(
+    () => [
+      { name: 'verificationMethod', label: t('fieldVerifyMethod'), type: 'text', required: true },
+      {
+        name: 'effective',
+        label: t('fieldEffective'),
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'true', label: t('yes') },
+          { value: 'false', label: t('no') },
+        ],
+      },
+    ],
+    [t],
+  );
 
-  const closeFields: FieldDef[] = useMemo(() => [
-    { name: 'closureNotes', label: t('fieldClosureNotes'), type: 'textarea' },
-  ], [t]);
+  const closeFields: FieldDef[] = useMemo(
+    () => [{ name: 'closureNotes', label: t('fieldClosureNotes'), type: 'textarea' }],
+    [t],
+  );
 
   async function handleRootCause(values: Record<string, string | boolean>) {
     if (!nc) return;
     try {
       await mutate(RECORD_ROOT_CAUSE, {
-        input: { ncId: nc.id, method: values.method, findings: values.findings, rootCauseSummary: values.rootCauseSummary },
+        input: {
+          ncId: nc.id,
+          method: values.method,
+          findings: values.findings,
+          rootCauseSummary: values.rootCauseSummary,
+        },
       });
       setActiveDrawer(null);
       await fetchNC();
@@ -199,7 +237,13 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
     if (!nc) return;
     try {
       await mutate(CREATE_CA, {
-        input: { ncId: nc.id, actionDesc: values.actionDesc, ownerId: values.ownerId, dueDate: values.dueDate, containmentFlag: values.containmentFlag === true },
+        input: {
+          ncId: nc.id,
+          actionDesc: values.actionDesc,
+          ownerId: values.ownerId,
+          dueDate: values.dueDate,
+          containmentFlag: values.containmentFlag === true,
+        },
       });
       setActiveDrawer(null);
       await fetchCAs();
@@ -213,7 +257,11 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
     try {
       // G2: uses the CA's id from the CA row, NEVER nc.id
       await mutate(VERIFY_EFF, {
-        input: { correctiveActionId: verifyCAId, verificationMethod: values.verificationMethod, effective: values.effective === 'true' },
+        input: {
+          correctiveActionId: verifyCAId,
+          verificationMethod: values.verificationMethod,
+          effective: values.effective === 'true',
+        },
       });
       setVerifyCAId(null);
       await fetchNC();
@@ -259,13 +307,20 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
             const completed = i <= stage;
             const isNext = i === stage + 1;
             return (
-              <div key={s} className={`${styles.stage} ${completed ? styles.stageCompleted : styles.stageFuture}`}>
-                <div className={`${styles.dot} ${completed ? styles.dotCompleted : styles.dotFuture}`} />
+              <div
+                key={s}
+                className={`${styles.stage} ${completed ? styles.stageCompleted : styles.stageFuture}`}
+              >
+                <div
+                  className={`${styles.dot} ${completed ? styles.dotCompleted : styles.dotFuture}`}
+                />
                 <div className={styles.stageContent}>
                   <span className={styles.stageLabel}>{t(`stage_${s}`)}</span>
                   {completed && i === 0 && (
                     <ProvenanceLink entityId={nc.id}>
-                      <span className={styles.stageDate}>{new Date(nc.raisedAt).toLocaleDateString()}</span>
+                      <span className={styles.stageDate}>
+                        {new Date(nc.raisedAt).toLocaleDateString()}
+                      </span>
                     </ProvenanceLink>
                   )}
                   {/* At correctiveAction stage: render the CA list */}
@@ -276,16 +331,23 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
                           <div className={styles.stageContent}>
                             <span className={styles.stageLabel}>{ca.actionDesc}</span>
                             <span className={styles.stageDate}>
-                              {t('caOwner')}: {ca.ownerId} &middot; {t('caDue')}: {new Date(ca.dueDate).toLocaleDateString()}
+                              {t('caOwner')}: {ca.ownerId} &middot; {t('caDue')}:{' '}
+                              {new Date(ca.dueDate).toLocaleDateString()}
                             </span>
                             <StatusBadge status={ca.status} />
                             {ca.status !== 'VERIFIED' && ca.status !== 'CLOSED' && (
-                              <PrimaryButton className={styles.stageAction} onClick={() => setVerifyCAId(ca.id)}>
+                              <PrimaryButton
+                                className={styles.stageAction}
+                                onClick={() => setVerifyCAId(ca.id)}
+                              >
                                 {t('action_effectiveness')}
                               </PrimaryButton>
                             )}
                             {ca.status === 'VERIFIED' && (
-                              <SecondaryButton className={styles.stageAction} onClick={() => setCloseCAId(ca.id)}>
+                              <SecondaryButton
+                                className={styles.stageAction}
+                                onClick={() => setCloseCAId(ca.id)}
+                              >
                                 {t('action_closed')}
                               </SecondaryButton>
                             )}
@@ -296,7 +358,10 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
                   )}
                   {/* Show action button for the next incomplete stage */}
                   {isNext && s !== 'effectiveness' && s !== 'closed' && (
-                    <PrimaryButton className={styles.stageAction} onClick={() => setActiveDrawer(s)}>
+                    <PrimaryButton
+                      className={styles.stageAction}
+                      onClick={() => setActiveDrawer(s)}
+                    >
                       {t(`action_${s}`)}
                     </PrimaryButton>
                   )}

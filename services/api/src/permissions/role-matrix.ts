@@ -17,7 +17,21 @@ const ROLE_WRITE_MODULES: Record<string, ReadonlySet<string>> = {
   // Role 1: Top Management / Executive — approve policies (M1 policy only), 9.3 outputs
   'top-management': new Set(['M1']),
   // Role 2: Management Rep / IMS Lead — full write across all modules
-  'management-rep': new Set(['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12', 'M13']),
+  'management-rep': new Set([
+    'M1',
+    'M2',
+    'M3',
+    'M4',
+    'M5',
+    'M6',
+    'M7',
+    'M8',
+    'M9',
+    'M10',
+    'M11',
+    'M12',
+    'M13',
+  ]),
   // Role 3: Quality Manager — quality domains
   'quality-manager': new Set(['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'M11', 'M12', 'M13']),
   // Role 4: EHS Manager — environmental + OH&S domains
@@ -31,11 +45,11 @@ const ROLE_WRITE_MODULES: Record<string, ReadonlySet<string>> = {
   // Role 8: Process Owner — write within assigned processes only (row-level)
   'process-owner': new Set(['M1', 'M2', 'M5']),
   // Role 9: Supervisor — M10 hazard/incident, M13 training
-  'supervisor': new Set(['M10', 'M13']),
+  supervisor: new Set(['M10', 'M13']),
   // Role 10: Employee / Worker — incident reporting only
-  'employee': new Set(['M10']),
+  employee: new Set(['M10']),
   // Role 11: Contractor (limited) — incident reporting only
-  'contractor': new Set(['M10']),
+  contractor: new Set(['M10']),
   // Role 12: Partner Consultant — delegated per-tenant, per-role access (handled at auth layer)
   'partner-consultant': new Set([]),
 };
@@ -49,12 +63,12 @@ const ROLE_WRITE_MODULES: Record<string, ReadonlySet<string>> = {
  * kebab-casing. 'Employee' is PreTokenGen's no-group fallback.
  */
 const COGNITO_GROUP_ROLES: Record<string, string> = {
-  'TopManagement': 'top-management',
-  'IMSLead': 'management-rep',
-  'QualityManager': 'quality-manager',
-  'EHSManager': 'ehs-manager',
-  'DocumentController': 'document-controller',
-  'Employee': 'employee',
+  TopManagement: 'top-management',
+  IMSLead: 'management-rep',
+  QualityManager: 'quality-manager',
+  EHSManager: 'ehs-manager',
+  DocumentController: 'document-controller',
+  Employee: 'employee',
 };
 
 /** Map a raw custom:role claim (Cognito group name or slug) to a matrix key. */
@@ -69,14 +83,14 @@ export function normalizeRole(role: string): string {
  * from the proposed tool; unmapped tools resolve to 'unknown' and deny.
  */
 export const TOOL_MODULES: Record<string, string> = {
-  'capa-open': 'M2',                    // m2.corrective_actions
-  'capa-verify-effectiveness': 'M2',    // m2.capa_effectiveness_checks
-  'doc-publish': 'M1',                  // m1 document lifecycle
-  'doc-version-control': 'M1',          // m1.document_versions
-  'audit-finding-write': 'M3',          // m3.audit_findings
-  'audit-checklist-gen': 'M3',          // m3.audit_checklists
-  'records-retention-schedule': 'M4',   // m4.retention_policies
-  'ct-governance-write': 'M1',          // BLOCKED-ON-DESIGN at writeback; M1 per corpus intent
+  'capa-open': 'M2', // m2.corrective_actions
+  'capa-verify-effectiveness': 'M2', // m2.capa_effectiveness_checks
+  'doc-publish': 'M1', // m1 document lifecycle
+  'doc-version-control': 'M1', // m1.document_versions
+  'audit-finding-write': 'M3', // m3.audit_findings
+  'audit-checklist-gen': 'M3', // m3.audit_checklists
+  'records-retention-schedule': 'M4', // m4.retention_policies
+  'ct-governance-write': 'M1', // BLOCKED-ON-DESIGN at writeback; M1 per corpus intent
 };
 
 /** Resolve a HITL item's module: explicit field first, then tool registry. */

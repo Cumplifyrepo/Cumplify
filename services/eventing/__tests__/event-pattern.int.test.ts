@@ -11,10 +11,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  EventBridgeClient,
-  TestEventPatternCommand,
-} from '@aws-sdk/client-eventbridge';
+import { EventBridgeClient, TestEventPatternCommand } from '@aws-sdk/client-eventbridge';
 
 const client = new EventBridgeClient({ region: 'us-east-1' });
 

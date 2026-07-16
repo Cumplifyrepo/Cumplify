@@ -72,15 +72,17 @@ interface TokenClaims extends JWTPayload {
  */
 async function getEntitlementStamp(tenantId: string): Promise<string> {
   try {
-    const result = await ddb.send(new GetItemCommand({
-      TableName: TABLE_NAME,
-      Key: {
-        PK: { S: `TENANT#${tenantId}#META` },
-        SK: { S: 'PLAN' },
-      },
-      ProjectionExpression: '#plan, seats, features',
-      ExpressionAttributeNames: { '#plan': 'plan' },
-    }));
+    const result = await ddb.send(
+      new GetItemCommand({
+        TableName: TABLE_NAME,
+        Key: {
+          PK: { S: `TENANT#${tenantId}#META` },
+          SK: { S: 'PLAN' },
+        },
+        ProjectionExpression: '#plan, seats, features',
+        ExpressionAttributeNames: { '#plan': 'plan' },
+      }),
+    );
 
     if (result.Item) {
       return JSON.stringify({
@@ -143,9 +145,12 @@ export async function handler(event: AppSyncAuthEvent): Promise<AuthResponse> {
       // - Expired tokens (jose throws JWTExpired)
       // - Bad signatures (jose throws JWSSignatureVerificationFailed)
       // - Wrong audience (token's aud not in allowed client IDs for pool)
-      logger.warn('Token rejected: not issued by Pool B or Pool C, or wrong audience (Layer 1 rejection)', {
-        requestId,
-      });
+      logger.warn(
+        'Token rejected: not issued by Pool B or Pool C, or wrong audience (Layer 1 rejection)',
+        {
+          requestId,
+        },
+      );
       return { isAuthorized: false };
     }
   }
@@ -167,8 +172,8 @@ export async function handler(event: AppSyncAuthEvent): Promise<AuthResponse> {
   }
 
   // Check poolClass — reject if somehow 'internal' leaked (defense in depth; Layer 1 already blocked)
-  const poolClass = claims!['custom:poolClass'] ??
-    (matchedPool === 'B' ? 'tenant-admin' : 'tenant-user');
+  const poolClass =
+    claims!['custom:poolClass'] ?? (matchedPool === 'B' ? 'tenant-admin' : 'tenant-user');
 
   if (poolClass === 'internal') {
     logger.warn('Token rejected: poolClass=internal (AUTH-4)');
@@ -176,8 +181,7 @@ export async function handler(event: AppSyncAuthEvent): Promise<AuthResponse> {
   }
 
   // Extract role (from custom:role claim or first Cognito group)
-  const role = claims!['custom:role'] ??
-    claims!['cognito:groups']?.[0] ?? 'Employee';
+  const role = claims!['custom:role'] ?? claims!['cognito:groups']?.[0] ?? 'Employee';
 
   const sub = claims!.sub ?? 'unknown';
 

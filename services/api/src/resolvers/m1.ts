@@ -6,7 +6,13 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
+import {
+  extractContext,
+  beginTenantTransaction,
+  publishAuditEvent,
+  marshalOne,
+  marshalMany,
+} from './shared.js';
 import { mapEnum, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP } from './enum-mappings.js';
 import { S3Client, GetObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
@@ -34,18 +40,30 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
 
   switch (event.info.fieldName) {
-    case 'createDocumentDraft': return createDocumentDraft(event, tenantId, sub);
-    case 'submitDocumentForApproval': return submitDocumentForApproval(event, tenantId, sub);
-    case 'approveDocumentVersion': return approveDocumentVersion(event, tenantId, sub);
-    case 'publishControlledDocument': return publishControlledDocument(event, tenantId, sub);
-    case 'updatePolicy': return updatePolicy(event, tenantId, sub);
-    case 'updateImsScope': return updateImsScope(event, tenantId, sub);
-    case 'getDocument': return getDocument(event, tenantId);
-    case 'listDocuments': return listDocuments(event, tenantId);
-    case 'listDocumentVersions': return listDocumentVersions(event, tenantId);
-    case 'getDocumentVersionDiff': return getDocumentVersionDiff(event, tenantId);
-    case 'getDocumentContent': return getDocumentContent(event, tenantId);
-    default: throw new Error(`Unknown field: ${event.info.fieldName}`);
+    case 'createDocumentDraft':
+      return createDocumentDraft(event, tenantId, sub);
+    case 'submitDocumentForApproval':
+      return submitDocumentForApproval(event, tenantId, sub);
+    case 'approveDocumentVersion':
+      return approveDocumentVersion(event, tenantId, sub);
+    case 'publishControlledDocument':
+      return publishControlledDocument(event, tenantId, sub);
+    case 'updatePolicy':
+      return updatePolicy(event, tenantId, sub);
+    case 'updateImsScope':
+      return updateImsScope(event, tenantId, sub);
+    case 'getDocument':
+      return getDocument(event, tenantId);
+    case 'listDocuments':
+      return listDocuments(event, tenantId);
+    case 'listDocumentVersions':
+      return listDocumentVersions(event, tenantId);
+    case 'getDocumentVersionDiff':
+      return getDocumentVersionDiff(event, tenantId);
+    case 'getDocumentContent':
+      return getDocumentContent(event, tenantId);
+    default:
+      throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
 
@@ -69,13 +87,21 @@ async function createDocumentDraft(event: AppSyncEvent, tenantId: string, actor:
     await txn.commit();
     const doc = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
-      detailType: 'Document.DraftCreated', source: 'cumplify.m1.document-studio',
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5.2',
+      standard: 'ISO9001',
+      detailType: 'Document.DraftCreated',
+      source: 'cumplify.m1.document-studio',
       entityId: String(doc?.id ?? ''),
       payload: { documentId: doc?.id, input },
     });
     return doc;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -84,12 +110,15 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
   try {
     // APR-1/APR-3: preconditions — only for documents with an associated generation run.
     // Non-generated documents (hand-authored M1 drafts) pass through unchanged.
-    const runResult = await txn.execute(`
+    const runResult = await txn.execute(
+      `
       SELECT gr.id, gr.status
       FROM qms.generation_runs gr
       WHERE gr.manual_document_id = :docId::uuid
       ORDER BY gr.started_at DESC LIMIT 1
-    `, [{ name: 'docId', value: { stringValue: id } }]);
+    `,
+      [{ name: 'docId', value: { stringValue: id } }],
+    );
 
     const hasRun = runResult.records && runResult.records.length > 0;
 
@@ -97,21 +126,29 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
       const runId = (runResult.records![0][0] as { stringValue?: string }).stringValue!;
 
       // APR-1: every section must have reviewed_at IS NOT NULL
-      const unreviewedResult = await txn.execute(`
+      const unreviewedResult = await txn.execute(
+        `
         SELECT COUNT(*) AS cnt FROM qms.generation_sections
         WHERE run_id = :runId::uuid AND reviewed_at IS NULL
-      `, [{ name: 'runId', value: { stringValue: runId } }]);
-      const unreviewedCount = (unreviewedResult.records![0][0] as { longValue?: number }).longValue ?? 0;
+      `,
+        [{ name: 'runId', value: { stringValue: runId } }],
+      );
+      const unreviewedCount =
+        (unreviewedResult.records![0][0] as { longValue?: number }).longValue ?? 0;
       if (unreviewedCount > 0) {
         throw new Error('UNREVIEWED_SECTIONS');
       }
 
       // APR-3: zero sections with status IN ('gap', 'failed')
-      const gapFailedResult = await txn.execute(`
+      const gapFailedResult = await txn.execute(
+        `
         SELECT COUNT(*) AS cnt FROM qms.generation_sections
         WHERE run_id = :runId::uuid AND status IN ('gap', 'failed')
-      `, [{ name: 'runId', value: { stringValue: runId } }]);
-      const gapFailedCount = (gapFailedResult.records![0][0] as { longValue?: number }).longValue ?? 0;
+      `,
+        [{ name: 'runId', value: { stringValue: runId } }],
+      );
+      const gapFailedCount =
+        (gapFailedResult.records![0][0] as { longValue?: number }).longValue ?? 0;
       if (gapFailedCount > 0) {
         throw new Error('UNRESOLVED_GAPS');
       }
@@ -124,14 +161,23 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
     );
     await txn.commit();
     await publishAuditEvent({
-      tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
-      detailType: 'Document.SubmittedForApproval', source: 'cumplify.m1.document-studio',
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5.2',
+      standard: 'ISO9001',
+      detailType: 'Document.SubmittedForApproval',
+      source: 'cumplify.m1.document-studio',
       entityId: id,
       payload: { documentId: id },
     });
     return marshalOne(result);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 }
@@ -152,8 +198,13 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
         // Rollback BEFORE publishing (lesson: attempt is logged, write is not)
         await txn.rollback();
         await publishAuditEvent({
-          tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
-          detailType: 'Security.SodViolationBlocked', source: 'cumplify.m1.document-studio',
+          tenantId,
+          actor,
+          module: 'M1',
+          clauseRef: 'ISO 9001 7.5.2',
+          standard: 'ISO9001',
+          detailType: 'Security.SodViolationBlocked',
+          source: 'cumplify.m1.document-studio',
           entityId: input.versionId as string, // blocked events carry the targeted row id
           payload: { versionId: input.versionId, attemptedBy: actor, createdBy },
         });
@@ -174,15 +225,24 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
     await txn.commit();
     const approval = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
-      detailType: 'Document.Approved', source: 'cumplify.m1.document-studio',
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5.2',
+      standard: 'ISO9001',
+      detailType: 'Document.Approved',
+      source: 'cumplify.m1.document-studio',
       entityId: String(approval?.id ?? ''), // the DocumentApproval row the mutation returns
       payload: { approvalId: approval?.id, versionId: input.versionId, decision: input.decision },
     });
     return approval;
   } catch (err) {
     if ((err as Error).message !== 'SOD_VIOLATION') {
-      try { await txn.rollback(); } catch { /* never mask */ }
+      try {
+        await txn.rollback();
+      } catch {
+        /* never mask */
+      }
     }
     throw err;
   }
@@ -213,11 +273,19 @@ async function publishControlledDocument(event: AppSyncEvent, tenantId: string, 
       [{ name: 'versionId', value: { stringValue: versionId } }],
     );
     const meta = marshalOne(metaRes) as {
-      contentRef: string | null; versionNo: number; documentId: string;
-      title: string; docType: string; standard: string;
+      contentRef: string | null;
+      versionNo: number;
+      documentId: string;
+      title: string;
+      docType: string;
+      standard: string;
     } | null;
     if (!meta) {
-      try { await txn.rollback(); } catch { /* never mask */ }
+      try {
+        await txn.rollback();
+      } catch {
+        /* never mask */
+      }
       throw new Error('VERSION_NOT_FOUND');
     }
 
@@ -251,17 +319,25 @@ async function publishControlledDocument(event: AppSyncEvent, tenantId: string, 
       }
 
       // Render the final PDF (sha-cached inside PdfRenderFn).
-      const invoke = await lambdaClient.send(new InvokeCommand({
-        FunctionName: PDF_RENDER_FN,
-        Payload: JSON.stringify({
-          tenantId,
-          documents: [{
-            documentId: meta.documentId, versionId, contentKey: meta.contentRef,
-            title: meta.title, docType: meta.docType, standard: meta.standard,
-            versionNo: meta.versionNo,
-          }],
+      const invoke = await lambdaClient.send(
+        new InvokeCommand({
+          FunctionName: PDF_RENDER_FN,
+          Payload: JSON.stringify({
+            tenantId,
+            documents: [
+              {
+                documentId: meta.documentId,
+                versionId,
+                contentKey: meta.contentRef,
+                title: meta.title,
+                docType: meta.docType,
+                standard: meta.standard,
+                versionNo: meta.versionNo,
+              },
+            ],
+          }),
         }),
-      }));
+      );
       if (invoke.FunctionError) {
         logger.error('seal render failed', { raw: new TextDecoder().decode(invoke.Payload) });
         throw new Error('SEAL_FAILED');
@@ -274,13 +350,15 @@ async function publishControlledDocument(event: AppSyncEvent, tenantId: string, 
 
       const retainUntil = new Date(Date.now() + years * 365.25 * 24 * 3600 * 1000);
       const sealedKey = `tenants/${tenantId}/sealed/${versionId}.pdf`;
-      await s3.send(new CopyObjectCommand({
-        Bucket: EVIDENCE_BUCKET,
-        Key: sealedKey,
-        CopySource: encodeURIComponent(`${CONTENT_BUCKET}/${pdfKey}`),
-        ObjectLockMode: EVIDENCE_LOCK_MODE as 'GOVERNANCE' | 'COMPLIANCE',
-        ObjectLockRetainUntilDate: retainUntil,
-      }));
+      await s3.send(
+        new CopyObjectCommand({
+          Bucket: EVIDENCE_BUCKET,
+          Key: sealedKey,
+          CopySource: encodeURIComponent(`${CONTENT_BUCKET}/${pdfKey}`),
+          ObjectLockMode: EVIDENCE_LOCK_MODE as 'GOVERNANCE' | 'COMPLIANCE',
+          ObjectLockRetainUntilDate: retainUntil,
+        }),
+      );
 
       await txn.execute(
         `INSERT INTO m4.records
@@ -298,21 +376,33 @@ async function publishControlledDocument(event: AppSyncEvent, tenantId: string, 
         ],
       );
       sealed = {
-        sealed: true, sealedKey, retentionYears: years,
-        lockMode: EVIDENCE_LOCK_MODE, retainUntil: retainUntil.toISOString(),
+        sealed: true,
+        sealedKey,
+        retentionYears: years,
+        lockMode: EVIDENCE_LOCK_MODE,
+        retainUntil: retainUntil.toISOString(),
       };
     }
 
     await txn.commit();
     await publishAuditEvent({
-      tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.3', standard: 'ISO9001',
-      detailType: 'Document.Published', source: 'cumplify.m1.document-studio',
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5.3',
+      standard: 'ISO9001',
+      detailType: 'Document.Published',
+      source: 'cumplify.m1.document-studio',
       entityId: meta.documentId, // mutation returns the document (RETURNING d.*)
       payload: { versionId, documentId: meta.documentId, ...sealed },
     });
     return marshalOne(result);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 }
@@ -331,13 +421,21 @@ async function updatePolicy(event: AppSyncEvent, tenantId: string, actor: string
     );
     await txn.commit();
     await publishAuditEvent({
-      tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 5.2', standard: 'ISO9001',
-      detailType: 'Policy.Updated', source: 'cumplify.m1.document-studio',
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 5.2',
+      standard: 'ISO9001',
+      detailType: 'Policy.Updated',
+      source: 'cumplify.m1.document-studio',
       entityId: input.id as string,
       payload: { policyId: input.id },
     });
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function updateImsScope(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -356,25 +454,35 @@ async function updateImsScope(event: AppSyncEvent, tenantId: string, actor: stri
     );
     await txn.commit();
     await publishAuditEvent({
-      tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 4.3', standard: 'ISO9001',
-      detailType: 'Scope.Changed', source: 'cumplify.m1.document-studio',
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 4.3',
+      standard: 'ISO9001',
+      detailType: 'Scope.Changed',
+      source: 'cumplify.m1.document-studio',
       entityId: input.id as string,
       payload: { scopeId: input.id },
     });
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function getDocument(event: AppSyncEvent, tenantId: string) {
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(
-      `SELECT * FROM m1.documents WHERE id = :id::uuid`,
-      [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
-    );
+    const result = await txn.execute(`SELECT * FROM m1.documents WHERE id = :id::uuid`, [
+      { name: 'id', value: { stringValue: event.arguments.id as string } },
+    ]);
     await txn.commit();
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function listDocuments(event: AppSyncEvent, tenantId: string) {
@@ -390,7 +498,10 @@ async function listDocuments(event: AppSyncEvent, tenantId: string) {
   }
   if (status) {
     clauses.push('status = :status');
-    params.push({ name: 'status', value: { stringValue: mapEnum(DOC_STATUS_MAP, status, 'status') } });
+    params.push({
+      name: 'status',
+      value: { stringValue: mapEnum(DOC_STATUS_MAP, status, 'status') },
+    });
   }
   const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
   const txn = await beginTenantTransaction(tenantId);
@@ -401,7 +512,10 @@ async function listDocuments(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function listDocumentVersions(event: AppSyncEvent, tenantId: string) {
@@ -413,7 +527,10 @@ async function listDocumentVersions(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function getDocumentVersionDiff(event: AppSyncEvent, tenantId: string) {
@@ -449,7 +566,11 @@ async function getDocumentVersionDiff(event: AppSyncEvent, tenantId: string) {
     // Align sections by harmonizationKey and compute diff
     return computeSectionDiff(content1, content2);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 }
@@ -475,7 +596,11 @@ async function getDocumentContent(event: AppSyncEvent, tenantId: string) {
     const content = await loadContentJson(ref);
     return JSON.stringify(content);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 }
@@ -498,7 +623,10 @@ async function loadContentJson(key: string): Promise<ContentJson> {
 
 // ─── Diff computation (section alignment by harmonizationKey + sentence LCS) ──
 
-interface Sentence { text: string; factRefs?: string[] }
+interface Sentence {
+  text: string;
+  factRefs?: string[];
+}
 
 interface ContentSection {
   harmonizationKey: string;
@@ -519,13 +647,17 @@ interface ContentJson {
  * Convention: bare key for shared sections, "key#standard" for forked/standard_only.
  * Non-prose sections: compare kind + gap + naJustification; gap→prose shows in diff.
  */
-function computeSectionDiff(v1: ContentJson, v2: ContentJson): { additions: number; deletions: number; content: string } {
-  const v1Map = new Map(v1.sections.map(s => [s.harmonizationKey, s]));
-  const v2Map = new Map(v2.sections.map(s => [s.harmonizationKey, s]));
+function computeSectionDiff(
+  v1: ContentJson,
+  v2: ContentJson,
+): { additions: number; deletions: number; content: string } {
+  const v1Map = new Map(v1.sections.map((s) => [s.harmonizationKey, s]));
+  const v2Map = new Map(v2.sections.map((s) => [s.harmonizationKey, s]));
 
   let totalAdditions = 0;
   let totalDeletions = 0;
-  const sectionDiffs: Record<string, { added: string[]; removed: string[]; kindChange?: string }> = {};
+  const sectionDiffs: Record<string, { added: string[]; removed: string[]; kindChange?: string }> =
+    {};
 
   // Sections in v2 but not v1 (added)
   for (const [key, sec] of v2Map) {
@@ -541,7 +673,10 @@ function computeSectionDiff(v1: ContentJson, v2: ContentJson): { additions: numb
     if (!v2Map.has(key)) {
       const texts = extractSentenceTexts(sec);
       totalDeletions += texts.length || 1;
-      sectionDiffs[key] = { added: [], removed: texts.length > 0 ? texts : [sec.kind ?? 'removed'] };
+      sectionDiffs[key] = {
+        added: [],
+        removed: texts.length > 0 ? texts : [sec.kind ?? 'removed'],
+      };
     }
   }
 
@@ -588,7 +723,7 @@ function computeSectionDiff(v1: ContentJson, v2: ContentJson): { additions: numb
 /** Extract sentence text strings from a section (handles {text, factRefs} objects). */
 function extractSentenceTexts(section: ContentSection): string[] {
   if (!section.sentences || section.sentences.length === 0) return [];
-  return section.sentences.map(s => typeof s === 'string' ? s : s.text);
+  return section.sentences.map((s) => (typeof s === 'string' ? s : s.text));
 }
 
 /**
@@ -603,18 +738,27 @@ function sentenceLcsDiff(v1: string[], v2: string[]): { added: string[]; removed
   const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
-      dp[i][j] = v1[i - 1] === v2[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+      dp[i][j] =
+        v1[i - 1] === v2[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
     }
   }
 
   // Backtrack to find which sentences are NOT in the LCS
   const inLcs1 = new Set<number>();
   const inLcs2 = new Set<number>();
-  let i = m, j = n;
+  let i = m,
+    j = n;
   while (i > 0 && j > 0) {
-    if (v1[i - 1] === v2[j - 1]) { inLcs1.add(i - 1); inLcs2.add(j - 1); i--; j--; }
-    else if (dp[i - 1][j] > dp[i][j - 1]) { i--; }
-    else { j--; }
+    if (v1[i - 1] === v2[j - 1]) {
+      inLcs1.add(i - 1);
+      inLcs2.add(j - 1);
+      i--;
+      j--;
+    } else if (dp[i - 1][j] > dp[i][j - 1]) {
+      i--;
+    } else {
+      j--;
+    }
   }
 
   const removed = v1.filter((_, idx) => !inLcs1.has(idx));

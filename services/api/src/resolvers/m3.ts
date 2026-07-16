@@ -6,7 +6,13 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
+import {
+  extractContext,
+  beginTenantTransaction,
+  publishAuditEvent,
+  marshalOne,
+  marshalMany,
+} from './shared.js';
 import { mapEnum, FINDING_TYPE_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m3' });
@@ -23,14 +29,22 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
 
   switch (event.info.fieldName) {
-    case 'createAuditProgramme': return createAuditProgramme(event, tenantId, sub);
-    case 'scheduleAudit': return scheduleAudit(event, tenantId, sub);
-    case 'recordFinding': return recordFinding(event, tenantId, sub);
-    case 'completeAudit': return completeAudit(event, tenantId, sub);
-    case 'getAudit': return getAudit(event, tenantId);
-    case 'getAuditReadiness': return getAuditReadiness(event, tenantId);
-    case 'generateAuditChecklist': return generateAuditChecklist(event, tenantId, sub);
-    default: throw new Error(`Unknown field: ${event.info.fieldName}`);
+    case 'createAuditProgramme':
+      return createAuditProgramme(event, tenantId, sub);
+    case 'scheduleAudit':
+      return scheduleAudit(event, tenantId, sub);
+    case 'recordFinding':
+      return recordFinding(event, tenantId, sub);
+    case 'completeAudit':
+      return completeAudit(event, tenantId, sub);
+    case 'getAudit':
+      return getAudit(event, tenantId);
+    case 'getAuditReadiness':
+      return getAuditReadiness(event, tenantId);
+    case 'generateAuditChecklist':
+      return generateAuditChecklist(event, tenantId, sub);
+    default:
+      throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
 
@@ -46,22 +60,34 @@ async function createAuditProgramme(event: AppSyncEvent, tenantId: string, actor
         { name: 'tenantId', value: { stringValue: tenantId } },
         { name: 'standard', value: { stringValue: input.standard as string } },
         { name: 'year', value: { longValue: input.year as number } },
-        { name: 'frequencyPlan', value: input.frequencyPlan ? { stringValue: input.frequencyPlan as string } : { isNull: true } },
+        {
+          name: 'frequencyPlan',
+          value: input.frequencyPlan
+            ? { stringValue: input.frequencyPlan as string }
+            : { isNull: true },
+        },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
     await txn.commit();
     const programme = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M3',
-      clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
-      detailType: 'Audit.ProgrammeCreated', source: 'cumplify.m3.audit-studio',
+      tenantId,
+      actor,
+      module: 'M3',
+      clauseRef: 'ISO 9001 9.2',
+      standard: 'ISO9001',
+      detailType: 'Audit.ProgrammeCreated',
+      source: 'cumplify.m3.audit-studio',
       entityId: String(programme?.id ?? ''),
       payload: { programmeId: programme?.id, input },
     });
     logger.info('Audit programme created', { tenantId });
     return programme;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function scheduleAudit(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -85,15 +111,26 @@ async function scheduleAudit(event: AppSyncEvent, tenantId: string, actor: strin
     await txn.commit();
     const audit = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M3',
-      clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
-      detailType: 'Audit.Scheduled', source: 'cumplify.m3.audit-studio',
+      tenantId,
+      actor,
+      module: 'M3',
+      clauseRef: 'ISO 9001 9.2',
+      standard: 'ISO9001',
+      detailType: 'Audit.Scheduled',
+      source: 'cumplify.m3.audit-studio',
       entityId: String(audit?.id ?? ''), // the Audit row the mutation returns
-      payload: { auditId: audit?.id, programmeId: input.programmeId, plannedDate: input.plannedDate },
+      payload: {
+        auditId: audit?.id,
+        programmeId: input.programmeId,
+        plannedDate: input.plannedDate,
+      },
     });
     logger.info('Audit scheduled', { tenantId });
     return audit;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function recordFinding(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -108,25 +145,47 @@ async function recordFinding(event: AppSyncEvent, tenantId: string, actor: strin
       [
         { name: 'tenantId', value: { stringValue: tenantId } },
         { name: 'auditId', value: { stringValue: input.auditId as string } },
-        { name: 'checklistId', value: input.checklistId ? { stringValue: input.checklistId as string } : { isNull: true } },
+        {
+          name: 'checklistId',
+          value: input.checklistId
+            ? { stringValue: input.checklistId as string }
+            : { isNull: true },
+        },
         { name: 'findingType', value: { stringValue: findingType } },
         { name: 'clauseRef', value: { stringValue: input.clauseRef as string } },
         { name: 'description', value: { stringValue: input.description as string } },
-        { name: 'evidenceRef', value: input.evidenceRef ? { stringValue: input.evidenceRef as string } : { isNull: true } },
+        {
+          name: 'evidenceRef',
+          value: input.evidenceRef
+            ? { stringValue: input.evidenceRef as string }
+            : { isNull: true },
+        },
         { name: 'actor', value: { stringValue: actor } },
       ],
     );
     await txn.commit();
     const finding = marshalOne(result);
     await publishAuditEvent({
-      tenantId, actor, module: 'M3',
-      clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
-      detailType: 'Audit.FindingRaised', source: 'cumplify.m3.audit-studio',
+      tenantId,
+      actor,
+      module: 'M3',
+      clauseRef: 'ISO 9001 9.2',
+      standard: 'ISO9001',
+      detailType: 'Audit.FindingRaised',
+      source: 'cumplify.m3.audit-studio',
       entityId: String(finding?.id ?? ''), // the AuditFinding row the mutation returns
-      payload: { findingId: finding?.id, auditId: input.auditId, findingType: input.findingType, clauseRef: input.clauseRef },
+      payload: {
+        findingId: finding?.id,
+        auditId: input.auditId,
+        findingType: input.findingType,
+        clauseRef: input.clauseRef,
+      },
     });
     return finding;
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function completeAudit(event: AppSyncEvent, tenantId: string, actor: string) {
@@ -140,26 +199,35 @@ async function completeAudit(event: AppSyncEvent, tenantId: string, actor: strin
     );
     await txn.commit();
     await publishAuditEvent({
-      tenantId, actor, module: 'M3',
-      clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
-      detailType: 'Audit.Completed', source: 'cumplify.m3.audit-studio',
+      tenantId,
+      actor,
+      module: 'M3',
+      clauseRef: 'ISO 9001 9.2',
+      standard: 'ISO9001',
+      detailType: 'Audit.Completed',
+      source: 'cumplify.m3.audit-studio',
       entityId: id,
       payload: { auditId: id },
     });
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function getAudit(event: AppSyncEvent, tenantId: string) {
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(
-      `SELECT * FROM m3.audits WHERE id = :id::uuid`,
-      [{ name: 'id', value: { stringValue: event.arguments.id as string } }],
-    );
+    const result = await txn.execute(`SELECT * FROM m3.audits WHERE id = :id::uuid`, [
+      { name: 'id', value: { stringValue: event.arguments.id as string } },
+    ]);
     await txn.commit();
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 async function getAuditReadiness(event: AppSyncEvent, tenantId: string) {
@@ -172,7 +240,10 @@ async function getAuditReadiness(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
 }
 
 /**
@@ -200,16 +271,19 @@ async function generateAuditChecklist(event: AppSyncEvent, tenantId: string, act
       throw new Error('AUDIT_NOT_FOUND');
     }
     const auditRow = auditResult.records[0];
-    const standardIdx = auditResult.columnMetadata!.findIndex(c => c.name === 'standard');
+    const standardIdx = auditResult.columnMetadata!.findIndex((c) => c.name === 'standard');
     const auditStandard = (auditRow[standardIdx] as { stringValue?: string }).stringValue!;
 
     // 2. Query clause registry for that standard
-    const clauseResult = await txn.execute(`
+    const clauseResult = await txn.execute(
+      `
       SELECT id, clause_no, clause_title, intent_paraphrase, required_sources
       FROM qms.clause_registry
       WHERE standard = :standard
       ORDER BY sort_order
-    `, [{ name: 'standard', value: { stringValue: auditStandard } }]);
+    `,
+      [{ name: 'standard', value: { stringValue: auditStandard } }],
+    );
 
     if (!clauseResult.records || clauseResult.records.length === 0) {
       throw new Error('NO_CLAUSES_FOR_STANDARD');
@@ -223,57 +297,88 @@ async function generateAuditChecklist(event: AppSyncEvent, tenantId: string, act
       const requiredSourcesRaw = (row[4] as { stringValue?: string }).stringValue ?? '[]';
 
       // question: "Does the organization ...?" wrapper around our own paraphrase
-      const question = `Does the organization ${intentParaphrase.charAt(0).toLowerCase()}${intentParaphrase.slice(1)}`.replace(/[.\s]*$/, '?');
+      const question =
+        `Does the organization ${intentParaphrase.charAt(0).toLowerCase()}${intentParaphrase.slice(1)}`.replace(
+          /[.\s]*$/,
+          '?',
+        );
       // expected_evidence: join required_sources tokens
       let expectedEvidence: string;
       try {
         const sources = JSON.parse(requiredSourcesRaw) as string[];
-        expectedEvidence = sources.length > 0 ? sources.join(', ') : null as unknown as string;
+        expectedEvidence = sources.length > 0 ? sources.join(', ') : (null as unknown as string);
       } catch {
         expectedEvidence = null as unknown as string;
       }
 
-      const insertResult = await txn.execute(`
+      const insertResult = await txn.execute(
+        `
         INSERT INTO m3.audit_checklists (tenant_id, audit_id, clause_ref, question, expected_evidence, created_by)
         VALUES (:tenantId, :auditId::uuid, :clauseRef, :question, :expectedEvidence, :actor)
         ON CONFLICT (audit_id, clause_ref) DO NOTHING
         RETURNING id
-      `, [
-        { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'auditId', value: { stringValue: auditId } },
-        { name: 'clauseRef', value: { stringValue: clauseNo } },
-        { name: 'question', value: { stringValue: question } },
-        { name: 'expectedEvidence', value: expectedEvidence ? { stringValue: expectedEvidence } : { isNull: true } },
-        { name: 'actor', value: { stringValue: actor } },
-      ]);
+      `,
+        [
+          { name: 'tenantId', value: { stringValue: tenantId } },
+          { name: 'auditId', value: { stringValue: auditId } },
+          { name: 'clauseRef', value: { stringValue: clauseNo } },
+          { name: 'question', value: { stringValue: question } },
+          {
+            name: 'expectedEvidence',
+            value: expectedEvidence ? { stringValue: expectedEvidence } : { isNull: true },
+          },
+          { name: 'actor', value: { stringValue: actor } },
+        ],
+      );
       if (insertResult.records && insertResult.records.length > 0) {
         insertedCount++;
       }
     }
 
     // 4. Fetch all checklist rows for this audit (includes pre-existing + newly inserted)
-    const checklistResult = await txn.execute(`
+    const checklistResult = await txn.execute(
+      `
       SELECT id, audit_id, clause_ref, question, expected_evidence
       FROM m3.audit_checklists
       WHERE audit_id = :auditId::uuid
       ORDER BY clause_ref
-    `, [{ name: 'auditId', value: { stringValue: auditId } }]);
+    `,
+      [{ name: 'auditId', value: { stringValue: auditId } }],
+    );
 
     await txn.commit();
 
     // 5. Publish advisory event (Audit.ChecklistGenerated already registered, auditTrail: false)
     await publishAuditEvent({
-      tenantId, actor, module: 'M3',
-      clauseRef: '9.2', standard: auditStandard as 'ISO9001' | 'ISO14001' | 'ISO45001',
-      detailType: 'Audit.ChecklistGenerated', source: 'cumplify.m3.audit-studio',
+      tenantId,
+      actor,
+      module: 'M3',
+      clauseRef: '9.2',
+      standard: auditStandard as 'ISO9001' | 'ISO14001' | 'ISO45001',
+      detailType: 'Audit.ChecklistGenerated',
+      source: 'cumplify.m3.audit-studio',
       entityId: auditId, // checklist rows are many — the audit is the entity
-      payload: { auditId, standard: auditStandard, clauseCount: clauseResult.records.length, insertedCount },
+      payload: {
+        auditId,
+        standard: auditStandard,
+        clauseCount: clauseResult.records.length,
+        insertedCount,
+      },
     });
 
-    logger.info('Audit checklist generated', { tenantId, auditId, standard: auditStandard, clauseCount: clauseResult.records.length });
+    logger.info('Audit checklist generated', {
+      tenantId,
+      auditId,
+      standard: auditStandard,
+      clauseCount: clauseResult.records.length,
+    });
     return marshalMany(checklistResult);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 }

@@ -25,10 +25,14 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
 
   switch (event.info.fieldName) {
-    case 'getProfile': return getProfile(tenantId, sub);
-    case 'updateProfile': return updateProfile(event, tenantId, sub);
-    case 'getTenantSettings': return getTenantSettings(tenantId);
-    default: throw new Error(`Unknown field: ${event.info.fieldName}`);
+    case 'getProfile':
+      return getProfile(tenantId, sub);
+    case 'updateProfile':
+      return updateProfile(event, tenantId, sub);
+    case 'getTenantSettings':
+      return getTenantSettings(tenantId);
+    default:
+      throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
 
@@ -43,13 +47,15 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
  */
 async function getTenantSettings(tenantId: string) {
   const ddb = await getTenantDdbClient(tenantId);
-  const result = await ddb.send(new GetItemCommand({
-    TableName: TABLE_NAME,
-    Key: marshall({
-      PK: `TENANT#${tenantId}#META`,
-      SK: 'ORG',
+  const result = await ddb.send(
+    new GetItemCommand({
+      TableName: TABLE_NAME,
+      Key: marshall({
+        PK: `TENANT#${tenantId}#META`,
+        SK: 'ORG',
+      }),
     }),
-  }));
+  );
 
   if (!result.Item) {
     return { tenantName: tenantId, documentLocale: 'en' };
@@ -64,13 +70,15 @@ async function getTenantSettings(tenantId: string) {
 
 async function getProfile(tenantId: string, sub: string) {
   const ddb = await getTenantDdbClient(tenantId);
-  const result = await ddb.send(new GetItemCommand({
-    TableName: TABLE_NAME,
-    Key: marshall({
-      PK: `TENANT#${tenantId}#PROFILE`,
-      SK: `USER#${sub}`,
+  const result = await ddb.send(
+    new GetItemCommand({
+      TableName: TABLE_NAME,
+      Key: marshall({
+        PK: `TENANT#${tenantId}#PROFILE`,
+        SK: `USER#${sub}`,
+      }),
     }),
-  }));
+  );
 
   if (!result.Item) {
     return { userId: sub, locale: 'en', updatedAt: null };
@@ -84,22 +92,24 @@ async function updateProfile(event: AppSyncEvent, tenantId: string, sub: string)
   const input = event.arguments.input as Record<string, unknown>;
   const locale = input.locale as string;
 
-  if (!VALID_LOCALES.includes(locale as typeof VALID_LOCALES[number])) {
+  if (!VALID_LOCALES.includes(locale as (typeof VALID_LOCALES)[number])) {
     throw new Error(`Invalid locale "${locale}". Must be one of: ${VALID_LOCALES.join(', ')}`);
   }
 
   const updatedAt = new Date().toISOString();
   const ddb = await getTenantDdbClient(tenantId);
 
-  await ddb.send(new PutItemCommand({
-    TableName: TABLE_NAME,
-    Item: marshall({
-      PK: `TENANT#${tenantId}#PROFILE`,
-      SK: `USER#${sub}`,
-      locale,
-      updatedAt,
+  await ddb.send(
+    new PutItemCommand({
+      TableName: TABLE_NAME,
+      Item: marshall({
+        PK: `TENANT#${tenantId}#PROFILE`,
+        SK: `USER#${sub}`,
+        locale,
+        updatedAt,
+      }),
     }),
-  }));
+  );
 
   return { userId: sub, locale, updatedAt };
 }

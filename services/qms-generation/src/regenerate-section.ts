@@ -34,14 +34,21 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Logger } from '@aws-lambda-powertools/logger';
 import {
-  beginTenantTransaction, marshalMany, publishAuditEvent,
+  beginTenantTransaction,
+  marshalMany,
+  publishAuditEvent,
 } from '../../api/src/resolvers/shared.js';
 import { handler as composeSection } from './compose-section.js';
 import { sha256Hex } from './facts.js';
 import {
-  assembleManualContent, deriveCorrelationMatrix, deriveMasterList,
-  documentStandard, clauseDocTitle, buildFrontMatter,
-  type SectionState, type MasterListEntry,
+  assembleManualContent,
+  deriveCorrelationMatrix,
+  deriveMasterList,
+  documentStandard,
+  clauseDocTitle,
+  buildFrontMatter,
+  type SectionState,
+  type MasterListEntry,
 } from './derive.js';
 
 const logger = new Logger({ serviceName: 'qms-regenerate-section' });
@@ -75,15 +82,25 @@ async function nextVersionNo(txn: Txn, documentId: string): Promise<number> {
 }
 
 async function writeNewVersion(
-  txn: Txn, tenantId: string, documentId: string, versionNo: number, author: string,
-  changeSummary: string, content: Record<string, unknown>,
+  txn: Txn,
+  tenantId: string,
+  documentId: string,
+  versionNo: number,
+  author: string,
+  changeSummary: string,
+  content: Record<string, unknown>,
 ): Promise<{ contentRef: string; contentSha: string }> {
   const body = JSON.stringify(content);
   const contentRef = versionContentKey(tenantId, documentId, versionNo);
   const contentSha = sha256Hex(body);
-  await s3.send(new PutObjectCommand({
-    Bucket: GENERAL_BUCKET, Key: contentRef, Body: body, ContentType: 'application/json',
-  }));
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: GENERAL_BUCKET,
+      Key: contentRef,
+      Body: body,
+      ContentType: 'application/json',
+    }),
+  );
   await txn.execute(
     `INSERT INTO m1.document_versions
        (tenant_id, document_id, version_no, content_ref, content_sha256, change_summary, author_id, created_by)
@@ -108,23 +125,24 @@ async function loadSectionStates(txn: Txn, runId: string): Promise<SectionState[
      FROM qms.generation_sections WHERE run_id = :runId::uuid ORDER BY harmonization_key`,
     [{ name: 'runId', value: { stringValue: runId } }],
   );
-  const sectionRows: Record<string, unknown>[] = marshalMany(sectionsResult).map(r => ({
-    ...r, status: (r.status as string).toLowerCase(),
+  const sectionRows: Record<string, unknown>[] = marshalMany(sectionsResult).map((r) => ({
+    ...r,
+    status: (r.status as string).toLowerCase(),
   }));
 
   const registryResult = await txn.execute(
     `SELECT id, standard, clause_no, clause_title, annex_sl_mode, doc_type, sort_order
      FROM qms.clause_registry`,
   );
-  const registryById = new Map(marshalMany(registryResult).map(r => [r.id as string, r]));
+  const registryById = new Map(marshalMany(registryResult).map((r) => [r.id as string, r]));
 
   const sections: SectionState[] = [];
   for (const row of sectionRows) {
     const clauseIds = (row.clauseRegistryIds as string[]) ?? [];
     const clauses = clauseIds
-      .map(id => registryById.get(id))
+      .map((id) => registryById.get(id))
       .filter((c): c is NonNullable<typeof c> => !!c)
-      .map(c => ({
+      .map((c) => ({
         standard: c.standard as string,
         clauseNo: c.clauseNo as string,
         clauseTitle: c.clauseTitle as string,
@@ -132,7 +150,7 @@ async function loadSectionStates(txn: Txn, runId: string): Promise<SectionState[
         docType: (c.docType as string).toLowerCase(),
       }));
     const sortOrder = Math.min(
-      ...clauseIds.map(id => (registryById.get(id)?.sortOrder as number) ?? 9999),
+      ...clauseIds.map((id) => (registryById.get(id)?.sortOrder as number) ?? 9999),
     );
     let content: Record<string, unknown> | null = null;
     const key = row.contentS3Key as string | null;
@@ -167,10 +185,14 @@ async function loadRun(txn: Txn, runId: string): Promise<RunRow | null> {
   if (!runResult.records?.length) return null;
   const rec = runResult.records[0];
   return {
-    standards: (rec[0] as { arrayValue?: { stringValues?: string[] } }).arrayValue?.stringValues ?? [],
+    standards:
+      (rec[0] as { arrayValue?: { stringValues?: string[] } }).arrayValue?.stringValues ?? [],
     manualDocumentId: (rec[1] as { stringValue?: string; isNull?: boolean }).stringValue ?? null,
     status: ((rec[2] as { stringValue?: string }).stringValue ?? '').toLowerCase(),
-    profile: JSON.parse((rec[3] as { stringValue?: string }).stringValue ?? '{}') as Record<string, unknown>,
+    profile: JSON.parse((rec[3] as { stringValue?: string }).stringValue ?? '{}') as Record<
+      string,
+      unknown
+    >,
   };
 }
 
@@ -197,7 +219,9 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
     );
     if (!secResult.records?.length) throw new Error('SECTION_NOT_FOUND');
     sectionId = (secResult.records[0][0] as { stringValue?: string }).stringValue!;
-    priorKind = ((secResult.records[0][1] as { stringValue?: string }).stringValue ?? '').toLowerCase();
+    priorKind = (
+      (secResult.records[0][1] as { stringValue?: string }).stringValue ?? ''
+    ).toLowerCase();
 
     await txn1.execute(
       `UPDATE qms.generation_sections
@@ -207,12 +231,21 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
     );
     await txn1.commit();
   } catch (err) {
-    try { await txn1.rollback(); } catch { /* never mask */ }
+    try {
+      await txn1.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 
   // ── 2. Compose (in-process; opens its own txn; honest failed on terminal) ─
-  const composed = await composeSection({ runId, tenantId, sectionId, sectionKey: harmonizationKey });
+  const composed = await composeSection({
+    runId,
+    tenantId,
+    sectionId,
+    sectionKey: harmonizationKey,
+  });
   const newKind = composed.status; // prose | gap | failed
 
   // ── 3. Version writeback ──────────────────────────────────────────────────
@@ -224,14 +257,25 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
     const manualId = run.manualDocumentId!;
     const locale = (run.profile.documentLocale as string) ?? 'en';
     const sections = await loadSectionStates(txn2, runId);
-    const section = sections.find(s => s.sectionKey === harmonizationKey)!;
+    const section = sections.find((s) => s.sectionKey === harmonizationKey)!;
 
     // 3a. New MANUAL version — assembled from ALL current sections
     const manualVersionNo = await nextVersionNo(txn2, manualId);
-    const manualContent = assembleManualContent(manualId, locale, run.profile, run.standards, sections);
+    const manualContent = assembleManualContent(
+      manualId,
+      locale,
+      run.profile,
+      run.standards,
+      sections,
+    );
     await writeNewVersion(
-      txn2, tenantId, manualId, manualVersionNo, actor,
-      `Section ${harmonizationKey} regenerated`, manualContent,
+      txn2,
+      tenantId,
+      manualId,
+      manualVersionNo,
+      actor,
+      `Section ${harmonizationKey} regenerated`,
+      manualContent,
     );
     audit.manualDocumentId = manualId;
     audit.manualVersionNo = manualVersionNo;
@@ -249,7 +293,7 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
     for (const row of marshalMany(mlResult)) {
       const content = await getJson(row.contentRef as string);
       const candidate = (content.entries ?? []) as MasterListEntry[];
-      if (candidate.some(e => e.documentId === manualId)) {
+      if (candidate.some((e) => e.documentId === manualId)) {
         masterDocId = row.id as string;
         entries = candidate;
         break;
@@ -259,11 +303,11 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
 
     // 3c. Clause document for this section — matched by harmonizationKey in
     // the candidate's CURRENT content (clauseRefs overlap narrows the fetches).
-    const sectionClauseNos = new Set(section.clauses.map(c => c.clauseNo));
+    const sectionClauseNos = new Set(section.clauses.map((c) => c.clauseNo));
     let clauseDocId: string | null = null;
     for (const entry of entries) {
       if (entry.docType === 'manual' || entry.docType === 'correlation_matrix') continue;
-      if (!entry.clauseRefs.some(c => sectionClauseNos.has(c))) continue;
+      if (!entry.clauseRefs.some((c) => sectionClauseNos.has(c))) continue;
       const latestRef = await txn2.execute(
         `SELECT content_ref FROM m1.document_versions
          WHERE document_id = :docId::uuid ORDER BY version_no DESC LIMIT 1`,
@@ -272,8 +316,12 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
       const ref = (latestRef.records?.[0]?.[0] as { stringValue?: string })?.stringValue;
       if (!ref) continue;
       const content = await getJson(ref);
-      const hkey = (content.sections as Array<{ harmonizationKey?: string }> | undefined)?.[0]?.harmonizationKey;
-      if (hkey === harmonizationKey) { clauseDocId = entry.documentId; break; }
+      const hkey = (content.sections as Array<{ harmonizationKey?: string }> | undefined)?.[0]
+        ?.harmonizationKey;
+      if (hkey === harmonizationKey) {
+        clauseDocId = entry.documentId;
+        break;
+      }
     }
 
     const clauseDocContent = (docId: string, versionNo: number) => ({
@@ -282,32 +330,45 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
       versionNo,
       locale,
       frontMatter: buildFrontMatter(run.profile, run.standards),
-      sections: [{
-        harmonizationKey: section.sectionKey,
-        clauseRefs: section.clauses.map(c => ({ standard: c.standard, clauseNo: c.clauseNo })),
-        kind: section.kind,
-        ...(section.content?.sentences !== undefined ? { sentences: section.content.sentences } : {}),
-        ...(section.content?.gap !== undefined ? { gap: section.content.gap } : {}),
-        ...(section.content?.naJustification !== undefined ? { naJustification: section.content.naJustification } : {}),
-      }],
+      sections: [
+        {
+          harmonizationKey: section.sectionKey,
+          clauseRefs: section.clauses.map((c) => ({ standard: c.standard, clauseNo: c.clauseNo })),
+          kind: section.kind,
+          ...(section.content?.sentences !== undefined
+            ? { sentences: section.content.sentences }
+            : {}),
+          ...(section.content?.gap !== undefined ? { gap: section.content.gap } : {}),
+          ...(section.content?.naJustification !== undefined
+            ? { naJustification: section.content.naJustification }
+            : {}),
+        },
+      ],
     });
 
     if (newKind !== 'failed') {
       if (clauseDocId) {
         const vNo = await nextVersionNo(txn2, clauseDocId);
         await writeNewVersion(
-          txn2, tenantId, clauseDocId, vNo, actor,
-          `Section ${harmonizationKey} regenerated`, clauseDocContent(clauseDocId, vNo),
+          txn2,
+          tenantId,
+          clauseDocId,
+          vNo,
+          actor,
+          `Section ${harmonizationKey} regenerated`,
+          clauseDocContent(clauseDocId, vNo),
         );
         audit.clauseDocumentId = clauseDocId;
         audit.clauseVersionNo = vNo;
       } else {
         // Previously-failed section shipped NO clause document — create it
         // now (regeneration is the PARTIAL-run repair path).
-        const sectionStandard = documentStandard([...new Set(section.clauses.map(c => c.standard))]);
+        const sectionStandard = documentStandard([
+          ...new Set(section.clauses.map((c) => c.standard)),
+        ]);
         const docType = section.clauses[0]?.docType ?? 'procedure';
         const title = clauseDocTitle(section);
-        const clauseNos = [...new Set(section.clauses.map(c => c.clauseNo))];
+        const clauseNos = [...new Set(section.clauses.map((c) => c.clauseNo))];
         const insertRes = await txn2.execute(
           `INSERT INTO m1.documents (tenant_id, standard, doc_type, title, clause_refs, owner_id, status, created_by)
            VALUES (:tenantId, :standard, :docType, :title, :clauseRefs::text[], :owner, 'draft', :owner)
@@ -323,12 +384,22 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
         );
         clauseDocId = (insertRes.records![0][0] as { stringValue?: string }).stringValue!;
         await writeNewVersion(
-          txn2, tenantId, clauseDocId, 1, actor,
-          `Section ${harmonizationKey} regenerated (document created)`, clauseDocContent(clauseDocId, 1),
+          txn2,
+          tenantId,
+          clauseDocId,
+          1,
+          actor,
+          `Section ${harmonizationKey} regenerated (document created)`,
+          clauseDocContent(clauseDocId, 1),
         );
         entries.push({
-          documentId: clauseDocId, title, docType, standard: sectionStandard,
-          clauseRefs: clauseNos, status: 'draft', versionNo: 1,
+          documentId: clauseDocId,
+          title,
+          docType,
+          standard: sectionStandard,
+          clauseRefs: clauseNos,
+          status: 'draft',
+          versionNo: 1,
           contentRef: versionContentKey(tenantId, clauseDocId, 1),
         });
         audit.clauseDocumentId = clauseDocId;
@@ -340,11 +411,15 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
 
     // 3d. Correlation matrix — only when the section kind changed
     if (newKind !== priorKind) {
-      const matrixEntry = entries.find(e => e.docType === 'correlation_matrix');
+      const matrixEntry = entries.find((e) => e.docType === 'correlation_matrix');
       if (matrixEntry) {
         const vNo = await nextVersionNo(txn2, matrixEntry.documentId);
         await writeNewVersion(
-          txn2, tenantId, matrixEntry.documentId, vNo, actor,
+          txn2,
+          tenantId,
+          matrixEntry.documentId,
+          vNo,
+          actor,
           `Section ${harmonizationKey} regenerated (${priorKind} → ${newKind})`,
           deriveCorrelationMatrix(matrixEntry.documentId, locale, run.standards, sections),
         );
@@ -354,7 +429,7 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
 
     // 3e. Master list REFRESH — every entry re-pointed at its latest version
     // (closes the Task-9 carry-forward: exports no longer pin clause docs at v1).
-    const entryIds = entries.map(e => e.documentId);
+    const entryIds = entries.map((e) => e.documentId);
     const latestResult = await txn2.execute(
       `SELECT DISTINCT ON (v.document_id) v.document_id, v.version_no, v.content_ref, d.status
        FROM m1.document_versions v JOIN m1.documents d ON d.id = v.document_id
@@ -362,26 +437,32 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
        ORDER BY v.document_id, v.version_no DESC`,
       [{ name: 'ids', value: { stringValue: `{${entryIds.join(',')}}` } }],
     );
-    const latestByDoc = new Map(marshalMany(latestResult).map(r => [r.documentId as string, r]));
-    const refreshed: MasterListEntry[] = entries.map(e => {
+    const latestByDoc = new Map(marshalMany(latestResult).map((r) => [r.documentId as string, r]));
+    const refreshed: MasterListEntry[] = entries.map((e) => {
       const latest = latestByDoc.get(e.documentId);
-      return latest ? {
-        ...e,
-        versionNo: latest.versionNo as number,
-        contentRef: latest.contentRef as string,
-        status: ((latest.status as string) ?? e.status).toLowerCase(),
-      } : e;
+      return latest
+        ? {
+            ...e,
+            versionNo: latest.versionNo as number,
+            contentRef: latest.contentRef as string,
+            status: ((latest.status as string) ?? e.status).toLowerCase(),
+          }
+        : e;
     });
     const masterVersionNo = await nextVersionNo(txn2, masterDocId);
     await writeNewVersion(
-      txn2, tenantId, masterDocId, masterVersionNo, actor,
+      txn2,
+      tenantId,
+      masterDocId,
+      masterVersionNo,
+      actor,
       `Section ${harmonizationKey} regenerated — entries refreshed`,
       deriveMasterList(masterDocId, locale, refreshed),
     );
     audit.masterListVersionNo = masterVersionNo;
 
     // 3f. Run status recompute — failed>0 → partial, else complete
-    const failedCount = sections.filter(s => s.kind === 'failed').length;
+    const failedCount = sections.filter((s) => s.kind === 'failed').length;
     const newRunStatus = failedCount > 0 ? 'partial' : 'complete';
     if (newRunStatus !== run.status) {
       await txn2.execute(
@@ -406,7 +487,11 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
 
     await txn2.commit();
   } catch (err) {
-    try { await txn2.rollback(); } catch { /* never mask */ }
+    try {
+      await txn2.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 

@@ -39,7 +39,9 @@ describe('DataTable', () => {
   });
 
   it('renders EmptyState when data is empty and emptyMessage provided', () => {
-    render(<DataTable columns={columns} data={[]} rowKey={(d) => d.id} emptyMessage="Nothing here" />);
+    render(
+      <DataTable columns={columns} data={[]} rowKey={(d) => d.id} emptyMessage="Nothing here" />,
+    );
     expect(screen.getByTestId('empty')).toHaveTextContent('Nothing here');
   });
 

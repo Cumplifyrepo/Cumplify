@@ -293,93 +293,484 @@
   "forms": {
     "pdf": { "yes": "Sim", "no": "Não" },
     "tpl": {
-      "ncr": { "title": "Não Conformidade e Ação Corretiva (NCR)", "desc": "Registrar não conformidades, contenção, disposição, análise de causa raiz e ações corretivas conforme Cláusula 8.7 / 10.2" },
-      "mgmtReview": { "title": "Ata de Análise Crítica pela Direção", "desc": "Documentar entradas (9.3.2) e saídas (9.3.3) da análise crítica pela direção" },
-      "riskOpp": { "title": "Registro de Riscos e Oportunidades", "desc": "Identificar, avaliar e tratar riscos e oportunidades conforme Cláusula 6.1" },
-      "aspects": { "title": "Registro de Aspectos e Impactos Ambientais", "desc": "Identificar aspectos ambientais, avaliar significância e definir controles conforme ISO 14001 Cláusula 6.1.2" },
-      "legalObl": { "title": "Registro de Obrigações Legais e de Conformidade", "desc": "Rastrear obrigações de conformidade e status de avaliação conforme ISO 14001/45001 Cláusula 6.1.3" },
-      "hira": { "title": "Identificação de Perigos e Avaliação de Riscos (IPAR)", "desc": "Identificar perigos, avaliar riscos de SST e determinar controles conforme ISO 45001 Cláusula 6.1.2" },
-      "incident": { "title": "Investigação de Incidentes", "desc": "Investigar incidentes no local de trabalho, identificar causas raiz e designar ações corretivas conforme ISO 45001 Cláusula 10.2" },
-      "emergency": { "title": "Preparação e Resposta a Emergências", "desc": "Planejar e documentar cenários de emergência, procedimentos de resposta e registros de simulados conforme Cláusula 8.2" },
-      "workerConsult": { "title": "Consulta e Participação de Trabalhadores", "desc": "Registrar atividades de consulta e resultados conforme ISO 45001 Cláusula 5.4" },
-      "competence": { "title": "Matriz de Competências e Treinamento", "desc": "Rastrear competência, registros de treinamento e evidências de qualificação conforme Cláusula 7.2" },
-      "supplier": { "title": "Avaliação de Fornecedores Externos", "desc": "Avaliar e classificar fornecedores externos conforme Cláusula 8.4.1" },
-      "calibration": { "title": "Registro de Calibração de Equipamentos de Medição", "desc": "Rastrear status de calibração e rastreabilidade de equipamentos de medição conforme Cláusula 7.1.5" },
-      "docChange": { "title": "Solicitação de Alteração de Documento", "desc": "Solicitar, avaliar e aprovar alterações em documentos controlados conforme Cláusula 7.5" },
-      "objectives": { "title": "Plano de Objetivos e Melhoria", "desc": "Definir objetivos mensuráveis de qualidade/ambiente/SST e acompanhar progresso conforme Cláusula 6.2" },
-      "intParties": { "title": "Partes Interessadas e Análise de Contexto", "desc": "Identificar partes interessadas, suas necessidades, expectativas e métodos de monitoramento conforme Cláusula 4.2" }
+      "ncr": {
+        "title": "Não Conformidade e Ação Corretiva (NCR)",
+        "desc": "Registrar não conformidades, contenção, disposição, análise de causa raiz e ações corretivas conforme Cláusula 8.7 / 10.2"
+      },
+      "mgmtReview": {
+        "title": "Ata de Análise Crítica pela Direção",
+        "desc": "Documentar entradas (9.3.2) e saídas (9.3.3) da análise crítica pela direção"
+      },
+      "riskOpp": {
+        "title": "Registro de Riscos e Oportunidades",
+        "desc": "Identificar, avaliar e tratar riscos e oportunidades conforme Cláusula 6.1"
+      },
+      "aspects": {
+        "title": "Registro de Aspectos e Impactos Ambientais",
+        "desc": "Identificar aspectos ambientais, avaliar significância e definir controles conforme ISO 14001 Cláusula 6.1.2"
+      },
+      "legalObl": {
+        "title": "Registro de Obrigações Legais e de Conformidade",
+        "desc": "Rastrear obrigações de conformidade e status de avaliação conforme ISO 14001/45001 Cláusula 6.1.3"
+      },
+      "hira": {
+        "title": "Identificação de Perigos e Avaliação de Riscos (IPAR)",
+        "desc": "Identificar perigos, avaliar riscos de SST e determinar controles conforme ISO 45001 Cláusula 6.1.2"
+      },
+      "incident": {
+        "title": "Investigação de Incidentes",
+        "desc": "Investigar incidentes no local de trabalho, identificar causas raiz e designar ações corretivas conforme ISO 45001 Cláusula 10.2"
+      },
+      "emergency": {
+        "title": "Preparação e Resposta a Emergências",
+        "desc": "Planejar e documentar cenários de emergência, procedimentos de resposta e registros de simulados conforme Cláusula 8.2"
+      },
+      "workerConsult": {
+        "title": "Consulta e Participação de Trabalhadores",
+        "desc": "Registrar atividades de consulta e resultados conforme ISO 45001 Cláusula 5.4"
+      },
+      "competence": {
+        "title": "Matriz de Competências e Treinamento",
+        "desc": "Rastrear competência, registros de treinamento e evidências de qualificação conforme Cláusula 7.2"
+      },
+      "supplier": {
+        "title": "Avaliação de Fornecedores Externos",
+        "desc": "Avaliar e classificar fornecedores externos conforme Cláusula 8.4.1"
+      },
+      "calibration": {
+        "title": "Registro de Calibração de Equipamentos de Medição",
+        "desc": "Rastrear status de calibração e rastreabilidade de equipamentos de medição conforme Cláusula 7.1.5"
+      },
+      "docChange": {
+        "title": "Solicitação de Alteração de Documento",
+        "desc": "Solicitar, avaliar e aprovar alterações em documentos controlados conforme Cláusula 7.5"
+      },
+      "objectives": {
+        "title": "Plano de Objetivos e Melhoria",
+        "desc": "Definir objetivos mensuráveis de qualidade/ambiente/SST e acompanhar progresso conforme Cláusula 6.2"
+      },
+      "intParties": {
+        "title": "Partes Interessadas e Análise de Contexto",
+        "desc": "Identificar partes interessadas, suas necessidades, expectativas e métodos de monitoramento conforme Cláusula 4.2"
+      }
     },
     "ncr": {
-      "sec": { "info": "Informações do NCR", "description": "Descrição da Não Conformidade", "containment": "Contenção", "disposition": "Disposição", "rootCause": "Análise de Causa Raiz", "closure": "Encerramento" },
-      "field": { "ncrNumber": "Número do NCR", "dateRaised": "Data de Registro", "raisedBy": "Registrado Por", "standard": "Norma", "source": "Fonte", "ncType": "Tipo de NC", "clauseRef": "Referência de Cláusula", "severity": "Severidade", "department": "Departamento", "productService": "Produto/Serviço", "ncDescription": "Descrição da Não Conformidade", "whereDiscovered": "Onde foi Descoberta", "quantityAffected": "Quantidade Afetada", "lotSerial": "Lote/Número de Série", "evidenceRef": "Referência de Evidência", "relatedDocument": "Documento Relacionado", "containmentRequired": "Contenção Necessária?", "containmentAction": "Ação de Contenção", "containmentOwner": "Responsável pela Contenção", "containmentDate": "Data de Contenção", "containmentFlag": "Marcar como Ação de Contenção", "dispositionDecision": "Decisão de Disposição", "dispositionAuthority": "Autorizado Por", "dispositionJustification": "Justificativa", "customerNotification": "Notificação ao Cliente Necessária?", "concessionRef": "Referência de Concessão", "rcaMethod": "Método de Análise de Causa Raiz", "rootCauseDesc": "Descrição da Causa Raiz", "correctiveActionDesc": "Descrição da Ação Corretiva", "caOwner": "Responsável pela Ação Corretiva", "caDueDate": "Data Limite da Ação Corretiva", "verificationMethod": "Método de Verificação", "effectivenessVerified": "Efetividade Verificada?", "closureNotes": "Notas de Encerramento", "linkedCapa": "CAPA Vinculado" }
+      "sec": {
+        "info": "Informações do NCR",
+        "description": "Descrição da Não Conformidade",
+        "containment": "Contenção",
+        "disposition": "Disposição",
+        "rootCause": "Análise de Causa Raiz",
+        "closure": "Encerramento"
+      },
+      "field": {
+        "ncrNumber": "Número do NCR",
+        "dateRaised": "Data de Registro",
+        "raisedBy": "Registrado Por",
+        "standard": "Norma",
+        "source": "Fonte",
+        "ncType": "Tipo de NC",
+        "clauseRef": "Referência de Cláusula",
+        "severity": "Severidade",
+        "department": "Departamento",
+        "productService": "Produto/Serviço",
+        "ncDescription": "Descrição da Não Conformidade",
+        "whereDiscovered": "Onde foi Descoberta",
+        "quantityAffected": "Quantidade Afetada",
+        "lotSerial": "Lote/Número de Série",
+        "evidenceRef": "Referência de Evidência",
+        "relatedDocument": "Documento Relacionado",
+        "containmentRequired": "Contenção Necessária?",
+        "containmentAction": "Ação de Contenção",
+        "containmentOwner": "Responsável pela Contenção",
+        "containmentDate": "Data de Contenção",
+        "containmentFlag": "Marcar como Ação de Contenção",
+        "dispositionDecision": "Decisão de Disposição",
+        "dispositionAuthority": "Autorizado Por",
+        "dispositionJustification": "Justificativa",
+        "customerNotification": "Notificação ao Cliente Necessária?",
+        "concessionRef": "Referência de Concessão",
+        "rcaMethod": "Método de Análise de Causa Raiz",
+        "rootCauseDesc": "Descrição da Causa Raiz",
+        "correctiveActionDesc": "Descrição da Ação Corretiva",
+        "caOwner": "Responsável pela Ação Corretiva",
+        "caDueDate": "Data Limite da Ação Corretiva",
+        "verificationMethod": "Método de Verificação",
+        "effectivenessVerified": "Efetividade Verificada?",
+        "closureNotes": "Notas de Encerramento",
+        "linkedCapa": "CAPA Vinculado"
+      }
     },
     "mgmtReview": {
-      "sec": { "info": "Informações da Análise", "inputs": "Entradas da Análise (9.3.2)", "outputs": "Saídas da Análise (9.3.3)" },
-      "field": { "reviewDate": "Data da Análise", "chairperson": "Presidente", "attendees": "Participantes", "standardsReviewed": "Normas Analisadas", "prevActionsStatus": "Status de Ações Anteriores", "customerFeedback": "Feedback do Cliente", "objectivesProgress": "Progresso dos Objetivos", "processPerformance": "Desempenho dos Processos", "ncCapaStatus": "Status NC/CAPA", "auditResults": "Resultados de Auditoria", "extProviderPerf": "Desempenho de Fornecedores Externos", "resourceAdequacy": "Adequação de Recursos", "riskOppChanges": "Mudanças em Riscos e Oportunidades", "improvementOpps": "Oportunidades de Melhoria", "decisionsActions": "Decisões e Ações", "resourceNeeds": "Necessidades de Recursos", "improvementActions": "Ações de Melhoria", "nextReviewDate": "Próxima Data de Análise", "actionOwners": "Responsáveis pelas Ações" }
+      "sec": {
+        "info": "Informações da Análise",
+        "inputs": "Entradas da Análise (9.3.2)",
+        "outputs": "Saídas da Análise (9.3.3)"
+      },
+      "field": {
+        "reviewDate": "Data da Análise",
+        "chairperson": "Presidente",
+        "attendees": "Participantes",
+        "standardsReviewed": "Normas Analisadas",
+        "prevActionsStatus": "Status de Ações Anteriores",
+        "customerFeedback": "Feedback do Cliente",
+        "objectivesProgress": "Progresso dos Objetivos",
+        "processPerformance": "Desempenho dos Processos",
+        "ncCapaStatus": "Status NC/CAPA",
+        "auditResults": "Resultados de Auditoria",
+        "extProviderPerf": "Desempenho de Fornecedores Externos",
+        "resourceAdequacy": "Adequação de Recursos",
+        "riskOppChanges": "Mudanças em Riscos e Oportunidades",
+        "improvementOpps": "Oportunidades de Melhoria",
+        "decisionsActions": "Decisões e Ações",
+        "resourceNeeds": "Necessidades de Recursos",
+        "improvementActions": "Ações de Melhoria",
+        "nextReviewDate": "Próxima Data de Análise",
+        "actionOwners": "Responsáveis pelas Ações"
+      }
     },
     "riskOpp": {
-      "sec": { "info": "Informações do Risco/Oportunidade", "assessment": "Avaliação", "treatment": "Tratamento" },
-      "field": { "title": "Título", "category": "Categoria", "standard": "Norma", "description": "Descrição", "owner": "Responsável", "likelihood": "Probabilidade (1-5)", "severity": "Severidade (1-5)", "rating": "Classificação de Risco", "existingControls": "Controles Existentes", "treatmentPlan": "Plano de Tratamento", "treatmentOwner": "Responsável pelo Tratamento", "treatmentDue": "Data Limite do Tratamento", "linkedRisk": "Risco Vinculado (M5)" }
+      "sec": {
+        "info": "Informações do Risco/Oportunidade",
+        "assessment": "Avaliação",
+        "treatment": "Tratamento"
+      },
+      "field": {
+        "title": "Título",
+        "category": "Categoria",
+        "standard": "Norma",
+        "description": "Descrição",
+        "owner": "Responsável",
+        "likelihood": "Probabilidade (1-5)",
+        "severity": "Severidade (1-5)",
+        "rating": "Classificação de Risco",
+        "existingControls": "Controles Existentes",
+        "treatmentPlan": "Plano de Tratamento",
+        "treatmentOwner": "Responsável pelo Tratamento",
+        "treatmentDue": "Data Limite do Tratamento",
+        "linkedRisk": "Risco Vinculado (M5)"
+      }
     },
     "aspects": {
-      "sec": { "identification": "Identificação de Aspectos", "evaluation": "Avaliação de Impacto" },
-      "field": { "activity": "Atividade/Processo", "aspectDesc": "Aspecto Ambiental", "impactDesc": "Impacto Ambiental", "condition": "Condição de Operação", "lifecycleStage": "Etapa do Ciclo de Vida", "significanceRating": "Classificação de Significância", "isSignificant": "Significativo?", "controlMeasures": "Medidas de Controle", "legalRequirement": "Requisito Legal Relacionado" }
+      "sec": {
+        "identification": "Identificação de Aspectos",
+        "evaluation": "Avaliação de Impacto"
+      },
+      "field": {
+        "activity": "Atividade/Processo",
+        "aspectDesc": "Aspecto Ambiental",
+        "impactDesc": "Impacto Ambiental",
+        "condition": "Condição de Operação",
+        "lifecycleStage": "Etapa do Ciclo de Vida",
+        "significanceRating": "Classificação de Significância",
+        "isSignificant": "Significativo?",
+        "controlMeasures": "Medidas de Controle",
+        "legalRequirement": "Requisito Legal Relacionado"
+      }
     },
     "legalObl": {
       "sec": { "info": "Informações da Obrigação", "evaluation": "Avaliação de Conformidade" },
-      "field": { "title": "Título da Obrigação", "type": "Tipo de Obrigação", "sourceAuthority": "Fonte/Autoridade", "applicableStandard": "Norma(s) Aplicável(is)", "requirementsSummary": "Resumo dos Requisitos", "effectiveDate": "Data de Vigência", "complianceStatus": "Status de Conformidade", "lastEvaluated": "Última Avaliação", "evalNotes": "Notas de Avaliação", "actionRequired": "Ação Necessária" }
+      "field": {
+        "title": "Título da Obrigação",
+        "type": "Tipo de Obrigação",
+        "sourceAuthority": "Fonte/Autoridade",
+        "applicableStandard": "Norma(s) Aplicável(is)",
+        "requirementsSummary": "Resumo dos Requisitos",
+        "effectiveDate": "Data de Vigência",
+        "complianceStatus": "Status de Conformidade",
+        "lastEvaluated": "Última Avaliação",
+        "evalNotes": "Notas de Avaliação",
+        "actionRequired": "Ação Necessária"
+      }
     },
     "hira": {
-      "sec": { "identification": "Identificação de Perigos", "assessment": "Avaliação de Riscos", "controls": "Controles" },
-      "field": { "location": "Localização/Área", "activity": "Atividade/Tarefa", "hazardDesc": "Descrição do Perigo", "hazardType": "Tipo de Perigo", "personsAtRisk": "Pessoas em Risco", "likelihood": "Probabilidade (1-5)", "severity": "Severidade (1-5)", "riskLevel": "Nível de Risco", "existingControls": "Controles Existentes", "hierarchyOfControls": "Hierarquia de Controles", "additionalControls": "Controles Adicionais Necessários", "residualRisk": "Risco Residual" }
+      "sec": {
+        "identification": "Identificação de Perigos",
+        "assessment": "Avaliação de Riscos",
+        "controls": "Controles"
+      },
+      "field": {
+        "location": "Localização/Área",
+        "activity": "Atividade/Tarefa",
+        "hazardDesc": "Descrição do Perigo",
+        "hazardType": "Tipo de Perigo",
+        "personsAtRisk": "Pessoas em Risco",
+        "likelihood": "Probabilidade (1-5)",
+        "severity": "Severidade (1-5)",
+        "riskLevel": "Nível de Risco",
+        "existingControls": "Controles Existentes",
+        "hierarchyOfControls": "Hierarquia de Controles",
+        "additionalControls": "Controles Adicionais Necessários",
+        "residualRisk": "Risco Residual"
+      }
     },
     "incident": {
-      "sec": { "info": "Informações do Incidente", "investigation": "Investigação", "actions": "Ações" },
-      "field": { "date": "Data do Incidente", "time": "Hora do Incidente", "location": "Localização", "type": "Tipo de Incidente", "description": "Descrição", "personsInvolved": "Pessoas Envolvidas", "severityClass": "Classificação de Severidade", "immediateCauses": "Causas Imediatas", "rootCauses": "Causas Raiz", "contributingFactors": "Fatores Contribuintes", "correctiveActions": "Ações Corretivas", "actionOwner": "Responsável pela Ação", "actionDue": "Data Limite da Ação", "reportable": "Reportável Externamente?" }
+      "sec": {
+        "info": "Informações do Incidente",
+        "investigation": "Investigação",
+        "actions": "Ações"
+      },
+      "field": {
+        "date": "Data do Incidente",
+        "time": "Hora do Incidente",
+        "location": "Localização",
+        "type": "Tipo de Incidente",
+        "description": "Descrição",
+        "personsInvolved": "Pessoas Envolvidas",
+        "severityClass": "Classificação de Severidade",
+        "immediateCauses": "Causas Imediatas",
+        "rootCauses": "Causas Raiz",
+        "contributingFactors": "Fatores Contribuintes",
+        "correctiveActions": "Ações Corretivas",
+        "actionOwner": "Responsável pela Ação",
+        "actionDue": "Data Limite da Ação",
+        "reportable": "Reportável Externamente?"
+      }
     },
     "emergency": {
       "sec": { "scenario": "Cenário de Emergência", "responsePlan": "Plano de Resposta" },
-      "field": { "scenarioDesc": "Descrição do Cenário", "scenarioType": "Tipo de Cenário", "likelihood": "Probabilidade", "potentialImpact": "Impacto Potencial", "responseProcedure": "Procedimento de Resposta", "responsiblePerson": "Pessoa Responsável", "drillFrequency": "Frequência de Simulados", "lastDrillDate": "Data do Último Simulado", "drillFindings": "Achados do Simulado" }
+      "field": {
+        "scenarioDesc": "Descrição do Cenário",
+        "scenarioType": "Tipo de Cenário",
+        "likelihood": "Probabilidade",
+        "potentialImpact": "Impacto Potencial",
+        "responseProcedure": "Procedimento de Resposta",
+        "responsiblePerson": "Pessoa Responsável",
+        "drillFrequency": "Frequência de Simulados",
+        "lastDrillDate": "Data do Último Simulado",
+        "drillFindings": "Achados do Simulado"
+      }
     },
     "workerConsult": {
       "sec": { "info": "Informações da Consulta", "outcomes": "Resultados" },
-      "field": { "date": "Data da Consulta", "topic": "Tema", "participants": "Participantes", "method": "Método", "keyConcerns": "Principais Preocupações", "actionsAgreed": "Ações Acordadas", "feedbackProvided": "Feedback Fornecido aos Trabalhadores?" }
+      "field": {
+        "date": "Data da Consulta",
+        "topic": "Tema",
+        "participants": "Participantes",
+        "method": "Método",
+        "keyConcerns": "Principais Preocupações",
+        "actionsAgreed": "Ações Acordadas",
+        "feedbackProvided": "Feedback Fornecido aos Trabalhadores?"
+      }
     },
     "competence": {
       "sec": { "personInfo": "Informações da Pessoa", "record": "Registro de Competência" },
-      "field": { "employeeName": "Nome do Funcionário", "rolePosition": "Função/Cargo", "department": "Departamento", "competenceArea": "Área de Competência", "trainingType": "Tipo de Treinamento", "trainingDate": "Data do Treinamento", "expiryDate": "Data de Validade", "competenceLevel": "Nível de Competência", "evidenceRef": "Referência de Evidência", "assessedBy": "Avaliado Por" }
+      "field": {
+        "employeeName": "Nome do Funcionário",
+        "rolePosition": "Função/Cargo",
+        "department": "Departamento",
+        "competenceArea": "Área de Competência",
+        "trainingType": "Tipo de Treinamento",
+        "trainingDate": "Data do Treinamento",
+        "expiryDate": "Data de Validade",
+        "competenceLevel": "Nível de Competência",
+        "evidenceRef": "Referência de Evidência",
+        "assessedBy": "Avaliado Por"
+      }
     },
     "supplier": {
       "sec": { "info": "Informações do Fornecedor", "evaluation": "Avaliação" },
-      "field": { "name": "Nome do Fornecedor", "productService": "Produto/Serviço Fornecido", "criticality": "Nível de Criticidade", "certifications": "Certificações", "qualityScore": "Pontuação de Qualidade", "deliveryScore": "Pontuação de Entrega", "overallRating": "Classificação Geral", "evalDate": "Data de Avaliação", "nextReview": "Próxima Revisão", "evalNotes": "Notas de Avaliação" }
+      "field": {
+        "name": "Nome do Fornecedor",
+        "productService": "Produto/Serviço Fornecido",
+        "criticality": "Nível de Criticidade",
+        "certifications": "Certificações",
+        "qualityScore": "Pontuação de Qualidade",
+        "deliveryScore": "Pontuação de Entrega",
+        "overallRating": "Classificação Geral",
+        "evalDate": "Data de Avaliação",
+        "nextReview": "Próxima Revisão",
+        "evalNotes": "Notas de Avaliação"
+      }
     },
     "calibration": {
       "sec": { "equipment": "Informações do Equipamento", "record": "Registro de Calibração" },
-      "field": { "assetTag": "Etiqueta de Ativo", "description": "Descrição do Equipamento", "manufacturer": "Fabricante", "serialNumber": "Número de Série", "location": "Localização", "calibrationDate": "Data de Calibração", "nextDue": "Próximo Vencimento", "standardUsed": "Norma/Referência Utilizada", "result": "Resultado", "calibratedBy": "Calibrado Por", "traceabilityRef": "Referência de Rastreabilidade" }
+      "field": {
+        "assetTag": "Etiqueta de Ativo",
+        "description": "Descrição do Equipamento",
+        "manufacturer": "Fabricante",
+        "serialNumber": "Número de Série",
+        "location": "Localização",
+        "calibrationDate": "Data de Calibração",
+        "nextDue": "Próximo Vencimento",
+        "standardUsed": "Norma/Referência Utilizada",
+        "result": "Resultado",
+        "calibratedBy": "Calibrado Por",
+        "traceabilityRef": "Referência de Rastreabilidade"
+      }
     },
     "docChange": {
       "sec": { "request": "Solicitação de Alteração", "assessment": "Avaliação e Decisão" },
-      "field": { "documentRef": "Referência do Documento", "requestedBy": "Solicitado Por", "requestDate": "Data da Solicitação", "changeReason": "Razão da Alteração", "changeDescription": "Descrição da Alteração", "urgency": "Urgência", "impactAssessment": "Avaliação de Impacto", "reviewer": "Revisor", "decision": "Decisão", "decisionNotes": "Notas da Decisão" }
+      "field": {
+        "documentRef": "Referência do Documento",
+        "requestedBy": "Solicitado Por",
+        "requestDate": "Data da Solicitação",
+        "changeReason": "Razão da Alteração",
+        "changeDescription": "Descrição da Alteração",
+        "urgency": "Urgência",
+        "impactAssessment": "Avaliação de Impacto",
+        "reviewer": "Revisor",
+        "decision": "Decisão",
+        "decisionNotes": "Notas da Decisão"
+      }
     },
     "objectives": {
       "sec": { "info": "Informações do Objetivo", "planning": "Planejamento" },
-      "field": { "title": "Título do Objetivo", "standard": "Norma(s) Aplicável(is)", "measurableTarget": "Meta Mensurável", "kpi": "KPI/Indicador", "baseline": "Valor de Linha Base", "actionsPlanned": "Ações Planejadas", "responsible": "Pessoa Responsável", "targetDate": "Data Alvo", "resourcesNeeded": "Recursos Necessários", "progressStatus": "Status de Progresso" }
+      "field": {
+        "title": "Título do Objetivo",
+        "standard": "Norma(s) Aplicável(is)",
+        "measurableTarget": "Meta Mensurável",
+        "kpi": "KPI/Indicador",
+        "baseline": "Valor de Linha Base",
+        "actionsPlanned": "Ações Planejadas",
+        "responsible": "Pessoa Responsável",
+        "targetDate": "Data Alvo",
+        "resourcesNeeded": "Recursos Necessários",
+        "progressStatus": "Status de Progresso"
+      }
     },
     "intParties": {
       "sec": { "info": "Informações da Parte", "needs": "Necessidades e Expectativas" },
-      "field": { "name": "Nome da Parte", "type": "Tipo de Parte", "relevance": "Relevância", "influence": "Nível de Influência", "needsDesc": "Necessidades", "expectationsDesc": "Expectativas", "applicableStandards": "Normas Aplicáveis", "monitoringMethod": "Método de Monitoramento", "reviewFrequency": "Frequência de Revisão" }
+      "field": {
+        "name": "Nome da Parte",
+        "type": "Tipo de Parte",
+        "relevance": "Relevância",
+        "influence": "Nível de Influência",
+        "needsDesc": "Necessidades",
+        "expectationsDesc": "Expectativas",
+        "applicableStandards": "Normas Aplicáveis",
+        "monitoringMethod": "Método de Monitoramento",
+        "reviewFrequency": "Frequência de Revisão"
+      }
     },
-    "catalog": { "title": "Modelos de Formulários", "filterAll": "Todos", "loading": "Carregando...", "sections": "seções", "fields": "campos" },
-    "register": { "colStatus": "Status", "colCompletion": "Conclusão", "colOpenedBy": "Aberto Por", "colUpdated": "Atualizado", "newRecord": "Novo Registro", "backToCatalog": "Voltar", "loading": "Carregando...", "empty": "Sem registros ainda" },
-    "form": { "loading": "Carregando...", "back": "Voltar", "submit": "Enviar", "approve": "Aprovar", "reopen": "Reabrir", "reopenTitle": "Reabrir Registro", "justification": "Justificativa", "mappingIncomplete": "Os campos de mapeamento obrigatórios estão incompletos", "validationIncomplete": "Os campos obrigatórios estão incompletos", "submitInvalidStatus": "O registro não pode ser enviado no status atual", "recordImmutable": "O registro está bloqueado", "linkTargetNotFound": "Destino vinculado não encontrado", "fieldRequired": "Este campo é obrigatório" }
+    "catalog": {
+      "title": "Modelos de Formulários",
+      "filterAll": "Todos",
+      "loading": "Carregando...",
+      "sections": "seções",
+      "fields": "campos"
+    },
+    "register": {
+      "colStatus": "Status",
+      "colCompletion": "Conclusão",
+      "colOpenedBy": "Aberto Por",
+      "colUpdated": "Atualizado",
+      "newRecord": "Novo Registro",
+      "backToCatalog": "Voltar",
+      "loading": "Carregando...",
+      "empty": "Sem registros ainda"
+    },
+    "form": {
+      "loading": "Carregando...",
+      "back": "Voltar",
+      "submit": "Enviar",
+      "approve": "Aprovar",
+      "reopen": "Reabrir",
+      "reopenTitle": "Reabrir Registro",
+      "justification": "Justificativa",
+      "mappingIncomplete": "Os campos de mapeamento obrigatórios estão incompletos",
+      "validationIncomplete": "Os campos obrigatórios estão incompletos",
+      "submitInvalidStatus": "O registro não pode ser enviado no status atual",
+      "recordImmutable": "O registro está bloqueado",
+      "linkTargetNotFound": "Destino vinculado não encontrado",
+      "fieldRequired": "Este campo é obrigatório"
+    }
   },
   "qms": {
     "title": "Motor de Documentos QMS",
     "tabWizard": "Perfil da Organização",
     "tabRegistry": "Registro de Cláusulas",
-    "wizard": { "title": "Perfil da Organização", "loading": "Carregando...", "legalName": "Razão Social", "industry": "Indústria", "industryOther": "Especifique sua indústria...", "productsServices": "Produtos / Serviços", "employeeCount": "Número de Funcionários", "managementRep": "Representante da Direção", "targetCertDate": "Data Alvo de Certificação", "standardsInScope": "Normas no Escopo", "designResponsibility": "Responsabilidade de Projeto", "coreProcesses": "Processos Centrais (separados por vírgula)", "siteName": "Site", "save": "Salvar Perfil", "saving": "Salvando...", "stepBasic": "Info Básica", "stepSites": "Sites", "stepScope": "Escopo e Processos", "prev": "Anterior", "next": "Próximo", "yearFounded": "Ano de Fundação", "supplyChainShape": "Descrição da Cadeia de Suprimentos", "existingCertifications": "Certificações Existentes (separadas por vírgula)", "manualExists": "Manual QMS Existente?", "outsourcedProcesses": "Processos Terceirizados (separados por vírgula)", "siteAddress": "Endereço", "siteCity": "Cidade", "siteState": "Estado/Província", "siteCountry": "País", "siteHeadcount": "Pessoal", "addSite": "Adicionar Site", "removeSite": "Remover" },
-    "registry": { "loading": "Carregando...", "namedGaps": "Evidência faltante", "requiresRegisterData": "Requer dados de {register}", "naJustified": "N/A — justificado", "markApplicable": "Marcar aplicável", "markExcluded": "Marcar N/A", "justificationPlaceholder": "Justificativa para exclusão (obrigatória)", "showAll": "Mostrar todas as normas" },
-    "generation": { "title": "Geração de Documentos", "generate": "Gerar Manual IMS", "generating": "Gerando...", "profileRequired": "O perfil da organização é necessário antes de gerar. Complete seu perfil primeiro.", "noStandards": "Sem normas no escopo. Selecione normas no perfil da organização.", "unavailable": "A geração não está disponível. Tente novamente mais tarde.", "goToProfile": "Completar Perfil", "runStatus": "Status da Geração", "sectionCount": "seções", "reviewed": "Revisado", "unreviewed": "Não revisado", "markReviewed": "Marcar revisado", "gapSection": "LACUNA", "failedSection": "Falhou", "naSection": "N/A", "proseSection": "Conteúdo pronto", "pendingSection": "Pendente", "sectionFailed": "Composição da seção falhou", "gapLinkTraining": "Competência e Formação", "gapLinkRisk": "Gestão de Riscos", "gapLinkAudit": "Estúdio de Auditoria", "gapLinkRecords": "Registros", "gapLinkCapa": "CAPA", "gapLinkLegal": "Obrigações Legais", "gapLinkObjectives": "Objetivos" },
-    "docViewer": { "title": "Visualizador de Documentos", "versions": "Histórico de Versões", "diffTitle": "Diferença de Versões", "diffUnavailable": "Diferença não disponível para esta versão", "noVersions": "Versão única — sem diferença disponível", "additions": "adições", "deletions": "exclusões", "kindChange": "Tipo de seção alterado", "selectVersions": "Selecione duas versões para comparar", "back": "Voltar", "unresolvedGaps": "Permanecem seções com lacunas não resolvidas", "sodViolation": "Violação de segregação de funções: o aprovador não pode ser o autor", "export": "Exportar", "exportBlocked": "Exportação não disponível ainda (aguardando backend)", "submitForApproval": "Enviar para aprovação", "unreviewedSections": "Nem todas as seções foram revisadas. Revise todas as seções de conteúdo antes de enviar.", "submitSuccess": "Documento enviado para aprovação com sucesso.", "versionLabel": "Versão {version}", "selectVersionForDiff": "Selecionar versão {version} para comparação" }
+    "wizard": {
+      "title": "Perfil da Organização",
+      "loading": "Carregando...",
+      "legalName": "Razão Social",
+      "industry": "Indústria",
+      "industryOther": "Especifique sua indústria...",
+      "productsServices": "Produtos / Serviços",
+      "employeeCount": "Número de Funcionários",
+      "managementRep": "Representante da Direção",
+      "targetCertDate": "Data Alvo de Certificação",
+      "standardsInScope": "Normas no Escopo",
+      "designResponsibility": "Responsabilidade de Projeto",
+      "coreProcesses": "Processos Centrais (separados por vírgula)",
+      "siteName": "Site",
+      "save": "Salvar Perfil",
+      "saving": "Salvando...",
+      "stepBasic": "Info Básica",
+      "stepSites": "Sites",
+      "stepScope": "Escopo e Processos",
+      "prev": "Anterior",
+      "next": "Próximo",
+      "yearFounded": "Ano de Fundação",
+      "supplyChainShape": "Descrição da Cadeia de Suprimentos",
+      "existingCertifications": "Certificações Existentes (separadas por vírgula)",
+      "manualExists": "Manual QMS Existente?",
+      "outsourcedProcesses": "Processos Terceirizados (separados por vírgula)",
+      "siteAddress": "Endereço",
+      "siteCity": "Cidade",
+      "siteState": "Estado/Província",
+      "siteCountry": "País",
+      "siteHeadcount": "Pessoal",
+      "addSite": "Adicionar Site",
+      "removeSite": "Remover"
+    },
+    "registry": {
+      "loading": "Carregando...",
+      "namedGaps": "Evidência faltante",
+      "requiresRegisterData": "Requer dados de {register}",
+      "naJustified": "N/A — justificado",
+      "markApplicable": "Marcar aplicável",
+      "markExcluded": "Marcar N/A",
+      "justificationPlaceholder": "Justificativa para exclusão (obrigatória)",
+      "showAll": "Mostrar todas as normas"
+    },
+    "generation": {
+      "title": "Geração de Documentos",
+      "generate": "Gerar Manual IMS",
+      "generating": "Gerando...",
+      "profileRequired": "O perfil da organização é necessário antes de gerar. Complete seu perfil primeiro.",
+      "noStandards": "Sem normas no escopo. Selecione normas no perfil da organização.",
+      "unavailable": "A geração não está disponível. Tente novamente mais tarde.",
+      "goToProfile": "Completar Perfil",
+      "runStatus": "Status da Geração",
+      "sectionCount": "seções",
+      "reviewed": "Revisado",
+      "unreviewed": "Não revisado",
+      "markReviewed": "Marcar revisado",
+      "gapSection": "LACUNA",
+      "failedSection": "Falhou",
+      "naSection": "N/A",
+      "proseSection": "Conteúdo pronto",
+      "pendingSection": "Pendente",
+      "sectionFailed": "Composição da seção falhou",
+      "gapLinkTraining": "Competência e Formação",
+      "gapLinkRisk": "Gestão de Riscos",
+      "gapLinkAudit": "Estúdio de Auditoria",
+      "gapLinkRecords": "Registros",
+      "gapLinkCapa": "CAPA",
+      "gapLinkLegal": "Obrigações Legais",
+      "gapLinkObjectives": "Objetivos"
+    },
+    "docViewer": {
+      "title": "Visualizador de Documentos",
+      "versions": "Histórico de Versões",
+      "diffTitle": "Diferença de Versões",
+      "diffUnavailable": "Diferença não disponível para esta versão",
+      "noVersions": "Versão única — sem diferença disponível",
+      "additions": "adições",
+      "deletions": "exclusões",
+      "kindChange": "Tipo de seção alterado",
+      "selectVersions": "Selecione duas versões para comparar",
+      "back": "Voltar",
+      "unresolvedGaps": "Permanecem seções com lacunas não resolvidas",
+      "sodViolation": "Violação de segregação de funções: o aprovador não pode ser o autor",
+      "export": "Exportar",
+      "exportBlocked": "Exportação não disponível ainda (aguardando backend)",
+      "submitForApproval": "Enviar para aprovação",
+      "unreviewedSections": "Nem todas as seções foram revisadas. Revise todas as seções de conteúdo antes de enviar.",
+      "submitSuccess": "Documento enviado para aprovação com sucesso.",
+      "versionLabel": "Versão {version}",
+      "selectVersionForDiff": "Selecionar versão {version} para comparação"
+    }
   }
 }

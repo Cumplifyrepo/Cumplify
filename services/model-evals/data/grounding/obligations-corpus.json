@@ -4,46 +4,251 @@
   "authoredBy": "architect",
   "authoredAt": "2026-07-10",
   "docs": [
-    { "docKey": "loto", "standard": "ISO45001", "clauseRef": "8.1.2", "text": "Obligation: control of hazardous energy (lockout/tagout) — an energy-control program with documented machine-specific procedures, annual procedure inspections, authorized/affected employee training, and locks/tags for servicing where unexpected energization or release of stored energy could injure. Source: OSHA 29 CFR 1910.147. Applies when: employees service or maintain machines with electrical, pneumatic, hydraulic, or stored mechanical (spring/gravity) energy — e.g., clearing jams inside automated packaging or press equipment. ISO mapping: ISO 45001 8.1.2 (hazard elimination/controls), 8.1.3 (management of change for new lines)." },
-    { "docKey": "machine-guarding", "standard": "ISO45001", "clauseRef": "8.1.2", "text": "Obligation: machine guarding — point of operation, ingoing nip points, rotating parts and flying debris must be guarded (fixed, interlocked, or devices); robotic cells typically need perimeter guarding with interlocked access. Source: OSHA 29 CFR 1910.212 (general machine guarding). Applies when: powered conveyors, presses, palletizers, case erectors or similar equipment are operated. ISO mapping: ISO 45001 8.1.2 (engineering controls in the hierarchy)." },
-    { "docKey": "hazcom", "standard": "ISO45001", "clauseRef": "7.4", "text": "Obligation: hazard communication — written HazCom program, chemical inventory, safety data sheets accessible to workers, labeled containers (including secondary/dispensing containers), and effective employee training before initial assignment and when new hazards are introduced. Source: OSHA 29 CFR 1910.1200 (GHS-aligned). Applies when: any hazardous chemical is used or stored — new solvents, coatings, plating chemistry. ISO mapping: ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness), 6.1.3 (legal requirements determination)." },
-    { "docKey": "flam-liquids", "standard": "ISO45001", "clauseRef": "8.1.1", "text": "Obligation: flammable liquids handling and storage — quantity limits outside storage rooms/cabinets, approved cabinets, bonding and grounding during transfer/dispensing from drums, ventilation and ignition-source control. Source: OSHA 29 CFR 1910.106. Applies when: solvents such as xylene or lacquer thinners are dispensed from drums or stored in work areas. ISO mapping: ISO 45001 8.1.1 (operational controls), 8.1.2 (substitution consideration when replacing lower-hazard products)." },
-    { "docKey": "spray-finishing", "standard": "ISO45001", "clauseRef": "8.1.1", "text": "Obligation: spray finishing using flammable/combustible materials — spraying confined to approved booths or rooms with adequate ventilation, filters, listed electrical equipment for classified areas, sprinkler/extinguishing coverage, and control of residue and ignition sources. Source: OSHA 29 CFR 1910.107. Applies when: solvent-borne coatings are spray-applied (new finishing lines, spray booths). ISO mapping: ISO 45001 8.1.1 (operating criteria), 8.1.3 (change control for new processes)." },
-    { "docKey": "respiratory", "standard": "ISO45001", "clauseRef": "8.1.2", "text": "Obligation: respiratory protection program — where air contaminants (e.g., isocyanate two-component coatings, welding fume, chromic acid mist) can't be controlled below limits by engineering means: written program, medical evaluation, fit testing, respirator selection, training, and program administrator. Source: OSHA 29 CFR 1910.134. Applies when: respirators are required or provided. ISO mapping: ISO 45001 8.1.2 (PPE = last tier of the hierarchy), 7.2 (competence)." },
-    { "docKey": "exposure-assessment", "standard": "ISO45001", "clauseRef": "9.1.1", "text": "Obligation: air contaminant exposure limits and assessment — employee exposures must be kept within permissible exposure limits; substance-specific standards (e.g., hexavalent chromium 29 CFR 1910.1026) add initial exposure determinations, periodic monitoring, regulated areas and medical surveillance. Source: OSHA 29 CFR 1910.1000 and substance standards. Applies when: solvent vapors, welding fume on stainless (Cr(VI)/nickel), plating mists, or isocyanates are present. ISO mapping: ISO 45001 9.1.1 (monitoring/measurement with calibrated equipment), 6.1.2 (risk assessment)." },
-    { "docKey": "multi-employer", "standard": "ISO45001", "clauseRef": "8.1.4", "text": "Obligation: multi-employer worksite and contractor safety — host and contractor each carry OSHA duties; the host must coordinate on shared hazards (e.g., roof work overhead, exclusion zones), exchange hazard information, and can be cited as controlling/exposing employer. Construction fall protection at 6 feet applies to the contractor (29 CFR 1926.501). Source: OSH Act multi-employer citation policy; 29 CFR 1926. Applies when: contractors work on site (roofing, construction). ISO mapping: ISO 45001 8.1.4.2 (contractors), 4.2 (interested parties)." },
-    { "docKey": "forklifts", "standard": "ISO45001", "clauseRef": "7.2", "text": "Obligation: powered industrial trucks — operator training and certification with formal instruction, practical evaluation, and refresher after an accident or observed unsafe operation; truck inspection; load handling rules. Source: OSHA 29 CFR 1910.178, incl. (l) training. Applies when: forklifts operate; a tip-over with elevated load triggers refresher evaluation of the operator. ISO mapping: ISO 45001 7.2 (competence), 10.2 (incident investigation)." },
-    { "docKey": "battery-charging", "standard": "ISO45001", "clauseRef": "8.1.1", "text": "Obligation: battery charging installations — designated charging areas with facilities for flushing/neutralizing spilled electrolyte, fire protection, protection of charging apparatus from truck damage, adequate ventilation for hydrogen off-gassing, eyewash where electrolyte is handled, and PPE. Source: OSHA 29 CFR 1910.178(g); 1910.151(c) for eyewash. Applies when: converting fleets to electric with battery charging/changing rooms. ISO mapping: ISO 45001 8.1.1 (operational planning of new facilities), 8.1.3 (management of change)." },
-    { "docKey": "serious-incident-reporting", "standard": "ISO45001", "clauseRef": "10.2", "text": "Obligation: report to OSHA any work-related fatality within 8 hours and any in-patient hospitalization, amputation, or loss of an eye within 24 hours; preserve the incident scene evidence and investigate. Source: OSHA 29 CFR 1904.39. Applies when: a serious incident occurs (e.g., forklift tip-over with hospitalized operator). ISO mapping: ISO 45001 10.2 (incident, nonconformity, corrective action), 7.4.3 (external communication)." },
-    { "docKey": "recordkeeping", "standard": "ISO45001", "clauseRef": "7.5", "text": "Obligation: injury/illness recordkeeping — OSHA 300 log, 301 incident reports, annual 300A summary posted Feb 1–Apr 30; establishments with 10 or fewer employees all year, or in low-hazard exempt industries, are exempt from routine logs but never from 1904.39 serious-incident reports; electronic submission applies to larger/high-hazard establishments. Source: OSHA 29 CFR Part 1904. Applies when: determining paperwork duties by size and industry. ISO mapping: ISO 45001 7.5 (documented information), 9.1.1 (performance data)." },
-    { "docKey": "hearing-conservation", "standard": "ISO45001", "clauseRef": "9.1.1", "text": "Obligation: occupational noise — with 8-hour TWA exposures at or above 85 dBA (action level), implement a hearing conservation program: noise monitoring, audiometric testing with baselines, hearing protection offered/required, and training; feasible engineering/administrative controls at 90 dBA PEL. Source: OSHA 29 CFR 1910.95. Applies when: press lines or similar equipment push full-shift exposures near or above 85 dBA. ISO mapping: ISO 45001 9.1.1 (monitoring), 8.1.2 (controls hierarchy)." },
-    { "docKey": "confined-space", "standard": "ISO45001", "clauseRef": "8.1.1", "text": "Obligation: permit-required confined spaces — identify and evaluate spaces (limited entry/exit, not for continuous occupancy, with hazards such as atmosphere or engulfment, e.g., below-grade pits with submerged mixers); post signs, write a permit program, control entries with permits, atmospheric testing, attendants, rescue arrangements — or prevent entry. Source: OSHA 29 CFR 1910.146. Applies when: pits, tanks, or vessels are entered for inspection/maintenance. ISO mapping: ISO 45001 6.1.2 (hazard identification), 8.1.1 (operational control), 8.2 (rescue/emergency)." },
-    { "docKey": "hot-work", "standard": "ISO45001", "clauseRef": "8.1.1", "text": "Obligation: welding, cutting, brazing — fire prevention measures (hot-work permits, fire watch, 35-ft combustible clearance), ventilation for fume, screens for arc flash, and stainless work adds hexavalent chromium and nickel fume exposure duties (assessment, controls, possible regulated areas). Source: OSHA 29 CFR 1910.252 (and 1910.1026 for Cr(VI)). Applies when: TIG/MIG welding or plasma cutting, especially on stainless steels. ISO mapping: ISO 45001 8.1.1, 6.1.2, 9.1.1." },
-    { "docKey": "temp-workers", "standard": "ISO45001", "clauseRef": "8.1.4", "text": "Obligation: temporary/staffing-agency workers — host employer and staffing agency share responsibility: the host typically controls site-specific hazard training, PPE, and supervision; injury recording generally falls to the employer supervising day-to-day work (usually the host); duties can't be contracted away. Source: OSH Act; OSHA temporary worker initiative guidance; 29 CFR 1904.31. Applies when: temp headcount is used, or a temp worker is injured. ISO mapping: ISO 45001 8.1.4 (procurement/outsourcing of labor), 4.2 (workers as interested parties), 5.4 (consultation covers all workers)." },
-    { "docKey": "calosha-state-plan", "standard": "ISO45001", "clauseRef": "6.1.3", "text": "Obligation: state-plan jurisdictions — states like California run their own OSHA-approved programs with requirements at least as protective and often stricter: Cal/OSHA requires a written Injury and Illness Prevention Program (T8 §3203) and indoor heat illness prevention (T8 §3396) for indoor workplaces reaching 82°F, with water, cool-down, assessment and controls above 87°F. Source: Cal/OSHA Title 8. Applies when: opening sites in state-plan states (e.g., non-climate-controlled California warehouse). ISO mapping: ISO 45001 6.1.3 (determining legal requirements per jurisdiction), 4.1 (context)." },
-    { "docKey": "eap-fpp", "standard": "ISO45001", "clauseRef": "8.2", "text": "Obligation: emergency action plan and fire prevention plan — written plans (10 or fewer employees may communicate orally) covering evacuation routes and procedures, alarm systems, employee training, accounting for personnel, and control of fuel-source hazards. Source: OSHA 29 CFR 1910.38 and 1910.39. Applies when: required by other standards or as general emergency preparedness. ISO mapping: ISO 45001 8.2 (emergency preparedness and response)." },
-    { "docKey": "first-aid", "standard": "ISO45001", "clauseRef": "8.2", "text": "Obligation: medical services and first aid — ensure ready availability of medical personnel, trained first-aid providers where no clinic/hospital is near, first-aid supplies, and quick drenching/flushing facilities (eyewash/shower) where corrosive materials like battery electrolyte or plating acids are handled. Source: OSHA 29 CFR 1910.151. Applies when: corrosives are used or remote sites lack nearby medical care. ISO mapping: ISO 45001 8.2, 7.1 (resources)." },
-    { "docKey": "electrical-safe-work", "standard": "ISO45001", "clauseRef": "8.1.2", "text": "Obligation: electrical safe work practices — de-energize live parts before work where feasible (tie-in with lockout/tagout), qualified-person training, protective equipment and insulated tools for work near exposed energized parts; arc-flash risk assessment per industry consensus (NFPA 70E) supports compliance. Source: OSHA 29 CFR 1910.331–335. Applies when: maintenance on powered equipment, charging infrastructure, or control panels. ISO mapping: ISO 45001 8.1.2, 7.2 (qualified persons)." },
-    { "docKey": "ppe-hazard-assessment", "standard": "ISO45001", "clauseRef": "6.1.2", "text": "Obligation: PPE hazard assessment — assess the workplace to determine hazards requiring PPE, certify the assessment in writing, select and require appropriate PPE, and train employees; employer pays for most required PPE. Source: OSHA 29 CFR 1910.132. Applies when: any new process, line, or chemical changes the hazard picture. ISO mapping: ISO 45001 6.1.2 (hazard identification/risk assessment), 8.1.2 (PPE as last-tier control)." },
-    { "docKey": "general-duty", "standard": "ISO45001", "clauseRef": "6.1.1", "text": "Obligation: General Duty Clause — furnish employment free from recognized hazards causing or likely to cause death or serious physical harm, used where no specific standard exists (e.g., heat stress in federal-plan states, ammonia handling practices per industry guidance, workplace violence). Source: OSH Act Section 5(a)(1). Applies when: recognized hazards lack a specific OSHA standard. ISO mapping: ISO 45001 6.1.1 (risks needing action), 6.1.2." },
-    { "docKey": "psm", "standard": "ISO45001", "clauseRef": "8.1.1", "text": "Obligation: process safety management of highly hazardous chemicals — full PSM program (process safety information, PHA, operating procedures, training, mechanical integrity, MOC, incident investigation, emergency planning, compliance audits) when a process contains a listed chemical at or above threshold quantity — anhydrous ammonia TQ is 10,000 lb. Source: OSHA 29 CFR 1910.119. Applies when: ammonia refrigeration charge grows to ≥10,000 lb, or other listed chemicals hit TQ. ISO mapping: ISO 45001 8.1.1, 8.1.3 (MOC), 8.2, 10.2." },
-    { "docKey": "rmp", "standard": "ISO14001", "clauseRef": "6.1.3", "text": "Obligation: EPA Risk Management Program — facilities with a regulated substance above threshold in a process (anhydrous ammonia 10,000 lb) must implement an RMP: hazard assessment with worst-case release scenario, prevention program tier (usually Program 3 mirroring PSM), emergency response coordination, and an RMP filing to EPA updated at least five-yearly. Source: Clean Air Act §112(r), 40 CFR Part 68. Applies when: ammonia refrigeration expansions cross 10,000 lb. ISO mapping: ISO 14001 6.1.3 (compliance obligations), 8.2 (emergency preparedness); ISO 45001 8.2." },
-    { "docKey": "rcra-generator", "standard": "ISO14001", "clauseRef": "6.1.3", "text": "Obligation: RCRA hazardous waste generator category — status set by monthly generation: very small (<100 kg/mo), small (100–1,000 kg/mo), large (≥1,000 kg/mo). LQG duties add weekly inspections, personnel training, contingency plan with quick-reference guide, 90-day accumulation limit, biennial reporting, and no volume cap; a category bump from a one-time cleanout may qualify as an episodic event for VSQG/SQG under state-adopted rules. Source: 40 CFR Part 262. Applies when: waste volumes change with production (e.g., 1,400 kg/mo sustained = LQG) or one-time decommissioning wastes. ISO mapping: ISO 14001 6.1.3, 8.1 (operational control), 7.2 (training)." },
-    { "docKey": "used-oil-universal-waste", "standard": "ISO14001", "clauseRef": "8.1", "text": "Obligation: used oil and universal waste management — used oil in labeled tanks/containers in good condition with spill response and authorized transporters (40 CFR Part 279); universal wastes (spent lamps, batteries, some pesticides/mercury devices) get labeled containers, one-year accumulation limit, and handler duties (40 CFR Part 273) — lamps boxed beyond a year exceed the limit. Source: 40 CFR Parts 279/273. Applies when: maintenance generates used oil, fluorescent lamps, or batteries. ISO mapping: ISO 14001 8.1, 6.1.3." },
-    { "docKey": "spcc", "standard": "ISO14001", "clauseRef": "8.2", "text": "Obligation: Spill Prevention, Control, and Countermeasure plan — required when aggregate aboveground oil storage in containers ≥55 gal exceeds 1,320 gallons (or >42,000 gal underground) and a discharge could reasonably reach navigable waters: written/certified plan, secondary containment, inspections, training, and tank integrity; diesel, used oil, hydraulic oil, and new ASTs all count toward the threshold. Source: 40 CFR Part 112. Applies when: adding tanks (e.g., 2,000-gal diesel plus existing oil) crosses 1,320 gal aggregate. ISO mapping: ISO 14001 8.2 (emergency preparedness), 8.1, 6.1.3." },
-    { "docKey": "epcra-tier2", "standard": "ISO14001", "clauseRef": "7.4", "text": "Obligation: EPCRA hazardous chemical inventory — SDS reporting (§311) and annual Tier II inventory by March 1 (§312) to state/local emergency bodies and the fire department for hazardous chemicals at or above 10,000 lb at any time (propane, diesel, oils count), or extremely hazardous substances at the lower of 500 lb or their TPQ (chlorine TPQ 100 lb; ammonia 500 lb) — EHS presence can also trigger §302 facility emergency-planning notification. Source: EPCRA §§302/311/312, 40 CFR Parts 355/370. Applies when: year-end inventories show propane, ammonia, chlorine, or bulk fuels above thresholds. ISO mapping: ISO 14001 7.4.3 (external communication), 6.1.3; ISO 45001 8.2." },
-    { "docKey": "release-reporting", "standard": "ISO14001", "clauseRef": "8.2", "text": "Obligation: emergency release notification — releases of listed substances at or above their reportable quantity within 24 hours require immediate notification: CERCLA §103 to the National Response Center and EPCRA §304 to state/local commissions (chlorine RQ 10 lb; anhydrous ammonia RQ 100 lb), followed by a written follow-up report. Source: CERCLA §103, EPCRA §304, 40 CFR 302/355. Applies when: accidental releases occur (e.g., chlorine cylinder valve failure). ISO mapping: ISO 14001 8.2, ISO 45001 8.2/10.2 (incident response and investigation)." },
-    { "docKey": "tri", "standard": "ISO14001", "clauseRef": "9.1.1", "text": "Obligation: Toxics Release Inventory (Form R) — facilities in covered NAICS sectors with 10+ full-time-equivalents must report annually by July 1 for listed chemicals exceeding activity thresholds: 25,000 lb manufactured or processed, or 10,000 lb otherwise used per year (toluene in coatings at 28,000 lb/yr 'otherwise used' exceeds threshold); report releases and waste-management quantities. Source: EPCRA §313, 40 CFR Part 372. Applies when: annual chemical throughput crosses thresholds. ISO mapping: ISO 14001 9.1.1 (evaluation/reporting), 6.1.3." },
-    { "docKey": "stormwater-industrial", "standard": "ISO14001", "clauseRef": "8.1", "text": "Obligation: industrial stormwater permit — facilities in regulated sectors (e.g., scrap recycling, Sector N) with industrial activities exposed to precipitation need NPDES multi-sector general permit coverage: NOI, a stormwater pollution prevention plan, control measures, quarterly visual assessments and sector benchmark monitoring, with corrective actions on exceedances; 'no exposure' certification can exempt fully-indoor operations. Source: CWA NPDES, EPA MSGP or state equivalent. Applies when: outdoor scrap yards, material staging, or exposed dumpsters/tanks exist. ISO mapping: ISO 14001 8.1, 9.1.1, 6.1.3." },
-    { "docKey": "stormwater-construction", "standard": "ISO14001", "clauseRef": "8.1", "text": "Obligation: construction stormwater permit — clearing/grading disturbing one or more acres, or smaller phases within a larger common plan of development, require construction general permit coverage before earthwork: NOI, SWPPP, erosion and sediment controls, inspections, and stabilization/termination requirements. Source: CWA NPDES CGP or state equivalent. Applies when: site development phases disturb ≥1 acre or belong to a bigger planned development. ISO mapping: ISO 14001 8.1, 6.1.2 (aspects), 6.1.3." },
-    { "docKey": "rice-generators", "standard": "ISO14001", "clauseRef": "6.1.3", "text": "Obligation: stationary emergency engines — new diesel engines must be certified to NSPS Subpart IIII emission standards with ULSD fuel; existing engines fall under NESHAP Subpart ZZZZ; 'emergency' status caps non-emergency operation (maintenance and readiness testing generally limited to about 100 hours/year) and requires hour-meter tracking; permitting as exempt/insignificant source varies by state. Source: 40 CFR Part 60 Subpart IIII; Part 63 Subpart ZZZZ. Applies when: installing standby generators (e.g., 750 kW diesel with belly tank — the tank also counts toward SPCC aggregate). ISO mapping: ISO 14001 6.1.3, 8.1, 9.1.1 (hour logging)." },
-    { "docKey": "refrigerant-mgmt", "standard": "ISO14001", "clauseRef": "8.1", "text": "Obligation: refrigerant leak-repair and servicing — appliances with 15+ lb of HFC refrigerant (e.g., R-448A racks) fall under leak-repair rules extended to HFCs by the AIM Act: leak-rate calculation on refrigerant additions, repair deadlines when leak rates exceed thresholds (commercial refrigeration 20%/yr), certified technicians (CAA §608), sales restrictions, recordkeeping; automatic leak detection for very large charges. Source: CAA §608; AIM Act, 40 CFR Part 84 Subpart C. Applies when: operating rack refrigeration with 300–500 lb HFC charges per store. ISO mapping: ISO 14001 8.1, 9.1.1, 6.1.3." },
-    { "docKey": "ust", "standard": "ISO14001", "clauseRef": "8.1", "text": "Obligation: underground storage tanks — new/replacement regulated USTs need secondary containment with interstitial monitoring, spill/overfill prevention, corrosion protection, monthly release detection, operator training (Classes A/B/C), financial responsibility, and formal closure/site assessment for removed tanks; state programs implement and may exceed federal rules. Source: 40 CFR Part 280 (state-run programs). Applies when: replacing gasoline USTs or closing old tanks. ISO mapping: ISO 14001 8.1, 6.1.3, 8.2." },
-    { "docKey": "minor-source-air", "standard": "ISO14001", "clauseRef": "6.1.3", "text": "Obligation: air permitting for coating/solvent operations — new or increased VOC/HAP emissions (spray booths, coating lines, electroplating) usually require state minor-source construction/operating permits BEFORE installation, with emission limits, control/capture requirements, and records of coating usage and VOC content to demonstrate potential-to-emit below major-source thresholds; surface-coating NESHAPs (e.g., 40 CFR 63 Subpart HHHHHH for miscellaneous surface coating) and chromium electroplating NESHAP (Subpart N — fume suppressants/composite mesh pads, surface-tension monitoring) may also attach. Source: state minor NSR programs; CAA NESHAPs. Applies when: adding spray booths, coating capacity, or plating lines. ISO mapping: ISO 14001 6.1.3, 8.1, 9.1.1." },
-    { "docKey": "tce-degreaser", "standard": "ISO14001", "clauseRef": "8.1", "text": "Obligation: halogenated solvent degreaser decommissioning — TCE cleanout waste is typically listed hazardous waste (spent solvent) requiring hazardous-waste determination, manifesting to a permitted TSDF, and possible one-time episodic-generation handling to avoid a permanent generator-category bump; the halogenated solvent cleaning NESHAP (40 CFR 63 Subpart T) governs operating machines, and TCE also carries specific worker-exposure risk management (TSCA §6 rule phase-outs/limits). Source: 40 CFR Parts 262/263, 63 Subpart T; TSCA §6. Applies when: one-time removal of a TCE vapor degreaser. ISO mapping: ISO 14001 8.1, 6.1.3; ISO 45001 6.1.2." },
-    { "docKey": "reg-change-tracking", "standard": "ISO45001", "clauseRef": "6.1.3", "text": "Obligation: regulatory change management — when an agency updates a rule (e.g., a Hazard Communication Standard revision adopting a newer GHS edition), the organization must identify the change, assess applicability by compliance date, update programs/labels/SDS libraries and retrain affected workers, and record the evaluation in the obligations register. Source: administrative rulemaking (e.g., 29 CFR 1910.1200 updates). Applies when: any tracked obligation's source rule changes. ISO mapping: ISO 45001/14001 6.1.3 (keep requirements up to date), 8.1.3 (management of change), 7.2 (retraining)." },
-    { "docKey": "ma-integration", "standard": "ISO14001", "clauseRef": "4.1", "text": "Obligation: acquisition integration of compliance obligations — after acquiring a facility, inventory and transfer/re-issue environmental permits (air, stormwater, wastewater, waste EPA ID numbers change with ownership), verify OSHA programs and posting/recordkeeping continuity under the new employer, harmonize the obligations register across jurisdictions (state plans differ), and evaluate legacy liabilities. Source: permit transfer provisions in each program; OSH Act employer duties. Applies when: closing an acquisition of an operating plant. ISO mapping: ISO 14001/45001 4.1 (context), 6.1.3, 8.1.3 (change), 9.1.2 (compliance evaluation of the acquired site)." },
-    { "docKey": "applicability-triage", "standard": "ISO14001", "clauseRef": "9.1.2", "text": "Obligation: applicability determination discipline — before adopting consultant claims wholesale, verify each asserted obligation against actual facility thresholds: SPCC needs >1,320 gal aggregate oil; Tier II needs 10,000 lb (or EHS TPQ) on hand; LQG needs ≥1,000 kg/mo generation; document why each obligation applies or does not, with quantities and dates, in the obligations register. Source: threshold provisions of each cited program. Applies when: third-party assessments propose blanket program adoption. ISO mapping: ISO 14001 6.1.3 + 9.1.2 (compliance evaluation), ISO 45001 6.1.3." },
-    { "docKey": "walking-working", "standard": "ISO45001", "clauseRef": "8.1.2", "text": "Obligation: walking-working surfaces and fall protection (general industry) — keep surfaces clean/dry/orderly, guard floor holes and open-sided platforms 4 feet or more above a lower level, ladder safety, and fall protection options (guardrails, personal fall arrest) for elevated work such as rack mezzanines or rooftop equipment access by own staff. Source: OSHA 29 CFR 1910 Subpart D. Applies when: warehousing, mezzanines, or maintenance at height by in-house crews. ISO mapping: ISO 45001 8.1.2, 6.1.2." }
+    {
+      "docKey": "loto",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.2",
+      "text": "Obligation: control of hazardous energy (lockout/tagout) — an energy-control program with documented machine-specific procedures, annual procedure inspections, authorized/affected employee training, and locks/tags for servicing where unexpected energization or release of stored energy could injure. Source: OSHA 29 CFR 1910.147. Applies when: employees service or maintain machines with electrical, pneumatic, hydraulic, or stored mechanical (spring/gravity) energy — e.g., clearing jams inside automated packaging or press equipment. ISO mapping: ISO 45001 8.1.2 (hazard elimination/controls), 8.1.3 (management of change for new lines)."
+    },
+    {
+      "docKey": "machine-guarding",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.2",
+      "text": "Obligation: machine guarding — point of operation, ingoing nip points, rotating parts and flying debris must be guarded (fixed, interlocked, or devices); robotic cells typically need perimeter guarding with interlocked access. Source: OSHA 29 CFR 1910.212 (general machine guarding). Applies when: powered conveyors, presses, palletizers, case erectors or similar equipment are operated. ISO mapping: ISO 45001 8.1.2 (engineering controls in the hierarchy)."
+    },
+    {
+      "docKey": "hazcom",
+      "standard": "ISO45001",
+      "clauseRef": "7.4",
+      "text": "Obligation: hazard communication — written HazCom program, chemical inventory, safety data sheets accessible to workers, labeled containers (including secondary/dispensing containers), and effective employee training before initial assignment and when new hazards are introduced. Source: OSHA 29 CFR 1910.1200 (GHS-aligned). Applies when: any hazardous chemical is used or stored — new solvents, coatings, plating chemistry. ISO mapping: ISO 45001 7.4 (communication), 7.2/7.3 (competence, awareness), 6.1.3 (legal requirements determination)."
+    },
+    {
+      "docKey": "flam-liquids",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.1",
+      "text": "Obligation: flammable liquids handling and storage — quantity limits outside storage rooms/cabinets, approved cabinets, bonding and grounding during transfer/dispensing from drums, ventilation and ignition-source control. Source: OSHA 29 CFR 1910.106. Applies when: solvents such as xylene or lacquer thinners are dispensed from drums or stored in work areas. ISO mapping: ISO 45001 8.1.1 (operational controls), 8.1.2 (substitution consideration when replacing lower-hazard products)."
+    },
+    {
+      "docKey": "spray-finishing",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.1",
+      "text": "Obligation: spray finishing using flammable/combustible materials — spraying confined to approved booths or rooms with adequate ventilation, filters, listed electrical equipment for classified areas, sprinkler/extinguishing coverage, and control of residue and ignition sources. Source: OSHA 29 CFR 1910.107. Applies when: solvent-borne coatings are spray-applied (new finishing lines, spray booths). ISO mapping: ISO 45001 8.1.1 (operating criteria), 8.1.3 (change control for new processes)."
+    },
+    {
+      "docKey": "respiratory",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.2",
+      "text": "Obligation: respiratory protection program — where air contaminants (e.g., isocyanate two-component coatings, welding fume, chromic acid mist) can't be controlled below limits by engineering means: written program, medical evaluation, fit testing, respirator selection, training, and program administrator. Source: OSHA 29 CFR 1910.134. Applies when: respirators are required or provided. ISO mapping: ISO 45001 8.1.2 (PPE = last tier of the hierarchy), 7.2 (competence)."
+    },
+    {
+      "docKey": "exposure-assessment",
+      "standard": "ISO45001",
+      "clauseRef": "9.1.1",
+      "text": "Obligation: air contaminant exposure limits and assessment — employee exposures must be kept within permissible exposure limits; substance-specific standards (e.g., hexavalent chromium 29 CFR 1910.1026) add initial exposure determinations, periodic monitoring, regulated areas and medical surveillance. Source: OSHA 29 CFR 1910.1000 and substance standards. Applies when: solvent vapors, welding fume on stainless (Cr(VI)/nickel), plating mists, or isocyanates are present. ISO mapping: ISO 45001 9.1.1 (monitoring/measurement with calibrated equipment), 6.1.2 (risk assessment)."
+    },
+    {
+      "docKey": "multi-employer",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.4",
+      "text": "Obligation: multi-employer worksite and contractor safety — host and contractor each carry OSHA duties; the host must coordinate on shared hazards (e.g., roof work overhead, exclusion zones), exchange hazard information, and can be cited as controlling/exposing employer. Construction fall protection at 6 feet applies to the contractor (29 CFR 1926.501). Source: OSH Act multi-employer citation policy; 29 CFR 1926. Applies when: contractors work on site (roofing, construction). ISO mapping: ISO 45001 8.1.4.2 (contractors), 4.2 (interested parties)."
+    },
+    {
+      "docKey": "forklifts",
+      "standard": "ISO45001",
+      "clauseRef": "7.2",
+      "text": "Obligation: powered industrial trucks — operator training and certification with formal instruction, practical evaluation, and refresher after an accident or observed unsafe operation; truck inspection; load handling rules. Source: OSHA 29 CFR 1910.178, incl. (l) training. Applies when: forklifts operate; a tip-over with elevated load triggers refresher evaluation of the operator. ISO mapping: ISO 45001 7.2 (competence), 10.2 (incident investigation)."
+    },
+    {
+      "docKey": "battery-charging",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.1",
+      "text": "Obligation: battery charging installations — designated charging areas with facilities for flushing/neutralizing spilled electrolyte, fire protection, protection of charging apparatus from truck damage, adequate ventilation for hydrogen off-gassing, eyewash where electrolyte is handled, and PPE. Source: OSHA 29 CFR 1910.178(g); 1910.151(c) for eyewash. Applies when: converting fleets to electric with battery charging/changing rooms. ISO mapping: ISO 45001 8.1.1 (operational planning of new facilities), 8.1.3 (management of change)."
+    },
+    {
+      "docKey": "serious-incident-reporting",
+      "standard": "ISO45001",
+      "clauseRef": "10.2",
+      "text": "Obligation: report to OSHA any work-related fatality within 8 hours and any in-patient hospitalization, amputation, or loss of an eye within 24 hours; preserve the incident scene evidence and investigate. Source: OSHA 29 CFR 1904.39. Applies when: a serious incident occurs (e.g., forklift tip-over with hospitalized operator). ISO mapping: ISO 45001 10.2 (incident, nonconformity, corrective action), 7.4.3 (external communication)."
+    },
+    {
+      "docKey": "recordkeeping",
+      "standard": "ISO45001",
+      "clauseRef": "7.5",
+      "text": "Obligation: injury/illness recordkeeping — OSHA 300 log, 301 incident reports, annual 300A summary posted Feb 1–Apr 30; establishments with 10 or fewer employees all year, or in low-hazard exempt industries, are exempt from routine logs but never from 1904.39 serious-incident reports; electronic submission applies to larger/high-hazard establishments. Source: OSHA 29 CFR Part 1904. Applies when: determining paperwork duties by size and industry. ISO mapping: ISO 45001 7.5 (documented information), 9.1.1 (performance data)."
+    },
+    {
+      "docKey": "hearing-conservation",
+      "standard": "ISO45001",
+      "clauseRef": "9.1.1",
+      "text": "Obligation: occupational noise — with 8-hour TWA exposures at or above 85 dBA (action level), implement a hearing conservation program: noise monitoring, audiometric testing with baselines, hearing protection offered/required, and training; feasible engineering/administrative controls at 90 dBA PEL. Source: OSHA 29 CFR 1910.95. Applies when: press lines or similar equipment push full-shift exposures near or above 85 dBA. ISO mapping: ISO 45001 9.1.1 (monitoring), 8.1.2 (controls hierarchy)."
+    },
+    {
+      "docKey": "confined-space",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.1",
+      "text": "Obligation: permit-required confined spaces — identify and evaluate spaces (limited entry/exit, not for continuous occupancy, with hazards such as atmosphere or engulfment, e.g., below-grade pits with submerged mixers); post signs, write a permit program, control entries with permits, atmospheric testing, attendants, rescue arrangements — or prevent entry. Source: OSHA 29 CFR 1910.146. Applies when: pits, tanks, or vessels are entered for inspection/maintenance. ISO mapping: ISO 45001 6.1.2 (hazard identification), 8.1.1 (operational control), 8.2 (rescue/emergency)."
+    },
+    {
+      "docKey": "hot-work",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.1",
+      "text": "Obligation: welding, cutting, brazing — fire prevention measures (hot-work permits, fire watch, 35-ft combustible clearance), ventilation for fume, screens for arc flash, and stainless work adds hexavalent chromium and nickel fume exposure duties (assessment, controls, possible regulated areas). Source: OSHA 29 CFR 1910.252 (and 1910.1026 for Cr(VI)). Applies when: TIG/MIG welding or plasma cutting, especially on stainless steels. ISO mapping: ISO 45001 8.1.1, 6.1.2, 9.1.1."
+    },
+    {
+      "docKey": "temp-workers",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.4",
+      "text": "Obligation: temporary/staffing-agency workers — host employer and staffing agency share responsibility: the host typically controls site-specific hazard training, PPE, and supervision; injury recording generally falls to the employer supervising day-to-day work (usually the host); duties can't be contracted away. Source: OSH Act; OSHA temporary worker initiative guidance; 29 CFR 1904.31. Applies when: temp headcount is used, or a temp worker is injured. ISO mapping: ISO 45001 8.1.4 (procurement/outsourcing of labor), 4.2 (workers as interested parties), 5.4 (consultation covers all workers)."
+    },
+    {
+      "docKey": "calosha-state-plan",
+      "standard": "ISO45001",
+      "clauseRef": "6.1.3",
+      "text": "Obligation: state-plan jurisdictions — states like California run their own OSHA-approved programs with requirements at least as protective and often stricter: Cal/OSHA requires a written Injury and Illness Prevention Program (T8 §3203) and indoor heat illness prevention (T8 §3396) for indoor workplaces reaching 82°F, with water, cool-down, assessment and controls above 87°F. Source: Cal/OSHA Title 8. Applies when: opening sites in state-plan states (e.g., non-climate-controlled California warehouse). ISO mapping: ISO 45001 6.1.3 (determining legal requirements per jurisdiction), 4.1 (context)."
+    },
+    {
+      "docKey": "eap-fpp",
+      "standard": "ISO45001",
+      "clauseRef": "8.2",
+      "text": "Obligation: emergency action plan and fire prevention plan — written plans (10 or fewer employees may communicate orally) covering evacuation routes and procedures, alarm systems, employee training, accounting for personnel, and control of fuel-source hazards. Source: OSHA 29 CFR 1910.38 and 1910.39. Applies when: required by other standards or as general emergency preparedness. ISO mapping: ISO 45001 8.2 (emergency preparedness and response)."
+    },
+    {
+      "docKey": "first-aid",
+      "standard": "ISO45001",
+      "clauseRef": "8.2",
+      "text": "Obligation: medical services and first aid — ensure ready availability of medical personnel, trained first-aid providers where no clinic/hospital is near, first-aid supplies, and quick drenching/flushing facilities (eyewash/shower) where corrosive materials like battery electrolyte or plating acids are handled. Source: OSHA 29 CFR 1910.151. Applies when: corrosives are used or remote sites lack nearby medical care. ISO mapping: ISO 45001 8.2, 7.1 (resources)."
+    },
+    {
+      "docKey": "electrical-safe-work",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.2",
+      "text": "Obligation: electrical safe work practices — de-energize live parts before work where feasible (tie-in with lockout/tagout), qualified-person training, protective equipment and insulated tools for work near exposed energized parts; arc-flash risk assessment per industry consensus (NFPA 70E) supports compliance. Source: OSHA 29 CFR 1910.331–335. Applies when: maintenance on powered equipment, charging infrastructure, or control panels. ISO mapping: ISO 45001 8.1.2, 7.2 (qualified persons)."
+    },
+    {
+      "docKey": "ppe-hazard-assessment",
+      "standard": "ISO45001",
+      "clauseRef": "6.1.2",
+      "text": "Obligation: PPE hazard assessment — assess the workplace to determine hazards requiring PPE, certify the assessment in writing, select and require appropriate PPE, and train employees; employer pays for most required PPE. Source: OSHA 29 CFR 1910.132. Applies when: any new process, line, or chemical changes the hazard picture. ISO mapping: ISO 45001 6.1.2 (hazard identification/risk assessment), 8.1.2 (PPE as last-tier control)."
+    },
+    {
+      "docKey": "general-duty",
+      "standard": "ISO45001",
+      "clauseRef": "6.1.1",
+      "text": "Obligation: General Duty Clause — furnish employment free from recognized hazards causing or likely to cause death or serious physical harm, used where no specific standard exists (e.g., heat stress in federal-plan states, ammonia handling practices per industry guidance, workplace violence). Source: OSH Act Section 5(a)(1). Applies when: recognized hazards lack a specific OSHA standard. ISO mapping: ISO 45001 6.1.1 (risks needing action), 6.1.2."
+    },
+    {
+      "docKey": "psm",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.1",
+      "text": "Obligation: process safety management of highly hazardous chemicals — full PSM program (process safety information, PHA, operating procedures, training, mechanical integrity, MOC, incident investigation, emergency planning, compliance audits) when a process contains a listed chemical at or above threshold quantity — anhydrous ammonia TQ is 10,000 lb. Source: OSHA 29 CFR 1910.119. Applies when: ammonia refrigeration charge grows to ≥10,000 lb, or other listed chemicals hit TQ. ISO mapping: ISO 45001 8.1.1, 8.1.3 (MOC), 8.2, 10.2."
+    },
+    {
+      "docKey": "rmp",
+      "standard": "ISO14001",
+      "clauseRef": "6.1.3",
+      "text": "Obligation: EPA Risk Management Program — facilities with a regulated substance above threshold in a process (anhydrous ammonia 10,000 lb) must implement an RMP: hazard assessment with worst-case release scenario, prevention program tier (usually Program 3 mirroring PSM), emergency response coordination, and an RMP filing to EPA updated at least five-yearly. Source: Clean Air Act §112(r), 40 CFR Part 68. Applies when: ammonia refrigeration expansions cross 10,000 lb. ISO mapping: ISO 14001 6.1.3 (compliance obligations), 8.2 (emergency preparedness); ISO 45001 8.2."
+    },
+    {
+      "docKey": "rcra-generator",
+      "standard": "ISO14001",
+      "clauseRef": "6.1.3",
+      "text": "Obligation: RCRA hazardous waste generator category — status set by monthly generation: very small (<100 kg/mo), small (100–1,000 kg/mo), large (≥1,000 kg/mo). LQG duties add weekly inspections, personnel training, contingency plan with quick-reference guide, 90-day accumulation limit, biennial reporting, and no volume cap; a category bump from a one-time cleanout may qualify as an episodic event for VSQG/SQG under state-adopted rules. Source: 40 CFR Part 262. Applies when: waste volumes change with production (e.g., 1,400 kg/mo sustained = LQG) or one-time decommissioning wastes. ISO mapping: ISO 14001 6.1.3, 8.1 (operational control), 7.2 (training)."
+    },
+    {
+      "docKey": "used-oil-universal-waste",
+      "standard": "ISO14001",
+      "clauseRef": "8.1",
+      "text": "Obligation: used oil and universal waste management — used oil in labeled tanks/containers in good condition with spill response and authorized transporters (40 CFR Part 279); universal wastes (spent lamps, batteries, some pesticides/mercury devices) get labeled containers, one-year accumulation limit, and handler duties (40 CFR Part 273) — lamps boxed beyond a year exceed the limit. Source: 40 CFR Parts 279/273. Applies when: maintenance generates used oil, fluorescent lamps, or batteries. ISO mapping: ISO 14001 8.1, 6.1.3."
+    },
+    {
+      "docKey": "spcc",
+      "standard": "ISO14001",
+      "clauseRef": "8.2",
+      "text": "Obligation: Spill Prevention, Control, and Countermeasure plan — required when aggregate aboveground oil storage in containers ≥55 gal exceeds 1,320 gallons (or >42,000 gal underground) and a discharge could reasonably reach navigable waters: written/certified plan, secondary containment, inspections, training, and tank integrity; diesel, used oil, hydraulic oil, and new ASTs all count toward the threshold. Source: 40 CFR Part 112. Applies when: adding tanks (e.g., 2,000-gal diesel plus existing oil) crosses 1,320 gal aggregate. ISO mapping: ISO 14001 8.2 (emergency preparedness), 8.1, 6.1.3."
+    },
+    {
+      "docKey": "epcra-tier2",
+      "standard": "ISO14001",
+      "clauseRef": "7.4",
+      "text": "Obligation: EPCRA hazardous chemical inventory — SDS reporting (§311) and annual Tier II inventory by March 1 (§312) to state/local emergency bodies and the fire department for hazardous chemicals at or above 10,000 lb at any time (propane, diesel, oils count), or extremely hazardous substances at the lower of 500 lb or their TPQ (chlorine TPQ 100 lb; ammonia 500 lb) — EHS presence can also trigger §302 facility emergency-planning notification. Source: EPCRA §§302/311/312, 40 CFR Parts 355/370. Applies when: year-end inventories show propane, ammonia, chlorine, or bulk fuels above thresholds. ISO mapping: ISO 14001 7.4.3 (external communication), 6.1.3; ISO 45001 8.2."
+    },
+    {
+      "docKey": "release-reporting",
+      "standard": "ISO14001",
+      "clauseRef": "8.2",
+      "text": "Obligation: emergency release notification — releases of listed substances at or above their reportable quantity within 24 hours require immediate notification: CERCLA §103 to the National Response Center and EPCRA §304 to state/local commissions (chlorine RQ 10 lb; anhydrous ammonia RQ 100 lb), followed by a written follow-up report. Source: CERCLA §103, EPCRA §304, 40 CFR 302/355. Applies when: accidental releases occur (e.g., chlorine cylinder valve failure). ISO mapping: ISO 14001 8.2, ISO 45001 8.2/10.2 (incident response and investigation)."
+    },
+    {
+      "docKey": "tri",
+      "standard": "ISO14001",
+      "clauseRef": "9.1.1",
+      "text": "Obligation: Toxics Release Inventory (Form R) — facilities in covered NAICS sectors with 10+ full-time-equivalents must report annually by July 1 for listed chemicals exceeding activity thresholds: 25,000 lb manufactured or processed, or 10,000 lb otherwise used per year (toluene in coatings at 28,000 lb/yr 'otherwise used' exceeds threshold); report releases and waste-management quantities. Source: EPCRA §313, 40 CFR Part 372. Applies when: annual chemical throughput crosses thresholds. ISO mapping: ISO 14001 9.1.1 (evaluation/reporting), 6.1.3."
+    },
+    {
+      "docKey": "stormwater-industrial",
+      "standard": "ISO14001",
+      "clauseRef": "8.1",
+      "text": "Obligation: industrial stormwater permit — facilities in regulated sectors (e.g., scrap recycling, Sector N) with industrial activities exposed to precipitation need NPDES multi-sector general permit coverage: NOI, a stormwater pollution prevention plan, control measures, quarterly visual assessments and sector benchmark monitoring, with corrective actions on exceedances; 'no exposure' certification can exempt fully-indoor operations. Source: CWA NPDES, EPA MSGP or state equivalent. Applies when: outdoor scrap yards, material staging, or exposed dumpsters/tanks exist. ISO mapping: ISO 14001 8.1, 9.1.1, 6.1.3."
+    },
+    {
+      "docKey": "stormwater-construction",
+      "standard": "ISO14001",
+      "clauseRef": "8.1",
+      "text": "Obligation: construction stormwater permit — clearing/grading disturbing one or more acres, or smaller phases within a larger common plan of development, require construction general permit coverage before earthwork: NOI, SWPPP, erosion and sediment controls, inspections, and stabilization/termination requirements. Source: CWA NPDES CGP or state equivalent. Applies when: site development phases disturb ≥1 acre or belong to a bigger planned development. ISO mapping: ISO 14001 8.1, 6.1.2 (aspects), 6.1.3."
+    },
+    {
+      "docKey": "rice-generators",
+      "standard": "ISO14001",
+      "clauseRef": "6.1.3",
+      "text": "Obligation: stationary emergency engines — new diesel engines must be certified to NSPS Subpart IIII emission standards with ULSD fuel; existing engines fall under NESHAP Subpart ZZZZ; 'emergency' status caps non-emergency operation (maintenance and readiness testing generally limited to about 100 hours/year) and requires hour-meter tracking; permitting as exempt/insignificant source varies by state. Source: 40 CFR Part 60 Subpart IIII; Part 63 Subpart ZZZZ. Applies when: installing standby generators (e.g., 750 kW diesel with belly tank — the tank also counts toward SPCC aggregate). ISO mapping: ISO 14001 6.1.3, 8.1, 9.1.1 (hour logging)."
+    },
+    {
+      "docKey": "refrigerant-mgmt",
+      "standard": "ISO14001",
+      "clauseRef": "8.1",
+      "text": "Obligation: refrigerant leak-repair and servicing — appliances with 15+ lb of HFC refrigerant (e.g., R-448A racks) fall under leak-repair rules extended to HFCs by the AIM Act: leak-rate calculation on refrigerant additions, repair deadlines when leak rates exceed thresholds (commercial refrigeration 20%/yr), certified technicians (CAA §608), sales restrictions, recordkeeping; automatic leak detection for very large charges. Source: CAA §608; AIM Act, 40 CFR Part 84 Subpart C. Applies when: operating rack refrigeration with 300–500 lb HFC charges per store. ISO mapping: ISO 14001 8.1, 9.1.1, 6.1.3."
+    },
+    {
+      "docKey": "ust",
+      "standard": "ISO14001",
+      "clauseRef": "8.1",
+      "text": "Obligation: underground storage tanks — new/replacement regulated USTs need secondary containment with interstitial monitoring, spill/overfill prevention, corrosion protection, monthly release detection, operator training (Classes A/B/C), financial responsibility, and formal closure/site assessment for removed tanks; state programs implement and may exceed federal rules. Source: 40 CFR Part 280 (state-run programs). Applies when: replacing gasoline USTs or closing old tanks. ISO mapping: ISO 14001 8.1, 6.1.3, 8.2."
+    },
+    {
+      "docKey": "minor-source-air",
+      "standard": "ISO14001",
+      "clauseRef": "6.1.3",
+      "text": "Obligation: air permitting for coating/solvent operations — new or increased VOC/HAP emissions (spray booths, coating lines, electroplating) usually require state minor-source construction/operating permits BEFORE installation, with emission limits, control/capture requirements, and records of coating usage and VOC content to demonstrate potential-to-emit below major-source thresholds; surface-coating NESHAPs (e.g., 40 CFR 63 Subpart HHHHHH for miscellaneous surface coating) and chromium electroplating NESHAP (Subpart N — fume suppressants/composite mesh pads, surface-tension monitoring) may also attach. Source: state minor NSR programs; CAA NESHAPs. Applies when: adding spray booths, coating capacity, or plating lines. ISO mapping: ISO 14001 6.1.3, 8.1, 9.1.1."
+    },
+    {
+      "docKey": "tce-degreaser",
+      "standard": "ISO14001",
+      "clauseRef": "8.1",
+      "text": "Obligation: halogenated solvent degreaser decommissioning — TCE cleanout waste is typically listed hazardous waste (spent solvent) requiring hazardous-waste determination, manifesting to a permitted TSDF, and possible one-time episodic-generation handling to avoid a permanent generator-category bump; the halogenated solvent cleaning NESHAP (40 CFR 63 Subpart T) governs operating machines, and TCE also carries specific worker-exposure risk management (TSCA §6 rule phase-outs/limits). Source: 40 CFR Parts 262/263, 63 Subpart T; TSCA §6. Applies when: one-time removal of a TCE vapor degreaser. ISO mapping: ISO 14001 8.1, 6.1.3; ISO 45001 6.1.2."
+    },
+    {
+      "docKey": "reg-change-tracking",
+      "standard": "ISO45001",
+      "clauseRef": "6.1.3",
+      "text": "Obligation: regulatory change management — when an agency updates a rule (e.g., a Hazard Communication Standard revision adopting a newer GHS edition), the organization must identify the change, assess applicability by compliance date, update programs/labels/SDS libraries and retrain affected workers, and record the evaluation in the obligations register. Source: administrative rulemaking (e.g., 29 CFR 1910.1200 updates). Applies when: any tracked obligation's source rule changes. ISO mapping: ISO 45001/14001 6.1.3 (keep requirements up to date), 8.1.3 (management of change), 7.2 (retraining)."
+    },
+    {
+      "docKey": "ma-integration",
+      "standard": "ISO14001",
+      "clauseRef": "4.1",
+      "text": "Obligation: acquisition integration of compliance obligations — after acquiring a facility, inventory and transfer/re-issue environmental permits (air, stormwater, wastewater, waste EPA ID numbers change with ownership), verify OSHA programs and posting/recordkeeping continuity under the new employer, harmonize the obligations register across jurisdictions (state plans differ), and evaluate legacy liabilities. Source: permit transfer provisions in each program; OSH Act employer duties. Applies when: closing an acquisition of an operating plant. ISO mapping: ISO 14001/45001 4.1 (context), 6.1.3, 8.1.3 (change), 9.1.2 (compliance evaluation of the acquired site)."
+    },
+    {
+      "docKey": "applicability-triage",
+      "standard": "ISO14001",
+      "clauseRef": "9.1.2",
+      "text": "Obligation: applicability determination discipline — before adopting consultant claims wholesale, verify each asserted obligation against actual facility thresholds: SPCC needs >1,320 gal aggregate oil; Tier II needs 10,000 lb (or EHS TPQ) on hand; LQG needs ≥1,000 kg/mo generation; document why each obligation applies or does not, with quantities and dates, in the obligations register. Source: threshold provisions of each cited program. Applies when: third-party assessments propose blanket program adoption. ISO mapping: ISO 14001 6.1.3 + 9.1.2 (compliance evaluation), ISO 45001 6.1.3."
+    },
+    {
+      "docKey": "walking-working",
+      "standard": "ISO45001",
+      "clauseRef": "8.1.2",
+      "text": "Obligation: walking-working surfaces and fall protection (general industry) — keep surfaces clean/dry/orderly, guard floor holes and open-sided platforms 4 feet or more above a lower level, ladder safety, and fall protection options (guardrails, personal fall arrest) for elevated work such as rack mezzanines or rooftop equipment access by own staff. Source: OSHA 29 CFR 1910 Subpart D. Applies when: warehousing, mezzanines, or maintenance at height by in-house crews. ISO mapping: ISO 45001 8.1.2, 6.1.2."
+    }
   ]
 }

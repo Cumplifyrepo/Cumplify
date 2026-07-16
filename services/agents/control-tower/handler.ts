@@ -22,7 +22,7 @@ const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
-  const description = (event.payload as Record<string, unknown>).description as string ?? '';
+  const description = ((event.payload as Record<string, unknown>).description as string) ?? '';
 
   let groundingContext = '';
   if (description) {
@@ -36,7 +36,7 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
         queryVector: placeholderVector,
         topK: 3,
       });
-      groundingContext = results.chunks.map(c => c.text).join('\n---\n');
+      groundingContext = results.chunks.map((c) => c.text).join('\n---\n');
     } catch {
       // Retrieval failure is non-blocking
     }
@@ -48,23 +48,20 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
     groundingContext ? `\nRelevant tenant documents:\n${groundingContext}` : '',
   ].join('');
 
-  await toolLoop(
-    [{ role: 'user', content: [{ text: userMessage }] }],
-    {
-      seat: 'workhorse',
-      systemPrompt: CONTROL_TOWER_PROMPT,
-      tools: CONTROL_TOWER_TOOLS,
-      tenantId,
-      agent: 'ControlTower',
-      module: 'cross-standard',
-      feature: 'governance',
-      hitlTools: HITL_TOOLS,
-      invokeFn,
-      dispatchTool: async (toolName, input, tid) => {
-        return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
-      },
+  await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+    seat: 'workhorse',
+    systemPrompt: CONTROL_TOWER_PROMPT,
+    tools: CONTROL_TOWER_TOOLS,
+    tenantId,
+    agent: 'ControlTower',
+    module: 'cross-standard',
+    feature: 'governance',
+    hitlTools: HITL_TOOLS,
+    invokeFn,
+    dispatchTool: async (toolName, input, tid) => {
+      return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
     },
-  );
+  });
 }
 
 export const handler = createHandler({

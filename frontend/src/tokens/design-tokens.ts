@@ -80,8 +80,20 @@ export const type = {
   body: { fontSize: '16px', fontWeight: 400, letterSpacing: '0px', lineHeight: 1.5 }, // "Body Regular"
   bodyMedium: { fontSize: '16px', fontWeight: 500, letterSpacing: '0px', lineHeight: 1.5 }, // "Body Medium"
   small: { fontSize: '14px', fontWeight: 400, letterSpacing: '0px', lineHeight: 1.5 }, // app-scale derivative
-  label: { fontSize: '14px', fontWeight: 600, letterSpacing: '2px', lineHeight: 1.4, textTransform: 'uppercase' }, // "Capitalized Label"
-  labelSmall: { fontSize: '12px', fontWeight: 500, letterSpacing: '2px', lineHeight: 1.4, textTransform: 'uppercase' }, // "Capitalized Label Small"
+  label: {
+    fontSize: '14px',
+    fontWeight: 600,
+    letterSpacing: '2px',
+    lineHeight: 1.4,
+    textTransform: 'uppercase',
+  }, // "Capitalized Label"
+  labelSmall: {
+    fontSize: '12px',
+    fontWeight: 500,
+    letterSpacing: '2px',
+    lineHeight: 1.4,
+    textTransform: 'uppercase',
+  }, // "Capitalized Label Small"
 } as const;
 
 /** 4px base grid. */

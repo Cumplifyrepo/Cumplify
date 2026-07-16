@@ -1,1034 +1,796 @@
 {
- "schemaVersion": 1,
- "documentId": "589ff392-9cb6-437b-8788-91d3ad109986",
- "versionNo": 1,
- "locale": "en",
- "frontMatter": {
-  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
-  "scope": {
-   "organization": "Meridian Care Clinics",
-   "standards": [
-    "ISO9001",
-    "ISO45001"
-   ],
-   "sites": [
-    "Downtown Clinic, Portland, OR, US",
-    "Eastside Clinic, Gresham, OR, US",
-    "Mobile Health Unit, Portland, OR, US"
-   ],
-   "managementRepresentative": "Dr. Alicia Fontaine"
+  "schemaVersion": 1,
+  "documentId": "589ff392-9cb6-437b-8788-91d3ad109986",
+  "versionNo": 1,
+  "locale": "en",
+  "frontMatter": {
+    "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+    "scope": {
+      "organization": "Meridian Care Clinics",
+      "standards": ["ISO9001", "ISO45001"],
+      "sites": [
+        "Downtown Clinic, Portland, OR, US",
+        "Eastside Clinic, Gresham, OR, US",
+        "Mobile Health Unit, Portland, OR, US"
+      ],
+      "managementRepresentative": "Dr. Alicia Fontaine"
+    },
+    "normativeRefs": [
+      {
+        "standard": "ISO9001",
+        "source": "https://www.iso.org/store.html"
+      },
+      {
+        "standard": "ISO45001",
+        "source": "https://www.iso.org/store.html"
+      }
+    ],
+    "terms": []
   },
-  "normativeRefs": [
-   {
-    "standard": "ISO9001",
-    "source": "https://www.iso.org/store.html"
-   },
-   {
-    "standard": "ISO45001",
-    "source": "https://www.iso.org/store.html"
-   }
-  ],
-  "terms": []
- },
- "sections": [
-  {
-   "harmonizationKey": "4.1",
-   "clauseRefs": [
+  "sections": [
     {
-     "standard": "ISO9001",
-     "clauseNo": "4.1"
+      "harmonizationKey": "4.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.1"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "4.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "standard": "ISO45001",
-     "clauseNo": "4.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.2"
+      "harmonizationKey": "4.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.2"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "4.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "standard": "ISO45001",
-     "clauseNo": "4.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "4.3"
+      "harmonizationKey": "4.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "4.3"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["applicability.exclusions"]
+      }
     },
     {
-     "standard": "ISO9001",
-     "clauseNo": "4.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "applicability.exclusions"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "4.4"
+      "harmonizationKey": "4.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "4.4"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics commits to establishing, implementing, maintaining, and continually improving its Occupational Health & Safety and Quality Management Systems.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "These systems encompass all interacting processes, including inputs, outputs, sequence, criteria, and designated process owners.",
+          "factRefs": ["F10", "F11"]
+        },
+        {
+          "text": "The organization's core processes such as patient scheduling, clinical care delivery, and occupational health services are integral to these management systems.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Continuous improvement of these systems ensures enhanced patient care, safety, and quality across all Meridian Care Clinics sites.",
+          "factRefs": ["F14", "F15", "F16"]
+        }
+      ]
     },
     {
-     "standard": "ISO9001",
-     "clauseNo": "4.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics commits to establishing, implementing, maintaining, and continually improving its Occupational Health & Safety and Quality Management Systems.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
+      "harmonizationKey": "5.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.1"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "5.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics, under the leadership of Dr. Alicia Fontaine, demonstrates unwavering commitment to both ISO45001 and ISO9001 standards.",
+          "factRefs": ["F1", "F5", "F13"]
+        },
+        {
+          "text": "The organization takes full responsibility for preventing work-related injuries and maintaining worker health, as well as ensuring customer focus throughout its operations.",
+          "factRefs": ["F2", "F13"]
+        },
+        {
+          "text": "This commitment is integral to Meridian Care Clinics' mission of providing high-quality healthcare services, including outpatient primary care and occupational health screenings.",
+          "factRefs": ["F2", "F3"]
+        },
+        {
+          "text": "By upholding these standards, Meridian Care Clinics aims to deliver exceptional patient care while safeguarding the well-being of its 210 employees across its various clinic sites.",
+          "factRefs": ["F4", "F14", "F15", "F16"]
+        }
+      ]
     },
     {
-     "text": "These systems encompass all interacting processes, including inputs, outputs, sequence, criteria, and designated process owners.",
-     "factRefs": [
-      "F10",
-      "F11"
-     ]
+      "harmonizationKey": "5.2#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "5.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.policies"]
+      }
     },
     {
-     "text": "The organization's core processes such as patient scheduling, clinical care delivery, and occupational health services are integral to these management systems.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "5.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.policies"]
+      }
     },
     {
-     "text": "Continuous improvement of these systems ensures enhanced patient care, safety, and quality across all Meridian Care Clinics sites.",
-     "factRefs": [
-      "F14",
-      "F15",
-      "F16"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.1"
+      "harmonizationKey": "5.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.3"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "5.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics assigns and communicates the responsibilities and authorities for roles relevant to the OH&S and QMS at all levels of the organization.",
+          "factRefs": ["F1", "F3", "F13"]
+        },
+        {
+          "text": "The organization ensures understanding of these responsibilities and authorities across its 210 employees.",
+          "factRefs": ["F4", "F13"]
+        },
+        {
+          "text": "Dr. Alicia Fontaine, the named management representative, oversees the implementation and maintenance of these systems.",
+          "factRefs": ["F5", "F13"]
+        },
+        {
+          "text": "This approach supports the delivery of Meridian Care Clinics' products and services, including outpatient primary care and occupational health screenings.",
+          "factRefs": ["F3", "F10"]
+        }
+      ]
     },
     {
-     "standard": "ISO45001",
-     "clauseNo": "5.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics, under the leadership of Dr. Alicia Fontaine, demonstrates unwavering commitment to both ISO45001 and ISO9001 standards.",
-     "factRefs": [
-      "F1",
-      "F5",
-      "F13"
-     ]
+      "harmonizationKey": "5.4#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "5.4"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.worker_consultation"]
+      }
     },
     {
-     "text": "The organization takes full responsibility for preventing work-related injuries and maintaining worker health, as well as ensuring customer focus throughout its operations.",
-     "factRefs": [
-      "F2",
-      "F13"
-     ]
+      "harmonizationKey": "6.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.risks"]
+      }
     },
     {
-     "text": "This commitment is integral to Meridian Care Clinics' mission of providing high-quality healthcare services, including outpatient primary care and occupational health screenings.",
-     "factRefs": [
-      "F2",
-      "F3"
-     ]
+      "harmonizationKey": "6.1#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "6.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.risks"]
+      }
     },
     {
-     "text": "By upholding these standards, Meridian Care Clinics aims to deliver exceptional patient care while safeguarding the well-being of its 210 employees across its various clinic sites.",
-     "factRefs": [
-      "F4",
-      "F14",
-      "F15",
-      "F16"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.2#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "5.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.policies"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "5.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.policies"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "5.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.3"
+      "harmonizationKey": "6.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.2"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "6.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
     },
     {
-     "standard": "ISO45001",
-     "clauseNo": "5.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics assigns and communicates the responsibilities and authorities for roles relevant to the OH&S and QMS at all levels of the organization.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F13"
-     ]
+      "harmonizationKey": "6.1.2-hazards#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "6.1.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.hazards"]
+      }
     },
     {
-     "text": "The organization ensures understanding of these responsibilities and authorities across its 210 employees.",
-     "factRefs": [
-      "F4",
-      "F13"
-     ]
+      "harmonizationKey": "6.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.change_plans"]
+      }
     },
     {
-     "text": "Dr. Alicia Fontaine, the named management representative, oversees the implementation and maintenance of these systems.",
-     "factRefs": [
-      "F5",
-      "F13"
-     ]
+      "harmonizationKey": "6.1.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "6.1.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.legal_obligations"]
+      }
     },
     {
-     "text": "This approach supports the delivery of Meridian Care Clinics' products and services, including outpatient primary care and occupational health screenings.",
-     "factRefs": [
-      "F3",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.4#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "5.4"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.worker_consultation"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.risks"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.1#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "6.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.risks"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.2"
+      "harmonizationKey": "7.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.1"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "7.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its OH&S and QMS.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "These resources encompass people, infrastructure, process environment, monitoring and measuring resources with calibration traceability, and organizational knowledge.",
+          "factRefs": ["F1", "F4", "F10", "F13"]
+        },
+        {
+          "text": "The organization ensures that its clinics, including Downtown Clinic, Eastside Clinic, and Mobile Health Unit, have the required resources to deliver outpatient primary care, occupational health screenings, and workplace vaccination programs.",
+          "factRefs": ["F1", "F3", "F13", "F14", "F15", "F16"]
+        },
+        {
+          "text": "Dr. Alicia Fontaine, the management representative, oversees the allocation and management of these resources to support the organization's core and outsourced processes.",
+          "factRefs": ["F1", "F5", "F10", "F11", "F13"]
+        }
+      ]
     },
     {
-     "standard": "ISO45001",
-     "clauseNo": "6.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.1.2-hazards#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "6.1.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.hazards"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.change_plans"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.1.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "6.1.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.legal_obligations"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.1"
+      "harmonizationKey": "7.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.2"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "7.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
     },
     {
-     "standard": "ISO45001",
-     "clauseNo": "7.1"
+      "harmonizationKey": "7.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.3"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "7.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
+    },
+    {
+      "harmonizationKey": "7.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.4"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "7.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics establishes processes for internal and external communications relevant to its Occupational Health & Safety and Quality Management Systems.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "Communications encompass interactions with workers at all levels, ensuring alignment with both ISO45001 and ISO9001 requirements.",
+          "factRefs": ["F1", "F4", "F13"]
+        },
+        {
+          "text": "The organization determines the content, timing, recipients, methods, and responsible parties for all communications pertinent to its management systems.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "These processes facilitate effective communication with employees, patients, supply-chain partners, and external stakeholders.",
+          "factRefs": ["F1", "F2", "F3", "F7"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "7.5",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.5"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "7.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics maintains essential documents for its integrated management system, ensuring they are appropriately identified, formatted, and approved upon creation and updates.",
+          "factRefs": ["F1", "F9", "F13", "F17", "F18"]
+        },
+        {
+          "text": "The organization controls the creation, updates, and availability of these documents to ensure they are protected, distributed, retained, and disposed of correctly.",
+          "factRefs": ["F1", "F9", "F13", "F17", "F18"]
+        },
+        {
+          "text": "Documented information is managed to support the organization's core processes, including patient scheduling, clinical care delivery, and occupational health services.",
+          "factRefs": ["F1", "F10", "F13", "F17", "F18"]
+        },
+        {
+          "text": "The documents register, which currently holds 43 entries, is utilized to track and manage the organization's critical documents, such as the General document and the Integrated Management System Manual.",
+          "factRefs": ["F1", "F17", "F18"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics plans, implements, and controls the processes required to meet the requirements for the provision of its products and services.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization ensures that criteria, resources, and documented information are established and maintained for these processes.",
+          "factRefs": ["F1", "F3", "F9"]
+        },
+        {
+          "text": "Meridian Care Clinics manages planned changes to its processes to ensure continued conformity with quality management system requirements.",
+          "factRefs": ["F1", "F9"]
+        },
+        {
+          "text": "The organization controls outsourced processes, such as reference laboratory testing and medical waste disposal, to ensure they meet the necessary quality standards.",
+          "factRefs": ["F1", "F11"]
+        },
+        {
+          "text": "These efforts are integrated into the core processes of patient scheduling, clinical care delivery, occupational health services, records management, and infection control.",
+          "factRefs": ["F1", "F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.2-9001#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.2"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics communicates with customers to determine requirements for its outpatient primary care, occupational health screenings, and workplace vaccination programs, including statutory and regulatory requirements.",
+          "factRefs": ["F1", "F2", "F3"]
+        },
+        {
+          "text": "Before committing to any service, Meridian Care Clinics reviews its ability to meet the determined requirements.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization maintains control over any changes to these requirements, ensuring alignment with its quality management system.",
+          "factRefs": ["F1", "F9"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.1#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "8.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics plans, implements, and controls the processes needed to meet the OH&S management system requirements and to implement planned actions.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "Operating criteria are established for core processes such as patient scheduling, clinical care delivery, occupational health services, records management, and infection control.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Documented information is maintained to ensure compliance with the OH&S management system requirements across all operational sites including Downtown Clinic, Eastside Clinic, and Mobile Health Unit.",
+          "factRefs": ["F14", "F15", "F16"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics has established a design and development process with planned stages and controls to ensure the quality of its healthcare services.",
+          "factRefs": ["F1", "F2", "F3", "F10"]
+        },
+        {
+          "text": "This process includes defined inputs, regular reviews, and verification and validation activities to maintain high standards in patient care.",
+          "factRefs": ["F1", "F2", "F3", "F10"]
+        },
+        {
+          "text": "All outputs are meticulously traced back to their inputs to ensure consistency and quality across services.",
+          "factRefs": ["F1", "F2", "F3", "F10"]
+        },
+        {
+          "text": "Design changes are controlled and documented to prevent any adverse impact on service delivery.",
+          "factRefs": ["F1", "F2", "F3", "F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.1.2#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "8.1.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.hazards"]
+      }
+    },
+    {
+      "harmonizationKey": "8.4#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.4"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.suppliers"]
+      }
+    },
+    {
+      "harmonizationKey": "8.1.3#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "8.1.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.change_plans"]
+      }
+    },
+    {
+      "harmonizationKey": "8.5#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics implements production and service provision under controlled conditions across its Downtown Clinic, Eastside Clinic, and Mobile Health Unit.",
+          "factRefs": ["F1", "F14", "F15", "F16"]
+        },
+        {
+          "text": "The organization ensures identification and traceability of its outpatient primary care, occupational health screenings, and workplace vaccination programs.",
+          "factRefs": ["F3", "F10"]
+        },
+        {
+          "text": "Meridian Care Clinics takes care of customer and external-provider property during patient scheduling, clinical care delivery, and occupational health services.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "The organization preserves the integrity of its services through rigorous records management and infection control processes.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Post-delivery activities are systematically managed to ensure patient satisfaction and continuous improvement in service quality.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Any changes to the provision of services are controlled to maintain consistency and quality, aligning with ISO9001 standards.",
+          "factRefs": ["F13"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.1.4#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "8.1.4"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.suppliers"]
+      }
+    },
+    {
+      "harmonizationKey": "8.6#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.6"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "Meridian Care Clinics ensures that all product and service requirements are met prior to release, focusing on outpatient primary care, occupational health screenings, and workplace vaccination programs.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "Verification processes are in place to confirm conformity with established requirements, with traceability maintained to the individual authorizing the release.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "Evidence of conformity is systematically retained, ensuring accountability and quality assurance across all services provided.",
+          "factRefs": ["F1", "F3"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.2-emergency",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "8.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.emergency_preparedness"]
+      }
+    },
+    {
+      "harmonizationKey": "8.7#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.7"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "9.1#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "9.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "9.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "9.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "9.2"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.audits"]
+      }
+    },
+    {
+      "harmonizationKey": "9.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "9.3"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.management_reviews"]
+      }
+    },
+    {
+      "harmonizationKey": "10.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "10.1"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.2#ISO45001",
+      "clauseRefs": [
+        {
+          "standard": "ISO45001",
+          "clauseNo": "10.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.3"
+        },
+        {
+          "standard": "ISO45001",
+          "clauseNo": "10.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities", "register.objectives"]
+      }
     }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its OH&S and QMS.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
-    },
-    {
-     "text": "These resources encompass people, infrastructure, process environment, monitoring and measuring resources with calibration traceability, and organizational knowledge.",
-     "factRefs": [
-      "F1",
-      "F4",
-      "F10",
-      "F13"
-     ]
-    },
-    {
-     "text": "The organization ensures that its clinics, including Downtown Clinic, Eastside Clinic, and Mobile Health Unit, have the required resources to deliver outpatient primary care, occupational health screenings, and workplace vaccination programs.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F13",
-      "F14",
-      "F15",
-      "F16"
-     ]
-    },
-    {
-     "text": "Dr. Alicia Fontaine, the management representative, oversees the allocation and management of these resources to support the organization's core and outsourced processes.",
-     "factRefs": [
-      "F1",
-      "F5",
-      "F10",
-      "F11",
-      "F13"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.2"
-    },
-    {
-     "standard": "ISO45001",
-     "clauseNo": "7.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.3"
-    },
-    {
-     "standard": "ISO45001",
-     "clauseNo": "7.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.4"
-    },
-    {
-     "standard": "ISO45001",
-     "clauseNo": "7.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics establishes processes for internal and external communications relevant to its Occupational Health & Safety and Quality Management Systems.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
-    },
-    {
-     "text": "Communications encompass interactions with workers at all levels, ensuring alignment with both ISO45001 and ISO9001 requirements.",
-     "factRefs": [
-      "F1",
-      "F4",
-      "F13"
-     ]
-    },
-    {
-     "text": "The organization determines the content, timing, recipients, methods, and responsible parties for all communications pertinent to its management systems.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
-    },
-    {
-     "text": "These processes facilitate effective communication with employees, patients, supply-chain partners, and external stakeholders.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F7"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.5",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.5"
-    },
-    {
-     "standard": "ISO45001",
-     "clauseNo": "7.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics maintains essential documents for its integrated management system, ensuring they are appropriately identified, formatted, and approved upon creation and updates.",
-     "factRefs": [
-      "F1",
-      "F9",
-      "F13",
-      "F17",
-      "F18"
-     ]
-    },
-    {
-     "text": "The organization controls the creation, updates, and availability of these documents to ensure they are protected, distributed, retained, and disposed of correctly.",
-     "factRefs": [
-      "F1",
-      "F9",
-      "F13",
-      "F17",
-      "F18"
-     ]
-    },
-    {
-     "text": "Documented information is managed to support the organization's core processes, including patient scheduling, clinical care delivery, and occupational health services.",
-     "factRefs": [
-      "F1",
-      "F10",
-      "F13",
-      "F17",
-      "F18"
-     ]
-    },
-    {
-     "text": "The documents register, which currently holds 43 entries, is utilized to track and manage the organization's critical documents, such as the General document and the Integrated Management System Manual.",
-     "factRefs": [
-      "F1",
-      "F17",
-      "F18"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics plans, implements, and controls the processes required to meet the requirements for the provision of its products and services.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization ensures that criteria, resources, and documented information are established and maintained for these processes.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F9"
-     ]
-    },
-    {
-     "text": "Meridian Care Clinics manages planned changes to its processes to ensure continued conformity with quality management system requirements.",
-     "factRefs": [
-      "F1",
-      "F9"
-     ]
-    },
-    {
-     "text": "The organization controls outsourced processes, such as reference laboratory testing and medical waste disposal, to ensure they meet the necessary quality standards.",
-     "factRefs": [
-      "F1",
-      "F11"
-     ]
-    },
-    {
-     "text": "These efforts are integrated into the core processes of patient scheduling, clinical care delivery, occupational health services, records management, and infection control.",
-     "factRefs": [
-      "F1",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.2-9001#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.2"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics communicates with customers to determine requirements for its outpatient primary care, occupational health screenings, and workplace vaccination programs, including statutory and regulatory requirements.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3"
-     ]
-    },
-    {
-     "text": "Before committing to any service, Meridian Care Clinics reviews its ability to meet the determined requirements.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization maintains control over any changes to these requirements, ensuring alignment with its quality management system.",
-     "factRefs": [
-      "F1",
-      "F9"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "8.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics plans, implements, and controls the processes needed to meet the OH&S management system requirements and to implement planned actions.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
-    },
-    {
-     "text": "Operating criteria are established for core processes such as patient scheduling, clinical care delivery, occupational health services, records management, and infection control.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Documented information is maintained to ensure compliance with the OH&S management system requirements across all operational sites including Downtown Clinic, Eastside Clinic, and Mobile Health Unit.",
-     "factRefs": [
-      "F14",
-      "F15",
-      "F16"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics has established a design and development process with planned stages and controls to ensure the quality of its healthcare services.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "This process includes defined inputs, regular reviews, and verification and validation activities to maintain high standards in patient care.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "All outputs are meticulously traced back to their inputs to ensure consistency and quality across services.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "Design changes are controlled and documented to prevent any adverse impact on service delivery.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1.2#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "8.1.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.hazards"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.4#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.4"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.suppliers"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.1.3#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "8.1.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.change_plans"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.5#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics implements production and service provision under controlled conditions across its Downtown Clinic, Eastside Clinic, and Mobile Health Unit.",
-     "factRefs": [
-      "F1",
-      "F14",
-      "F15",
-      "F16"
-     ]
-    },
-    {
-     "text": "The organization ensures identification and traceability of its outpatient primary care, occupational health screenings, and workplace vaccination programs.",
-     "factRefs": [
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "Meridian Care Clinics takes care of customer and external-provider property during patient scheduling, clinical care delivery, and occupational health services.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "The organization preserves the integrity of its services through rigorous records management and infection control processes.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Post-delivery activities are systematically managed to ensure patient satisfaction and continuous improvement in service quality.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Any changes to the provision of services are controlled to maintain consistency and quality, aligning with ISO9001 standards.",
-     "factRefs": [
-      "F13"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1.4#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "8.1.4"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.suppliers"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.6#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.6"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "Meridian Care Clinics ensures that all product and service requirements are met prior to release, focusing on outpatient primary care, occupational health screenings, and workplace vaccination programs.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "Verification processes are in place to confirm conformity with established requirements, with traceability maintained to the individual authorizing the release.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "Evidence of conformity is systematically retained, ensuring accountability and quality assurance across all services provided.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.2-emergency",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "8.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.emergency_preparedness"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.7#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.7"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.1#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "9.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "9.2"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.audits"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "9.3"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.management_reviews"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "10.1"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.2#ISO45001",
-   "clauseRefs": [
-    {
-     "standard": "ISO45001",
-     "clauseNo": "10.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.3"
-    },
-    {
-     "standard": "ISO45001",
-     "clauseNo": "10.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities",
-     "register.objectives"
-    ]
-   }
-  }
- ]
+  ]
 }

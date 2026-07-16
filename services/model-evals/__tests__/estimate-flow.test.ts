@@ -25,13 +25,13 @@ const DATA_DIR = resolve(__dirname, '../data');
 // Real prices come from the live Pricing API (architect-executed).
 const FIXTURE_PRICES: Record<string, PriceEntry> = {
   'us.amazon.nova-micro-v1:0': {
-    inputPricePerMToken: 0.10,
-    outputPricePerMToken: 0.40,
+    inputPricePerMToken: 0.1,
+    outputPricePerMToken: 0.4,
     unit: 'USD per 1M tokens (FIXTURE)',
   },
   'zai.glm-4.7-flash': {
-    inputPricePerMToken: 0.10,
-    outputPricePerMToken: 0.40,
+    inputPricePerMToken: 0.1,
+    outputPricePerMToken: 0.4,
     unit: 'USD per 1M tokens (FIXTURE)',
   },
 };
@@ -66,7 +66,14 @@ describe('estimate flow (integration-shaped, fixture-priced)', () => {
 
   it('all Kiro-drafted seats have valid eval set files that load and parse', () => {
     // Kiro-drafted sets (Task 5) — should all exist
-    const kiroDraftedSeats = ['micro', 'lightweight', 'snapshot', 'editor-ai', 'pain-distiller', 'workhorse'];
+    const kiroDraftedSeats = [
+      'micro',
+      'lightweight',
+      'snapshot',
+      'editor-ai',
+      'pain-distiller',
+      'workhorse',
+    ];
 
     for (const seatName of kiroDraftedSeats) {
       const config = SEAT_CONFIGS[seatName];

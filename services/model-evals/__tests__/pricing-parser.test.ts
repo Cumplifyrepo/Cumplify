@@ -14,7 +14,9 @@ const FIXTURES_DIR = resolve(__dirname, 'fixtures');
 
 describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
   it('nova-micro fixture parses to exactly $0.035 in / $0.14 out per M tokens', () => {
-    const fixture = JSON.parse(readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-micro.json'), 'utf-8'));
+    const fixture = JSON.parse(
+      readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-micro.json'), 'utf-8'),
+    );
     const result = parsePricingApiResponse(fixture.PriceList);
 
     expect(result).not.toBeNull();
@@ -24,12 +26,14 @@ describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
   });
 
   it('glm-4.7-flash fixture parses to exactly $0.07 in / $0.40 out per M tokens', () => {
-    const fixture = JSON.parse(readFileSync(resolve(FIXTURES_DIR, 'pricing-api-glm-4.7-flash.json'), 'utf-8'));
+    const fixture = JSON.parse(
+      readFileSync(resolve(FIXTURES_DIR, 'pricing-api-glm-4.7-flash.json'), 'utf-8'),
+    );
     const result = parsePricingApiResponse(fixture.PriceList);
 
     expect(result).not.toBeNull();
     expect(result!.inputPricePerMToken).toBeCloseTo(0.07, 6);
-    expect(result!.outputPricePerMToken).toBeCloseTo(0.40, 6);
+    expect(result!.outputPricePerMToken).toBeCloseTo(0.4, 6);
     expect(result!.unit).toBe('USD per 1M tokens');
   });
 
@@ -121,7 +125,9 @@ describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
   });
 
   it('correctly excludes batch/cache/custom-model usagetypes from nova-micro fixture', () => {
-    const fixture = JSON.parse(readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-micro.json'), 'utf-8'));
+    const fixture = JSON.parse(
+      readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-micro.json'), 'utf-8'),
+    );
     // The fixture contains batch, cache, custom-model entries — they must be excluded
     // If they leaked in, the prices would be different (batch is 50% of on-demand)
     const result = parsePricingApiResponse(fixture.PriceList);
@@ -132,7 +138,9 @@ describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
   });
 
   it('nova-2-lite fixture parses to exactly $0.33 in / $2.75 out per M (cross-region-global dims excluded, FINDING-E)', () => {
-    const fixture = JSON.parse(readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-2-lite.json'), 'utf-8'));
+    const fixture = JSON.parse(
+      readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-2-lite.json'), 'utf-8'),
+    );
     // Fixture contains cross-region-global ($0.30/$2.50), batch, priority, custom-model
     // dims alongside plain in-region on-demand. We invoke via us.* geo profiles, so the
     // plain in-region dim is the billed rate — everything else must be excluded, and the
@@ -147,7 +155,9 @@ describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
   it('handles duplicate dims with same price (agrees → takes the value)', () => {
     // Two "Input tokens" entries with identical prices (e.g., On-demand + custom-model-same-price)
     // After filtering, if only on-demand survives, this is just the normal case
-    const fixture = JSON.parse(readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-micro.json'), 'utf-8'));
+    const fixture = JSON.parse(
+      readFileSync(resolve(FIXTURES_DIR, 'pricing-api-nova-micro.json'), 'utf-8'),
+    );
     // Nova-micro has both "On-demand Inference" and "Model Customization" Input tokens at same price
     // The custom-model usagetype is excluded, so only one survives — no ambiguity
     expect(() => parsePricingApiResponse(fixture.PriceList)).not.toThrow();
@@ -158,9 +168,15 @@ describe('parsePricingApiResponse (architect-supplied fixtures)', () => {
 // `required` array, not the schema envelope keys. Uses the REAL eval-set shape.
 import { scoreSchemaValidation } from '../graders/schema-validator.js';
 describe('scoreSchemaValidation (real JSON Schema shape)', () => {
-  const schema = { type: 'object', required: ['recordId', 'status'], properties: { recordId: { type: 'string' }, status: { type: 'string' } } };
+  const schema = {
+    type: 'object',
+    required: ['recordId', 'status'],
+    properties: { recordId: { type: 'string' }, status: { type: 'string' } },
+  };
   it('scores 1.0 when all required fields present', () => {
-    expect(scoreSchemaValidation('```json\n{"recordId":"R-1","status":"ok","extra":1}\n```', schema)).toBe(1.0);
+    expect(
+      scoreSchemaValidation('```json\n{"recordId":"R-1","status":"ok","extra":1}\n```', schema),
+    ).toBe(1.0);
   });
   it('scores partial when a required field is missing', () => {
     expect(scoreSchemaValidation('{"recordId":"R-1"}', schema)).toBe(0.5);

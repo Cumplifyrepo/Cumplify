@@ -12,14 +12,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { PublishAuditEventOptions } from '../src/resolvers/shared.js';
 
-const SCHEMA = readFileSync(
-  resolve(__dirname, '../schema/schema.graphql'),
-  'utf8',
-);
-const MIGRATION_011 = readFileSync(
-  resolve(__dirname, '../migrations/011_qms_engine.sql'),
-  'utf8',
-);
+const SCHEMA = readFileSync(resolve(__dirname, '../schema/schema.graphql'), 'utf8');
+const MIGRATION_011 = readFileSync(resolve(__dirname, '../migrations/011_qms_engine.sql'), 'utf8');
 const MIGRATION_002 = readFileSync(
   resolve(__dirname, '../migrations/002_m1_document_studio.sql'),
   'utf8',
@@ -28,7 +22,10 @@ const MIGRATION_002 = readFileSync(
 describe('IMS as first-class standard (BC-6)', () => {
   it('GraphQL Standard enum includes IMS', () => {
     const enumBlock = SCHEMA.match(/enum Standard \{([\s\S]*?)\}/)?.[1] ?? '';
-    const values = enumBlock.split('\n').map((l) => l.trim()).filter(Boolean);
+    const values = enumBlock
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
     expect(values).toEqual(['ISO9001', 'ISO14001', 'ISO45001', 'IMS']);
   });
 
@@ -40,7 +37,9 @@ describe('IMS as first-class standard (BC-6)', () => {
   });
 
   it('migration 011 rewrites the m4.records standard CHECK to include IMS', () => {
-    expect(MIGRATION_011).toContain('ALTER TABLE m4.records DROP CONSTRAINT IF EXISTS records_standard_check');
+    expect(MIGRATION_011).toContain(
+      'ALTER TABLE m4.records DROP CONSTRAINT IF EXISTS records_standard_check',
+    );
     const newCheck = MIGRATION_011.match(
       /ADD CONSTRAINT records_standard_check\s+CHECK \(standard IN \(([^)]*)\)\)/,
     )?.[1];
@@ -50,9 +49,15 @@ describe('IMS as first-class standard (BC-6)', () => {
   it('PublishAuditEventOptions accepts IMS (type-level pin)', () => {
     // This test exists to fail COMPILATION if the union is ever narrowed again.
     const opts: PublishAuditEventOptions = {
-      tenantId: 't', actor: 'a', module: 'M1', clauseRef: '4.3',
+      tenantId: 't',
+      actor: 'a',
+      module: 'M1',
+      clauseRef: '4.3',
       standard: 'IMS',
-      detailType: 'x', source: 'y', entityId: 'e', payload: {},
+      detailType: 'x',
+      source: 'y',
+      entityId: 'e',
+      payload: {},
     };
     expect(opts.standard).toBe('IMS');
   });

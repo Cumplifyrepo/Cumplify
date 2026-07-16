@@ -64,10 +64,9 @@ export default function M3AuditStudioPage() {
       setError(false);
       const results: Record<string, ReadinessScore[]> = {};
       const promises = STANDARDS.map(async (std) => {
-        const data = await query<{ getAuditReadiness: ReadinessScore[] }>(
-          GET_READINESS_QUERY,
-          { standard: std },
-        );
+        const data = await query<{ getAuditReadiness: ReadinessScore[] }>(GET_READINESS_QUERY, {
+          standard: std,
+        });
         results[std] = data.getAuditReadiness;
       });
       await Promise.all(promises);
@@ -108,32 +107,59 @@ export default function M3AuditStudioPage() {
   }
 
   // FormDrawer field definitions
-  const programmeFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
-    { name: 'year', label: t('fieldYear'), type: 'text', required: true },
-    { name: 'frequencyPlan', label: t('fieldFrequencyPlan'), type: 'text' },
-  ], [t]);
+  const programmeFields: FieldDef[] = useMemo(
+    () => [
+      {
+        name: 'standard',
+        label: t('fieldStandard'),
+        type: 'select',
+        required: true,
+        options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })),
+      },
+      { name: 'year', label: t('fieldYear'), type: 'text', required: true },
+      { name: 'frequencyPlan', label: t('fieldFrequencyPlan'), type: 'text' },
+    ],
+    [t],
+  );
 
-  const scheduleFields: FieldDef[] = useMemo(() => [
-    { name: 'programmeId', label: t('fieldProgrammeId'), type: 'text', required: true },
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
-    { name: 'scope', label: t('fieldScope'), type: 'textarea', required: true },
-    { name: 'leadAuditorId', label: t('fieldLeadAuditorId'), type: 'text', required: true },
-    { name: 'plannedDate', label: t('fieldPlannedDate'), type: 'date', required: true },
-  ], [t]);
+  const scheduleFields: FieldDef[] = useMemo(
+    () => [
+      { name: 'programmeId', label: t('fieldProgrammeId'), type: 'text', required: true },
+      {
+        name: 'standard',
+        label: t('fieldStandard'),
+        type: 'select',
+        required: true,
+        options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })),
+      },
+      { name: 'scope', label: t('fieldScope'), type: 'textarea', required: true },
+      { name: 'leadAuditorId', label: t('fieldLeadAuditorId'), type: 'text', required: true },
+      { name: 'plannedDate', label: t('fieldPlannedDate'), type: 'date', required: true },
+    ],
+    [t],
+  );
 
-  const findingFields: FieldDef[] = useMemo(() => [
-    { name: 'auditId', label: t('fieldAuditId'), type: 'text', required: true },
-    { name: 'findingType', label: t('fieldFindingType'), type: 'select', required: true, options: [
-      { value: 'MAJOR_NC', label: t('findingMajorNc') },
-      { value: 'MINOR_NC', label: t('findingMinorNc') },
-      { value: 'OBSERVATION', label: t('findingObservation') },
-      { value: 'OFI', label: t('findingOfi') },
-    ]},
-    { name: 'clauseRef', label: t('fieldClauseRef'), type: 'text', required: true },
-    { name: 'description', label: t('fieldDescription'), type: 'textarea', required: true },
-    { name: 'evidenceRef', label: t('fieldEvidenceRef'), type: 'text' },
-  ], [t]);
+  const findingFields: FieldDef[] = useMemo(
+    () => [
+      { name: 'auditId', label: t('fieldAuditId'), type: 'text', required: true },
+      {
+        name: 'findingType',
+        label: t('fieldFindingType'),
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'MAJOR_NC', label: t('findingMajorNc') },
+          { value: 'MINOR_NC', label: t('findingMinorNc') },
+          { value: 'OBSERVATION', label: t('findingObservation') },
+          { value: 'OFI', label: t('findingOfi') },
+        ],
+      },
+      { name: 'clauseRef', label: t('fieldClauseRef'), type: 'text', required: true },
+      { name: 'description', label: t('fieldDescription'), type: 'textarea', required: true },
+      { name: 'evidenceRef', label: t('fieldEvidenceRef'), type: 'text' },
+    ],
+    [t],
+  );
 
   async function handleCreateProgramme(values: Record<string, string | boolean>) {
     try {

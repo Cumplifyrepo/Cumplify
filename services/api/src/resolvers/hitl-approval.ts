@@ -63,13 +63,15 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
   // Step 3: Fetch the HITL item (need item data before role validation)
   const ddb = await getTenantDdbClient(tenantId);
 
-  const getResult = await ddb.send(new GetItemCommand({
-    TableName: TABLE_NAME,
-    Key: marshall({
-      PK: `TENANT#${tenantId}#HITL`,
-      SK: `PENDING#${hitlItemId}`,
+  const getResult = await ddb.send(
+    new GetItemCommand({
+      TableName: TABLE_NAME,
+      Key: marshall({
+        PK: `TENANT#${tenantId}#HITL`,
+        SK: `PENDING#${hitlItemId}`,
+      }),
     }),
-  }));
+  );
 
   if (!getResult.Item) {
     throw new ApprovalError(404, `HITL item not found: ${hitlItemId}`);
@@ -95,21 +97,23 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
   // Step 4: Conditional UpdateItem — status to RESOLVING (AM-1 guard)
   const now = new Date().toISOString();
   try {
-    await ddb.send(new UpdateItemCommand({
-      TableName: TABLE_NAME,
-      Key: marshall({
-        PK: `TENANT#${tenantId}#HITL`,
-        SK: `PENDING#${hitlItemId}`,
+    await ddb.send(
+      new UpdateItemCommand({
+        TableName: TABLE_NAME,
+        Key: marshall({
+          PK: `TENANT#${tenantId}#HITL`,
+          SK: `PENDING#${hitlItemId}`,
+        }),
+        ConditionExpression: 'attribute_exists(PK) AND #status = :pending',
+        UpdateExpression: 'SET #status = :resolving, resolvingAt = :now',
+        ExpressionAttributeNames: { '#status': 'status' },
+        ExpressionAttributeValues: marshall({
+          ':pending': 'PENDING',
+          ':resolving': 'RESOLVING',
+          ':now': now,
+        }),
       }),
-      ConditionExpression: 'attribute_exists(PK) AND #status = :pending',
-      UpdateExpression: 'SET #status = :resolving, resolvingAt = :now',
-      ExpressionAttributeNames: { '#status': 'status' },
-      ExpressionAttributeValues: marshall({
-        ':pending': 'PENDING',
-        ':resolving': 'RESOLVING',
-        ':now': now,
-      }),
-    }));
+    );
   } catch (err: unknown) {
     if ((err as { name?: string }).name === 'ConditionalCheckFailedException') {
       throw new ApprovalError(409, `HITL item already resolved or being processed: ${hitlItemId}`);
@@ -120,28 +124,35 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
   // Step 8: Branch on decision — send to SFN
   try {
     if (decision === 'APPROVE') {
-      await sfnClient.send(new SendTaskSuccessCommand({
-        taskToken,
-        output: JSON.stringify({
-          decision: 'APPROVE',
-          approverSub,
-          ...(editedPayload ? { editedPayload } : {}),
-          ...(justification ? { justification } : {}),
+      await sfnClient.send(
+        new SendTaskSuccessCommand({
+          taskToken,
+          output: JSON.stringify({
+            decision: 'APPROVE',
+            approverSub,
+            ...(editedPayload ? { editedPayload } : {}),
+            ...(justification ? { justification } : {}),
+          }),
         }),
-      }));
+      );
     } else {
       // SEND_BACK
-      await sfnClient.send(new SendTaskFailureCommand({
-        taskToken,
-        error: 'SENT_BACK',
-        cause: justification ?? 'No reason provided',
-      }));
+      await sfnClient.send(
+        new SendTaskFailureCommand({
+          taskToken,
+          error: 'SENT_BACK',
+          cause: justification ?? 'No reason provided',
+        }),
+      );
     }
   } catch (err: unknown) {
     const errName = (err as { name?: string }).name ?? '';
     if (errName === 'TaskDoesNotExist' || errName === 'TaskTimedOut') {
       // Rollback: item remains in RESOLVING but SFN expired — mark as timed out
-      throw new ApprovalError(410, `SFN task expired or does not exist for HITL item: ${hitlItemId}`);
+      throw new ApprovalError(
+        410,
+        `SFN task expired or does not exist for HITL item: ${hitlItemId}`,
+      );
     }
     throw err;
   }

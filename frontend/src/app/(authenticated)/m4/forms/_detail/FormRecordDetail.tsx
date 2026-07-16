@@ -2,7 +2,14 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { PageHeader, Panel, StatusBadge, PrimaryButton, SecondaryButton, ErrorState } from '@/components/shared';
+import {
+  PageHeader,
+  Panel,
+  StatusBadge,
+  PrimaryButton,
+  SecondaryButton,
+  ErrorState,
+} from '@/components/shared';
 import { FormDrawer, type FieldDef } from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
@@ -94,7 +101,15 @@ const REOPEN_RECORD = `mutation ReopenFormRecord($input: ReopenFormRecordInput!)
 const DEBOUNCE_MS = 1500;
 const IMMUTABLE_STATUSES = new Set(['COMPLETE', 'APPROVED']);
 
-export function FormRecordDetail({ recordId, template, onBack }: { recordId: string; template: FormTemplate; onBack: () => void }) {
+export function FormRecordDetail({
+  recordId,
+  template,
+  onBack,
+}: {
+  recordId: string;
+  template: FormTemplate;
+  onBack: () => void;
+}) {
   const t = useTranslations('forms');
   const tForm = useTranslations('forms.form');
   const { query, mutate } = useGraphQL();
@@ -120,7 +135,9 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
   // Fetch template sections + fields
   const fetchTemplate = useCallback(async () => {
     try {
-      const data = await query<{ getFormTemplate: { sections: TemplateSection[] } }>(GET_TEMPLATE, { id: template.id });
+      const data = await query<{ getFormTemplate: { sections: TemplateSection[] } }>(GET_TEMPLATE, {
+        id: template.id,
+      });
       setSections(data.getFormTemplate.sections);
     } catch {
       setError(true);
@@ -140,18 +157,25 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
     }
   }, [query, recordId]);
 
-  useEffect(() => { fetchTemplate(); fetchRecord(); }, [fetchTemplate, fetchRecord]);
+  useEffect(() => {
+    fetchTemplate();
+    fetchRecord();
+  }, [fetchTemplate, fetchRecord]);
 
   // ─── Autosave (debounced) ──────────────────────────────────────────────────
 
   function handleFieldChange(fieldKey: string, value: unknown) {
     if (isImmutable) return;
-    setValues(prev => ({ ...prev, [fieldKey]: value }));
-    setFieldErrors(prev => { const n = new Set(prev); n.delete(fieldKey); return n; });
+    setValues((prev) => ({ ...prev, [fieldKey]: value }));
+    setFieldErrors((prev) => {
+      const n = new Set(prev);
+      n.delete(fieldKey);
+      return n;
+    });
     setSubmitError(null);
 
     // Queue for autosave — send null for cleared fields (DELETE path)
-    const saveValue = (value === '' || value === undefined) ? null : value;
+    const saveValue = value === '' || value === undefined ? null : value;
     pendingRef.current[fieldKey] = saveValue;
 
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -172,7 +196,7 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
       const msg = (err as Error).message;
       if (msg === 'LINK_TARGET_NOT_FOUND') {
         // Surface on the relation field that triggered it
-        const relationKeys = Object.keys(toSave).filter(k => toSave[k] !== null);
+        const relationKeys = Object.keys(toSave).filter((k) => toSave[k] !== null);
         setFieldErrors(new Set(relationKeys));
         setSubmitError(tForm('linkTargetNotFound'));
       }
@@ -183,7 +207,10 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
 
   async function handleSubmit() {
     // Flush pending saves first
-    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     await flushSave();
 
     setActionLoading(true);
@@ -203,7 +230,9 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
         if (record?.completion.requiredMissing) {
           setFieldErrors(new Set(record.completion.requiredMissing));
         }
-        setSubmitError(msg === 'MAPPING_INCOMPLETE' ? tForm('mappingIncomplete') : tForm('validationIncomplete'));
+        setSubmitError(
+          msg === 'MAPPING_INCOMPLETE' ? tForm('mappingIncomplete') : tForm('validationIncomplete'),
+        );
       } else if (msg === 'SUBMIT_INVALID_STATUS') {
         setSubmitError(tForm('submitInvalidStatus'));
       } else if (msg === 'RECORD_IMMUTABLE') {
@@ -260,7 +289,10 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
   if (error || !record) return <ErrorState onRetry={fetchRecord} />;
 
   const completion = record.completion;
-  const pct = completion.fieldsTotal > 0 ? Math.round((completion.fieldsFilled / completion.fieldsTotal) * 100) : 0;
+  const pct =
+    completion.fieldsTotal > 0
+      ? Math.round((completion.fieldsFilled / completion.fieldsTotal) * 100)
+      : 0;
 
   return (
     <>
@@ -294,7 +326,9 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
         <div className={styles.completionTrack}>
           <div className={styles.completionFill} style={{ width: `${pct}%` }} />
         </div>
-        <span className={styles.completionText}>{completion.fieldsFilled}/{completion.fieldsTotal}</span>
+        <span className={styles.completionText}>
+          {completion.fieldsFilled}/{completion.fieldsTotal}
+        </span>
       </div>
 
       {/* Sectioned form */}
@@ -333,7 +367,14 @@ export function FormRecordDetail({ recordId, template, onBack }: { recordId: str
 
 // ─── FormField component ─────────────────────────────────────────────────────
 
-function FormField({ field, value, onChange, readOnly, hasError, t }: {
+function FormField({
+  field,
+  value,
+  onChange,
+  readOnly,
+  hasError,
+  t,
+}: {
   field: TemplateField;
   value: unknown;
   onChange: (v: unknown) => void;
@@ -389,7 +430,9 @@ function FormField({ field, value, onChange, readOnly, hasError, t }: {
           type="date"
           className={inputClass}
           value={(value as string)?.split('T')[0] ?? ''}
-          onChange={(e) => onChange(e.target.value ? new Date(e.target.value).toISOString() : undefined)}
+          onChange={(e) =>
+            onChange(e.target.value ? new Date(e.target.value).toISOString() : undefined)
+          }
           readOnly={readOnly}
           aria-invalid={hasError}
         />
@@ -404,7 +447,11 @@ function FormField({ field, value, onChange, readOnly, hasError, t }: {
           aria-invalid={hasError}
         >
           <option value="">—</option>
-          {options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
         </select>
       )}
 
@@ -412,15 +459,19 @@ function FormField({ field, value, onChange, readOnly, hasError, t }: {
         <select
           className={inputClass}
           multiple
-          value={Array.isArray(value) ? value as string[] : []}
+          value={Array.isArray(value) ? (value as string[]) : []}
           onChange={(e) => {
-            const selected = Array.from(e.target.selectedOptions).map(o => o.value);
+            const selected = Array.from(e.target.selectedOptions).map((o) => o.value);
             onChange(selected.length > 0 ? selected : undefined);
           }}
           disabled={readOnly}
           aria-invalid={hasError}
         >
-          {options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
         </select>
       )}
 

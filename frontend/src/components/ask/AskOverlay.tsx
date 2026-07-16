@@ -38,7 +38,12 @@ export function AskOverlay() {
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <path d="M8 12h.01M12 12h.01M16 12h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path
+              d="M8 12h.01M12 12h.01M16 12h.01"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
       )}

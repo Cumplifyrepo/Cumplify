@@ -58,15 +58,20 @@ function validateNode(
   } else if (typeOf(value) === 'array') {
     const arr = value as unknown[];
     if (typeof schema.minItems === 'number' && arr.length < schema.minItems) {
-      errors.push(`Property '${path || '(root)'}' expected at least ${schema.minItems} items, got ${arr.length}`);
+      errors.push(
+        `Property '${path || '(root)'}' expected at least ${schema.minItems} items, got ${arr.length}`,
+      );
     }
     if (schema.items) {
       arr.forEach((item, i) =>
-        validateNode(item, schema.items as Record<string, unknown>, `${path}[${i}]`, errors));
+        validateNode(item, schema.items as Record<string, unknown>, `${path}[${i}]`, errors),
+      );
     }
   } else if (typeof value === 'string') {
     if (typeof schema.minLength === 'number' && value.length < schema.minLength) {
-      errors.push(`Property '${path || '(root)'}' expected minLength ${schema.minLength}, got ${value.length}`);
+      errors.push(
+        `Property '${path || '(root)'}' expected minLength ${schema.minLength}, got ${value.length}`,
+      );
     }
   }
 }

@@ -103,12 +103,10 @@ describe('Lambda Authorizer', () => {
 
   it('should authorize a valid Pool C token', async () => {
     // Pool B fails, Pool C succeeds
-    mockedJwtVerify
-      .mockRejectedValueOnce(new Error('issuer mismatch'))
-      .mockResolvedValueOnce({
-        payload: validPoolCClaims,
-        protectedHeader: { alg: 'RS256' },
-      } as never);
+    mockedJwtVerify.mockRejectedValueOnce(new Error('issuer mismatch')).mockResolvedValueOnce({
+      payload: validPoolCClaims,
+      protectedHeader: { alg: 'RS256' },
+    } as never);
 
     const result = await handler(baseEvent);
 

@@ -23,7 +23,7 @@ const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
-  const description = (event.payload as Record<string, unknown>).description as string ?? '';
+  const description = ((event.payload as Record<string, unknown>).description as string) ?? '';
 
   let groundingContext = '';
   if (description) {
@@ -47,8 +47,8 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
           topK: 3,
         }),
       ]);
-      const isoContext = isoResults.chunks.map(c => c.text).join('\n---\n');
-      const tenantContext = tenantResults.chunks.map(c => c.text).join('\n---\n');
+      const isoContext = isoResults.chunks.map((c) => c.text).join('\n---\n');
+      const tenantContext = tenantResults.chunks.map((c) => c.text).join('\n---\n');
       groundingContext = [isoContext, tenantContext].filter(Boolean).join('\n===\n');
     } catch {
       // Retrieval failure is non-blocking
@@ -61,23 +61,20 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
     groundingContext ? `\nRelevant context:\n${groundingContext}` : '',
   ].join('');
 
-  await toolLoop(
-    [{ role: 'user', content: [{ text: userMessage }] }],
-    {
-      seat: 'workhorse',
-      systemPrompt: LEAD_AUDITOR_PROMPT,
-      tools: LEAD_AUDITOR_TOOLS,
-      tenantId,
-      agent: 'LeadAuditor',
-      module: 'M3',
-      feature: 'audit-studio',
-      hitlTools: HITL_TOOLS,
-      invokeFn,
-      dispatchTool: async (toolName, input, tid) => {
-        return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
-      },
+  await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+    seat: 'workhorse',
+    systemPrompt: LEAD_AUDITOR_PROMPT,
+    tools: LEAD_AUDITOR_TOOLS,
+    tenantId,
+    agent: 'LeadAuditor',
+    module: 'M3',
+    feature: 'audit-studio',
+    hitlTools: HITL_TOOLS,
+    invokeFn,
+    dispatchTool: async (toolName, input, tid) => {
+      return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
     },
-  );
+  });
 }
 
 export const handler = createHandler({

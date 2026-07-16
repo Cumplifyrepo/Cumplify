@@ -29,11 +29,7 @@ export function SecondaryButton({ children, className, ...props }: ButtonProps) 
   );
 }
 
-export function DestructiveButton({
-  children,
-  className,
-  ...props
-}: ButtonProps) {
+export function DestructiveButton({ children, className, ...props }: ButtonProps) {
   return (
     <button className={`${styles.destructive} ${className ?? ''}`} {...props}>
       {children}

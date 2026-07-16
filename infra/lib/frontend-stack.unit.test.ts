@@ -64,7 +64,7 @@ describe('URL_REWRITE_FN_CODE handler behavior', () => {
   // pinned against the static-export layout (dashboard.html, not dashboard/).
   const handler = new Function(
     'event',
-    `${URL_REWRITE_FN_CODE}; return handler(event);`
+    `${URL_REWRITE_FN_CODE}; return handler(event);`,
   ) as (event: { request: { uri: string } }) => { uri: string };
 
   const rewrite = (uri: string) => handler({ request: { uri } }).uri;
@@ -84,7 +84,7 @@ describe('URL_REWRITE_FN_CODE handler behavior', () => {
 
   it('leaves asset paths with extensions untouched', () => {
     expect(rewrite('/_next/static/chunks/main-app-7b4335fd9d9ddc9a.js')).toBe(
-      '/_next/static/chunks/main-app-7b4335fd9d9ddc9a.js'
+      '/_next/static/chunks/main-app-7b4335fd9d9ddc9a.js',
     );
     expect(rewrite('/brand/cumplify-logo.png')).toBe('/brand/cumplify-logo.png');
     expect(rewrite('/dashboard.txt')).toBe('/dashboard.txt');

@@ -104,33 +104,48 @@ export class FrontendStack extends cdk.Stack {
     // CfnOutputs for readback + pipeline deploy step
     new cdk.CfnOutput(this, 'FrontendBucketName', { value: bucket.bucketName });
     new cdk.CfnOutput(this, 'FrontendDistributionId', { value: distribution.distributionId });
-    new cdk.CfnOutput(this, 'FrontendDistributionDomain', { value: distribution.distributionDomainName });
+    new cdk.CfnOutput(this, 'FrontendDistributionDomain', {
+      value: distribution.distributionDomainName,
+    });
 
     // CDK Nag suppressions
-    NagSuppressions.addResourceSuppressions(distribution, [
-      {
-        id: 'AwsSolutions-CFR1',
-        reason: 'Geo restrictions not required for P1 (global SaaS, no data-residency constraint yet).',
-      },
-      {
-        id: 'AwsSolutions-CFR2',
-        reason: 'WAF integration deferred — the app is auth-gated (API behind WAF already); static assets are low-risk.',
-      },
-      {
-        id: 'AwsSolutions-CFR3',
-        reason: 'Access logging deferred — CloudFront standard logging costs non-trivial for P1; revisit post-launch.',
-      },
-      {
-        id: 'AwsSolutions-CFR4',
-        reason: 'Custom SSL certificate + domain deferred to post-P1 (using default CloudFront domain for now).',
-      },
-    ], true);
+    NagSuppressions.addResourceSuppressions(
+      distribution,
+      [
+        {
+          id: 'AwsSolutions-CFR1',
+          reason:
+            'Geo restrictions not required for P1 (global SaaS, no data-residency constraint yet).',
+        },
+        {
+          id: 'AwsSolutions-CFR2',
+          reason:
+            'WAF integration deferred — the app is auth-gated (API behind WAF already); static assets are low-risk.',
+        },
+        {
+          id: 'AwsSolutions-CFR3',
+          reason:
+            'Access logging deferred — CloudFront standard logging costs non-trivial for P1; revisit post-launch.',
+        },
+        {
+          id: 'AwsSolutions-CFR4',
+          reason:
+            'Custom SSL certificate + domain deferred to post-P1 (using default CloudFront domain for now).',
+        },
+      ],
+      true,
+    );
 
-    NagSuppressions.addResourceSuppressions(bucket, [
-      {
-        id: 'AwsSolutions-S1',
-        reason: 'Access logging deferred — CloudFront standard logging provides visibility at the edge layer.',
-      },
-    ], true);
+    NagSuppressions.addResourceSuppressions(
+      bucket,
+      [
+        {
+          id: 'AwsSolutions-S1',
+          reason:
+            'Access logging deferred — CloudFront standard logging provides visibility at the edge layer.',
+        },
+      ],
+      true,
+    );
   }
 }

@@ -77,12 +77,19 @@ async function readJson(key: string): Promise<{ entries?: MasterEntry[] }> {
 }
 
 function slug(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'document';
+  return (
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60) || 'document'
+  );
 }
 
 export async function handler(event: ExportRequest): Promise<{ url: string; expiresAt: string }> {
   const { tenantId, manual, masterListCandidates } = event;
-  if (!tenantId || !manual?.documentId) throw new Error('BAD_REQUEST: tenantId and manual required');
+  if (!tenantId || !manual?.documentId)
+    throw new Error('BAD_REQUEST: tenantId and manual required');
   if (!CONTENT_BUCKET || !PDF_RENDER_FN) throw new Error('EXPORT_NOT_CONFIGURED');
   logger.appendKeys({ tenantId, manualDocumentId: manual.documentId });
 
@@ -92,7 +99,7 @@ export async function handler(event: ExportRequest): Promise<{ url: string; expi
   for (const cand of masterListCandidates ?? []) {
     assertTenantKey(tenantId, cand.contentKey);
     const content = await readJson(cand.contentKey);
-    if (content.entries?.some(e => e.documentId === manual.documentId)) {
+    if (content.entries?.some((e) => e.documentId === manual.documentId)) {
       masterList = cand;
       entries = content.entries;
       break;
@@ -103,38 +110,60 @@ export async function handler(event: ExportRequest): Promise<{ url: string; expi
   // 2. Build the render batch: entries (manual entry replaced by its CURRENT
   //    latest version from SQL) + the master list itself.
   const docs: RenderRequestDoc[] = [
-    ...entries.map(e => (e.documentId === manual.documentId ? {
-      documentId: manual.documentId, versionId: manual.versionId, contentKey: manual.contentKey,
-      title: manual.title, docType: manual.docType, standard: manual.standard, versionNo: manual.versionNo,
-    } : {
-      documentId: e.documentId, versionId: `${e.documentId}-v${e.versionNo}`, contentKey: e.contentRef,
-      title: e.title, docType: e.docType, standard: e.standard, versionNo: e.versionNo,
-    })),
+    ...entries.map((e) =>
+      e.documentId === manual.documentId
+        ? {
+            documentId: manual.documentId,
+            versionId: manual.versionId,
+            contentKey: manual.contentKey,
+            title: manual.title,
+            docType: manual.docType,
+            standard: manual.standard,
+            versionNo: manual.versionNo,
+          }
+        : {
+            documentId: e.documentId,
+            versionId: `${e.documentId}-v${e.versionNo}`,
+            contentKey: e.contentRef,
+            title: e.title,
+            docType: e.docType,
+            standard: e.standard,
+            versionNo: e.versionNo,
+          },
+    ),
     {
-      documentId: masterList.documentId, versionId: masterList.versionId, contentKey: masterList.contentKey,
-      title: masterList.title, docType: 'master_list', standard: masterList.standard,
+      documentId: masterList.documentId,
+      versionId: masterList.versionId,
+      contentKey: masterList.contentKey,
+      title: masterList.title,
+      docType: 'master_list',
+      standard: masterList.standard,
       versionNo: masterList.versionNo,
     },
   ];
   for (const d of docs) assertTenantKey(tenantId, d.contentKey);
 
   // 3. Render (sha-cached inside PdfRenderFn).
-  const invoke = await lambda.send(new InvokeCommand({
-    FunctionName: PDF_RENDER_FN,
-    Payload: JSON.stringify({ tenantId, documents: docs }),
-  }));
+  const invoke = await lambda.send(
+    new InvokeCommand({
+      FunctionName: PDF_RENDER_FN,
+      Payload: JSON.stringify({ tenantId, documents: docs }),
+    }),
+  );
   if (invoke.FunctionError) {
     logger.error('render failed', { err: new TextDecoder().decode(invoke.Payload) });
     throw new Error('RENDER_FAILED');
   }
-  const { results } = JSON.parse(new TextDecoder().decode(invoke.Payload)) as { results: RenderedDoc[] };
+  const { results } = JSON.parse(new TextDecoder().decode(invoke.Payload)) as {
+    results: RenderedDoc[];
+  };
 
   // 4. Zip. Manual first (00-), then the rest in master-list order.
   const files: Record<string, Uint8Array> = {};
   const used = new Set<string>();
   let n = 0;
   for (const doc of docs) {
-    const r = results.find(x => x.documentId === doc.documentId);
+    const r = results.find((x) => x.documentId === doc.documentId);
     if (!r) throw new Error(`RENDER_MISSING: ${doc.documentId}`);
     const body = await s3.send(new GetObjectCommand({ Bucket: CONTENT_BUCKET, Key: r.pdfKey }));
     const prefix = doc.documentId === manual.documentId ? '00' : String(++n).padStart(2, '0');
@@ -148,9 +177,14 @@ export async function handler(event: ExportRequest): Promise<{ url: string; expi
   // 5. Upload + presign (15 min). Signed with this role's creds — TTL is far
   //    below the role session lifetime, so the URL honors the full 15 min.
   const zipKey = `tenants/${tenantId}/exports/ims-${manual.documentId}-${randomUUID().slice(0, 8)}.zip`;
-  await s3.send(new PutObjectCommand({
-    Bucket: CONTENT_BUCKET, Key: zipKey, Body: zipped, ContentType: 'application/zip',
-  }));
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: CONTENT_BUCKET,
+      Key: zipKey,
+      Body: zipped,
+      ContentType: 'application/zip',
+    }),
+  );
   const url = await getSignedUrl(
     s3,
     new GetObjectCommand({ Bucket: CONTENT_BUCKET, Key: zipKey }),

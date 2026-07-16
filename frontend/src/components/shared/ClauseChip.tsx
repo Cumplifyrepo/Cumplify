@@ -15,9 +15,7 @@ export function ClauseChip({
 }) {
   if (!standard && !clauseRef) return null;
 
-  const label = [standard?.replace('ISO', 'ISO '), clauseRef]
-    .filter(Boolean)
-    .join(' \u00B7 ');
+  const label = [standard?.replace('ISO', 'ISO '), clauseRef].filter(Boolean).join(' \u00B7 ');
 
   return <span className={styles.chip}>{label}</span>;
 }

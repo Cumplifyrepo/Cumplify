@@ -2,7 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Panel, StatusBadge, ClauseChip, EmptyState, ErrorState, ProvenanceLink } from '@/components/shared';
+import {
+  Panel,
+  StatusBadge,
+  ClauseChip,
+  EmptyState,
+  ErrorState,
+  ProvenanceLink,
+} from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import Link from 'next/link';
 import styles from './TopRisksPanel.module.css';
@@ -60,7 +67,12 @@ export function TopRisksPanel() {
     fetchRisks();
   }, [fetchRisks]);
 
-  if (error) return <Panel title={t('topRisks')}><ErrorState onRetry={fetchRisks} /></Panel>;
+  if (error)
+    return (
+      <Panel title={t('topRisks')}>
+        <ErrorState onRetry={fetchRisks} />
+      </Panel>
+    );
 
   return (
     <Panel

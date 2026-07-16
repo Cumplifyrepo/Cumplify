@@ -25,7 +25,8 @@ describe('GAP decision table', () => {
   it('all sources present → no gap', () => {
     const d = decideGap(
       ['org_profile.legalName', 'org_profile.coreProcesses', 'register.risks'],
-      PROFILE, { risks: 3 },
+      PROFILE,
+      { risks: 3 },
     );
     expect(d.gap).toBe(false);
     expect(d.missingSources).toEqual([]);
@@ -48,7 +49,11 @@ describe('GAP decision table', () => {
   });
 
   it('boolean false is PRESENT (designResponsibility=false is an answer, not a gap)', () => {
-    const d = decideGap(['org_profile.designResponsibility'], { ...PROFILE, designResponsibility: false }, {});
+    const d = decideGap(
+      ['org_profile.designResponsibility'],
+      { ...PROFILE, designResponsibility: false },
+      {},
+    );
     expect(d.gap).toBe(false);
   });
 
@@ -61,25 +66,32 @@ describe('GAP decision table', () => {
     const { readFileSync } = await import('node:fs');
     const { resolve } = await import('node:path');
     const seed = readFileSync(
-      resolve(__dirname, '../../api/migrations/014_qms_registry_seed.sql'), 'utf8',
+      resolve(__dirname, '../../api/migrations/014_qms_registry_seed.sql'),
+      'utf8',
     );
-    const named = new Set([...seed.matchAll(/register\.(\w+)/g)].map(m => m[1]));
+    const named = new Set([...seed.matchAll(/register\.(\w+)/g)].map((m) => m[1]));
     for (const reg of named) {
-      expect(REGISTER_TABLE_MAP, `register '${reg}' missing from REGISTER_TABLE_MAP`).toHaveProperty(reg);
+      expect(
+        REGISTER_TABLE_MAP,
+        `register '${reg}' missing from REGISTER_TABLE_MAP`,
+      ).toHaveProperty(reg);
     }
   });
 });
 
 describe('deterministic checker', () => {
   const facts = assembleFacts(PROFILE, [{ name: 'risks', count: 2, samples: ['supply delay'] }]);
-  const factKeys = new Set(facts.map(f => f.key));
+  const factKeys = new Set(facts.map((f) => f.key));
   const ctx = { factKeys, orgName: 'MB Design & Remodel LLC' };
 
   it('positive fixture: cited, styled prose passes', () => {
     const r = checkSection({
       ...ctx,
       sentences: [
-        { text: 'MB Design & Remodel LLC assigns quality responsibility to Julio Medrano.', factRefs: ['F1', 'F5'] },
+        {
+          text: 'MB Design & Remodel LLC assigns quality responsibility to Julio Medrano.',
+          factRefs: ['F1', 'F5'],
+        },
       ],
     });
     expect(r.pass).toBe(true);
@@ -106,7 +118,9 @@ describe('deterministic checker', () => {
   it('"shall" fails house style', () => {
     const r = checkSection({
       ...ctx,
-      sentences: [{ text: 'The organization shall maintain documented information.', factRefs: ['F1'] }],
+      sentences: [
+        { text: 'The organization shall maintain documented information.', factRefs: ['F1'] },
+      ],
     });
     expect(r.violations.join(' ')).toContain('shall');
   });
@@ -128,7 +142,9 @@ describe('deterministic checker', () => {
   it('banned standard-text fragment fails (CLR-3 screen)', () => {
     const r = checkSection({
       ...ctx,
-      sentences: [{ text: 'The organization conforms to this International Standard.', factRefs: ['F1'] }],
+      sentences: [
+        { text: 'The organization conforms to this International Standard.', factRefs: ['F1'] },
+      ],
     });
     expect(r.violations.join(' ')).toContain('banned standard-text fragment');
   });
@@ -145,7 +161,7 @@ describe('deterministic checker', () => {
 describe('fact assembly', () => {
   it('absent profile fields produce NO fact — what was never said cannot be cited', () => {
     const facts = buildProfileFacts({ legalName: 'X Corp' });
-    const sources = facts.map(f => f.source);
+    const sources = facts.map((f) => f.source);
     expect(sources).toContain('org_profile.legalName');
     expect(sources).not.toContain('org_profile.outsourcedProcesses');
     expect(sources).not.toContain('org_profile.industry');
@@ -159,8 +175,8 @@ describe('fact assembly', () => {
     const facts = assembleFacts(PROFILE, [{ name: 'risks', count: 2, samples: ['a'] }]);
     expect(facts[0].key).toBe('F1');
     expect(facts[facts.length - 1].key).toBe(`F${facts.length}`);
-    expect(facts.find(f => f.source === 'register.risks[count]')).toBeTruthy();
-    expect(facts.find(f => f.source === 'register.risks[sample]')).toBeTruthy();
+    expect(facts.find((f) => f.source === 'register.risks[count]')).toBeTruthy();
+    expect(facts.find((f) => f.source === 'register.risks[sample]')).toBeTruthy();
   });
 });
 
@@ -169,7 +185,7 @@ describe('fact assembly', () => {
 describe('manualExists boolean fact (golden-eval finding)', () => {
   it('manualExists:false yields the NEGATIVE fact, never "existing quality manual"', () => {
     const facts = buildProfileFacts({ manualExists: false });
-    const f = facts.find(x => x.source === 'org_profile.manualExists');
+    const f = facts.find((x) => x.source === 'org_profile.manualExists');
     expect(f).toBeDefined();
     expect(f!.text).toContain('does not yet have a quality manual');
     expect(f!.text).not.toContain('existing quality manual');
@@ -177,12 +193,12 @@ describe('manualExists boolean fact (golden-eval finding)', () => {
 
   it('manualExists:true yields the existing-manual fact', () => {
     const facts = buildProfileFacts({ manualExists: true });
-    const f = facts.find(x => x.source === 'org_profile.manualExists');
+    const f = facts.find((x) => x.source === 'org_profile.manualExists');
     expect(f!.text).toContain('maintains an existing quality manual');
   });
 
   it('manualExists absent yields no manual fact at all', () => {
     const facts = buildProfileFacts({});
-    expect(facts.find(x => x.source === 'org_profile.manualExists')).toBeUndefined();
+    expect(facts.find((x) => x.source === 'org_profile.manualExists')).toBeUndefined();
   });
 });

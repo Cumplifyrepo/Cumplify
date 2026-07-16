@@ -66,4 +66,40 @@ Known residual (documented in fn comment): 'permanent' retention is
 unrepresentable in the ratified schema — owner schema decision if the
 RecordsVault agent should be able to express it.
 
-## C — eslint debt cleared (see section appended by the C commit)
+## C — verify gate restored to green (this commit)
+
+`npm run verify` had been failing at step 3 (eslint + prettier) since before
+a07e5d1 (A/B-verified pre-existing); recent closures gated on
+tsc/suite/synth instead. Peeling the onion produced three fix layers:
+
+1. **eslint: 13 errors → 0** (all mechanical, none in recently-touched code):
+   unused destructure aliases (`_policyId`/`_logicalId` ×2/`_mod` → elision),
+   `require()` → top-level imports (ai-stack.unit.test.ts, gsi-prefix.test.ts),
+   4 unnecessary `\(` escapes in char classes (api-stack.unit.test.ts),
+   `prefer-const` (tool-loop.ts totalUsage), a zero-width space in a
+   sql-splitter.ts comment (no-irregular-whitespace). 70 warnings remain
+   (`no-explicit-any` etc. — warnings don't fail the gate).
+2. **prettier: 281 drifted source files reformatted** (`prettier --write`).
+   `.prettierignore` extended: `frontend/out/`, `frontend/.next/`,
+   `coverage/` (git-ignored build artifacts were being checked), and
+   `services/api/schema/schema.graphql` — prettier's argument rewrapping
+   broke TWO line-oriented tripwires (schema-guard rule 4's per-line @aws_
+   directive check + the api-stack Query-field count pin). Ruling: the SDL's
+   one-field-per-line format is load-bearing for security tripwires — the
+   file stays hand-formatted; the tripwires were NOT weakened. SDL restored
+   byte-identical via git checkout before commit.
+3. **verify step 4 policy check**: `services/model-evals/` (top-level
+   sources) had no `*.property.test.ts` — mandatory per steering 13. Added
+   `budget.property.test.ts` (5 fast-check properties on the C-4
+   halt-on-cap invariant: campaign cap can never be silently exceeded,
+   per-seat cap throws on any overrun split, in-cap ledger exactness,
+   computeEstimate monotonicity/non-negativity).
+
+| Gate | Result |
+|---|---|
+| `npm run verify` (all 6 steps) | **PASS, MAX-RUNG D1** — 16:27:44Z, first full-gate green |
+| tsc / full suite | 0 / 906+3 services & 121 frontend (887→906 across the wave) |
+| cdk synth | exit 0, 0 Nag (post-reformat) |
+
+`.gitignore` += `.kiro/evidence/unknown-spec/` (verify's no-spec-context
+scratch log — regenerated every run, not evidence).

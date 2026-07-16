@@ -13,8 +13,12 @@ export function generateReport(report: ScoredReport): string {
   lines.push(`# Eval Report: ${report.seat} — ${report.timestamp}`);
   lines.push('');
   lines.push('## Summary');
-  lines.push('| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |');
-  lines.push('|-----------|--------------|-------------|-----------|-----------|-----------------|------|');
+  lines.push(
+    '| Candidate | Quality Score | Quality Pass | $/task P50 | $/task P95 | Margin Headroom | Rank |',
+  );
+  lines.push(
+    '|-----------|--------------|-------------|-----------|-----------|-----------------|------|',
+  );
 
   for (const c of report.candidates) {
     lines.push(
@@ -38,7 +42,9 @@ export function generateReport(report: ScoredReport): string {
       const trunc = (c as any).truncationCount ?? 0;
       const errs = (c as any).invocationErrorCount ?? 0;
       if (trunc > 0 || errs > 0) {
-        lines.push(`- ${c.modelId}: ${trunc > 0 ? `${trunc} TRUNCATED` : ''} ${errs > 0 ? `${errs} INVOCATION-ERROR` : ''}`);
+        lines.push(
+          `- ${c.modelId}: ${trunc > 0 ? `${trunc} TRUNCATED` : ''} ${errs > 0 ? `${errs} INVOCATION-ERROR` : ''}`,
+        );
       }
     }
     lines.push('');

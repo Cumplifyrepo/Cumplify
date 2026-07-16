@@ -50,49 +50,54 @@ export async function handler(event: StoreTokenInput): Promise<{ stored: true }>
   const { tenantId, hitlItemId, agentName, proposedAction, createdAt } = event.input;
 
   logger.info('Creating/updating HITL item with task token', {
-    tenantId, hitlItemId, agentName, tool: proposedAction.tool,
+    tenantId,
+    hitlItemId,
+    agentName,
+    tool: proposedAction.tool,
   });
 
   const now = new Date().toISOString();
 
-  await ddb.send(new UpdateItemCommand({
-    TableName: TABLE_NAME,
-    Key: marshall({
-      PK: `TENANT#${tenantId}#HITL`,
-      SK: `PENDING#${hitlItemId}`,
+  await ddb.send(
+    new UpdateItemCommand({
+      TableName: TABLE_NAME,
+      Key: marshall({
+        PK: `TENANT#${tenantId}#HITL`,
+        SK: `PENDING#${hitlItemId}`,
+      }),
+      // Native upsert: SET creates the item if it doesn't exist, updates if it does.
+      // No ConditionExpression — idempotent on re-delivery (SFN retry).
+      UpdateExpression: [
+        'SET itemType = :itemType',
+        'agentName = :agentName',
+        'proposedAction = :proposedAction',
+        'createdAt = :createdAt',
+        '#status = :status',
+        'taskToken = :taskToken',
+        'tokenStoredAt = :tokenStoredAt',
+        // GSI9: sparse projection for frontend pending-approvals query (D-2)
+        'GSI9PK = :gsi9pk',
+        'GSI9SK = :gsi9sk',
+        // HITL-10: store SFN execution ARN for tracing/audit (if_not_exists preserves on retry)
+        'sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)',
+      ].join(', '),
+      ExpressionAttributeNames: {
+        '#status': 'status',
+      },
+      ExpressionAttributeValues: marshall({
+        ':itemType': 'HITL_PENDING',
+        ':agentName': agentName,
+        ':proposedAction': proposedAction,
+        ':createdAt': createdAt,
+        ':status': 'PENDING',
+        ':taskToken': taskToken,
+        ':tokenStoredAt': now,
+        ':gsi9pk': `TENANT#${tenantId}#HITL_PENDING`,
+        ':gsi9sk': createdAt,
+        ':sfnArn': sfnExecutionArn ?? 'unknown',
+      }),
     }),
-    // Native upsert: SET creates the item if it doesn't exist, updates if it does.
-    // No ConditionExpression — idempotent on re-delivery (SFN retry).
-    UpdateExpression: [
-      'SET itemType = :itemType',
-      'agentName = :agentName',
-      'proposedAction = :proposedAction',
-      'createdAt = :createdAt',
-      '#status = :status',
-      'taskToken = :taskToken',
-      'tokenStoredAt = :tokenStoredAt',
-      // GSI9: sparse projection for frontend pending-approvals query (D-2)
-      'GSI9PK = :gsi9pk',
-      'GSI9SK = :gsi9sk',
-      // HITL-10: store SFN execution ARN for tracing/audit (if_not_exists preserves on retry)
-      'sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)',
-    ].join(', '),
-    ExpressionAttributeNames: {
-      '#status': 'status',
-    },
-    ExpressionAttributeValues: marshall({
-      ':itemType': 'HITL_PENDING',
-      ':agentName': agentName,
-      ':proposedAction': proposedAction,
-      ':createdAt': createdAt,
-      ':status': 'PENDING',
-      ':taskToken': taskToken,
-      ':tokenStoredAt': now,
-      ':gsi9pk': `TENANT#${tenantId}#HITL_PENDING`,
-      ':gsi9sk': createdAt,
-      ':sfnArn': sfnExecutionArn ?? 'unknown',
-    }),
-  }));
+  );
 
   logger.info('HITL item created with task token', { tenantId, hitlItemId });
   return { stored: true };

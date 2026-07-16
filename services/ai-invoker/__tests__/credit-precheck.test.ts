@@ -15,7 +15,9 @@ vi.mock('@aws-sdk/client-dynamodb', () => {
     },
     GetItemCommand: class {
       input: unknown;
-      constructor(input: unknown) { this.input = input; }
+      constructor(input: unknown) {
+        this.input = input;
+      }
     },
   };
 });

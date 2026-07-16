@@ -10,16 +10,26 @@ export const CAPA_GURU_TOOLS: ToolConfig[] = [
   {
     toolSpec: {
       name: 'capa-open',
-      description: 'Propose a corrective action for a nonconformity. HITL-gated: requires human approval before commit.',
+      description:
+        'Propose a corrective action for a nonconformity. HITL-gated: requires human approval before commit.',
       inputSchema: {
         json: {
           type: 'object',
           required: ['ncId', 'actionDesc', 'suggestedOwnerId', 'dueDate'],
           properties: {
             ncId: { type: 'string', description: 'ID of the nonconformity' },
-            actionDesc: { type: 'string', description: 'Description of the proposed corrective action' },
-            suggestedOwnerId: { type: 'string', description: 'Suggested owner (user ID) for the action' },
-            dueDate: { type: 'string', description: 'Due date for the corrective action (ISO 8601 timestamp)' },
+            actionDesc: {
+              type: 'string',
+              description: 'Description of the proposed corrective action',
+            },
+            suggestedOwnerId: {
+              type: 'string',
+              description: 'Suggested owner (user ID) for the action',
+            },
+            dueDate: {
+              type: 'string',
+              description: 'Due date for the corrective action (ISO 8601 timestamp)',
+            },
           },
         },
       },
@@ -28,7 +38,8 @@ export const CAPA_GURU_TOOLS: ToolConfig[] = [
   {
     toolSpec: {
       name: 'capa-rootcause',
-      description: 'Perform structured root-cause analysis (5-why, fishbone). Advisory — no HITL required.',
+      description:
+        'Perform structured root-cause analysis (5-why, fishbone). Advisory — no HITL required.',
       inputSchema: {
         json: {
           type: 'object',

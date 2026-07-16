@@ -11,14 +11,20 @@ const mockDdbSend = vi.hoisted(() => {
 });
 
 vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: class { send = mockDdbSend; },
+  DynamoDBClient: class {
+    send = mockDdbSend;
+  },
   ScanCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
   UpdateItemCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 
@@ -28,7 +34,12 @@ vi.mock('@aws-sdk/util-dynamodb', () => ({
 }));
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 import { handler } from '../../src/resolvers/hitl-sweeper.js';
@@ -155,9 +166,7 @@ describe('hitl-sweeper handler', () => {
 
     const scanCmd = mockDdbSend.mock.calls[0][0];
     expect(scanCmd.input.IndexName).toBe('GSI9');
-    expect(scanCmd.input.FilterExpression).toBe(
-      '#status = :resolving AND resolvingAt < :cutoff',
-    );
+    expect(scanCmd.input.FilterExpression).toBe('#status = :resolving AND resolvingAt < :cutoff');
     expect(scanCmd.input.ExpressionAttributeNames['#status']).toBe('status');
     expect(scanCmd.input.ExpressionAttributeValues[':resolving']).toBe('RESOLVING');
   });

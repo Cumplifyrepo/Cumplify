@@ -28,10 +28,7 @@ export interface CreditLimit {
  *
  * @param creditExempt - If true, skip pre-check (incident/HITL exemption)
  */
-export async function checkCreditBalance(
-  tenantId: string,
-  creditExempt: boolean,
-): Promise<void> {
+export async function checkCreditBalance(tenantId: string, creditExempt: boolean): Promise<void> {
   // SERVE-9: incident-reporting and HITL-approval flows NEVER block on credits
   if (creditExempt) {
     logger.info('Credit pre-check skipped (exempt)', { tenantId });

@@ -71,7 +71,9 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   if (request.outputSchema) {
     try {
       assertSchemaValid(result.text, request.outputSchema, {
-        seat, modelId, attempt: 1,
+        seat,
+        modelId,
+        attempt: 1,
       });
     } catch (err) {
       if (err instanceof InvokeError && err.code === 'SCHEMA_VALIDATION_ERROR') {
@@ -80,7 +82,14 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
         const retryMessages = [
           ...request.messages,
           { role: 'assistant' as const, content: [{ text: result.text }] },
-          { role: 'user' as const, content: [{ text: 'Your previous output failed JSON schema validation. Please return valid JSON matching the required schema.' }] },
+          {
+            role: 'user' as const,
+            content: [
+              {
+                text: 'Your previous output failed JSON schema validation. Please return valid JSON matching the required schema.',
+              },
+            ],
+          },
         ];
         const retryParams = { ...converseParams, messages: retryMessages };
         result = await converse(retryParams);
@@ -88,18 +97,25 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
 
         try {
           assertSchemaValid(result.text, request.outputSchema, {
-            seat, modelId, attempt: 2,
+            seat,
+            modelId,
+            attempt: 2,
           });
         } catch (retryErr) {
           // F-1 FIX: meter consumed usage BEFORE propagating the error
           const credits = computeCredits(usage, weights);
           await incrementMeter(tenantId, credits);
           await emitCreditsTelemetry({
-            tenantId, agent, module, feature,
+            tenantId,
+            agent,
+            module,
+            feature,
             inputTokens: usage.inputTokens,
             outputTokens: usage.outputTokens,
             cacheReadTokens: usage.cacheReadInputTokens,
-            creditsConsumed: credits, modelId, seat,
+            creditsConsumed: credits,
+            modelId,
+            seat,
           });
           throw retryErr;
         }
@@ -128,7 +144,9 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   });
 
   logger.info('Invocation complete', {
-    seat, modelId, tenantId,
+    seat,
+    modelId,
+    tenantId,
     inputTokens: usage.inputTokens,
     outputTokens: usage.outputTokens,
     credits: credits.toFixed(4),

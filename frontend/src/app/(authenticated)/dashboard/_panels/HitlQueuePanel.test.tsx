@@ -16,8 +16,12 @@ let mockRole = 'QualityManager';
 vi.mock('@/lib/auth-context', () => ({
   useAuth: () => ({
     user: { sub: 'u1', email: 'test@test.com', tenantId: 'T1', role: mockRole, locale: 'en' },
-    isAuthenticated: true, isLoading: false, idToken: 'tok',
-    signIn: vi.fn(), signOut: vi.fn(), refreshLocale: vi.fn(),
+    isAuthenticated: true,
+    isLoading: false,
+    idToken: 'tok',
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    refreshLocale: vi.fn(),
   }),
 }));
 
@@ -29,36 +33,66 @@ vi.mock('@/lib/use-tenant-subscription', () => ({
 vi.mock('next-intl', () => {
   const translations: Record<string, Record<string, string>> = {
     commandCenter: {
-      hitlQueue: 'Approval Queue', loading: 'Loading...', noItems: 'No items',
+      hitlQueue: 'Approval Queue',
+      loading: 'Loading...',
+      noItems: 'No items',
     },
     hitlCard: {
-      approve: 'Approve', editAndApprove: 'Edit & approve', sendBack: 'Send back with note',
-      trustRitual: 'Trust ritual', flaggedJustification: 'Justification required',
-      notePlaceholder: 'Note', viewAuditEvent: 'View event', guardrailEvidence: 'Evidence',
-      groundingScore: 'Grounding', arVerdict: 'Verdict', actionError: 'Failed',
-      editArgsLabel: 'Edit args', editParseError: 'Invalid JSON', confirmEdit: 'Confirm',
-      cancelEdit: 'Cancel', dismiss: 'Dismiss',
+      approve: 'Approve',
+      editAndApprove: 'Edit & approve',
+      sendBack: 'Send back with note',
+      trustRitual: 'Trust ritual',
+      flaggedJustification: 'Justification required',
+      notePlaceholder: 'Note',
+      viewAuditEvent: 'View event',
+      guardrailEvidence: 'Evidence',
+      groundingScore: 'Grounding',
+      arVerdict: 'Verdict',
+      actionError: 'Failed',
+      editArgsLabel: 'Edit args',
+      editParseError: 'Invalid JSON',
+      confirmEdit: 'Confirm',
+      cancelEdit: 'Cancel',
+      dismiss: 'Dismiss',
     },
     status: { PENDING: 'Pending' },
   };
   return {
     useTranslations: (ns: string) => {
       const t = (key: string) => translations[ns]?.[key] ?? key;
-      t.has = (key: string) => !!(translations[ns]?.[key]);
+      t.has = (key: string) => !!translations[ns]?.[key];
       return t;
     },
   };
 });
 
 vi.mock('@/components/shared', () => ({
-  Panel: ({ children, title }: { children: React.ReactNode; title: string }) => <div data-testid="panel" aria-label={title}>{title}{children}</div>,
+  Panel: ({ children, title }: { children: React.ReactNode; title: string }) => (
+    <div data-testid="panel" aria-label={title}>
+      {title}
+      {children}
+    </div>
+  ),
   StatusBadge: ({ status }: { status: string }) => <span data-testid="badge">{status}</span>,
-  ClauseChip: ({ clauseRef }: { clauseRef: string | null }) => clauseRef ? <span data-testid="chip">{clauseRef}</span> : null,
+  ClauseChip: ({ clauseRef }: { clauseRef: string | null }) =>
+    clauseRef ? <span data-testid="chip">{clauseRef}</span> : null,
   EmptyState: ({ message }: { message: string }) => <p>{message}</p>,
-  ErrorState: ({ onRetry }: { onRetry: () => void }) => <button onClick={onRetry}>retry-action</button>,
-  PrimaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button data-testid="primary-btn" {...props}>{children}</button>,
-  SecondaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button data-testid="secondary-btn" {...props}>{children}</button>,
-  ProvenanceLink: ({ children }: { children: React.ReactNode }) => <span data-testid="provenance">{children}</span>,
+  ErrorState: ({ onRetry }: { onRetry: () => void }) => (
+    <button onClick={onRetry}>retry-action</button>
+  ),
+  PrimaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button data-testid="primary-btn" {...props}>
+      {children}
+    </button>
+  ),
+  SecondaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button data-testid="secondary-btn" {...props}>
+      {children}
+    </button>
+  ),
+  ProvenanceLink: ({ children }: { children: React.ReactNode }) => (
+    <span data-testid="provenance">{children}</span>
+  ),
 }));
 
 // ----- Fixtures -----
@@ -100,7 +134,10 @@ describe('HitlQueuePanel', () => {
     vi.clearAllMocks();
     mockRole = 'QualityManager';
     mockQuery.mockResolvedValue({
-      listPendingHitlItems: { items: [unflaggedItem, flaggedItem, unparseableItem], nextToken: null },
+      listPendingHitlItems: {
+        items: [unflaggedItem, flaggedItem, unparseableItem],
+        nextToken: null,
+      },
     });
   });
 
@@ -166,7 +203,11 @@ describe('HitlQueuePanel', () => {
 
     it('mutation includes justification for flagged item', async () => {
       mockMutate.mockResolvedValue({
-        approveHitlItem: { hitlItemId: 'item-2', auditEventId: 'evt-1', auditEventTimestamp: '2026-07-13T12:00:00Z' },
+        approveHitlItem: {
+          hitlItemId: 'item-2',
+          auditEventId: 'evt-1',
+          auditEventTimestamp: '2026-07-13T12:00:00Z',
+        },
       });
 
       render(<HitlQueuePanel />);
@@ -187,7 +228,11 @@ describe('HitlQueuePanel', () => {
 
     it('unflagged item approves without justification', async () => {
       mockMutate.mockResolvedValue({
-        approveHitlItem: { hitlItemId: 'item-1', auditEventId: 'evt-2', auditEventTimestamp: '2026-07-13T12:00:00Z' },
+        approveHitlItem: {
+          hitlItemId: 'item-1',
+          auditEventId: 'evt-2',
+          auditEventTimestamp: '2026-07-13T12:00:00Z',
+        },
       });
 
       render(<HitlQueuePanel />);
@@ -207,7 +252,11 @@ describe('HitlQueuePanel', () => {
   describe('CARD-3: Edit & approve flow', () => {
     it('enters edit mode and sends the edited args as an AWSJSON string', async () => {
       mockMutate.mockResolvedValue({
-        approveHitlItem: { hitlItemId: 'item-1', auditEventId: 'evt-3', auditEventTimestamp: '2026-07-13T12:00:00Z' },
+        approveHitlItem: {
+          hitlItemId: 'item-1',
+          auditEventId: 'evt-3',
+          auditEventTimestamp: '2026-07-13T12:00:00Z',
+        },
       });
 
       render(<HitlQueuePanel />);

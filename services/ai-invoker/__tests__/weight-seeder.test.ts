@@ -11,10 +11,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockSend = vi.fn();
 vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: class { send = mockSend; },
+  DynamoDBClient: class {
+    send = mockSend;
+  },
   PutItemCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 vi.mock('@aws-sdk/util-dynamodb', () => ({
@@ -73,7 +77,9 @@ describe('weight-seeder', () => {
 
   it('omits wCache attribute for null-wCache models (qwen/kimi)', async () => {
     await handler({ action: 'seed' });
-    const items = mockSend.mock.calls.map((c) => (c[0] as { input: { Item: Record<string, unknown> } }).input.Item);
+    const items = mockSend.mock.calls.map(
+      (c) => (c[0] as { input: { Item: Record<string, unknown> } }).input.Item,
+    );
     const byModel = Object.fromEntries(items.map((i) => [i.modelId as string, i]));
     expect(byModel['us.amazon.nova-pro-v1:0'].wCache).toBe(200);
     expect(byModel['us.amazon.nova-lite-v1:0'].wCache).toBe(15);

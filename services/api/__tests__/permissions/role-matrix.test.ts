@@ -101,7 +101,13 @@ describe('role-matrix', () => {
   describe('normalizeRole (BUG-11a: Cognito group names vs matrix slugs)', () => {
     // Every group IdentityStack deploys (identity-stack.ts groups list) must
     // resolve to a matrix key — PreTokenGen stamps the group name verbatim.
-    const DEPLOYED_GROUPS = ['TopManagement', 'IMSLead', 'QualityManager', 'EHSManager', 'DocumentController'];
+    const DEPLOYED_GROUPS = [
+      'TopManagement',
+      'IMSLead',
+      'QualityManager',
+      'EHSManager',
+      'DocumentController',
+    ];
 
     it('maps every deployed Cognito group to a known matrix role', () => {
       for (const g of DEPLOYED_GROUPS) {
@@ -158,7 +164,7 @@ describe('role-matrix', () => {
       // silently 403 — this pin fails the build instead.
       const src = readFileSync(
         join(__dirname, '../../../agents/shared/execute-writeback.ts'),
-        'utf8'
+        'utf8',
       );
       const tools = [...src.matchAll(/case '([a-z0-9-]+)':/g)].map((m) => m[1]);
       expect(tools.length).toBeGreaterThanOrEqual(8);

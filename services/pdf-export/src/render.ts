@@ -17,7 +17,12 @@
 
 import { createHash } from 'node:crypto';
 import { Logger } from '@aws-lambda-powertools/logger';
-import { S3Client, GetObjectCommand, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  HeadObjectCommand,
+} from '@aws-sdk/client-s3';
 import { buildDocumentHtml, type ContentJson, type DocMeta } from './template.js';
 
 const logger = new Logger({ serviceName: 'pdf-render' });
@@ -97,16 +102,18 @@ export async function handler(event: RenderRequest): Promise<{ results: Rendered
 
   // 1. Fetch bodies + decide cache hits BEFORE paying for chromium: if every
   //    PDF is cached, the browser never launches.
-  const prepared = await Promise.all(documents.map(async d => {
-    assertTenantKey(tenantId, d.contentKey);
-    const body = await getBody(d.contentKey);
-    const sha = createHash('sha256').update(body).digest('hex');
-    const pdfKey = pdfKeyFor(tenantId, d.documentId, sha);
-    const cached = force ? false : await pdfExists(pdfKey);
-    return { doc: d, body, sha, pdfKey, cached };
-  }));
+  const prepared = await Promise.all(
+    documents.map(async (d) => {
+      assertTenantKey(tenantId, d.contentKey);
+      const body = await getBody(d.contentKey);
+      const sha = createHash('sha256').update(body).digest('hex');
+      const pdfKey = pdfKeyFor(tenantId, d.documentId, sha);
+      const cached = force ? false : await pdfExists(pdfKey);
+      return { doc: d, body, sha, pdfKey, cached };
+    }),
+  );
 
-  const toRender = prepared.filter(p => !p.cached);
+  const toRender = prepared.filter((p) => !p.cached);
   logger.info('render plan', { total: prepared.length, cached: prepared.length - toRender.length });
 
   if (toRender.length > 0) {
@@ -130,9 +137,14 @@ export async function handler(event: RenderRequest): Promise<{ results: Rendered
           try {
             await page.setContent(buildDocumentHtml(meta, content), { waitUntil: 'load' });
             const pdf = await page.pdf({ format: 'A4', printBackground: true });
-            await s3.send(new PutObjectCommand({
-              Bucket: CONTENT_BUCKET, Key: item.pdfKey, Body: pdf, ContentType: 'application/pdf',
-            }));
+            await s3.send(
+              new PutObjectCommand({
+                Bucket: CONTENT_BUCKET,
+                Key: item.pdfKey,
+                Body: pdf,
+                ContentType: 'application/pdf',
+              }),
+            );
           } finally {
             await page.close();
           }
@@ -147,7 +159,7 @@ export async function handler(event: RenderRequest): Promise<{ results: Rendered
   }
 
   return {
-    results: prepared.map(p => ({
+    results: prepared.map((p) => ({
       documentId: p.doc.documentId,
       versionId: p.doc.versionId,
       pdfKey: p.pdfKey,

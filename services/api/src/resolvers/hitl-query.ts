@@ -33,8 +33,10 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
 
   switch (event.info.fieldName) {
-    case 'listPendingHitlItems': return listPendingHitlItems(event, tenantId);
-    default: throw new Error(`Unknown field: ${event.info.fieldName}`);
+    case 'listPendingHitlItems':
+      return listPendingHitlItems(event, tenantId);
+    default:
+      throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
 }
 
@@ -48,7 +50,11 @@ async function listPendingHitlItems(event: AppSyncEvent, tenantId: string) {
     try {
       const decoded = JSON.parse(Buffer.from(pagination.nextToken, 'base64').toString('utf-8'));
       // Cross-tenant rejection: validate the decoded key belongs to this tenant
-      if (!decoded.PK || typeof decoded.PK !== 'string' || !decoded.PK.startsWith(`TENANT#${tenantId}#`)) {
+      if (
+        !decoded.PK ||
+        typeof decoded.PK !== 'string' ||
+        !decoded.PK.startsWith(`TENANT#${tenantId}#`)
+      ) {
         throw new Error('Cross-tenant pagination key rejected');
       }
       exclusiveStartKey = decoded;
@@ -62,17 +68,19 @@ async function listPendingHitlItems(event: AppSyncEvent, tenantId: string) {
 
   const ddb = await getTenantDdbClient(tenantId);
 
-  const result = await ddb.send(new QueryCommand({
-    TableName: TABLE_NAME,
-    IndexName: 'GSI9',
-    KeyConditionExpression: 'GSI9PK = :pk', // GSI9PK value is TENANT#<tenantId>#HITL_PENDING (reads only)
-    ExpressionAttributeValues: marshall({ ':pk': `TENANT#${tenantId}#HITL_PENDING` }),
-    Limit: limit,
-    ScanIndexForward: true,
-    ...(exclusiveStartKey ? { ExclusiveStartKey: marshall(exclusiveStartKey) } : {}),
-  }));
+  const result = await ddb.send(
+    new QueryCommand({
+      TableName: TABLE_NAME,
+      IndexName: 'GSI9',
+      KeyConditionExpression: 'GSI9PK = :pk', // GSI9PK value is TENANT#<tenantId>#HITL_PENDING (reads only)
+      ExpressionAttributeValues: marshall({ ':pk': `TENANT#${tenantId}#HITL_PENDING` }),
+      Limit: limit,
+      ScanIndexForward: true,
+      ...(exclusiveStartKey ? { ExclusiveStartKey: marshall(exclusiveStartKey) } : {}),
+    }),
+  );
 
-  const items = (result.Items ?? []).map(raw => {
+  const items = (result.Items ?? []).map((raw) => {
     const item = unmarshall(raw);
     const sk = item.SK as string;
     const hitlItemId = sk.split('PENDING#')[1] ?? sk;

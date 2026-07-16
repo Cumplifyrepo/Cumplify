@@ -14,7 +14,9 @@ vi.mock('@aws-sdk/client-bedrock-runtime', () => {
     },
     ConverseCommand: class {
       input: unknown;
-      constructor(input: unknown) { this.input = input; }
+      constructor(input: unknown) {
+        this.input = input;
+      }
     },
   };
 });
@@ -29,7 +31,12 @@ function baseParams(overrides: Partial<ConverseParams> = {}): ConverseParams {
     system: 'You are a helpful assistant.',
     temperature: 0.3,
     maxTokens: 4096,
-    requestMetadata: { tenantId: 'tenant-1', agent: 'CAPAGuru', module: 'M2', feature: 'capa-open' },
+    requestMetadata: {
+      tenantId: 'tenant-1',
+      agent: 'CAPAGuru',
+      module: 'M2',
+      feature: 'capa-open',
+    },
     cachingEnabled: true,
     ...overrides,
   };
@@ -63,9 +70,7 @@ describe('converse', () => {
     const serverError = new Error('Internal Server Error');
     (serverError as any).$metadata = { httpStatusCode: 500 };
 
-    mockSend
-      .mockRejectedValueOnce(serverError)
-      .mockResolvedValueOnce(successResponse());
+    mockSend.mockRejectedValueOnce(serverError).mockResolvedValueOnce(successResponse());
 
     const result = await converse(baseParams());
     expect(result.text).toBe('response text');
@@ -76,9 +81,7 @@ describe('converse', () => {
     const throttleError = new Error('Too Many Requests');
     (throttleError as any).$metadata = { httpStatusCode: 429 };
 
-    mockSend
-      .mockRejectedValueOnce(throttleError)
-      .mockResolvedValueOnce(successResponse());
+    mockSend.mockRejectedValueOnce(throttleError).mockResolvedValueOnce(successResponse());
 
     const result = await converse(baseParams());
     expect(result.text).toBe('response text');
@@ -145,9 +148,11 @@ describe('converse', () => {
   it('includes guardrailConfig when provided', async () => {
     mockSend.mockResolvedValueOnce(successResponse());
 
-    await converse(baseParams({
-      guardrailConfig: { guardrailIdentifier: 'grl-123', guardrailVersion: '1' },
-    }));
+    await converse(
+      baseParams({
+        guardrailConfig: { guardrailIdentifier: 'grl-123', guardrailVersion: '1' },
+      }),
+    );
 
     const cmd = mockSend.mock.calls[0][0];
     expect(cmd.input.guardrailConfig).toEqual({
@@ -159,15 +164,19 @@ describe('converse', () => {
   it('maps guardedText blocks to Bedrock guardContent (selective evaluation, spec-40 Task 4)', async () => {
     mockSend.mockResolvedValueOnce(successResponse());
 
-    await converse(baseParams({
-      messages: [{
-        role: 'user',
-        content: [
-          { text: 'Format instruction scaffolding.' },
-          { guardedText: 'F1: tenant-entered fact.' },
+    await converse(
+      baseParams({
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { text: 'Format instruction scaffolding.' },
+              { guardedText: 'F1: tenant-entered fact.' },
+            ],
+          },
         ],
-      }],
-    }));
+      }),
+    );
 
     const cmd = mockSend.mock.calls[0][0];
     expect(cmd.input.messages[0].content).toEqual([
@@ -198,15 +207,22 @@ describe('converse', () => {
 });
 
 describe('Nova tool-use greedy decoding (Task 11 fix)', () => {
-  const SAMPLE_TOOLS = [{
-    toolSpec: {
-      name: 'capa-open',
-      description: 'Propose a corrective action',
-      inputSchema: { json: { type: 'object', required: ['ncId'], properties: { ncId: { type: 'string' } } } },
+  const SAMPLE_TOOLS = [
+    {
+      toolSpec: {
+        name: 'capa-open',
+        description: 'Propose a corrective action',
+        inputSchema: {
+          json: { type: 'object', required: ['ncId'], properties: { ncId: { type: 'string' } } },
+        },
+      },
     },
-  }];
+  ];
   const okResponse = () => successResponse('ok');
-  beforeEach(() => { mockSend.mockReset(); resetClient(); });
+  beforeEach(() => {
+    mockSend.mockReset();
+    resetClient();
+  });
 
   it('applies greedy params (temp=1, topP=1, topK=1) for Nova WITH tools', async () => {
     mockSend.mockResolvedValueOnce(okResponse());
@@ -227,13 +243,26 @@ describe('Nova tool-use greedy decoding (Task 11 fix)', () => {
 
   it('wire-encodes hyphenated tool names (Nova A/B proven) and decodes extraction', async () => {
     mockSend.mockResolvedValueOnce({
-      output: { message: { content: [{ toolUse: { toolUseId: 't1', name: 'capa_open', input: { ncId: 'x' } } }] } },
+      output: {
+        message: {
+          content: [{ toolUse: { toolUseId: 't1', name: 'capa_open', input: { ncId: 'x' } } }],
+        },
+      },
       stopReason: 'tool_use',
       usage: { inputTokens: 10, outputTokens: 5 },
     });
-    const result = await converse({ ...baseParams(), tools: [{
-      toolSpec: { name: 'capa-open', description: 'd', inputSchema: { json: { type: 'object' } } },
-    }] });
+    const result = await converse({
+      ...baseParams(),
+      tools: [
+        {
+          toolSpec: {
+            name: 'capa-open',
+            description: 'd',
+            inputSchema: { json: { type: 'object' } },
+          },
+        },
+      ],
+    });
     const input = mockSend.mock.calls[0][0].input;
     expect(input.toolConfig.tools[0].toolSpec.name).toBe('capa_open'); // wire
     expect(result.toolUseBlocks[0].name).toBe('capa-open'); // domain

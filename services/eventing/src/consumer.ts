@@ -193,7 +193,16 @@ function parseAndValidate(body: string): QueueMessage {
 
   // Validate mandatory envelope fields on .detail (ET-4)
   const detail = obj.detail as Record<string, unknown>;
-  const required = ['tenantId', 'eventId', 'timestamp', 'actor', 'module', 'clauseRef', 'standard', 'payload'];
+  const required = [
+    'tenantId',
+    'eventId',
+    'timestamp',
+    'actor',
+    'module',
+    'clauseRef',
+    'standard',
+    'payload',
+  ];
   for (const field of required) {
     if (!(field in detail)) {
       throw new PoisonMessageError(`Missing envelope field: detail.${field}`);

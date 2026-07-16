@@ -22,56 +22,91 @@ const { mockDdbSend, mockSfnSend, mockResolveHitlItem, mockPublishAuditEvent } =
 });
 
 vi.mock('@aws-sdk/client-eventbridge', () => ({
-  EventBridgeClient: class { send = vi.fn().mockResolvedValue({ FailedEntryCount: 0, Entries: [{ EventId: 'evt-test-1' }] }); },
-  PutEventsCommand: class { constructor(public input: unknown) {} },
+  EventBridgeClient: class {
+    send = vi.fn().mockResolvedValue({ FailedEntryCount: 0, Entries: [{ EventId: 'evt-test-1' }] });
+  },
+  PutEventsCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: class { send = mockDdbSend; },
+  DynamoDBClient: class {
+    send = mockDdbSend;
+  },
   GetItemCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
   UpdateItemCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 
 vi.mock('@aws-sdk/client-sfn', () => ({
-  SFNClient: class { send = mockSfnSend; },
+  SFNClient: class {
+    send = mockSfnSend;
+  },
   SendTaskSuccessCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
   SendTaskFailureCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 
 vi.mock('@aws-sdk/client-sts', () => ({
-  STSClient: class { send = vi.fn().mockResolvedValue({
-    Credentials: {
-      AccessKeyId: 'AKIA_TEST',
-      SecretAccessKey: 'secret',
-      SessionToken: 'token',
-      Expiration: new Date(Date.now() + 900_000),
-    },
-  }); },
-  AssumeRoleCommand: class { constructor(public input: unknown) {} },
+  STSClient: class {
+    send = vi.fn().mockResolvedValue({
+      Credentials: {
+        AccessKeyId: 'AKIA_TEST',
+        SecretAccessKey: 'secret',
+        SessionToken: 'token',
+        Expiration: new Date(Date.now() + 900_000),
+      },
+    });
+  },
+  AssumeRoleCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-sdk/client-rds-data', () => ({
-  RDSDataClient: class { send = vi.fn(); },
-  BeginTransactionCommand: class { constructor(public input: unknown) {} },
-  CommitTransactionCommand: class { constructor(public input: unknown) {} },
-  RollbackTransactionCommand: class { constructor(public input: unknown) {} },
-  ExecuteStatementCommand: class { constructor(public input: unknown) {} },
+  RDSDataClient: class {
+    send = vi.fn();
+  },
+  BeginTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  CommitTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  RollbackTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  ExecuteStatementCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 vi.mock('../../../../eventing/src/publisher.js', () => ({
@@ -138,13 +173,15 @@ describe('hitl-approval resolver — happy path approve', () => {
     // UpdateItem (conditional) succeeds
     mockDdbSend.mockResolvedValueOnce({});
 
-    const result = await handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'APPROVE',
-        justification: 'Looks good',
-      },
-    }));
+    const result = await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'APPROVE',
+          justification: 'Looks good',
+        },
+      }),
+    );
 
     // Schema shape — every field non-nullable in HitlApprovalResult, and
     // tenantId is the onHitlItemResolved(tenantId:) delivery-filter field
@@ -171,7 +208,11 @@ describe('hitl-approval resolver — happy path approve', () => {
     // Verify resolveHitlItem was called with the tenant-scoped client (BUG-14:
     // the ambient role has no DDB grants)
     expect(mockResolveHitlItem).toHaveBeenCalledWith(
-      TENANT_ID, 'hitl-item-123', 'APPROVED', 'approver-user-1', expect.anything(),
+      TENANT_ID,
+      'hitl-item-123',
+      'APPROVED',
+      'approver-user-1',
+      expect.anything(),
     );
   });
 
@@ -179,13 +220,15 @@ describe('hitl-approval resolver — happy path approve', () => {
     mockDdbSend.mockResolvedValueOnce({ Item: makeDdbItem() });
     mockDdbSend.mockResolvedValueOnce({});
 
-    await handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'APPROVE',
-        editedPayload: { severity: 'MEDIUM' },
-      },
-    }));
+    await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'APPROVE',
+          editedPayload: { severity: 'MEDIUM' },
+        },
+      }),
+    );
 
     const sfnCmd = mockSfnSend.mock.calls[0][0];
     const output = JSON.parse(sfnCmd.input.output);
@@ -198,13 +241,15 @@ describe('hitl-approval resolver — happy path send-back', () => {
     mockDdbSend.mockResolvedValueOnce({ Item: makeDdbItem() });
     mockDdbSend.mockResolvedValueOnce({});
 
-    const result = await handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'SEND_BACK',
-        justification: 'Needs more detail',
-      },
-    }));
+    const result = await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'SEND_BACK',
+          justification: 'Needs more detail',
+        },
+      }),
+    );
 
     expect(result.decision).toBe('SEND_BACK');
     expect(result.tenantId).toBe(TENANT_ID);
@@ -220,7 +265,11 @@ describe('hitl-approval resolver — happy path send-back', () => {
 
     // Verify resolveHitlItem was called with REJECTED + the tenant-scoped client
     expect(mockResolveHitlItem).toHaveBeenCalledWith(
-      TENANT_ID, 'hitl-item-123', 'REJECTED', 'approver-user-1', expect.anything(),
+      TENANT_ID,
+      'hitl-item-123',
+      'REJECTED',
+      'approver-user-1',
+      expect.anything(),
     );
   });
 });
@@ -230,12 +279,19 @@ describe('hitl-approval resolver — 403 wrong role', () => {
     // Item has module M5, employee can only approve M10
     mockDdbSend.mockResolvedValueOnce({ Item: makeDdbItem({ module: 'M5' }) });
 
-    await expect(handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'APPROVE',
-      },
-    }, 'employee'))).rejects.toThrow(/cannot approve/);
+    await expect(
+      handler(
+        makeEvent(
+          {
+            input: {
+              hitlItemId: 'hitl-item-123',
+              decision: 'APPROVE',
+            },
+          },
+          'employee',
+        ),
+      ),
+    ).rejects.toThrow(/cannot approve/);
   });
 });
 
@@ -243,12 +299,16 @@ describe('hitl-approval resolver — 404 not found', () => {
   it('throws 404 when item does not exist', async () => {
     mockDdbSend.mockResolvedValueOnce({ Item: undefined });
 
-    await expect(handler(makeEvent({
-      input: {
-        hitlItemId: 'nonexistent-item',
-        decision: 'APPROVE',
-      },
-    }))).rejects.toThrow(/not found/);
+    await expect(
+      handler(
+        makeEvent({
+          input: {
+            hitlItemId: 'nonexistent-item',
+            decision: 'APPROVE',
+          },
+        }),
+      ),
+    ).rejects.toThrow(/not found/);
   });
 });
 
@@ -260,12 +320,16 @@ describe('hitl-approval resolver — 409 race condition', () => {
     (condErr as unknown as Record<string, string>).name = 'ConditionalCheckFailedException';
     mockDdbSend.mockRejectedValueOnce(condErr);
 
-    await expect(handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'APPROVE',
-      },
-    }))).rejects.toThrow(/already resolved/);
+    await expect(
+      handler(
+        makeEvent({
+          input: {
+            hitlItemId: 'hitl-item-123',
+            decision: 'APPROVE',
+          },
+        }),
+      ),
+    ).rejects.toThrow(/already resolved/);
   });
 });
 
@@ -277,12 +341,16 @@ describe('hitl-approval resolver — 410 SFN expired', () => {
     (sfnErr as unknown as Record<string, string>).name = 'TaskDoesNotExist';
     mockSfnSend.mockRejectedValueOnce(sfnErr);
 
-    await expect(handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'APPROVE',
-      },
-    }))).rejects.toThrow(/expired/);
+    await expect(
+      handler(
+        makeEvent({
+          input: {
+            hitlItemId: 'hitl-item-123',
+            decision: 'APPROVE',
+          },
+        }),
+      ),
+    ).rejects.toThrow(/expired/);
   });
 
   it('throws 410 when SFN task has timed out', async () => {
@@ -292,12 +360,16 @@ describe('hitl-approval resolver — 410 SFN expired', () => {
     (sfnErr as unknown as Record<string, string>).name = 'TaskTimedOut';
     mockSfnSend.mockRejectedValueOnce(sfnErr);
 
-    await expect(handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'APPROVE',
-      },
-    }))).rejects.toThrow(/expired/);
+    await expect(
+      handler(
+        makeEvent({
+          input: {
+            hitlItemId: 'hitl-item-123',
+            decision: 'APPROVE',
+          },
+        }),
+      ),
+    ).rejects.toThrow(/expired/);
   });
 });
 
@@ -306,13 +378,15 @@ describe('hitl-approval resolver — justification passthrough', () => {
     mockDdbSend.mockResolvedValueOnce({ Item: makeDdbItem() });
     mockDdbSend.mockResolvedValueOnce({});
 
-    await handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'APPROVE',
-        justification: 'Reviewed and acceptable per clause 7.1.2',
-      },
-    }));
+    await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'APPROVE',
+          justification: 'Reviewed and acceptable per clause 7.1.2',
+        },
+      }),
+    );
 
     const sfnCmd = mockSfnSend.mock.calls[0][0];
     const output = JSON.parse(sfnCmd.input.output);
@@ -323,12 +397,14 @@ describe('hitl-approval resolver — justification passthrough', () => {
     mockDdbSend.mockResolvedValueOnce({ Item: makeDdbItem() });
     mockDdbSend.mockResolvedValueOnce({});
 
-    await handler(makeEvent({
-      input: {
-        hitlItemId: 'hitl-item-123',
-        decision: 'SEND_BACK',
-      },
-    }));
+    await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'SEND_BACK',
+        },
+      }),
+    );
 
     const sfnCmd = mockSfnSend.mock.calls[0][0];
     expect(sfnCmd.input.cause).toBe('No reason provided');

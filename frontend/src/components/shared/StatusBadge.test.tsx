@@ -24,7 +24,7 @@ vi.mock('next-intl', () => ({
       },
     };
     const t = (key: string) => translations[ns]?.[key] ?? key;
-    t.has = (key: string) => !!(translations[ns]?.[key]);
+    t.has = (key: string) => !!translations[ns]?.[key];
     return t;
   },
 }));

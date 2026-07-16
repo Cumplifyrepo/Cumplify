@@ -22,11 +22,14 @@ const TABLE_NAME = process.env.TABLE_NAME!;
 interface WeightSeed {
   capturedAt: string;
   sourceCommit: string;
-  models: Record<string, {
-    wIn: number;
-    wOut: number;
-    wCache: number | null;
-  }>;
+  models: Record<
+    string,
+    {
+      wIn: number;
+      wOut: number;
+      wCache: number | null;
+    }
+  >;
 }
 
 // T3E-F2 FIX: static default import — esbuild's json loader inlines the content
@@ -36,7 +39,10 @@ interface WeightSeed {
 import seedRaw from '../data/model-weights-seed.json' with { type: 'json' };
 const seed = seedRaw as unknown as WeightSeed;
 
-export async function handler(event: { action: string; seedHash?: string }): Promise<{ status: string; seeded: number; skipped: number }> {
+export async function handler(event: {
+  action: string;
+  seedHash?: string;
+}): Promise<{ status: string; seeded: number; skipped: number }> {
   if (event.action !== 'seed') {
     return { status: 'skipped', seeded: 0, skipped: 0 };
   }
@@ -60,21 +66,26 @@ export async function handler(event: { action: string; seedHash?: string }): Pro
     const sk = `VERSION#${version}`;
 
     try {
-      await ddb.send(new PutItemCommand({
-        TableName: TABLE_NAME,
-        Item: marshall({
-          PK: pk,
-          SK: sk,
-          modelId,
-          wIn: weights.wIn,
-          wOut: weights.wOut,
-          ...(weights.wCache !== null ? { wCache: weights.wCache } : {}),
-          effectiveFrom: seed.capturedAt,
-          sourceCommit: seed.sourceCommit,
-          seededAt: new Date().toISOString(),
-        }, { removeUndefinedValues: true }),
-        ConditionExpression: 'attribute_not_exists(PK)',
-      }));
+      await ddb.send(
+        new PutItemCommand({
+          TableName: TABLE_NAME,
+          Item: marshall(
+            {
+              PK: pk,
+              SK: sk,
+              modelId,
+              wIn: weights.wIn,
+              wOut: weights.wOut,
+              ...(weights.wCache !== null ? { wCache: weights.wCache } : {}),
+              effectiveFrom: seed.capturedAt,
+              sourceCommit: seed.sourceCommit,
+              seededAt: new Date().toISOString(),
+            },
+            { removeUndefinedValues: true },
+          ),
+          ConditionExpression: 'attribute_not_exists(PK)',
+        }),
+      );
 
       logger.info('Seeded weight', { modelId, pk, sk });
       seeded++;

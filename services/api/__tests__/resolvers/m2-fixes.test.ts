@@ -37,7 +37,12 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
 });
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 import { handler as m2Handler } from '../../src/resolvers/m2.js';
@@ -63,30 +68,47 @@ beforeEach(() => {
 
 describe('m2 recordRootCause — stale-schema fix regression', () => {
   it('inserts into m2.root_cause_analyses (not UPDATE nonconformities root_cause)', async () => {
-    await m2Handler(makeEvent('recordRootCause', {
-      input: { ncId: 'nc-1', method: '5why', findings: 'Line 3 skipped QC', rootCauseSummary: 'Missing checklist step' },
-    }));
+    await m2Handler(
+      makeEvent('recordRootCause', {
+        input: {
+          ncId: 'nc-1',
+          method: '5why',
+          findings: 'Line 3 skipped QC',
+          rootCauseSummary: 'Missing checklist step',
+        },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('INSERT INTO m2.root_cause_analyses');
     expect(sql).not.toContain('root_cause_method');
     expect(sql).toContain('root_cause_summary');
     expect(params).toContainEqual({ name: 'ncId', value: { stringValue: 'nc-1' } });
-    expect(params).toContainEqual({ name: 'findings', value: { stringValue: 'Line 3 skipped QC' } });
-    expect(params).toContainEqual({ name: 'rootCauseSummary', value: { stringValue: 'Missing checklist step' } });
+    expect(params).toContainEqual({
+      name: 'findings',
+      value: { stringValue: 'Line 3 skipped QC' },
+    });
+    expect(params).toContainEqual({
+      name: 'rootCauseSummary',
+      value: { stringValue: 'Missing checklist step' },
+    });
   });
 
   it('normalizes UPPERCASE method to the DB CHECK vocabulary (5WHY → 5why)', async () => {
-    await m2Handler(makeEvent('recordRootCause', {
-      input: { ncId: 'nc-1', method: 'FISHBONE', findings: 'f', rootCauseSummary: 's' },
-    }));
+    await m2Handler(
+      makeEvent('recordRootCause', {
+        input: { ncId: 'nc-1', method: 'FISHBONE', findings: 'f', rootCauseSummary: 's' },
+      }),
+    );
     const [, params] = mockExecute.mock.calls[0];
     expect(params).toContainEqual({ name: 'method', value: { stringValue: 'fishbone' } });
   });
 
   it('advances the NC open → in_progress in the same transaction (before commit)', async () => {
-    await m2Handler(makeEvent('recordRootCause', {
-      input: { ncId: 'nc-1', method: '5why', findings: 'f', rootCauseSummary: 's' },
-    }));
+    await m2Handler(
+      makeEvent('recordRootCause', {
+        input: { ncId: 'nc-1', method: '5why', findings: 'f', rootCauseSummary: 's' },
+      }),
+    );
     expect(mockExecute).toHaveBeenCalledTimes(2);
     const [sql, params] = mockExecute.mock.calls[1];
     expect(sql).toContain(`SET status = 'in_progress'`);
@@ -99,9 +121,17 @@ describe('m2 recordRootCause — stale-schema fix regression', () => {
 
 describe('m2 createCorrectiveAction — stale-schema fix regression', () => {
   it('inserts into nc_id (not nonconformity_id), reads input.ncId, wires containment_flag', async () => {
-    await m2Handler(makeEvent('createCorrectiveAction', {
-      input: { ncId: 'nc-1', actionDesc: 'Retrain operators', ownerId: 'u2', dueDate: '2027-01-01T00:00:00.000Z', containmentFlag: true },
-    }));
+    await m2Handler(
+      makeEvent('createCorrectiveAction', {
+        input: {
+          ncId: 'nc-1',
+          actionDesc: 'Retrain operators',
+          ownerId: 'u2',
+          dueDate: '2027-01-01T00:00:00.000Z',
+          containmentFlag: true,
+        },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('nc_id');
     expect(sql).not.toContain('nonconformity_id');
@@ -111,9 +141,16 @@ describe('m2 createCorrectiveAction — stale-schema fix regression', () => {
   });
 
   it('defaults containment_flag to false when the optional input field is absent', async () => {
-    await m2Handler(makeEvent('createCorrectiveAction', {
-      input: { ncId: 'nc-1', actionDesc: 'a', ownerId: 'u2', dueDate: '2027-01-01T00:00:00.000Z' },
-    }));
+    await m2Handler(
+      makeEvent('createCorrectiveAction', {
+        input: {
+          ncId: 'nc-1',
+          actionDesc: 'a',
+          ownerId: 'u2',
+          dueDate: '2027-01-01T00:00:00.000Z',
+        },
+      }),
+    );
     const [, params] = mockExecute.mock.calls[0];
     expect(params).toContainEqual({ name: 'containmentFlag', value: { booleanValue: false } });
   });
@@ -132,9 +169,11 @@ describe('m2 closeCapa — stale-schema fix regression', () => {
 
 describe('m2 verifyEffectiveness — stale-schema fix regression', () => {
   it('inserts into m2.capa_effectiveness_checks with VerifyEffectivenessInput fields', async () => {
-    await m2Handler(makeEvent('verifyEffectiveness', {
-      input: { correctiveActionId: 'ca-1', verificationMethod: 'audit sample', effective: true },
-    }));
+    await m2Handler(
+      makeEvent('verifyEffectiveness', {
+        input: { correctiveActionId: 'ca-1', verificationMethod: 'audit sample', effective: true },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('INSERT INTO m2.capa_effectiveness_checks');
     expect(sql).toContain('verification_method');
@@ -146,9 +185,11 @@ describe('m2 verifyEffectiveness — stale-schema fix regression', () => {
   });
 
   it('advances the CA to verified when effective=true (same transaction)', async () => {
-    await m2Handler(makeEvent('verifyEffectiveness', {
-      input: { correctiveActionId: 'ca-1', verificationMethod: 'm', effective: true },
-    }));
+    await m2Handler(
+      makeEvent('verifyEffectiveness', {
+        input: { correctiveActionId: 'ca-1', verificationMethod: 'm', effective: true },
+      }),
+    );
     expect(mockExecute).toHaveBeenCalledTimes(2);
     const [sql] = mockExecute.mock.calls[1];
     expect(sql).toContain(`SET status = 'verified'`);
@@ -156,9 +197,11 @@ describe('m2 verifyEffectiveness — stale-schema fix regression', () => {
   });
 
   it('does NOT touch CA status when effective=false', async () => {
-    await m2Handler(makeEvent('verifyEffectiveness', {
-      input: { correctiveActionId: 'ca-1', verificationMethod: 'm', effective: false },
-    }));
+    await m2Handler(
+      makeEvent('verifyEffectiveness', {
+        input: { correctiveActionId: 'ca-1', verificationMethod: 'm', effective: false },
+      }),
+    );
     expect(mockExecute).toHaveBeenCalledTimes(1);
     const [, params] = mockExecute.mock.calls[0];
     expect(params).toContainEqual({ name: 'effective', value: { booleanValue: false } });
@@ -167,7 +210,9 @@ describe('m2 verifyEffectiveness — stale-schema fix regression', () => {
 
 describe('m5 getCrossRegisterRiskView — filter-args fix regression', () => {
   it('honors standard + category args (category mapped to DB vocabulary)', async () => {
-    await m5Handler(makeEvent('getCrossRegisterRiskView', { standard: 'ISO14001', category: 'ENVIRONMENTAL' }));
+    await m5Handler(
+      makeEvent('getCrossRegisterRiskView', { standard: 'ISO14001', category: 'ENVIRONMENTAL' }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('m5_views.get_risk_register_view()');
     expect(sql).toContain('standard = :standard');
@@ -186,9 +231,17 @@ describe('m5 getCrossRegisterRiskView — filter-args fix regression', () => {
 
 describe('m3 recordFinding — checklist_id ::uuid cast fix regression', () => {
   it('casts :checklistId to uuid so a provided id does not bind as VARCHAR', async () => {
-    await m3Handler(makeEvent('recordFinding', {
-      input: { auditId: 'a-1', checklistId: 'cl-1', findingType: 'MINOR_NC', clauseRef: '8.5.1', description: 'd' },
-    }));
+    await m3Handler(
+      makeEvent('recordFinding', {
+        input: {
+          auditId: 'a-1',
+          checklistId: 'cl-1',
+          findingType: 'MINOR_NC',
+          clauseRef: '8.5.1',
+          description: 'd',
+        },
+      }),
+    );
     const [sql] = mockExecute.mock.calls[0];
     expect(sql).toContain(':checklistId::uuid');
   });
@@ -207,12 +260,21 @@ describe('shared marshalRow — CAPAStatus reverse-map fix regression', () => {
       ],
       columnMetadata: columns(['status']),
     };
-    expect(marshalMany(result).map((r) => r.status)).toEqual(['OPEN', 'IN_PROGRESS', 'VERIFIED', 'CLOSED']);
+    expect(marshalMany(result).map((r) => r.status)).toEqual([
+      'OPEN',
+      'IN_PROGRESS',
+      'VERIFIED',
+      'CLOSED',
+    ]);
   });
 
   it('still maps DocumentStatus values through the same merged map', () => {
     const result = {
-      records: [[{ stringValue: 'draft' }], [{ stringValue: 'in_review' }], [{ stringValue: 'obsolete' }]],
+      records: [
+        [{ stringValue: 'draft' }],
+        [{ stringValue: 'in_review' }],
+        [{ stringValue: 'obsolete' }],
+      ],
       columnMetadata: columns(['status']),
     };
     expect(marshalMany(result).map((r) => r.status)).toEqual(['DRAFT', 'IN_REVIEW', 'OBSOLETE']);

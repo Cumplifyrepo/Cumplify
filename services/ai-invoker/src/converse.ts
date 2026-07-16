@@ -17,7 +17,6 @@ import {
 import { Logger } from '@aws-lambda-powertools/logger';
 import type { ConversationMessage, ToolConfig, TokenUsage } from './types.js';
 
-
 /**
  * Nova cannot emit hyphens inside tool-call names (live A/B proven 2026-07-09:
  * 'test-tool' -> invalid-sequence error; 'test_tool' -> clean tool_use).

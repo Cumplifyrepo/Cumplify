@@ -22,11 +22,14 @@ try {
 } catch (e) {
   console.warn('⚠ cdk-outputs.json not found or invalid; using fallback env vars.');
   // Fallback for CI where cdk-outputs.json might not exist
-  writeFileSync(OUTPUT_PATH, [
-    'NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4000/graphql',
-    'NEXT_PUBLIC_USER_POOL_ID=us-east-1_LOCAL',
-    'NEXT_PUBLIC_USER_POOL_CLIENT_ID=local-client-id',
-  ].join('\n') + '\n');
+  writeFileSync(
+    OUTPUT_PATH,
+    [
+      'NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4000/graphql',
+      'NEXT_PUBLIC_USER_POOL_ID=us-east-1_LOCAL',
+      'NEXT_PUBLIC_USER_POOL_CLIENT_ID=local-client-id',
+    ].join('\n') + '\n',
+  );
   process.exit(0);
 }
 
@@ -46,11 +49,12 @@ if (!graphqlUrl || !userPoolId || !userPoolClientId) {
   process.exit(1);
 }
 
-const envContent = [
-  `NEXT_PUBLIC_GRAPHQL_URL=${graphqlUrl}`,
-  `NEXT_PUBLIC_USER_POOL_ID=${userPoolId}`,
-  `NEXT_PUBLIC_USER_POOL_CLIENT_ID=${userPoolClientId}`,
-].join('\n') + '\n';
+const envContent =
+  [
+    `NEXT_PUBLIC_GRAPHQL_URL=${graphqlUrl}`,
+    `NEXT_PUBLIC_USER_POOL_ID=${userPoolId}`,
+    `NEXT_PUBLIC_USER_POOL_CLIENT_ID=${userPoolClientId}`,
+  ].join('\n') + '\n';
 
 writeFileSync(OUTPUT_PATH, envContent);
 console.log('✓ frontend/.env.local written from cdk-outputs.json');

@@ -29,7 +29,12 @@ import {
   type DataApiResult,
 } from './shared.js';
 import type { SqlParameter } from '@aws-sdk/client-rds-data';
-import { S3Client, GetObjectCommand, PutObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  CopyObjectCommand,
+} from '@aws-sdk/client-s3';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { GetItemCommand } from '@aws-sdk/client-dynamodb';
@@ -169,16 +174,22 @@ async function listFormTemplates(tenantId: string): Promise<unknown[]> {
     const templates = marshalTemplates(result);
     const payloadRaw = profileResult.records?.[0]?.[0] as { stringValue?: string } | undefined;
     if (!payloadRaw?.stringValue) return templates; // no profile → all (design §5)
-    const scope = (JSON.parse(payloadRaw.stringValue) as { standardsInScope?: string[] }).standardsInScope ?? [];
+    const scope =
+      (JSON.parse(payloadRaw.stringValue) as { standardsInScope?: string[] }).standardsInScope ??
+      [];
     if (scope.length === 0) return templates;
 
     const scopeSet = new Set(scope);
-    return templates.filter(t => {
-      const concrete = ((t.standards as string[]) ?? []).filter(s => s !== 'IMS');
-      return concrete.some(s => scopeSet.has(s));
+    return templates.filter((t) => {
+      const concrete = ((t.standards as string[]) ?? []).filter((s) => s !== 'IMS');
+      return concrete.some((s) => scopeSet.has(s));
     });
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -191,7 +202,8 @@ async function getFormTemplate(event: AppSyncEvent): Promise<unknown> {
   // Template is tenant-less; use a minimal transaction for consistency
   const txn = await beginTenantTransaction('__catalog__');
   try {
-    const tplResult = await txn.execute(`
+    const tplResult = await txn.execute(
+      `
       SELECT t.id, t.key, t.title_key, t.description_key, t.category,
              t.clause_refs, t.standards, t.requires_approval,
              (SELECT COUNT(*) FROM forms.template_sections s WHERE s.template_id = t.id) AS section_count,
@@ -199,26 +211,38 @@ async function getFormTemplate(event: AppSyncEvent): Promise<unknown> {
               JOIN forms.template_sections s2 ON f.section_id = s2.id
               WHERE s2.template_id = t.id) AS field_count
       FROM forms.templates t WHERE t.id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: templateId } }],
+    );
 
-    const sectionsResult = await txn.execute(`
+    const sectionsResult = await txn.execute(
+      `
       SELECT s.id, s.section_key, s.title_key, s.sort_order
       FROM forms.template_sections s
       WHERE s.template_id = :id::uuid ORDER BY s.sort_order
-    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: templateId } }],
+    );
 
-    const fieldsResult = await txn.execute(`
+    const fieldsResult = await txn.execute(
+      `
       SELECT f.id, f.section_id, f.field_key, f.label_key, f.field_type,
              f.required, f.options, f.relation_target, f.validation, f.sort_order
       FROM forms.template_fields f
       JOIN forms.template_sections s ON f.section_id = s.id
       WHERE s.template_id = :id::uuid ORDER BY s.sort_order, f.sort_order
-    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: templateId } }],
+    );
 
     await txn.commit();
     return marshalTemplateDetail(tplResult, sectionsResult, fieldsResult);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -240,7 +264,10 @@ const LIST_MAX_LIMIT = 500;
 async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<unknown[]> {
   const templateId = event.arguments.templateId as string;
   const status = event.arguments.status as string | undefined;
-  const limit = Math.min(Math.max(1, (event.arguments.limit as number | undefined) ?? LIST_DEFAULT_LIMIT), LIST_MAX_LIMIT);
+  const limit = Math.min(
+    Math.max(1, (event.arguments.limit as number | undefined) ?? LIST_DEFAULT_LIMIT),
+    LIST_MAX_LIMIT,
+  );
   const offset = Math.max(0, (event.arguments.offset as number | undefined) ?? 0);
   const txn = await beginTenantTransaction(tenantId);
   try {
@@ -259,7 +286,8 @@ async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<u
     // LATERAL runs for every candidate row BEFORE the sort+limit (measured:
     // 10k aggregate executions ≈ 340ms; paged: 100 ≈ 3ms). Ordered walk of
     // idx_forms_records_register (migration 017) serves the page directly.
-    const result = await txn.execute(`
+    const result = await txn.execute(
+      `
       SELECT page.*, c.filled_count, c.filled_keys
       FROM (
         SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
@@ -276,11 +304,13 @@ async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<u
         WHERE rv.record_id = page.id
       ) c ON true
       ORDER BY page.created_at DESC
-    `, params);
+    `,
+      params,
+    );
     const fieldsMeta = await fetchTemplateFieldMeta(txn, templateId);
     await txn.commit();
 
-    return marshalRecordRows(result).map(rec => {
+    return marshalRecordRows(result).map((rec) => {
       const filledKeys = new Set((rec.filledKeys as string[] | null) ?? []);
       rec.completion = completionFrom(fieldsMeta, filledKeys);
       rec.values = '{}'; // Values returned on getFormRecord only (list is lightweight)
@@ -289,7 +319,11 @@ async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<u
       return rec;
     });
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -301,24 +335,30 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
   const recordId = event.arguments.id as string;
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const recResult = await txn.execute(`
+    const recResult = await txn.execute(
+      `
       SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
              r.m2_nc_id, r.created_at, r.updated_at
       FROM forms.records r WHERE r.id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
 
     const rows = marshalRecordRows(recResult);
     if (rows.length === 0) throw new Error('RECORD_NOT_FOUND');
     const rec = rows[0];
 
     // Fetch values
-    const valResult = await txn.execute(`
+    const valResult = await txn.execute(
+      `
       SELECT f.field_key, rv.value_text, rv.value_number, rv.value_date,
              rv.value_bool, rv.value_uuid, rv.value_json
       FROM forms.record_values rv
       JOIN forms.template_fields f ON rv.field_id = f.id
       WHERE rv.record_id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
 
     const values = marshalValues(valResult);
     rec.values = JSON.stringify(values);
@@ -330,7 +370,11 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
     await txn.commit();
     return rec;
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -340,19 +384,26 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
 /**
  * createFormRecord — creates a new record in draft status.
  */
-async function createFormRecord(event: AppSyncEvent, tenantId: string, actor: string): Promise<unknown> {
+async function createFormRecord(
+  event: AppSyncEvent,
+  tenantId: string,
+  actor: string,
+): Promise<unknown> {
   const templateId = event.arguments.templateId as string;
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(`
+    const result = await txn.execute(
+      `
       INSERT INTO forms.records (tenant_id, template_id, status, opened_by)
       VALUES (:tenantId, :templateId::uuid, 'draft', :actor)
       RETURNING id, template_id, status, opened_by, completed_by, m2_nc_id, created_at, updated_at
-    `, [
-      { name: 'tenantId', value: { stringValue: tenantId } },
-      { name: 'templateId', value: { stringValue: templateId } },
-      { name: 'actor', value: { stringValue: actor } },
-    ]);
+    `,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'templateId', value: { stringValue: templateId } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
     const rec = marshalRecordRows(result)[0];
     // BUG-1 fix: compute real completion from catalog (not hardcoded 0/0/[]).
     // Task 10: fresh record has zero filled fields — one fields query suffices.
@@ -362,7 +413,11 @@ async function createFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     await txn.commit();
     return rec;
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -403,12 +458,15 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
     }
 
     // Resolve field metadata for typed dispatch
-    const fieldsResult = await txn.execute(`
+    const fieldsResult = await txn.execute(
+      `
       SELECT f.id, f.field_key, f.field_type, f.relation_target
       FROM forms.template_fields f
       JOIN forms.template_sections s ON f.section_id = s.id
       WHERE s.template_id = :templateId::uuid
-    `, [{ name: 'templateId', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'templateId', value: { stringValue: templateId } }],
+    );
 
     const fieldMeta = marshalFieldMeta(fieldsResult);
 
@@ -422,13 +480,16 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
 
       // BUG-2 fix: null value → DELETE the row (clearing a field)
       if (value === null || value === undefined) {
-        await txn.execute(`
+        await txn.execute(
+          `
           DELETE FROM forms.record_values
           WHERE record_id = :recordId::uuid AND field_id = :fieldId::uuid
-        `, [
-          { name: 'recordId', value: { stringValue: recordId } },
-          { name: 'fieldId', value: { stringValue: meta.fieldId } },
-        ]);
+        `,
+          [
+            { name: 'recordId', value: { stringValue: recordId } },
+            { name: 'fieldId', value: { stringValue: meta.fieldId } },
+          ],
+        );
         continue;
       }
 
@@ -455,32 +516,38 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
       // Upsert: INSERT ON CONFLICT UPDATE the appropriate column, null others
       // Type casts: uuid columns need ::uuid, date needs ::timestamptz, json needs ::jsonb, number needs ::numeric
       const valueCast = VALUE_COLUMN_CAST[valueColumn] ?? '';
-      await txn.execute(`
+      await txn.execute(
+        `
         INSERT INTO forms.record_values (record_id, tenant_id, field_id, ${valueColumn})
         VALUES (:recordId::uuid, :tenantId, :fieldId::uuid, :val${valueCast})
         ON CONFLICT (record_id, field_id)
         DO UPDATE SET ${valueColumn} = :val${valueCast},
           ${nullOtherColumns(valueColumn)}
-      `, [
-        { name: 'recordId', value: { stringValue: recordId } },
-        { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'fieldId', value: { stringValue: meta.fieldId } },
-        param,
-      ]);
+      `,
+        [
+          { name: 'recordId', value: { stringValue: recordId } },
+          { name: 'tenantId', value: { stringValue: tenantId } },
+          { name: 'fieldId', value: { stringValue: meta.fieldId } },
+          param,
+        ],
+      );
     }
 
     // Update record timestamp
-    await txn.execute(
-      `UPDATE forms.records SET updated_at = NOW() WHERE id = :id::uuid`,
-      [{ name: 'id', value: { stringValue: recordId } }],
-    );
+    await txn.execute(`UPDATE forms.records SET updated_at = NOW() WHERE id = :id::uuid`, [
+      { name: 'id', value: { stringValue: recordId } },
+    ]);
 
     await txn.commit();
 
     // Return refreshed record
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -495,17 +562,24 @@ async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Prom
  *
  * ZERO hardcoded defaults for clause_ref/severity/source/standard/nc_type.
  */
-async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: string): Promise<unknown> {
+async function submitFormRecord(
+  event: AppSyncEvent,
+  tenantId: string,
+  actor: string,
+): Promise<unknown> {
   const input = event.arguments.input as { recordId: string };
   const recordId = input.recordId;
 
   const txn = await beginTenantTransaction(tenantId);
   try {
     // 1. Fetch record + template metadata
-    const recResult = await txn.execute(`
+    const recResult = await txn.execute(
+      `
       SELECT r.id, r.template_id, r.status, r.opened_by, r.m2_nc_id
       FROM forms.records r WHERE r.id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
     const recRows = marshalRecordRows(recResult);
     if (recRows.length === 0) throw new Error('RECORD_NOT_FOUND');
     const rec = recRows[0];
@@ -520,38 +594,47 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     }
 
     // Check template maps_to + standards + clause_refs
-    const tplResult = await txn.execute(`
+    const tplResult = await txn.execute(
+      `
       SELECT maps_to, standards, clause_refs FROM forms.templates WHERE id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: templateId } }],
+    );
     const tplRows = marshalRecordRows(tplResult);
     const mapsTo = tplRows[0]?.mapsTo as string | null;
     const tplStandards = tplRows[0]?.standards as string[] | null;
     const tplClauseRefs = tplRows[0]?.clauseRefs as string[] | null;
 
     // Fetch all field metadata with maps_to_column
-    const fieldMetaResult = await txn.execute(`
+    const fieldMetaResult = await txn.execute(
+      `
       SELECT f.id, f.field_key, f.field_type, f.required, f.maps_to_column, f.relation_target
       FROM forms.template_fields f
       JOIN forms.template_sections s ON f.section_id = s.id
       WHERE s.template_id = :templateId::uuid
-    `, [{ name: 'templateId', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'templateId', value: { stringValue: templateId } }],
+    );
 
     // Fetch all current record values
-    const valuesResult = await txn.execute(`
+    const valuesResult = await txn.execute(
+      `
       SELECT f.field_key, rv.value_text, rv.value_number, rv.value_date,
              rv.value_bool, rv.value_uuid, rv.value_json
       FROM forms.record_values rv
       JOIN forms.template_fields f ON rv.field_id = f.id
       WHERE rv.record_id = :recordId::uuid
-    `, [{ name: 'recordId', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'recordId', value: { stringValue: recordId } }],
+    );
 
     const currentValues = marshalValues(valuesResult);
     const fieldsMeta = marshalFieldMetaFull(fieldMetaResult);
 
     // BC-3: Validate mapped fields FIRST (MAPPING_INCOMPLETE is the BC-3 signal)
     if (mapsTo === 'm2_ncr') {
-      const mappedFields = fieldsMeta.filter(f => f.mapsToColumn !== null);
-      const requiredMapped = mappedFields.filter(f => f.required);
+      const mappedFields = fieldsMeta.filter((f) => f.mapsToColumn !== null);
+      const requiredMapped = mappedFields.filter((f) => f.required);
 
       for (const field of requiredMapped) {
         const value = currentValues[field.fieldKey];
@@ -562,7 +645,7 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     }
 
     // F3: Full validation (REC-3) — ALL required fields must be filled
-    const allRequired = fieldsMeta.filter(f => f.required);
+    const allRequired = fieldsMeta.filter((f) => f.required);
     for (const field of allRequired) {
       const value = currentValues[field.fieldKey];
       if (value === null || value === undefined || value === '') {
@@ -572,12 +655,14 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
     // NCR→M2 mapping path
     if (mapsTo === 'm2_ncr') {
-
       // Resolve clause_ref UUID → clause_no TEXT from qms.clause_registry (pending 011)
       const clauseRefUuid = currentValues['clause_ref'] as string;
-      const clauseResult = await txn.execute(`
+      const clauseResult = await txn.execute(
+        `
         SELECT clause_no FROM qms.clause_registry WHERE id = :id::uuid
-      `, [{ name: 'id', value: { stringValue: clauseRefUuid } }]);
+      `,
+        [{ name: 'id', value: { stringValue: clauseRefUuid } }],
+      );
       const clauseRows = marshalRecordRows(clauseResult);
       if (clauseRows.length === 0) throw new Error('LINK_TARGET_NOT_FOUND');
       const clauseNoText = clauseRows[0].clauseNo as string;
@@ -586,67 +671,90 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
       let ncId: string;
       if (existingNcId) {
         // UPDATE existing m2.nonconformities mapped columns (do NOT touch CA row — its lifecycle belongs to M2)
-        await txn.execute(`
+        await txn.execute(
+          `
           UPDATE m2.nonconformities
           SET standard = :standard, source = :source, nc_type = :ncType,
               description = :description, clause_ref = :clauseRef, severity = :severity,
               updated_at = NOW()
           WHERE id = :ncId::uuid
-        `, [
-          { name: 'standard', value: { stringValue: currentValues['standard'] as string } },
-          { name: 'source', value: { stringValue: currentValues['source'] as string } },
-          { name: 'ncType', value: { stringValue: currentValues['nc_type'] as string } },
-          { name: 'description', value: { stringValue: currentValues['nc_description'] as string } },
-          { name: 'clauseRef', value: { stringValue: clauseNoText } },
-          { name: 'severity', value: { stringValue: currentValues['severity'] as string } },
-          { name: 'ncId', value: { stringValue: existingNcId } },
-        ]);
+        `,
+          [
+            { name: 'standard', value: { stringValue: currentValues['standard'] as string } },
+            { name: 'source', value: { stringValue: currentValues['source'] as string } },
+            { name: 'ncType', value: { stringValue: currentValues['nc_type'] as string } },
+            {
+              name: 'description',
+              value: { stringValue: currentValues['nc_description'] as string },
+            },
+            { name: 'clauseRef', value: { stringValue: clauseNoText } },
+            { name: 'severity', value: { stringValue: currentValues['severity'] as string } },
+            { name: 'ncId', value: { stringValue: existingNcId } },
+          ],
+        );
         ncId = existingNcId;
       } else {
         // First submit: INSERT m2.nonconformities (real column names from migration 003)
-        const ncResult = await txn.execute(`
+        const ncResult = await txn.execute(
+          `
           INSERT INTO m2.nonconformities (tenant_id, standard, source, nc_type, description, clause_ref, severity, raised_by, created_by)
           VALUES (:tenantId, :standard, :source, :ncType, :description, :clauseRef, :severity, :raisedBy, :actor)
           RETURNING id
-        `, [
-          { name: 'tenantId', value: { stringValue: tenantId } },
-          { name: 'standard', value: { stringValue: currentValues['standard'] as string } },
-          { name: 'source', value: { stringValue: currentValues['source'] as string } },
-          { name: 'ncType', value: { stringValue: currentValues['nc_type'] as string } },
-          { name: 'description', value: { stringValue: currentValues['nc_description'] as string } },
-          { name: 'clauseRef', value: { stringValue: clauseNoText } },
-          { name: 'severity', value: { stringValue: currentValues['severity'] as string } },
-          { name: 'raisedBy', value: { stringValue: currentValues['raised_by'] as string } },
-          { name: 'actor', value: { stringValue: actor } },
-        ]);
+        `,
+          [
+            { name: 'tenantId', value: { stringValue: tenantId } },
+            { name: 'standard', value: { stringValue: currentValues['standard'] as string } },
+            { name: 'source', value: { stringValue: currentValues['source'] as string } },
+            { name: 'ncType', value: { stringValue: currentValues['nc_type'] as string } },
+            {
+              name: 'description',
+              value: { stringValue: currentValues['nc_description'] as string },
+            },
+            { name: 'clauseRef', value: { stringValue: clauseNoText } },
+            { name: 'severity', value: { stringValue: currentValues['severity'] as string } },
+            { name: 'raisedBy', value: { stringValue: currentValues['raised_by'] as string } },
+            { name: 'actor', value: { stringValue: actor } },
+          ],
+        );
         ncId = unwrapField((ncResult.records![0] as Array<Record<string, unknown>>)[0]) as string;
 
         // INSERT m2.corrective_actions (nc_id from INSERT; action_desc/owner_id/due_date NOT NULL)
-        const containmentFlag = currentValues['containment_flag'] === true || currentValues['containment_flag'] === 'true';
-        await txn.execute(`
+        const containmentFlag =
+          currentValues['containment_flag'] === true ||
+          currentValues['containment_flag'] === 'true';
+        await txn.execute(
+          `
           INSERT INTO m2.corrective_actions (tenant_id, nc_id, action_desc, owner_id, due_date, containment_flag, created_by)
           VALUES (:tenantId, :ncId::uuid, :actionDesc, :ownerId, :dueDate::timestamptz, :containmentFlag, :actor)
-        `, [
-          { name: 'tenantId', value: { stringValue: tenantId } },
-          { name: 'ncId', value: { stringValue: ncId } },
-          { name: 'actionDesc', value: { stringValue: currentValues['corrective_action_desc'] as string } },
-          { name: 'ownerId', value: { stringValue: currentValues['ca_owner'] as string } },
-          { name: 'dueDate', value: { stringValue: currentValues['ca_due_date'] as string } },
-          { name: 'containmentFlag', value: { booleanValue: containmentFlag } },
-          { name: 'actor', value: { stringValue: actor } },
-        ]);
+        `,
+          [
+            { name: 'tenantId', value: { stringValue: tenantId } },
+            { name: 'ncId', value: { stringValue: ncId } },
+            {
+              name: 'actionDesc',
+              value: { stringValue: currentValues['corrective_action_desc'] as string },
+            },
+            { name: 'ownerId', value: { stringValue: currentValues['ca_owner'] as string } },
+            { name: 'dueDate', value: { stringValue: currentValues['ca_due_date'] as string } },
+            { name: 'containmentFlag', value: { booleanValue: containmentFlag } },
+            { name: 'actor', value: { stringValue: actor } },
+          ],
+        );
       }
 
       // Stamp forms.records.m2_nc_id + mark complete
-      await txn.execute(`
+      await txn.execute(
+        `
         UPDATE forms.records
         SET m2_nc_id = :ncId::uuid, status = 'complete', completed_by = :actor, completed_at = NOW(), updated_at = NOW()
         WHERE id = :id::uuid
-      `, [
-        { name: 'ncId', value: { stringValue: ncId } },
-        { name: 'actor', value: { stringValue: actor } },
-        { name: 'id', value: { stringValue: recordId } },
-      ]);
+      `,
+        [
+          { name: 'ncId', value: { stringValue: ncId } },
+          { name: 'actor', value: { stringValue: actor } },
+          { name: 'id', value: { stringValue: recordId } },
+        ],
+      );
 
       await txn.commit();
 
@@ -664,14 +772,17 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
       });
     } else {
       // Non-mapping template: just mark complete (no m2 writes)
-      await txn.execute(`
+      await txn.execute(
+        `
         UPDATE forms.records
         SET status = 'complete', completed_by = :actor, completed_at = NOW(), updated_at = NOW()
         WHERE id = :id::uuid
-      `, [
-        { name: 'actor', value: { stringValue: actor } },
-        { name: 'id', value: { stringValue: recordId } },
-      ]);
+      `,
+        [
+          { name: 'actor', value: { stringValue: actor } },
+          { name: 'id', value: { stringValue: recordId } },
+        ],
+      );
 
       await txn.commit();
 
@@ -695,7 +806,11 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -706,17 +821,24 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
  * SoD: approver ≠ completed_by AND approver ≠ opened_by.
  * Violation → Security.SodViolationBlocked, writes NOTHING.
  */
-async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: string): Promise<unknown> {
+async function approveFormRecord(
+  event: AppSyncEvent,
+  tenantId: string,
+  actor: string,
+): Promise<unknown> {
   const input = event.arguments.input as { recordId: string };
   const recordId = input.recordId;
 
   const txn = await beginTenantTransaction(tenantId);
   try {
     // Fetch record
-    const recResult = await txn.execute(`
+    const recResult = await txn.execute(
+      `
       SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by
       FROM forms.records r WHERE r.id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
     const recRows = marshalRecordRows(recResult);
     if (recRows.length === 0) throw new Error('RECORD_NOT_FOUND');
     const rec = recRows[0];
@@ -731,9 +853,12 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
     }
 
     // Template guard: only requires_approval templates
-    const tplResult = await txn.execute(`
+    const tplResult = await txn.execute(
+      `
       SELECT requires_approval, standards, clause_refs FROM forms.templates WHERE id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: templateId } }],
+    );
     const tplRows = marshalRecordRows(tplResult);
     const requiresApproval = tplRows[0]?.requiresApproval;
     const tplStandards = tplRows[0]?.standards as string[] | null;
@@ -746,30 +871,50 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
     // BC-4: SoD — approver ≠ completed_by AND approver ≠ opened_by
     if (actor === completedBy || actor === openedBy) {
       // Publish Security.SodViolationBlocked, write NOTHING
-      try { await txn.rollback(); } catch { /* never mask the original error */ }
+      try {
+        await txn.rollback();
+      } catch {
+        /* never mask the original error */
+      }
       await publishAuditEvent({
         tenantId,
         actor,
         module: 'M4',
-        clauseRef: tplClauseRefs?.[0] ?? (() => { throw new Error('TEMPLATE_METADATA_MISSING'); })(),
-        standard: (tplStandards?.[0] ?? (() => { throw new Error('TEMPLATE_METADATA_MISSING'); })()) as 'ISO9001' | 'ISO14001' | 'ISO45001',
+        clauseRef:
+          tplClauseRefs?.[0] ??
+          (() => {
+            throw new Error('TEMPLATE_METADATA_MISSING');
+          })(),
+        standard: (tplStandards?.[0] ??
+          (() => {
+            throw new Error('TEMPLATE_METADATA_MISSING');
+          })()) as 'ISO9001' | 'ISO14001' | 'ISO45001',
         detailType: 'Security.SodViolationBlocked',
         source: 'cumplify.forms',
         entityId: recordId, // blocked events carry the targeted row id
-        payload: { recordId, attemptedBy: actor, openedBy, completedBy, reason: 'approver must differ from opened_by and completed_by' },
+        payload: {
+          recordId,
+          attemptedBy: actor,
+          openedBy,
+          completedBy,
+          reason: 'approver must differ from opened_by and completed_by',
+        },
       });
       throw new Error('SOD_VIOLATION');
     }
 
     // Approve: stamp approved_by/approved_at, status → approved
-    await txn.execute(`
+    await txn.execute(
+      `
       UPDATE forms.records
       SET status = 'approved', approved_by = :actor, approved_at = NOW(), updated_at = NOW()
       WHERE id = :id::uuid
-    `, [
-      { name: 'actor', value: { stringValue: actor } },
-      { name: 'id', value: { stringValue: recordId } },
-    ]);
+    `,
+      [
+        { name: 'actor', value: { stringValue: actor } },
+        { name: 'id', value: { stringValue: recordId } },
+      ],
+    );
 
     // Task 8 (REC-7): seal the approved record — PDF → EvidenceVault with
     // per-object retention + m4.records pointer, SAME txn as the flip. A
@@ -778,7 +923,13 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
     // honestly — the audit payload carries sealed:false + reason.
     let sealed: Record<string, unknown> = { sealed: false, reason: 'SEAL_NOT_CONFIGURED' };
     if (CONTENT_BUCKET && EVIDENCE_BUCKET && PDF_RENDER_FN) {
-      sealed = await sealApprovedRecord(txn, tenantId, recordId, actor, (tplStandards ?? []) as string[]);
+      sealed = await sealApprovedRecord(
+        txn,
+        tenantId,
+        recordId,
+        actor,
+        (tplStandards ?? []) as string[],
+      );
     }
 
     await txn.commit();
@@ -802,7 +953,11 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
     if ((err as Error).message !== 'SOD_VIOLATION') {
-      try { await txn.rollback(); } catch { /* never mask the original error */ }
+      try {
+        await txn.rollback();
+      } catch {
+        /* never mask the original error */
+      }
     }
     throw err;
   }
@@ -812,7 +967,11 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
  * reopenFormRecord — explicit reopen with justification (REC-4, BC-5).
  * Status complete/approved → reopened. Audit-logged with justification.
  */
-async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: string): Promise<unknown> {
+async function reopenFormRecord(
+  event: AppSyncEvent,
+  tenantId: string,
+  actor: string,
+): Promise<unknown> {
   const input = event.arguments.input as { recordId: string; justification: string };
   const { recordId, justification } = input;
 
@@ -823,10 +982,13 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
   const txn = await beginTenantTransaction(tenantId);
   try {
     // Verify record exists and is in a completable state
-    const recResult = await txn.execute(`
+    const recResult = await txn.execute(
+      `
       SELECT r.id, r.template_id, r.status
       FROM forms.records r WHERE r.id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
     const recRows = marshalRecordRows(recResult);
     if (recRows.length === 0) throw new Error('RECORD_NOT_FOUND');
 
@@ -838,19 +1000,25 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     const templateId = recRows[0].templateId as string;
 
     // Fetch template metadata for audit event (no literal standards)
-    const tplResult = await txn.execute(`
+    const tplResult = await txn.execute(
+      `
       SELECT standards, clause_refs FROM forms.templates WHERE id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: templateId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: templateId } }],
+    );
     const tplRows = marshalRecordRows(tplResult);
     const tplStandards = tplRows[0]?.standards as string[] | null;
     const tplClauseRefs = tplRows[0]?.clauseRefs as string[] | null;
 
     // Transition to reopened
-    await txn.execute(`
+    await txn.execute(
+      `
       UPDATE forms.records
       SET status = 'reopened', completed_by = NULL, completed_at = NULL, updated_at = NOW()
       WHERE id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
 
     await txn.commit();
 
@@ -873,7 +1041,11 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
 
     return getFormRecordById(recordId, tenantId);
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -899,7 +1071,11 @@ async function exportFormRecordPdf(event: AppSyncEvent, tenantId: string): Promi
     built = await buildRecordContent(txn, recordId, locale);
     await txn.commit();
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 
@@ -956,13 +1132,15 @@ async function sealApprovedRecord(
 
   const retainUntil = new Date(Date.now() + years * 365.25 * 24 * 3600 * 1000);
   const sealedKey = `tenants/${tenantId}/sealed/records/${recordId}-${rendered.sha256.slice(0, 12)}.pdf`;
-  await s3.send(new CopyObjectCommand({
-    Bucket: EVIDENCE_BUCKET,
-    Key: sealedKey,
-    CopySource: encodeURIComponent(`${CONTENT_BUCKET}/${rendered.pdfKey}`),
-    ObjectLockMode: EVIDENCE_LOCK_MODE as 'GOVERNANCE' | 'COMPLIANCE',
-    ObjectLockRetainUntilDate: retainUntil,
-  }));
+  await s3.send(
+    new CopyObjectCommand({
+      Bucket: EVIDENCE_BUCKET,
+      Key: sealedKey,
+      CopySource: encodeURIComponent(`${CONTENT_BUCKET}/${rendered.pdfKey}`),
+      ObjectLockMode: EVIDENCE_LOCK_MODE as 'GOVERNANCE' | 'COMPLIANCE',
+      ObjectLockRetainUntilDate: retainUntil,
+    }),
+  );
 
   // BC-6: multi-standard templates seal as 'IMS' (m4.records CHECK widened in 011).
   const effective = effectiveStandard(templateStandards);
@@ -982,7 +1160,9 @@ async function sealApprovedRecord(
       { name: 'actor', value: { stringValue: actor } },
     ],
   );
-  const m4RecordId = unwrapField((m4Res.records![0] as Array<Record<string, unknown>>)[0]) as string;
+  const m4RecordId = unwrapField(
+    (m4Res.records![0] as Array<Record<string, unknown>>)[0],
+  ) as string;
 
   // ACC-7: pointer stamped in the SAME transaction as the approval flip.
   await txn.execute(
@@ -994,8 +1174,12 @@ async function sealApprovedRecord(
   );
 
   return {
-    sealed: true, sealedKey, m4RecordId, retentionYears: years,
-    lockMode: EVIDENCE_LOCK_MODE, retainUntil: retainUntil.toISOString(),
+    sealed: true,
+    sealedKey,
+    m4RecordId,
+    retentionYears: years,
+    lockMode: EVIDENCE_LOCK_MODE,
+    retainUntil: retainUntil.toISOString(),
   };
 }
 
@@ -1017,7 +1201,7 @@ function recordContentKey(tenantId: string, recordId: string): string {
  * seals/renders as IMS.
  */
 function effectiveStandard(standards: string[]): string {
-  const concrete = (standards ?? []).filter(s => s !== 'IMS');
+  const concrete = (standards ?? []).filter((s) => s !== 'IMS');
   return concrete.length === 1 ? concrete[0] : 'IMS';
 }
 
@@ -1028,28 +1212,34 @@ async function renderRecordPdf(
   built: BuiltRecordContent,
 ): Promise<{ pdfKey: string; sha256: string }> {
   const contentKey = recordContentKey(tenantId, recordId);
-  await s3.send(new PutObjectCommand({
-    Bucket: CONTENT_BUCKET,
-    Key: contentKey,
-    Body: JSON.stringify(built.content),
-    ContentType: 'application/json',
-  }));
-
-  const invoke = await lambdaClient.send(new InvokeCommand({
-    FunctionName: PDF_RENDER_FN,
-    Payload: JSON.stringify({
-      tenantId,
-      documents: [{
-        documentId: recordId,
-        versionId: `${recordId}-v${built.versionNo}`,
-        contentKey,
-        title: built.title,
-        docType: 'form_record',
-        standard: built.standard,
-        versionNo: built.versionNo,
-      }],
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: CONTENT_BUCKET,
+      Key: contentKey,
+      Body: JSON.stringify(built.content),
+      ContentType: 'application/json',
     }),
-  }));
+  );
+
+  const invoke = await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: PDF_RENDER_FN,
+      Payload: JSON.stringify({
+        tenantId,
+        documents: [
+          {
+            documentId: recordId,
+            versionId: `${recordId}-v${built.versionNo}`,
+            contentKey,
+            title: built.title,
+            docType: 'form_record',
+            standard: built.standard,
+            versionNo: built.versionNo,
+          },
+        ],
+      }),
+    }),
+  );
   if (invoke.FunctionError) {
     logger.error('record PDF render failed', { raw: new TextDecoder().decode(invoke.Payload) });
     throw new Error('RENDER_FAILED');
@@ -1072,47 +1262,62 @@ async function buildRecordContent(
   recordId: string,
   locale: string,
 ): Promise<BuiltRecordContent> {
-  const recResult = await txn.execute(`
+  const recResult = await txn.execute(
+    `
     SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by, r.completed_at,
            r.approved_by, r.approved_at, r.m2_nc_id, r.version, r.created_at, r.updated_at
     FROM forms.records r WHERE r.id = :id::uuid
-  `, [{ name: 'id', value: { stringValue: recordId } }]);
+  `,
+    [{ name: 'id', value: { stringValue: recordId } }],
+  );
   const recRows = marshalRecordRows(recResult);
   if (recRows.length === 0) throw new Error('RECORD_NOT_FOUND');
   const rec = recRows[0];
   const templateId = rec.templateId as string;
 
-  const tplResult = await txn.execute(`
+  const tplResult = await txn.execute(
+    `
     SELECT key, title_key, category, clause_refs, standards, requires_approval
     FROM forms.templates WHERE id = :id::uuid
-  `, [{ name: 'id', value: { stringValue: templateId } }]);
+  `,
+    [{ name: 'id', value: { stringValue: templateId } }],
+  );
   const tpl = marshalRecordRows(tplResult)[0];
   if (!tpl) throw new Error('TEMPLATE_METADATA_MISSING');
   const standards = (tpl.standards as string[]) ?? [];
   const title = resolveLabel(locale, tpl.titleKey as string);
 
-  const sectionsResult = await txn.execute(`
+  const sectionsResult = await txn.execute(
+    `
     SELECT s.id, s.section_key, s.title_key
     FROM forms.template_sections s
     WHERE s.template_id = :id::uuid ORDER BY s.sort_order
-  `, [{ name: 'id', value: { stringValue: templateId } }]);
+  `,
+    [{ name: 'id', value: { stringValue: templateId } }],
+  );
   const sections = marshalRecordRows(sectionsResult);
 
-  const fieldsResult = await txn.execute(`
+  const fieldsResult = await txn.execute(
+    `
     SELECT f.id, f.section_id, f.field_key, f.label_key, f.field_type, f.required, f.relation_target
     FROM forms.template_fields f
     JOIN forms.template_sections s ON f.section_id = s.id
     WHERE s.template_id = :id::uuid ORDER BY s.sort_order, f.sort_order
-  `, [{ name: 'id', value: { stringValue: templateId } }]);
+  `,
+    [{ name: 'id', value: { stringValue: templateId } }],
+  );
   const fields = marshalRecordRows(fieldsResult);
 
-  const valuesResult = await txn.execute(`
+  const valuesResult = await txn.execute(
+    `
     SELECT f.field_key, rv.value_text, rv.value_number, rv.value_date,
            rv.value_bool, rv.value_uuid, rv.value_json
     FROM forms.record_values rv
     JOIN forms.template_fields f ON rv.field_id = f.id
     WHERE rv.record_id = :id::uuid
-  `, [{ name: 'id', value: { stringValue: recordId } }]);
+  `,
+    [{ name: 'id', value: { stringValue: recordId } }],
+  );
   const values = marshalValues(valuesResult);
 
   // Clause relations render as "ISO9001 8.7 — Title", not a bare UUID.
@@ -1131,12 +1336,12 @@ async function buildRecordContent(
     if (row) clauseDisplay.set(v, `${row.standard} ${row.clauseNo} — ${row.clauseTitle}`);
   }
 
-  const recordSections = sections.map(sec => ({
+  const recordSections = sections.map((sec) => ({
     key: sec.sectionKey as string,
     title: resolveLabel(locale, sec.titleKey as string),
     fields: fields
-      .filter(f => f.sectionId === sec.id)
-      .map(f => {
+      .filter((f) => f.sectionId === sec.id)
+      .map((f) => {
         const raw = values[f.fieldKey as string];
         const filled = raw !== null && raw !== undefined;
         return {
@@ -1145,7 +1350,15 @@ async function buildRecordContent(
           type: f.fieldType as string,
           required: f.required === true,
           filled,
-          display: filled ? formatFieldValue(f.fieldType as string, f.relationTarget as string | null, raw, locale, clauseDisplay) : '',
+          display: filled
+            ? formatFieldValue(
+                f.fieldType as string,
+                f.relationTarget as string | null,
+                raw,
+                locale,
+                clauseDisplay,
+              )
+            : '',
         };
       }),
   }));
@@ -1194,12 +1407,16 @@ function formatFieldValue(
 ): string {
   switch (fieldType) {
     case 'checkbox':
-      return raw === true ? resolveLabel(locale, 'forms.pdf.yes') : resolveLabel(locale, 'forms.pdf.no');
+      return raw === true
+        ? resolveLabel(locale, 'forms.pdf.yes')
+        : resolveLabel(locale, 'forms.pdf.no');
     case 'multiselect': {
       try {
         const arr = JSON.parse(String(raw)) as unknown;
         if (Array.isArray(arr)) return arr.map(String).join(', ');
-      } catch { /* fall through to String(raw) */ }
+      } catch {
+        /* fall through to String(raw) */
+      }
       return String(raw);
     }
     case 'date':
@@ -1220,11 +1437,15 @@ function formatFieldValue(
 async function getTenantDocumentLocale(tenantId: string): Promise<string> {
   try {
     const ddb = await getTenantDdbClient(tenantId);
-    const result = await ddb.send(new GetItemCommand({
-      TableName: TABLE_NAME,
-      Key: marshall({ PK: `TENANT#${tenantId}#META`, SK: 'ORG' }),
-    }));
-    const loc = result.Item ? (unmarshall(result.Item).documentLocale as string | undefined) : undefined;
+    const result = await ddb.send(
+      new GetItemCommand({
+        TableName: TABLE_NAME,
+        Key: marshall({ PK: `TENANT#${tenantId}#META`, SK: 'ORG' }),
+      }),
+    );
+    const loc = result.Item
+      ? (unmarshall(result.Item).documentLocale as string | undefined)
+      : undefined;
     return loc && loc in MESSAGES ? loc : 'en';
   } catch (err) {
     logger.warn('documentLocale read failed — defaulting to en', { error: (err as Error).message });
@@ -1235,10 +1456,13 @@ async function getTenantDocumentLocale(tenantId: string): Promise<string> {
 /** Resolve an i18n catalog key to the locale's string (en fallback, then the key itself). */
 function resolveLabel(locale: string, key: string): string {
   const walk = (root: unknown): unknown =>
-    key.split('.').reduce<unknown>(
-      (o, part) => (o && typeof o === 'object' ? (o as Record<string, unknown>)[part] : undefined),
-      root,
-    );
+    key
+      .split('.')
+      .reduce<unknown>(
+        (o, part) =>
+          o && typeof o === 'object' ? (o as Record<string, unknown>)[part] : undefined,
+        root,
+      );
   const v = walk(MESSAGES[locale] ?? MESSAGES.en) ?? walk(MESSAGES.en);
   if (typeof v === 'string') return v;
   logger.warn('i18n key missing from catalogs — rendering the key', { key, locale });
@@ -1255,15 +1479,18 @@ async function fetchTemplateFieldMeta(
   txn: TenantTransaction,
   templateId: string,
 ): Promise<Array<{ fieldKey: string; required: boolean }>> {
-  const result = await txn.execute(`
+  const result = await txn.execute(
+    `
     SELECT f.field_key, f.required
     FROM forms.template_fields f
     JOIN forms.template_sections s ON f.section_id = s.id
     WHERE s.template_id = :templateId::uuid
-  `, [{ name: 'templateId', value: { stringValue: templateId } }]);
+  `,
+    [{ name: 'templateId', value: { stringValue: templateId } }],
+  );
   const allKeys = extractFieldKeys(result);
   const requiredKeys = new Set(extractRequiredFieldKeys(result));
-  return allKeys.map(k => ({ fieldKey: k, required: requiredKeys.has(k) }));
+  return allKeys.map((k) => ({ fieldKey: k, required: requiredKeys.has(k) }));
 }
 
 /** Compute FormCompletion (design §2.4) from field meta + filled keys. */
@@ -1274,7 +1501,9 @@ function completionFrom(
   return {
     fieldsFilled: filledKeys.size,
     fieldsTotal: fieldsMeta.length,
-    requiredMissing: fieldsMeta.filter(f => f.required && !filledKeys.has(f.fieldKey)).map(f => f.fieldKey),
+    requiredMissing: fieldsMeta
+      .filter((f) => f.required && !filledKeys.has(f.fieldKey))
+      .map((f) => f.fieldKey),
   };
 }
 
@@ -1282,22 +1511,28 @@ function completionFrom(
 async function getFormRecordById(recordId: string, tenantId: string): Promise<unknown> {
   const txn = await beginTenantTransaction(tenantId);
   try {
-    const result = await txn.execute(`
+    const result = await txn.execute(
+      `
       SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
              r.m2_nc_id, r.created_at, r.updated_at
       FROM forms.records r WHERE r.id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
     const rows = marshalRecordRows(result);
     if (rows.length === 0) throw new Error('RECORD_NOT_FOUND');
     const rec = rows[0];
 
-    const valResult = await txn.execute(`
+    const valResult = await txn.execute(
+      `
       SELECT f.field_key, rv.value_text, rv.value_number, rv.value_date,
              rv.value_bool, rv.value_uuid, rv.value_json
       FROM forms.record_values rv
       JOIN forms.template_fields f ON rv.field_id = f.id
       WHERE rv.record_id = :id::uuid
-    `, [{ name: 'id', value: { stringValue: recordId } }]);
+    `,
+      [{ name: 'id', value: { stringValue: recordId } }],
+    );
     const values = marshalValues(valResult);
     rec.values = JSON.stringify(values);
     const fieldsMeta = await fetchTemplateFieldMeta(txn, rec.templateId as string);
@@ -1306,7 +1541,11 @@ async function getFormRecordById(recordId: string, tenantId: string): Promise<un
     await txn.commit();
     return rec;
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask the original error */
+    }
     throw err;
   }
 }
@@ -1333,10 +1572,16 @@ function buildValueParam(valueColumn: string, value: unknown): SqlParameter {
 
 /** Generate SET clause to null out all other value columns. */
 function nullOtherColumns(activeColumn: string): string {
-  const ALL_VALUE_COLUMNS = ['value_text', 'value_number', 'value_date', 'value_bool', 'value_uuid', 'value_json'];
-  return ALL_VALUE_COLUMNS
-    .filter(c => c !== activeColumn)
-    .map(c => `${c} = NULL`)
+  const ALL_VALUE_COLUMNS = [
+    'value_text',
+    'value_number',
+    'value_date',
+    'value_bool',
+    'value_uuid',
+    'value_json',
+  ];
+  return ALL_VALUE_COLUMNS.filter((c) => c !== activeColumn)
+    .map((c) => `${c} = NULL`)
     .join(', ');
 }
 
@@ -1361,7 +1606,7 @@ function unwrapField(field: Record<string, unknown>): unknown {
 
 function marshalTemplates(result: DataApiResult): Record<string, unknown>[] {
   if (!result.records || !result.columnMetadata) return [];
-  return result.records.map(row => {
+  return result.records.map((row) => {
     const obj: Record<string, unknown> = {};
     for (let i = 0; i < result.columnMetadata!.length; i++) {
       const col = result.columnMetadata![i].name ?? `col${i}`;
@@ -1399,7 +1644,7 @@ function marshalTemplateDetail(
 
   // Attach fields to their sections
   if (fieldsResult.records && fieldsResult.columnMetadata) {
-    const sectionMap = new Map(sections.map(s => [s.id as string, s]));
+    const sectionMap = new Map(sections.map((s) => [s.id as string, s]));
     for (const row of fieldsResult.records) {
       const field: Record<string, unknown> = {};
       for (let i = 0; i < fieldsResult.columnMetadata.length; i++) {
@@ -1417,7 +1662,7 @@ function marshalTemplateDetail(
 
 function marshalRecordRows(result: DataApiResult): Record<string, unknown>[] {
   if (!result.records || !result.columnMetadata) return [];
-  return result.records.map(row => {
+  return result.records.map((row) => {
     const obj: Record<string, unknown> = {};
     for (let i = 0; i < result.columnMetadata!.length; i++) {
       const col = result.columnMetadata![i].name ?? `col${i}`;
@@ -1441,23 +1686,41 @@ function marshalValues(result: DataApiResult): Record<string, unknown> {
     for (let i = 0; i < result.columnMetadata.length; i++) {
       const col = result.columnMetadata[i].name ?? '';
       const v = unwrapField(row[i]);
-      if (col === 'field_key') { fieldKey = v as string; continue; }
-      if (v !== null && col !== 'field_key') { value = v; }
+      if (col === 'field_key') {
+        fieldKey = v as string;
+        continue;
+      }
+      if (v !== null && col !== 'field_key') {
+        value = v;
+      }
     }
     if (fieldKey) obj[fieldKey] = value;
   }
   return obj;
 }
 
-interface FieldMeta { fieldId: string; fieldType: string; relationTarget: string | null }
+interface FieldMeta {
+  fieldId: string;
+  fieldType: string;
+  relationTarget: string | null;
+}
 
-interface FieldMetaFull { fieldKey: string; fieldType: string; required: boolean; mapsToColumn: string | null; relationTarget: string | null }
+interface FieldMetaFull {
+  fieldKey: string;
+  fieldType: string;
+  required: boolean;
+  mapsToColumn: string | null;
+  relationTarget: string | null;
+}
 
 function marshalFieldMetaFull(result: DataApiResult): FieldMetaFull[] {
   const fields: FieldMetaFull[] = [];
   if (!result.records || !result.columnMetadata) return fields;
   for (const row of result.records) {
-    let key = '', type = '', mapsTo: string | null = null, relTarget: string | null = null;
+    let key = '',
+      type = '',
+      mapsTo: string | null = null,
+      relTarget: string | null = null;
     let required = false;
     for (let i = 0; i < result.columnMetadata.length; i++) {
       const col = result.columnMetadata[i].name ?? '';
@@ -1468,7 +1731,14 @@ function marshalFieldMetaFull(result: DataApiResult): FieldMetaFull[] {
       if (col === 'maps_to_column') mapsTo = v as string | null;
       if (col === 'relation_target') relTarget = v as string | null;
     }
-    if (key) fields.push({ fieldKey: key, fieldType: type, required, mapsToColumn: mapsTo, relationTarget: relTarget });
+    if (key)
+      fields.push({
+        fieldKey: key,
+        fieldType: type,
+        required,
+        mapsToColumn: mapsTo,
+        relationTarget: relTarget,
+      });
   }
   return fields;
 }
@@ -1477,7 +1747,10 @@ function marshalFieldMeta(result: DataApiResult): Map<string, FieldMeta> {
   const map = new Map<string, FieldMeta>();
   if (!result.records || !result.columnMetadata) return map;
   for (const row of result.records) {
-    let id = '', key = '', type = '', relTarget: string | null = null;
+    let id = '',
+      key = '',
+      type = '',
+      relTarget: string | null = null;
     for (let i = 0; i < result.columnMetadata.length; i++) {
       const col = result.columnMetadata[i].name ?? '';
       const v = unwrapField(row[i]);
@@ -1494,7 +1767,7 @@ function marshalFieldMeta(result: DataApiResult): Map<string, FieldMeta> {
 function extractFieldKeys(result: DataApiResult): string[] {
   const keys: string[] = [];
   if (!result.records || !result.columnMetadata) return keys;
-  const keyIdx = result.columnMetadata.findIndex(c => c.name === 'field_key');
+  const keyIdx = result.columnMetadata.findIndex((c) => c.name === 'field_key');
   if (keyIdx < 0) return keys;
   for (const row of result.records) {
     keys.push(unwrapField(row[keyIdx]) as string);
@@ -1505,8 +1778,8 @@ function extractFieldKeys(result: DataApiResult): string[] {
 function extractRequiredFieldKeys(result: DataApiResult): string[] {
   const keys: string[] = [];
   if (!result.records || !result.columnMetadata) return keys;
-  const keyIdx = result.columnMetadata.findIndex(c => c.name === 'field_key');
-  const reqIdx = result.columnMetadata.findIndex(c => c.name === 'required');
+  const keyIdx = result.columnMetadata.findIndex((c) => c.name === 'field_key');
+  const reqIdx = result.columnMetadata.findIndex((c) => c.name === 'required');
   if (keyIdx < 0 || reqIdx < 0) return keys;
   for (const row of result.records) {
     if (unwrapField(row[reqIdx]) === true) {
@@ -1515,4 +1788,3 @@ function extractRequiredFieldKeys(result: DataApiResult): string[] {
   }
   return keys;
 }
-

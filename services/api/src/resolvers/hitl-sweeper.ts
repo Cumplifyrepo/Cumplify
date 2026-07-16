@@ -12,11 +12,7 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import {
-  DynamoDBClient,
-  ScanCommand,
-  UpdateItemCommand,
-} from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, ScanCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const logger = new Logger({ serviceName: 'hitl-sweeper' });
@@ -54,19 +50,21 @@ export async function handler(): Promise<SweepResult> {
   let exclusiveStartKey: Record<string, unknown> | undefined;
 
   do {
-    const result = await ddb.send(new ScanCommand({
-      TableName: TABLE_NAME,
-      IndexName: 'GSI9', // sparse index — membership already implies GSI9PK exists
-      FilterExpression: '#status = :resolving AND resolvingAt < :cutoff',
-      ExpressionAttributeNames: { '#status': 'status' },
-      ExpressionAttributeValues: marshall({
-        ':resolving': 'RESOLVING',
-        ':cutoff': cutoff,
+    const result = await ddb.send(
+      new ScanCommand({
+        TableName: TABLE_NAME,
+        IndexName: 'GSI9', // sparse index — membership already implies GSI9PK exists
+        FilterExpression: '#status = :resolving AND resolvingAt < :cutoff',
+        ExpressionAttributeNames: { '#status': 'status' },
+        ExpressionAttributeValues: marshall({
+          ':resolving': 'RESOLVING',
+          ':cutoff': cutoff,
+        }),
+        ...(exclusiveStartKey ? { ExclusiveStartKey: marshall(exclusiveStartKey) } : {}),
       }),
-      ...(exclusiveStartKey ? { ExclusiveStartKey: marshall(exclusiveStartKey) } : {}),
-    }));
+    );
 
-    const items = (result.Items ?? []).map(i => unmarshall(i));
+    const items = (result.Items ?? []).map((i) => unmarshall(i));
     scanned += items.length;
 
     for (const item of items) {
@@ -74,17 +72,19 @@ export async function handler(): Promise<SweepResult> {
       const sk = item.SK as string;
 
       try {
-        await ddb.send(new UpdateItemCommand({
-          TableName: TABLE_NAME,
-          Key: marshall({ PK: pk, SK: sk }),
-          ConditionExpression: '#status = :resolving',
-          UpdateExpression: 'SET #status = :pending REMOVE resolvingAt',
-          ExpressionAttributeNames: { '#status': 'status' },
-          ExpressionAttributeValues: marshall({
-            ':resolving': 'RESOLVING',
-            ':pending': 'PENDING',
+        await ddb.send(
+          new UpdateItemCommand({
+            TableName: TABLE_NAME,
+            Key: marshall({ PK: pk, SK: sk }),
+            ConditionExpression: '#status = :resolving',
+            UpdateExpression: 'SET #status = :pending REMOVE resolvingAt',
+            ExpressionAttributeNames: { '#status': 'status' },
+            ExpressionAttributeValues: marshall({
+              ':resolving': 'RESOLVING',
+              ':pending': 'PENDING',
+            }),
           }),
-        }));
+        );
 
         reset++;
         logger.info('Reset stale RESOLVING item to PENDING', { PK: pk, SK: sk });

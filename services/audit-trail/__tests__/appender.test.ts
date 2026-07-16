@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mockClient } from 'aws-sdk-client-mock';
-import {
-  DynamoDBClient,
-  QueryCommand,
-  TransactWriteItemsCommand,
-} from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand, TransactWriteItemsCommand } from '@aws-sdk/client-dynamodb';
 import { appendAuditEvent, ItemSizeExceededError, ReplayDetectedError } from '../src/appender.js';
 import { computePayloadHash, GENESIS_HASH } from '../src/hash-chain.js';
 
@@ -204,40 +200,27 @@ describe('appendAuditEvent', () => {
       // Simulate transaction failure on dedup marker (index 1)
       const err = new Error('Transaction cancelled');
       err.name = 'TransactionCanceledException';
-      (err as any).CancellationReasons = [
-        { Code: 'None' },
-        { Code: 'ConditionalCheckFailed' },
-      ];
+      (err as any).CancellationReasons = [{ Code: 'None' }, { Code: 'ConditionalCheckFailed' }];
       ddbMock.on(TransactWriteItemsCommand).rejects(err);
 
-      await expect(appendAuditEvent(baseInput, 'CAPA.Closed')).rejects.toThrow(
-        ReplayDetectedError,
-      );
+      await expect(appendAuditEvent(baseInput, 'CAPA.Closed')).rejects.toThrow(ReplayDetectedError);
     });
 
     it('throws ReplayDetectedError when chain item already exists', async () => {
       ddbMock.on(QueryCommand).resolves({ Items: [] });
       const err = new Error('Transaction cancelled');
       err.name = 'TransactionCanceledException';
-      (err as any).CancellationReasons = [
-        { Code: 'ConditionalCheckFailed' },
-        { Code: 'None' },
-      ];
+      (err as any).CancellationReasons = [{ Code: 'ConditionalCheckFailed' }, { Code: 'None' }];
       ddbMock.on(TransactWriteItemsCommand).rejects(err);
 
-      await expect(appendAuditEvent(baseInput, 'CAPA.Closed')).rejects.toThrow(
-        ReplayDetectedError,
-      );
+      await expect(appendAuditEvent(baseInput, 'CAPA.Closed')).rejects.toThrow(ReplayDetectedError);
     });
 
     it('rethrows non-conditional transaction failures', async () => {
       ddbMock.on(QueryCommand).resolves({ Items: [] });
       const err = new Error('Transaction cancelled');
       err.name = 'TransactionCanceledException';
-      (err as any).CancellationReasons = [
-        { Code: 'TransactionConflict' },
-        { Code: 'None' },
-      ];
+      (err as any).CancellationReasons = [{ Code: 'TransactionConflict' }, { Code: 'None' }];
       ddbMock.on(TransactWriteItemsCommand).rejects(err);
 
       await expect(appendAuditEvent(baseInput, 'CAPA.Closed')).rejects.toThrow(

@@ -58,13 +58,18 @@ describe('grouping matrix', () => {
     ];
     const plans = groupSections(reg, ['ISO9001', 'ISO14001'], []);
     expect(plans).toHaveLength(2);
-    expect(plans.map(p => p.sectionKey).sort()).toEqual(['8.1#ISO14001', '8.1#ISO9001']);
+    expect(plans.map((p) => p.sectionKey).sort()).toEqual(['8.1#ISO14001', '8.1#ISO9001']);
     for (const p of plans) expect(p.standards).toHaveLength(1);
   });
 
   it('standard_only: own section, keyed per standard', () => {
     const reg = [
-      clause({ standard: 'ISO45001', annexSlMode: 'standard_only', harmonizationKey: '8.2-emergency', clauseNo: '8.2' }),
+      clause({
+        standard: 'ISO45001',
+        annexSlMode: 'standard_only',
+        harmonizationKey: '8.2-emergency',
+        clauseNo: '8.2',
+      }),
     ];
     const plans = groupSections(reg, ['ISO45001', 'ISO9001'], []);
     expect(plans).toHaveLength(1);
@@ -73,16 +78,30 @@ describe('grouping matrix', () => {
 
   it('standard_only clause of an OUT-of-scope standard produces no section', () => {
     const reg = [
-      clause({ standard: 'ISO45001', annexSlMode: 'standard_only', harmonizationKey: '8.2-emergency' }),
+      clause({
+        standard: 'ISO45001',
+        annexSlMode: 'standard_only',
+        harmonizationKey: '8.2-emergency',
+      }),
     ];
     expect(groupSections(reg, ['ISO9001'], [])).toHaveLength(0);
   });
 
   it('exclusion of ALL members → na_justified carrying the justification (never omitted)', () => {
-    const reg = [clause({ id: 'c-design', standard: 'ISO9001', harmonizationKey: '8.3', clauseNo: '8.3', annexSlMode: 'standard_only' })];
-    const plans = groupSections(reg, ['ISO9001'], [
-      { clauseRegistryId: 'c-design', justification: 'No design activity — build-to-print only' },
-    ]);
+    const reg = [
+      clause({
+        id: 'c-design',
+        standard: 'ISO9001',
+        harmonizationKey: '8.3',
+        clauseNo: '8.3',
+        annexSlMode: 'standard_only',
+      }),
+    ];
+    const plans = groupSections(
+      reg,
+      ['ISO9001'],
+      [{ clauseRegistryId: 'c-design', justification: 'No design activity — build-to-print only' }],
+    );
     expect(plans).toHaveLength(1);
     expect(plans[0].status).toBe('na_justified');
     expect(plans[0].naJustification).toContain('build-to-print');
@@ -94,13 +113,15 @@ describe('grouping matrix', () => {
       clause({ id: 'c-a', standard: 'ISO9001', harmonizationKey: '6.1' }),
       clause({ id: 'c-b', standard: 'ISO14001', harmonizationKey: '6.1' }),
     ];
-    const plans = groupSections(reg, ['ISO9001', 'ISO14001'], [
-      { clauseRegistryId: 'c-b', justification: 'excluded' },
-    ]);
+    const plans = groupSections(
+      reg,
+      ['ISO9001', 'ISO14001'],
+      [{ clauseRegistryId: 'c-b', justification: 'excluded' }],
+    );
     expect(plans).toHaveLength(1);
     expect(plans[0].status).toBe('pending');
     expect(plans[0].standards).toEqual(['ISO9001']);
-    expect(plans[0].clauses.map(c => c.id)).toEqual(['c-a']);
+    expect(plans[0].clauses.map((c) => c.id)).toEqual(['c-a']);
   });
 
   it('output is ordered by sortOrder then sectionKey (stable assembly order)', () => {
@@ -110,6 +131,6 @@ describe('grouping matrix', () => {
       clause({ harmonizationKey: '7.5', sortOrder: 75 }),
     ];
     const plans = groupSections(reg, ['ISO9001'], []);
-    expect(plans.map(p => p.sectionKey)).toEqual(['4.1', '7.5', '9.1']);
+    expect(plans.map((p) => p.sectionKey)).toEqual(['4.1', '7.5', '9.1']);
   });
 });

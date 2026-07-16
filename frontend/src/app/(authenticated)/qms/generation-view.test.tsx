@@ -8,57 +8,189 @@ const mockOnViewDocument = vi.fn();
 
 vi.mock('@/lib/api', () => ({ useGraphQL: () => ({ query: mockQuery, mutate: mockMutate }) }));
 vi.mock('@/lib/auth-context', () => ({
-  useAuth: () => ({ user: { sub: 'u1', tenantId: 'T1', role: 'QualityManager', locale: 'en' }, isAuthenticated: true, isLoading: false, signIn: vi.fn(), signOut: vi.fn(), refreshLocale: vi.fn() }),
+  useAuth: () => ({
+    user: { sub: 'u1', tenantId: 'T1', role: 'QualityManager', locale: 'en' },
+    isAuthenticated: true,
+    isLoading: false,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    refreshLocale: vi.fn(),
+  }),
 }));
 vi.mock('@/lib/use-tenant-subscription', () => ({ useTenantSubscription: vi.fn() }));
 
 vi.mock('next-intl', () => {
   const t: Record<string, Record<string, string>> = {
     'qms.generation': {
-      title: 'Document Generation', generate: 'Generate IMS Manual', generating: 'Generating...',
-      profileRequired: 'Organization profile is required before generating. Complete your profile first.',
+      title: 'Document Generation',
+      generate: 'Generate IMS Manual',
+      generating: 'Generating...',
+      profileRequired:
+        'Organization profile is required before generating. Complete your profile first.',
       noStandards: 'No standards in scope. Select standards in your organization profile.',
       unavailable: 'Generation is currently unavailable. Please try again later.',
-      goToProfile: 'Complete Profile', runStatus: 'Generation Status',
-      sectionCount: 'sections', gapSection: 'GAP', failedSection: 'Failed',
-      naSection: 'N/A', proseSection: 'Content ready', pendingSection: 'Pending',
-      reviewed: 'Reviewed', unreviewed: 'Not reviewed', markReviewed: 'Mark reviewed',
+      goToProfile: 'Complete Profile',
+      runStatus: 'Generation Status',
+      sectionCount: 'sections',
+      gapSection: 'GAP',
+      failedSection: 'Failed',
+      naSection: 'N/A',
+      proseSection: 'Content ready',
+      pendingSection: 'Pending',
+      reviewed: 'Reviewed',
+      unreviewed: 'Not reviewed',
+      markReviewed: 'Mark reviewed',
       sectionFailed: 'Section composition failed',
-      gapLinkTraining: 'Competence & Training', gapLinkRisk: 'Risk Management',
-      gapLinkAudit: 'Audit Studio', gapLinkRecords: 'Records',
-      gapLinkCapa: 'CAPA', gapLinkLegal: 'Legal Obligations', gapLinkObjectives: 'Objectives',
+      gapLinkTraining: 'Competence & Training',
+      gapLinkRisk: 'Risk Management',
+      gapLinkAudit: 'Audit Studio',
+      gapLinkRecords: 'Records',
+      gapLinkCapa: 'CAPA',
+      gapLinkLegal: 'Legal Obligations',
+      gapLinkObjectives: 'Objectives',
     },
   };
-  return { useTranslations: (ns: string) => { const fn = (k: string) => t[ns]?.[k] ?? `${ns}.${k}`; fn.has = (k: string) => !!(t[ns]?.[k]); return fn; } };
+  return {
+    useTranslations: (ns: string) => {
+      const fn = (k: string) => t[ns]?.[k] ?? `${ns}.${k}`;
+      fn.has = (k: string) => !!t[ns]?.[k];
+      return fn;
+    },
+  };
 });
 
 vi.mock('@/components/shared', () => ({
-  Panel: ({ children, title }: { children: React.ReactNode; title?: string }) => <section data-testid={`panel-${title ?? 'untitled'}`}>{children}</section>,
-  PrimaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...p}>{children}</button>,
-  SecondaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...p}>{children}</button>,
-  StatusBadge: ({ status }: { status: string }) => <span data-testid={`badge-${status}`}>{status}</span>,
-  ErrorState: ({ onRetry }: { onRetry: () => void }) => <button onClick={onRetry}>retry-action</button>,
+  Panel: ({ children, title }: { children: React.ReactNode; title?: string }) => (
+    <section data-testid={`panel-${title ?? 'untitled'}`}>{children}</section>
+  ),
+  PrimaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button {...p}>{children}</button>
+  ),
+  SecondaryButton: ({ children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button {...p}>{children}</button>
+  ),
+  StatusBadge: ({ status }: { status: string }) => (
+    <span data-testid={`badge-${status}`}>{status}</span>
+  ),
+  ErrorState: ({ onRetry }: { onRetry: () => void }) => (
+    <button onClick={onRetry}>retry-action</button>
+  ),
 }));
 
 // Registry map fixture — clauseRefs in GenerationSection are UUIDs that resolve here
 const mockRegistryMap = new Map<string, RegistryEntry>([
-  ['reg-uuid-1', { id: 'reg-uuid-1', standard: 'ISO9001', clauseNo: '4.1', clauseTitle: 'Context', requiredSources: '["org_profile.legalName"]' }],
-  ['reg-uuid-2', { id: 'reg-uuid-2', standard: 'ISO9001', clauseNo: '6.1', clauseTitle: 'Risks', requiredSources: '["register.risk_assessments"]' }],
-  ['reg-uuid-3', { id: 'reg-uuid-3', standard: 'ISO9001', clauseNo: '4.4', clauseTitle: 'QMS', requiredSources: '["org_profile.coreProcesses"]' }],
-  ['reg-uuid-4', { id: 'reg-uuid-4', standard: 'ISO9001', clauseNo: '8.1', clauseTitle: 'Operations', requiredSources: '["register.training_records"]' }],
-  ['reg-uuid-5', { id: 'reg-uuid-5', standard: 'ISO9001', clauseNo: '7.2', clauseTitle: 'Competence', requiredSources: '["register.training_records"]' }],
+  [
+    'reg-uuid-1',
+    {
+      id: 'reg-uuid-1',
+      standard: 'ISO9001',
+      clauseNo: '4.1',
+      clauseTitle: 'Context',
+      requiredSources: '["org_profile.legalName"]',
+    },
+  ],
+  [
+    'reg-uuid-2',
+    {
+      id: 'reg-uuid-2',
+      standard: 'ISO9001',
+      clauseNo: '6.1',
+      clauseTitle: 'Risks',
+      requiredSources: '["register.risk_assessments"]',
+    },
+  ],
+  [
+    'reg-uuid-3',
+    {
+      id: 'reg-uuid-3',
+      standard: 'ISO9001',
+      clauseNo: '4.4',
+      clauseTitle: 'QMS',
+      requiredSources: '["org_profile.coreProcesses"]',
+    },
+  ],
+  [
+    'reg-uuid-4',
+    {
+      id: 'reg-uuid-4',
+      standard: 'ISO9001',
+      clauseNo: '8.1',
+      clauseTitle: 'Operations',
+      requiredSources: '["register.training_records"]',
+    },
+  ],
+  [
+    'reg-uuid-5',
+    {
+      id: 'reg-uuid-5',
+      standard: 'ISO9001',
+      clauseNo: '7.2',
+      clauseTitle: 'Competence',
+      requiredSources: '["register.training_records"]',
+    },
+  ],
 ]);
 
 const mockRun = {
-  id: 'run-1', status: 'COMPLETE', standards: ['ISO9001', 'ISO14001'],
+  id: 'run-1',
+  status: 'COMPLETE',
+  standards: ['ISO9001', 'ISO14001'],
   sections: [
-    { id: 's1', harmonizationKey: '4.1-context', kind: 'PROSE', clauseRefs: '["reg-uuid-1"]', contentSha256: 'abc', reviewedBy: null, reviewedAt: null, error: null },
-    { id: 's2', harmonizationKey: '6.1-risks', kind: 'GAP', clauseRefs: '["reg-uuid-2"]', contentSha256: null, reviewedBy: null, reviewedAt: null, error: null },
-    { id: 's3', harmonizationKey: '4.4-qms', kind: 'PROSE', clauseRefs: '["reg-uuid-3"]', contentSha256: 'def', reviewedBy: 'jane', reviewedAt: '2026-07-15T10:00:00Z', error: null },
-    { id: 's4', harmonizationKey: '8.1-ops', kind: 'FAILED', clauseRefs: '["reg-uuid-4"]', contentSha256: null, reviewedBy: null, reviewedAt: null, error: 'Composition timeout' },
-    { id: 's5', harmonizationKey: '7.2-competence', kind: 'NA_JUSTIFIED', clauseRefs: '["reg-uuid-5"]', contentSha256: null, reviewedBy: null, reviewedAt: null, error: null },
+    {
+      id: 's1',
+      harmonizationKey: '4.1-context',
+      kind: 'PROSE',
+      clauseRefs: '["reg-uuid-1"]',
+      contentSha256: 'abc',
+      reviewedBy: null,
+      reviewedAt: null,
+      error: null,
+    },
+    {
+      id: 's2',
+      harmonizationKey: '6.1-risks',
+      kind: 'GAP',
+      clauseRefs: '["reg-uuid-2"]',
+      contentSha256: null,
+      reviewedBy: null,
+      reviewedAt: null,
+      error: null,
+    },
+    {
+      id: 's3',
+      harmonizationKey: '4.4-qms',
+      kind: 'PROSE',
+      clauseRefs: '["reg-uuid-3"]',
+      contentSha256: 'def',
+      reviewedBy: 'jane',
+      reviewedAt: '2026-07-15T10:00:00Z',
+      error: null,
+    },
+    {
+      id: 's4',
+      harmonizationKey: '8.1-ops',
+      kind: 'FAILED',
+      clauseRefs: '["reg-uuid-4"]',
+      contentSha256: null,
+      reviewedBy: null,
+      reviewedAt: null,
+      error: 'Composition timeout',
+    },
+    {
+      id: 's5',
+      harmonizationKey: '7.2-competence',
+      kind: 'NA_JUSTIFIED',
+      clauseRefs: '["reg-uuid-5"]',
+      contentSha256: null,
+      reviewedBy: null,
+      reviewedAt: null,
+      error: null,
+    },
   ],
-  manualDocumentId: 'doc-123', gapCount: 1, startedAt: '2026-07-15T09:00:00Z', finishedAt: '2026-07-15T09:05:00Z',
+  manualDocumentId: 'doc-123',
+  gapCount: 1,
+  startedAt: '2026-07-15T09:00:00Z',
+  finishedAt: '2026-07-15T09:05:00Z',
 };
 
 beforeEach(() => {
@@ -140,7 +272,13 @@ describe('GenerationView — run view and section states', () => {
   });
 
   it('calls markSectionReviewed with correct sectionId', async () => {
-    mockMutate.mockResolvedValue({ markSectionReviewed: { ...mockRun.sections[0], reviewedBy: 'u1', reviewedAt: '2026-07-15T12:00:00Z' } });
+    mockMutate.mockResolvedValue({
+      markSectionReviewed: {
+        ...mockRun.sections[0],
+        reviewedBy: 'u1',
+        reviewedAt: '2026-07-15T12:00:00Z',
+      },
+    });
     render(<GenerationView onViewDocument={mockOnViewDocument} registryMap={mockRegistryMap} />);
 
     await waitFor(() => expect(screen.getByTestId('review-btn-4.1-context')).toBeInTheDocument());

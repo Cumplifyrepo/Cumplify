@@ -28,23 +28,20 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
     `\nEvent: ${JSON.stringify(event.payload)}`,
   ].join('');
 
-  await toolLoop(
-    [{ role: 'user', content: [{ text: userMessage }] }],
-    {
-      seat: 'lightweight',
-      systemPrompt: RECORDS_VAULT_PROMPT,
-      tools: RECORDS_VAULT_TOOLS,
-      tenantId,
-      agent: 'RecordsVault',
-      module: 'M4',
-      feature: 'records-management',
-      hitlTools: HITL_TOOLS,
-      invokeFn,
-      dispatchTool: async (toolName, input, tid) => {
-        return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
-      },
+  await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+    seat: 'lightweight',
+    systemPrompt: RECORDS_VAULT_PROMPT,
+    tools: RECORDS_VAULT_TOOLS,
+    tenantId,
+    agent: 'RecordsVault',
+    module: 'M4',
+    feature: 'records-management',
+    hitlTools: HITL_TOOLS,
+    invokeFn,
+    dispatchTool: async (toolName, input, tid) => {
+      return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
     },
-  );
+  });
 }
 
 export const handler = createHandler({

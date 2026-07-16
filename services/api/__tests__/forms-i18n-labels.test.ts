@@ -23,15 +23,19 @@ const CATALOGS: Record<string, unknown> = {
 };
 
 function resolveKey(catalog: unknown, key: string): unknown {
-  return key.split('.').reduce<unknown>(
-    (o, part) => (o && typeof o === 'object' ? (o as Record<string, unknown>)[part] : undefined),
-    catalog,
-  );
+  return key
+    .split('.')
+    .reduce<unknown>(
+      (o, part) => (o && typeof o === 'object' ? (o as Record<string, unknown>)[part] : undefined),
+      catalog,
+    );
 }
 
 // Every quoted forms.* key in the seed (title_key / description_key / label_key
 // columns are the only places such strings appear).
-const seededKeys = [...new Set([...SEED_SQL.matchAll(/'(forms\.[A-Za-z0-9_.]+)'/g)].map(m => m[1]))];
+const seededKeys = [
+  ...new Set([...SEED_SQL.matchAll(/'(forms\.[A-Za-z0-9_.]+)'/g)].map((m) => m[1])),
+];
 
 // Keys the PDF value formatter resolves directly (forms.ts).
 const FORMATTER_KEYS = ['forms.pdf.yes', 'forms.pdf.no'];
@@ -45,7 +49,7 @@ describe('forms seed i18n keys resolve in every catalog (BC-7 / Task 8)', () => 
 
   for (const locale of Object.keys(CATALOGS)) {
     it(`every seeded key resolves to a non-empty string in ${locale}`, () => {
-      const missing = [...seededKeys, ...FORMATTER_KEYS].filter(k => {
+      const missing = [...seededKeys, ...FORMATTER_KEYS].filter((k) => {
         const v = resolveKey(CATALOGS[locale], k);
         return typeof v !== 'string' || v.length === 0;
       });

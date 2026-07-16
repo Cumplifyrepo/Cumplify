@@ -36,13 +36,14 @@ export interface VerifierEvent {
   tenantId?: string; // If set, verify only this tenant (for readback testing)
 }
 
-export async function handler(event: VerifierEvent, context: Context): Promise<VerifierTenantResult[]> {
+export async function handler(
+  event: VerifierEvent,
+  context: Context,
+): Promise<VerifierTenantResult[]> {
   const results: VerifierTenantResult[] = [];
 
   // Discover tenants
-  const tenantIds = event.tenantId
-    ? [event.tenantId]
-    : await discoverTenants();
+  const tenantIds = event.tenantId ? [event.tenantId] : await discoverTenants();
 
   for (const tenantId of tenantIds) {
     // Check remaining time
@@ -129,9 +130,7 @@ async function verifyTenant(tenantId: string): Promise<VerifierTenantResult> {
       result.itemsChecked++;
 
       // 1. Verify payloadHash (REV-2: recompute from stored payload)
-      const recomputedPayloadHash = computePayloadHash(
-        item.payload as Record<string, unknown>,
-      );
+      const recomputedPayloadHash = computePayloadHash(item.payload as Record<string, unknown>);
       if (recomputedPayloadHash !== item.payloadHash) {
         result.chainValid = false;
         result.brokenLinks.push({

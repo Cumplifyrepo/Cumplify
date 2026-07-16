@@ -86,7 +86,7 @@ async function withResumeRetry<T>(fn: () => Promise<T>): Promise<T> {
 
       if (isDatabaseResuming && attempt < MAX_RESUME_RETRIES) {
         logger.warn('Aurora resuming from auto-pause — retrying', { attempt });
-        await new Promise(resolve => setTimeout(resolve, RESUME_DELAY_MS));
+        await new Promise((resolve) => setTimeout(resolve, RESUME_DELAY_MS));
         continue;
       }
       throw err;
@@ -102,19 +102,23 @@ async function withResumeRetry<T>(fn: () => Promise<T>): Promise<T> {
 const FINDING_TYPE_MAP: Record<string, string> = {
   'major-nc': 'major_nc',
   'minor-nc': 'minor_nc',
-  'observation': 'observation',
-  'ofi': 'ofi',
+  observation: 'observation',
+  ofi: 'ofi',
 };
 
 function mapFindingType(raw: string): string {
   const mapped = FINDING_TYPE_MAP[raw];
   if (!mapped) {
-    throw new Error(`Invalid finding_type: '${raw}'. Expected: ${Object.keys(FINDING_TYPE_MAP).join(', ')}`);
+    throw new Error(
+      `Invalid finding_type: '${raw}'. Expected: ${Object.keys(FINDING_TYPE_MAP).join(', ')}`,
+    );
   }
   return mapped;
 }
 
-export async function handler(event: WritebackInput | { Payload: WritebackInput }): Promise<{ status: string; auditEventId?: string }> {
+export async function handler(
+  event: WritebackInput | { Payload: WritebackInput },
+): Promise<{ status: string; auditEventId?: string }> {
   // Task-11 hotfix: the SFN lambda:invoke integration with `'Payload.$': '$'`
   // delivers the STATE as the event — there is no {Payload:...} wrapper on
   // input (the wrapper exists only in state OUTPUT). Accept both shapes.
@@ -122,7 +126,11 @@ export async function handler(event: WritebackInput | { Payload: WritebackInput 
   const { tenantId, agentName, proposedAction, approvalResult } = input;
 
   if (approvalResult.decision !== 'APPROVE') {
-    logger.info('Writeback rejected by human', { tenantId, agentName, hitlItemId: input.hitlItemId });
+    logger.info('Writeback rejected by human', {
+      tenantId,
+      agentName,
+      hitlItemId: input.hitlItemId,
+    });
     return { status: 'REJECTED' };
   }
 
@@ -137,56 +145,79 @@ export async function handler(event: WritebackInput | { Payload: WritebackInput 
     : proposedAction;
 
   logger.info('Executing approved writeback', {
-    tenantId, agentName, tool: effectiveAction.tool, approver: approvalResult.approverSub,
+    tenantId,
+    agentName,
+    tool: effectiveAction.tool,
+    approver: approvalResult.approverSub,
     edited: Boolean(approvalResult.editedPayload),
   });
 
   // M-1: Begin transaction with Aurora resume-retry
-  const txnResult = await withResumeRetry(() => rds.send(new BeginTransactionCommand({
-    resourceArn: CLUSTER_ARN,
-    secretArn: SECRET_ARN,
-    database: DB_NAME,
-  })));
+  const txnResult = await withResumeRetry(() =>
+    rds.send(
+      new BeginTransactionCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: SECRET_ARN,
+        database: DB_NAME,
+      }),
+    ),
+  );
   const transactionId = txnResult.transactionId!;
 
   try {
     // T-8a (BINDING, C-2): set_config FIRST — RLS scoping on the app_role path.
-    await rds.send(new ExecuteStatementCommand({
-      resourceArn: CLUSTER_ARN,
-      secretArn: SECRET_ARN,
-      database: DB_NAME,
-      transactionId,
-      sql: "SELECT set_config('app.tenant_id', :tid, true)",
-      parameters: [{ name: 'tid', value: { stringValue: tenantId } }],
-    }));
+    await rds.send(
+      new ExecuteStatementCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: SECRET_ARN,
+        database: DB_NAME,
+        transactionId,
+        sql: "SELECT set_config('app.tenant_id', :tid, true)",
+        parameters: [{ name: 'tid', value: { stringValue: tenantId } }],
+      }),
+    );
 
     // Dispatch the tool-specific write
     const writeResult = await dispatchToolWrite(effectiveAction, tenantId, transactionId, actor);
 
     // Commit
-    await rds.send(new CommitTransactionCommand({
-      resourceArn: CLUSTER_ARN,
-      secretArn: SECRET_ARN,
-      transactionId,
-    }));
+    await rds.send(
+      new CommitTransactionCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: SECRET_ARN,
+        transactionId,
+      }),
+    );
 
     // H-3: Emit audit event via publishAuditEvent (registered, ULID, correct standard)
     const standard = resolveStandard(effectiveAction);
     const auditEventId = await emitWritebackAuditEvent({
-      tenantId, actor, agentName, proposedAction: effectiveAction, writeResult, standard,
+      tenantId,
+      actor,
+      agentName,
+      proposedAction: effectiveAction,
+      writeResult,
+      standard,
     });
 
     logger.info('Writeback committed + audit emitted', {
-      tenantId, agentName, tool: effectiveAction.tool, auditEventId,
+      tenantId,
+      agentName,
+      tool: effectiveAction.tool,
+      auditEventId,
     });
 
     return { status: 'COMMITTED', auditEventId };
   } catch (err) {
-    await rds.send(new RollbackTransactionCommand({
-      resourceArn: CLUSTER_ARN,
-      secretArn: SECRET_ARN,
-      transactionId,
-    })).catch(() => {}); // Best-effort rollback
+    await rds
+      .send(
+        new RollbackTransactionCommand({
+          resourceArn: CLUSTER_ARN,
+          secretArn: SECRET_ARN,
+          transactionId,
+        }),
+      )
+      .catch(() => {}); // Best-effort rollback
     logger.error('Writeback failed, rolled back', { tenantId, error: (err as Error).message });
     throw err;
   }
@@ -197,7 +228,10 @@ export async function handler(event: WritebackInput | { Payload: WritebackInput 
  * H-3: never hardcode 'ISO9001' — derive from tool args or agent context.
  * Normalizes model output (e.g., "ISO 9001:2015", "iso 14001") to enum values.
  */
-function resolveStandard(proposedAction: { tool: string; args: Record<string, unknown> }): 'ISO9001' | 'ISO14001' | 'ISO45001' {
+function resolveStandard(proposedAction: {
+  tool: string;
+  args: Record<string, unknown>;
+}): 'ISO9001' | 'ISO14001' | 'ISO45001' {
   const raw = proposedAction.args.standard as string | undefined;
   if (raw) {
     const normalized = normalizeStandard(raw);
@@ -259,7 +293,7 @@ async function dispatchToolWrite(
       // Pending architect design ruling on the correct corpus target table.
       throw new Error(
         `Tool 'ct-governance-write' is BLOCKED-ON-DESIGN: target table m1.roles_responsibilities ` +
-        `does not exist in migrations. Requires architect design ruling before implementation.`,
+          `does not exist in migrations. Requires architect design ruling before implementation.`,
       );
     default:
       throw new Error(`Unknown writeback tool: '${action.tool}'`);
@@ -281,127 +315,180 @@ function writtenRow(result: { records?: unknown[][] }): { records: number; id: s
 }
 
 async function executeCapaOpen(
-  args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
 ): Promise<Record<string, unknown>> {
   // C-3a: includes due_date (NOT NULL, no default in 003_m2_capa.sql:41)
   // M-2: created_by = full actor (agent:<name>+human:<sub>)
-  const result = await rds.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `INSERT INTO m2.corrective_actions (tenant_id, nc_id, action_desc, owner_id, due_date, status, created_by)
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m2.corrective_actions (tenant_id, nc_id, action_desc, owner_id, due_date, status, created_by)
           VALUES (current_setting('app.tenant_id'), :ncId::uuid, :actionDesc, :ownerId, :dueDate::timestamptz, 'open', :actor)
           RETURNING id, status, due_date`,
-    parameters: [
-      { name: 'ncId', value: { stringValue: args.ncId as string } },
-      { name: 'actionDesc', value: { stringValue: args.actionDesc as string } },
-      { name: 'ownerId', value: { stringValue: args.suggestedOwnerId as string } },
-      { name: 'dueDate', value: { stringValue: args.dueDate as string } },
-      { name: 'actor', value: { stringValue: actor } },
-    ],
-  }));
+      parameters: [
+        { name: 'ncId', value: { stringValue: args.ncId as string } },
+        { name: 'actionDesc', value: { stringValue: args.actionDesc as string } },
+        { name: 'ownerId', value: { stringValue: args.suggestedOwnerId as string } },
+        { name: 'dueDate', value: { stringValue: args.dueDate as string } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
   return writtenRow(result);
 }
 
 async function executeCapaVerifyEffectiveness(
-  args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
 ): Promise<Record<string, unknown>> {
-  const result = await rds.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `INSERT INTO m2.capa_effectiveness_checks (tenant_id, corrective_action_id, verification_method, verified_by, verified_at, effective, created_by)
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m2.capa_effectiveness_checks (tenant_id, corrective_action_id, verification_method, verified_by, verified_at, effective, created_by)
           VALUES (current_setting('app.tenant_id'), :capaId::uuid, :verificationMethod, :verifiedBy, NOW(), :effective::boolean, :actor)
           RETURNING id, effective`,
-    parameters: [
-      { name: 'capaId', value: { stringValue: args.capaId as string } },
-      { name: 'verificationMethod', value: { stringValue: args.verificationMethod as string } },
-      { name: 'verifiedBy', value: { stringValue: actor } },
-      { name: 'effective', value: { stringValue: String(args.effective) } },
-      { name: 'actor', value: { stringValue: actor } },
-    ],
-  }));
+      parameters: [
+        { name: 'capaId', value: { stringValue: args.capaId as string } },
+        { name: 'verificationMethod', value: { stringValue: args.verificationMethod as string } },
+        { name: 'verifiedBy', value: { stringValue: actor } },
+        { name: 'effective', value: { stringValue: String(args.effective) } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
   return writtenRow(result);
 }
 
 async function executeDocPublish(
-  args: Record<string, unknown>, _tenantId: string, transactionId: string,
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
 ): Promise<Record<string, unknown>> {
-  const result = await rds.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `UPDATE m1.documents SET status = 'approved', updated_at = NOW()
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `UPDATE m1.documents SET status = 'approved', updated_at = NOW()
           WHERE id = :docId::uuid AND tenant_id = current_setting('app.tenant_id')
           RETURNING id, status`,
-    parameters: [{ name: 'docId', value: { stringValue: args.docId as string } }],
-  }));
+      parameters: [{ name: 'docId', value: { stringValue: args.docId as string } }],
+    }),
+  );
   return writtenRow(result);
 }
 
 async function executeDocVersionControl(
-  args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
 ): Promise<Record<string, unknown>> {
-  const result = await rds.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `INSERT INTO m1.document_versions (tenant_id, document_id, version_no, content_ref, change_summary, author_id, created_by)
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m1.document_versions (tenant_id, document_id, version_no, content_ref, change_summary, author_id, created_by)
           VALUES (current_setting('app.tenant_id'), :docId::uuid, :versionNo::integer, :contentRef, :changeSummary, :authorId, :actor)
           RETURNING id, version_no`,
-    parameters: [
-      { name: 'docId', value: { stringValue: args.docId as string } },
-      { name: 'versionNo', value: { stringValue: String(args.newVersion ?? '1') } },
-      // TRACKED-TODO(content-ref-tripwire): the agent HITL writeback has no
-      // content plane yet — '' is the DOCUMENTED exemption pinned by
-      // content-ref-tripwire.test.ts (spec-40 Task 6, BC-8). Closes when the
-      // agent drafting flow writes real S3 content refs (DocStudio content
-      // plane follow-up). Every OTHER writer must set a real content_ref.
-      { name: 'contentRef', value: { stringValue: (args.contentRef as string) ?? '' } },
-      { name: 'changeSummary', value: { stringValue: args.changeDescription as string } },
-      { name: 'authorId', value: { stringValue: actor } },
-      { name: 'actor', value: { stringValue: actor } },
-    ],
-  }));
+      parameters: [
+        { name: 'docId', value: { stringValue: args.docId as string } },
+        { name: 'versionNo', value: { stringValue: String(args.newVersion ?? '1') } },
+        // TRACKED-TODO(content-ref-tripwire): the agent HITL writeback has no
+        // content plane yet — '' is the DOCUMENTED exemption pinned by
+        // content-ref-tripwire.test.ts (spec-40 Task 6, BC-8). Closes when the
+        // agent drafting flow writes real S3 content refs (DocStudio content
+        // plane follow-up). Every OTHER writer must set a real content_ref.
+        { name: 'contentRef', value: { stringValue: (args.contentRef as string) ?? '' } },
+        { name: 'changeSummary', value: { stringValue: args.changeDescription as string } },
+        { name: 'authorId', value: { stringValue: actor } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
   return writtenRow(result);
 }
 
 async function executeAuditFindingWrite(
-  args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
 ): Promise<Record<string, unknown>> {
   // C-3d: map finding_type hyphens→underscores at dispatch layer (not by re-prompting model)
   const findingType = mapFindingType(args.findingType as string);
   // M-2: created_by = full actor
-  const result = await rds.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `INSERT INTO m3.audit_findings (tenant_id, audit_id, finding_type, clause_ref, description, created_by)
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m3.audit_findings (tenant_id, audit_id, finding_type, clause_ref, description, created_by)
           VALUES (current_setting('app.tenant_id'), :auditId::uuid, :findingType, :clauseRef, :description, :actor)
           RETURNING id, finding_type`,
-    parameters: [
-      { name: 'auditId', value: { stringValue: args.auditId as string } },
-      { name: 'findingType', value: { stringValue: findingType } },
-      { name: 'clauseRef', value: { stringValue: (args.clauseRef ?? args.clause) as string } },
-      { name: 'description', value: { stringValue: args.description as string } },
-      { name: 'actor', value: { stringValue: actor } },
-    ],
-  }));
+      parameters: [
+        { name: 'auditId', value: { stringValue: args.auditId as string } },
+        { name: 'findingType', value: { stringValue: findingType } },
+        { name: 'clauseRef', value: { stringValue: (args.clauseRef ?? args.clause) as string } },
+        { name: 'description', value: { stringValue: args.description as string } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
   return writtenRow(result);
 }
 
 async function executeChecklistGen(
-  args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
 ): Promise<Record<string, unknown>> {
   // C-3b: includes created_by (NOT NULL in 004_m3_audit_studio.sql:41)
-  const result = await rds.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `INSERT INTO m3.audit_checklists (tenant_id, audit_id, clause_ref, question, expected_evidence, created_by)
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m3.audit_checklists (tenant_id, audit_id, clause_ref, question, expected_evidence, created_by)
           VALUES (current_setting('app.tenant_id'), :auditId::uuid, :clauseRef, :question, :evidence, :actor)
           RETURNING id`,
-    parameters: [
-      { name: 'auditId', value: { stringValue: args.auditId as string } },
-      { name: 'clauseRef', value: { stringValue: args.clauseRef as string } },
-      { name: 'question', value: { stringValue: args.question as string } },
-      { name: 'evidence', value: { stringValue: (args.expectedEvidence ?? args.checklistItems ?? '') as string } },
-      { name: 'actor', value: { stringValue: actor } },
-    ],
-  }));
+      parameters: [
+        { name: 'auditId', value: { stringValue: args.auditId as string } },
+        { name: 'clauseRef', value: { stringValue: args.clauseRef as string } },
+        { name: 'question', value: { stringValue: args.question as string } },
+        {
+          name: 'evidence',
+          value: { stringValue: (args.expectedEvidence ?? args.checklistItems ?? '') as string },
+        },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
   return writtenRow(result);
 }
 
 async function executeRecordsRetentionSchedule(
-  args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
 ): Promise<Record<string, unknown>> {
   // REWRITTEN 2026-07-16 (architect, owner-approved cleanup): the previous SQL
   // targeted columns that never existed (record_category/retention_period/
@@ -428,44 +515,60 @@ async function executeRecordsRetentionSchedule(
   if (!yearsMatch) {
     throw new Error(
       `RETENTION_PERIOD_UNREPRESENTABLE: '${rawPeriod}' has no leading integer — ` +
-      `m4.retention_policies.retention_years is INTEGER NOT NULL ('permanent' ` +
-      `retention needs a schema decision before this tool can express it).`,
+        `m4.retention_policies.retention_years is INTEGER NOT NULL ('permanent' ` +
+        `retention needs a schema decision before this tool can express it).`,
     );
   }
   const years = Number(yearsMatch[1]);
 
-  const existing = await rds.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `SELECT id FROM m4.retention_policies
+  const existing = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `SELECT id FROM m4.retention_policies
           WHERE tenant_id = current_setting('app.tenant_id') AND record_type = :recordType
           LIMIT 1`,
-    parameters: [{ name: 'recordType', value: { stringValue: category } }],
-  }));
-  const existingId = (existing.records?.[0]?.[0] as { stringValue?: string } | undefined)?.stringValue;
+      parameters: [{ name: 'recordType', value: { stringValue: category } }],
+    }),
+  );
+  const existingId = (existing.records?.[0]?.[0] as { stringValue?: string } | undefined)
+    ?.stringValue;
 
   const result = existingId
-    ? await rds.send(new ExecuteStatementCommand({
-        resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-        sql: `UPDATE m4.retention_policies
+    ? await rds.send(
+        new ExecuteStatementCommand({
+          resourceArn: CLUSTER_ARN,
+          secretArn: SECRET_ARN,
+          database: DB_NAME,
+          transactionId,
+          sql: `UPDATE m4.retention_policies
               SET retention_years = :years, updated_at = NOW(), version = version + 1
               WHERE id = :id::uuid AND tenant_id = current_setting('app.tenant_id')
               RETURNING id, record_type, retention_years`,
-        parameters: [
-          { name: 'years', value: { longValue: years } },
-          { name: 'id', value: { stringValue: existingId } },
-        ],
-      }))
-    : await rds.send(new ExecuteStatementCommand({
-        resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-        sql: `INSERT INTO m4.retention_policies (tenant_id, record_type, retention_years, disposition_rule, created_by)
+          parameters: [
+            { name: 'years', value: { longValue: years } },
+            { name: 'id', value: { stringValue: existingId } },
+          ],
+        }),
+      )
+    : await rds.send(
+        new ExecuteStatementCommand({
+          resourceArn: CLUSTER_ARN,
+          secretArn: SECRET_ARN,
+          database: DB_NAME,
+          transactionId,
+          sql: `INSERT INTO m4.retention_policies (tenant_id, record_type, retention_years, disposition_rule, created_by)
               VALUES (current_setting('app.tenant_id'), :recordType, :years, 'review_before_disposal', :actor)
               RETURNING id, record_type, retention_years`,
-        parameters: [
-          { name: 'recordType', value: { stringValue: category } },
-          { name: 'years', value: { longValue: years } },
-          { name: 'actor', value: { stringValue: actor } },
-        ],
-      }));
+          parameters: [
+            { name: 'recordType', value: { stringValue: category } },
+            { name: 'years', value: { longValue: years } },
+            { name: 'actor', value: { stringValue: actor } },
+          ],
+        }),
+      );
   return writtenRow(result);
 }
 
@@ -484,10 +587,14 @@ async function emitWritebackAuditEvent(opts: {
 }): Promise<string> {
   const eventId = ulid(); // H-3: ULID — avoids FIFO dedup collision risk from timestamp-based IDs
   const moduleMap: Record<string, string> = {
-    'capa-open': 'M2', 'capa-verify-effectiveness': 'M2',
-    'doc-publish': 'M1', 'doc-version-control': 'M1',
-    'audit-finding-write': 'M3', 'audit-checklist-gen': 'M3',
-    'records-retention-schedule': 'M4', 'ct-governance-write': 'cross-standard',
+    'capa-open': 'M2',
+    'capa-verify-effectiveness': 'M2',
+    'doc-publish': 'M1',
+    'doc-version-control': 'M1',
+    'audit-finding-write': 'M3',
+    'audit-checklist-gen': 'M3',
+    'records-retention-schedule': 'M4',
+    'ct-governance-write': 'cross-standard',
   };
   const module = moduleMap[opts.proposedAction.tool] ?? opts.agentName;
 

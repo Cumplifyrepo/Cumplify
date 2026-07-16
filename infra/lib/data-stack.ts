@@ -397,12 +397,8 @@ export class DataStack extends cdk.Stack {
       // disposition and GDPR erasure. Fixed 2026-07-14 (bucket was still empty).
       objectLockDefaultRetention:
         envConfig.evidenceRetentionMode === 'COMPLIANCE'
-          ? s3.ObjectLockRetention.compliance(
-              cdk.Duration.days(envConfig.evidenceRetentionDays),
-            )
-          : s3.ObjectLockRetention.governance(
-              cdk.Duration.days(envConfig.evidenceRetentionDays),
-            ),
+          ? s3.ObjectLockRetention.compliance(cdk.Duration.days(envConfig.evidenceRetentionDays))
+          : s3.ObjectLockRetention.governance(cdk.Duration.days(envConfig.evidenceRetentionDays)),
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       eventBridgeEnabled: true,
       serverAccessLogsBucket: accessLogsBucket,

@@ -37,7 +37,7 @@ export async function handleQuery(
       queryVector,
       topK: 5,
     });
-    groundingContext = results.chunks.map(c => c.text).join('\n---\n');
+    groundingContext = results.chunks.map((c) => c.text).join('\n---\n');
   } catch {
     // Retrieval failure — respond without grounding
   }

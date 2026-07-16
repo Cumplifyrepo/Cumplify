@@ -1,748 +1,561 @@
 {
- "schemaVersion": 1,
- "documentId": "82135f29-dce5-4b05-b0a9-889de111acb8",
- "versionNo": 1,
- "locale": "en",
- "frontMatter": {
-  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
-  "scope": {
-   "organization": "PrecisionFab Machining LLC",
-   "standards": [
-    "ISO9001"
-   ],
-   "sites": [
-    "Plant 1, Wichita, KS, US",
-    "Finishing Shop, Wichita, KS, US"
-   ],
-   "managementRepresentative": "Dana Whitfield"
+  "schemaVersion": 1,
+  "documentId": "82135f29-dce5-4b05-b0a9-889de111acb8",
+  "versionNo": 1,
+  "locale": "en",
+  "frontMatter": {
+    "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+    "scope": {
+      "organization": "PrecisionFab Machining LLC",
+      "standards": ["ISO9001"],
+      "sites": ["Plant 1, Wichita, KS, US", "Finishing Shop, Wichita, KS, US"],
+      "managementRepresentative": "Dana Whitfield"
+    },
+    "normativeRefs": [
+      {
+        "standard": "ISO9001",
+        "source": "https://www.iso.org/store.html"
+      }
+    ],
+    "terms": []
   },
-  "normativeRefs": [
-   {
-    "standard": "ISO9001",
-    "source": "https://www.iso.org/store.html"
-   }
-  ],
-  "terms": []
- },
- "sections": [
-  {
-   "harmonizationKey": "4.1",
-   "clauseRefs": [
+  "sections": [
     {
-     "standard": "ISO9001",
-     "clauseNo": "4.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "applicability.exclusions"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC establishes, implements, maintains, and continually improves its Quality Management System (QMS) and its interacting processes.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
+      "harmonizationKey": "4.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "text": "These processes include quoting and contract review, CNC machining, finishing and coating, final inspection, and shipping, with heat treatment and anodizing being outsourced.",
-     "factRefs": [
-      "F10",
-      "F11"
-     ]
+      "harmonizationKey": "4.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "text": "Each process is defined with clear inputs, outputs, sequence, criteria, and designated process owners to ensure effective management and continuous improvement.",
-     "factRefs": [
-      "F10",
-      "F11"
-     ]
+      "harmonizationKey": "4.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["applicability.exclusions"]
+      }
     },
     {
-     "text": "The QMS is designed to meet the requirements of ISO9001 and to support the organization's objectives in the Precision Machining industry.",
-     "factRefs": [
-      "F2",
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC demonstrates top management leadership and commitment to the QMS, ensuring customer focus is maintained throughout the organization.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
+      "harmonizationKey": "4.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC establishes, implements, maintains, and continually improves its Quality Management System (QMS) and its interacting processes.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "These processes include quoting and contract review, CNC machining, finishing and coating, final inspection, and shipping, with heat treatment and anodizing being outsourced.",
+          "factRefs": ["F10", "F11"]
+        },
+        {
+          "text": "Each process is defined with clear inputs, outputs, sequence, criteria, and designated process owners to ensure effective management and continuous improvement.",
+          "factRefs": ["F10", "F11"]
+        },
+        {
+          "text": "The QMS is designed to meet the requirements of ISO9001 and to support the organization's objectives in the Precision Machining industry.",
+          "factRefs": ["F2", "F12"]
+        }
+      ]
     },
     {
-     "text": "Dana Whitfield, the management representative, plays a pivotal role in upholding these principles within PrecisionFab Machining LLC.",
-     "factRefs": [
-      "F5"
-     ]
+      "harmonizationKey": "5.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC demonstrates top management leadership and commitment to the QMS, ensuring customer focus is maintained throughout the organization.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "Dana Whitfield, the management representative, plays a pivotal role in upholding these principles within PrecisionFab Machining LLC.",
+          "factRefs": ["F5"]
+        },
+        {
+          "text": "This commitment is vital in the precision machining industry, where the organization specializes in CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
+          "factRefs": ["F2", "F3"]
+        },
+        {
+          "text": "With a workforce of 85 employees across two sites, PrecisionFab Machining LLC ensures that customer focus permeates every level of the organization.",
+          "factRefs": ["F4", "F13", "F14"]
+        },
+        {
+          "text": "The establishment of this quality manual marks a significant step in formalizing the organization's dedication to quality and customer satisfaction.",
+          "factRefs": ["F9"]
+        }
+      ]
     },
     {
-     "text": "This commitment is vital in the precision machining industry, where the organization specializes in CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
-     "factRefs": [
-      "F2",
-      "F3"
-     ]
+      "harmonizationKey": "5.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.policies"]
+      }
     },
     {
-     "text": "With a workforce of 85 employees across two sites, PrecisionFab Machining LLC ensures that customer focus permeates every level of the organization.",
-     "factRefs": [
-      "F4",
-      "F13",
-      "F14"
-     ]
+      "harmonizationKey": "5.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC assigns specific roles and responsibilities to its employees to ensure effective management of its quality system.",
+          "factRefs": ["F1", "F4", "F12"]
+        },
+        {
+          "text": "Dana Whitfield, the management representative, is responsible for ensuring that the quality management system is understood, implemented, and maintained at all levels within the organization.",
+          "factRefs": ["F5"]
+        },
+        {
+          "text": "The organization communicates the roles, responsibilities, and authorities relevant to the quality management system to all employees to foster a culture of quality and accountability.",
+          "factRefs": ["F4"]
+        },
+        {
+          "text": "By clearly defining and communicating these roles and responsibilities, PrecisionFab Machining LLC aims to enhance its quality management practices and achieve customer satisfaction in the precision machining industry.",
+          "factRefs": ["F1", "F2", "F3"]
+        }
+      ]
     },
     {
-     "text": "The establishment of this quality manual marks a significant step in formalizing the organization's dedication to quality and customer satisfaction.",
-     "factRefs": [
-      "F9"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.policies"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "5.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC assigns specific roles and responsibilities to its employees to ensure effective management of its quality system.",
-     "factRefs": [
-      "F1",
-      "F4",
-      "F12"
-     ]
+      "harmonizationKey": "6.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.risks"]
+      }
     },
     {
-     "text": "Dana Whitfield, the management representative, is responsible for ensuring that the quality management system is understood, implemented, and maintained at all levels within the organization.",
-     "factRefs": [
-      "F5"
-     ]
+      "harmonizationKey": "6.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
     },
     {
-     "text": "The organization communicates the roles, responsibilities, and authorities relevant to the quality management system to all employees to foster a culture of quality and accountability.",
-     "factRefs": [
-      "F4"
-     ]
+      "harmonizationKey": "6.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.change_plans"]
+      }
     },
     {
-     "text": "By clearly defining and communicating these roles and responsibilities, PrecisionFab Machining LLC aims to enhance its quality management practices and achieve customer satisfaction in the precision machining industry.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "6.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.risks"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.change_plans"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC determines and provides the necessary resources for its quality management system, including skilled personnel, infrastructure, and a controlled process environment.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F4",
-      "F13",
-      "F14"
-     ]
+      "harmonizationKey": "7.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC determines and provides the necessary resources for its quality management system, including skilled personnel, infrastructure, and a controlled process environment.",
+          "factRefs": ["F1", "F2", "F3", "F4", "F13", "F14"]
+        },
+        {
+          "text": "The organization ensures that monitoring and measuring resources are calibrated and traceable to maintain accuracy and reliability in its precision machining operations.",
+          "factRefs": ["F2", "F3", "F10"]
+        },
+        {
+          "text": "Organizational knowledge is systematically managed to support continuous improvement and effective decision-making across all core processes.",
+          "factRefs": ["F8", "F10", "F11"]
+        }
+      ]
     },
     {
-     "text": "The organization ensures that monitoring and measuring resources are calibrated and traceable to maintain accuracy and reliability in its precision machining operations.",
-     "factRefs": [
-      "F2",
-      "F3",
-      "F10"
-     ]
+      "harmonizationKey": "7.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
     },
     {
-     "text": "Organizational knowledge is systematically managed to support continuous improvement and effective decision-making across all core processes.",
-     "factRefs": [
-      "F8",
-      "F10",
-      "F11"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC determines the internal and external communications relevant to its Quality Management System (QMS) in the precision machining industry.",
-     "factRefs": [
-      "F1",
-      "F2"
-     ]
+      "harmonizationKey": "7.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
     },
     {
-     "text": "The organization identifies what information to communicate, including details about CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
-     "factRefs": [
-      "F3"
-     ]
+      "harmonizationKey": "7.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC determines the internal and external communications relevant to its Quality Management System (QMS) in the precision machining industry.",
+          "factRefs": ["F1", "F2"]
+        },
+        {
+          "text": "The organization identifies what information to communicate, including details about CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
+          "factRefs": ["F3"]
+        },
+        {
+          "text": "It establishes when and with whom these communications should occur, considering its 85 employees and its network of regional metal stock distributors and heat-treatment subcontractors.",
+          "factRefs": ["F4", "F7"]
+        },
+        {
+          "text": "The method of communication and the designated communicators are also determined, with Dana Whitfield as the named management representative.",
+          "factRefs": ["F5"]
+        },
+        {
+          "text": "This approach ensures effective communication across all core processes, from quoting and contract review to CNC machining, finishing and coating, final inspection, and shipping.",
+          "factRefs": ["F10"]
+        }
+      ]
     },
     {
-     "text": "It establishes when and with whom these communications should occur, considering its 85 employees and its network of regional metal stock distributors and heat-treatment subcontractors.",
-     "factRefs": [
-      "F4",
-      "F7"
-     ]
+      "harmonizationKey": "7.5",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC maintains the necessary documentation as per ISO9001 requirements, ensuring each document is appropriately identified, formatted, and approved upon creation and update.",
+          "factRefs": ["F1", "F12", "F15"]
+        },
+        {
+          "text": "The organization controls the availability, protection, distribution, retention, and disposition of all documented information to ensure its integrity and accessibility.",
+          "factRefs": ["F1", "F12", "F15"]
+        },
+        {
+          "text": "Documented information includes, but is not limited to, the Quality Management System Manual and procedures for nonconformity and corrective action.",
+          "factRefs": ["F1", "F15", "F16"]
+        },
+        {
+          "text": "This approach ensures that all employees, including those in CNC machining and finishing processes, have access to the correct and current documentation needed to perform their tasks effectively.",
+          "factRefs": ["F1", "F4", "F10", "F15"]
+        }
+      ]
     },
     {
-     "text": "The method of communication and the designated communicators are also determined, with Dana Whitfield as the named management representative.",
-     "factRefs": [
-      "F5"
-     ]
+      "harmonizationKey": "8.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC plans, implements, and controls the processes required to meet the requirements for the provision of CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization ensures that criteria, resources, and documented information are established and maintained for these processes.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "PrecisionFab Machining LLC manages planned changes to its processes to ensure continued conformity with customer and regulatory requirements.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "The organization controls outsourced processes, such as heat treatment and anodizing, to ensure they meet specified requirements.",
+          "factRefs": ["F1", "F11"]
+        }
+      ]
     },
     {
-     "text": "This approach ensures effective communication across all core processes, from quoting and contract review to CNC machining, finishing and coating, final inspection, and shipping.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "8.2-9001#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.2"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC communicates with customers to determine the requirements for CNC-machined components and assemblies, including statutory and regulatory ones.",
+          "factRefs": ["F1", "F2", "F3"]
+        },
+        {
+          "text": "The organization reviews its ability to meet these requirements before committing to contracts.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "Changes to requirements are controlled to ensure continued compliance and customer satisfaction.",
+          "factRefs": ["F1", "F3", "F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC establishes a design and development process with planned stages and controls to ensure the quality and reliability of its CNC-machined components and assemblies.",
+          "factRefs": ["F1", "F3", "F8"]
+        },
+        {
+          "text": "The organization defines specific inputs for each stage of the design and development process, ensuring that all necessary information is considered and documented.",
+          "factRefs": ["F8"]
+        },
+        {
+          "text": "Regular reviews are conducted throughout the design and development stages to assess progress, identify potential issues, and ensure alignment with customer requirements and industry standards.",
+          "factRefs": ["F8", "F12"]
+        },
+        {
+          "text": "Verification and validation activities are integrated into the process to confirm that the design meets specified requirements and functions as intended in its intended application.",
+          "factRefs": ["F8"]
+        },
+        {
+          "text": "All design outputs are meticulously traced back to their corresponding inputs, maintaining a clear and auditable trail of the design process.",
+          "factRefs": ["F8"]
+        },
+        {
+          "text": "Design changes are controlled through a formal process to ensure that modifications are reviewed, approved, and documented, minimizing the risk of errors and ensuring continued compliance with quality standards.",
+          "factRefs": ["F8"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.4#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.4"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.suppliers"]
+      }
+    },
+    {
+      "harmonizationKey": "8.5#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC implements production and service provision under controlled conditions, ensuring the quality and consistency of CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "The organization maintains identification and traceability throughout the production process, from initial quoting and contract review to final inspection and shipping.",
+          "factRefs": ["F1", "F10"]
+        },
+        {
+          "text": "Customer and external-provider property is handled with care, ensuring that all materials and components are preserved and managed according to specified requirements.",
+          "factRefs": ["F1", "F7", "F10"]
+        },
+        {
+          "text": "Post-delivery activities are conducted to ensure customer satisfaction and address any issues that may arise after the components and assemblies have been delivered.",
+          "factRefs": ["F1", "F10"]
+        },
+        {
+          "text": "Changes to production and service provision are controlled to prevent adverse effects on product quality and delivery timelines.",
+          "factRefs": ["F1", "F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.6#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.6"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "PrecisionFab Machining LLC ensures that all CNC-machined components and assemblies for agricultural and industrial equipment OEMs meet specified requirements prior to release.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "Verification processes are in place to confirm that product and service requirements have been fulfilled, with documented evidence maintained for traceability.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Each release is authorized by a designated individual, with records kept to demonstrate conformity and authorization.",
+          "factRefs": ["F5"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.7#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.7"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "9.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "9.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.audits"]
+      }
+    },
+    {
+      "harmonizationKey": "9.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.management_reviews"]
+      }
+    },
+    {
+      "harmonizationKey": "10.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities", "register.objectives"]
+      }
     }
-   ]
-  },
-  {
-   "harmonizationKey": "7.5",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC maintains the necessary documentation as per ISO9001 requirements, ensuring each document is appropriately identified, formatted, and approved upon creation and update.",
-     "factRefs": [
-      "F1",
-      "F12",
-      "F15"
-     ]
-    },
-    {
-     "text": "The organization controls the availability, protection, distribution, retention, and disposition of all documented information to ensure its integrity and accessibility.",
-     "factRefs": [
-      "F1",
-      "F12",
-      "F15"
-     ]
-    },
-    {
-     "text": "Documented information includes, but is not limited to, the Quality Management System Manual and procedures for nonconformity and corrective action.",
-     "factRefs": [
-      "F1",
-      "F15",
-      "F16"
-     ]
-    },
-    {
-     "text": "This approach ensures that all employees, including those in CNC machining and finishing processes, have access to the correct and current documentation needed to perform their tasks effectively.",
-     "factRefs": [
-      "F1",
-      "F4",
-      "F10",
-      "F15"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC plans, implements, and controls the processes required to meet the requirements for the provision of CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization ensures that criteria, resources, and documented information are established and maintained for these processes.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "PrecisionFab Machining LLC manages planned changes to its processes to ensure continued conformity with customer and regulatory requirements.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "The organization controls outsourced processes, such as heat treatment and anodizing, to ensure they meet specified requirements.",
-     "factRefs": [
-      "F1",
-      "F11"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.2-9001#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.2"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC communicates with customers to determine the requirements for CNC-machined components and assemblies, including statutory and regulatory ones.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization reviews its ability to meet these requirements before committing to contracts.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "Changes to requirements are controlled to ensure continued compliance and customer satisfaction.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC establishes a design and development process with planned stages and controls to ensure the quality and reliability of its CNC-machined components and assemblies.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F8"
-     ]
-    },
-    {
-     "text": "The organization defines specific inputs for each stage of the design and development process, ensuring that all necessary information is considered and documented.",
-     "factRefs": [
-      "F8"
-     ]
-    },
-    {
-     "text": "Regular reviews are conducted throughout the design and development stages to assess progress, identify potential issues, and ensure alignment with customer requirements and industry standards.",
-     "factRefs": [
-      "F8",
-      "F12"
-     ]
-    },
-    {
-     "text": "Verification and validation activities are integrated into the process to confirm that the design meets specified requirements and functions as intended in its intended application.",
-     "factRefs": [
-      "F8"
-     ]
-    },
-    {
-     "text": "All design outputs are meticulously traced back to their corresponding inputs, maintaining a clear and auditable trail of the design process.",
-     "factRefs": [
-      "F8"
-     ]
-    },
-    {
-     "text": "Design changes are controlled through a formal process to ensure that modifications are reviewed, approved, and documented, minimizing the risk of errors and ensuring continued compliance with quality standards.",
-     "factRefs": [
-      "F8"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.4#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.4"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.suppliers"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.5#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC implements production and service provision under controlled conditions, ensuring the quality and consistency of CNC-machined components and assemblies for agricultural and industrial equipment OEMs.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "The organization maintains identification and traceability throughout the production process, from initial quoting and contract review to final inspection and shipping.",
-     "factRefs": [
-      "F1",
-      "F10"
-     ]
-    },
-    {
-     "text": "Customer and external-provider property is handled with care, ensuring that all materials and components are preserved and managed according to specified requirements.",
-     "factRefs": [
-      "F1",
-      "F7",
-      "F10"
-     ]
-    },
-    {
-     "text": "Post-delivery activities are conducted to ensure customer satisfaction and address any issues that may arise after the components and assemblies have been delivered.",
-     "factRefs": [
-      "F1",
-      "F10"
-     ]
-    },
-    {
-     "text": "Changes to production and service provision are controlled to prevent adverse effects on product quality and delivery timelines.",
-     "factRefs": [
-      "F1",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.6#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.6"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "PrecisionFab Machining LLC ensures that all CNC-machined components and assemblies for agricultural and industrial equipment OEMs meet specified requirements prior to release.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "Verification processes are in place to confirm that product and service requirements have been fulfilled, with documented evidence maintained for traceability.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Each release is authorized by a designated individual, with records kept to demonstrate conformity and authorization.",
-     "factRefs": [
-      "F5"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.7#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.7"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.audits"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.management_reviews"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities",
-     "register.objectives"
-    ]
-   }
-  }
- ]
+  ]
 }

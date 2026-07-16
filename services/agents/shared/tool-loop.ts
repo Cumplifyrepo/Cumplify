@@ -6,7 +6,13 @@
  * When a mutating tool is detected, enters the HITL gate (§3).
  */
 
-import type { InvokeRequest, ConversationMessage, ToolConfig, SeatId, ContentBlock } from '../../ai-invoker/src/types.js';
+import type {
+  InvokeRequest,
+  ConversationMessage,
+  ToolConfig,
+  SeatId,
+  ContentBlock,
+} from '../../ai-invoker/src/types.js';
 import type { InvokeResponse } from '../../ai-invoker/src/types.js';
 import { enterHitlGate, type HitlResult } from './hitl.js';
 import { Logger } from '@aws-lambda-powertools/logger';
@@ -71,7 +77,7 @@ export async function toolLoop(
   opts: ToolLoopOpts,
 ): Promise<AgentResult> {
   let messages = [...initialMessages];
-  let totalUsage = { inputTokens: 0, outputTokens: 0 };
+  const totalUsage = { inputTokens: 0, outputTokens: 0 };
 
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     const request: InvokeRequest = {
@@ -104,7 +110,9 @@ export async function toolLoop(
         assistantContent.push({ text: response.text });
       }
       for (const tu of response.toolUseBlocks) {
-        assistantContent.push({ toolUse: { toolUseId: tu.toolUseId, name: tu.name, input: tu.input } });
+        assistantContent.push({
+          toolUse: { toolUseId: tu.toolUseId, name: tu.name, input: tu.input },
+        });
       }
       messages = [...messages, { role: 'assistant', content: assistantContent }];
 
@@ -163,7 +171,12 @@ export async function toolLoop(
         toolResultContent.push({
           toolResult: {
             toolUseId: toolUse.toolUseId,
-            content: [{ text: typeof result.output === 'string' ? result.output : JSON.stringify(result.output) }],
+            content: [
+              {
+                text:
+                  typeof result.output === 'string' ? result.output : JSON.stringify(result.output),
+              },
+            ],
             status: 'success',
           },
         });

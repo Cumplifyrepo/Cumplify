@@ -17,7 +17,9 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { Logger } from '@aws-lambda-powertools/logger';
 import {
-  beginTenantTransaction, marshalMany, publishAuditEvent,
+  beginTenantTransaction,
+  marshalMany,
+  publishAuditEvent,
 } from '../../api/src/resolvers/shared.js';
 import { DOC_COMPOSER_OUTPUT_SCHEMA } from '../../ai-invoker/src/doc-composer-schema.js';
 import type { InvokeRequest, InvokeResponse, ContentBlock } from '../../ai-invoker/src/types.js';
@@ -51,11 +53,13 @@ interface ClauseRow {
 }
 
 async function invokeComposer(request: InvokeRequest): Promise<InvokeResponse> {
-  const result = await lambdaClient.send(new InvokeCommand({
-    FunctionName: AI_INVOKER_ARN,
-    InvocationType: 'RequestResponse',
-    Payload: Buffer.from(JSON.stringify(request)),
-  }));
+  const result = await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: AI_INVOKER_ARN,
+      InvocationType: 'RequestResponse',
+      Payload: Buffer.from(JSON.stringify(request)),
+    }),
+  );
   if (result.FunctionError) {
     const payload = result.Payload ? JSON.parse(Buffer.from(result.Payload).toString()) : {};
     throw new Error(`AI Invoker error: ${payload.errorMessage ?? result.FunctionError}`);
@@ -64,10 +68,13 @@ async function invokeComposer(request: InvokeRequest): Promise<InvokeResponse> {
 }
 
 function composerMessages(
-  clauses: ClauseRow[], facts: Fact[], locale: string, retryViolations?: string[],
+  clauses: ClauseRow[],
+  facts: Fact[],
+  locale: string,
+  retryViolations?: string[],
 ): InvokeRequest['messages'] {
   const clauseContext = clauses
-    .map(c => `${c.standard} ${c.clauseNo} (${c.clauseTitle}): ${c.intentParaphrase}`)
+    .map((c) => `${c.standard} ${c.clauseNo} (${c.clauseTitle}): ${c.intentParaphrase}`)
     .join('\n');
 
   const scaffolding =
@@ -80,7 +87,7 @@ function composerMessages(
     `factRefs must never be empty. The sentence text itself must never contain F-numbers or ` +
     `citations like "(F1, F3)" — citations go in factRefs, prose stays clean. The facts follow:`;
 
-  const factsText = facts.map(f => `${f.key}: ${f.text}`).join('\n');
+  const factsText = facts.map((f) => `${f.key}: ${f.text}`).join('\n');
 
   const content: ContentBlock[] = [
     { text: scaffolding },
@@ -116,10 +123,16 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
       logger.info('Section not pending — skipping (idempotent retry)', { currentStatus });
       return { sectionId, status: currentStatus ?? 'unknown' };
     }
-    const clauseIds = ((sectionResult.records[0][1] as { arrayValue?: { stringValues?: string[] } })
-      .arrayValue?.stringValues) ?? [];
+    const clauseIds =
+      (sectionResult.records[0][1] as { arrayValue?: { stringValues?: string[] } }).arrayValue
+        ?.stringValues ?? [];
 
-    await publishGenerationEvent({ runId, tenantId, type: 'section_started', harmonizationKey: sectionKey });
+    await publishGenerationEvent({
+      runId,
+      tenantId,
+      type: 'section_started',
+      harmonizationKey: sectionKey,
+    });
 
     // Load run (pinned profile version) + profile payload
     const runResult = await txn.execute(
@@ -142,7 +155,7 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
        FROM qms.clause_registry WHERE id = ANY(:ids::uuid[]) ORDER BY standard`,
       [{ name: 'ids', value: { stringValue: idsLiteral } }],
     );
-    const clauses: ClauseRow[] = marshalMany(clausesResult).map(r => ({
+    const clauses: ClauseRow[] = marshalMany(clausesResult).map((r) => ({
       id: r.id as string,
       standard: r.standard as string,
       clauseNo: r.clauseNo as string,
@@ -150,17 +163,20 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
       intentParaphrase: r.intentParaphrase as string,
       requiredSources: JSON.parse((r.requiredSources as string) || '[]') as string[],
     }));
-    const requiredSources = [...new Set(clauses.flatMap(c => c.requiredSources))];
+    const requiredSources = [...new Set(clauses.flatMap((c) => c.requiredSources))];
 
     // 2. GAP decision — register counts + samples, RLS-scoped inside this txn
     const registerNames = requiredSources
-      .filter(s => s.startsWith('register.'))
-      .map(s => s.slice('register.'.length));
+      .filter((s) => s.startsWith('register.'))
+      .map((s) => s.slice('register.'.length));
     const registerCounts: Record<string, number> = {};
     const registerData: RegisterData[] = [];
     for (const name of registerNames) {
       const spec = REGISTER_TABLE_MAP[name];
-      if (!spec) { registerCounts[name] = 0; continue; } // module not built — definitionally empty
+      if (!spec) {
+        registerCounts[name] = 0;
+        continue;
+      } // module not built — definitionally empty
       const countResult = await txn.execute(`SELECT COUNT(*) FROM ${spec.table}`);
       const count = Number((countResult.records![0][0] as { longValue?: number }).longValue ?? 0);
       registerCounts[name] = count;
@@ -169,13 +185,13 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
           `SELECT ${spec.titleExpr} FROM ${spec.table} ORDER BY created_at DESC LIMIT 3`,
         );
         const samples = (sampleResult.records ?? [])
-          .map(row => (row[0] as { stringValue?: string }).stringValue ?? '')
+          .map((row) => (row[0] as { stringValue?: string }).stringValue ?? '')
           .filter(Boolean);
         registerData.push({ name, count, samples });
       }
     }
 
-    const clauseRefs = clauses.map(c => ({ standard: c.standard, clauseNo: c.clauseNo }));
+    const clauseRefs = clauses.map((c) => ({ standard: c.standard, clauseNo: c.clauseNo }));
     const gapDecision = decideGap(requiredSources, profile, registerCounts);
 
     if (gapDecision.gap) {
@@ -189,9 +205,14 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
       });
       contentKey = sectionContentKey(tenantId, runId, sectionKey);
       const contentSha = sha256Hex(content);
-      await s3.send(new PutObjectCommand({
-        Bucket: GENERAL_BUCKET, Key: contentKey, Body: content, ContentType: 'application/json',
-      }));
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: GENERAL_BUCKET,
+          Key: contentKey,
+          Body: content,
+          ContentType: 'application/json',
+        }),
+      );
       await txn.execute(
         `UPDATE qms.generation_sections
          SET status = 'gap', content_s3_key = :key, content_sha256 = :sha, updated_at = NOW()
@@ -210,17 +231,18 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
       const locale = (profile.documentLocale as string) ?? 'en';
       const orgName = (profile.legalName as string) ?? 'the organization';
 
-      const invokeOnce = (retryViolations?: string[]) => invokeComposer({
-        seat: 'doc-composer',
-        messages: composerMessages(clauses, facts, locale, retryViolations),
-        outputSchema: DOC_COMPOSER_OUTPUT_SCHEMA as Record<string, unknown>,
-        tenantId,
-        agent: 'doc-composer',
-        module: 'M1',
-        feature: 'ims-manual-generation',
-      });
+      const invokeOnce = (retryViolations?: string[]) =>
+        invokeComposer({
+          seat: 'doc-composer',
+          messages: composerMessages(clauses, facts, locale, retryViolations),
+          outputSchema: DOC_COMPOSER_OUTPUT_SCHEMA as Record<string, unknown>,
+          tenantId,
+          agent: 'doc-composer',
+          module: 'M1',
+          feature: 'ims-manual-generation',
+        });
 
-      const factKeys = new Set(facts.map(f => f.key));
+      const factKeys = new Set(facts.map((f) => f.key));
       // Golden-eval round-2 finding (Task 12): a terminal AI-invoker error
       // (schema retries exhausted, guardrail hard block) on ONE section must
       // never kill the whole run — eval-09's 8.3 crashed the execution and
@@ -273,11 +295,16 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
         });
         contentKey = sectionContentKey(tenantId, runId, sectionKey);
         const contentSha = sha256Hex(content);
-        await s3.send(new PutObjectCommand({
-          Bucket: GENERAL_BUCKET, Key: contentKey, Body: content, ContentType: 'application/json',
-        }));
+        await s3.send(
+          new PutObjectCommand({
+            Bucket: GENERAL_BUCKET,
+            Key: contentKey,
+            Body: content,
+            ContentType: 'application/json',
+          }),
+        );
 
-        const factsByKey = new Map(facts.map(f => [f.key, f]));
+        const factsByKey = new Map(facts.map((f) => [f.key, f]));
         for (let i = 0; i < sentences.length; i++) {
           for (const ref of sentences[i].factRefs) {
             const fact = factsByKey.get(ref)!;
@@ -322,7 +349,11 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
 
     await txn.commit();
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 
@@ -334,13 +365,15 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
     module: 'M1',
     clauseRef: sectionKey,
     standard: 'IMS',
-    detailType: sectionStatus === 'failed' ? 'Generation.SectionFailed' : 'Generation.SectionComposed',
+    detailType:
+      sectionStatus === 'failed' ? 'Generation.SectionFailed' : 'Generation.SectionComposed',
     source: 'cumplify.qms.docgen',
     entityId: sectionId,
     payload: { runId, sectionId, harmonizationKey: sectionKey, ...auditPayload },
   });
   await publishGenerationEvent({
-    runId, tenantId,
+    runId,
+    tenantId,
     type: sectionStatus === 'failed' ? 'section_failed' : 'section_complete',
     harmonizationKey: sectionKey,
     kind: kindUpper,

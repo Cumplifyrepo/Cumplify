@@ -19,7 +19,9 @@ function baseOpts(overrides: Partial<Parameters<typeof toolLoop>[1]> = {}) {
   return {
     seat: 'workhorse' as const,
     systemPrompt: 'You are a helpful agent.',
-    tools: [{ toolSpec: { name: 'read-data', description: 'Read data', inputSchema: { json: {} } } }],
+    tools: [
+      { toolSpec: { name: 'read-data', description: 'Read data', inputSchema: { json: {} } } },
+    ],
     tenantId: 'tenant-1',
     agent: 'CAPAGuru',
     module: 'M2',
@@ -71,7 +73,8 @@ describe('toolLoop', () => {
 
   it('dispatches non-HITL tools and continues loop', async () => {
     const dispatchTool = vi.fn().mockResolvedValue({ output: { data: 'result' } });
-    const invokeFn = vi.fn()
+    const invokeFn = vi
+      .fn()
       .mockResolvedValueOnce(toolUseResponse('read-data', { id: '123' }))
       .mockResolvedValueOnce(endTurnResponse('processed'));
 
@@ -126,7 +129,8 @@ describe('toolLoop', () => {
   });
 
   it('accumulates token usage across turns', async () => {
-    const invokeFn = vi.fn()
+    const invokeFn = vi
+      .fn()
       .mockResolvedValueOnce(toolUseResponse('read-data', {}))
       .mockResolvedValueOnce(endTurnResponse('done'));
     const dispatchTool = vi.fn().mockResolvedValue({ output: 'ok' });

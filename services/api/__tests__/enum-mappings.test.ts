@@ -8,9 +8,15 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
-  DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP,
-  NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP,
-  DISPOSITION_MAP, FINDING_TYPE_MAP, RISK_CATEGORY_MAP,
+  DOC_TYPE_MAP,
+  DOC_STATUS_MAP,
+  APPROVAL_DECISION_MAP,
+  NC_SOURCE_MAP,
+  NC_TYPE_MAP,
+  SEVERITY_MAP,
+  DISPOSITION_MAP,
+  FINDING_TYPE_MAP,
+  RISK_CATEGORY_MAP,
   mapEnum,
 } from '../src/resolvers/enum-mappings.js';
 
@@ -23,10 +29,13 @@ function readMigration(filename: string): string {
 /** Extract allowed values from a CHECK constraint for a given column */
 function extractCheckValues(sql: string, columnName: string): string[] {
   // Match: column_name TEXT ... CHECK (column_name IN ('val1', 'val2', ...))
-  const pattern = new RegExp(`${columnName}[^)]*CHECK\\s*\\(${columnName}\\s+IN\\s*\\(([^)]+)\\)`, 'i');
+  const pattern = new RegExp(
+    `${columnName}[^)]*CHECK\\s*\\(${columnName}\\s+IN\\s*\\(([^)]+)\\)`,
+    'i',
+  );
   const match = sql.match(pattern);
   if (!match) return [];
-  return match[1].match(/'([^']+)'/g)?.map(s => s.slice(1, -1)) ?? [];
+  return match[1].match(/'([^']+)'/g)?.map((s) => s.slice(1, -1)) ?? [];
 }
 
 describe('Enum mappings match DB CHECK constraints', () => {

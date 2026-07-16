@@ -19,15 +19,19 @@ const AI_INVOKER_ARN = process.env.AI_INVOKER_ARN!;
  */
 export function createInvokeFn(): InvokeFn {
   return async (request: InvokeRequest): Promise<InvokeResponse> => {
-    const result = await lambdaClient.send(new InvokeCommand({
-      FunctionName: AI_INVOKER_ARN,
-      InvocationType: 'RequestResponse',
-      Payload: Buffer.from(JSON.stringify(request)),
-    }));
+    const result = await lambdaClient.send(
+      new InvokeCommand({
+        FunctionName: AI_INVOKER_ARN,
+        InvocationType: 'RequestResponse',
+        Payload: Buffer.from(JSON.stringify(request)),
+      }),
+    );
 
     if (result.FunctionError) {
       const errorPayload = result.Payload ? JSON.parse(Buffer.from(result.Payload).toString()) : {};
-      throw new Error(`AI Invoker error: ${result.FunctionError} — ${errorPayload.errorMessage ?? 'unknown'}`);
+      throw new Error(
+        `AI Invoker error: ${result.FunctionError} — ${errorPayload.errorMessage ?? 'unknown'}`,
+      );
     }
 
     if (!result.Payload) {

@@ -13,20 +13,23 @@ import { resolve } from 'node:path';
 
 const API_STACK_CODE = readFileSync(resolve(__dirname, 'api-stack.ts'), 'utf-8');
 const AI_STACK_CODE = readFileSync(resolve(__dirname, 'ai-stack.ts'), 'utf-8');
-const SCHEMA_CODE = readFileSync(resolve(__dirname, '../../services/api/schema/schema.graphql'), 'utf-8');
+const SCHEMA_CODE = readFileSync(
+  resolve(__dirname, '../../services/api/schema/schema.graphql'),
+  'utf-8',
+);
 
 describe('ApiStack template assertions (source-level)', () => {
   it('has createResolver calls for all Query fields in schema', () => {
     // Count Query fields in schema (one per line with a field name)
     const querySection = SCHEMA_CODE.match(/type Query \{([^}]+)\}/s);
     expect(querySection).not.toBeNull();
-    const queryLines = querySection![1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/));
+    const queryLines = querySection![1].split('\n').filter((l) => l.match(/^\s+\w+[(:]/));
     let queryFieldCount = queryLines.length;
 
     // Also count fields in `extend type Query` blocks
     const extendQuerySections = SCHEMA_CODE.matchAll(/extend type Query \{([^}]+)\}/gs);
     for (const m of extendQuerySections) {
-      queryFieldCount += m[1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/)).length;
+      queryFieldCount += m[1].split('\n').filter((l) => l.match(/^\s+\w+[(:]/)).length;
     }
 
     // Count Query resolver attachments in api-stack + ai-stack (guru resolvers live in AiStack)
@@ -41,13 +44,13 @@ describe('ApiStack template assertions (source-level)', () => {
     const mutationSection = SCHEMA_CODE.match(/type Mutation \{([^}]+)\}/s);
     expect(mutationSection).not.toBeNull();
     // Count lines that have a field definition (word followed by '(' or ':')
-    const mutationLines = mutationSection![1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/));
+    const mutationLines = mutationSection![1].split('\n').filter((l) => l.match(/^\s+\w+[(:]/));
     let mutationFieldCount = mutationLines.length;
 
     // Also count fields in `extend type Mutation` blocks
     const extendMutationSections = SCHEMA_CODE.matchAll(/extend type Mutation \{([^}]+)\}/gs);
     for (const m of extendMutationSections) {
-      mutationFieldCount += m[1].split('\n').filter(l => l.match(/^\s+\w+[\(:]/)).length;
+      mutationFieldCount += m[1].split('\n').filter((l) => l.match(/^\s+\w+[(:]/)).length;
     }
 
     // Count Mutation resolver attachments in api-stack
@@ -124,7 +127,9 @@ describe('ApiStack template assertions (source-level)', () => {
     const mutationCount = (API_STACK_CODE.match(/typeName: 'Mutation'/g) ?? []).length;
     // Subscription count: 5 fields in subscriptionFields array (loop-generated)
     const subscriptionFields = API_STACK_CODE.match(/subscriptionFields = \[([^\]]+)\]/s);
-    const subLoopCount = subscriptionFields ? (subscriptionFields[1].match(/'/g) ?? []).length / 2 : 0;
+    const subLoopCount = subscriptionFields
+      ? (subscriptionFields[1].match(/'/g) ?? []).length / 2
+      : 0;
     // Plus individually-created subscription resolvers (Spec 9: onHitlItemResolved)
     const individualSubCount = (API_STACK_CODE.match(/typeName: 'Subscription'/g) ?? []).length - 1; // -1 for the loop template
     // 2026-07-13: +3 (listDocumentVersions, listNonconformities,
@@ -142,7 +147,9 @@ describe('ApiStack template assertions (source-level)', () => {
   });
 
   it('subscription resolvers enforce C-6 tenant-claim check via $util.unauthorized()', () => {
-    expect(API_STACK_CODE).toContain('$ctx.identity.resolverContext.tenantId != $ctx.args.tenantId');
+    expect(API_STACK_CODE).toContain(
+      '$ctx.identity.resolverContext.tenantId != $ctx.args.tenantId',
+    );
     expect(API_STACK_CODE).toContain('$util.unauthorized()');
   });
 
@@ -165,7 +172,10 @@ describe('ApiStack template assertions (source-level)', () => {
     // Count entries in the dataSources suppression array
     const dsArrayMatch = API_STACK_CODE.match(/const dataSources = \[([^\]]+)\]/);
     expect(dsArrayMatch).not.toBeNull();
-    const dsEntries = dsArrayMatch![1].split(',').map(s => s.trim()).filter(Boolean);
+    const dsEntries = dsArrayMatch![1]
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
     // Every Lambda data source must be in the suppression array
     expect(dsEntries.length).toBe(dsCreations.length);
   });

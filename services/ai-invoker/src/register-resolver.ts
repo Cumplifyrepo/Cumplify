@@ -54,10 +54,16 @@ export function resolveModel(seat: SeatId, register?: CompiledRegister): SeatEnt
 
   // Status check
   if (entry.status === 'UNASSIGNED') {
-    throw new InvokeError('MODEL_SEAT_UNASSIGNED', `Seat '${seat}' is UNASSIGNED — no model assigned`);
+    throw new InvokeError(
+      'MODEL_SEAT_UNASSIGNED',
+      `Seat '${seat}' is UNASSIGNED — no model assigned`,
+    );
   }
   if (entry.status === 'EXPIRED') {
-    throw new InvokeError('MODEL_SEAT_EXPIRED', `Seat '${seat}' is EXPIRED — re-validation required`);
+    throw new InvokeError(
+      'MODEL_SEAT_EXPIRED',
+      `Seat '${seat}' is EXPIRED — re-validation required`,
+    );
   }
 
   // Live expiry date check (D-4: runs at invoke time regardless of build-time map)

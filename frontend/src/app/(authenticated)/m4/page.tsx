@@ -118,10 +118,9 @@ export default function M4RecordsPage() {
     try {
       setError(false);
       setLoading(true);
-      const data = await query<{ getAuditTrail: AuditEvent[] }>(
-        GET_AUDIT_TRAIL_QUERY,
-        { entityId },
-      );
+      const data = await query<{ getAuditTrail: AuditEvent[] }>(GET_AUDIT_TRAIL_QUERY, {
+        entityId,
+      });
       setTrailEvents(data.getAuditTrail);
     } catch {
       setError(true);
@@ -135,35 +134,61 @@ export default function M4RecordsPage() {
     if (tab === 'calibrations') fetchCalibrations();
   }, [tab, fetchCalibrations]);
 
-  const calibrationColumns: Column<CalibrationRecord>[] = useMemo(() => [
-    { key: 'measuringResourceId', header: t('colResource'), render: (c) => c.measuringResourceId },
-    { key: 'standardUsed', header: t('colStandardUsed'), render: (c) => c.standardUsed },
-    { key: 'result', header: t('colResult'), render: (c) => c.result },
-    { key: 'nextDue', header: t('colNextDue'), render: (c) => new Date(c.nextDue).toLocaleDateString() },
-  ], [t]);
+  const calibrationColumns: Column<CalibrationRecord>[] = useMemo(
+    () => [
+      {
+        key: 'measuringResourceId',
+        header: t('colResource'),
+        render: (c) => c.measuringResourceId,
+      },
+      { key: 'standardUsed', header: t('colStandardUsed'), render: (c) => c.standardUsed },
+      { key: 'result', header: t('colResult'), render: (c) => c.result },
+      {
+        key: 'nextDue',
+        header: t('colNextDue'),
+        render: (c) => new Date(c.nextDue).toLocaleDateString(),
+      },
+    ],
+    [t],
+  );
 
   // FormDrawer field definitions
-  const registerFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
-    { name: 'recordType', label: t('fieldRecordType'), type: 'text', required: true },
-    { name: 'sourceModule', label: t('fieldSourceModule'), type: 'text', required: true },
-    { name: 'retentionClass', label: t('fieldRetentionClass'), type: 'text' },
-    { name: 's3ObjectRef', label: t('fieldS3ObjectRef'), type: 'text' },
-  ], [t]);
+  const registerFields: FieldDef[] = useMemo(
+    () => [
+      {
+        name: 'standard',
+        label: t('fieldStandard'),
+        type: 'select',
+        required: true,
+        options: STANDARDS.map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })),
+      },
+      { name: 'recordType', label: t('fieldRecordType'), type: 'text', required: true },
+      { name: 'sourceModule', label: t('fieldSourceModule'), type: 'text', required: true },
+      { name: 'retentionClass', label: t('fieldRetentionClass'), type: 'text' },
+      { name: 's3ObjectRef', label: t('fieldS3ObjectRef'), type: 'text' },
+    ],
+    [t],
+  );
 
-  const retentionFields: FieldDef[] = useMemo(() => [
-    { name: 'recordType', label: t('fieldRecordType'), type: 'text', required: true },
-    { name: 'retentionYears', label: t('fieldRetentionYears'), type: 'text', required: true },
-    { name: 'dispositionRule', label: t('fieldDispositionRule'), type: 'text', required: true },
-  ], [t]);
+  const retentionFields: FieldDef[] = useMemo(
+    () => [
+      { name: 'recordType', label: t('fieldRecordType'), type: 'text', required: true },
+      { name: 'retentionYears', label: t('fieldRetentionYears'), type: 'text', required: true },
+      { name: 'dispositionRule', label: t('fieldDispositionRule'), type: 'text', required: true },
+    ],
+    [t],
+  );
 
-  const calibrationFields: FieldDef[] = useMemo(() => [
-    { name: 'measuringResourceId', label: t('fieldResourceId'), type: 'text', required: true },
-    { name: 'standardUsed', label: t('fieldStandardUsed'), type: 'text', required: true },
-    { name: 'traceabilityRef', label: t('fieldTraceabilityRef'), type: 'text' },
-    { name: 'result', label: t('fieldResult'), type: 'text', required: true },
-    { name: 'nextDue', label: t('fieldNextDue'), type: 'date', required: true },
-  ], [t]);
+  const calibrationFields: FieldDef[] = useMemo(
+    () => [
+      { name: 'measuringResourceId', label: t('fieldResourceId'), type: 'text', required: true },
+      { name: 'standardUsed', label: t('fieldStandardUsed'), type: 'text', required: true },
+      { name: 'traceabilityRef', label: t('fieldTraceabilityRef'), type: 'text' },
+      { name: 'result', label: t('fieldResult'), type: 'text', required: true },
+      { name: 'nextDue', label: t('fieldNextDue'), type: 'date', required: true },
+    ],
+    [t],
+  );
 
   async function handleRegisterRecord(values: Record<string, string | boolean>) {
     try {
@@ -306,11 +331,11 @@ export default function M4RecordsPage() {
               onChange={(e) => setTrailEntityId(e.target.value)}
               placeholder={t('trailSearchPlaceholder')}
               aria-label={t('trailSearchLabel')}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleTrailSearch(); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleTrailSearch();
+              }}
             />
-            <PrimaryButton onClick={handleTrailSearch}>
-              {t('trailSearchButton')}
-            </PrimaryButton>
+            <PrimaryButton onClick={handleTrailSearch}>{t('trailSearchButton')}</PrimaryButton>
           </div>
 
           {loading ? (
@@ -323,17 +348,15 @@ export default function M4RecordsPage() {
                 <div
                   key={evt.eventId}
                   className={styles.eventRow}
-                  onClick={() => setExpandedEventId(
-                    expandedEventId === evt.eventId ? null : evt.eventId,
-                  )}
+                  onClick={() =>
+                    setExpandedEventId(expandedEventId === evt.eventId ? null : evt.eventId)
+                  }
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      setExpandedEventId(
-                        expandedEventId === evt.eventId ? null : evt.eventId,
-                      );
+                      setExpandedEventId(expandedEventId === evt.eventId ? null : evt.eventId);
                     }
                   }}
                   id={evt.eventId}

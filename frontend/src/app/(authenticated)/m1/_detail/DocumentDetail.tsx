@@ -121,7 +121,9 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
 
   const fetchVersions = useCallback(async () => {
     try {
-      const data = await query<{ listDocumentVersions: DocumentVersion[] }>(LIST_VERSIONS, { documentId: id });
+      const data = await query<{ listDocumentVersions: DocumentVersion[] }>(LIST_VERSIONS, {
+        documentId: id,
+      });
       setVersions(data.listDocumentVersions);
     } catch {
       // Non-critical — version rail stays empty
@@ -160,7 +162,9 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
     if (!doc) return;
     setActionLoading(true);
     try {
-      const result = await mutate<{ submitDocumentForApproval: { id: string } }>(SUBMIT_MUTATION, { id: doc.id });
+      const result = await mutate<{ submitDocumentForApproval: { id: string } }>(SUBMIT_MUTATION, {
+        id: doc.id,
+      });
       showToast(result.submitDocumentForApproval.id);
       await fetchDoc();
       await fetchVersions();
@@ -176,7 +180,9 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
     setActionLoading(true);
     try {
       // G3: uses the REAL version id from the version list
-      const result = await mutate<{ approveDocumentVersion: { id: string } }>(APPROVE_MUTATION, { input: { versionId: latestVersion.id, decision: 'APPROVED' } });
+      const result = await mutate<{ approveDocumentVersion: { id: string } }>(APPROVE_MUTATION, {
+        input: { versionId: latestVersion.id, decision: 'APPROVED' },
+      });
       showToast(result.approveDocumentVersion.id);
       await fetchDoc();
       await fetchVersions();
@@ -192,7 +198,9 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
     setActionLoading(true);
     try {
       // G3: uses the REAL version id from the version list
-      const result = await mutate<{ publishControlledDocument: { id: string } }>(PUBLISH_MUTATION, { versionId: latestVersion.id });
+      const result = await mutate<{ publishControlledDocument: { id: string } }>(PUBLISH_MUTATION, {
+        versionId: latestVersion.id,
+      });
       showToast(result.publishControlledDocument.id);
       await fetchDoc();
       await fetchVersions();
@@ -306,9 +314,7 @@ export function DocumentDetail({ id, onBack }: { id: string; onBack: () => void 
       {/* G8: Success toast with ProvenanceLink */}
       {toast && (
         <div className={styles.toast}>
-          <ProvenanceLink entityId={toast.entityId}>
-            {t('savedSuccessfully')}
-          </ProvenanceLink>
+          <ProvenanceLink entityId={toast.entityId}>{t('savedSuccessfully')}</ProvenanceLink>
         </div>
       )}
     </>

@@ -12,18 +12,26 @@ const mockSfnSend = vi.fn();
 const mockDdbSend = vi.fn();
 
 vi.mock('@aws-sdk/client-sfn', () => ({
-  SFNClient: class { send = mockSfnSend; },
+  SFNClient: class {
+    send = mockSfnSend;
+  },
   StartExecutionCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 
 vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: class { send = mockDdbSend; },
+  DynamoDBClient: class {
+    send = mockDdbSend;
+  },
   UpdateItemCommand: class {
     input: unknown;
-    constructor(input: unknown) { this.input = input; }
+    constructor(input: unknown) {
+      this.input = input;
+    }
   },
 }));
 
@@ -43,7 +51,9 @@ describe('enterHitlGate', () => {
   });
 
   it('starts SFN execution with correct input including item payload fields', async () => {
-    mockSfnSend.mockResolvedValueOnce({ executionArn: 'arn:aws:states:us-east-1:123:execution:hitl-test' });
+    mockSfnSend.mockResolvedValueOnce({
+      executionArn: 'arn:aws:states:us-east-1:123:execution:hitl-test',
+    });
 
     const result = await enterHitlGate({
       tenantId: 'tenant-1',
@@ -58,7 +68,9 @@ describe('enterHitlGate', () => {
 
     // Verify SFN was called
     const sfnCall = mockSfnSend.mock.calls[0][0];
-    expect(sfnCall.input.stateMachineArn).toBe('arn:aws:states:us-east-1:123456:stateMachine:AgentHitl');
+    expect(sfnCall.input.stateMachineArn).toBe(
+      'arn:aws:states:us-east-1:123456:stateMachine:AgentHitl',
+    );
     const sfnInput = JSON.parse(sfnCall.input.input);
     expect(sfnInput.tenantId).toBe('tenant-1');
     expect(sfnInput.agentName).toBe('CAPAGuru');

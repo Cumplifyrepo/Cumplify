@@ -29,16 +29,46 @@ const content: ContentJson = {
     approvedAt: '2026-07-16T11:00:00Z',
     m2NcId: 'nc-42',
   },
-  recordSections: [{
-    key: 'info',
-    title: 'NCR Information',
-    fields: [
-      { key: 'ncr_number', label: 'NCR Number', type: 'text', required: true, filled: true, display: 'NCR-001' },
-      { key: 'clause_ref', label: 'Clause Reference', type: 'relation', required: true, filled: true, display: 'ISO9001 8.7 — Nonconforming outputs' },
-      { key: 'severity', label: 'Severity', type: 'select', required: true, filled: false, display: '' },
-      { key: 'notes', label: 'Notes <script>', type: 'textarea', required: false, filled: true, display: '<img src=x onerror=alert(1)>' },
-    ],
-  }],
+  recordSections: [
+    {
+      key: 'info',
+      title: 'NCR Information',
+      fields: [
+        {
+          key: 'ncr_number',
+          label: 'NCR Number',
+          type: 'text',
+          required: true,
+          filled: true,
+          display: 'NCR-001',
+        },
+        {
+          key: 'clause_ref',
+          label: 'Clause Reference',
+          type: 'relation',
+          required: true,
+          filled: true,
+          display: 'ISO9001 8.7 — Nonconforming outputs',
+        },
+        {
+          key: 'severity',
+          label: 'Severity',
+          type: 'select',
+          required: true,
+          filled: false,
+          display: '',
+        },
+        {
+          key: 'notes',
+          label: 'Notes <script>',
+          type: 'textarea',
+          required: false,
+          filled: true,
+          display: '<img src=x onerror=alert(1)>',
+        },
+      ],
+    },
+  ],
 };
 
 describe('form_record template', () => {

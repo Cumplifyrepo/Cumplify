@@ -13,24 +13,45 @@ const { mockRdsSend } = vi.hoisted(() => {
 });
 
 vi.mock('@aws-sdk/client-rds-data', () => ({
-  RDSDataClient: class { send = mockRdsSend; },
-  BeginTransactionCommand: class { constructor(public input: unknown) {} },
-  CommitTransactionCommand: class { constructor(public input: unknown) {} },
-  RollbackTransactionCommand: class { constructor(public input: unknown) {} },
-  ExecuteStatementCommand: class { constructor(public input: unknown) {} },
+  RDSDataClient: class {
+    send = mockRdsSend;
+  },
+  BeginTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  CommitTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  RollbackTransactionCommand: class {
+    constructor(public input: unknown) {}
+  },
+  ExecuteStatementCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-sdk/client-sts', () => ({
-  STSClient: class { send = vi.fn(); },
-  AssumeRoleCommand: class { constructor(public input: unknown) {} },
+  STSClient: class {
+    send = vi.fn();
+  },
+  AssumeRoleCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: class { send = vi.fn(); },
+  DynamoDBClient: class {
+    send = vi.fn();
+  },
 }));
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 vi.mock('../../../eventing/src/publisher.js', () => ({

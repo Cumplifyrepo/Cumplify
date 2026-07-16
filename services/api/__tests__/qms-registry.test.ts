@@ -87,13 +87,20 @@ interface SeedRow {
 
 /** Split one VALUES tuple on commas, respecting single-quoted SQL strings. */
 function tokenizeRow(line: string): string[] {
-  const trimmed = line.trim().replace(/^\(/, '').replace(/\)[,;]?\s*$/, '');
+  const trimmed = line
+    .trim()
+    .replace(/^\(/, '')
+    .replace(/\)[,;]?\s*$/, '');
   const tokens: string[] = [];
   let current = '';
   let inQuote = false;
   for (let i = 0; i < trimmed.length; i++) {
     const ch = trimmed[i];
-    if (ch === "'" && !inQuote) { inQuote = true; current += ch; continue; }
+    if (ch === "'" && !inQuote) {
+      inQuote = true;
+      current += ch;
+      continue;
+    }
     if (ch === "'" && inQuote) {
       // Escaped quote ('')
       if (i + 1 < trimmed.length && trimmed[i + 1] === "'") {
@@ -101,7 +108,9 @@ function tokenizeRow(line: string): string[] {
         i++;
         continue;
       }
-      inQuote = false; current += ch; continue;
+      inQuote = false;
+      current += ch;
+      continue;
     }
     if (ch === ',' && !inQuote) {
       tokens.push(current.trim());

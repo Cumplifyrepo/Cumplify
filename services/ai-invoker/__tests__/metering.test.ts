@@ -16,7 +16,9 @@ vi.mock('@aws-sdk/client-eventbridge', () => {
     },
     PutEventsCommand: class {
       input: unknown;
-      constructor(input: unknown) { this.input = input; }
+      constructor(input: unknown) {
+        this.input = input;
+      }
     },
   };
 });
@@ -139,8 +141,11 @@ describe('emitCreditsTelemetry (telemetry.credits.consumed contract)', () => {
     await emitCreditsTelemetry(opts);
 
     expect(mockEbSend).toHaveBeenCalledTimes(1);
-    const entry = (mockEbSend.mock.calls[0][0] as { input: { Entries: Array<{ Source: string; DetailType: string; Detail: string }> } })
-      .input.Entries[0];
+    const entry = (
+      mockEbSend.mock.calls[0][0] as {
+        input: { Entries: Array<{ Source: string; DetailType: string; Detail: string }> };
+      }
+    ).input.Entries[0];
     expect(entry.Source).toBe('cumplify.ai-invoker');
     expect(entry.DetailType).toBe('telemetry.credits.consumed');
 

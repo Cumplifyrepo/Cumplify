@@ -27,7 +27,11 @@ process.env.COLLECTIONS = JSON.stringify([
 
 const { handler } = await import('../aoss-prover.js');
 
-const GOOD_VERIFY = { collection: 'cumplify-tenant-docs-kb', dimension: 1024, tenantIdType: 'keyword' };
+const GOOD_VERIFY = {
+  collection: 'cumplify-tenant-docs-kb',
+  dimension: 1024,
+  tenantIdType: 'keyword',
+};
 
 function seedDoc(overrides: Record<string, unknown> = {}) {
   return {
@@ -54,7 +58,10 @@ describe('aoss-prover handler', () => {
   });
 
   it('template-check delegates to the single-source verifyTemplate', async () => {
-    const result = await handler({ action: 'template-check', collection: 'cumplify-tenant-docs-kb' });
+    const result = await handler({
+      action: 'template-check',
+      collection: 'cumplify-tenant-docs-kb',
+    });
     expect(result).toEqual(GOOD_VERIFY);
     expect(verifyTemplateMock).toHaveBeenCalledWith(
       'cumplify-tenant-docs-kb',
@@ -146,7 +153,11 @@ describe('aoss-prover handler', () => {
 
   it('delete-index refuses non-proof indexes', async () => {
     await expect(
-      handler({ action: 'delete-index', collection: 'cumplify-tenant-docs-kb', indexName: 'tenant-docs' }),
+      handler({
+        action: 'delete-index',
+        collection: 'cumplify-tenant-docs-kb',
+        indexName: 'tenant-docs',
+      }),
     ).rejects.toThrow(/REFUSED/);
     expect(signedFetchMock).not.toHaveBeenCalled();
   });
@@ -168,6 +179,10 @@ describe('aoss-prover handler', () => {
       indexName: 'task12-e2e',
     })) as any;
     expect(result.deleted).toBe('task12-e2e');
-    expect(signedFetchMock).toHaveBeenCalledWith('DELETE', 'https://tdocs.us-east-1.aoss.amazonaws.com', '/task12-e2e');
+    expect(signedFetchMock).toHaveBeenCalledWith(
+      'DELETE',
+      'https://tdocs.us-east-1.aoss.amazonaws.com',
+      '/task12-e2e',
+    );
   });
 });

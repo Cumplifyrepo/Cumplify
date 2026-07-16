@@ -44,7 +44,8 @@ function createTemplate(): Template {
     envConfig: testEnvConfig,
     tableArn: 'arn:aws:dynamodb:us-east-1:697114252993:table/CumplifyCore',
     tableName: 'CumplifyCore',
-    tableStreamArn: 'arn:aws:dynamodb:us-east-1:697114252993:table/CumplifyCore/stream/2026-07-04T00:00:00.000',
+    tableStreamArn:
+      'arn:aws:dynamodb:us-east-1:697114252993:table/CumplifyCore/stream/2026-07-04T00:00:00.000',
     dynamodbKey: ddbKey,
     s3GeneralKey: s3Key,
     auditSinkQueueArn: 'arn:aws:sqs:us-east-1:697114252993:AuditSinkQueue.fifo',
@@ -152,7 +153,11 @@ describe('AuditTrailStack template assertions', () => {
       const json = template.toJSON() as {
         Resources: Record<string, { Type: string; Properties?: any }>;
       };
-      const mutationActions = ['dynamodb:UpdateItem', 'dynamodb:DeleteItem', 'dynamodb:BatchWriteItem'];
+      const mutationActions = [
+        'dynamodb:UpdateItem',
+        'dynamodb:DeleteItem',
+        'dynamodb:BatchWriteItem',
+      ];
       const offenders: string[] = [];
       for (const [id, res] of Object.entries(json.Resources)) {
         if (res.Type !== 'AWS::IAM::Policy' && res.Type !== 'AWS::IAM::ManagedPolicy') continue;
@@ -165,7 +170,10 @@ describe('AuditTrailStack template assertions', () => {
           }
         }
       }
-      expect(offenders, `Allow statements must not grant AUDITLOG-mutation actions: ${offenders.join(', ')}`).toHaveLength(0);
+      expect(
+        offenders,
+        `Allow statements must not grant AUDITLOG-mutation actions: ${offenders.join(', ')}`,
+      ).toHaveLength(0);
     });
   });
 });

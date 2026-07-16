@@ -121,8 +121,13 @@ describe('eventing-backbone readback (12-test matrix)', () => {
 
   it('test 2: all queues exist (GetQueueAttributes)', () => {
     const queueKeys = [
-      'CapaIntakeQueueUrl', 'AuditSinkQueueUrl', 'NcTriageQueueUrl',
-      'HazardQueueUrl', 'AspectQueueUrl', 'ReviewFanoutQueueUrl', 'RecordsQueueUrl',
+      'CapaIntakeQueueUrl',
+      'AuditSinkQueueUrl',
+      'NcTriageQueueUrl',
+      'HazardQueueUrl',
+      'AspectQueueUrl',
+      'ReviewFanoutQueueUrl',
+      'RecordsQueueUrl',
     ];
     for (const key of queueKeys) {
       const url = requireOutput(outputs, key);
@@ -142,7 +147,9 @@ describe('eventing-backbone readback (12-test matrix)', () => {
       // SSL policy check: queue should have a policy with SecureTransport condition
       expect(attrs.Policy).toBeDefined();
       expect(attrs.Policy).toContain('aws:SecureTransport');
-      console.log(`  ${key}: VisibilityTimeout=${attrs.VisibilityTimeout}, FIFO=${attrs.FifoQueue ?? 'false'}, SSL=enforced`);
+      console.log(
+        `  ${key}: VisibilityTimeout=${attrs.VisibilityTimeout}, FIFO=${attrs.FifoQueue ?? 'false'}, SSL=enforced`,
+      );
     }
   });
 
@@ -150,8 +157,13 @@ describe('eventing-backbone readback (12-test matrix)', () => {
 
   it('test 3: all rules exist (DescribeRule)', () => {
     const ruleKeys = [
-      'NcTriageRuleName', 'CapaIntakeRuleName', 'AuditSinkRuleName',
-      'HazardRuleName', 'AspectRuleName', 'ReviewFanoutRuleName', 'RecordsRuleName',
+      'NcTriageRuleName',
+      'CapaIntakeRuleName',
+      'AuditSinkRuleName',
+      'HazardRuleName',
+      'AspectRuleName',
+      'ReviewFanoutRuleName',
+      'RecordsRuleName',
     ];
     for (const key of ruleKeys) {
       // A rule's CFN Ref on a CUSTOM bus is "busName|ruleName" — strip the prefix.
@@ -170,12 +182,19 @@ describe('eventing-backbone readback (12-test matrix)', () => {
   it('test 4: publish Hazard.Identified → arrives in hazard-q', async () => {
     const eventId = `readback-t4-${Date.now()}`;
     const event = JSON.stringify({
-      tenantId: 'readback-tenant', eventId, timestamp: new Date().toISOString(),
-      actor: 'readback', module: 'M10', clauseRef: 'ISO 45001 6.1.2.1',
-      standard: 'ISO45001', payload: { test: true },
+      tenantId: 'readback-tenant',
+      eventId,
+      timestamp: new Date().toISOString(),
+      actor: 'readback',
+      module: 'M10',
+      clauseRef: 'ISO 45001 6.1.2.1',
+      standard: 'ISO45001',
+      payload: { test: true },
     });
 
-    aws(`events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Hazard.Identified","Detail":${JSON.stringify(event)}}]'`);
+    aws(
+      `events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Hazard.Identified","Detail":${JSON.stringify(event)}}]'`,
+    );
 
     // Poll hazard-q for up to 30s
     let found = false;
@@ -190,7 +209,9 @@ describe('eventing-backbone readback (12-test matrix)', () => {
           found = true;
           expect(body.detailType).toBe('Hazard.Identified');
           // Clean up
-          aws(`sqs delete-message --queue-url "${hazardQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`);
+          aws(
+            `sqs delete-message --queue-url "${hazardQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`,
+          );
           break;
         }
       }
@@ -205,12 +226,19 @@ describe('eventing-backbone readback (12-test matrix)', () => {
   it('test 5: publish Document.Published → arrives in records-q', async () => {
     const eventId = `readback-t5-${Date.now()}`;
     const event = JSON.stringify({
-      tenantId: 'readback-tenant', eventId, timestamp: new Date().toISOString(),
-      actor: 'readback', module: 'M1', clauseRef: 'ISO 9001 7.5',
-      standard: 'ISO9001', payload: { test: true },
+      tenantId: 'readback-tenant',
+      eventId,
+      timestamp: new Date().toISOString(),
+      actor: 'readback',
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5',
+      standard: 'ISO9001',
+      payload: { test: true },
     });
 
-    aws(`events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Document.Published","Detail":${JSON.stringify(event)}}]'`);
+    aws(
+      `events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Document.Published","Detail":${JSON.stringify(event)}}]'`,
+    );
 
     let found = false;
     for (let i = 0; i < 6; i++) {
@@ -223,7 +251,9 @@ describe('eventing-backbone readback (12-test matrix)', () => {
         if (body.detail?.eventId === eventId) {
           found = true;
           expect(body.detailType).toBe('Document.Published');
-          aws(`sqs delete-message --queue-url "${recordsQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`);
+          aws(
+            `sqs delete-message --queue-url "${recordsQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`,
+          );
           break;
         }
       }
@@ -238,12 +268,19 @@ describe('eventing-backbone readback (12-test matrix)', () => {
   it('test 6: publish CAPA.Opened → arrives in capa-intake.fifo via router', async () => {
     const eventId = `readback-t6-${Date.now()}`;
     const event = JSON.stringify({
-      tenantId: 'readback-tenant', eventId, timestamp: new Date().toISOString(),
-      actor: 'readback', module: 'M2', clauseRef: 'ISO 9001 10.2',
-      standard: 'ISO9001', payload: { test: true },
+      tenantId: 'readback-tenant',
+      eventId,
+      timestamp: new Date().toISOString(),
+      actor: 'readback',
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      payload: { test: true },
     });
 
-    aws(`events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"CAPA.Opened","Detail":${JSON.stringify(event)}}]'`);
+    aws(
+      `events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"CAPA.Opened","Detail":${JSON.stringify(event)}}]'`,
+    );
 
     let found = false;
     for (let i = 0; i < 6; i++) {
@@ -256,7 +293,9 @@ describe('eventing-backbone readback (12-test matrix)', () => {
         if (body.detail?.eventId === eventId) {
           found = true;
           expect(body.detailType).toBe('CAPA.Opened');
-          aws(`sqs delete-message --queue-url "${capaIntakeQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`);
+          aws(
+            `sqs delete-message --queue-url "${capaIntakeQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`,
+          );
           break;
         }
       }
@@ -271,12 +310,19 @@ describe('eventing-backbone readback (12-test matrix)', () => {
   it('test 7: publish Document.Approved → arrives in audit-sink.fifo via router', async () => {
     const eventId = `readback-t7-${Date.now()}`;
     const event = JSON.stringify({
-      tenantId: 'readback-tenant', eventId, timestamp: new Date().toISOString(),
-      actor: 'readback', module: 'M1', clauseRef: 'ISO 9001 7.5',
-      standard: 'ISO9001', payload: { test: true },
+      tenantId: 'readback-tenant',
+      eventId,
+      timestamp: new Date().toISOString(),
+      actor: 'readback',
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5',
+      standard: 'ISO9001',
+      payload: { test: true },
     });
 
-    aws(`events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Document.Approved","Detail":${JSON.stringify(event)}}]'`);
+    aws(
+      `events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Document.Approved","Detail":${JSON.stringify(event)}}]'`,
+    );
 
     let found = false;
     for (let i = 0; i < 6; i++) {
@@ -289,7 +335,9 @@ describe('eventing-backbone readback (12-test matrix)', () => {
         if (body.detail?.eventId === eventId) {
           found = true;
           expect(body.detailType).toBe('Document.Approved');
-          aws(`sqs delete-message --queue-url "${auditSinkQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`);
+          aws(
+            `sqs delete-message --queue-url "${auditSinkQueueUrl}" --receipt-handle "${msg.ReceiptHandle}"`,
+          );
           break;
         }
       }
@@ -304,12 +352,19 @@ describe('eventing-backbone readback (12-test matrix)', () => {
   it('test 8: publish Audit.FindingRaised → demo consumer logs eventId (D-1)', async () => {
     const eventId = `readback-t8-${Date.now()}`;
     const event = JSON.stringify({
-      tenantId: 'readback-tenant', eventId, timestamp: new Date().toISOString(),
-      actor: 'readback', module: 'M3', clauseRef: 'ISO 9001 9.2',
-      standard: 'ISO9001', payload: { test: true },
+      tenantId: 'readback-tenant',
+      eventId,
+      timestamp: new Date().toISOString(),
+      actor: 'readback',
+      module: 'M3',
+      clauseRef: 'ISO 9001 9.2',
+      standard: 'ISO9001',
+      payload: { test: true },
     });
 
-    aws(`events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Audit.FindingRaised","Detail":${JSON.stringify(event)}}]'`);
+    aws(
+      `events put-events --entries '[{"EventBusName":"${busName}","Source":"cumplify.readback","DetailType":"Audit.FindingRaised","Detail":${JSON.stringify(event)}}]'`,
+    );
 
     // D-1: do NOT poll nc-triage queue (ESM drains it). Verify via CloudWatch Logs.
     let found = false;
@@ -324,9 +379,10 @@ describe('eventing-backbone readback (12-test matrix)', () => {
         );
         const queryId = (result as unknown as { queryId: string }).queryId;
         await sleep(2000);
-        const queryResult = aws<{ status: string; results: Array<Array<{ field: string; value: string }>> }>(
-          `logs get-query-results --query-id "${queryId}"`,
-        );
+        const queryResult = aws<{
+          status: string;
+          results: Array<Array<{ field: string; value: string }>>;
+        }>(`logs get-query-results --query-id "${queryId}"`);
         if (queryResult.results && queryResult.results.length > 0) {
           found = true;
           break;
@@ -350,15 +406,18 @@ describe('eventing-backbone readback (12-test matrix)', () => {
     // Extract DLQ URL from ARN
     const dlqArnParts = requireOutput(outputs, 'NcTriageDlqArn').split(':');
     const dlqName = dlqArnParts[dlqArnParts.length - 1];
-    const dlqUrlResult = aws<{ QueueUrl: string }>(
-      `sqs get-queue-url --queue-name "${dlqName}"`,
-    );
+    const dlqUrlResult = aws<{ QueueUrl: string }>(`sqs get-queue-url --queue-name "${dlqName}"`);
     const dlqUrl = dlqUrlResult.QueueUrl;
 
     let found = false;
     for (let i = 0; i < 6; i++) {
       await sleep(5000);
-      const result = aws<{ Messages?: Array<{ Body: string; MessageAttributes?: Record<string, { StringValue: string }> }> }>(
+      const result = aws<{
+        Messages?: Array<{
+          Body: string;
+          MessageAttributes?: Record<string, { StringValue: string }>;
+        }>;
+      }>(
         `sqs receive-message --queue-url "${dlqUrl}" --max-number-of-messages 10 --wait-time-seconds 5 --message-attribute-names All`,
       );
       for (const msg of result.Messages ?? []) {
@@ -382,9 +441,14 @@ describe('eventing-backbone readback (12-test matrix)', () => {
       targetQueue: 'CAPA_INTAKE_QUEUE_URL',
       detailType: 'CAPA.Opened',
       detail: {
-        tenantId: 'cold-start-test', eventId: `cold-t10-${Date.now()}`,
-        timestamp: new Date().toISOString(), actor: 'readback',
-        module: 'M2', clauseRef: 'ISO 9001 10.2', standard: 'ISO9001', payload: {},
+        tenantId: 'cold-start-test',
+        eventId: `cold-t10-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        actor: 'readback',
+        module: 'M2',
+        clauseRef: 'ISO 9001 10.2',
+        standard: 'ISO9001',
+        payload: {},
       },
     });
 
@@ -404,24 +468,36 @@ describe('eventing-backbone readback (12-test matrix)', () => {
 
   it('test 11: cold-start demo consumer Lambda (direct invoke)', () => {
     const sqsPayload = JSON.stringify({
-      Records: [{
-        messageId: 'cold-test-msg',
-        receiptHandle: 'fake-receipt',
-        body: JSON.stringify({
-          detailType: 'Audit.FindingRaised',
-          detail: {
-            tenantId: 'cold-start-test', eventId: `cold-t11-${Date.now()}`,
-            timestamp: new Date().toISOString(), actor: 'readback',
-            module: 'M3', clauseRef: 'ISO 9001 9.2', standard: 'ISO9001', payload: {},
+      Records: [
+        {
+          messageId: 'cold-test-msg',
+          receiptHandle: 'fake-receipt',
+          body: JSON.stringify({
+            detailType: 'Audit.FindingRaised',
+            detail: {
+              tenantId: 'cold-start-test',
+              eventId: `cold-t11-${Date.now()}`,
+              timestamp: new Date().toISOString(),
+              actor: 'readback',
+              module: 'M3',
+              clauseRef: 'ISO 9001 9.2',
+              standard: 'ISO9001',
+              payload: {},
+            },
+          }),
+          attributes: {
+            ApproximateReceiveCount: '1',
+            SentTimestamp: `${Date.now()}`,
+            SenderId: 'test',
+            ApproximateFirstReceiveTimestamp: `${Date.now()}`,
           },
-        }),
-        attributes: { ApproximateReceiveCount: '1', SentTimestamp: `${Date.now()}`, SenderId: 'test', ApproximateFirstReceiveTimestamp: `${Date.now()}` },
-        messageAttributes: {},
-        md5OfBody: '',
-        eventSource: 'aws:sqs',
-        eventSourceARN: requireOutput(outputs, 'NcTriageQueueArn'),
-        awsRegion: REGION,
-      }],
+          messageAttributes: {},
+          md5OfBody: '',
+          eventSource: 'aws:sqs',
+          eventSourceARN: requireOutput(outputs, 'NcTriageQueueArn'),
+          awsRegion: REGION,
+        },
+      ],
     });
 
     const start = Date.now();
@@ -440,15 +516,15 @@ describe('eventing-backbone readback (12-test matrix)', () => {
   // ─── Test 12: All 8 DLQ alarms exist ───────────────────────────────────
 
   it('test 12: all 8 DLQ alarms exist with treatMissingData=notBreaching', () => {
-    const result = aws<{ MetricAlarms: Array<{ AlarmName: string; TreatMissingData: string; Namespace: string }> }>(
+    const result = aws<{
+      MetricAlarms: Array<{ AlarmName: string; TreatMissingData: string; Namespace: string }>;
+    }>(
       // Deployed stack name is Dev-EventingStack — CloudFormation prefixes
       // physical alarm names with it (construct-path prefix was wrong here).
       `cloudwatch describe-alarms --alarm-name-prefix "Dev-EventingStack"`,
     );
 
-    const eventingAlarms = result.MetricAlarms.filter(
-      (a) => a.Namespace === 'AWS/SQS',
-    );
+    const eventingAlarms = result.MetricAlarms.filter((a) => a.Namespace === 'AWS/SQS');
     expect(eventingAlarms.length).toBeGreaterThanOrEqual(8);
 
     for (const alarm of eventingAlarms) {

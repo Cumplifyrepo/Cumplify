@@ -127,43 +127,94 @@ export default function M5RiskManagementPage() {
     return 'LOW';
   }
 
-  const columns: Column<Risk>[] = useMemo(() => [
-    { key: 'description', header: t('colDescription'), render: (r) => r.description },
-    { key: 'category', header: t('colCategory'), render: (r) => t(`category${r.category}`) },
-    { key: 'standard', header: t('colStandard'), render: (r) => <ClauseChip standard={r.standard} clauseRef={null} /> },
-    { key: 'riskRating', header: t('colRiskRating'), render: (r) => (
-      <ProvenanceLink entityId={r.id}>
-        <span className={styles.ratingCell}>
-          <span>{r.riskRating}</span>
-          <StatusBadge status={getRatingBadgeStatus(r.riskRating)} />
-        </span>
-      </ProvenanceLink>
-    )},
-    { key: 'ownerId', header: t('colOwner'), render: (r) => r.ownerId },
-    { key: 'status', header: t('colStatus'), render: (r) => <StatusBadge status={r.status} /> },
-  ], [t]);
+  const columns: Column<Risk>[] = useMemo(
+    () => [
+      { key: 'description', header: t('colDescription'), render: (r) => r.description },
+      { key: 'category', header: t('colCategory'), render: (r) => t(`category${r.category}`) },
+      {
+        key: 'standard',
+        header: t('colStandard'),
+        render: (r) => <ClauseChip standard={r.standard} clauseRef={null} />,
+      },
+      {
+        key: 'riskRating',
+        header: t('colRiskRating'),
+        render: (r) => (
+          <ProvenanceLink entityId={r.id}>
+            <span className={styles.ratingCell}>
+              <span>{r.riskRating}</span>
+              <StatusBadge status={getRatingBadgeStatus(r.riskRating)} />
+            </span>
+          </ProvenanceLink>
+        ),
+      },
+      { key: 'ownerId', header: t('colOwner'), render: (r) => r.ownerId },
+      { key: 'status', header: t('colStatus'), render: (r) => <StatusBadge status={r.status} /> },
+    ],
+    [t],
+  );
 
   // FormDrawer field definitions
-  const createFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.filter(Boolean).map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })), defaultValue: chipStandard || '' },
-    { name: 'category', label: t('fieldCategory'), type: 'select', required: true, options: CATEGORIES.filter(Boolean).map((c) => ({ value: c, label: t(`category${c}`) })) },
-    { name: 'description', label: t('fieldDescription'), type: 'textarea', required: true, defaultValue: chipTitle },
-    { name: 'likelihood', label: t('fieldLikelihood'), type: 'text', required: true },
-    { name: 'severity', label: t('fieldSeverity'), type: 'text', required: true },
-    { name: 'treatment', label: t('fieldTreatment'), type: 'textarea' },
-  ], [t, chipTitle, chipStandard]);
+  const createFields: FieldDef[] = useMemo(
+    () => [
+      {
+        name: 'standard',
+        label: t('fieldStandard'),
+        type: 'select',
+        required: true,
+        options: STANDARDS.filter(Boolean).map((s) => ({
+          value: s,
+          label: s.replace('ISO', 'ISO '),
+        })),
+        defaultValue: chipStandard || '',
+      },
+      {
+        name: 'category',
+        label: t('fieldCategory'),
+        type: 'select',
+        required: true,
+        options: CATEGORIES.filter(Boolean).map((c) => ({ value: c, label: t(`category${c}`) })),
+      },
+      {
+        name: 'description',
+        label: t('fieldDescription'),
+        type: 'textarea',
+        required: true,
+        defaultValue: chipTitle,
+      },
+      { name: 'likelihood', label: t('fieldLikelihood'), type: 'text', required: true },
+      { name: 'severity', label: t('fieldSeverity'), type: 'text', required: true },
+      { name: 'treatment', label: t('fieldTreatment'), type: 'textarea' },
+    ],
+    [t, chipTitle, chipStandard],
+  );
 
-  const treatmentFields: FieldDef[] = useMemo(() => [
-    { name: 'actionDesc', label: t('fieldActionDesc'), type: 'textarea', required: true },
-    { name: 'ownerId', label: t('fieldOwnerId'), type: 'text', required: true },
-    { name: 'dueDate', label: t('fieldDueDate'), type: 'date', required: true },
-  ], [t]);
+  const treatmentFields: FieldDef[] = useMemo(
+    () => [
+      { name: 'actionDesc', label: t('fieldActionDesc'), type: 'textarea', required: true },
+      { name: 'ownerId', label: t('fieldOwnerId'), type: 'text', required: true },
+      { name: 'dueDate', label: t('fieldDueDate'), type: 'date', required: true },
+    ],
+    [t],
+  );
 
-  const changePlanFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.filter(Boolean).map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })) },
-    { name: 'changeDesc', label: t('fieldChangeDesc'), type: 'textarea', required: true },
-    { name: 'impactAssessment', label: t('fieldImpactAssessment'), type: 'textarea' },
-  ], [t]);
+  const changePlanFields: FieldDef[] = useMemo(
+    () => [
+      {
+        name: 'standard',
+        label: t('fieldStandard'),
+        type: 'select',
+        required: true,
+        options: STANDARDS.filter(Boolean).map((s) => ({
+          value: s,
+          label: s.replace('ISO', 'ISO '),
+        })),
+      },
+      { name: 'changeDesc', label: t('fieldChangeDesc'), type: 'textarea', required: true },
+      { name: 'impactAssessment', label: t('fieldImpactAssessment'), type: 'textarea' },
+    ],
+    [t],
+  );
 
   async function handleCreateRisk(values: Record<string, string | boolean>) {
     try {
@@ -223,7 +274,9 @@ export default function M5RiskManagementPage() {
     <>
       <PageHeader
         title={t('title')}
-        actions={<PrimaryButton onClick={() => setCreateDrawerOpen(true)}>{t('newRisk')}</PrimaryButton>}
+        actions={
+          <PrimaryButton onClick={() => setCreateDrawerOpen(true)}>{t('newRisk')}</PrimaryButton>
+        }
       />
 
       {/* Filter bar */}
@@ -268,7 +321,9 @@ export default function M5RiskManagementPage() {
 
       {/* Row expand: detail section — treatments listing BLOCKED (no listRiskTreatments query) */}
       {selectedRisk && (
-        <div className={`${styles.detailSection} ${escalatedId === selectedRisk.id ? styles.escalatedFlash : ''}`}>
+        <div
+          className={`${styles.detailSection} ${escalatedId === selectedRisk.id ? styles.escalatedFlash : ''}`}
+        >
           <h3 className={styles.detailTitle}>{t('treatmentsTitle')}</h3>
           <p className={styles.detailEmpty}>{t('treatmentsBlocked')}</p>
           <div className={styles.detailActions}>

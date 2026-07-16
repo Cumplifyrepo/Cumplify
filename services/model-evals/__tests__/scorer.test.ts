@@ -38,16 +38,21 @@ describe('scoreCandidate', () => {
           { id: 't2', prompt: '', groundTruthLabels: ['b'], expectedOutput: 'b' },
           { id: 't3', prompt: '', groundTruthLabels: ['c'], expectedOutput: 'c' },
           { id: 't4', prompt: '', groundTruthLabels: ['d'], expectedOutput: 'd' },
-          { id: 't5', prompt: '', groundTruthLabels: ['a', 'b', 'c', 'd'], expectedOutput: 'a,b,c,d' },
+          {
+            id: 't5',
+            prompt: '',
+            groundTruthLabels: ['a', 'b', 'c', 'd'],
+            expectedOutput: 'a,b,c,d',
+          },
         ],
       };
 
       const results: EvalResult[] = [
-        makeResult('t1', 'ANSWER: a'),           // 1.0
-        makeResult('t2', 'ANSWER: b'),           // 1.0
-        makeResult('t3', 'ANSWER: c'),           // 1.0
-        makeResult('t4', 'ANSWER: d'),           // 1.0
-        makeResult('t5', 'ANSWER: a, b'),        // 2/6 precision × recall → F1 ≈ 0.5 (partial)
+        makeResult('t1', 'ANSWER: a'), // 1.0
+        makeResult('t2', 'ANSWER: b'), // 1.0
+        makeResult('t3', 'ANSWER: c'), // 1.0
+        makeResult('t4', 'ANSWER: d'), // 1.0
+        makeResult('t5', 'ANSWER: a, b'), // 2/6 precision × recall → F1 ≈ 0.5 (partial)
       ];
 
       const seatConfig: SeatConfig = {
@@ -80,7 +85,12 @@ describe('scoreCandidate', () => {
           { id: 't2', prompt: '', groundTruthLabels: ['b'], expectedOutput: 'b' },
           { id: 't3', prompt: '', groundTruthLabels: ['c'], expectedOutput: 'c' },
           { id: 't4', prompt: '', groundTruthLabels: ['d'], expectedOutput: 'd' },
-          { id: 't5', prompt: '', groundTruthLabels: ['a', 'b', 'c', 'd'], expectedOutput: 'a,b,c,d' },
+          {
+            id: 't5',
+            prompt: '',
+            groundTruthLabels: ['a', 'b', 'c', 'd'],
+            expectedOutput: 'a,b,c,d',
+          },
         ],
       };
 
@@ -89,7 +99,7 @@ describe('scoreCandidate', () => {
         makeResult('t2', 'ANSWER: b'),
         makeResult('t3', 'ANSWER: c'),
         makeResult('t4', 'ANSWER: d'),
-        makeResult('t5', 'ANSWER: a, b'),  // partial match → drops aggregate below 0.95
+        makeResult('t5', 'ANSWER: a, b'), // partial match → drops aggregate below 0.95
       ];
 
       const seatConfig: SeatConfig = {
@@ -144,7 +154,14 @@ describe('scoreCandidate', () => {
         version: '1.0',
         taskCount: 1,
         gradingMethod: 'exact-match',
-        tasks: [{ id: 't1', prompt: '', groundTruthLabels: ['nc-triage', 'hazard-q'], expectedOutput: 'hazard-q,nc-triage' }],
+        tasks: [
+          {
+            id: 't1',
+            prompt: '',
+            groundTruthLabels: ['nc-triage', 'hazard-q'],
+            expectedOutput: 'hazard-q,nc-triage',
+          },
+        ],
       };
 
       const results: EvalResult[] = [makeResult('t1', 'ANSWER: nc-triage, hazard-q')];

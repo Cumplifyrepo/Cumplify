@@ -1,693 +1,532 @@
 {
- "schemaVersion": 1,
- "documentId": "924e6bf8-579d-40c1-83c8-82a0a0506f66",
- "versionNo": 1,
- "locale": "en",
- "frontMatter": {
-  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
-  "scope": {
-   "organization": "AeroFix MRO Services",
-   "standards": [
-    "ISO9001"
-   ],
-   "sites": [
-    "Hangar 4, Meacham Field, Fort Worth, TX, US"
-   ],
-   "managementRepresentative": "Sam Okafor"
+  "schemaVersion": 1,
+  "documentId": "924e6bf8-579d-40c1-83c8-82a0a0506f66",
+  "versionNo": 1,
+  "locale": "en",
+  "frontMatter": {
+    "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+    "scope": {
+      "organization": "AeroFix MRO Services",
+      "standards": ["ISO9001"],
+      "sites": ["Hangar 4, Meacham Field, Fort Worth, TX, US"],
+      "managementRepresentative": "Sam Okafor"
+    },
+    "normativeRefs": [
+      {
+        "standard": "ISO9001",
+        "source": "https://www.iso.org/store.html"
+      }
+    ],
+    "terms": []
   },
-  "normativeRefs": [
-   {
-    "standard": "ISO9001",
-    "source": "https://www.iso.org/store.html"
-   }
-  ],
-  "terms": []
- },
- "sections": [
-  {
-   "harmonizationKey": "4.1",
-   "clauseRefs": [
+  "sections": [
     {
-     "standard": "ISO9001",
-     "clauseNo": "4.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "applicability.exclusions"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services establishes, implements, maintains, and continually improves its quality management system (QMS) and its interacting processes.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
+      "harmonizationKey": "4.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "text": "These processes include work-order intake, inspection, repair and overhaul, airworthiness release, and tooling calibration.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "4.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "text": "The organization defines inputs, outputs, sequence, criteria, and assigns process owners to ensure clarity and accountability.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "4.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["applicability.exclusions"]
+      }
     },
     {
-     "text": "Sam Okafor, the management representative, oversees this continual improvement initiative.",
-     "factRefs": [
-      "F5"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services demonstrates top management leadership and commitment to its Quality Management System (QMS) as per ISO9001 standards.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
+      "harmonizationKey": "4.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services establishes, implements, maintains, and continually improves its quality management system (QMS) and its interacting processes.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "These processes include work-order intake, inspection, repair and overhaul, airworthiness release, and tooling calibration.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "The organization defines inputs, outputs, sequence, criteria, and assigns process owners to ensure clarity and accountability.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Sam Okafor, the management representative, oversees this continual improvement initiative.",
+          "factRefs": ["F5"]
+        }
+      ]
     },
     {
-     "text": "Sam Okafor, the management representative, ensures that customer focus is maintained throughout the organization.",
-     "factRefs": [
-      "F5"
-     ]
+      "harmonizationKey": "5.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services demonstrates top management leadership and commitment to its Quality Management System (QMS) as per ISO9001 standards.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "Sam Okafor, the management representative, ensures that customer focus is maintained throughout the organization.",
+          "factRefs": ["F5"]
+        },
+        {
+          "text": "This commitment is integral to the organization's operations in the Aviation Maintenance industry, particularly in providing services such as airframe inspection, component repair, and line maintenance for regional turboprop operators.",
+          "factRefs": ["F2", "F3"]
+        },
+        {
+          "text": "By upholding these principles, AeroFix MRO Services aims to consistently meet and exceed customer expectations in every aspect of its service delivery.",
+          "factRefs": ["F1", "F3"]
+        }
+      ]
     },
     {
-     "text": "This commitment is integral to the organization's operations in the Aviation Maintenance industry, particularly in providing services such as airframe inspection, component repair, and line maintenance for regional turboprop operators.",
-     "factRefs": [
-      "F2",
-      "F3"
-     ]
+      "harmonizationKey": "5.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.policies"]
+      }
     },
     {
-     "text": "By upholding these principles, AeroFix MRO Services aims to consistently meet and exceed customer expectations in every aspect of its service delivery.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.policies"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "5.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services assigns specific roles and responsibilities to its employees to ensure effective management of its quality system.",
-     "factRefs": [
-      "F1",
-      "F4",
-      "F13"
-     ]
+      "harmonizationKey": "5.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services assigns specific roles and responsibilities to its employees to ensure effective management of its quality system.",
+          "factRefs": ["F1", "F4", "F13"]
+        },
+        {
+          "text": "These roles and responsibilities are clearly communicated to all employees to ensure understanding and compliance with the quality management system.",
+          "factRefs": ["F1", "F4", "F13"]
+        },
+        {
+          "text": "Sam Okafor, the management representative, oversees the implementation and maintenance of the quality management system, ensuring that all employees understand their roles and responsibilities.",
+          "factRefs": ["F1", "F5", "F13"]
+        },
+        {
+          "text": "The organization\u2019s quality manual outlines the specific responsibilities and authorities for each role relevant to the quality management system, providing a clear framework for employees to follow.",
+          "factRefs": ["F1", "F9", "F13"]
+        }
+      ]
     },
     {
-     "text": "These roles and responsibilities are clearly communicated to all employees to ensure understanding and compliance with the quality management system.",
-     "factRefs": [
-      "F1",
-      "F4",
-      "F13"
-     ]
+      "harmonizationKey": "6.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.risks"]
+      }
     },
     {
-     "text": "Sam Okafor, the management representative, oversees the implementation and maintenance of the quality management system, ensuring that all employees understand their roles and responsibilities.",
-     "factRefs": [
-      "F1",
-      "F5",
-      "F13"
-     ]
+      "harmonizationKey": "6.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
     },
     {
-     "text": "The organization\u2019s quality manual outlines the specific responsibilities and authorities for each role relevant to the quality management system, providing a clear framework for employees to follow.",
-     "factRefs": [
-      "F1",
-      "F9",
-      "F13"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "6.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.risks"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.change_plans"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services determines and provides the necessary resources for its quality management system, ensuring the availability of skilled personnel, appropriate infrastructure, and a conducive process environment.",
-     "factRefs": [
-      "F1",
-      "F4",
-      "F10",
-      "F14"
-     ]
+      "harmonizationKey": "6.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.change_plans"]
+      }
     },
     {
-     "text": "The organization ensures that monitoring and measuring resources are calibrated and traceable, maintaining the highest standards of accuracy and reliability in its operations.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "7.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services determines and provides the necessary resources for its quality management system, ensuring the availability of skilled personnel, appropriate infrastructure, and a conducive process environment.",
+          "factRefs": ["F1", "F4", "F10", "F14"]
+        },
+        {
+          "text": "The organization ensures that monitoring and measuring resources are calibrated and traceable, maintaining the highest standards of accuracy and reliability in its operations.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "AeroFix MRO Services leverages its organizational knowledge, including industry expertise and documented processes, to enhance the effectiveness of its quality management system.",
+          "factRefs": ["F9", "F10"]
+        }
+      ]
     },
     {
-     "text": "AeroFix MRO Services leverages its organizational knowledge, including industry expertise and documented processes, to enhance the effectiveness of its quality management system.",
-     "factRefs": [
-      "F9",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services determines the internal and external communications relevant to its quality management system, ensuring alignment with its core processes and industry standards.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F10",
-      "F13"
-     ]
+      "harmonizationKey": "7.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
     },
     {
-     "text": "Communications encompass what to communicate, when, with whom, how, and who communicates, tailored to the organization's specific needs in the Aviation Maintenance industry.",
-     "factRefs": [
-      "F2",
-      "F10"
-     ]
+      "harmonizationKey": "7.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
     },
     {
-     "text": "Internal communications are managed to ensure all 65 employees are informed about quality objectives and process updates relevant to their roles.",
-     "factRefs": [
-      "F4"
-     ]
+      "harmonizationKey": "7.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services determines the internal and external communications relevant to its quality management system, ensuring alignment with its core processes and industry standards.",
+          "factRefs": ["F1", "F2", "F10", "F13"]
+        },
+        {
+          "text": "Communications encompass what to communicate, when, with whom, how, and who communicates, tailored to the organization's specific needs in the Aviation Maintenance industry.",
+          "factRefs": ["F2", "F10"]
+        },
+        {
+          "text": "Internal communications are managed to ensure all 65 employees are informed about quality objectives and process updates relevant to their roles.",
+          "factRefs": ["F4"]
+        },
+        {
+          "text": "External communications are structured to maintain effective relationships with OEM-approved parts distributors, FAA-certificated repair-station subcontractors, and other stakeholders.",
+          "factRefs": ["F7"]
+        },
+        {
+          "text": "Sam Okafor, the management representative, oversees the communication strategy to ensure it supports the quality management system and complies with ISO9001 requirements.",
+          "factRefs": ["F5", "F13"]
+        }
+      ]
     },
     {
-     "text": "External communications are structured to maintain effective relationships with OEM-approved parts distributors, FAA-certificated repair-station subcontractors, and other stakeholders.",
-     "factRefs": [
-      "F7"
-     ]
+      "harmonizationKey": "7.5",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services maintains the necessary documentation as per ISO9001 requirements, ensuring proper identification, format, and approval upon creation and updates.",
+          "factRefs": ["F1", "F13"]
+        },
+        {
+          "text": "The organization controls the availability, protection, distribution, retention, and disposition of all documented information.",
+          "factRefs": ["F1"]
+        },
+        {
+          "text": "Documented information is appropriately managed to support core processes such as work-order intake, inspection, repair, overhaul, and airworthiness release.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "The documents register, which currently holds 62 entries, includes critical documents like the Quality Management System Manual and procedures for nonconformity and corrective action.",
+          "factRefs": ["F15", "F16"]
+        }
+      ]
     },
     {
-     "text": "Sam Okafor, the management representative, oversees the communication strategy to ensure it supports the quality management system and complies with ISO9001 requirements.",
-     "factRefs": [
-      "F5",
-      "F13"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.5",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services maintains the necessary documentation as per ISO9001 requirements, ensuring proper identification, format, and approval upon creation and updates.",
-     "factRefs": [
-      "F1",
-      "F13"
-     ]
+      "harmonizationKey": "8.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services plans, implements, and controls the processes required to meet the needs of its regional turboprop operator clients, focusing on airframe inspection, component repair, and line maintenance services.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "These processes include establishing criteria, allocating resources, and maintaining documented information to ensure consistent service delivery.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "The organization manages planned changes and oversees outsourced processes, such as NDT level-III services, to maintain compliance with ISO9001 standards.",
+          "factRefs": ["F11", "F13"]
+        },
+        {
+          "text": "Sam Okafor, the management representative, ensures that all processes align with the organization\u2019s quality objectives and regulatory requirements.",
+          "factRefs": ["F5"]
+        }
+      ]
     },
     {
-     "text": "The organization controls the availability, protection, distribution, retention, and disposition of all documented information.",
-     "factRefs": [
-      "F1"
-     ]
+      "harmonizationKey": "8.2-9001#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.2"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services communicates with customers to determine the requirements for its products and services, which include airframe inspection, component repair, and line maintenance for regional turboprop operators.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization reviews its ability to meet these requirements, including statutory and regulatory ones, before making any commitments to customers.",
+          "factRefs": ["F2", "F3"]
+        },
+        {
+          "text": "AeroFix MRO Services ensures that changes to customer requirements are properly controlled and managed throughout the process.",
+          "factRefs": ["F1", "F3"]
+        }
+      ]
     },
     {
-     "text": "Documented information is appropriately managed to support core processes such as work-order intake, inspection, repair, overhaul, and airworthiness release.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "8.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.3"
+        }
+      ],
+      "kind": "na_justified",
+      "naJustification": "ISO9001 8.3: AeroFix performs maintenance to OEM instructions and approved data only; it does not design or develop products or services. Clause 8.3 is excluded per ISO 9001 A.5 applicability rules."
     },
     {
-     "text": "The documents register, which currently holds 62 entries, includes critical documents like the Quality Management System Manual and procedures for nonconformity and corrective action.",
-     "factRefs": [
-      "F15",
-      "F16"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services plans, implements, and controls the processes required to meet the needs of its regional turboprop operator clients, focusing on airframe inspection, component repair, and line maintenance services.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
+      "harmonizationKey": "8.4#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.4"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.suppliers"]
+      }
     },
     {
-     "text": "These processes include establishing criteria, allocating resources, and maintaining documented information to ensure consistent service delivery.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "8.5#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services implements production and service provision under controlled conditions, ensuring identification and traceability throughout the processes of airframe inspection, component repair, and line maintenance.",
+          "factRefs": ["F1", "F3", "F10", "F13"]
+        },
+        {
+          "text": "The organization carefully manages customer and external-provider property, preserving it to maintain the integrity and quality of the services provided.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "Post-delivery activities are systematically conducted to ensure customer satisfaction and compliance with airworthiness standards.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "Any changes to production and service provision are controlled to prevent adverse effects on the quality of the services delivered.",
+          "factRefs": ["F1", "F3", "F10", "F13"]
+        }
+      ]
     },
     {
-     "text": "The organization manages planned changes and oversees outsourced processes, such as NDT level-III services, to maintain compliance with ISO9001 standards.",
-     "factRefs": [
-      "F11",
-      "F13"
-     ]
+      "harmonizationKey": "8.6#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.6"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "AeroFix MRO Services ensures that all products and services meet specified requirements prior to release.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "Verification processes are in place to confirm compliance with customer and regulatory requirements for airframe inspection, component repair, and line maintenance services.",
+          "factRefs": ["F2", "F3", "F10"]
+        },
+        {
+          "text": "Evidence of conformity is systematically retained, with clear traceability to the individual authorizing the release.",
+          "factRefs": ["F1", "F5"]
+        },
+        {
+          "text": "This approach supports the organization's commitment to quality and regulatory adherence in the Aviation Maintenance industry.",
+          "factRefs": ["F2", "F12"]
+        }
+      ]
     },
     {
-     "text": "Sam Okafor, the management representative, ensures that all processes align with the organization\u2019s quality objectives and regulatory requirements.",
-     "factRefs": [
-      "F5"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.2-9001#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.2"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services communicates with customers to determine the requirements for its products and services, which include airframe inspection, component repair, and line maintenance for regional turboprop operators.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
+      "harmonizationKey": "8.7#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.7"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
     },
     {
-     "text": "The organization reviews its ability to meet these requirements, including statutory and regulatory ones, before making any commitments to customers.",
-     "factRefs": [
-      "F2",
-      "F3"
-     ]
+      "harmonizationKey": "9.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
     },
     {
-     "text": "AeroFix MRO Services ensures that changes to customer requirements are properly controlled and managed throughout the process.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.3"
-    }
-   ],
-   "kind": "na_justified",
-   "naJustification": "ISO9001 8.3: AeroFix performs maintenance to OEM instructions and approved data only; it does not design or develop products or services. Clause 8.3 is excluded per ISO 9001 A.5 applicability rules."
-  },
-  {
-   "harmonizationKey": "8.4#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.4"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.suppliers"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.5#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services implements production and service provision under controlled conditions, ensuring identification and traceability throughout the processes of airframe inspection, component repair, and line maintenance.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10",
-      "F13"
-     ]
+      "harmonizationKey": "9.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.audits"]
+      }
     },
     {
-     "text": "The organization carefully manages customer and external-provider property, preserving it to maintain the integrity and quality of the services provided.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
+      "harmonizationKey": "9.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.management_reviews"]
+      }
     },
     {
-     "text": "Post-delivery activities are systematically conducted to ensure customer satisfaction and compliance with airworthiness standards.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
+      "harmonizationKey": "10.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
     },
     {
-     "text": "Any changes to production and service provision are controlled to prevent adverse effects on the quality of the services delivered.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10",
-      "F13"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.6#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.6"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "AeroFix MRO Services ensures that all products and services meet specified requirements prior to release.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
+      "harmonizationKey": "10.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
     },
     {
-     "text": "Verification processes are in place to confirm compliance with customer and regulatory requirements for airframe inspection, component repair, and line maintenance services.",
-     "factRefs": [
-      "F2",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "Evidence of conformity is systematically retained, with clear traceability to the individual authorizing the release.",
-     "factRefs": [
-      "F1",
-      "F5"
-     ]
-    },
-    {
-     "text": "This approach supports the organization's commitment to quality and regulatory adherence in the Aviation Maintenance industry.",
-     "factRefs": [
-      "F2",
-      "F12"
-     ]
+      "harmonizationKey": "10.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities", "register.objectives"]
+      }
     }
-   ]
-  },
-  {
-   "harmonizationKey": "8.7#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.7"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.audits"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.management_reviews"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities",
-     "register.objectives"
-    ]
-   }
-  }
- ]
+  ]
 }

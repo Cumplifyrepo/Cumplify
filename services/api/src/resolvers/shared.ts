@@ -21,13 +21,8 @@ import {
   ExecuteStatementCommand,
   type SqlParameter,
 } from '@aws-sdk/client-rds-data';
-import {
-  STSClient,
-  AssumeRoleCommand,
-} from '@aws-sdk/client-sts';
-import {
-  DynamoDBClient,
-} from '@aws-sdk/client-dynamodb';
+import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { publish } from '../../../eventing/src/publisher.js';
 
@@ -70,12 +65,14 @@ export async function getTenantDdbClient(tenantId: string): Promise<DynamoDBClie
     });
   }
 
-  const assumed = await stsClient.send(new AssumeRoleCommand({
-    RoleArn: TENANT_DATA_ROLE_ARN,
-    RoleSessionName: `resolver-${tenantId.substring(0, 8)}-${now}`,
-    Tags: [{ Key: 'tenantId', Value: tenantId }], // BARE tenantId (FF-3)
-    DurationSeconds: 900,
-  }));
+  const assumed = await stsClient.send(
+    new AssumeRoleCommand({
+      RoleArn: TENANT_DATA_ROLE_ARN,
+      RoleSessionName: `resolver-${tenantId.substring(0, 8)}-${now}`,
+      Tags: [{ Key: 'tenantId', Value: tenantId }], // BARE tenantId (FF-3)
+      DurationSeconds: 900,
+    }),
+  );
 
   const creds: CachedCredentials = {
     accessKeyId: assumed.Credentials!.AccessKeyId!,
@@ -116,7 +113,7 @@ async function withResumeRetry<T>(fn: () => Promise<T>): Promise<T> {
         msg.includes('Timed out');
 
       if (isDatabaseResuming && attempt < MAX_RESUME_RETRIES) {
-        await new Promise(resolve => setTimeout(resolve, RESUME_DELAY_MS));
+        await new Promise((resolve) => setTimeout(resolve, RESUME_DELAY_MS));
         continue;
       }
       throw err;
@@ -140,50 +137,62 @@ export interface TenantTransaction {
  * Uses app_role secret (NEVER master) for Data API.
  */
 export async function beginTenantTransaction(tenantId: string): Promise<TenantTransaction> {
-  const { transactionId } = await withResumeRetry(() => rdsClient.send(new BeginTransactionCommand({
-    resourceArn: CLUSTER_ARN,
-    secretArn: APP_ROLE_SECRET_ARN,
-    database: 'postgres',
-  })));
+  const { transactionId } = await withResumeRetry(() =>
+    rdsClient.send(
+      new BeginTransactionCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: APP_ROLE_SECRET_ARN,
+        database: 'postgres',
+      }),
+    ),
+  );
 
   // C-2 INVARIANT: set_config is the FIRST statement in every transaction.
   // Third arg = true → transaction-local. Connection reuse is safe.
-  await rdsClient.send(new ExecuteStatementCommand({
-    resourceArn: CLUSTER_ARN,
-    secretArn: APP_ROLE_SECRET_ARN,
-    database: 'postgres',
-    transactionId: transactionId!,
-    sql: `SELECT set_config('app.tenant_id', :tenantId, true)`,
-    parameters: [{ name: 'tenantId', value: { stringValue: tenantId } }],
-  }));
-
-  const execute = async (sql: string, parameters?: SqlParameter[]): Promise<DataApiResult> => {
-    const result = await rdsClient.send(new ExecuteStatementCommand({
+  await rdsClient.send(
+    new ExecuteStatementCommand({
       resourceArn: CLUSTER_ARN,
       secretArn: APP_ROLE_SECRET_ARN,
       database: 'postgres',
       transactionId: transactionId!,
-      sql,
-      parameters,
-      includeResultMetadata: true, // Required for columnMetadata in response
-    }));
+      sql: `SELECT set_config('app.tenant_id', :tenantId, true)`,
+      parameters: [{ name: 'tenantId', value: { stringValue: tenantId } }],
+    }),
+  );
+
+  const execute = async (sql: string, parameters?: SqlParameter[]): Promise<DataApiResult> => {
+    const result = await rdsClient.send(
+      new ExecuteStatementCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: APP_ROLE_SECRET_ARN,
+        database: 'postgres',
+        transactionId: transactionId!,
+        sql,
+        parameters,
+        includeResultMetadata: true, // Required for columnMetadata in response
+      }),
+    );
     return result as DataApiResult;
   };
 
   const commit = async () => {
-    await rdsClient.send(new CommitTransactionCommand({
-      resourceArn: CLUSTER_ARN,
-      secretArn: APP_ROLE_SECRET_ARN,
-      transactionId: transactionId!,
-    }));
+    await rdsClient.send(
+      new CommitTransactionCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: APP_ROLE_SECRET_ARN,
+        transactionId: transactionId!,
+      }),
+    );
   };
 
   const rollback = async () => {
-    await rdsClient.send(new RollbackTransactionCommand({
-      resourceArn: CLUSTER_ARN,
-      secretArn: APP_ROLE_SECRET_ARN,
-      transactionId: transactionId!,
-    }));
+    await rdsClient.send(
+      new RollbackTransactionCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: APP_ROLE_SECRET_ARN,
+        transactionId: transactionId!,
+      }),
+    );
   };
 
   return { transactionId: transactionId!, execute, commit, rollback };
@@ -244,7 +253,9 @@ export interface ResolverContext {
  * Extract and validate resolverContext from AppSync event.
  * SCHEMA-5: tenantId comes ONLY from resolverContext — never from input args.
  */
-export function extractContext(event: { identity?: { resolverContext?: Record<string, string> } }): ResolverContext {
+export function extractContext(event: {
+  identity?: { resolverContext?: Record<string, string> };
+}): ResolverContext {
   const ctx = event.identity?.resolverContext;
   if (!ctx?.tenantId) {
     throw new Error('Missing resolverContext.tenantId — authorization failed');
@@ -262,15 +273,26 @@ export { TABLE_NAME, BUS_NAME, CLUSTER_ARN, Logger };
 
 // ─── Data API Response Marshalling (BUG-A fix) ───────────────────────────────
 import {
-  RISK_CATEGORY_MAP, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP,
-  NC_SOURCE_MAP, NC_TYPE_MAP, SEVERITY_MAP, DISPOSITION_MAP,
-  FINDING_TYPE_MAP, CAPA_STATUS_MAP, GENERATION_RUN_STATUS_MAP, SECTION_KIND_MAP,
+  RISK_CATEGORY_MAP,
+  DOC_TYPE_MAP,
+  DOC_STATUS_MAP,
+  APPROVAL_DECISION_MAP,
+  NC_SOURCE_MAP,
+  NC_TYPE_MAP,
+  SEVERITY_MAP,
+  DISPOSITION_MAP,
+  FINDING_TYPE_MAP,
+  CAPA_STATUS_MAP,
+  GENERATION_RUN_STATUS_MAP,
+  SECTION_KIND_MAP,
 } from './enum-mappings.js';
 
 /** Reverse maps: DB lowercase → GraphQL UPPERCASE */
 function invertMap(map: Record<string, string>): Record<string, string> {
   const inv: Record<string, string> = {};
-  for (const [k, v] of Object.entries(map)) { inv[v] = k; }
+  for (const [k, v] of Object.entries(map)) {
+    inv[v] = k;
+  }
   return inv;
 }
 
@@ -290,8 +312,10 @@ const REVERSE_ENUMS: Record<string, Record<string, string>> = {
   // FIXED 2026-07-15 (architect): same class, qms values — GenerationRun/
   // GenerationSection reads would have failed enum serialization on deploy.
   status: {
-    ...invertMap(DOC_STATUS_MAP), ...invertMap(CAPA_STATUS_MAP),
-    ...invertMap(GENERATION_RUN_STATUS_MAP), ...invertMap(SECTION_KIND_MAP),
+    ...invertMap(DOC_STATUS_MAP),
+    ...invertMap(CAPA_STATUS_MAP),
+    ...invertMap(GENERATION_RUN_STATUS_MAP),
+    ...invertMap(SECTION_KIND_MAP),
   },
   kind: invertMap(SECTION_KIND_MAP),
   decision: invertMap(APPROVAL_DECISION_MAP),
@@ -316,7 +340,11 @@ function unwrapArray(av: Record<string, unknown>): unknown[] {
   if (Array.isArray(av.arrayValues)) {
     return (av.arrayValues as Record<string, unknown>[]).map(unwrapArray);
   }
-  return (av.stringValues ?? av.longValues ?? av.doubleValues ?? av.booleanValues ?? []) as unknown[];
+  return (av.stringValues ??
+    av.longValues ??
+    av.doubleValues ??
+    av.booleanValues ??
+    []) as unknown[];
 }
 
 /** Unwrap a Data API field value */
@@ -326,7 +354,8 @@ function unwrapField(field: Record<string, unknown>): unknown {
   if (field.doubleValue !== undefined) return field.doubleValue;
   if (field.booleanValue !== undefined) return field.booleanValue;
   if (field.isNull) return null;
-  if (field.arrayValue !== undefined) return unwrapArray(field.arrayValue as Record<string, unknown>);
+  if (field.arrayValue !== undefined)
+    return unwrapArray(field.arrayValue as Record<string, unknown>);
   // Blob or other — return as-is
   return Object.values(field)[0] ?? null;
 }
@@ -366,7 +395,7 @@ export function marshalRow(
  */
 export function marshalResult(result: DataApiResult): Record<string, unknown>[] {
   if (!result.records || !result.columnMetadata) return [];
-  return result.records.map(row => marshalRow(row, result.columnMetadata!));
+  return result.records.map((row) => marshalRow(row, result.columnMetadata!));
 }
 
 /**
@@ -383,4 +412,3 @@ export function marshalOne(result: DataApiResult): Record<string, unknown> | nul
 export function marshalMany(result: DataApiResult): Record<string, unknown>[] {
   return marshalResult(result);
 }
-

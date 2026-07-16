@@ -30,8 +30,16 @@ describe('budget module', () => {
       };
 
       const prices: Record<string, PriceEntry> = {
-        'model-a': { inputPricePerMToken: 0.10, outputPricePerMToken: 0.40, unit: 'USD per 1M tokens' },
-        'model-b': { inputPricePerMToken: 0.20, outputPricePerMToken: 0.80, unit: 'USD per 1M tokens' },
+        'model-a': {
+          inputPricePerMToken: 0.1,
+          outputPricePerMToken: 0.4,
+          unit: 'USD per 1M tokens',
+        },
+        'model-b': {
+          inputPricePerMToken: 0.2,
+          outputPricePerMToken: 0.8,
+          unit: 'USD per 1M tokens',
+        },
       };
 
       const estimate = computeEstimate(seatConfig, evalSet, prices);

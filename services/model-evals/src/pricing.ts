@@ -207,7 +207,14 @@ async function fetchFromPricingApi(modelIds: string[]): Promise<Record<string, P
  */
 export function parsePricingApiResponse(priceList: string[]): PriceEntry | null {
   const SUPPORTED_UNITS = new Set(['1K tokens']);
-  const EXCLUDE_USAGETYPE_PATTERNS = ['batch', 'flex', 'priority', 'cache', 'custom-model', 'cross-region-global'];
+  const EXCLUDE_USAGETYPE_PATTERNS = [
+    'batch',
+    'flex',
+    'priority',
+    'cache',
+    'custom-model',
+    'cross-region-global',
+  ];
 
   const inputPrices: number[] = [];
   const outputPrices: number[] = [];

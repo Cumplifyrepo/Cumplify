@@ -25,7 +25,7 @@ const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
-  const ncDescription = (event.payload as Record<string, unknown>).description as string ?? '';
+  const ncDescription = ((event.payload as Record<string, unknown>).description as string) ?? '';
 
   // Retrieve similar past NCs for grounding (REQ-RET-6)
   let groundingContext = '';
@@ -42,7 +42,7 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
         queryVector: placeholderVector,
         topK: 3,
       });
-      groundingContext = results.chunks.map(c => c.text).join('\n---\n');
+      groundingContext = results.chunks.map((c) => c.text).join('\n---\n');
     } catch {
       // AOSS retrieval failure is non-blocking for CAPAGuru — proceed without grounding
     }
@@ -56,25 +56,22 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
   ].join('');
 
   // Tool-loop: may invoke Converse multiple times, dispatch tools, enter HITL gate
-  await toolLoop(
-    [{ role: 'user', content: [{ text: userMessage }] }],
-    {
-      seat: 'workhorse',
-      systemPrompt: CAPA_GURU_PROMPT,
-      tools: CAPA_GURU_TOOLS,
-      tenantId,
-      agent: 'CAPAGuru',
-      module: 'M2',
-      feature: 'capa-intake',
-      hitlTools: HITL_TOOLS,
-      invokeFn,
-      dispatchTool: async (toolName, input, tid) => {
-        // Non-HITL tools execute directly (read-only / advisory)
-        // HITL tools are caught by the tool-loop and routed to the gate
-        return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
-      },
+  await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+    seat: 'workhorse',
+    systemPrompt: CAPA_GURU_PROMPT,
+    tools: CAPA_GURU_TOOLS,
+    tenantId,
+    agent: 'CAPAGuru',
+    module: 'M2',
+    feature: 'capa-intake',
+    hitlTools: HITL_TOOLS,
+    invokeFn,
+    dispatchTool: async (toolName, input, tid) => {
+      // Non-HITL tools execute directly (read-only / advisory)
+      // HITL tools are caught by the tool-loop and routed to the gate
+      return { output: { toolName, input, tenantId: tid }, requiresHitl: false };
     },
-  );
+  });
 }
 
 export const handler = createFifoHandler({

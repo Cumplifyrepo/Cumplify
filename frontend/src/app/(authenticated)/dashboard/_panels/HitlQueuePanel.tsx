@@ -2,7 +2,16 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { Panel, StatusBadge, ClauseChip, EmptyState, ErrorState, PrimaryButton, SecondaryButton, ProvenanceLink } from '@/components/shared';
+import {
+  Panel,
+  StatusBadge,
+  ClauseChip,
+  EmptyState,
+  ErrorState,
+  PrimaryButton,
+  SecondaryButton,
+  ProvenanceLink,
+} from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import { useTenantSubscription } from '@/lib/use-tenant-subscription';
@@ -259,7 +268,12 @@ export function HitlQueuePanel() {
     }
   }
 
-  if (error) return <Panel title={t('hitlQueue')}><ErrorState onRetry={fetchItems} /></Panel>;
+  if (error)
+    return (
+      <Panel title={t('hitlQueue')}>
+        <ErrorState onRetry={fetchItems} />
+      </Panel>
+    );
 
   return (
     <Panel title={t('hitlQueue')} aria-label={t('hitlQueue')}>
@@ -278,7 +292,11 @@ export function HitlQueuePanel() {
             const isParseable = tryParseArgs(item.draftBody) !== null;
 
             return (
-              <li key={item.hitlItemId} className={styles.card} data-testid={`hitl-card-${item.hitlItemId}`}>
+              <li
+                key={item.hitlItemId}
+                className={styles.card}
+                data-testid={`hitl-card-${item.hitlItemId}`}
+              >
                 <div className={styles.cardHeader}>
                   <span className={styles.agentName}>{item.agentName}</span>
                   <StatusBadge status={item.status} />
@@ -294,7 +312,8 @@ export function HitlQueuePanel() {
                     <p className={styles.evidenceLabel}>{tCard('guardrailEvidence')}</p>
                     {item.guardrailEvidence.groundingScore != null && (
                       <p className={styles.evidenceRow}>
-                        {tCard('groundingScore')}: {(item.guardrailEvidence.groundingScore * 100).toFixed(0)}%
+                        {tCard('groundingScore')}:{' '}
+                        {(item.guardrailEvidence.groundingScore * 100).toFixed(0)}%
                       </p>
                     )}
                     {item.guardrailEvidence.arVerdict && (
@@ -303,17 +322,20 @@ export function HitlQueuePanel() {
                       </p>
                     )}
                     {item.guardrailEvidence.arDetails && (
-                      <p className={styles.evidenceRow}>
-                        {item.guardrailEvidence.arDetails}
-                      </p>
+                      <p className={styles.evidenceRow}>{item.guardrailEvidence.arDetails}</p>
                     )}
-                    {item.guardrailEvidence.citations && item.guardrailEvidence.citations.length > 0 && (
-                      <div className={styles.citations}>
-                        {item.guardrailEvidence.citations.map((cit, i) => (
-                          <ClauseChip key={i} standard={item.standard} clauseRef={cit.clauseRef} />
-                        ))}
-                      </div>
-                    )}
+                    {item.guardrailEvidence.citations &&
+                      item.guardrailEvidence.citations.length > 0 && (
+                        <div className={styles.citations}>
+                          {item.guardrailEvidence.citations.map((cit, i) => (
+                            <ClauseChip
+                              key={i}
+                              standard={item.standard}
+                              clauseRef={cit.clauseRef}
+                            />
+                          ))}
+                        </div>
+                      )}
                   </div>
                 )}
 
@@ -339,12 +361,14 @@ export function HitlQueuePanel() {
                     <div className={styles.editActions}>
                       <PrimaryButton
                         onClick={() => handleConfirmEditApprove(item)}
-                        disabled={isFlagged && !(noteInput[item.hitlItemId]?.trim())}
+                        disabled={isFlagged && !noteInput[item.hitlItemId]?.trim()}
                       >
                         {tCard('confirmEdit')}
                       </PrimaryButton>
                       <SecondaryButton
-                        onClick={() => setEditMode((prev) => ({ ...prev, [item.hitlItemId]: false }))}
+                        onClick={() =>
+                          setEditMode((prev) => ({ ...prev, [item.hitlItemId]: false }))
+                        }
                       >
                         {tCard('cancelEdit')}
                       </SecondaryButton>
@@ -361,9 +385,13 @@ export function HitlQueuePanel() {
                       onChange={(e) =>
                         setNoteInput((prev) => ({ ...prev, [item.hitlItemId]: e.target.value }))
                       }
-                      placeholder={isFlagged ? tCard('flaggedJustification') : tCard('notePlaceholder')}
+                      placeholder={
+                        isFlagged ? tCard('flaggedJustification') : tCard('notePlaceholder')
+                      }
                       required={isFlagged}
-                      aria-label={isFlagged ? tCard('flaggedJustification') : tCard('notePlaceholder')}
+                      aria-label={
+                        isFlagged ? tCard('flaggedJustification') : tCard('notePlaceholder')
+                      }
                     />
                   </div>
                 )}
@@ -395,7 +423,7 @@ export function HitlQueuePanel() {
                   <div className={styles.actions} data-testid={`hitl-actions-${item.hitlItemId}`}>
                     <PrimaryButton
                       onClick={() => handleApprove(item)}
-                      disabled={isFlagged && !(noteInput[item.hitlItemId]?.trim())}
+                      disabled={isFlagged && !noteInput[item.hitlItemId]?.trim()}
                     >
                       {tCard('approve')}
                     </PrimaryButton>

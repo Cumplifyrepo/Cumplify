@@ -10,14 +10,8 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Logger } from '@aws-lambda-powertools/logger';
-import {
-  SecretsManagerClient,
-  GetSecretValueCommand,
-} from '@aws-sdk/client-secrets-manager';
-import {
-  RDSDataClient,
-  ExecuteStatementCommand,
-} from '@aws-sdk/client-rds-data';
+import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+import { RDSDataClient, ExecuteStatementCommand } from '@aws-sdk/client-rds-data';
 import { runMigrations, type MigrationFile } from './migration-runner.js';
 
 const logger = new Logger({ serviceName: 'migrator' });
@@ -93,7 +87,9 @@ async function withResumeRetry<T>(label: string, fn: () => Promise<T>): Promise<
   throw new Error(`withResumeRetry(${label}): exhausted retries`);
 }
 
-export async function handler(event: CdkCustomResourceEvent): Promise<{ Data: Record<string, string> }> {
+export async function handler(
+  event: CdkCustomResourceEvent,
+): Promise<{ Data: Record<string, string> }> {
   logger.info('Migration handler invoked', { requestType: event.RequestType });
 
   // On Delete, nothing to do (we don't drop schemas)

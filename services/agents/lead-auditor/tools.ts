@@ -17,8 +17,15 @@ export const LEAD_AUDITOR_TOOLS: ToolConfig[] = [
           required: ['scope', 'standards'],
           properties: {
             scope: { type: 'string', description: 'Audit scope description' },
-            standards: { type: 'array', items: { type: 'string' }, description: 'Standards to audit against' },
-            frequency: { type: 'string', description: 'Audit frequency: annual | semi-annual | quarterly' },
+            standards: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Standards to audit against',
+            },
+            frequency: {
+              type: 'string',
+              description: 'Audit frequency: annual | semi-annual | quarterly',
+            },
             riskFactors: { type: 'string', description: 'Risk factors influencing audit priority' },
           },
         },
@@ -28,7 +35,8 @@ export const LEAD_AUDITOR_TOOLS: ToolConfig[] = [
   {
     toolSpec: {
       name: 'audit-checklist-gen',
-      description: 'Generate an audit checklist for a specific process/clause area. HITL-gated: requires human approval.',
+      description:
+        'Generate an audit checklist for a specific process/clause area. HITL-gated: requires human approval.',
       inputSchema: {
         json: {
           type: 'object',
@@ -36,8 +44,16 @@ export const LEAD_AUDITOR_TOOLS: ToolConfig[] = [
           properties: {
             processArea: { type: 'string', description: 'Process area to audit' },
             standard: { type: 'string', description: 'Standard (e.g., ISO 9001:2015)' },
-            clauses: { type: 'array', items: { type: 'string' }, description: 'Clauses to cover in the checklist' },
-            checklistItems: { type: 'array', items: { type: 'string' }, description: 'Generated checklist questions' },
+            clauses: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Clauses to cover in the checklist',
+            },
+            checklistItems: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Generated checklist questions',
+            },
           },
         },
       },
@@ -46,16 +62,23 @@ export const LEAD_AUDITOR_TOOLS: ToolConfig[] = [
   {
     toolSpec: {
       name: 'audit-finding-write',
-      description: 'Record an audit finding (NC, observation, OFI). HITL-gated: requires human approval.',
+      description:
+        'Record an audit finding (NC, observation, OFI). HITL-gated: requires human approval.',
       inputSchema: {
         json: {
           type: 'object',
           required: ['auditId', 'findingType', 'clause', 'description'],
           properties: {
             auditId: { type: 'string', description: 'ID of the parent audit' },
-            findingType: { type: 'string', description: 'Type: major-nc | minor-nc | observation | ofi' },
+            findingType: {
+              type: 'string',
+              description: 'Type: major-nc | minor-nc | observation | ofi',
+            },
             clause: { type: 'string', description: 'Clause reference (e.g., ISO 9001 8.5.1)' },
-            description: { type: 'string', description: 'Finding description with objective evidence' },
+            description: {
+              type: 'string',
+              description: 'Finding description with objective evidence',
+            },
           },
         },
       },

@@ -8,10 +8,7 @@ import { AUDIT_TRAIL_REGISTRY } from '../src/audit-trail-registry.js';
  * trail designation section exactly. Fails build on mismatch.
  */
 describe('AUDIT_TRAIL_REGISTRY parity with contracts/events.md', () => {
-  const eventsMarkdown = readFileSync(
-    resolve(__dirname, '../../../contracts/events.md'),
-    'utf-8',
-  );
+  const eventsMarkdown = readFileSync(resolve(__dirname, '../../../contracts/events.md'), 'utf-8');
 
   it('every registry key appears in contracts/events.md trail designation tables', () => {
     const registryKeys = Object.keys(AUDIT_TRAIL_REGISTRY);

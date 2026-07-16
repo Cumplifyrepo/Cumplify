@@ -141,23 +141,31 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
       setError(null);
       const [verData, runData] = await Promise.all([
         query<{ listDocumentVersions: DocumentVersion[] }>(LIST_DOCUMENT_VERSIONS, { documentId }),
-        query<{ listGenerationRuns: Array<{ manualDocumentId: string | null; sections: RunSection[] }> }>(LIST_GENERATION_RUNS, { limit: 10 }),
+        query<{
+          listGenerationRuns: Array<{ manualDocumentId: string | null; sections: RunSection[] }>;
+        }>(LIST_GENERATION_RUNS, { limit: 10 }),
       ]);
       setVersions(verData.listDocumentVersions);
       if (verData.listDocumentVersions.length > 0) {
         setSelectedVersion(verData.listDocumentVersions[0]);
       }
       // Join: find the run whose manualDocumentId === this documentId
-      const matchingRun = runData.listGenerationRuns.find(r => r.manualDocumentId === documentId);
+      const matchingRun = runData.listGenerationRuns.find((r) => r.manualDocumentId === documentId);
       if (matchingRun) {
         const map = new Map<string, RunSection>();
         for (const s of matchingRun.sections) map.set(s.harmonizationKey, s);
         setRunSections(map);
       }
-    } catch { setError('load'); } finally { setLoading(false); }
+    } catch {
+      setError('load');
+    } finally {
+      setLoading(false);
+    }
   }, [query, documentId]);
 
-  useEffect(() => { fetchVersions(); }, [fetchVersions]);
+  useEffect(() => {
+    fetchVersions();
+  }, [fetchVersions]);
 
   // ─── Load content for selected version ─────────────────────────────────────
   useEffect(() => {
@@ -167,7 +175,9 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
       try {
         setContentLoading(true);
         setError(null);
-        const data = await query<{ getDocumentContent: string }>(GET_DOCUMENT_CONTENT, { versionId: selectedVersion.id });
+        const data = await query<{ getDocumentContent: string }>(GET_DOCUMENT_CONTENT, {
+          versionId: selectedVersion.id,
+        });
         if (!cancelled) {
           const parsed = JSON.parse(data.getDocumentContent) as DocumentContent;
           setContent(parsed);
@@ -178,27 +188,37 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
           if (msg.includes('CONTENT_UNAVAILABLE')) setError('contentUnavailable');
           else setError('load');
         }
-      } finally { if (!cancelled) setContentLoading(false); }
+      } finally {
+        if (!cancelled) setContentLoading(false);
+      }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [selectedVersion, query]);
 
   // ─── Mark section reviewed ─────────────────────────────────────────────────
   async function handleMarkReviewed(sectionId: string, harmonizationKey: string) {
     try {
-      const data = await mutate<{ markSectionReviewed: { id: string; reviewedBy: string; reviewedAt: string } }>(
-        MARK_SECTION_REVIEWED, { input: { sectionId } }
-      );
+      const data = await mutate<{
+        markSectionReviewed: { id: string; reviewedBy: string; reviewedAt: string };
+      }>(MARK_SECTION_REVIEWED, { input: { sectionId } });
       // Update runSections map
-      setRunSections(prev => {
+      setRunSections((prev) => {
         const next = new Map(prev);
         const existing = next.get(harmonizationKey);
         if (existing) {
-          next.set(harmonizationKey, { ...existing, reviewedBy: data.markSectionReviewed.reviewedBy, reviewedAt: data.markSectionReviewed.reviewedAt });
+          next.set(harmonizationKey, {
+            ...existing,
+            reviewedBy: data.markSectionReviewed.reviewedBy,
+            reviewedAt: data.markSectionReviewed.reviewedAt,
+          });
         }
         return next;
       });
-    } catch { /* server enforces */ }
+    } catch {
+      /* server enforces */
+    }
   }
 
   // ─── Submit for approval ───────────────────────────────────────────────────
@@ -222,7 +242,8 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
     setExportError(null);
     try {
       const data = await mutate<{ requestImsExport: { url: string; expiresAt: string } }>(
-        REQUEST_IMS_EXPORT, { documentId }
+        REQUEST_IMS_EXPORT,
+        { documentId },
       );
       window.open(data.requestImsExport.url, '_blank');
     } catch (e: unknown) {
@@ -237,8 +258,8 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
 
   // ─── Diff selection handler ────────────────────────────────────────────────
   function handleDiffToggle(versionId: string) {
-    setDiffSelection(prev => {
-      if (prev.includes(versionId)) return prev.filter(v => v !== versionId);
+    setDiffSelection((prev) => {
+      if (prev.includes(versionId)) return prev.filter((v) => v !== versionId);
       if (prev.length >= 2) return [prev[1], versionId];
       return [...prev, versionId];
     });
@@ -251,7 +272,9 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
   return (
     <div className={styles.documentViewer} data-testid="document-viewer">
       <div className={styles.viewerHeader}>
-        <SecondaryButton onClick={onBack} data-testid="viewer-back">{t('back')}</SecondaryButton>
+        <SecondaryButton onClick={onBack} data-testid="viewer-back">
+          {t('back')}
+        </SecondaryButton>
         <h2 className={styles.viewerTitle}>{t('title')}</h2>
         <div className={styles.viewerActions}>
           {user && canApprove(user.role, 'M1') && (
@@ -278,7 +301,9 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
           {submitError === 'UNREVIEWED_SECTIONS' && <p>{t('unreviewedSections')}</p>}
           {submitError === 'UNRESOLVED_GAPS' && <p>{t('unresolvedGaps')}</p>}
           {submitError === 'SOD_VIOLATION' && <p>{t('sodViolation')}</p>}
-          {submitError !== 'UNREVIEWED_SECTIONS' && submitError !== 'UNRESOLVED_GAPS' && submitError !== 'SOD_VIOLATION' && <p>{submitError}</p>}
+          {submitError !== 'UNREVIEWED_SECTIONS' &&
+            submitError !== 'UNRESOLVED_GAPS' &&
+            submitError !== 'SOD_VIOLATION' && <p>{submitError}</p>}
         </div>
       )}
 
@@ -299,21 +324,34 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
         <div className={styles.versionSidebar} data-testid="version-list">
           <h3 className={styles.sidebarTitle}>{t('versions')}</h3>
           {versions.length === 0 && <p className={styles.emptyMsg}>{t('noVersions')}</p>}
-          {versions.map(v => (
-            <div key={v.id} className={`${styles.versionItem} ${selectedVersion?.id === v.id ? styles.versionActive : ''}`}>
-              <button type="button" className={styles.versionBtn} onClick={() => setSelectedVersion(v)}
-                aria-label={t('versionLabel', { version: v.versionNo })}>
+          {versions.map((v) => (
+            <div
+              key={v.id}
+              className={`${styles.versionItem} ${selectedVersion?.id === v.id ? styles.versionActive : ''}`}
+            >
+              <button
+                type="button"
+                className={styles.versionBtn}
+                onClick={() => setSelectedVersion(v)}
+                aria-label={t('versionLabel', { version: v.versionNo })}
+              >
                 v{v.versionNo} &middot; {new Date(v.createdAt).toLocaleDateString()}
               </button>
               {versions.length > 1 && (
-                <input type="checkbox" checked={diffSelection.includes(v.id)}
+                <input
+                  type="checkbox"
+                  checked={diffSelection.includes(v.id)}
                   onChange={() => handleDiffToggle(v.id)}
-                  aria-label={t('selectVersionForDiff', { version: v.versionNo })} />
+                  aria-label={t('selectVersionForDiff', { version: v.versionNo })}
+                />
               )}
             </div>
           ))}
           {diffSelection.length === 2 && (
-            <PrimaryButton onClick={() => onDiff(documentId, diffSelection[0], diffSelection[1])} data-testid="compare-btn">
+            <PrimaryButton
+              onClick={() => onDiff(documentId, diffSelection[0], diffSelection[1])}
+              data-testid="compare-btn"
+            >
               {t('diffTitle')}
             </PrimaryButton>
           )}
@@ -323,7 +361,9 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
         <div className={styles.contentArea} data-testid="content-area">
           {contentLoading && <p className={styles.loading}>{t('versions')}</p>}
           {error === 'contentUnavailable' && (
-            <p className={styles.errorMsg} data-testid="content-unavailable">{t('diffUnavailable')}</p>
+            <p className={styles.errorMsg} data-testid="content-unavailable">
+              {t('diffUnavailable')}
+            </p>
           )}
           {content && !contentLoading && (
             <div className={styles.documentContent}>
@@ -331,7 +371,11 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
               <div className={styles.disclaimer} data-testid="bc1-disclaimer">
                 <p>{content.frontMatter.purpose}</p>
                 {content.frontMatter.normativeRefs.length > 0 && (
-                  <a href={content.frontMatter.normativeRefs[0].source} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={content.frontMatter.normativeRefs[0].source}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {content.frontMatter.normativeRefs[0].source}
                   </a>
                 )}
@@ -361,7 +405,13 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
 
 // ─── Content Section ─────────────────────────────────────────────────────────
 
-function ContentSectionView({ section, runSection, canReview, onMarkReviewed, tGen }: {
+function ContentSectionView({
+  section,
+  runSection,
+  canReview,
+  onMarkReviewed,
+  tGen,
+}: {
   section: ContentSection;
   runSection: RunSection | null;
   canReview: boolean;
@@ -373,16 +423,18 @@ function ContentSectionView({ section, runSection, canReview, onMarkReviewed, tG
   const isNa = section.kind === 'na_justified';
 
   return (
-    <div className={`${styles.contentSection} ${isGap ? styles.gapBlock : ''} ${isFailed ? styles.failedBlock : ''}`}
-      data-testid={`doc-section-${section.harmonizationKey}`}>
+    <div
+      className={`${styles.contentSection} ${isGap ? styles.gapBlock : ''} ${isFailed ? styles.failedBlock : ''}`}
+      data-testid={`doc-section-${section.harmonizationKey}`}
+    >
       <div className={styles.sectionHeader}>
         <span className={styles.sectionKey}>{section.harmonizationKey}</span>
         <span className={styles.sectionClauses}>
-          {section.clauseRefs.map(c => `${c.standard} ${c.clauseNo}`).join(', ')}
+          {section.clauseRefs.map((c) => `${c.standard} ${c.clauseNo}`).join(', ')}
         </span>
-        <StatusBadge status={
-          isGap ? 'PENDING' : isFailed ? 'REJECTED' : isNa ? 'CLOSED' : 'APPROVED'
-        } />
+        <StatusBadge
+          status={isGap ? 'PENDING' : isFailed ? 'REJECTED' : isNa ? 'CLOSED' : 'APPROVED'}
+        />
       </div>
 
       {/* Prose content */}
@@ -400,7 +452,9 @@ function ContentSectionView({ section, runSection, canReview, onMarkReviewed, tG
           <strong>{tGen('gapSection')}</strong>
           <ul className={styles.gapSources}>
             {section.gap.missingSources.map((src, i) => (
-              <li key={i} className={styles.gapSourceItem}>{src}</li>
+              <li key={i} className={styles.gapSourceItem}>
+                {src}
+              </li>
             ))}
           </ul>
         </div>
@@ -409,7 +463,9 @@ function ContentSectionView({ section, runSection, canReview, onMarkReviewed, tG
       {/* N/A justified */}
       {isNa && section.naJustification && (
         <div className={styles.naContent}>
-          <em>{tGen('naSection')}: {section.naJustification}</em>
+          <em>
+            {tGen('naSection')}: {section.naJustification}
+          </em>
         </div>
       )}
 
@@ -423,14 +479,20 @@ function ContentSectionView({ section, runSection, canReview, onMarkReviewed, tG
       {/* Review state — joined from run.sections by harmonizationKey */}
       <div className={styles.sectionReview}>
         {runSection?.reviewedBy ? (
-          <span className={styles.reviewedLabel} data-testid={`doc-reviewed-${section.harmonizationKey}`}>
-            {tGen('reviewed')} &middot; {runSection.reviewedBy} &middot; {runSection.reviewedAt ? new Date(runSection.reviewedAt).toLocaleDateString() : ''}
+          <span
+            className={styles.reviewedLabel}
+            data-testid={`doc-reviewed-${section.harmonizationKey}`}
+          >
+            {tGen('reviewed')} &middot; {runSection.reviewedBy} &middot;{' '}
+            {runSection.reviewedAt ? new Date(runSection.reviewedAt).toLocaleDateString() : ''}
           </span>
         ) : (
           <>
             {canReview && section.kind === 'prose' && runSection && (
-              <SecondaryButton onClick={() => onMarkReviewed(runSection.id, section.harmonizationKey)}
-                data-testid={`doc-review-btn-${section.harmonizationKey}`}>
+              <SecondaryButton
+                onClick={() => onMarkReviewed(runSection.id, section.harmonizationKey)}
+                data-testid={`doc-review-btn-${section.harmonizationKey}`}
+              >
                 {tGen('markReviewed')}
               </SecondaryButton>
             )}

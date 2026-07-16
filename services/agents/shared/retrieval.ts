@@ -59,7 +59,9 @@ export class AossColdStartTimeoutError extends Error {
 
 export class TenantFilterMissingError extends Error {
   constructor() {
-    super('AOSS retrieval query MUST include tenantId metadata filter (REQ-RET-1). This is a blocking defect.');
+    super(
+      'AOSS retrieval query MUST include tenantId metadata filter (REQ-RET-1). This is a blocking defect.',
+    );
     this.name = 'TenantFilterMissingError';
   }
 }
@@ -120,11 +122,21 @@ export async function retrieve(
     }
 
     try {
-      const body = buildKnnQuery(request.queryVector, request.tenantId, topK, request.scoreThreshold);
+      const body = buildKnnQuery(
+        request.queryVector,
+        request.tenantId,
+        topK,
+        request.scoreThreshold,
+      );
       // R5-n3: derive socket timeout from remaining budget (not a fixed 50s)
       const elapsed = Date.now() - startTime;
       const remainingMs = Math.max(BACKOFF_CEILING_MS - elapsed + 5000, 10_000); // floor 10s
-      const response = await client.search(request.collectionEndpoint, request.indexName, body, remainingMs);
+      const response = await client.search(
+        request.collectionEndpoint,
+        request.indexName,
+        body,
+        remainingMs,
+      );
       const chunks = parseSearchResponse(response);
 
       const latencyMs = Date.now() - startTime;
@@ -163,7 +175,7 @@ export async function retrieve(
   // Exhausted all attempts within ceiling
   throw new AossColdStartTimeoutError(
     `AOSS retrieval timed out after ${Date.now() - startTime}ms (${attempts} attempts). ` +
-    `Last error: ${lastError?.message ?? 'unknown'}`,
+      `Last error: ${lastError?.message ?? 'unknown'}`,
   );
 }
 
@@ -226,7 +238,12 @@ function isAossRetryable(err: unknown): boolean {
 // ─── HTTP Client Interface (injectable for testing) ─────────────────────────
 
 export interface AossHttpClient {
-  search(endpoint: string, indexName: string, body: Record<string, unknown>, timeoutMs?: number): Promise<unknown>;
+  search(
+    endpoint: string,
+    indexName: string,
+    body: Record<string, unknown>,
+    timeoutMs?: number,
+  ): Promise<unknown>;
 }
 
 /**
@@ -236,7 +253,12 @@ export interface AossHttpClient {
  * VPC (AOSS network policy allows the VPC endpoint only).
  */
 const defaultAossClient: AossHttpClient = {
-  async search(endpoint: string, indexName: string, body: Record<string, unknown>, timeoutMs?: number): Promise<unknown> {
+  async search(
+    endpoint: string,
+    indexName: string,
+    body: Record<string, unknown>,
+    timeoutMs?: number,
+  ): Promise<unknown> {
     const response = await signedAossFetch(
       'POST',
       endpoint,
@@ -246,7 +268,9 @@ const defaultAossClient: AossHttpClient = {
     );
 
     if (response.status < 200 || response.status >= 300) {
-      const error = new Error(`AOSS search failed: ${response.status} ${response.body.slice(0, 300)}`);
+      const error = new Error(
+        `AOSS search failed: ${response.status} ${response.body.slice(0, 300)}`,
+      );
       (error as any).statusCode = response.status;
       throw error;
     }

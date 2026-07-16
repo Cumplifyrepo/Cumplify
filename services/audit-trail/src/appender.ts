@@ -8,11 +8,7 @@
  * FIX-4: itemType='AUDITLOG' discriminator for stream filtering.
  */
 
-import {
-  DynamoDBClient,
-  QueryCommand,
-  TransactWriteItemsCommand,
-} from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand, TransactWriteItemsCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { ulid } from 'ulid';
@@ -160,10 +156,7 @@ export async function appendAuditEvent(
       }),
     );
   } catch (err: unknown) {
-    if (
-      err instanceof Error &&
-      err.name === 'TransactionCanceledException'
-    ) {
+    if (err instanceof Error && err.name === 'TransactionCanceledException') {
       const reasons = (err as any).CancellationReasons ?? [];
       if (reasons[1]?.Code === 'ConditionalCheckFailed') {
         throw new ReplayDetectedError(`Replay detected for eventId ${eventId}`);

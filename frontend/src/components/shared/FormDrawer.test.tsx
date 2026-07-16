@@ -7,8 +7,11 @@ vi.mock('next-intl', () => ({
   useTranslations: () => {
     const t = (key: string) => {
       const map: Record<string, string> = {
-        loading: 'Loading...', error: 'Error', submit: 'Submit',
-        cancel: 'Cancel', close: 'Close',
+        loading: 'Loading...',
+        error: 'Error',
+        submit: 'Submit',
+        cancel: 'Cancel',
+        close: 'Close',
       };
       return map[key] ?? key;
     };
@@ -18,10 +21,16 @@ vi.mock('next-intl', () => ({
 
 // Mock Buttons
 vi.mock('./Buttons', () => ({
-  PrimaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) =>
-    <button data-testid="submit-btn" {...props}>{children}</button>,
-  SecondaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) =>
-    <button data-testid="cancel-btn" {...props}>{children}</button>,
+  PrimaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button data-testid="submit-btn" {...props}>
+      {children}
+    </button>
+  ),
+  SecondaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button data-testid="cancel-btn" {...props}>
+      {children}
+    </button>
+  ),
 }));
 
 const fields: FieldDef[] = [
@@ -41,7 +50,13 @@ describe('FormDrawer', () => {
 
   it('renders nothing when closed', () => {
     const { container } = render(
-      <FormDrawer open={false} onClose={onClose} title="Test" fields={fields} onSubmit={onSubmit} />,
+      <FormDrawer
+        open={false}
+        onClose={onClose}
+        title="Test"
+        fields={fields}
+        onSubmit={onSubmit}
+      />,
     );
     expect(container.innerHTML).toBe('');
   });
@@ -85,12 +100,24 @@ describe('FormDrawer', () => {
     ];
 
     const { rerender } = render(
-      <FormDrawer open={false} onClose={onClose} title="Test" fields={fieldsWithPrefill} onSubmit={onSubmit} />,
+      <FormDrawer
+        open={false}
+        onClose={onClose}
+        title="Test"
+        fields={fieldsWithPrefill}
+        onSubmit={onSubmit}
+      />,
     );
 
     // Open the drawer
     rerender(
-      <FormDrawer open={true} onClose={onClose} title="Test" fields={fieldsWithPrefill} onSubmit={onSubmit} />,
+      <FormDrawer
+        open={true}
+        onClose={onClose}
+        title="Test"
+        fields={fieldsWithPrefill}
+        onSubmit={onSubmit}
+      />,
     );
 
     const input = screen.getByLabelText('Title') as HTMLInputElement;

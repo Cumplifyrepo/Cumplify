@@ -1,924 +1,732 @@
 {
- "schemaVersion": 1,
- "documentId": "da6bbeef-a405-490c-9c1c-d79371330b26",
- "versionNo": 1,
- "locale": "en",
- "frontMatter": {
-  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
-  "scope": {
-   "organization": "ClearWater Environmental Services Inc.",
-   "standards": [
-    "ISO9001",
-    "ISO14001"
-   ],
-   "sites": [
-    "Head Office & Lab, Tampa, FL, US"
-   ],
-   "managementRepresentative": "Luis Herrera"
+  "schemaVersion": 1,
+  "documentId": "da6bbeef-a405-490c-9c1c-d79371330b26",
+  "versionNo": 1,
+  "locale": "en",
+  "frontMatter": {
+    "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+    "scope": {
+      "organization": "ClearWater Environmental Services Inc.",
+      "standards": ["ISO9001", "ISO14001"],
+      "sites": ["Head Office & Lab, Tampa, FL, US"],
+      "managementRepresentative": "Luis Herrera"
+    },
+    "normativeRefs": [
+      {
+        "standard": "ISO9001",
+        "source": "https://www.iso.org/store.html"
+      },
+      {
+        "standard": "ISO14001",
+        "source": "https://www.iso.org/store.html"
+      }
+    ],
+    "terms": []
   },
-  "normativeRefs": [
-   {
-    "standard": "ISO9001",
-    "source": "https://www.iso.org/store.html"
-   },
-   {
-    "standard": "ISO14001",
-    "source": "https://www.iso.org/store.html"
-   }
-  ],
-  "terms": []
- },
- "sections": [
-  {
-   "harmonizationKey": "4.1",
-   "clauseRefs": [
+  "sections": [
     {
-     "standard": "ISO9001",
-     "clauseNo": "4.1"
+      "harmonizationKey": "4.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.1"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "4.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "standard": "ISO14001",
-     "clauseNo": "4.1"
+      "harmonizationKey": "4.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.2"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "4.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
+    },
+    {
+      "harmonizationKey": "4.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "4.3"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["applicability.exclusions"]
+      }
+    },
+    {
+      "harmonizationKey": "4.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.4"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "4.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. establishes, implements, maintains, and continually improves its environmental management system (EMS) and quality management system (QMS) to achieve the intended environmental and quality outcomes.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "The organization's EMS and QMS encompass interacting processes, including inputs, outputs, sequence, criteria, and designated process owners.",
+          "factRefs": ["F10", "F12"]
+        },
+        {
+          "text": "Luis Herrera, the management representative, oversees the continual improvement of these systems to ensure alignment with ISO14001 and ISO9001 standards.",
+          "factRefs": ["F5", "F12"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "5.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "5.1"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. demonstrates top management leadership and commitment to its Environmental Management System (EMS) and Quality Management System (QMS).",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "Top management takes accountability for the effectiveness of both systems, ensuring that necessary resources are available and customer focus is maintained throughout the organization.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "Luis Herrera, the management representative, leads these efforts, aligning with the organization's commitment to excellence in environmental services.",
+          "factRefs": ["F1", "F5", "F12"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "5.2#ISO14001",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "5.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.policies"]
+      }
+    },
+    {
+      "harmonizationKey": "5.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.policies"]
+      }
+    },
+    {
+      "harmonizationKey": "5.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.3"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "5.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. assigns and communicates the responsibilities and authorities for roles relevant to both the Environmental Management System (EMS) and the Quality Management System (QMS).",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "The organization ensures that all employees understand their specific roles and authorities within the EMS and QMS frameworks.",
+          "factRefs": ["F4"]
+        },
+        {
+          "text": "Luis Herrera, the management representative, plays a critical role in overseeing these responsibilities and ensuring compliance with ISO14001 and ISO9001 standards.",
+          "factRefs": ["F5", "F12"]
+        },
+        {
+          "text": "This clear assignment of roles and responsibilities helps maintain the integrity and effectiveness of both the EMS and QMS across all core processes.",
+          "factRefs": ["F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "6.1#ISO14001",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "6.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.risks"]
+      }
+    },
+    {
+      "harmonizationKey": "6.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.risks"]
+      }
+    },
+    {
+      "harmonizationKey": "6.1.2-aspects#ISO14001",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "6.1.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.aspects"]
+      }
+    },
+    {
+      "harmonizationKey": "6.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.2"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "6.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "6.1.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "6.1.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.legal_obligations"]
+      }
+    },
+    {
+      "harmonizationKey": "6.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.change_plans"]
+      }
+    },
+    {
+      "harmonizationKey": "7.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.1"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "7.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its Environmental Management System (EMS) and Quality Management System (QMS).",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "These resources encompass personnel, infrastructure, process environment, and monitoring and measuring resources with calibration traceability, as well as organizational knowledge pertinent to its operations in the Environmental Services industry.",
+          "factRefs": ["F2", "F4", "F7", "F9"]
+        },
+        {
+          "text": "The organization ensures that all resources are aligned with its core processes, which include client intake, field sampling, laboratory analysis, and compliance reporting.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Under the leadership of management representative Luis Herrera, ClearWater Environmental Services Inc. commits to maintaining these resources to uphold its State NELAP lab accreditation and to meet the requirements of ISO9001 and ISO14001.",
+          "factRefs": ["F5", "F11", "F12"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "7.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.2"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "7.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
+    },
+    {
+      "harmonizationKey": "7.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.3"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "7.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
+    },
+    {
+      "harmonizationKey": "7.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.4"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "7.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. establishes processes for internal and external communications relevant to its Environmental Management System (EMS) and Quality Management System (QMS).",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "These processes encompass both internal communications among its 40 employees and external communications with clients, reagent and consumables suppliers, and the courier network for sample logistics.",
+          "factRefs": ["F4", "F7"]
+        },
+        {
+          "text": "External communication also includes compliance obligations related to its industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting services.",
+          "factRefs": ["F3"]
+        },
+        {
+          "text": "The organization determines what information to communicate, the timing, the recipients, the methods, and the responsible personnel for these communications.",
+          "factRefs": ["F12"]
+        },
+        {
+          "text": "Luis Herrera, the management representative, oversees the implementation and maintenance of these communication processes.",
+          "factRefs": ["F5"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "7.5",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.5"
+        },
+        {
+          "standard": "ISO14001",
+          "clauseNo": "7.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. maintains the necessary documentation for its Environmental Management System (EMS) and Quality Management System (QMS) in accordance with ISO14001 and ISO9001 standards.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "The organization controls the creation and updating of all documented information, ensuring its appropriate identification, format, and approval.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "Documented information is made available, protected, distributed, retained, and disposed of in a controlled manner to ensure integrity and accessibility.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "The documents register, which currently holds 78 entries, includes critical documents such as the scope determination of the EMS and the Integrated Management System Manual.",
+          "factRefs": ["F14", "F15"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. plans, implements, and controls its processes to meet the requirements for providing industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization ensures that criteria, resources, and documented information are adequately managed to support these processes.",
+          "factRefs": ["F10", "F9"]
+        },
+        {
+          "text": "Planned changes and outsourced processes, such as reagent supply and sample logistics via a courier network, are controlled to maintain service quality and compliance.",
+          "factRefs": ["F7"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.1#ISO14001",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "8.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. establishes, implements, and controls the processes required to meet the Environmental Management System (EMS) requirements.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "The organization applies a lifecycle perspective and operational controls for significant environmental aspects related to its industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting services.",
+          "factRefs": ["F2", "F3"]
+        },
+        {
+          "text": "Planned changes are controlled to ensure continuous compliance and improvement within the EMS framework.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Outsourced processes, including reagent and consumables supply as well as sample logistics via a courier network, are controlled or influenced to align with EMS requirements.",
+          "factRefs": ["F7"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.2-9001#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.2"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. engages in proactive communication with clients to ascertain the requirements for its products and services, which encompass industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization diligently reviews its capability to fulfill these requirements, including adherence to statutory and regulatory obligations, prior to making any commitments to clients.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "Changes to client requirements are systematically controlled and managed to ensure ongoing compliance and service quality.",
+          "factRefs": ["F1"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.2-emergency",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "8.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.emergency_preparedness"]
+      }
+    },
+    {
+      "harmonizationKey": "8.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. does not carry design and development responsibility within its operations.",
+          "factRefs": ["F1", "F8"]
+        },
+        {
+          "text": "Given the nature of its services in industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting, the organization focuses on delivering high-quality environmental services rather than product design.",
+          "factRefs": ["F2", "F3"]
+        },
+        {
+          "text": "Therefore, the design and development process as outlined in ISO9001 8.3 is not applicable to ClearWater Environmental Services Inc.'s core activities.",
+          "factRefs": ["F1", "F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.4#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.4"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.suppliers"]
+      }
+    },
+    {
+      "harmonizationKey": "9.1#ISO14001",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "9.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "8.5#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. ensures that its production and service provision processes, including industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting, are conducted under controlled conditions.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization maintains identification and traceability of all processes to ensure quality and compliance with regulatory standards.",
+          "factRefs": ["F3", "F11"]
+        },
+        {
+          "text": "Care is taken for both customer and external-provider property throughout the service provision to prevent loss, damage, or misplacement.",
+          "factRefs": ["F3", "F7"]
+        },
+        {
+          "text": "Preservation of samples and data integrity is ensured through standardized procedures and controlled environments.",
+          "factRefs": ["F3", "F10"]
+        },
+        {
+          "text": "Post-delivery activities, such as follow-up on compliance reporting and client feedback, are systematically managed to enhance customer satisfaction.",
+          "factRefs": ["F3", "F10"]
+        },
+        {
+          "text": "Any changes to the production and service provision processes are controlled and documented to maintain consistency and quality.",
+          "factRefs": ["F9", "F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "9.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "9.2"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.audits"]
+      }
+    },
+    {
+      "harmonizationKey": "8.6#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.6"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "ClearWater Environmental Services Inc. ensures that all product and service requirements are met prior to release.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization maintains evidence of conformity for each release, ensuring traceability to the authorizing individual.",
+          "factRefs": ["F1", "F3", "F5"]
+        },
+        {
+          "text": "This practice is integral to the quality management system, particularly in the context of industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting.",
+          "factRefs": ["F1", "F2", "F3", "F10"]
+        },
+        {
+          "text": "By adhering to these protocols, ClearWater Environmental Services Inc. upholds its commitment to quality and regulatory compliance in the Environmental Services industry.",
+          "factRefs": ["F1", "F2", "F3", "F11", "F12"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "9.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "9.3"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.management_reviews"]
+      }
+    },
+    {
+      "harmonizationKey": "10.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "10.1"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "8.7#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.7"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.2#ISO14001",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "10.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "9.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "10.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO14001",
+          "clauseNo": "10.3"
+        },
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities", "register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "10.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
     }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.2"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "4.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "4.3"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "applicability.exclusions"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.4"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "4.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. establishes, implements, maintains, and continually improves its environmental management system (EMS) and quality management system (QMS) to achieve the intended environmental and quality outcomes.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization's EMS and QMS encompass interacting processes, including inputs, outputs, sequence, criteria, and designated process owners.",
-     "factRefs": [
-      "F10",
-      "F12"
-     ]
-    },
-    {
-     "text": "Luis Herrera, the management representative, oversees the continual improvement of these systems to ensure alignment with ISO14001 and ISO9001 standards.",
-     "factRefs": [
-      "F5",
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "5.1"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. demonstrates top management leadership and commitment to its Environmental Management System (EMS) and Quality Management System (QMS).",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "Top management takes accountability for the effectiveness of both systems, ensuring that necessary resources are available and customer focus is maintained throughout the organization.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "Luis Herrera, the management representative, leads these efforts, aligning with the organization's commitment to excellence in environmental services.",
-     "factRefs": [
-      "F1",
-      "F5",
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.2#ISO14001",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "5.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.policies"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "5.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.policies"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "5.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.3"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "5.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. assigns and communicates the responsibilities and authorities for roles relevant to both the Environmental Management System (EMS) and the Quality Management System (QMS).",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization ensures that all employees understand their specific roles and authorities within the EMS and QMS frameworks.",
-     "factRefs": [
-      "F4"
-     ]
-    },
-    {
-     "text": "Luis Herrera, the management representative, plays a critical role in overseeing these responsibilities and ensuring compliance with ISO14001 and ISO9001 standards.",
-     "factRefs": [
-      "F5",
-      "F12"
-     ]
-    },
-    {
-     "text": "This clear assignment of roles and responsibilities helps maintain the integrity and effectiveness of both the EMS and QMS across all core processes.",
-     "factRefs": [
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "6.1#ISO14001",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "6.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.risks"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.risks"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.1.2-aspects#ISO14001",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "6.1.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.aspects"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.2"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "6.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.1.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "6.1.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.legal_obligations"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.change_plans"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.1"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "7.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its Environmental Management System (EMS) and Quality Management System (QMS).",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "These resources encompass personnel, infrastructure, process environment, and monitoring and measuring resources with calibration traceability, as well as organizational knowledge pertinent to its operations in the Environmental Services industry.",
-     "factRefs": [
-      "F2",
-      "F4",
-      "F7",
-      "F9"
-     ]
-    },
-    {
-     "text": "The organization ensures that all resources are aligned with its core processes, which include client intake, field sampling, laboratory analysis, and compliance reporting.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Under the leadership of management representative Luis Herrera, ClearWater Environmental Services Inc. commits to maintaining these resources to uphold its State NELAP lab accreditation and to meet the requirements of ISO9001 and ISO14001.",
-     "factRefs": [
-      "F5",
-      "F11",
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.2"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "7.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.3"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "7.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.4"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "7.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. establishes processes for internal and external communications relevant to its Environmental Management System (EMS) and Quality Management System (QMS).",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "These processes encompass both internal communications among its 40 employees and external communications with clients, reagent and consumables suppliers, and the courier network for sample logistics.",
-     "factRefs": [
-      "F4",
-      "F7"
-     ]
-    },
-    {
-     "text": "External communication also includes compliance obligations related to its industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting services.",
-     "factRefs": [
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization determines what information to communicate, the timing, the recipients, the methods, and the responsible personnel for these communications.",
-     "factRefs": [
-      "F12"
-     ]
-    },
-    {
-     "text": "Luis Herrera, the management representative, oversees the implementation and maintenance of these communication processes.",
-     "factRefs": [
-      "F5"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.5",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.5"
-    },
-    {
-     "standard": "ISO14001",
-     "clauseNo": "7.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. maintains the necessary documentation for its Environmental Management System (EMS) and Quality Management System (QMS) in accordance with ISO14001 and ISO9001 standards.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization controls the creation and updating of all documented information, ensuring its appropriate identification, format, and approval.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "Documented information is made available, protected, distributed, retained, and disposed of in a controlled manner to ensure integrity and accessibility.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "The documents register, which currently holds 78 entries, includes critical documents such as the scope determination of the EMS and the Integrated Management System Manual.",
-     "factRefs": [
-      "F14",
-      "F15"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. plans, implements, and controls its processes to meet the requirements for providing industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization ensures that criteria, resources, and documented information are adequately managed to support these processes.",
-     "factRefs": [
-      "F10",
-      "F9"
-     ]
-    },
-    {
-     "text": "Planned changes and outsourced processes, such as reagent supply and sample logistics via a courier network, are controlled to maintain service quality and compliance.",
-     "factRefs": [
-      "F7"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1#ISO14001",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "8.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. establishes, implements, and controls the processes required to meet the Environmental Management System (EMS) requirements.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization applies a lifecycle perspective and operational controls for significant environmental aspects related to its industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting services.",
-     "factRefs": [
-      "F2",
-      "F3"
-     ]
-    },
-    {
-     "text": "Planned changes are controlled to ensure continuous compliance and improvement within the EMS framework.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Outsourced processes, including reagent and consumables supply as well as sample logistics via a courier network, are controlled or influenced to align with EMS requirements.",
-     "factRefs": [
-      "F7"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.2-9001#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.2"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. engages in proactive communication with clients to ascertain the requirements for its products and services, which encompass industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization diligently reviews its capability to fulfill these requirements, including adherence to statutory and regulatory obligations, prior to making any commitments to clients.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "Changes to client requirements are systematically controlled and managed to ensure ongoing compliance and service quality.",
-     "factRefs": [
-      "F1"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.2-emergency",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "8.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.emergency_preparedness"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. does not carry design and development responsibility within its operations.",
-     "factRefs": [
-      "F1",
-      "F8"
-     ]
-    },
-    {
-     "text": "Given the nature of its services in industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting, the organization focuses on delivering high-quality environmental services rather than product design.",
-     "factRefs": [
-      "F2",
-      "F3"
-     ]
-    },
-    {
-     "text": "Therefore, the design and development process as outlined in ISO9001 8.3 is not applicable to ClearWater Environmental Services Inc.'s core activities.",
-     "factRefs": [
-      "F1",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.4#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.4"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.suppliers"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.1#ISO14001",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "9.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.5#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. ensures that its production and service provision processes, including industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting, are conducted under controlled conditions.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization maintains identification and traceability of all processes to ensure quality and compliance with regulatory standards.",
-     "factRefs": [
-      "F3",
-      "F11"
-     ]
-    },
-    {
-     "text": "Care is taken for both customer and external-provider property throughout the service provision to prevent loss, damage, or misplacement.",
-     "factRefs": [
-      "F3",
-      "F7"
-     ]
-    },
-    {
-     "text": "Preservation of samples and data integrity is ensured through standardized procedures and controlled environments.",
-     "factRefs": [
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "Post-delivery activities, such as follow-up on compliance reporting and client feedback, are systematically managed to enhance customer satisfaction.",
-     "factRefs": [
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "Any changes to the production and service provision processes are controlled and documented to maintain consistency and quality.",
-     "factRefs": [
-      "F9",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "9.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "9.2"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.audits"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.6#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.6"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "ClearWater Environmental Services Inc. ensures that all product and service requirements are met prior to release.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization maintains evidence of conformity for each release, ensuring traceability to the authorizing individual.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F5"
-     ]
-    },
-    {
-     "text": "This practice is integral to the quality management system, particularly in the context of industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "By adhering to these protocols, ClearWater Environmental Services Inc. upholds its commitment to quality and regulatory compliance in the Environmental Services industry.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3",
-      "F11",
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "9.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "9.3"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.management_reviews"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "10.1"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.7#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.7"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.2#ISO14001",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "10.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO14001",
-     "clauseNo": "10.3"
-    },
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities",
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  }
- ]
+  ]
 }

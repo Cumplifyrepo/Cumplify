@@ -31,15 +31,20 @@ const MIGRATION_SQL = readFileSync(resolve(MIGRATIONS_DIR, '012_qms_forms.sql'),
 /** Extract column names from a CREATE TABLE block in migration SQL. */
 function extractColumns(sql: string, table: string): string[] {
   // Match CREATE TABLE <schema>.<table> ( ... );
-  const re = new RegExp(
-    `CREATE TABLE ${table.replace('.', '\\.')}\\s*\\(([\\s\\S]*?)\\);`,
-    'm',
-  );
+  const re = new RegExp(`CREATE TABLE ${table.replace('.', '\\.')}\\s*\\(([\\s\\S]*?)\\);`, 'm');
   const match = sql.match(re);
   if (!match) return [];
   const body = match[1];
   // Column lines start with a word (column name), not a constraint keyword
-  const CONSTRAINT_KEYWORDS = ['PRIMARY', 'UNIQUE', 'CHECK', 'CONSTRAINT', 'FOREIGN', 'CREATE', 'REFERENCES'];
+  const CONSTRAINT_KEYWORDS = [
+    'PRIMARY',
+    'UNIQUE',
+    'CHECK',
+    'CONSTRAINT',
+    'FOREIGN',
+    'CREATE',
+    'REFERENCES',
+  ];
   return body
     .split('\n')
     .map((l) => l.trim())
@@ -83,16 +88,25 @@ function extractNcrMapsToColumns(sql: string): string[] {
 }
 
 /** Parse a single INSERT row for template_fields. */
-function parseInsertRow(line: string): { fieldKey: string; required: boolean; mapsToColumn: string } | null {
+function parseInsertRow(
+  line: string,
+): { fieldKey: string; required: boolean; mapsToColumn: string } | null {
   // Row format: ('id', 'section_id', 'field_key', 'label_key', 'field_type', true/false, options, relation_target, maps_to_column, sort_order)
-  const trimmed = line.trim().replace(/^\(/, '').replace(/\)[,;]?\s*$/, '');
+  const trimmed = line
+    .trim()
+    .replace(/^\(/, '')
+    .replace(/\)[,;]?\s*$/, '');
   // Split carefully respecting single-quoted strings
   const tokens: string[] = [];
   let current = '';
   let inQuote = false;
   for (let i = 0; i < trimmed.length; i++) {
     const ch = trimmed[i];
-    if (ch === "'" && !inQuote) { inQuote = true; current += ch; continue; }
+    if (ch === "'" && !inQuote) {
+      inQuote = true;
+      current += ch;
+      continue;
+    }
     if (ch === "'" && inQuote) {
       // Check escaped quote ('')
       if (i + 1 < trimmed.length && trimmed[i + 1] === "'") {
@@ -100,7 +114,9 @@ function parseInsertRow(line: string): { fieldKey: string; required: boolean; ma
         i++;
         continue;
       }
-      inQuote = false; current += ch; continue;
+      inQuote = false;
+      current += ch;
+      continue;
     }
     if (ch === ',' && !inQuote) {
       tokens.push(current.trim());
@@ -192,9 +208,7 @@ describe('qms-forms: seed catalog (BC-1, TPL-4, TPL-5)', () => {
 
   it('TPL-5: NCR template has ≥30 fields', () => {
     // Count field rows with NCR section IDs (c0000001-*)
-    const ncrFieldLines = SEED_SQL.split('\n').filter(
-      (l) => l.trim().startsWith("('c0000001-"),
-    );
+    const ncrFieldLines = SEED_SQL.split('\n').filter((l) => l.trim().startsWith("('c0000001-"));
     expect(ncrFieldLines.length).toBeGreaterThanOrEqual(30);
   });
 
@@ -203,7 +217,7 @@ describe('qms-forms: seed catalog (BC-1, TPL-4, TPL-5)', () => {
     const countPattern = /\d+\s+(fields?|sections?|field count|section count)/i;
     // Filter: only check INSERT statements and template data, not comments
     const dataLines = SEED_SQL.split('\n').filter(
-      (l) => l.trim().startsWith("('") || l.trim().startsWith("("),
+      (l) => l.trim().startsWith("('") || l.trim().startsWith('('),
     );
     const offenders = dataLines.filter((l) => countPattern.test(l));
     countPattern.lastIndex = 0; // reset
@@ -217,9 +231,7 @@ describe('qms-forms: seed catalog (BC-1, TPL-4, TPL-5)', () => {
 
   it('NCR disposition is a SELECT field, not text', () => {
     // Find the disposition_decision field — must be field_type 'select'
-    const dispositionLine = SEED_SQL.split('\n').find((l) =>
-      l.includes("'disposition_decision'"),
-    );
+    const dispositionLine = SEED_SQL.split('\n').find((l) => l.includes("'disposition_decision'"));
     expect(dispositionLine).toBeDefined();
     expect(dispositionLine).toContain("'select'");
     expect(dispositionLine).toContain('use_as_is');

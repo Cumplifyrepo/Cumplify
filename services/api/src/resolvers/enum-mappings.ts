@@ -133,7 +133,9 @@ export const SECTION_KIND_MAP: Record<string, string> = {
 export function mapEnum(map: Record<string, string>, value: string, fieldName: string): string {
   const mapped = map[value];
   if (mapped === undefined) {
-    throw new Error(`Invalid enum value '${value}' for field '${fieldName}'. Allowed: ${Object.keys(map).join(', ')}`);
+    throw new Error(
+      `Invalid enum value '${value}' for field '${fieldName}'. Allowed: ${Object.keys(map).join(', ')}`,
+    );
   }
   return mapped;
 }

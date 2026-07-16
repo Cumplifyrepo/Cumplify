@@ -37,7 +37,11 @@ export interface DocMeta {
   generatedAt: string; // ISO — passed in, template stays pure
 }
 
-interface ClauseRef { standard: string; clauseNo: string; clauseTitle?: string }
+interface ClauseRef {
+  standard: string;
+  clauseNo: string;
+  clauseTitle?: string;
+}
 
 interface ContentSection {
   harmonizationKey: string;
@@ -176,7 +180,8 @@ function qmsInfoBlock(meta: DocMeta, extra: Array<[string, string]> = []): strin
     ['Generated', meta.generatedAt],
     ...extra,
   ];
-  const tr = (pair: [string, string]) => `<tr><th>${esc(pair[0])}</th><td>${esc(pair[1])}</td></tr>`;
+  const tr = (pair: [string, string]) =>
+    `<tr><th>${esc(pair[0])}</th><td>${esc(pair[1])}</td></tr>`;
   return `<table class="qms-info"><caption>QMS Required Document Information</caption>
     ${rows.map(tr).join('\n    ')}</table>`;
 }
@@ -197,7 +202,7 @@ function shell(meta: DocMeta, body: string): string {
 
 function sectionHtml(s: ContentSection, no: string): string {
   const clauses = (s.clauseRefs ?? [])
-    .map(c => `${esc(c.standard)} ${esc(c.clauseNo)}`)
+    .map((c) => `${esc(c.standard)} ${esc(c.clauseNo)}`)
     .join(', ');
   const head = `<div class="section-head"><span class="section-no">${esc(no)}</span>
     <span class="section-title">${esc(s.harmonizationKey)}</span>
@@ -206,11 +211,11 @@ function sectionHtml(s: ContentSection, no: string): string {
   let body: string;
   switch (s.kind) {
     case 'prose':
-      body = `<p>${(s.sentences ?? []).map(x => esc(x.text)).join(' ')}</p>`;
+      body = `<p>${(s.sentences ?? []).map((x) => esc(x.text)).join(' ')}</p>`;
       break;
     case 'gap':
       body = `<div class="gap-block"><span class="gap-title">Gap — required information not recorded</span>
-        <ul>${(s.gap?.missingSources ?? []).map(m => `<li>${esc(m)}</li>`).join('')}</ul></div>`;
+        <ul>${(s.gap?.missingSources ?? []).map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>`;
       break;
     case 'na_justified':
       body = `<div class="na-block">Not applicable — ${esc(s.naJustification ?? '')}</div>`;
@@ -225,43 +230,45 @@ function sectionHtml(s: ContentSection, no: string): string {
 
 function sectionsDocument(meta: DocMeta, content: ContentJson): string {
   const fm = content.frontMatter;
-  const disclaimer = fm?.purpose
-    ? `<div class="disclaimer">${esc(fm.purpose)}</div>`
-    : '';
+  const disclaimer = fm?.purpose ? `<div class="disclaimer">${esc(fm.purpose)}</div>` : '';
   const scope = fm?.scope;
   const extra: Array<[string, string]> = [];
   if (scope?.organization) extra.push(['Organization', scope.organization]);
-  if (scope?.managementRepresentative) extra.push(['Management representative', scope.managementRepresentative]);
+  if (scope?.managementRepresentative)
+    extra.push(['Management representative', scope.managementRepresentative]);
   if (scope?.sites?.length) extra.push(['Sites', scope.sites.join(' | ')]);
-  const sections = (content.sections ?? [])
-    .map((s, i) => sectionHtml(s, `${i + 1}.`))
-    .join('\n');
+  const sections = (content.sections ?? []).map((s, i) => sectionHtml(s, `${i + 1}.`)).join('\n');
   return shell(meta, `${qmsInfoBlock(meta, extra)}${disclaimer}${sections}`);
 }
 
 function matrixDocument(meta: DocMeta, content: ContentJson): string {
   const standards = content.standards ?? [];
-  const header = `<tr><th>Section</th><th>Kind</th>${standards.map(s => `<th>${esc(s)}</th>`).join('')}</tr>`;
-  const rows = (content.rows ?? []).map(r => {
-    const byStd = new Map<string, string[]>();
-    for (const c of r.coverage) {
-      const cur = byStd.get(c.standard) ?? [];
-      cur.push(`${c.clauseNo} ${c.clauseTitle} (${c.annexSlMode})`);
-      byStd.set(c.standard, cur);
-    }
-    const cells = standards
-      .map(s => `<td>${(byStd.get(s) ?? ['—']).map(esc).join('<br>')}</td>`)
-      .join('');
-    return `<tr><td>${esc(r.harmonizationKey)}</td><td>${esc(r.sectionKind)}</td>${cells}</tr>`;
-  }).join('\n');
+  const header = `<tr><th>Section</th><th>Kind</th>${standards.map((s) => `<th>${esc(s)}</th>`).join('')}</tr>`;
+  const rows = (content.rows ?? [])
+    .map((r) => {
+      const byStd = new Map<string, string[]>();
+      for (const c of r.coverage) {
+        const cur = byStd.get(c.standard) ?? [];
+        cur.push(`${c.clauseNo} ${c.clauseTitle} (${c.annexSlMode})`);
+        byStd.set(c.standard, cur);
+      }
+      const cells = standards
+        .map((s) => `<td>${(byStd.get(s) ?? ['—']).map(esc).join('<br>')}</td>`)
+        .join('');
+      return `<tr><td>${esc(r.harmonizationKey)}</td><td>${esc(r.sectionKind)}</td>${cells}</tr>`;
+    })
+    .join('\n');
   return shell(meta, `${qmsInfoBlock(meta)}<table class="grid">${header}${rows}</table>`);
 }
 
 function masterListDocument(meta: DocMeta, content: ContentJson): string {
-  const rows = (content.entries ?? []).map(e =>
-    `<tr><td>${esc(e.title)}</td><td>${esc(e.docType)}</td><td>${esc(e.standard)}</td>
+  const rows = (content.entries ?? [])
+    .map(
+      (e) =>
+        `<tr><td>${esc(e.title)}</td><td>${esc(e.docType)}</td><td>${esc(e.standard)}</td>
      <td>${(e.clauseRefs ?? []).map(esc).join(', ')}</td><td>v${esc(e.versionNo)}</td><td>${esc(e.status)}</td></tr>`,
-  ).join('\n');
+    )
+    .join('\n');
   const header = `<tr><th>Title</th><th>Type</th><th>Standard</th><th>Clauses</th><th>Version</th><th>Status</th></tr>`;
   return shell(meta, `${qmsInfoBlock(meta)}<table class="grid">${header}${rows}</table>`);
 }
@@ -273,22 +280,33 @@ function recordDocument(meta: DocMeta, content: ContentJson): string {
     extra.push(['Status', rec.status]);
     extra.push(['Opened by', rec.openedBy]);
     if (rec.completedBy) {
-      extra.push(['Completed by', `${rec.completedBy}${rec.completedAt ? ` — ${rec.completedAt.slice(0, 10)}` : ''}`]);
+      extra.push([
+        'Completed by',
+        `${rec.completedBy}${rec.completedAt ? ` — ${rec.completedAt.slice(0, 10)}` : ''}`,
+      ]);
     }
     if (rec.approvedBy) {
-      extra.push(['Approved by', `${rec.approvedBy}${rec.approvedAt ? ` — ${rec.approvedAt.slice(0, 10)}` : ''}`]);
+      extra.push([
+        'Approved by',
+        `${rec.approvedBy}${rec.approvedAt ? ` — ${rec.approvedAt.slice(0, 10)}` : ''}`,
+      ]);
     }
     if (rec.m2NcId) extra.push(['Nonconformity ID', rec.m2NcId]);
   }
-  const sections = (content.recordSections ?? []).map(s => {
-    const rows = s.fields.map(f =>
-      `<tr><td style="width:38%">${esc(f.label)}${f.required ? ' *' : ''}</td>
+  const sections = (content.recordSections ?? [])
+    .map((s) => {
+      const rows = s.fields
+        .map(
+          (f) =>
+            `<tr><td style="width:38%">${esc(f.label)}${f.required ? ' *' : ''}</td>
        <td>${f.filled ? esc(f.display) : '—'}</td></tr>`,
-    ).join('\n');
-    return `<div class="section">
+        )
+        .join('\n');
+      return `<div class="section">
       <div class="section-head"><span class="section-title">${esc(s.title)}</span></div>
       <table class="grid">${rows}</table></div>`;
-  }).join('\n');
+    })
+    .join('\n');
   return shell(meta, `${qmsInfoBlock(meta, extra)}${sections}`);
 }
 

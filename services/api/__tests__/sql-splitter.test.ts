@@ -50,7 +50,7 @@ SELECT 1;`;
       const stmts = splitStatements(sql);
       expect(stmts).toHaveLength(2);
       expect(stmts[0]).toContain('$$');
-      expect(stmts[0]).toContain("INSERT INTO t VALUES (1);");
+      expect(stmts[0]).toContain('INSERT INTO t VALUES (1);');
     });
 
     it('does NOT split inside tagged $tag$ blocks', () => {
@@ -63,7 +63,7 @@ SELECT 2;`;
       const stmts = splitStatements(sql);
       expect(stmts).toHaveLength(2);
       expect(stmts[0]).toContain('$body$');
-      expect(stmts[0]).toContain("CREATE POLICY p; DROP TABLE t;");
+      expect(stmts[0]).toContain('CREATE POLICY p; DROP TABLE t;');
     });
 
     it('handles nested semicolons + single-quote escapes inside $$', () => {
@@ -96,13 +96,13 @@ $$ LANGUAGE plpgsql;`;
 
   describe('comment awareness', () => {
     it('does NOT split on semicolons in line comments', () => {
-      const sql = "-- comment with; semicolon\nSELECT 1;\nSELECT 2;";
+      const sql = '-- comment with; semicolon\nSELECT 1;\nSELECT 2;';
       const stmts = splitStatements(sql);
       expect(stmts).toHaveLength(2);
     });
 
     it('does NOT split on semicolons in block comments', () => {
-      const sql = "/* comment; with; semis */\nSELECT 1;\nSELECT 2;";
+      const sql = '/* comment; with; semis */\nSELECT 1;\nSELECT 2;';
       const stmts = splitStatements(sql);
       expect(stmts).toHaveLength(2);
     });
@@ -114,7 +114,7 @@ $$ LANGUAGE plpgsql;`;
       const stmts = splitStatements(sql);
       // 6 CREATE SCHEMA + 1 CREATE TABLE = 7
       expect(stmts.length).toBeGreaterThanOrEqual(7);
-      stmts.forEach(s => expect(s).not.toBe(''));
+      stmts.forEach((s) => expect(s).not.toBe(''));
     });
 
     it('002_m1_document_studio.sql: splits correctly', () => {
@@ -142,7 +142,9 @@ $$ LANGUAGE plpgsql;`;
       const sql = readMigration('008_risk_register_view.sql');
       const stmts = splitStatements(sql);
       // Find the CREATE FUNCTION statement (not the comment that mentions it)
-      const fnStmt = stmts.find(s => s.includes('CREATE OR REPLACE FUNCTION') && s.includes('SECURITY DEFINER'));
+      const fnStmt = stmts.find(
+        (s) => s.includes('CREATE OR REPLACE FUNCTION') && s.includes('SECURITY DEFINER'),
+      );
       expect(fnStmt).toBeDefined();
       // It must contain the full function body (WHERE clause inside $$)
       expect(fnStmt).toContain('current_setting');
@@ -154,17 +156,25 @@ $$ LANGUAGE plpgsql;`;
     it('009_app_role.sql: DO block is not torn apart', () => {
       const sql = readMigration('009_app_role.sql');
       const stmts = splitStatements(sql);
-      const doStmt = stmts.find(s => s.includes('DO $$'));
+      const doStmt = stmts.find((s) => s.includes('DO $$'));
       expect(doStmt).toBeDefined();
       expect(doStmt).toContain('BEGIN');
       expect(doStmt).toContain('END');
     });
 
     it('no migration file produces empty statements after splitting', () => {
-      const files = ['001_create_schemas.sql', '002_m1_document_studio.sql',
-        '003_m2_capa.sql', '004_m3_audit_studio.sql', '005_m4_records_management.sql',
-        '006_m5_risk_management.sql', '007_rls_policies.sql',
-        '008_risk_register_view.sql', '009_app_role.sql', '010_risk_register_refresh.sql'];
+      const files = [
+        '001_create_schemas.sql',
+        '002_m1_document_studio.sql',
+        '003_m2_capa.sql',
+        '004_m3_audit_studio.sql',
+        '005_m4_records_management.sql',
+        '006_m5_risk_management.sql',
+        '007_rls_policies.sql',
+        '008_risk_register_view.sql',
+        '009_app_role.sql',
+        '010_risk_register_refresh.sql',
+      ];
 
       for (const file of files) {
         const sql = readMigration(file);
@@ -180,18 +190,18 @@ $$ LANGUAGE plpgsql;`;
   describe('targeted security fixture', () => {
     it('function body with multiple semicolons and nested quotes → ONE statement', () => {
       const sql = [
-        "CREATE OR REPLACE FUNCTION m5_views.get_risk()",
-        "RETURNS SETOF m5_views.risk_register_view",
-        "LANGUAGE sql",
-        "SECURITY DEFINER",
-        "SET search_path = m5_views, m5, pg_temp",
-        "AS $$",
-        "  SELECT * FROM m5_views.risk_register_view",
+        'CREATE OR REPLACE FUNCTION m5_views.get_risk()',
+        'RETURNS SETOF m5_views.risk_register_view',
+        'LANGUAGE sql',
+        'SECURITY DEFINER',
+        'SET search_path = m5_views, m5, pg_temp',
+        'AS $$',
+        '  SELECT * FROM m5_views.risk_register_view',
         "  WHERE tenant_id = current_setting('app.tenant_id', true);",
-        "$$;",
-        "",
-        "REVOKE ALL ON m5_views.risk_register_view FROM app_role;",
-        "GRANT EXECUTE ON FUNCTION m5_views.get_risk() TO app_role;",
+        '$$;',
+        '',
+        'REVOKE ALL ON m5_views.risk_register_view FROM app_role;',
+        'GRANT EXECUTE ON FUNCTION m5_views.get_risk() TO app_role;',
       ].join('\n');
 
       const stmts = splitStatements(sql);

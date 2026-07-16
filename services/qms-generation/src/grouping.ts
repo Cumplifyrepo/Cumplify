@@ -54,16 +54,15 @@ export function groupSections(
   exclusions: Exclusion[],
 ): SectionPlan[] {
   const inScope = new Set(inScopeStandards);
-  const excludedById = new Map(exclusions.map(e => [e.clauseRegistryId, e.justification]));
+  const excludedById = new Map(exclusions.map((e) => [e.clauseRegistryId, e.justification]));
 
-  const rows = registry.filter(c => inScope.has(c.standard));
+  const rows = registry.filter((c) => inScope.has(c.standard));
 
   // Bucket by section identity
   const buckets = new Map<string, { key: string; hk: string; members: RegistryClause[] }>();
   for (const c of rows) {
-    const sectionKey = c.annexSlMode === 'shared'
-      ? c.harmonizationKey
-      : `${c.harmonizationKey}#${c.standard}`;
+    const sectionKey =
+      c.annexSlMode === 'shared' ? c.harmonizationKey : `${c.harmonizationKey}#${c.standard}`;
     let bucket = buckets.get(sectionKey);
     if (!bucket) {
       bucket = { key: sectionKey, hk: c.harmonizationKey, members: [] };
@@ -74,21 +73,21 @@ export function groupSections(
 
   const plans: SectionPlan[] = [];
   for (const { key, hk, members } of buckets.values()) {
-    const active = members.filter(m => !excludedById.has(m.id));
-    const excluded = members.filter(m => excludedById.has(m.id));
+    const active = members.filter((m) => !excludedById.has(m.id));
+    const excluded = members.filter((m) => excludedById.has(m.id));
 
     if (active.length === 0) {
       // Every member clause excluded → N/A section, justification carried (ORG-4)
       plans.push({
         sectionKey: key,
         harmonizationKey: hk,
-        standards: [...new Set(members.map(m => m.standard))].sort(),
+        standards: [...new Set(members.map((m) => m.standard))].sort(),
         clauses: members,
         docType: members[0].docType,
-        sortOrder: Math.min(...members.map(m => m.sortOrder)),
+        sortOrder: Math.min(...members.map((m) => m.sortOrder)),
         status: 'na_justified',
         naJustification: excluded
-          .map(m => `${m.standard} ${m.clauseNo}: ${excludedById.get(m.id)}`)
+          .map((m) => `${m.standard} ${m.clauseNo}: ${excludedById.get(m.id)}`)
           .join('; '),
       });
       continue;
@@ -97,13 +96,15 @@ export function groupSections(
     plans.push({
       sectionKey: key,
       harmonizationKey: hk,
-      standards: [...new Set(active.map(m => m.standard))].sort(),
+      standards: [...new Set(active.map((m) => m.standard))].sort(),
       clauses: active,
       docType: active[0].docType,
-      sortOrder: Math.min(...active.map(m => m.sortOrder)),
+      sortOrder: Math.min(...active.map((m) => m.sortOrder)),
       status: 'pending',
     });
   }
 
-  return plans.sort((a, b) => a.sortOrder - b.sortOrder || a.sectionKey.localeCompare(b.sectionKey));
+  return plans.sort(
+    (a, b) => a.sortOrder - b.sortOrder || a.sectionKey.localeCompare(b.sectionKey),
+  );
 }

@@ -44,7 +44,9 @@ describe('ask-store: standard selector routing', () => {
   it('subscribe notifies on state change', async () => {
     const store = await import('./ask-store');
     let called = 0;
-    const unsub = store.subscribe(() => { called += 1; });
+    const unsub = store.subscribe(() => {
+      called += 1;
+    });
     store.setSelectedStandard('ISO14001');
     expect(called).toBe(1);
     store.addUserMessage('test', 'ISO14001');

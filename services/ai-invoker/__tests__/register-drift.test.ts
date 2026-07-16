@@ -59,16 +59,20 @@ function parseRegisterMd(): ParsedSeat[] {
 
 /** Map Register seat names to compiled SeatId keys */
 const SEAT_NAME_TO_ID: Record<string, string> = {
-  'Workhorse (ControlTower, DocStudio, LeadAuditor, CAPAGuru, RiskSentinel, AspectWarden, HazardScout, IncidentInvestigator, ReviewOrchestrator, ComplianceCopilot)': 'workhorse',
-  'Lightweight (RecordsVault, ObjectiveTracker, ContextCartographer, SupplierScout, CompetenceKeeper, EmergencyPlanner, WorkerVoice, NCTriage)': 'lightweight',
+  'Workhorse (ControlTower, DocStudio, LeadAuditor, CAPAGuru, RiskSentinel, AspectWarden, HazardScout, IncidentInvestigator, ReviewOrchestrator, ComplianceCopilot)':
+    'workhorse',
+  'Lightweight (RecordsVault, ObjectiveTracker, ContextCartographer, SupplierScout, CompetenceKeeper, EmergencyPlanner, WorkerVoice, NCTriage)':
+    'lightweight',
   'ISO 9001 Domain Guru (clause Q&A)': 'guru-9001',
   'ISO 14001 Domain Guru (clause Q&A)': 'guru-14001',
   'ISO 45001 Domain Guru (clause Q&A)': 'guru-45001',
   'Micro (classification, routing, triage)': 'micro',
   'Snapshot (AI Readiness Assessment — unauthenticated, high-volume)': 'snapshot',
-  'Editor-AI (ISO document drafting/completion — policies, procedures, CAPA records, work instructions)': 'editor-ai',
+  'Editor-AI (ISO document drafting/completion — policies, procedures, CAPA records, work instructions)':
+    'editor-ai',
   'Pain-distiller (customer feedback extraction + synthesis)': 'pain-distiller',
-  'LegalLedger (statutory/legal-text interpretation — 14001 6.1.3, 45001 6.1.3, 9.1.2)': 'legal-ledger',
+  'LegalLedger (statutory/legal-text interpretation — 14001 6.1.3, 45001 6.1.3, 9.1.2)':
+    'legal-ledger',
   'Doc-Composer (IMS manual + clause document generation — spec 40)': 'doc-composer',
 };
 
@@ -100,12 +104,13 @@ describe('register-drift (CI gate, F-4)', () => {
     const mdSeats = parseRegisterMd();
     const compiled: CompiledRegister = JSON.parse(readFileSync(COMPILED_PATH, 'utf-8'));
 
-    const mdSeatIds = new Set(
-      mdSeats.map((s) => SEAT_NAME_TO_ID[s.seatName]).filter(Boolean),
-    );
+    const mdSeatIds = new Set(mdSeats.map((s) => SEAT_NAME_TO_ID[s.seatName]).filter(Boolean));
 
     for (const compiledSeatId of Object.keys(compiled.seats)) {
-      expect(mdSeatIds.has(compiledSeatId), `Compiled seat '${compiledSeatId}' not found in Register MD`).toBe(true);
+      expect(
+        mdSeatIds.has(compiledSeatId),
+        `Compiled seat '${compiledSeatId}' not found in Register MD`,
+      ).toBe(true);
     }
   });
 });

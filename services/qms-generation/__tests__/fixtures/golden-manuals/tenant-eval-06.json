@@ -1,753 +1,569 @@
 {
- "schemaVersion": 1,
- "documentId": "da2801c5-2b88-4ac3-8693-943f67a1a9a0",
- "versionNo": 1,
- "locale": "en",
- "frontMatter": {
-  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
-  "scope": {
-   "organization": "FreshCrate Foods Co.",
-   "standards": [
-    "ISO9001"
-   ],
-   "sites": [
-    "Processing Plant, Salinas, CA, US",
-    "Cold Storage & Dispatch, Salinas, CA, US"
-   ],
-   "managementRepresentative": "Karen Osei"
+  "schemaVersion": 1,
+  "documentId": "da2801c5-2b88-4ac3-8693-943f67a1a9a0",
+  "versionNo": 1,
+  "locale": "en",
+  "frontMatter": {
+    "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+    "scope": {
+      "organization": "FreshCrate Foods Co.",
+      "standards": ["ISO9001"],
+      "sites": ["Processing Plant, Salinas, CA, US", "Cold Storage & Dispatch, Salinas, CA, US"],
+      "managementRepresentative": "Karen Osei"
+    },
+    "normativeRefs": [
+      {
+        "standard": "ISO9001",
+        "source": "https://www.iso.org/store.html"
+      }
+    ],
+    "terms": []
   },
-  "normativeRefs": [
-   {
-    "standard": "ISO9001",
-    "source": "https://www.iso.org/store.html"
-   }
-  ],
-  "terms": []
- },
- "sections": [
-  {
-   "harmonizationKey": "4.1",
-   "clauseRefs": [
+  "sections": [
     {
-     "standard": "ISO9001",
-     "clauseNo": "4.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.interested_parties"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "applicability.exclusions"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "4.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "4.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. establishes, implements, maintains, and continually improves its Quality Management System (QMS) and its interacting processes.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
+      "harmonizationKey": "4.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "text": "These processes include receiving and grading, washing and cutting, packaging, cold-chain dispatch, and sanitation.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "4.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.interested_parties"]
+      }
     },
     {
-     "text": "Each process is defined with specific inputs, outputs, sequence, and criteria, ensuring clarity and consistency across operations.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "4.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["applicability.exclusions"]
+      }
     },
     {
-     "text": "Process owners are designated to oversee each core process, ensuring accountability and effective management.",
-     "factRefs": [
-      "F10"
-     ]
+      "harmonizationKey": "4.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "4.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. establishes, implements, maintains, and continually improves its Quality Management System (QMS) and its interacting processes.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "These processes include receiving and grading, washing and cutting, packaging, cold-chain dispatch, and sanitation.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Each process is defined with specific inputs, outputs, sequence, and criteria, ensuring clarity and consistency across operations.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Process owners are designated to oversee each core process, ensuring accountability and effective management.",
+          "factRefs": ["F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "5.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. demonstrates top management leadership and commitment to the quality management system (QMS) by ensuring that customer focus is maintained throughout the organization.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "Karen Osei, the named management representative, plays a pivotal role in upholding these principles within FreshCrate Foods Co., emphasizing the importance of customer satisfaction in all operations.",
+          "factRefs": ["F5"]
+        },
+        {
+          "text": "This commitment is reflected in the organization's core processes, which are meticulously designed to meet and exceed customer expectations in the food processing industry.",
+          "factRefs": ["F2", "F10"]
+        },
+        {
+          "text": "By integrating customer focus into every aspect of its operations, from receiving and grading to cold-chain dispatch, FreshCrate Foods Co. ensures that its washed, cut, and packaged fresh produce consistently meets the high standards demanded by its grocery retail private label customers.",
+          "factRefs": ["F3", "F10"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "5.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.policies"]
+      }
+    },
+    {
+      "harmonizationKey": "5.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "5.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. assigns and communicates the responsibilities and authorities for roles relevant to the quality management system.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "Karen Osei, the named management representative, ensures that all employees understand their roles within the quality management system.",
+          "factRefs": ["F5", "F4"]
+        },
+        {
+          "text": "The organization's quality manual delineates the specific responsibilities and authorities for each role involved in the core processes of receiving and grading, washing and cutting, packaging, cold-chain dispatch, and sanitation.",
+          "factRefs": ["F9", "F10"]
+        },
+        {
+          "text": "This clear assignment of responsibilities and authorities is essential for maintaining the organization's existing certifications such as HACCP and PrimusGFS.",
+          "factRefs": ["F11"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "6.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.risks"]
+      }
+    },
+    {
+      "harmonizationKey": "6.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "6.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "6.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.change_plans"]
+      }
+    },
+    {
+      "harmonizationKey": "7.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. determines and provides the necessary resources for its quality management system, ensuring alignment with its core processes and industry standards.",
+          "factRefs": ["F1", "F3", "F10", "F12"]
+        },
+        {
+          "text": "The organization allocates human resources, including its 150 employees, to support the quality management system across its operations.",
+          "factRefs": ["F1", "F4"]
+        },
+        {
+          "text": "FreshCrate Foods Co. ensures that its infrastructure, including the Processing Plant and Cold Storage & Dispatch sites, meets the requirements for maintaining product quality and safety.",
+          "factRefs": ["F1", "F13", "F14"]
+        },
+        {
+          "text": "The organization maintains monitoring and measuring resources with calibration and traceability to ensure accurate and reliable quality assessments.",
+          "factRefs": ["F1", "F10"]
+        },
+        {
+          "text": "FreshCrate Foods Co. leverages its organizational knowledge, including existing certifications like HACCP and PrimusGFS, to enhance its quality management practices.",
+          "factRefs": ["F1", "F11"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "7.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
+    },
+    {
+      "harmonizationKey": "7.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.competence"]
+      }
+    },
+    {
+      "harmonizationKey": "7.4",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.4"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. identifies and manages both internal and external communications pertinent to its Quality Management System (QMS).",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "The organization determines the content, timing, recipients, methods, and responsible parties for these communications.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "Karen Osei, the designated management representative, oversees the communication strategy to ensure alignment with the QMS objectives.",
+          "factRefs": ["F1", "F5", "F12"]
+        },
+        {
+          "text": "Communications are tailored to address the needs of various stakeholders, including employees, contracted growers, and retail partners.",
+          "factRefs": ["F4", "F7", "F12"]
+        },
+        {
+          "text": "The organization ensures that communication processes are integrated into its core operations such as receiving, grading, washing, cutting, packaging, and dispatch.",
+          "factRefs": ["F10", "F12"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "7.5",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "7.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. ensures the maintenance of all necessary documentation as per the quality management system, with appropriate identification, format, and approval upon creation and updates.",
+          "factRefs": ["F1", "F9", "F12", "F15"]
+        },
+        {
+          "text": "The organization controls the availability, protection, distribution, retention, and disposition of this documentation to ensure its integrity and accessibility.",
+          "factRefs": ["F1", "F9", "F12", "F15"]
+        },
+        {
+          "text": "All documented information is systematically managed to align with the requirements of ISO9001 and other relevant standards.",
+          "factRefs": ["F1", "F12", "F15", "F16"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.1"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. plans, implements, and controls the processes required to meet the needs of its food processing operations.",
+          "factRefs": ["F1", "F2"]
+        },
+        {
+          "text": "These processes ensure the provision of washed, cut, and packaged fresh produce for grocery retail private labels.",
+          "factRefs": ["F3"]
+        },
+        {
+          "text": "The organization identifies the necessary criteria, resources, and documented information to support these processes.",
+          "factRefs": ["F10", "F9"]
+        },
+        {
+          "text": "FreshCrate Foods Co. manages planned changes and oversees outsourced processes to maintain consistent quality and compliance.",
+          "factRefs": ["F7", "F12"]
+        },
+        {
+          "text": "The operational planning and control are integral to the organization's commitment to delivering high-quality products and services.",
+          "factRefs": ["F11", "F13", "F14"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.2-9001#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.2"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. ensures effective communication with customers to determine requirements for its washed, cut, and packaged fresh produce.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "The organization reviews its ability to meet these requirements, including statutory and regulatory ones, before making any commitments.",
+          "factRefs": ["F1", "F2", "F3"]
+        },
+        {
+          "text": "Changes to customer requirements are controlled to maintain compliance and product quality.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "This approach ensures that FreshCrate Foods Co. consistently delivers products that meet both customer expectations and regulatory standards.",
+          "factRefs": ["F1", "F2", "F3"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.3#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.3"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. ensures that its design and development process is meticulously planned with defined stages and controls, aligning with ISO9001 standards.",
+          "factRefs": ["F1", "F12"]
+        },
+        {
+          "text": "The organization, despite not carrying direct design and development responsibility, maintains a robust system for managing inputs, reviews, verification, and validation throughout the process.",
+          "factRefs": ["F8", "F12"]
+        },
+        {
+          "text": "All design and development outputs are meticulously traced back to their corresponding inputs, ensuring transparency and accountability in the process.",
+          "factRefs": ["F12"]
+        },
+        {
+          "text": "Design changes are carefully controlled and documented to maintain the integrity and quality of the organization's products and services.",
+          "factRefs": ["F12"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.4#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.4"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.suppliers"]
+      }
+    },
+    {
+      "harmonizationKey": "8.5#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.5"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. implements production and service provision under controlled conditions to ensure consistent quality and safety of its washed, cut, and packaged fresh produce.",
+          "factRefs": ["F1", "F3", "F10"]
+        },
+        {
+          "text": "The organization maintains identification and traceability throughout its core processes, from receiving and grading to cold-chain dispatch.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Care is taken for both customer and external-provider property, ensuring that all materials and products are handled with the utmost attention to quality and safety standards.",
+          "factRefs": ["F7", "F10"]
+        },
+        {
+          "text": "Preservation of product integrity is a priority, with stringent controls in place during packaging and cold-chain dispatch to maintain product freshness and quality.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Post-delivery activities are monitored to address any customer feedback or issues, ensuring continuous improvement and customer satisfaction.",
+          "factRefs": ["F3"]
+        },
+        {
+          "text": "Any changes to production and service provision are controlled and documented to prevent adverse effects on product quality and compliance with standards.",
+          "factRefs": ["F12"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.6#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.6"
+        }
+      ],
+      "kind": "prose",
+      "sentences": [
+        {
+          "text": "FreshCrate Foods Co. ensures that all washed, cut, and packaged fresh produce meets specified requirements prior to release.",
+          "factRefs": ["F1", "F3"]
+        },
+        {
+          "text": "Verification of conformity with product and service requirements is conducted throughout the core processes of receiving and grading, washing and cutting, packaging, and cold-chain dispatch.",
+          "factRefs": ["F10"]
+        },
+        {
+          "text": "Evidence of conformity is retained, with traceability to the person authorizing release, ensuring accountability and quality assurance.",
+          "factRefs": ["F12"]
+        },
+        {
+          "text": "This practice is integral to maintaining the organization's commitment to quality, as evidenced by its HACCP and PrimusGFS certifications.",
+          "factRefs": ["F11"]
+        }
+      ]
+    },
+    {
+      "harmonizationKey": "8.7#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "8.7"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "9.1#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.objectives"]
+      }
+    },
+    {
+      "harmonizationKey": "9.2",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.audits"]
+      }
+    },
+    {
+      "harmonizationKey": "9.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "9.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.management_reviews"]
+      }
+    },
+    {
+      "harmonizationKey": "10.1",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.1"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.2#ISO9001",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.2"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities"]
+      }
+    },
+    {
+      "harmonizationKey": "10.3",
+      "clauseRefs": [
+        {
+          "standard": "ISO9001",
+          "clauseNo": "10.3"
+        }
+      ],
+      "kind": "gap",
+      "gap": {
+        "missingSources": ["register.nonconformities", "register.objectives"]
+      }
     }
-   ]
-  },
-  {
-   "harmonizationKey": "5.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. demonstrates top management leadership and commitment to the quality management system (QMS) by ensuring that customer focus is maintained throughout the organization.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "Karen Osei, the named management representative, plays a pivotal role in upholding these principles within FreshCrate Foods Co., emphasizing the importance of customer satisfaction in all operations.",
-     "factRefs": [
-      "F5"
-     ]
-    },
-    {
-     "text": "This commitment is reflected in the organization's core processes, which are meticulously designed to meet and exceed customer expectations in the food processing industry.",
-     "factRefs": [
-      "F2",
-      "F10"
-     ]
-    },
-    {
-     "text": "By integrating customer focus into every aspect of its operations, from receiving and grading to cold-chain dispatch, FreshCrate Foods Co. ensures that its washed, cut, and packaged fresh produce consistently meets the high standards demanded by its grocery retail private label customers.",
-     "factRefs": [
-      "F3",
-      "F10"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "5.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.policies"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "5.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "5.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. assigns and communicates the responsibilities and authorities for roles relevant to the quality management system.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "Karen Osei, the named management representative, ensures that all employees understand their roles within the quality management system.",
-     "factRefs": [
-      "F5",
-      "F4"
-     ]
-    },
-    {
-     "text": "The organization's quality manual delineates the specific responsibilities and authorities for each role involved in the core processes of receiving and grading, washing and cutting, packaging, cold-chain dispatch, and sanitation.",
-     "factRefs": [
-      "F9",
-      "F10"
-     ]
-    },
-    {
-     "text": "This clear assignment of responsibilities and authorities is essential for maintaining the organization's existing certifications such as HACCP and PrimusGFS.",
-     "factRefs": [
-      "F11"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "6.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.risks"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "6.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "6.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.change_plans"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. determines and provides the necessary resources for its quality management system, ensuring alignment with its core processes and industry standards.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization allocates human resources, including its 150 employees, to support the quality management system across its operations.",
-     "factRefs": [
-      "F1",
-      "F4"
-     ]
-    },
-    {
-     "text": "FreshCrate Foods Co. ensures that its infrastructure, including the Processing Plant and Cold Storage & Dispatch sites, meets the requirements for maintaining product quality and safety.",
-     "factRefs": [
-      "F1",
-      "F13",
-      "F14"
-     ]
-    },
-    {
-     "text": "The organization maintains monitoring and measuring resources with calibration and traceability to ensure accurate and reliable quality assessments.",
-     "factRefs": [
-      "F1",
-      "F10"
-     ]
-    },
-    {
-     "text": "FreshCrate Foods Co. leverages its organizational knowledge, including existing certifications like HACCP and PrimusGFS, to enhance its quality management practices.",
-     "factRefs": [
-      "F1",
-      "F11"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.competence"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "7.4",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.4"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. identifies and manages both internal and external communications pertinent to its Quality Management System (QMS).",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization determines the content, timing, recipients, methods, and responsible parties for these communications.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "Karen Osei, the designated management representative, oversees the communication strategy to ensure alignment with the QMS objectives.",
-     "factRefs": [
-      "F1",
-      "F5",
-      "F12"
-     ]
-    },
-    {
-     "text": "Communications are tailored to address the needs of various stakeholders, including employees, contracted growers, and retail partners.",
-     "factRefs": [
-      "F4",
-      "F7",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization ensures that communication processes are integrated into its core operations such as receiving, grading, washing, cutting, packaging, and dispatch.",
-     "factRefs": [
-      "F10",
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "7.5",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "7.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. ensures the maintenance of all necessary documentation as per the quality management system, with appropriate identification, format, and approval upon creation and updates.",
-     "factRefs": [
-      "F1",
-      "F9",
-      "F12",
-      "F15"
-     ]
-    },
-    {
-     "text": "The organization controls the availability, protection, distribution, retention, and disposition of this documentation to ensure its integrity and accessibility.",
-     "factRefs": [
-      "F1",
-      "F9",
-      "F12",
-      "F15"
-     ]
-    },
-    {
-     "text": "All documented information is systematically managed to align with the requirements of ISO9001 and other relevant standards.",
-     "factRefs": [
-      "F1",
-      "F12",
-      "F15",
-      "F16"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.1"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. plans, implements, and controls the processes required to meet the needs of its food processing operations.",
-     "factRefs": [
-      "F1",
-      "F2"
-     ]
-    },
-    {
-     "text": "These processes ensure the provision of washed, cut, and packaged fresh produce for grocery retail private labels.",
-     "factRefs": [
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization identifies the necessary criteria, resources, and documented information to support these processes.",
-     "factRefs": [
-      "F10",
-      "F9"
-     ]
-    },
-    {
-     "text": "FreshCrate Foods Co. manages planned changes and oversees outsourced processes to maintain consistent quality and compliance.",
-     "factRefs": [
-      "F7",
-      "F12"
-     ]
-    },
-    {
-     "text": "The operational planning and control are integral to the organization's commitment to delivering high-quality products and services.",
-     "factRefs": [
-      "F11",
-      "F13",
-      "F14"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.2-9001#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.2"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. ensures effective communication with customers to determine requirements for its washed, cut, and packaged fresh produce.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "The organization reviews its ability to meet these requirements, including statutory and regulatory ones, before making any commitments.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3"
-     ]
-    },
-    {
-     "text": "Changes to customer requirements are controlled to maintain compliance and product quality.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "This approach ensures that FreshCrate Foods Co. consistently delivers products that meet both customer expectations and regulatory standards.",
-     "factRefs": [
-      "F1",
-      "F2",
-      "F3"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.3#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.3"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. ensures that its design and development process is meticulously planned with defined stages and controls, aligning with ISO9001 standards.",
-     "factRefs": [
-      "F1",
-      "F12"
-     ]
-    },
-    {
-     "text": "The organization, despite not carrying direct design and development responsibility, maintains a robust system for managing inputs, reviews, verification, and validation throughout the process.",
-     "factRefs": [
-      "F8",
-      "F12"
-     ]
-    },
-    {
-     "text": "All design and development outputs are meticulously traced back to their corresponding inputs, ensuring transparency and accountability in the process.",
-     "factRefs": [
-      "F12"
-     ]
-    },
-    {
-     "text": "Design changes are carefully controlled and documented to maintain the integrity and quality of the organization's products and services.",
-     "factRefs": [
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.4#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.4"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.suppliers"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "8.5#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.5"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. implements production and service provision under controlled conditions to ensure consistent quality and safety of its washed, cut, and packaged fresh produce.",
-     "factRefs": [
-      "F1",
-      "F3",
-      "F10"
-     ]
-    },
-    {
-     "text": "The organization maintains identification and traceability throughout its core processes, from receiving and grading to cold-chain dispatch.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Care is taken for both customer and external-provider property, ensuring that all materials and products are handled with the utmost attention to quality and safety standards.",
-     "factRefs": [
-      "F7",
-      "F10"
-     ]
-    },
-    {
-     "text": "Preservation of product integrity is a priority, with stringent controls in place during packaging and cold-chain dispatch to maintain product freshness and quality.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Post-delivery activities are monitored to address any customer feedback or issues, ensuring continuous improvement and customer satisfaction.",
-     "factRefs": [
-      "F3"
-     ]
-    },
-    {
-     "text": "Any changes to production and service provision are controlled and documented to prevent adverse effects on product quality and compliance with standards.",
-     "factRefs": [
-      "F12"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.6#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.6"
-    }
-   ],
-   "kind": "prose",
-   "sentences": [
-    {
-     "text": "FreshCrate Foods Co. ensures that all washed, cut, and packaged fresh produce meets specified requirements prior to release.",
-     "factRefs": [
-      "F1",
-      "F3"
-     ]
-    },
-    {
-     "text": "Verification of conformity with product and service requirements is conducted throughout the core processes of receiving and grading, washing and cutting, packaging, and cold-chain dispatch.",
-     "factRefs": [
-      "F10"
-     ]
-    },
-    {
-     "text": "Evidence of conformity is retained, with traceability to the person authorizing release, ensuring accountability and quality assurance.",
-     "factRefs": [
-      "F12"
-     ]
-    },
-    {
-     "text": "This practice is integral to maintaining the organization's commitment to quality, as evidenced by its HACCP and PrimusGFS certifications.",
-     "factRefs": [
-      "F11"
-     ]
-    }
-   ]
-  },
-  {
-   "harmonizationKey": "8.7#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "8.7"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.1#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.objectives"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.2",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.audits"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "9.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "9.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.management_reviews"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.1",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.1"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.2#ISO9001",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.2"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities"
-    ]
-   }
-  },
-  {
-   "harmonizationKey": "10.3",
-   "clauseRefs": [
-    {
-     "standard": "ISO9001",
-     "clauseNo": "10.3"
-    }
-   ],
-   "kind": "gap",
-   "gap": {
-    "missingSources": [
-     "register.nonconformities",
-     "register.objectives"
-    ]
-   }
-  }
- ]
+  ]
 }

@@ -110,7 +110,10 @@ export default function M2ListPage() {
   const fetchNCs = useCallback(async () => {
     try {
       setError(false);
-      const data = await query<{ listNonconformities: Nonconformity[] }>(LIST_NCS_QUERY, filterVars);
+      const data = await query<{ listNonconformities: Nonconformity[] }>(
+        LIST_NCS_QUERY,
+        filterVars,
+      );
       setNcs(data.listNonconformities);
     } catch {
       setError(true);
@@ -148,29 +151,88 @@ export default function M2ListPage() {
     },
   });
 
-  const ncColumns: Column<Nonconformity>[] = useMemo(() => [
-    { key: 'description', header: t('colDescription'), render: (nc) => nc.description },
-    { key: 'severity', header: t('colSeverity'), render: (nc) => <StatusBadge status={nc.severity} /> },
-    { key: 'standard', header: t('colStandard'), render: (nc) => <ClauseChip standard={nc.standard} clauseRef={nc.clauseRef} /> },
-    { key: 'raisedAt', header: t('colRaisedAt'), render: (nc) => new Date(nc.raisedAt).toLocaleDateString() },
-    { key: 'status', header: t('colStatus'), render: (nc) => <StatusBadge status={nc.status} /> },
-  ], [t]);
+  const ncColumns: Column<Nonconformity>[] = useMemo(
+    () => [
+      { key: 'description', header: t('colDescription'), render: (nc) => nc.description },
+      {
+        key: 'severity',
+        header: t('colSeverity'),
+        render: (nc) => <StatusBadge status={nc.severity} />,
+      },
+      {
+        key: 'standard',
+        header: t('colStandard'),
+        render: (nc) => <ClauseChip standard={nc.standard} clauseRef={nc.clauseRef} />,
+      },
+      {
+        key: 'raisedAt',
+        header: t('colRaisedAt'),
+        render: (nc) => new Date(nc.raisedAt).toLocaleDateString(),
+      },
+      { key: 'status', header: t('colStatus'), render: (nc) => <StatusBadge status={nc.status} /> },
+    ],
+    [t],
+  );
 
-  const capaColumns: Column<CorrectiveAction>[] = useMemo(() => [
-    { key: 'actionDesc', header: t('colAction'), render: (ca) => ca.actionDesc },
-    { key: 'ownerId', header: t('colOwner'), render: (ca) => ca.ownerId },
-    { key: 'dueDate', header: t('colDueDate'), render: (ca) => new Date(ca.dueDate).toLocaleDateString() },
-    { key: 'status', header: t('colStatus'), render: (ca) => <StatusBadge status={ca.status} /> },
-  ], [t]);
+  const capaColumns: Column<CorrectiveAction>[] = useMemo(
+    () => [
+      { key: 'actionDesc', header: t('colAction'), render: (ca) => ca.actionDesc },
+      { key: 'ownerId', header: t('colOwner'), render: (ca) => ca.ownerId },
+      {
+        key: 'dueDate',
+        header: t('colDueDate'),
+        render: (ca) => new Date(ca.dueDate).toLocaleDateString(),
+      },
+      { key: 'status', header: t('colStatus'), render: (ca) => <StatusBadge status={ca.status} /> },
+    ],
+    [t],
+  );
 
-  const drawerFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.filter(Boolean).map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })), defaultValue: chipStandard || '' },
-    { name: 'source', label: t('fieldSource'), type: 'select', required: true, options: NC_SOURCES.map((s) => ({ value: s, label: s })) },
-    { name: 'ncType', label: t('fieldNcType'), type: 'select', required: true, options: NC_TYPES.map((nt) => ({ value: nt, label: nt.replace(/_/g, ' ') })) },
-    { name: 'description', label: t('fieldDescription'), type: 'textarea', required: true, defaultValue: chipDesc },
-    { name: 'clauseRef', label: t('fieldClauseRef'), type: 'text', required: true },
-    { name: 'severity', label: t('fieldSeverity'), type: 'select', required: true, options: SEVERITIES.filter(Boolean).map((s) => ({ value: s, label: s })) },
-  ], [t, chipDesc, chipStandard]);
+  const drawerFields: FieldDef[] = useMemo(
+    () => [
+      {
+        name: 'standard',
+        label: t('fieldStandard'),
+        type: 'select',
+        required: true,
+        options: STANDARDS.filter(Boolean).map((s) => ({
+          value: s,
+          label: s.replace('ISO', 'ISO '),
+        })),
+        defaultValue: chipStandard || '',
+      },
+      {
+        name: 'source',
+        label: t('fieldSource'),
+        type: 'select',
+        required: true,
+        options: NC_SOURCES.map((s) => ({ value: s, label: s })),
+      },
+      {
+        name: 'ncType',
+        label: t('fieldNcType'),
+        type: 'select',
+        required: true,
+        options: NC_TYPES.map((nt) => ({ value: nt, label: nt.replace(/_/g, ' ') })),
+      },
+      {
+        name: 'description',
+        label: t('fieldDescription'),
+        type: 'textarea',
+        required: true,
+        defaultValue: chipDesc,
+      },
+      { name: 'clauseRef', label: t('fieldClauseRef'), type: 'text', required: true },
+      {
+        name: 'severity',
+        label: t('fieldSeverity'),
+        type: 'select',
+        required: true,
+        options: SEVERITIES.filter(Boolean).map((s) => ({ value: s, label: s })),
+      },
+    ],
+    [t, chipDesc, chipStandard],
+  );
 
   async function handleRaiseNC(values: Record<string, string | boolean>) {
     try {
@@ -259,7 +321,9 @@ export default function M2ListPage() {
           aria-label={t('filterSeverity')}
         >
           {SEVERITIES.map((s) => (
-            <option key={s || 'all'} value={s}>{s ? tStatus(s) : t('filterAll')}</option>
+            <option key={s || 'all'} value={s}>
+              {s ? tStatus(s) : t('filterAll')}
+            </option>
           ))}
         </select>
       </div>

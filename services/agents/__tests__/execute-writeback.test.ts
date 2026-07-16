@@ -29,7 +29,12 @@ const { mockPublish } = vi.hoisted(() => ({ mockPublish: vi.fn() }));
 
 vi.mock('../../eventing/src/publisher.js', () => ({ publish: mockPublish }));
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 process.env.CLUSTER_ARN = 'arn:aws:rds:us-east-1:000000000000:cluster:test';
@@ -56,8 +61,7 @@ beforeEach(() => {
 });
 
 /** Every ExecuteStatement input sent, in order. */
-const sqlCalls = () =>
-  rdsMock.commandCalls(ExecuteStatementCommand).map(c => c.args[0].input);
+const sqlCalls = () => rdsMock.commandCalls(ExecuteStatementCommand).map((c) => c.args[0].input);
 
 describe('Agent.WritebackCommitted entityId (written-row id)', () => {
   it('capa-open: envelope entityId = the RETURNING id; payload carries it too', async () => {
@@ -65,11 +69,20 @@ describe('Agent.WritebackCommitted entityId (written-row id)', () => {
     rdsMock
       .on(ExecuteStatementCommand)
       .resolvesOnce({ records: [[{ stringValue: 'on' }]] }) // set_config
-      .resolvesOnce({ records: [[{ stringValue: 'ca-uuid-1' }, { stringValue: 'open' }, { stringValue: '2026-08-01' }]] });
+      .resolvesOnce({
+        records: [
+          [{ stringValue: 'ca-uuid-1' }, { stringValue: 'open' }, { stringValue: '2026-08-01' }],
+        ],
+      });
 
-    const res = await handler(baseInput('capa-open', {
-      ncId: 'nc-1', actionDesc: 'a', suggestedOwnerId: 'o', dueDate: '2026-08-01T00:00:00Z',
-    }));
+    const res = await handler(
+      baseInput('capa-open', {
+        ncId: 'nc-1',
+        actionDesc: 'a',
+        suggestedOwnerId: 'o',
+        dueDate: '2026-08-01T00:00:00Z',
+      }),
+    );
 
     expect(res.status).toBe('COMMITTED');
     expect(mockPublish).toHaveBeenCalledTimes(1);
@@ -94,12 +107,20 @@ describe('records-retention-schedule — migration-005 truth (stale-schema fix)'
     rdsMock
       .on(ExecuteStatementCommand)
       .resolvesOnce({ records: [[{ stringValue: 'on' }]] }) // set_config
-      .resolvesOnce({ records: [] })                         // SELECT: no existing policy
-      .resolvesOnce({ records: [[{ stringValue: 'pol-uuid-1' }, { stringValue: 'calibration' }, { longValue: 7 }]] });
+      .resolvesOnce({ records: [] }) // SELECT: no existing policy
+      .resolvesOnce({
+        records: [
+          [{ stringValue: 'pol-uuid-1' }, { stringValue: 'calibration' }, { longValue: 7 }],
+        ],
+      });
 
-    await handler(baseInput('records-retention-schedule', {
-      category: 'calibration', retentionPeriod: '7-year', justification: 'ISO 7.5.3 review',
-    }));
+    await handler(
+      baseInput('records-retention-schedule', {
+        category: 'calibration',
+        retentionPeriod: '7-year',
+        justification: 'ISO 7.5.3 review',
+      }),
+    );
 
     const insert = sqlCalls()[2];
     expect(insert.sql).toContain('INSERT INTO m4.retention_policies');
@@ -117,13 +138,21 @@ describe('records-retention-schedule — migration-005 truth (stale-schema fix)'
   it('UPDATE path when a policy row already exists for the record_type', async () => {
     rdsMock
       .on(ExecuteStatementCommand)
-      .resolvesOnce({ records: [[{ stringValue: 'on' }]] })            // set_config
-      .resolvesOnce({ records: [[{ stringValue: 'pol-uuid-9' }]] })    // SELECT hit
-      .resolvesOnce({ records: [[{ stringValue: 'pol-uuid-9' }, { stringValue: 'calibration' }, { longValue: 5 }]] });
+      .resolvesOnce({ records: [[{ stringValue: 'on' }]] }) // set_config
+      .resolvesOnce({ records: [[{ stringValue: 'pol-uuid-9' }]] }) // SELECT hit
+      .resolvesOnce({
+        records: [
+          [{ stringValue: 'pol-uuid-9' }, { stringValue: 'calibration' }, { longValue: 5 }],
+        ],
+      });
 
-    await handler(baseInput('records-retention-schedule', {
-      category: 'calibration', retentionPeriod: '5-year', justification: 'j',
-    }));
+    await handler(
+      baseInput('records-retention-schedule', {
+        category: 'calibration',
+        retentionPeriod: '5-year',
+        justification: 'j',
+      }),
+    );
 
     const update = sqlCalls()[2];
     expect(update.sql).toContain('UPDATE m4.retention_policies');
@@ -136,13 +165,17 @@ describe('records-retention-schedule — migration-005 truth (stale-schema fix)'
   });
 
   it("'permanent' retention throws loudly (unrepresentable in retention_years INTEGER)", async () => {
-    rdsMock
-      .on(ExecuteStatementCommand)
-      .resolvesOnce({ records: [[{ stringValue: 'on' }]] }); // set_config
+    rdsMock.on(ExecuteStatementCommand).resolvesOnce({ records: [[{ stringValue: 'on' }]] }); // set_config
 
-    await expect(handler(baseInput('records-retention-schedule', {
-      category: 'calibration', retentionPeriod: 'permanent', justification: 'j',
-    }))).rejects.toThrow('RETENTION_PERIOD_UNREPRESENTABLE');
+    await expect(
+      handler(
+        baseInput('records-retention-schedule', {
+          category: 'calibration',
+          retentionPeriod: 'permanent',
+          justification: 'j',
+        }),
+      ),
+    ).rejects.toThrow('RETENTION_PERIOD_UNREPRESENTABLE');
 
     // Failure path rolls back and publishes nothing
     expect(rdsMock.commandCalls(RollbackTransactionCommand).length).toBe(1);

@@ -34,20 +34,95 @@ const CACHING_MODELS = new Set([
  * This mapping is manually maintained to match the Register.
  * Any discrepancy fails the spec's acceptance gate.
  */
-const SEAT_MAP: Record<SeatId, { modelId: string; status: RegisterStatus; expiry: string | null; marginHeadroom: number; tier: SeatTier }> = {
-  workhorse: { modelId: 'us.amazon.nova-pro-v1:0', status: 'PROVISIONAL', expiry: '2026-10-06', marginHeadroom: 0.948, tier: 'workhorse' },
-  lightweight: { modelId: 'us.amazon.nova-lite-v1:0', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.990, tier: 'lightweight' },
-  'guru-9001': { modelId: 'qwen.qwen3-next-80b-a3b', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.966, tier: 'guru' },
-  'guru-14001': { modelId: 'qwen.qwen3-next-80b-a3b', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.975, tier: 'guru' },
-  'guru-45001': { modelId: 'moonshotai.kimi-k2.5', status: 'ASSIGNED', expiry: '2026-10-08', marginHeadroom: 0.949, tier: 'guru' },
-  micro: { modelId: 'us.amazon.nova-2-lite-v1:0', status: 'PROVISIONAL', expiry: '2026-10-06', marginHeadroom: 0.931, tier: 'micro' },
-  snapshot: { modelId: 'zai.glm-4.7-flash', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.971, tier: 'snapshot' },
-  'editor-ai': { modelId: 'us.amazon.nova-pro-v1:0', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.854, tier: 'editor-ai' },
-  'pain-distiller': { modelId: 'qwen.qwen3-next-80b-a3b', status: 'ASSIGNED', expiry: '2026-10-06', marginHeadroom: 0.978, tier: 'pain-distiller' },
-  'legal-ledger': { modelId: 'zai.glm-5', status: 'ASSIGNED', expiry: '2026-10-08', marginHeadroom: 0.853, tier: 'legal-ledger' },
+const SEAT_MAP: Record<
+  SeatId,
+  {
+    modelId: string;
+    status: RegisterStatus;
+    expiry: string | null;
+    marginHeadroom: number;
+    tier: SeatTier;
+  }
+> = {
+  workhorse: {
+    modelId: 'us.amazon.nova-pro-v1:0',
+    status: 'PROVISIONAL',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.948,
+    tier: 'workhorse',
+  },
+  lightweight: {
+    modelId: 'us.amazon.nova-lite-v1:0',
+    status: 'ASSIGNED',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.99,
+    tier: 'lightweight',
+  },
+  'guru-9001': {
+    modelId: 'qwen.qwen3-next-80b-a3b',
+    status: 'ASSIGNED',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.966,
+    tier: 'guru',
+  },
+  'guru-14001': {
+    modelId: 'qwen.qwen3-next-80b-a3b',
+    status: 'ASSIGNED',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.975,
+    tier: 'guru',
+  },
+  'guru-45001': {
+    modelId: 'moonshotai.kimi-k2.5',
+    status: 'ASSIGNED',
+    expiry: '2026-10-08',
+    marginHeadroom: 0.949,
+    tier: 'guru',
+  },
+  micro: {
+    modelId: 'us.amazon.nova-2-lite-v1:0',
+    status: 'PROVISIONAL',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.931,
+    tier: 'micro',
+  },
+  snapshot: {
+    modelId: 'zai.glm-4.7-flash',
+    status: 'ASSIGNED',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.971,
+    tier: 'snapshot',
+  },
+  'editor-ai': {
+    modelId: 'us.amazon.nova-pro-v1:0',
+    status: 'ASSIGNED',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.854,
+    tier: 'editor-ai',
+  },
+  'pain-distiller': {
+    modelId: 'qwen.qwen3-next-80b-a3b',
+    status: 'ASSIGNED',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.978,
+    tier: 'pain-distiller',
+  },
+  'legal-ledger': {
+    modelId: 'zai.glm-5',
+    status: 'ASSIGNED',
+    expiry: '2026-10-08',
+    marginHeadroom: 0.853,
+    tier: 'legal-ledger',
+  },
   // spec-40 §4.4: same Pro-class model as workhorse (weights row shared by modelId);
   // PROVISIONAL until the Task-12 golden-set eval (≥4.0/5) — owner ratifies there.
-  'doc-composer': { modelId: 'us.amazon.nova-pro-v1:0', status: 'PROVISIONAL', expiry: '2026-10-06', marginHeadroom: 0.948, tier: 'doc-composer' },
+  'doc-composer': {
+    modelId: 'us.amazon.nova-pro-v1:0',
+    status: 'PROVISIONAL',
+    expiry: '2026-10-06',
+    marginHeadroom: 0.948,
+    tier: 'doc-composer',
+  },
 };
 
 function main(): void {

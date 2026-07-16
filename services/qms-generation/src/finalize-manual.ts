@@ -23,21 +23,31 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Logger } from '@aws-lambda-powertools/logger';
 import {
-  beginTenantTransaction, marshalMany, publishAuditEvent,
+  beginTenantTransaction,
+  marshalMany,
+  publishAuditEvent,
 } from '../../api/src/resolvers/shared.js';
 import { publishGenerationEvent } from './appsync-publish.js';
 import { sha256Hex } from './facts.js';
 import {
-  assembleManualContent, deriveCorrelationMatrix, deriveMasterList,
-  documentStandard, clauseDocTitle, buildFrontMatter,
-  type SectionState, type MasterListEntry,
+  assembleManualContent,
+  deriveCorrelationMatrix,
+  deriveMasterList,
+  documentStandard,
+  clauseDocTitle,
+  buildFrontMatter,
+  type SectionState,
+  type MasterListEntry,
 } from './derive.js';
 
 const logger = new Logger({ serviceName: 'qms-finalize-manual' });
 const s3 = new S3Client({});
 const GENERAL_BUCKET = process.env.GENERAL_BUCKET!;
 
-export interface FinalizeInput { runId: string; tenantId: string }
+export interface FinalizeInput {
+  runId: string;
+  tenantId: string;
+}
 export interface FinalizeOutput {
   runId: string;
   status: string;
@@ -60,8 +70,14 @@ function docContentKey(tenantId: string, documentId: string): string {
 type Txn = Awaited<ReturnType<typeof beginTenantTransaction>>;
 
 async function insertDocument(
-  txn: Txn, tenantId: string, opts: {
-    standard: string; docType: string; title: string; clauseRefs: string[]; owner: string;
+  txn: Txn,
+  tenantId: string,
+  opts: {
+    standard: string;
+    docType: string;
+    title: string;
+    clauseRefs: string[];
+    owner: string;
   },
 ): Promise<string> {
   const result = await txn.execute(
@@ -81,15 +97,23 @@ async function insertDocument(
 }
 
 async function writeVersion(
-  txn: Txn, tenantId: string, documentId: string, owner: string,
+  txn: Txn,
+  tenantId: string,
+  documentId: string,
+  owner: string,
   content: Record<string, unknown>,
 ): Promise<{ contentRef: string; contentSha: string }> {
   const body = JSON.stringify(content);
   const contentRef = docContentKey(tenantId, documentId);
   const contentSha = sha256Hex(body);
-  await s3.send(new PutObjectCommand({
-    Bucket: GENERAL_BUCKET, Key: contentRef, Body: body, ContentType: 'application/json',
-  }));
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: GENERAL_BUCKET,
+      Key: contentRef,
+      Body: body,
+      ContentType: 'application/json',
+    }),
+  );
   await txn.execute(
     `INSERT INTO m1.document_versions
        (tenant_id, document_id, version_no, content_ref, content_sha256, change_summary, author_id, created_by)
@@ -113,7 +137,13 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
   let status: string;
   let manualDocumentId: string | null = null;
   let documentsCreated = 0;
-  const summary: Record<string, number> = { prose: 0, gap: 0, na_justified: 0, failed: 0, pending: 0 };
+  const summary: Record<string, number> = {
+    prose: 0,
+    gap: 0,
+    na_justified: 0,
+    failed: 0,
+    pending: 0,
+  };
   try {
     // Load run — idempotency guard first
     const runResult = await txn.execute(
@@ -126,10 +156,15 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
     );
     if (!runResult.records?.length) throw new Error(`RUN_NOT_FOUND: ${runId}`);
     const rec = runResult.records[0];
-    const standards = (rec[0] as { arrayValue?: { stringValues?: string[] } }).arrayValue?.stringValues ?? [];
-    const existingManualId = (rec[1] as { stringValue?: string; isNull?: boolean }).stringValue ?? null;
+    const standards =
+      (rec[0] as { arrayValue?: { stringValues?: string[] } }).arrayValue?.stringValues ?? [];
+    const existingManualId =
+      (rec[1] as { stringValue?: string; isNull?: boolean }).stringValue ?? null;
     const owner = (rec[2] as { stringValue?: string }).stringValue ?? 'docgen-state-machine';
-    const profile = JSON.parse((rec[3] as { stringValue?: string }).stringValue ?? '{}') as Record<string, unknown>;
+    const profile = JSON.parse((rec[3] as { stringValue?: string }).stringValue ?? '{}') as Record<
+      string,
+      unknown
+    >;
     const locale = (profile.documentLocale as string) ?? 'en';
 
     // Section states + registry join
@@ -140,8 +175,9 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
     );
     // marshalMany reverse-maps the overloaded `status` column to GraphQL
     // UPPERCASE (d11d803) — normalize back to DB casing for internal logic.
-    const sectionRows: Record<string, unknown>[] = marshalMany(sectionsResult).map(r => ({
-      ...r, status: (r.status as string).toLowerCase(),
+    const sectionRows: Record<string, unknown>[] = marshalMany(sectionsResult).map((r) => ({
+      ...r,
+      status: (r.status as string).toLowerCase(),
     }));
     for (const row of sectionRows) {
       const s = row.status as string;
@@ -160,18 +196,16 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
       `SELECT id, standard, clause_no, clause_title, annex_sl_mode, doc_type, sort_order
        FROM qms.clause_registry`,
     );
-    const registryById = new Map(
-      marshalMany(registryResult).map(r => [r.id as string, r]),
-    );
+    const registryById = new Map(marshalMany(registryResult).map((r) => [r.id as string, r]));
 
     // Build SectionState[] — content JSONs from S3
     const sections: SectionState[] = [];
     for (const row of sectionRows) {
       const clauseIds = (row.clauseRegistryIds as string[]) ?? [];
       const clauses = clauseIds
-        .map(id => registryById.get(id))
+        .map((id) => registryById.get(id))
         .filter((c): c is NonNullable<typeof c> => !!c)
-        .map(c => ({
+        .map((c) => ({
           standard: c.standard as string,
           clauseNo: c.clauseNo as string,
           clauseTitle: c.clauseTitle as string,
@@ -181,7 +215,7 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
           docType: (c.docType as string).toLowerCase(),
         }));
       const sortOrder = Math.min(
-        ...clauseIds.map(id => (registryById.get(id)?.sortOrder as number) ?? 9999),
+        ...clauseIds.map((id) => (registryById.get(id)?.sortOrder as number) ?? 9999),
       );
       let content: Record<string, unknown> | null = null;
       const key = row.contentS3Key as string | null;
@@ -199,7 +233,9 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
     }
 
     const manualStandard = documentStandard(standards);
-    const allClauseNos = [...new Set(sections.flatMap(s => s.clauses.map(c => c.clauseNo)))].sort();
+    const allClauseNos = [
+      ...new Set(sections.flatMap((s) => s.clauses.map((c) => c.clauseNo))),
+    ].sort();
     const masterEntries: MasterListEntry[] = [];
 
     // 1. Manual
@@ -210,24 +246,41 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
       clauseRefs: allClauseNos,
       owner,
     });
-    const manualContent = assembleManualContent(manualDocumentId, locale, profile, standards, sections);
+    const manualContent = assembleManualContent(
+      manualDocumentId,
+      locale,
+      profile,
+      standards,
+      sections,
+    );
     const manualVersion = await writeVersion(txn, tenantId, manualDocumentId, owner, manualContent);
     documentsCreated++;
     masterEntries.push({
-      documentId: manualDocumentId, title: MANUAL_TITLES[manualStandard] ?? MANUAL_TITLES.IMS,
-      docType: 'manual', standard: manualStandard, clauseRefs: allClauseNos,
-      status: 'draft', versionNo: 1, contentRef: manualVersion.contentRef,
+      documentId: manualDocumentId,
+      title: MANUAL_TITLES[manualStandard] ?? MANUAL_TITLES.IMS,
+      docType: 'manual',
+      standard: manualStandard,
+      clauseRefs: allClauseNos,
+      status: 'draft',
+      versionNo: 1,
+      contentRef: manualVersion.contentRef,
     });
 
     // 2. Clause documents — failed sections ship nothing
     for (const section of sections) {
       if (section.kind === 'failed') continue;
-      const sectionStandard = documentStandard([...new Set(section.clauses.map(c => c.standard))]);
+      const sectionStandard = documentStandard([
+        ...new Set(section.clauses.map((c) => c.standard)),
+      ]);
       const docType = section.clauses[0]?.docType ?? 'procedure';
       const title = clauseDocTitle(section);
-      const clauseNos = [...new Set(section.clauses.map(c => c.clauseNo))];
+      const clauseNos = [...new Set(section.clauses.map((c) => c.clauseNo))];
       const docId = await insertDocument(txn, tenantId, {
-        standard: sectionStandard, docType, title, clauseRefs: clauseNos, owner,
+        standard: sectionStandard,
+        docType,
+        title,
+        clauseRefs: clauseNos,
+        owner,
       });
       const content = {
         schemaVersion: 1,
@@ -235,45 +288,77 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
         versionNo: 1,
         locale,
         frontMatter: buildFrontMatter(profile, standards),
-        sections: [{
-          harmonizationKey: section.sectionKey,
-          clauseRefs: section.clauses.map(c => ({ standard: c.standard, clauseNo: c.clauseNo })),
-          kind: section.kind,
-          ...(section.content?.sentences !== undefined ? { sentences: section.content.sentences } : {}),
-          ...(section.content?.gap !== undefined ? { gap: section.content.gap } : {}),
-          ...(section.content?.naJustification !== undefined ? { naJustification: section.content.naJustification } : {}),
-        }],
+        sections: [
+          {
+            harmonizationKey: section.sectionKey,
+            clauseRefs: section.clauses.map((c) => ({
+              standard: c.standard,
+              clauseNo: c.clauseNo,
+            })),
+            kind: section.kind,
+            ...(section.content?.sentences !== undefined
+              ? { sentences: section.content.sentences }
+              : {}),
+            ...(section.content?.gap !== undefined ? { gap: section.content.gap } : {}),
+            ...(section.content?.naJustification !== undefined
+              ? { naJustification: section.content.naJustification }
+              : {}),
+          },
+        ],
       };
       const version = await writeVersion(txn, tenantId, docId, owner, content);
       documentsCreated++;
       masterEntries.push({
-        documentId: docId, title, docType, standard: sectionStandard, clauseRefs: clauseNos,
-        status: 'draft', versionNo: 1, contentRef: version.contentRef,
+        documentId: docId,
+        title,
+        docType,
+        standard: sectionStandard,
+        clauseRefs: clauseNos,
+        status: 'draft',
+        versionNo: 1,
+        contentRef: version.contentRef,
       });
     }
 
     // 3. Correlation matrix + master list (derived, never authored)
     const matrixId = await insertDocument(txn, tenantId, {
-      standard: manualStandard, docType: 'correlation_matrix',
-      title: 'Standards Correlation Matrix', clauseRefs: allClauseNos, owner,
+      standard: manualStandard,
+      docType: 'correlation_matrix',
+      title: 'Standards Correlation Matrix',
+      clauseRefs: allClauseNos,
+      owner,
     });
     const matrixVersion = await writeVersion(
-      txn, tenantId, matrixId, owner,
+      txn,
+      tenantId,
+      matrixId,
+      owner,
       deriveCorrelationMatrix(matrixId, locale, standards, sections),
     );
     documentsCreated++;
     masterEntries.push({
-      documentId: matrixId, title: 'Standards Correlation Matrix', docType: 'correlation_matrix',
-      standard: manualStandard, clauseRefs: allClauseNos, status: 'draft', versionNo: 1,
+      documentId: matrixId,
+      title: 'Standards Correlation Matrix',
+      docType: 'correlation_matrix',
+      standard: manualStandard,
+      clauseRefs: allClauseNos,
+      status: 'draft',
+      versionNo: 1,
       contentRef: matrixVersion.contentRef,
     });
 
     const masterId = await insertDocument(txn, tenantId, {
-      standard: manualStandard, docType: 'master_list',
-      title: 'Documented Information Master List', clauseRefs: ['7.5'], owner,
+      standard: manualStandard,
+      docType: 'master_list',
+      title: 'Documented Information Master List',
+      clauseRefs: ['7.5'],
+      owner,
     });
     await writeVersion(
-      txn, tenantId, masterId, owner,
+      txn,
+      tenantId,
+      masterId,
+      owner,
       deriveMasterList(masterId, locale, masterEntries),
     );
     documentsCreated++;
@@ -291,7 +376,11 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
     );
     await txn.commit();
   } catch (err) {
-    try { await txn.rollback(); } catch { /* never mask */ }
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
     throw err;
   }
 
@@ -307,7 +396,9 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
     payload: { runId, status, summary, manualDocumentId, documentsCreated },
   });
   await publishGenerationEvent({
-    runId, tenantId, type: 'run_complete',
+    runId,
+    tenantId,
+    type: 'run_complete',
     summary: JSON.stringify({ status, manualDocumentId, documentsCreated, ...summary }),
   });
 

@@ -51,7 +51,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
     gradingMethod: 'schema-validation',
     evalSetPath: 'data/eval-sets/lightweight.json',
     humanReviewPercent: 0,
-    qualityBar: 0.90, // §2.3: task correctness >= 90%
+    qualityBar: 0.9, // §2.3: task correctness >= 90%
   },
   micro: {
     seat: 'micro',
@@ -106,11 +106,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
   },
   'pain-distiller': {
     seat: 'pain-distiller',
-    candidates: [
-      'us.amazon.nova-pro-v1:0',
-      'deepseek.v3.2',
-      'qwen.qwen3-next-80b-a3b',
-    ],
+    candidates: ['us.amazon.nova-pro-v1:0', 'deepseek.v3.2', 'qwen.qwen3-next-80b-a3b'],
     temperature: 0,
     maxTokens: 2048,
     gradingMethod: 'exact-match',
@@ -120,11 +116,7 @@ export const SEAT_CONFIGS: Record<string, SeatConfig> = {
   },
   'legal-ledger': {
     seat: 'legal-ledger',
-    candidates: [
-      'zai.glm-5',
-      'deepseek.v3.2',
-      'moonshot.kimi-k2-thinking',
-    ],
+    candidates: ['zai.glm-5', 'deepseek.v3.2', 'moonshot.kimi-k2-thinking'],
     temperature: 0,
     maxTokens: 8192,
     gradingMethod: 'human',

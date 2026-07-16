@@ -18,7 +18,16 @@ export type SeatId =
   | 'doc-composer';
 
 /** Tier grouping for seat-specific logic (schema-retry, caching) */
-export type SeatTier = 'workhorse' | 'lightweight' | 'guru' | 'micro' | 'snapshot' | 'editor-ai' | 'pain-distiller' | 'legal-ledger' | 'doc-composer';
+export type SeatTier =
+  | 'workhorse'
+  | 'lightweight'
+  | 'guru'
+  | 'micro'
+  | 'snapshot'
+  | 'editor-ai'
+  | 'pain-distiller'
+  | 'legal-ledger'
+  | 'doc-composer';
 
 /** Register entry status */
 export type RegisterStatus = 'ASSIGNED' | 'PROVISIONAL' | 'EXPIRED' | 'UNASSIGNED';

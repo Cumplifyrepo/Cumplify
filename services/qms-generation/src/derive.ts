@@ -38,10 +38,13 @@ interface ProfileShape {
   documentLocale?: string;
 }
 
-export function buildFrontMatter(profile: ProfileShape, standards: string[]): Record<string, unknown> {
+export function buildFrontMatter(
+  profile: ProfileShape,
+  standards: string[],
+): Record<string, unknown> {
   const siteLines = (profile.sites ?? [])
-    .filter(s => s?.name)
-    .map(s => [s.name, s.city, s.state, s.country].filter(Boolean).join(', '));
+    .filter((s) => s?.name)
+    .map((s) => [s.name, s.city, s.state, s.country].filter(Boolean).join(', '));
   return {
     purpose: BC1_DISCLAIMER,
     scope: {
@@ -50,7 +53,7 @@ export function buildFrontMatter(profile: ProfileShape, standards: string[]): Re
       sites: siteLines,
       managementRepresentative: profile.managementRep ?? null,
     },
-    normativeRefs: standards.map(s => ({ standard: s, source: ISO_STORE_URL })),
+    normativeRefs: standards.map((s) => ({ standard: s, source: ISO_STORE_URL })),
     terms: [],
   };
 }
@@ -72,13 +75,15 @@ export function assembleManualContent(
     versionNo: 1,
     locale,
     frontMatter: buildFrontMatter(profile, standards),
-    sections: ordered.map(s => ({
+    sections: ordered.map((s) => ({
       harmonizationKey: s.sectionKey,
-      clauseRefs: s.clauses.map(c => ({ standard: c.standard, clauseNo: c.clauseNo })),
+      clauseRefs: s.clauses.map((c) => ({ standard: c.standard, clauseNo: c.clauseNo })),
       kind: s.kind,
       ...(s.content?.sentences !== undefined ? { sentences: s.content.sentences } : {}),
       ...(s.content?.gap !== undefined ? { gap: s.content.gap } : {}),
-      ...(s.content?.naJustification !== undefined ? { naJustification: s.content.naJustification } : {}),
+      ...(s.content?.naJustification !== undefined
+        ? { naJustification: s.content.naJustification }
+        : {}),
       ...(s.kind === 'failed' ? { failed: true } : {}),
     })),
   };
@@ -104,10 +109,10 @@ export function deriveCorrelationMatrix(
     locale,
     kind: 'correlation_matrix',
     standards,
-    rows: ordered.map(s => ({
+    rows: ordered.map((s) => ({
       harmonizationKey: s.sectionKey,
       sectionKind: s.kind,
-      coverage: s.clauses.map(c => ({
+      coverage: s.clauses.map((c) => ({
         standard: c.standard,
         clauseNo: c.clauseNo,
         clauseTitle: c.clauseTitle,

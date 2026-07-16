@@ -1,734 +1,734 @@
 {
- "round": 3,
- "system": "post-fix deployed system (facts manualExists ternary + inline-marker checker rule + prompt v3 + invoker-error resilience)",
- "seedCommit": "9ce994df2916bc149aaa7045c16802428af88b36",
- "sealedKeySha256": "19721945162ee0256a07f096ca67af239f3f2669b20783a1267a5b054bbe5119",
- "scores": [
-  {
-   "index": 0,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 1,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 2,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 3,
-   "dimensions": {
-    "grounding": 2,
-    "voice": 4,
-    "clauseIntent": 3,
-    "coherence": 3,
-    "specificity": 3
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 4,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 5,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 6,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 7,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 8,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 9,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 10,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 4,
-    "clauseIntent": 5,
-    "coherence": 3,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 11,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 12,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 13,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 14,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 15,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 4,
-    "clauseIntent": 4,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 16,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 4,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 17,
-   "dimensions": {
-    "grounding": 2,
-    "voice": 4,
-    "clauseIntent": 3,
-    "coherence": 3,
-    "specificity": 3
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 18,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 19,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 4,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 20,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 21,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 22,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 23,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 24,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 25,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 26,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 4,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 27,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 4,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 28,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 29,
-   "dimensions": {
-    "grounding": 2,
-    "voice": 4,
-    "clauseIntent": 3,
-    "coherence": 3,
-    "specificity": 3
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 30,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 31,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 4,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 32,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 33,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 4,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 34,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 35,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 36,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 4,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 37,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 38,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 39,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 40,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 41,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 3
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 42,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 43,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 44,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 45,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 46,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 47,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 48,
-   "dimensions": {
-    "grounding": 4,
-    "voice": 4,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 3
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 49,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 50,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 51,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 52,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 53,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 54,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 55,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 56,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 5
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 57,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 58,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
-  },
-  {
-   "index": 59,
-   "dimensions": {
-    "grounding": 5,
-    "voice": 5,
-    "clauseIntent": 5,
-    "coherence": 4,
-    "specificity": 4
-   },
-   "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
-   "gradedAt": "2026-07-16T10:05:00Z"
+  "round": 3,
+  "system": "post-fix deployed system (facts manualExists ternary + inline-marker checker rule + prompt v3 + invoker-error resilience)",
+  "seedCommit": "9ce994df2916bc149aaa7045c16802428af88b36",
+  "sealedKeySha256": "19721945162ee0256a07f096ca67af239f3f2669b20783a1267a5b054bbe5119",
+  "scores": [
+    {
+      "index": 0,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 1,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 2,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 3,
+      "dimensions": {
+        "grounding": 2,
+        "voice": 4,
+        "clauseIntent": 3,
+        "coherence": 3,
+        "specificity": 3
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 4,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 5,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 6,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 7,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 8,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 9,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 10,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 4,
+        "clauseIntent": 5,
+        "coherence": 3,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 11,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 12,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 13,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 14,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 15,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 4,
+        "clauseIntent": 4,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 16,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 4,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 17,
+      "dimensions": {
+        "grounding": 2,
+        "voice": 4,
+        "clauseIntent": 3,
+        "coherence": 3,
+        "specificity": 3
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 18,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 19,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 4,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 20,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 21,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 22,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 23,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 24,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 25,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 26,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 4,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 27,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 4,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 28,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 29,
+      "dimensions": {
+        "grounding": 2,
+        "voice": 4,
+        "clauseIntent": 3,
+        "coherence": 3,
+        "specificity": 3
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 30,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 31,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 4,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 32,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 33,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 4,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 34,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 35,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 36,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 4,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 37,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 38,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 39,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 40,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 41,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 3
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 42,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 43,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 44,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 45,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 46,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 47,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 48,
+      "dimensions": {
+        "grounding": 4,
+        "voice": 4,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 3
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 49,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 50,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 51,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 52,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 53,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 54,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 55,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 56,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 5
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 57,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 58,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    },
+    {
+      "index": 59,
+      "dimensions": {
+        "grounding": 5,
+        "voice": 5,
+        "clauseIntent": 5,
+        "coherence": 4,
+        "specificity": 4
+      },
+      "gradedBy": "architect (Claude, senior AWS architect role) \u2014 blind order (seeded shuffle, sealed key sha 19721945162e...), single-candidate eval; tenant identity inherently visible in org-as-subject prose",
+      "gradedAt": "2026-07-16T10:05:00Z"
+    }
+  ],
+  "aggregate": {
+    "mean": 4.53,
+    "ones": 0,
+    "twos": 3,
+    "dimScores": 300
   }
- ],
- "aggregate": {
-  "mean": 4.53,
-  "ones": 0,
-  "twos": 3,
-  "dimScores": 300
- }
 }

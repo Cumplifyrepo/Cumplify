@@ -11,11 +11,36 @@ import { resolve } from 'node:path';
 const AGENTS_DIR = resolve(__dirname, '..');
 
 const SQS_AGENTS = [
-  { dir: 'capa-guru', agent: 'CAPAGuru', module: 'M2', hitlTools: ['capa-open', 'capa-verify-effectiveness'] },
-  { dir: 'doc-studio', agent: 'DocStudio', module: 'M1', hitlTools: ['doc-publish', 'doc-version-control'] },
-  { dir: 'lead-auditor', agent: 'LeadAuditor', module: 'M3', hitlTools: ['audit-finding-write', 'audit-checklist-gen'] },
-  { dir: 'control-tower', agent: 'ControlTower', module: 'cross-standard', hitlTools: ['ct-governance-write'] },
-  { dir: 'records-vault', agent: 'RecordsVault', module: 'M4', hitlTools: ['records-retention-schedule'] },
+  {
+    dir: 'capa-guru',
+    agent: 'CAPAGuru',
+    module: 'M2',
+    hitlTools: ['capa-open', 'capa-verify-effectiveness'],
+  },
+  {
+    dir: 'doc-studio',
+    agent: 'DocStudio',
+    module: 'M1',
+    hitlTools: ['doc-publish', 'doc-version-control'],
+  },
+  {
+    dir: 'lead-auditor',
+    agent: 'LeadAuditor',
+    module: 'M3',
+    hitlTools: ['audit-finding-write', 'audit-checklist-gen'],
+  },
+  {
+    dir: 'control-tower',
+    agent: 'ControlTower',
+    module: 'cross-standard',
+    hitlTools: ['ct-governance-write'],
+  },
+  {
+    dir: 'records-vault',
+    agent: 'RecordsVault',
+    module: 'M4',
+    hitlTools: ['records-retention-schedule'],
+  },
 ];
 
 const GURU_AGENTS = [
@@ -25,7 +50,7 @@ const GURU_AGENTS = [
 ];
 
 describe('SQS consumer agent handlers (C-1 compliance)', () => {
-  for (const { dir, agent, module: _mod, hitlTools } of SQS_AGENTS) {
+  for (const { dir, agent, hitlTools } of SQS_AGENTS) {
     describe(agent, () => {
       const handlerCode = readFileSync(resolve(AGENTS_DIR, dir, 'handler.ts'), 'utf-8');
 
@@ -65,7 +90,9 @@ describe('Guru agent handlers (C-1 compliance)', () => {
 
       it('does NOT import invoke() directly', () => {
         // Should not have a bare `import { invoke }` from ai-invoker
-        expect(handlerCode).not.toMatch(/import\s*\{[^}]*invoke[^}]*\}\s*from\s*['"]\.\.\/\.\.\/ai-invoker/);
+        expect(handlerCode).not.toMatch(
+          /import\s*\{[^}]*invoke[^}]*\}\s*from\s*['"]\.\.\/\.\.\/ai-invoker/,
+        );
       });
 
       it('uses invokeFn (Lambda transport) for model calls', () => {
@@ -76,7 +103,7 @@ describe('Guru agent handlers (C-1 compliance)', () => {
 });
 
 describe('No direct ai-invoker import across all agents/', () => {
-  const allDirs = [...SQS_AGENTS.map(a => a.dir), ...GURU_AGENTS.map(a => a.dir)];
+  const allDirs = [...SQS_AGENTS.map((a) => a.dir), ...GURU_AGENTS.map((a) => a.dir)];
 
   it('NEGATIVE: no handler.ts imports invoke from ai-invoker/src/index', () => {
     const violations: string[] = [];

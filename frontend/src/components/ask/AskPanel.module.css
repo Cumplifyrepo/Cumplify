@@ -74,7 +74,9 @@
   background: var(--color-surface-raised);
   border-radius: var(--radius-pill);
   border: 1px solid var(--color-border-subtle);
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .actionChip:hover {
@@ -99,8 +101,12 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Input area */
@@ -126,7 +132,9 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .standardBtn:hover {

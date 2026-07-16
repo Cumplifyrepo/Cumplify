@@ -40,7 +40,12 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
 });
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 import { handler as m1Handler } from '../../src/resolvers/m1.js';
@@ -54,8 +59,8 @@ const EMPTY_RESULT = { records: undefined, columnMetadata: undefined };
 function rowWithId(id: string, extra: Record<string, string> = {}) {
   const cols = ['id', ...Object.keys(extra)];
   return {
-    columnMetadata: cols.map(name => ({ name })),
-    records: [[{ stringValue: id }, ...Object.values(extra).map(v => ({ stringValue: v }))]],
+    columnMetadata: cols.map((name) => ({ name })),
+    records: [[{ stringValue: id }, ...Object.values(extra).map((v) => ({ stringValue: v }))]],
   };
 }
 
@@ -83,12 +88,18 @@ describe('entityId = returned-row id (marshal-first sites)', () => {
   it('raiseNonconformity publishes entityId + payload.ncId = the new NC row id (F-A)', async () => {
     mockExecute.mockResolvedValueOnce(rowWithId('nc-uuid-1'));
 
-    await m2Handler(makeEvent('raiseNonconformity', {
-      input: {
-        standard: 'ISO9001', source: 'AUDIT', ncType: 'NC',
-        description: 'd', clauseRef: '8.7', severity: 'HIGH',
-      },
-    }));
+    await m2Handler(
+      makeEvent('raiseNonconformity', {
+        input: {
+          standard: 'ISO9001',
+          source: 'AUDIT',
+          ncType: 'NC',
+          description: 'd',
+          clauseRef: '8.7',
+          severity: 'HIGH',
+        },
+      }),
+    );
 
     const evt = publishedEvent();
     expect(evt.detailType).toBe('NC.Raised');
@@ -101,9 +112,11 @@ describe('entityId = returned-row id (marshal-first sites)', () => {
       .mockResolvedValueOnce(rowWithId('creator-sub')) // SoD SELECT created_by (≠ actor → passes)
       .mockResolvedValueOnce(rowWithId('approval-uuid-1'));
 
-    await m1Handler(makeEvent('approveDocumentVersion', {
-      input: { versionId: 'version-uuid-9', decision: 'APPROVED' },
-    }));
+    await m1Handler(
+      makeEvent('approveDocumentVersion', {
+        input: { versionId: 'version-uuid-9', decision: 'APPROVED' },
+      }),
+    );
 
     const evt = publishedEvent();
     expect(evt.detailType).toBe('Document.Approved');
@@ -115,12 +128,17 @@ describe('entityId = returned-row id (marshal-first sites)', () => {
   it('scheduleAudit publishes entityId = the new Audit row id, not programmeId', async () => {
     mockExecute.mockResolvedValueOnce(rowWithId('audit-uuid-1'));
 
-    await m3Handler(makeEvent('scheduleAudit', {
-      input: {
-        programmeId: 'prog-uuid-7', standard: 'ISO9001', scope: 's',
-        leadAuditorId: 'aud-1', plannedDate: '2026-08-01T00:00:00Z',
-      },
-    }));
+    await m3Handler(
+      makeEvent('scheduleAudit', {
+        input: {
+          programmeId: 'prog-uuid-7',
+          standard: 'ISO9001',
+          scope: 's',
+          leadAuditorId: 'aud-1',
+          plannedDate: '2026-08-01T00:00:00Z',
+        },
+      }),
+    );
 
     const evt = publishedEvent();
     expect(evt.detailType).toBe('Audit.Scheduled');
@@ -132,12 +150,16 @@ describe('entityId = returned-row id (marshal-first sites)', () => {
   it('addRiskTreatment publishes entityId = the RiskTreatment row id, not riskId', async () => {
     mockExecute.mockResolvedValueOnce(rowWithId('treatment-uuid-1'));
 
-    await m5Handler(makeEvent('addRiskTreatment', {
-      input: {
-        riskId: 'risk-uuid-3', actionDesc: 'a', ownerId: 'o',
-        dueDate: '2026-08-01T00:00:00Z',
-      },
-    }));
+    await m5Handler(
+      makeEvent('addRiskTreatment', {
+        input: {
+          riskId: 'risk-uuid-3',
+          actionDesc: 'a',
+          ownerId: 'o',
+          dueDate: '2026-08-01T00:00:00Z',
+        },
+      }),
+    );
 
     const evt = publishedEvent();
     expect(evt.detailType).toBe('Risk.TreatmentAdded');
@@ -147,12 +169,18 @@ describe('entityId = returned-row id (marshal-first sites)', () => {
 
   it("empty RETURNING → entityId '' (sparse GSI: appender skips stamping)", async () => {
     // mockExecute default = EMPTY_RESULT → marshalOne returns null
-    await m2Handler(makeEvent('raiseNonconformity', {
-      input: {
-        standard: 'ISO9001', source: 'AUDIT', ncType: 'NC',
-        description: 'd', clauseRef: '8.7', severity: 'HIGH',
-      },
-    }));
+    await m2Handler(
+      makeEvent('raiseNonconformity', {
+        input: {
+          standard: 'ISO9001',
+          source: 'AUDIT',
+          ncType: 'NC',
+          description: 'd',
+          clauseRef: '8.7',
+          severity: 'HIGH',
+        },
+      }),
+    );
 
     const evt = publishedEvent();
     expect(evt.entityId).toBe('');

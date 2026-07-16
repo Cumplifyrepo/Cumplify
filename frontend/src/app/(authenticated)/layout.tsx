@@ -11,11 +11,7 @@ import { AskOverlay } from '@/components/ask';
  * Redirects to /sign-in if not authenticated.
  * AskOverlay provides the floating trigger on all views (§4, ASK-1).
  */
-export default function AuthenticatedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -27,7 +23,9 @@ export default function AuthenticatedLayout({
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <div
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}
+      >
         <p style={{ color: 'var(--color-text-muted)' }}>...</p>
       </div>
     );

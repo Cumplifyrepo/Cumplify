@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const RESOLVERS_DIR = resolve(__dirname, '../src/resolvers');
@@ -26,8 +26,9 @@ describe('GSI*PK prefix convention (FF-5)', () => {
   });
 
   it('no resolver writes a GSI*PK value without TENANT# prefix', () => {
-    const resolverFiles = readdirSync(RESOLVERS_DIR)
-      .filter(f => f.endsWith('.ts') && f !== 'shared.ts' && f !== 'subscriptions.ts');
+    const resolverFiles = readdirSync(RESOLVERS_DIR).filter(
+      (f) => f.endsWith('.ts') && f !== 'shared.ts' && f !== 'subscriptions.ts',
+    );
 
     const violations: string[] = [];
 
@@ -53,31 +54,39 @@ describe('GSI*PK prefix convention (FF-5)', () => {
     // The TENANT# prefix is enforced at the IAM layer (infra/lib/api-stack.ts)
     // via the dynamodb:LeadingKeys condition. This test verifies the api-stack
     // contains the pattern. The live proof is ACC-2 (Task 14 GSI probe).
-    const apiStackCode = readFileSync(resolve(__dirname, '../../../infra/lib/api-stack.ts'), 'utf-8');
+    const apiStackCode = readFileSync(
+      resolve(__dirname, '../../../infra/lib/api-stack.ts'),
+      'utf-8',
+    );
     expect(apiStackCode).toContain('TENANT#${aws:PrincipalTag/tenantId}#*');
     expect(apiStackCode).toContain('dynamodb:LeadingKeys');
   });
 
   it('GSI9 (HITL-PENDING) uses TENANT#<tenantId>#HITL_PENDING prefix (FF-5, Task 7/8R-2)', () => {
     // Task 8R-2: GSI9 write moved to store-token.ts (upsert creates item with GSI fields)
-    const storeTokenCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/store-token.ts'), 'utf-8');
+    const storeTokenCode = readFileSync(
+      resolve(__dirname, '../../../services/agents/shared/store-token.ts'),
+      'utf-8',
+    );
     expect(storeTokenCode).toContain('TENANT#${tenantId}#HITL_PENDING');
     expect(storeTokenCode).toContain('GSI9PK');
     expect(storeTokenCode).toContain('GSI9SK');
     // Sparse GSI: resolved items REMOVE the GSI attributes (still in hitl.ts)
-    const hitlCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/hitl.ts'), 'utf-8');
+    const hitlCode = readFileSync(
+      resolve(__dirname, '../../../services/agents/shared/hitl.ts'),
+      'utf-8',
+    );
     expect(hitlCode).toContain('REMOVE GSI9PK, GSI9SK');
   });
 
   it('NEGATIVE: no GSI*PK in services/agents/** lacks TENANT# prefix (M-3, Task 8R)', () => {
     // Scan ALL files under services/agents/ for any GSI writes that violate FF-5.
     // Task 8R (M-3): broadened from hitl.ts-only to full glob coverage.
-    const { readdirSync: readdir, statSync } = require('node:fs');
     const agentsDir = resolve(__dirname, '../../../services/agents');
 
     function getAllTsFiles(dir: string): string[] {
       const results: string[] = [];
-      for (const entry of readdir(dir)) {
+      for (const entry of readdirSync(dir)) {
         const fullPath = resolve(dir, entry);
         if (statSync(fullPath).isDirectory()) {
           if (entry === 'node_modules' || entry === '__tests__') continue;
@@ -111,7 +120,10 @@ describe('GSI*PK prefix convention (FF-5)', () => {
   it('GSI9 sparse projection: resolved HITL items REMOVE GSI9PK/GSI9SK (M-3, Task 8R)', () => {
     // Verifies the sparse-projection invariant: when a HITL item is resolved,
     // GSI9PK and GSI9SK are REMOVEd so the item disappears from the pending query.
-    const hitlCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/hitl.ts'), 'utf-8');
+    const hitlCode = readFileSync(
+      resolve(__dirname, '../../../services/agents/shared/hitl.ts'),
+      'utf-8',
+    );
 
     // resolveHitlItem must REMOVE both GSI attributes
     expect(hitlCode).toContain('REMOVE GSI9PK, GSI9SK');
@@ -121,7 +133,10 @@ describe('GSI*PK prefix convention (FF-5)', () => {
     expect(resolveSection).toContain('REMOVE GSI9PK, GSI9SK');
 
     // Task 8R-2: GSI9 SET moved to store-token.ts (first SFN state creates the item)
-    const storeTokenCode = readFileSync(resolve(__dirname, '../../../services/agents/shared/store-token.ts'), 'utf-8');
+    const storeTokenCode = readFileSync(
+      resolve(__dirname, '../../../services/agents/shared/store-token.ts'),
+      'utf-8',
+    );
     expect(storeTokenCode).toContain('GSI9PK');
     expect(storeTokenCode).toContain('GSI9SK');
     expect(storeTokenCode).toContain('TENANT#${tenantId}#HITL_PENDING');

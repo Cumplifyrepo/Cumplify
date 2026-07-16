@@ -38,47 +38,50 @@ export function ReadinessPanel() {
   const prevScores = useRef<Map<string, number>>(new Map());
   const lastAttribution = useRef<string | null>(null);
 
-  const fetchReadiness = useCallback(async (attribution?: string) => {
-    try {
-      setError(false);
-      if (attribution) lastAttribution.current = attribution;
+  const fetchReadiness = useCallback(
+    async (attribution?: string) => {
+      try {
+        setError(false);
+        if (attribution) lastAttribution.current = attribution;
 
-      // m6 fix: fetch all 3 standards in parallel with Promise.all
-      const results = await Promise.all(
-        STANDARDS.map(async (standard) => {
-          const data = await query<{ getAuditReadiness: Array<{ score: number }> }>(
-            READINESS_QUERY,
-            { standard },
-          );
-          const avg =
-            data.getAuditReadiness.length > 0
-              ? data.getAuditReadiness.reduce((sum, r) => sum + r.score, 0) /
-                data.getAuditReadiness.length
-              : 0;
-          return { standard, score: Math.round(avg * 100) / 100 };
-        }),
-      );
+        // m6 fix: fetch all 3 standards in parallel with Promise.all
+        const results = await Promise.all(
+          STANDARDS.map(async (standard) => {
+            const data = await query<{ getAuditReadiness: Array<{ score: number }> }>(
+              READINESS_QUERY,
+              { standard },
+            );
+            const avg =
+              data.getAuditReadiness.length > 0
+                ? data.getAuditReadiness.reduce((sum, r) => sum + r.score, 0) /
+                  data.getAuditReadiness.length
+                : 0;
+            return { standard, score: Math.round(avg * 100) / 100 };
+          }),
+        );
 
-      // M7: compute delta from previous fetch
-      const withDelta: ReadinessData[] = results.map(({ standard, score }) => {
-        const prev = prevScores.current.get(standard);
-        const delta = prev != null ? Math.round((score - prev) * 100) / 100 : null;
-        prevScores.current.set(standard, score);
-        return {
-          standard,
-          score,
-          delta,
-          attribution: delta != null && delta !== 0 ? lastAttribution.current : null,
-        };
-      });
+        // M7: compute delta from previous fetch
+        const withDelta: ReadinessData[] = results.map(({ standard, score }) => {
+          const prev = prevScores.current.get(standard);
+          const delta = prev != null ? Math.round((score - prev) * 100) / 100 : null;
+          prevScores.current.set(standard, score);
+          return {
+            standard,
+            score,
+            delta,
+            attribution: delta != null && delta !== 0 ? lastAttribution.current : null,
+          };
+        });
 
-      setScores(withDelta);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [query]);
+        setScores(withDelta);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [query],
+  );
 
   useEffect(() => {
     fetchReadiness();
@@ -99,7 +102,12 @@ export function ReadinessPanel() {
     onData: () => fetchReadiness(t('trendCapa')),
   });
 
-  if (error) return <Panel title={t('readinessScore')}><ErrorState onRetry={() => fetchReadiness()} /></Panel>;
+  if (error)
+    return (
+      <Panel title={t('readinessScore')}>
+        <ErrorState onRetry={() => fetchReadiness()} />
+      </Panel>
+    );
 
   return (
     <Panel title={t('readinessScore')} aria-label={t('readinessScore')}>
@@ -110,13 +118,12 @@ export function ReadinessPanel() {
           {scores.map((s) => (
             <div key={s.standard} className={styles.scoreCard}>
               <span className={styles.scoreValue}>{s.score}</span>
-              <span className={styles.standardLabel}>
-                {s.standard.replace('ISO', 'ISO ')}
-              </span>
+              <span className={styles.standardLabel}>{s.standard.replace('ISO', 'ISO ')}</span>
               {/* M7: TrendIndicator */}
               {s.delta != null && s.delta !== 0 && (
                 <span className={s.delta > 0 ? styles.trendPositive : styles.trendNegative}>
-                  {s.delta > 0 ? '+' : ''}{s.delta}
+                  {s.delta > 0 ? '+' : ''}
+                  {s.delta}
                   {s.attribution && (
                     <span className={styles.trendAttribution}>{s.attribution}</span>
                   )}

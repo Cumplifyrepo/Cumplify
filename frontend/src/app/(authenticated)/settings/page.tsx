@@ -81,9 +81,7 @@ export default function SettingsPage() {
             </div>
             <div className={styles.field}>
               <span className={styles.fieldLabel}>{t('tenantLocale')}</span>
-              <span className={styles.fieldValue}>
-                {settings?.documentLocale.toUpperCase()}
-              </span>
+              <span className={styles.fieldValue}>{settings?.documentLocale.toUpperCase()}</span>
             </div>
             <p className={styles.readOnlyNote}>{t('tenantLocaleReadOnly')}</p>
           </Panel>

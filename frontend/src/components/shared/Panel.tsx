@@ -26,10 +26,7 @@ export function Panel({
   'aria-label': ariaLabel,
 }: PanelProps) {
   return (
-    <section
-      className={`${styles.panel} ${className ?? ''}`}
-      aria-label={ariaLabel ?? title}
-    >
+    <section className={`${styles.panel} ${className ?? ''}`} aria-label={ariaLabel ?? title}>
       {(title || headerRight) && (
         <div className={styles.header}>
           <div>

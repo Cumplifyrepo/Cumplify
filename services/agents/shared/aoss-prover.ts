@@ -50,7 +50,12 @@ export type ProverEvent =
       topK?: number;
       scoreThreshold?: number;
     }
-  | { action: 'search-control'; collection: string; indexName: string; body: Record<string, unknown> }
+  | {
+      action: 'search-control';
+      collection: string;
+      indexName: string;
+      body: Record<string, unknown>;
+    }
   | { action: 'delete-index'; collection: string; indexName: string };
 
 function resolveEndpoint(collection: string): string {
@@ -83,10 +88,14 @@ async function seed(
   const ids: string[] = [];
   for (const doc of docs) {
     if (doc.embedding.length !== 1024) {
-      throw new Error(`Seed doc embedding must be 1024-dim (Titan Embed v2), got ${doc.embedding.length}`);
+      throw new Error(
+        `Seed doc embedding must be 1024-dim (Titan Embed v2), got ${doc.embedding.length}`,
+      );
     }
     if (!doc.metadata.tenantId) {
-      throw new Error('Seed doc missing metadata.tenantId — refusing to index an unattributable doc');
+      throw new Error(
+        'Seed doc missing metadata.tenantId — refusing to index an unattributable doc',
+      );
     }
     // AOSS VECTORSEARCH collections reject client-supplied _id — POST auto-ID.
     const resp = await signedAossFetch(

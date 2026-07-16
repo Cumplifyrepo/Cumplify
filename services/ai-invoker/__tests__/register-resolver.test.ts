@@ -8,7 +8,9 @@ import { resolveModel, resetCache } from '../src/register-resolver.js';
 import { InvokeError } from '../src/types.js';
 import type { CompiledRegister } from '../src/types.js';
 
-function makeRegister(overrides: Partial<CompiledRegister['seats']['workhorse']> = {}): CompiledRegister {
+function makeRegister(
+  overrides: Partial<CompiledRegister['seats']['workhorse']> = {},
+): CompiledRegister {
   return {
     seats: {
       workhorse: {

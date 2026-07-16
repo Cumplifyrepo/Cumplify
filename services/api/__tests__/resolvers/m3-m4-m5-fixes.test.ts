@@ -36,7 +36,12 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
 });
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 import { handler as m3Handler } from '../../src/resolvers/m3.js';
@@ -62,7 +67,11 @@ beforeEach(() => {
 
 describe('m3 createAuditProgramme — SQL fix regression', () => {
   it('inserts into real columns (standard, year, frequency_plan) and writes year', async () => {
-    await m3Handler(makeEvent('createAuditProgramme', { input: { standard: 'ISO9001', year: 2027, frequencyPlan: 'annual' } }));
+    await m3Handler(
+      makeEvent('createAuditProgramme', {
+        input: { standard: 'ISO9001', year: 2027, frequencyPlan: 'annual' },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('INSERT INTO m3.audit_programmes');
     expect(sql).toContain('year');
@@ -74,15 +83,26 @@ describe('m3 createAuditProgramme — SQL fix regression', () => {
 
 describe('m3 scheduleAudit — SQL fix regression', () => {
   it('inserts into real columns (standard, planned_date) not audit_type/scheduled_date', async () => {
-    await m3Handler(makeEvent('scheduleAudit', {
-      input: { programmeId: 'prog-1', standard: 'ISO9001', scope: 'Warehouse', leadAuditorId: 'u1', plannedDate: '2027-01-01T00:00:00.000Z' },
-    }));
+    await m3Handler(
+      makeEvent('scheduleAudit', {
+        input: {
+          programmeId: 'prog-1',
+          standard: 'ISO9001',
+          scope: 'Warehouse',
+          leadAuditorId: 'u1',
+          plannedDate: '2027-01-01T00:00:00.000Z',
+        },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('planned_date');
     expect(sql).not.toContain('audit_type');
     expect(sql).not.toContain('scheduled_date');
     expect(params).toContainEqual({ name: 'standard', value: { stringValue: 'ISO9001' } });
-    expect(params).toContainEqual({ name: 'plannedDate', value: { stringValue: '2027-01-01T00:00:00.000Z' } });
+    expect(params).toContainEqual({
+      name: 'plannedDate',
+      value: { stringValue: '2027-01-01T00:00:00.000Z' },
+    });
   });
 });
 
@@ -109,9 +129,11 @@ describe('m3 getAuditReadiness — shape fix regression', () => {
 
 describe('m4 registerRecord — SQL fix regression', () => {
   it('inserts into real columns (source_module, retention_class, s3_object_ref) not title/description/status', async () => {
-    await m4Handler(makeEvent('registerRecord', {
-      input: { standard: 'ISO9001', recordType: 'inspection', sourceModule: 'M3' },
-    }));
+    await m4Handler(
+      makeEvent('registerRecord', {
+        input: { standard: 'ISO9001', recordType: 'inspection', sourceModule: 'M3' },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('source_module');
     expect(sql).not.toContain('title');
@@ -123,9 +145,16 @@ describe('m4 registerRecord — SQL fix regression', () => {
 
 describe('m4 recordCalibration — table/column fix regression', () => {
   it('inserts into m4.calibration_records (not m4.calibrations) with real columns', async () => {
-    await m4Handler(makeEvent('recordCalibration', {
-      input: { measuringResourceId: 'res-1', standardUsed: 'ISO17025', result: 'pass', nextDue: '2027-01-01T00:00:00.000Z' },
-    }));
+    await m4Handler(
+      makeEvent('recordCalibration', {
+        input: {
+          measuringResourceId: 'res-1',
+          standardUsed: 'ISO17025',
+          result: 'pass',
+          nextDue: '2027-01-01T00:00:00.000Z',
+        },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('INSERT INTO m4.calibration_records');
     expect(sql).not.toContain('m4.calibrations');
@@ -137,9 +166,11 @@ describe('m4 recordCalibration — table/column fix regression', () => {
 
 describe('m4 createRetentionPolicy — SQL fix regression', () => {
   it('inserts retention_years/disposition_rule, matching CreateRetentionPolicyInput', async () => {
-    await m4Handler(makeEvent('createRetentionPolicy', {
-      input: { recordType: 'audit-report', retentionYears: 7, dispositionRule: 'archive' },
-    }));
+    await m4Handler(
+      makeEvent('createRetentionPolicy', {
+        input: { recordType: 'audit-report', retentionYears: 7, dispositionRule: 'archive' },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('retention_years');
     expect(sql).toContain('disposition_rule');
@@ -181,14 +212,18 @@ describe('m4 getAuditTrail — GSI1 per-entity query + pre-migration fallback', 
       Items: [ledgerItem('evt-1', '2027-01-01T00:00:00.000Z', 'risk-42')],
     });
 
-    const result = await m4Handler(makeEvent('getAuditTrail', { entityId: 'risk-42' })) as Array<Record<string, unknown>>;
+    const result = (await m4Handler(makeEvent('getAuditTrail', { entityId: 'risk-42' }))) as Array<
+      Record<string, unknown>
+    >;
 
     expect(mockExecute).not.toHaveBeenCalled();
     expect(mockDdbSend).toHaveBeenCalledTimes(1); // GSI hit → NO fallback scan
     const [gsiCall] = mockDdbSend.mock.calls[0];
     expect(gsiCall.input.TableName).toBe('CumplifyCore-test');
     expect(gsiCall.input.IndexName).toBe('GSI1');
-    expect(gsiCall.input.ExpressionAttributeValues[':gpk']).toEqual({ S: 'TENANT#tenant-test#ENTITY#risk-42' });
+    expect(gsiCall.input.ExpressionAttributeValues[':gpk']).toEqual({
+      S: 'TENANT#tenant-test#ENTITY#risk-42',
+    });
     expect(gsiCall.input.ExpressionAttributeValues[':audit']).toEqual({ S: 'AUDITLOG' });
     expect(result).toHaveLength(1);
     expect(result[0].eventId).toBe('evt-1');
@@ -205,12 +240,16 @@ describe('m4 getAuditTrail — GSI1 per-entity query + pre-migration fallback', 
         ],
       });
 
-    const result = await m4Handler(makeEvent('getAuditTrail', { entityId: 'risk-42' })) as Array<Record<string, unknown>>;
+    const result = (await m4Handler(makeEvent('getAuditTrail', { entityId: 'risk-42' }))) as Array<
+      Record<string, unknown>
+    >;
 
     expect(mockDdbSend).toHaveBeenCalledTimes(2);
     const [fallbackCall] = mockDdbSend.mock.calls[1];
     expect(fallbackCall.input.IndexName).toBeUndefined(); // base-table partition query
-    expect(fallbackCall.input.ExpressionAttributeValues[':pk']).toEqual({ S: 'TENANT#tenant-test#AUDITLOG' });
+    expect(fallbackCall.input.ExpressionAttributeValues[':pk']).toEqual({
+      S: 'TENANT#tenant-test#AUDITLOG',
+    });
     // Substring match still filters to the requested entity
     expect(result).toHaveLength(1);
     expect(result[0].eventId).toBe('evt-1');
@@ -219,22 +258,35 @@ describe('m4 getAuditTrail — GSI1 per-entity query + pre-migration fallback', 
 
 describe('m4 registerMeasuringResource — new mutation (unblocks recordCalibration)', () => {
   it('inserts into m4.measuring_resources with assetTag/description', async () => {
-    await m4Handler(makeEvent('registerMeasuringResource', {
-      input: { assetTag: 'CAL-001', description: 'Digital caliper' },
-    }));
+    await m4Handler(
+      makeEvent('registerMeasuringResource', {
+        input: { assetTag: 'CAL-001', description: 'Digital caliper' },
+      }),
+    );
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('INSERT INTO m4.measuring_resources');
     expect(sql).toContain('asset_tag');
     expect(params).toContainEqual({ name: 'assetTag', value: { stringValue: 'CAL-001' } });
-    expect(params).toContainEqual({ name: 'description', value: { stringValue: 'Digital caliper' } });
+    expect(params).toContainEqual({
+      name: 'description',
+      value: { stringValue: 'Digital caliper' },
+    });
   });
 });
 
 describe('m5 createRisk — register-refresh fix regression', () => {
   it('refreshes m5_views.risk_register_view via the SECURITY DEFINER accessor, in the same transaction as the INSERT', async () => {
-    await m5Handler(makeEvent('createRisk', {
-      input: { standard: 'ISO9001', category: 'QUALITY', description: 'Test risk', likelihood: 3, severity: 3 },
-    }));
+    await m5Handler(
+      makeEvent('createRisk', {
+        input: {
+          standard: 'ISO9001',
+          category: 'QUALITY',
+          description: 'Test risk',
+          likelihood: 3,
+          severity: 3,
+        },
+      }),
+    );
 
     expect(mockExecute).toHaveBeenCalledTimes(2);
     const [insertSql] = mockExecute.mock.calls[0];
@@ -243,7 +295,9 @@ describe('m5 createRisk — register-refresh fix regression', () => {
     expect(refreshSql).toContain('m5_views.refresh_risk_register_view()');
     // Refresh happens BEFORE commit — same transaction, atomic with the write.
     expect(mockCommit).toHaveBeenCalledTimes(1);
-    expect(mockExecute.mock.invocationCallOrder[1]).toBeLessThan(mockCommit.mock.invocationCallOrder[0]);
+    expect(mockExecute.mock.invocationCallOrder[1]).toBeLessThan(
+      mockCommit.mock.invocationCallOrder[0],
+    );
   });
 });
 
@@ -259,24 +313,71 @@ describe('generateAuditChecklist — M3-native clause-registry checklist', () =>
     // Call 2: clause registry query (2 clauses)
     mockExecute.mockResolvedValueOnce({
       records: [
-        [{ stringValue: 'c-1' }, { stringValue: '4.1' }, { stringValue: 'Context' }, { stringValue: 'understand the organization and its context' }, { stringValue: '["documented context analysis"]' }],
-        [{ stringValue: 'c-2' }, { stringValue: '4.2' }, { stringValue: 'Interested parties' }, { stringValue: 'determine interested parties and their requirements' }, { stringValue: '["stakeholder register"]' }],
+        [
+          { stringValue: 'c-1' },
+          { stringValue: '4.1' },
+          { stringValue: 'Context' },
+          { stringValue: 'understand the organization and its context' },
+          { stringValue: '["documented context analysis"]' },
+        ],
+        [
+          { stringValue: 'c-2' },
+          { stringValue: '4.2' },
+          { stringValue: 'Interested parties' },
+          { stringValue: 'determine interested parties and their requirements' },
+          { stringValue: '["stakeholder register"]' },
+        ],
       ],
-      columnMetadata: [{ name: 'id' }, { name: 'clause_no' }, { name: 'clause_title' }, { name: 'intent_paraphrase' }, { name: 'required_sources' }],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'clause_no' },
+        { name: 'clause_title' },
+        { name: 'intent_paraphrase' },
+        { name: 'required_sources' },
+      ],
     });
     // Call 3+4: INSERT per clause (with RETURNING)
-    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'chk-1' }]], columnMetadata: [{ name: 'id' }] });
-    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'chk-2' }]], columnMetadata: [{ name: 'id' }] });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'chk-1' }]],
+      columnMetadata: [{ name: 'id' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'chk-2' }]],
+      columnMetadata: [{ name: 'id' }],
+    });
     // Call 5: fetch all checklist rows
     mockExecute.mockResolvedValueOnce({
       records: [
-        [{ stringValue: 'chk-1' }, { stringValue: 'audit-1' }, { stringValue: '4.1' }, { stringValue: 'Does the organization understand the organization and its context' }, { stringValue: 'documented context analysis' }],
-        [{ stringValue: 'chk-2' }, { stringValue: 'audit-1' }, { stringValue: '4.2' }, { stringValue: 'Does the organization determine interested parties and their requirements' }, { stringValue: 'stakeholder register' }],
+        [
+          { stringValue: 'chk-1' },
+          { stringValue: 'audit-1' },
+          { stringValue: '4.1' },
+          { stringValue: 'Does the organization understand the organization and its context' },
+          { stringValue: 'documented context analysis' },
+        ],
+        [
+          { stringValue: 'chk-2' },
+          { stringValue: 'audit-1' },
+          { stringValue: '4.2' },
+          {
+            stringValue:
+              'Does the organization determine interested parties and their requirements',
+          },
+          { stringValue: 'stakeholder register' },
+        ],
       ],
-      columnMetadata: [{ name: 'id' }, { name: 'audit_id' }, { name: 'clause_ref' }, { name: 'question' }, { name: 'expected_evidence' }],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'audit_id' },
+        { name: 'clause_ref' },
+        { name: 'question' },
+        { name: 'expected_evidence' },
+      ],
     });
 
-    const result = await m3Handler(makeEvent('generateAuditChecklist', { auditId: 'audit-1' })) as Record<string, unknown>[];
+    const result = (await m3Handler(
+      makeEvent('generateAuditChecklist', { auditId: 'audit-1' }),
+    )) as Record<string, unknown>[];
 
     // Audit validation with ::uuid cast
     const [auditSql] = mockExecute.mock.calls[0];
@@ -308,18 +409,48 @@ describe('generateAuditChecklist — M3-native clause-registry checklist', () =>
     });
     // Call 2: clause registry (1 clause)
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'c-1' }, { stringValue: '6.1.2' }, { stringValue: 'Aspects' }, { stringValue: 'determine environmental aspects' }, { stringValue: '[]' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'clause_no' }, { name: 'clause_title' }, { name: 'intent_paraphrase' }, { name: 'required_sources' }],
+      records: [
+        [
+          { stringValue: 'c-1' },
+          { stringValue: '6.1.2' },
+          { stringValue: 'Aspects' },
+          { stringValue: 'determine environmental aspects' },
+          { stringValue: '[]' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'clause_no' },
+        { name: 'clause_title' },
+        { name: 'intent_paraphrase' },
+        { name: 'required_sources' },
+      ],
     });
     // Call 3: INSERT → ON CONFLICT DO NOTHING (returns empty = already existed)
     mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'id' }] });
     // Call 4: fetch all (1 pre-existing row)
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'chk-existing' }, { stringValue: 'audit-1' }, { stringValue: '6.1.2' }, { stringValue: 'Q' }, { isNull: true }]],
-      columnMetadata: [{ name: 'id' }, { name: 'audit_id' }, { name: 'clause_ref' }, { name: 'question' }, { name: 'expected_evidence' }],
+      records: [
+        [
+          { stringValue: 'chk-existing' },
+          { stringValue: 'audit-1' },
+          { stringValue: '6.1.2' },
+          { stringValue: 'Q' },
+          { isNull: true },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'audit_id' },
+        { name: 'clause_ref' },
+        { name: 'question' },
+        { name: 'expected_evidence' },
+      ],
     });
 
-    const result = await m3Handler(makeEvent('generateAuditChecklist', { auditId: 'audit-1' })) as Record<string, unknown>[];
+    const result = (await m3Handler(
+      makeEvent('generateAuditChecklist', { auditId: 'audit-1' }),
+    )) as Record<string, unknown>[];
 
     // Still returns 1 row (idempotent — no duplicates)
     expect(result).toHaveLength(1);
@@ -327,7 +458,10 @@ describe('generateAuditChecklist — M3-native clause-registry checklist', () =>
   });
 
   it('AUDIT_NOT_FOUND when audit does not exist', async () => {
-    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [{ name: 'id' }, { name: 'standard' }] });
+    mockExecute.mockResolvedValueOnce({
+      records: [],
+      columnMetadata: [{ name: 'id' }, { name: 'standard' }],
+    });
 
     await expect(
       m3Handler(makeEvent('generateAuditChecklist', { auditId: 'nonexistent' })),
@@ -342,27 +476,64 @@ describe('generateAuditChecklist — M3-native clause-registry checklist', () =>
       columnMetadata: [{ name: 'id' }, { name: 'standard' }],
     });
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'c-1' }, { stringValue: '5.4' }, { stringValue: 'Participation' }, { stringValue: 'Ensure worker consultation and participation' }, { stringValue: '["meeting minutes"]' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'clause_no' }, { name: 'clause_title' }, { name: 'intent_paraphrase' }, { name: 'required_sources' }],
+      records: [
+        [
+          { stringValue: 'c-1' },
+          { stringValue: '5.4' },
+          { stringValue: 'Participation' },
+          { stringValue: 'Ensure worker consultation and participation' },
+          { stringValue: '["meeting minutes"]' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'clause_no' },
+        { name: 'clause_title' },
+        { name: 'intent_paraphrase' },
+        { name: 'required_sources' },
+      ],
     });
-    mockExecute.mockResolvedValueOnce({ records: [[{ stringValue: 'chk-1' }]], columnMetadata: [{ name: 'id' }] });
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'chk-1' }, { stringValue: 'a-1' }, { stringValue: '5.4' }, { stringValue: 'Does the organization ensure worker consultation and participation' }, { stringValue: 'meeting minutes' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'audit_id' }, { name: 'clause_ref' }, { name: 'question' }, { name: 'expected_evidence' }],
+      records: [[{ stringValue: 'chk-1' }]],
+      columnMetadata: [{ name: 'id' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [
+          { stringValue: 'chk-1' },
+          { stringValue: 'a-1' },
+          { stringValue: '5.4' },
+          { stringValue: 'Does the organization ensure worker consultation and participation' },
+          { stringValue: 'meeting minutes' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'audit_id' },
+        { name: 'clause_ref' },
+        { name: 'question' },
+        { name: 'expected_evidence' },
+      ],
     });
 
     await m3Handler(makeEvent('generateAuditChecklist', { auditId: 'a-1' }));
 
     // INSERT params contain the wrapped question
     const [, insertParams] = mockExecute.mock.calls[2];
-    expect(insertParams).toContainEqual(expect.objectContaining({
-      name: 'question',
-      value: { stringValue: 'Does the organization ensure worker consultation and participation?' },
-    }));
+    expect(insertParams).toContainEqual(
+      expect.objectContaining({
+        name: 'question',
+        value: {
+          stringValue: 'Does the organization ensure worker consultation and participation?',
+        },
+      }),
+    );
     // expected_evidence from required_sources
-    expect(insertParams).toContainEqual(expect.objectContaining({
-      name: 'expectedEvidence',
-      value: { stringValue: 'meeting minutes' },
-    }));
+    expect(insertParams).toContainEqual(
+      expect.objectContaining({
+        name: 'expectedEvidence',
+        value: { stringValue: 'meeting minutes' },
+      }),
+    );
   });
 });

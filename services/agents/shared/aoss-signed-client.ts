@@ -27,7 +27,8 @@ function toBuffer(data: SourceData): Buffer {
 export class NodeSha256 {
   private hash: ReturnType<typeof createHash> | ReturnType<typeof createHmac>;
   constructor(secret?: SourceData) {
-    this.hash = secret !== undefined ? createHmac('sha256', toBuffer(secret)) : createHash('sha256');
+    this.hash =
+      secret !== undefined ? createHmac('sha256', toBuffer(secret)) : createHash('sha256');
   }
   update(data: SourceData): void {
     this.hash.update(toBuffer(data));

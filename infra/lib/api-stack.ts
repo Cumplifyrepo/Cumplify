@@ -122,15 +122,17 @@ export class ApiStack extends cdk.Stack {
     // Cannot use tenant-data role — no tenant context exists at auth time.
     // LeadingKeys 'TENANT#*' allows reading any tenant's metadata (the
     // authorizer needs to read the requesting tenant's plan/entitlement).
-    authorizerFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['dynamodb:GetItem'],
-      resources: [props.tableArn],
-      conditions: {
-        'ForAllValues:StringLike': {
-          'dynamodb:LeadingKeys': ['TENANT#*'],
+    authorizerFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['dynamodb:GetItem'],
+        resources: [props.tableArn],
+        conditions: {
+          'ForAllValues:StringLike': {
+            'dynamodb:LeadingKeys': ['TENANT#*'],
+          },
         },
-      },
-    }));
+      }),
+    );
 
     // KMS decrypt for DynamoDB CMK (required for GetItem on encrypted table)
     props.dynamodbKey.grantDecrypt(authorizerFn);
@@ -149,9 +151,7 @@ export class ApiStack extends cdk.Stack {
             resultsCacheTtl: cdk.Duration.seconds(300), // OQ-3: 300s dev
           },
         },
-        additionalAuthorizationModes: [
-          { authorizationType: appsync.AuthorizationType.IAM },
-        ],
+        additionalAuthorizationModes: [{ authorizationType: appsync.AuthorizationType.IAM }],
       },
       xrayEnabled: true,
       logConfig: {
@@ -201,22 +201,26 @@ export class ApiStack extends cdk.Stack {
     });
 
     // Migrator needs rds-data:* on the cluster + secrets read
-    migratorFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: [
-        'rds-data:ExecuteStatement',
-        'rds-data:BeginTransaction',
-        'rds-data:CommitTransaction',
-        'rds-data:RollbackTransaction',
-        'rds-data:BatchExecuteStatement',
-      ],
-      resources: [props.clusterArn],
-    }));
+    migratorFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'rds-data:ExecuteStatement',
+          'rds-data:BeginTransaction',
+          'rds-data:CommitTransaction',
+          'rds-data:RollbackTransaction',
+          'rds-data:BatchExecuteStatement',
+        ],
+        resources: [props.clusterArn],
+      }),
+    );
 
     // Read master secret + app_role secret (for password sync)
-    migratorFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['secretsmanager:GetSecretValue'],
-      resources: [props.dbSecretArn, appRoleSecret.secretArn],
-    }));
+    migratorFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [props.dbSecretArn, appRoleSecret.secretArn],
+      }),
+    );
 
     // KMS decrypt for secrets + DDB.
     // dynamodbKey encrypts the app_role secret; dbSecretKey (secretsKey) encrypts
@@ -231,23 +235,27 @@ export class ApiStack extends cdk.Stack {
     });
 
     // NAG: Custom Resource provider role uses lambda:InvokeFunction on <handlerArn>:*
-    NagSuppressions.addResourceSuppressions(migratorProvider, [
-      {
-        id: 'AwsSolutions-IAM5',
-        reason:
-          'CDK Custom Resource Provider service role invokes the handler Lambda with ' +
-          'lambda:InvokeFunction on <fnArn>:*. CDK-generated, cannot scope further.',
-        appliesTo: [{ regex: '/^Resource::.*\\*$/g' }],
-      },
-      {
-        id: 'AwsSolutions-IAM4',
-        reason: 'Custom Resource framework Lambda uses AWSLambdaBasicExecutionRole.',
-      },
-      {
-        id: 'AwsSolutions-L1',
-        reason: 'Custom Resource framework Lambda runtime is CDK-managed.',
-      },
-    ], true);
+    NagSuppressions.addResourceSuppressions(
+      migratorProvider,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'CDK Custom Resource Provider service role invokes the handler Lambda with ' +
+            'lambda:InvokeFunction on <fnArn>:*. CDK-generated, cannot scope further.',
+          appliesTo: [{ regex: '/^Resource::.*\\*$/g' }],
+        },
+        {
+          id: 'AwsSolutions-IAM4',
+          reason: 'Custom Resource framework Lambda uses AWSLambdaBasicExecutionRole.',
+        },
+        {
+          id: 'AwsSolutions-L1',
+          reason: 'Custom Resource framework Lambda runtime is CDK-managed.',
+        },
+      ],
+      true,
+    );
 
     new cdk.CustomResource(this, 'MigrationResource', {
       serviceToken: migratorProvider.serviceToken,
@@ -282,27 +290,33 @@ export class ApiStack extends cdk.Stack {
       });
 
       // Data API access for resolvers (using app_role secret)
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        actions: [
-          'rds-data:ExecuteStatement',
-          'rds-data:BeginTransaction',
-          'rds-data:CommitTransaction',
-          'rds-data:RollbackTransaction',
-        ],
-        resources: [props.clusterArn],
-      }));
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: [
+            'rds-data:ExecuteStatement',
+            'rds-data:BeginTransaction',
+            'rds-data:CommitTransaction',
+            'rds-data:RollbackTransaction',
+          ],
+          resources: [props.clusterArn],
+        }),
+      );
 
       // Read app_role secret
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        actions: ['secretsmanager:GetSecretValue'],
-        resources: [appRoleSecret.secretArn],
-      }));
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: ['secretsmanager:GetSecretValue'],
+          resources: [appRoleSecret.secretArn],
+        }),
+      );
 
       // EventBridge publish (for audit events)
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        actions: ['events:PutEvents'],
-        resources: [props.busArn],
-      }));
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: ['events:PutEvents'],
+          resources: [props.busArn],
+        }),
+      );
 
       // KMS decrypt for secrets + DDB
       props.dynamodbKey.grantDecrypt(fn);
@@ -326,68 +340,73 @@ export class ApiStack extends cdk.Stack {
     // preserved verbatim in effect.
     const tenantDataRole = new iam.Role(this, 'TenantDataRole', {
       roleName: `cumplify-${envConfig.envName}-tenant-data-role`,
-      assumedBy: new iam.SessionTagsPrincipal(new iam.PrincipalWithConditions(
-        new iam.AccountRootPrincipal(),
-        {
-          'StringLike': {
+      assumedBy: new iam.SessionTagsPrincipal(
+        new iam.PrincipalWithConditions(new iam.AccountRootPrincipal(), {
+          StringLike: {
             'aws:PrincipalArn': `arn:aws:iam::${cdk.Stack.of(this).account}:role/${cdk.Stack.of(this).stackName}-*`,
             // Bare tenantId = UUID format; NOT TENANT#-prefixed (FF-3)
             'aws:RequestTag/tenantId': '*',
           },
-        },
-      )),
+        }),
+      ),
       description: 'Tenant-scoped DDB role assumed per-request with tenantId session tag (CARRY-1)',
     });
 
     // FIX-4: DENY any tag value containing '#' — prevents TENANT#-prefixed injection
     // that would bypass LeadingKeys matching (applies to every caller).
-    tenantDataRole.assumeRolePolicy!.addStatements(new iam.PolicyStatement({
-      effect: iam.Effect.DENY,
-      actions: ['sts:TagSession'],
-      principals: [new iam.AnyPrincipal()],
-      conditions: {
-        'StringLike': {
-          'aws:RequestTag/tenantId': '*#*',
+    tenantDataRole.assumeRolePolicy!.addStatements(
+      new iam.PolicyStatement({
+        effect: iam.Effect.DENY,
+        actions: ['sts:TagSession'],
+        principals: [new iam.AnyPrincipal()],
+        conditions: {
+          StringLike: {
+            'aws:RequestTag/tenantId': '*#*',
+          },
         },
-      },
-    }));
+      }),
+    );
 
     // Inline policy: DDB actions with LeadingKeys condition
-    tenantDataRole.addToPolicy(new iam.PolicyStatement({
-      actions: [
-        'dynamodb:GetItem',
-        'dynamodb:PutItem',
-        'dynamodb:Query',
-        'dynamodb:TransactWriteItems',
-      ],
-      resources: [
-        props.tableArn,
-        // GSI grant — all 9 GSIs are TENANT#-prefixed by design constraint (FF-5).
-        // Cross-tenant GSI query denial proven at ACC-2 Task 14 GSI probe.
-        // DO NOT sign CARRY-1 green until that probe shows cross-tenant = denied.
-        `${props.tableArn}/index/*`,
-      ],
-      conditions: {
-        'ForAllValues:StringLike': {
-          'dynamodb:LeadingKeys': ['TENANT#${aws:PrincipalTag/tenantId}#*'],
+    tenantDataRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'dynamodb:GetItem',
+          'dynamodb:PutItem',
+          'dynamodb:Query',
+          'dynamodb:TransactWriteItems',
+        ],
+        resources: [
+          props.tableArn,
+          // GSI grant — all 9 GSIs are TENANT#-prefixed by design constraint (FF-5).
+          // Cross-tenant GSI query denial proven at ACC-2 Task 14 GSI probe.
+          // DO NOT sign CARRY-1 green until that probe shows cross-tenant = denied.
+          `${props.tableArn}/index/*`,
+        ],
+        conditions: {
+          'ForAllValues:StringLike': {
+            'dynamodb:LeadingKeys': ['TENANT#${aws:PrincipalTag/tenantId}#*'],
+          },
         },
-      },
-    }));
+      }),
+    );
 
     // UpdateItem pinned to the caller-tenant's HITL partition ONLY (exact
     // LeadingKeys, no wildcard tail) — the approval Lambda's PENDING→RESOLVING
     // guard and resolveHitlItem bookkeeping both write PK TENANT#<t>#HITL.
     // Deliberately NOT added to the statement above: a tenant-wide UpdateItem
     // would open a same-tenant AUDITLOG modify surface (BUG-14 fix, ACC-3).
-    tenantDataRole.addToPolicy(new iam.PolicyStatement({
-      actions: ['dynamodb:UpdateItem'],
-      resources: [props.tableArn],
-      conditions: {
-        'ForAllValues:StringLike': {
-          'dynamodb:LeadingKeys': ['TENANT#${aws:PrincipalTag/tenantId}#HITL'],
+    tenantDataRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['dynamodb:UpdateItem'],
+        resources: [props.tableArn],
+        conditions: {
+          'ForAllValues:StringLike': {
+            'dynamodb:LeadingKeys': ['TENANT#${aws:PrincipalTag/tenantId}#HITL'],
+          },
         },
-      },
-    }));
+      }),
+    );
 
     // KMS decrypt for DDB CMK (required for GetItem/PutItem on encrypted table)
     props.dynamodbKey.grantDecrypt(tenantDataRole);
@@ -401,20 +420,24 @@ export class ApiStack extends cdk.Stack {
 
     // ─── STS AssumeRole grant for resolvers → tenant-data role ───────────────
     for (const fn of resolverFns) {
-      fn.role!.addToPrincipalPolicy(new iam.PolicyStatement({
-        actions: ['sts:AssumeRole', 'sts:TagSession'],
-        resources: [tenantDataRole.roleArn],
-      }));
+      fn.role!.addToPrincipalPolicy(
+        new iam.PolicyStatement({
+          actions: ['sts:AssumeRole', 'sts:TagSession'],
+          resources: [tenantDataRole.roleArn],
+        }),
+      );
     }
 
     // ─── AppSync Data Sources & Resolver Attachments (BLOCK-1) ────────────────
 
     // M1 resolver needs S3 read for getDocumentVersionDiff (spec 40, Task 7)
     resolverFns[0].addEnvironment('CONTENT_BUCKET', props.generalBucketName);
-    resolverFns[0].addToRolePolicy(new iam.PolicyStatement({
-      actions: ['s3:GetObject'],
-      resources: [`${props.generalBucketArn}/tenants/*`],
-    }));
+    resolverFns[0].addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: [`${props.generalBucketArn}/tenants/*`],
+      }),
+    );
     props.s3GeneralKey.grantDecrypt(resolverFns[0]);
 
     // ─── Spec 40 Task 9: PDF render + IMS export + sealing ───────────────────
@@ -440,10 +463,12 @@ export class ApiStack extends cdk.Stack {
         POWERTOOLS_SERVICE_NAME: 'pdf-render',
       },
     });
-    pdfRenderFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['s3:GetObject', 's3:PutObject'],
-      resources: [`${props.generalBucketArn}/tenants/*`],
-    }));
+    pdfRenderFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:GetObject', 's3:PutObject'],
+        resources: [`${props.generalBucketArn}/tenants/*`],
+      }),
+    );
     props.s3GeneralKey.grantEncryptDecrypt(pdfRenderFn);
 
     // ExportFn (STO-4): assembles the IMS ZIP + presigned URL. No chromium —
@@ -462,10 +487,12 @@ export class ApiStack extends cdk.Stack {
         POWERTOOLS_SERVICE_NAME: 'ims-export',
       },
     });
-    exportFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['s3:GetObject', 's3:PutObject'],
-      resources: [`${props.generalBucketArn}/tenants/*`],
-    }));
+    exportFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:GetObject', 's3:PutObject'],
+        resources: [`${props.generalBucketArn}/tenants/*`],
+      }),
+    );
     props.s3GeneralKey.grantEncryptDecrypt(exportFn);
     pdfRenderFn.grantInvoke(exportFn);
 
@@ -477,10 +504,12 @@ export class ApiStack extends cdk.Stack {
     resolverFns[0].addEnvironment('EVIDENCE_BUCKET', props.evidenceBucketName);
     resolverFns[0].addEnvironment('EVIDENCE_LOCK_MODE', envConfig.evidenceRetentionMode);
     resolverFns[0].addEnvironment('PDF_RENDER_FN', pdfRenderFn.functionName);
-    resolverFns[0].addToRolePolicy(new iam.PolicyStatement({
-      actions: ['s3:PutObject', 's3:PutObjectRetention'],
-      resources: [`${props.evidenceBucketArn}/tenants/*`],
-    }));
+    resolverFns[0].addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:PutObject', 's3:PutObjectRetention'],
+        resources: [`${props.evidenceBucketArn}/tenants/*`],
+      }),
+    );
     props.s3GeneralKey.grantEncrypt(resolverFns[0]);
     pdfRenderFn.grantInvoke(resolverFns[0]);
 
@@ -500,91 +529,177 @@ export class ApiStack extends cdk.Stack {
     m1DS.createResolver('ListDocuments', { typeName: 'Query', fieldName: 'listDocuments' });
     // New field 2026-07-13 (frontend-app Phase C read surface) — MUST carry the
     // schema dependency below, or CFN races the schema update (BUG at 9d9c90a1).
-    const listDocVersionsResolver = m1DS.createResolver('ListDocumentVersions', { typeName: 'Query', fieldName: 'listDocumentVersions' });
-    m1DS.createResolver('GetDocumentVersionDiff', { typeName: 'Query', fieldName: 'getDocumentVersionDiff' });
+    const listDocVersionsResolver = m1DS.createResolver('ListDocumentVersions', {
+      typeName: 'Query',
+      fieldName: 'listDocumentVersions',
+    });
+    m1DS.createResolver('GetDocumentVersionDiff', {
+      typeName: 'Query',
+      fieldName: 'getDocumentVersionDiff',
+    });
     // New field 2026-07-15 (spec-40 Task 11 viewer read surface)
-    const getDocumentContentResolver = m1DS.createResolver('GetDocumentContent', { typeName: 'Query', fieldName: 'getDocumentContent' });
+    const getDocumentContentResolver = m1DS.createResolver('GetDocumentContent', {
+      typeName: 'Query',
+      fieldName: 'getDocumentContent',
+    });
     // M2
     m2DS.createResolver('GetNonconformity', { typeName: 'Query', fieldName: 'getNonconformity' });
-    const listNcResolver = m2DS.createResolver('ListNonconformities', { typeName: 'Query', fieldName: 'listNonconformities' });
+    const listNcResolver = m2DS.createResolver('ListNonconformities', {
+      typeName: 'Query',
+      fieldName: 'listNonconformities',
+    });
     m2DS.createResolver('ListOpenCAPAs', { typeName: 'Query', fieldName: 'listOpenCAPAs' });
-    const listCaResolver = m2DS.createResolver('ListCorrectiveActions', { typeName: 'Query', fieldName: 'listCorrectiveActions' });
+    const listCaResolver = m2DS.createResolver('ListCorrectiveActions', {
+      typeName: 'Query',
+      fieldName: 'listCorrectiveActions',
+    });
     // M3
     m3DS.createResolver('GetAudit', { typeName: 'Query', fieldName: 'getAudit' });
     m3DS.createResolver('GetAuditReadiness', { typeName: 'Query', fieldName: 'getAuditReadiness' });
     // M4
     m4DS.createResolver('GetRecord', { typeName: 'Query', fieldName: 'getRecord' });
-    m4DS.createResolver('ListCalibrationsDue', { typeName: 'Query', fieldName: 'listCalibrationsDue' });
+    m4DS.createResolver('ListCalibrationsDue', {
+      typeName: 'Query',
+      fieldName: 'listCalibrationsDue',
+    });
     m4DS.createResolver('GetAuditTrail', { typeName: 'Query', fieldName: 'getAuditTrail' });
     // M5
     m5DS.createResolver('GetRisk', { typeName: 'Query', fieldName: 'getRisk' });
-    m5DS.createResolver('GetCrossRegisterRiskView', { typeName: 'Query', fieldName: 'getCrossRegisterRiskView' });
+    m5DS.createResolver('GetCrossRegisterRiskView', {
+      typeName: 'Query',
+      fieldName: 'getCrossRegisterRiskView',
+    });
 
     // ─── Mutation resolvers (user-facing, @aws_lambda) ───────────────────────
     // M1
-    m1DS.createResolver('CreateDocumentDraft', { typeName: 'Mutation', fieldName: 'createDocumentDraft' });
-    m1DS.createResolver('SubmitDocumentForApproval', { typeName: 'Mutation', fieldName: 'submitDocumentForApproval' });
-    m1DS.createResolver('ApproveDocumentVersion', { typeName: 'Mutation', fieldName: 'approveDocumentVersion' });
-    m1DS.createResolver('PublishControlledDocument', { typeName: 'Mutation', fieldName: 'publishControlledDocument' });
+    m1DS.createResolver('CreateDocumentDraft', {
+      typeName: 'Mutation',
+      fieldName: 'createDocumentDraft',
+    });
+    m1DS.createResolver('SubmitDocumentForApproval', {
+      typeName: 'Mutation',
+      fieldName: 'submitDocumentForApproval',
+    });
+    m1DS.createResolver('ApproveDocumentVersion', {
+      typeName: 'Mutation',
+      fieldName: 'approveDocumentVersion',
+    });
+    m1DS.createResolver('PublishControlledDocument', {
+      typeName: 'Mutation',
+      fieldName: 'publishControlledDocument',
+    });
     m1DS.createResolver('UpdatePolicy', { typeName: 'Mutation', fieldName: 'updatePolicy' });
     m1DS.createResolver('UpdateImsScope', { typeName: 'Mutation', fieldName: 'updateImsScope' });
     // M2
-    m2DS.createResolver('RaiseNonconformity', { typeName: 'Mutation', fieldName: 'raiseNonconformity' });
+    m2DS.createResolver('RaiseNonconformity', {
+      typeName: 'Mutation',
+      fieldName: 'raiseNonconformity',
+    });
     m2DS.createResolver('RecordRootCause', { typeName: 'Mutation', fieldName: 'recordRootCause' });
-    m2DS.createResolver('CreateCorrectiveAction', { typeName: 'Mutation', fieldName: 'createCorrectiveAction' });
+    m2DS.createResolver('CreateCorrectiveAction', {
+      typeName: 'Mutation',
+      fieldName: 'createCorrectiveAction',
+    });
     m2DS.createResolver('CloseCapa', { typeName: 'Mutation', fieldName: 'closeCapa' });
-    m2DS.createResolver('VerifyEffectiveness', { typeName: 'Mutation', fieldName: 'verifyEffectiveness' });
-    m2DS.createResolver('DisposeNonconformingOutput', { typeName: 'Mutation', fieldName: 'disposeNonconformingOutput' });
+    m2DS.createResolver('VerifyEffectiveness', {
+      typeName: 'Mutation',
+      fieldName: 'verifyEffectiveness',
+    });
+    m2DS.createResolver('DisposeNonconformingOutput', {
+      typeName: 'Mutation',
+      fieldName: 'disposeNonconformingOutput',
+    });
     // M3
-    m3DS.createResolver('CreateAuditProgramme', { typeName: 'Mutation', fieldName: 'createAuditProgramme' });
+    m3DS.createResolver('CreateAuditProgramme', {
+      typeName: 'Mutation',
+      fieldName: 'createAuditProgramme',
+    });
     m3DS.createResolver('ScheduleAudit', { typeName: 'Mutation', fieldName: 'scheduleAudit' });
     m3DS.createResolver('RecordFinding', { typeName: 'Mutation', fieldName: 'recordFinding' });
     m3DS.createResolver('CompleteAudit', { typeName: 'Mutation', fieldName: 'completeAudit' });
-    m3DS.createResolver('GenerateAuditChecklist', { typeName: 'Mutation', fieldName: 'generateAuditChecklist' });
+    m3DS.createResolver('GenerateAuditChecklist', {
+      typeName: 'Mutation',
+      fieldName: 'generateAuditChecklist',
+    });
     // M4
     m4DS.createResolver('RegisterRecord', { typeName: 'Mutation', fieldName: 'registerRecord' });
     // New field 2026-07-14 (architect follow-up, M4 calibration unblock) — MUST
     // carry the schema dependency below (9d9c90a1 lesson).
-    const registerMeasuringResourceResolver = m4DS.createResolver('RegisterMeasuringResource', { typeName: 'Mutation', fieldName: 'registerMeasuringResource' });
-    m4DS.createResolver('RecordCalibration', { typeName: 'Mutation', fieldName: 'recordCalibration' });
-    m4DS.createResolver('CreateRetentionPolicy', { typeName: 'Mutation', fieldName: 'createRetentionPolicy' });
+    const registerMeasuringResourceResolver = m4DS.createResolver('RegisterMeasuringResource', {
+      typeName: 'Mutation',
+      fieldName: 'registerMeasuringResource',
+    });
+    m4DS.createResolver('RecordCalibration', {
+      typeName: 'Mutation',
+      fieldName: 'recordCalibration',
+    });
+    m4DS.createResolver('CreateRetentionPolicy', {
+      typeName: 'Mutation',
+      fieldName: 'createRetentionPolicy',
+    });
     // M5
     m5DS.createResolver('CreateRisk', { typeName: 'Mutation', fieldName: 'createRisk' });
-    m5DS.createResolver('AddRiskTreatment', { typeName: 'Mutation', fieldName: 'addRiskTreatment' });
-    m5DS.createResolver('CreateChangePlan', { typeName: 'Mutation', fieldName: 'createChangePlan' });
+    m5DS.createResolver('AddRiskTreatment', {
+      typeName: 'Mutation',
+      fieldName: 'addRiskTreatment',
+    });
+    m5DS.createResolver('CreateChangePlan', {
+      typeName: 'Mutation',
+      fieldName: 'createChangePlan',
+    });
 
     // ─── Mutation resolvers (agent-path, @aws_iam) ───────────────────────────
-    m1DS.createResolver('AgentDraftDocument', { typeName: 'Mutation', fieldName: 'agentDraftDocument' });
+    m1DS.createResolver('AgentDraftDocument', {
+      typeName: 'Mutation',
+      fieldName: 'agentDraftDocument',
+    });
     m2DS.createResolver('AgentTriageNC', { typeName: 'Mutation', fieldName: 'agentTriageNC' });
-    m2DS.createResolver('AgentProposeCorrectiveAction', { typeName: 'Mutation', fieldName: 'agentProposeCorrectiveAction' });
-    m3DS.createResolver('AgentGenerateChecklist', { typeName: 'Mutation', fieldName: 'agentGenerateChecklist' });
-    m3DS.createResolver('AgentScoreReadiness', { typeName: 'Mutation', fieldName: 'agentScoreReadiness' });
+    m2DS.createResolver('AgentProposeCorrectiveAction', {
+      typeName: 'Mutation',
+      fieldName: 'agentProposeCorrectiveAction',
+    });
+    m3DS.createResolver('AgentGenerateChecklist', {
+      typeName: 'Mutation',
+      fieldName: 'agentGenerateChecklist',
+    });
+    m3DS.createResolver('AgentScoreReadiness', {
+      typeName: 'Mutation',
+      fieldName: 'agentScoreReadiness',
+    });
     m5DS.createResolver('AgentAssessRisk', { typeName: 'Mutation', fieldName: 'agentAssessRisk' });
     // appendAuditEvent REMOVED 2026-07-16 (owner-approved): the field+resolver
     // shipped with no m4.ts handler case and zero callers — every call threw
     // 'Unknown field'. Agents publish audit events via the eventing publisher.
 
     // ─── Subscription publish mutations (None data source, passthrough) ──────
-    const passthroughRequestMapping = appsync.MappingTemplate.fromString('{"version":"2017-02-28","payload":$util.toJson($context.arguments.input)}');
-    const passthroughResponseMapping = appsync.MappingTemplate.fromString('$util.toJson($context.result)');
+    const passthroughRequestMapping = appsync.MappingTemplate.fromString(
+      '{"version":"2017-02-28","payload":$util.toJson($context.arguments.input)}',
+    );
+    const passthroughResponseMapping = appsync.MappingTemplate.fromString(
+      '$util.toJson($context.result)',
+    );
 
     noneDS.createResolver('PublishDocumentEvent', {
-      typeName: 'Mutation', fieldName: 'publishDocumentEvent',
+      typeName: 'Mutation',
+      fieldName: 'publishDocumentEvent',
       requestMappingTemplate: passthroughRequestMapping,
       responseMappingTemplate: passthroughResponseMapping,
     });
     noneDS.createResolver('PublishCAPAEvent', {
-      typeName: 'Mutation', fieldName: 'publishCAPAEvent',
+      typeName: 'Mutation',
+      fieldName: 'publishCAPAEvent',
       requestMappingTemplate: passthroughRequestMapping,
       responseMappingTemplate: passthroughResponseMapping,
     });
     noneDS.createResolver('PublishAuditEventTrigger', {
-      typeName: 'Mutation', fieldName: 'publishAuditEvent',
+      typeName: 'Mutation',
+      fieldName: 'publishAuditEvent',
       requestMappingTemplate: passthroughRequestMapping,
       responseMappingTemplate: passthroughResponseMapping,
     });
     noneDS.createResolver('PublishRiskEvent', {
-      typeName: 'Mutation', fieldName: 'publishRiskEvent',
+      typeName: 'Mutation',
+      fieldName: 'publishRiskEvent',
       requestMappingTemplate: passthroughRequestMapping,
       responseMappingTemplate: passthroughResponseMapping,
     });
@@ -600,9 +715,7 @@ export class ApiStack extends cdk.Stack {
 #end
 {"version":"2017-02-28","payload":{}}`,
     );
-    const subscriptionResponseTemplate = appsync.MappingTemplate.fromString(
-      '$util.toJson(null)',
-    );
+    const subscriptionResponseTemplate = appsync.MappingTemplate.fromString('$util.toJson(null)');
 
     const subscriptionFields = [
       'onDocumentStatusChanged',
@@ -680,14 +793,18 @@ export class ApiStack extends cdk.Stack {
 
     // IAM: all 3 new Lambdas need STS AssumeRole + DDB via tenant-data role
     for (const fn of [hitlApprovalFn, hitlQueryFn, profileFn]) {
-      fn.role!.addToPrincipalPolicy(new iam.PolicyStatement({
-        actions: ['sts:AssumeRole', 'sts:TagSession'],
-        resources: [tenantDataRole.roleArn],
-      }));
-      fn.addToRolePolicy(new iam.PolicyStatement({
-        actions: ['events:PutEvents'],
-        resources: [props.busArn],
-      }));
+      fn.role!.addToPrincipalPolicy(
+        new iam.PolicyStatement({
+          actions: ['sts:AssumeRole', 'sts:TagSession'],
+          resources: [tenantDataRole.roleArn],
+        }),
+      );
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: ['events:PutEvents'],
+          resources: [props.busArn],
+        }),
+      );
       props.dynamodbKey.grantDecrypt(fn);
       fn.addEnvironment('TENANT_DATA_ROLE_ARN', tenantDataRole.roleArn);
     }
@@ -701,15 +818,24 @@ export class ApiStack extends cdk.Stack {
     // resource-level scoping exists only for activities (not used here), so
     // Resource must be '*' — verified against the service authorization
     // reference at Task 14 review.
-    hitlApprovalFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['states:SendTaskSuccess', 'states:SendTaskFailure'],
-      resources: ['*'],
-    }));
-    NagSuppressions.addResourceSuppressions(hitlApprovalFn.role!, [{
-      id: 'AwsSolutions-IAM5',
-      reason: 'states:SendTaskSuccess/SendTaskFailure support resource-level permissions only for activities; callback-pattern authorization is scoped by the task token, which the Lambda obtains exclusively from the tenant-scoped HITL item (BC-8).',
-      appliesTo: ['Resource::*'],
-    }], true);
+    hitlApprovalFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['states:SendTaskSuccess', 'states:SendTaskFailure'],
+        resources: ['*'],
+      }),
+    );
+    NagSuppressions.addResourceSuppressions(
+      hitlApprovalFn.role!,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'states:SendTaskSuccess/SendTaskFailure support resource-level permissions only for activities; callback-pattern authorization is scoped by the task token, which the Lambda obtains exclusively from the tenant-scoped HITL item (BC-8).',
+          appliesTo: ['Resource::*'],
+        },
+      ],
+      true,
+    );
 
     // HITL RESOLVING-cleanup sweeper (Task 8) — system-level scheduled recovery.
     // Cross-tenant BY DESIGN (resets stale RESOLVING locks for every tenant), so
@@ -728,14 +854,18 @@ export class ApiStack extends cdk.Stack {
         POWERTOOLS_SERVICE_NAME: 'hitl-sweeper',
       },
     });
-    hitlSweeperFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['dynamodb:Scan'],
-      resources: [`${props.tableArn}/index/GSI9`],
-    }));
-    hitlSweeperFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['dynamodb:UpdateItem'],
-      resources: [props.tableArn],
-    }));
+    hitlSweeperFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['dynamodb:Scan'],
+        resources: [`${props.tableArn}/index/GSI9`],
+      }),
+    );
+    hitlSweeperFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['dynamodb:UpdateItem'],
+        resources: [props.tableArn],
+      }),
+    );
     props.dynamodbKey.grantDecrypt(hitlSweeperFn);
     new events.Rule(this, 'HitlSweeperSchedule', {
       schedule: events.Schedule.rate(cdk.Duration.minutes(5)),
@@ -749,15 +879,30 @@ export class ApiStack extends cdk.Stack {
     const profileDS = api.addLambdaDataSource('ProfileDS', profileFn);
 
     // Query resolvers (Spec 9)
-    const listHitlResolver = hitlQueryDS.createResolver('ListPendingHitlItems', { typeName: 'Query', fieldName: 'listPendingHitlItems' });
-    const getProfileResolver = profileDS.createResolver('GetProfile', { typeName: 'Query', fieldName: 'getProfile' });
+    const listHitlResolver = hitlQueryDS.createResolver('ListPendingHitlItems', {
+      typeName: 'Query',
+      fieldName: 'listPendingHitlItems',
+    });
+    const getProfileResolver = profileDS.createResolver('GetProfile', {
+      typeName: 'Query',
+      fieldName: 'getProfile',
+    });
     // New field 2026-07-14 (Task 31 Settings unblock) — MUST carry the schema
     // dependency below (9d9c90a1 lesson).
-    const getTenantSettingsResolver = profileDS.createResolver('GetTenantSettings', { typeName: 'Query', fieldName: 'getTenantSettings' });
+    const getTenantSettingsResolver = profileDS.createResolver('GetTenantSettings', {
+      typeName: 'Query',
+      fieldName: 'getTenantSettings',
+    });
 
     // Mutation resolvers (Spec 9)
-    const approveHitlResolver = hitlApprovalDS.createResolver('ApproveHitlItem', { typeName: 'Mutation', fieldName: 'approveHitlItem' });
-    const updateProfileResolver = profileDS.createResolver('UpdateProfile', { typeName: 'Mutation', fieldName: 'updateProfile' });
+    const approveHitlResolver = hitlApprovalDS.createResolver('ApproveHitlItem', {
+      typeName: 'Mutation',
+      fieldName: 'approveHitlItem',
+    });
+    const updateProfileResolver = profileDS.createResolver('UpdateProfile', {
+      typeName: 'Mutation',
+      fieldName: 'updateProfile',
+    });
 
     // ─── Spec 41: QMS Forms & Records Engine ──────────────────────────────────
 
@@ -781,22 +926,35 @@ export class ApiStack extends cdk.Stack {
     });
 
     // IAM: RDS Data API + EventBridge + STS
-    formsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['rds-data:ExecuteStatement', 'rds-data:BeginTransaction', 'rds-data:CommitTransaction', 'rds-data:RollbackTransaction'],
-      resources: [props.clusterArn],
-    }));
-    formsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['secretsmanager:GetSecretValue'],
-      resources: [appRoleSecret.secretArn],
-    }));
-    formsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['events:PutEvents'],
-      resources: [props.busArn],
-    }));
-    formsFn.role!.addToPrincipalPolicy(new iam.PolicyStatement({
-      actions: ['sts:AssumeRole', 'sts:TagSession'],
-      resources: [tenantDataRole.roleArn],
-    }));
+    formsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'rds-data:ExecuteStatement',
+          'rds-data:BeginTransaction',
+          'rds-data:CommitTransaction',
+          'rds-data:RollbackTransaction',
+        ],
+        resources: [props.clusterArn],
+      }),
+    );
+    formsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [appRoleSecret.secretArn],
+      }),
+    );
+    formsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['events:PutEvents'],
+        resources: [props.busArn],
+      }),
+    );
+    formsFn.role!.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ['sts:AssumeRole', 'sts:TagSession'],
+        resources: [tenantDataRole.roleArn],
+      }),
+    );
     props.dynamodbKey.grantDecrypt(formsFn);
 
     // Spec-41 Task 8 (REC-7): record PDF export + approved-record sealing.
@@ -809,14 +967,18 @@ export class ApiStack extends cdk.Stack {
     formsFn.addEnvironment('EVIDENCE_BUCKET', props.evidenceBucketName);
     formsFn.addEnvironment('EVIDENCE_LOCK_MODE', envConfig.evidenceRetentionMode);
     formsFn.addEnvironment('PDF_RENDER_FN', pdfRenderFn.functionName);
-    formsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['s3:GetObject', 's3:PutObject'],
-      resources: [`${props.generalBucketArn}/tenants/*`],
-    }));
-    formsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['s3:PutObject', 's3:PutObjectRetention'],
-      resources: [`${props.evidenceBucketArn}/tenants/*`],
-    }));
+    formsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:GetObject', 's3:PutObject'],
+        resources: [`${props.generalBucketArn}/tenants/*`],
+      }),
+    );
+    formsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:PutObject', 's3:PutObjectRetention'],
+        resources: [`${props.evidenceBucketArn}/tenants/*`],
+      }),
+    );
     props.s3GeneralKey.grantEncryptDecrypt(formsFn);
     pdfRenderFn.grantInvoke(formsFn);
     // formsFn stays OUTSIDE the blanket lambdaResources IAM5 list (qmsFn
@@ -825,47 +987,81 @@ export class ApiStack extends cdk.Stack {
     // 1. grantInvoke emits lambda:InvokeFunction on <fnArn>:* (qmsFn→ExportFn class).
     // 2. Tenant-prefix S3 access is inherently /tenants/* — object keys are
     //    per-tenant/per-record; the same scoping every PDF-pipeline fn uses.
-    NagSuppressions.addResourceSuppressions(formsFn, [
-      {
-        id: 'AwsSolutions-IAM5',
-        reason:
-          'grantInvoke(PdfRenderFn) emits lambda:InvokeFunction on <fnArn>:* for ' +
-          'versioned Lambda invocation. CDK-generated; cannot be scoped further.',
-        appliesTo: [{ regex: '/^Resource::<PdfRenderFn.*\\.Arn>:\\*$/g' }],
-      },
-      {
-        id: 'AwsSolutions-IAM5',
-        reason:
-          'Record content JSONs, cached PDFs and sealed copies live under per-tenant ' +
-          'object keys — access is scoped to the tenants/ prefix of the two content ' +
-          'buckets, the same pattern as PdfRenderFn/ExportFn/M1.',
-        appliesTo: [{ regex: '/^Resource::.*\\.Arn>\\/tenants\\/\\*$/g' }],
-      },
-      {
-        id: 'AwsSolutions-IAM5',
-        reason:
-          'kms.grantEncryptDecrypt on the S3 content CMK emits the standard ' +
-          'kms:ReEncrypt*/kms:GenerateDataKey* action wildcards (CDK-generated, ' +
-          'key-scoped resource).',
-        appliesTo: ['Action::kms:ReEncrypt*', 'Action::kms:GenerateDataKey*'],
-      },
-    ], true);
+    NagSuppressions.addResourceSuppressions(
+      formsFn,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'grantInvoke(PdfRenderFn) emits lambda:InvokeFunction on <fnArn>:* for ' +
+            'versioned Lambda invocation. CDK-generated; cannot be scoped further.',
+          appliesTo: [{ regex: '/^Resource::<PdfRenderFn.*\\.Arn>:\\*$/g' }],
+        },
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'Record content JSONs, cached PDFs and sealed copies live under per-tenant ' +
+            'object keys — access is scoped to the tenants/ prefix of the two content ' +
+            'buckets, the same pattern as PdfRenderFn/ExportFn/M1.',
+          appliesTo: [{ regex: '/^Resource::.*\\.Arn>\\/tenants\\/\\*$/g' }],
+        },
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'kms.grantEncryptDecrypt on the S3 content CMK emits the standard ' +
+            'kms:ReEncrypt*/kms:GenerateDataKey* action wildcards (CDK-generated, ' +
+            'key-scoped resource).',
+          appliesTo: ['Action::kms:ReEncrypt*', 'Action::kms:GenerateDataKey*'],
+        },
+      ],
+      true,
+    );
 
     const formsDS = api.addLambdaDataSource('FormsDataSource', formsFn);
 
     // Query resolvers (Spec 41)
-    const listFormTemplatesResolver = formsDS.createResolver('ListFormTemplates', { typeName: 'Query', fieldName: 'listFormTemplates' });
-    const getFormTemplateResolver = formsDS.createResolver('GetFormTemplate', { typeName: 'Query', fieldName: 'getFormTemplate' });
-    const listFormRecordsResolver = formsDS.createResolver('ListFormRecords', { typeName: 'Query', fieldName: 'listFormRecords' });
-    const getFormRecordResolver = formsDS.createResolver('GetFormRecord', { typeName: 'Query', fieldName: 'getFormRecord' });
+    const listFormTemplatesResolver = formsDS.createResolver('ListFormTemplates', {
+      typeName: 'Query',
+      fieldName: 'listFormTemplates',
+    });
+    const getFormTemplateResolver = formsDS.createResolver('GetFormTemplate', {
+      typeName: 'Query',
+      fieldName: 'getFormTemplate',
+    });
+    const listFormRecordsResolver = formsDS.createResolver('ListFormRecords', {
+      typeName: 'Query',
+      fieldName: 'listFormRecords',
+    });
+    const getFormRecordResolver = formsDS.createResolver('GetFormRecord', {
+      typeName: 'Query',
+      fieldName: 'getFormRecord',
+    });
 
     // Mutation resolvers (Spec 41)
-    const createFormRecordResolver = formsDS.createResolver('CreateFormRecord', { typeName: 'Mutation', fieldName: 'createFormRecord' });
-    const saveFormRecordValuesResolver = formsDS.createResolver('SaveFormRecordValues', { typeName: 'Mutation', fieldName: 'saveFormRecordValues' });
-    const submitFormRecordResolver = formsDS.createResolver('SubmitFormRecord', { typeName: 'Mutation', fieldName: 'submitFormRecord' });
-    const approveFormRecordResolver = formsDS.createResolver('ApproveFormRecord', { typeName: 'Mutation', fieldName: 'approveFormRecord' });
-    const reopenFormRecordResolver = formsDS.createResolver('ReopenFormRecord', { typeName: 'Mutation', fieldName: 'reopenFormRecord' });
-    const exportFormRecordPdfResolver = formsDS.createResolver('ExportFormRecordPdf', { typeName: 'Mutation', fieldName: 'exportFormRecordPdf' });
+    const createFormRecordResolver = formsDS.createResolver('CreateFormRecord', {
+      typeName: 'Mutation',
+      fieldName: 'createFormRecord',
+    });
+    const saveFormRecordValuesResolver = formsDS.createResolver('SaveFormRecordValues', {
+      typeName: 'Mutation',
+      fieldName: 'saveFormRecordValues',
+    });
+    const submitFormRecordResolver = formsDS.createResolver('SubmitFormRecord', {
+      typeName: 'Mutation',
+      fieldName: 'submitFormRecord',
+    });
+    const approveFormRecordResolver = formsDS.createResolver('ApproveFormRecord', {
+      typeName: 'Mutation',
+      fieldName: 'approveFormRecord',
+    });
+    const reopenFormRecordResolver = formsDS.createResolver('ReopenFormRecord', {
+      typeName: 'Mutation',
+      fieldName: 'reopenFormRecord',
+    });
+    const exportFormRecordPdfResolver = formsDS.createResolver('ExportFormRecordPdf', {
+      typeName: 'Mutation',
+      fieldName: 'exportFormRecordPdf',
+    });
 
     // ─── Spec 40: QMS Document Engine ─────────────────────────────────────────
 
@@ -910,31 +1106,48 @@ export class ApiStack extends cdk.Stack {
       },
     });
 
-    qmsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['states:StartExecution'],
-      resources: [docGenSfnArn],
-    }));
-    qmsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['lambda:InvokeFunction'],
-      resources: [regenFnArn],
-    }));
+    qmsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['states:StartExecution'],
+        resources: [docGenSfnArn],
+      }),
+    );
+    qmsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['lambda:InvokeFunction'],
+        resources: [regenFnArn],
+      }),
+    );
 
-    qmsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['rds-data:ExecuteStatement', 'rds-data:BeginTransaction', 'rds-data:CommitTransaction', 'rds-data:RollbackTransaction'],
-      resources: [props.clusterArn],
-    }));
-    qmsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['secretsmanager:GetSecretValue'],
-      resources: [appRoleSecret.secretArn],
-    }));
-    qmsFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['events:PutEvents'],
-      resources: [props.busArn],
-    }));
-    qmsFn.role!.addToPrincipalPolicy(new iam.PolicyStatement({
-      actions: ['sts:AssumeRole', 'sts:TagSession'],
-      resources: [tenantDataRole.roleArn],
-    }));
+    qmsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'rds-data:ExecuteStatement',
+          'rds-data:BeginTransaction',
+          'rds-data:CommitTransaction',
+          'rds-data:RollbackTransaction',
+        ],
+        resources: [props.clusterArn],
+      }),
+    );
+    qmsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [appRoleSecret.secretArn],
+      }),
+    );
+    qmsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['events:PutEvents'],
+        resources: [props.busArn],
+      }),
+    );
+    qmsFn.role!.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ['sts:AssumeRole', 'sts:TagSession'],
+        resources: [tenantDataRole.roleArn],
+      }),
+    );
     props.dynamodbKey.grantDecrypt(qmsFn);
     // Task 9: requestImsExport dispatches to ExportFn (SQL in QmsFn, S3/zip there)
     qmsFn.addEnvironment('EXPORT_FN', exportFn.functionName);
@@ -943,22 +1156,56 @@ export class ApiStack extends cdk.Stack {
     const qmsDS = api.addLambdaDataSource('QmsDataSource', qmsFn);
 
     // Query resolvers (Spec 40)
-    const getOrgProfileResolver = qmsDS.createResolver('GetOrgProfile', { typeName: 'Query', fieldName: 'getOrgProfile' });
-    const listClauseRegistryResolver = qmsDS.createResolver('ListClauseRegistry', { typeName: 'Query', fieldName: 'listClauseRegistry' });
-    const listClauseApplicabilityResolver = qmsDS.createResolver('ListClauseApplicability', { typeName: 'Query', fieldName: 'listClauseApplicability' });
-    const getGenerationRunResolver = qmsDS.createResolver('GetGenerationRun', { typeName: 'Query', fieldName: 'getGenerationRun' });
-    const listGenerationRunsResolver = qmsDS.createResolver('ListGenerationRuns', { typeName: 'Query', fieldName: 'listGenerationRuns' });
+    const getOrgProfileResolver = qmsDS.createResolver('GetOrgProfile', {
+      typeName: 'Query',
+      fieldName: 'getOrgProfile',
+    });
+    const listClauseRegistryResolver = qmsDS.createResolver('ListClauseRegistry', {
+      typeName: 'Query',
+      fieldName: 'listClauseRegistry',
+    });
+    const listClauseApplicabilityResolver = qmsDS.createResolver('ListClauseApplicability', {
+      typeName: 'Query',
+      fieldName: 'listClauseApplicability',
+    });
+    const getGenerationRunResolver = qmsDS.createResolver('GetGenerationRun', {
+      typeName: 'Query',
+      fieldName: 'getGenerationRun',
+    });
+    const listGenerationRunsResolver = qmsDS.createResolver('ListGenerationRuns', {
+      typeName: 'Query',
+      fieldName: 'listGenerationRuns',
+    });
 
     // Mutation resolvers (Spec 40 — user-facing)
-    const saveOrgProfileResolver = qmsDS.createResolver('SaveOrgProfile', { typeName: 'Mutation', fieldName: 'saveOrgProfile' });
-    const setClauseApplicabilityResolver = qmsDS.createResolver('SetClauseApplicability', { typeName: 'Mutation', fieldName: 'setClauseApplicability' });
-    const generateImsManualResolver = qmsDS.createResolver('GenerateImsManual', { typeName: 'Mutation', fieldName: 'generateImsManual' });
-    const regenerateSectionResolver = qmsDS.createResolver('RegenerateSection', { typeName: 'Mutation', fieldName: 'regenerateSection' });
-    const markSectionReviewedResolver = qmsDS.createResolver('MarkSectionReviewed', { typeName: 'Mutation', fieldName: 'markSectionReviewed' });
-    const requestImsExportResolver = qmsDS.createResolver('RequestImsExport', { typeName: 'Mutation', fieldName: 'requestImsExport' });
+    const saveOrgProfileResolver = qmsDS.createResolver('SaveOrgProfile', {
+      typeName: 'Mutation',
+      fieldName: 'saveOrgProfile',
+    });
+    const setClauseApplicabilityResolver = qmsDS.createResolver('SetClauseApplicability', {
+      typeName: 'Mutation',
+      fieldName: 'setClauseApplicability',
+    });
+    const generateImsManualResolver = qmsDS.createResolver('GenerateImsManual', {
+      typeName: 'Mutation',
+      fieldName: 'generateImsManual',
+    });
+    const regenerateSectionResolver = qmsDS.createResolver('RegenerateSection', {
+      typeName: 'Mutation',
+      fieldName: 'regenerateSection',
+    });
+    const markSectionReviewedResolver = qmsDS.createResolver('MarkSectionReviewed', {
+      typeName: 'Mutation',
+      fieldName: 'markSectionReviewed',
+    });
+    const requestImsExportResolver = qmsDS.createResolver('RequestImsExport', {
+      typeName: 'Mutation',
+      fieldName: 'requestImsExport',
+    });
     // @aws_iam — publishGenerationEvent routed through None DS (passthrough)
     noneDS.createResolver('PublishGenerationEvent', {
-      typeName: 'Mutation', fieldName: 'publishGenerationEvent',
+      typeName: 'Mutation',
+      fieldName: 'publishGenerationEvent',
       requestMappingTemplate: passthroughRequestMapping,
       responseMappingTemplate: passthroughResponseMapping,
     });
@@ -978,17 +1225,37 @@ export class ApiStack extends cdk.Stack {
     // onHitlItemResolved found on type Subscription").
     const schemaResource = api.node.findChild('Schema') as cdk.CfnResource;
     for (const r of [
-      listHitlResolver, getProfileResolver, approveHitlResolver, updateProfileResolver, subHitlResolver,
-      listDocVersionsResolver, listNcResolver, listCaResolver,
-      registerMeasuringResourceResolver, getTenantSettingsResolver,
-      listFormTemplatesResolver, getFormTemplateResolver, listFormRecordsResolver, getFormRecordResolver,
-      createFormRecordResolver, saveFormRecordValuesResolver, submitFormRecordResolver,
-      approveFormRecordResolver, reopenFormRecordResolver, exportFormRecordPdfResolver,
-      getOrgProfileResolver, listClauseRegistryResolver, listClauseApplicabilityResolver,
-      getGenerationRunResolver, listGenerationRunsResolver,
-      saveOrgProfileResolver, setClauseApplicabilityResolver,
-      generateImsManualResolver, regenerateSectionResolver,
-      markSectionReviewedResolver, requestImsExportResolver,
+      listHitlResolver,
+      getProfileResolver,
+      approveHitlResolver,
+      updateProfileResolver,
+      subHitlResolver,
+      listDocVersionsResolver,
+      listNcResolver,
+      listCaResolver,
+      registerMeasuringResourceResolver,
+      getTenantSettingsResolver,
+      listFormTemplatesResolver,
+      getFormTemplateResolver,
+      listFormRecordsResolver,
+      getFormRecordResolver,
+      createFormRecordResolver,
+      saveFormRecordValuesResolver,
+      submitFormRecordResolver,
+      approveFormRecordResolver,
+      reopenFormRecordResolver,
+      exportFormRecordPdfResolver,
+      getOrgProfileResolver,
+      listClauseRegistryResolver,
+      listClauseApplicabilityResolver,
+      getGenerationRunResolver,
+      listGenerationRunsResolver,
+      saveOrgProfileResolver,
+      setClauseApplicabilityResolver,
+      generateImsManualResolver,
+      regenerateSectionResolver,
+      markSectionReviewedResolver,
+      requestImsExportResolver,
       getDocumentContentResolver,
     ]) {
       r.node.addDependency(schemaResource);
@@ -1014,36 +1281,52 @@ export class ApiStack extends cdk.Stack {
         },
         {
           id: 'AwsSolutions-L1',
-          reason:
-            'Lambda uses NODEJS_22_X (latest LTS). CDK Nag may not recognize newer runtimes.',
+          reason: 'Lambda uses NODEJS_22_X (latest LTS). CDK Nag may not recognize newer runtimes.',
         },
       ],
       true,
     );
 
     // FIX-3(a): IAM5 on Lambda log-group wildcards only (not the DDB grant)
-    const lambdaResources = [authorizerFn, migratorFn, ...resolverFns, hitlApprovalFn, hitlQueryFn, profileFn, pdfRenderFn, exportFn];
+    const lambdaResources = [
+      authorizerFn,
+      migratorFn,
+      ...resolverFns,
+      hitlApprovalFn,
+      hitlQueryFn,
+      profileFn,
+      pdfRenderFn,
+      exportFn,
+    ];
     for (const fn of lambdaResources) {
-      NagSuppressions.addResourceSuppressions(fn, [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason:
-            'Lambda execution role has logs:CreateLogGroup/PutLogEvents with wildcard on ' +
-            'log stream name. Standard CDK pattern for Lambda logging.',
-        },
-      ], true);
+      NagSuppressions.addResourceSuppressions(
+        fn,
+        [
+          {
+            id: 'AwsSolutions-IAM5',
+            reason:
+              'Lambda execution role has logs:CreateLogGroup/PutLogEvents with wildcard on ' +
+              'log stream name. Standard CDK pattern for Lambda logging.',
+          },
+        ],
+        true,
+      );
     }
 
     // FIX-3(b): IAM5 on TenantDataRole — explicit justification for index/* wildcard
-    NagSuppressions.addResourceSuppressions(tenantDataRole, [
-      {
-        id: 'AwsSolutions-IAM5',
-        reason:
-          'GSI access uses ${tableArn}/index/* wildcard. Tenant isolation is enforced by ' +
-          'the dynamodb:LeadingKeys condition (TENANT#${aws:PrincipalTag/tenantId}#*). ' +
-          'Cross-tenant GSI query denial proven at ACC-2 GSI probe (Task 14).',
-      },
-    ], true);
+    NagSuppressions.addResourceSuppressions(
+      tenantDataRole,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'GSI access uses ${tableArn}/index/* wildcard. Tenant isolation is enforced by ' +
+            'the dynamodb:LeadingKeys condition (TENANT#${aws:PrincipalTag/tenantId}#*). ' +
+            'Cross-tenant GSI query denial proven at ACC-2 GSI probe (Task 14).',
+        },
+      ],
+      true,
+    );
 
     // NAG-1: app_role secret rotation deferred (owner-approved FIX-5 decision)
     NagSuppressions.addResourceSuppressions(appRoleSecret, [
@@ -1073,47 +1356,68 @@ export class ApiStack extends cdk.Stack {
     // xray:PutTraceSegments + xray:PutTelemetryRecords with Resource:* (AWS-managed behavior).
     // IAM5[Resource::<FnArn>:*] from AppSync data source service roles — lambda:InvokeFunction
     // on <fnArn>:* for versioned invocation (CDK-generated, cannot scope further).
-    const dataSources = [m1DS, m2DS, m3DS, m4DS, m5DS, hitlApprovalDS, hitlQueryDS, profileDS, formsDS, qmsDS];
+    const dataSources = [
+      m1DS,
+      m2DS,
+      m3DS,
+      m4DS,
+      m5DS,
+      hitlApprovalDS,
+      hitlQueryDS,
+      profileDS,
+      formsDS,
+      qmsDS,
+    ];
     for (const ds of dataSources) {
-      NagSuppressions.addResourceSuppressions(ds, [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason:
-            'AppSync Lambda data source service role uses lambda:InvokeFunction on ' +
-            '<fnArn>:* for versioned Lambda invocation. This is CDK-generated behavior ' +
-            'that cannot be scoped further without breaking AppSync resolver invocation.',
-          appliesTo: [
-            { regex: '/^Resource::.*\\*$/g' },
-          ],
-        },
-      ], true);
+      NagSuppressions.addResourceSuppressions(
+        ds,
+        [
+          {
+            id: 'AwsSolutions-IAM5',
+            reason:
+              'AppSync Lambda data source service role uses lambda:InvokeFunction on ' +
+              '<fnArn>:* for versioned Lambda invocation. This is CDK-generated behavior ' +
+              'that cannot be scoped further without breaking AppSync resolver invocation.',
+            appliesTo: [{ regex: '/^Resource::.*\\*$/g' }],
+          },
+        ],
+        true,
+      );
     }
 
     // Task 9: qmsFn invokes ExportFn via grantInvoke — CDK grants
     // lambda:InvokeFunction on <fnArn>:* for versioned invocation (same class
     // as NAG-3). Targeted appliesTo, NOT a blanket: qmsFn stays outside
     // lambdaResources so future real wildcards on it still fail synth.
-    NagSuppressions.addResourceSuppressions(qmsFn, [
-      {
-        id: 'AwsSolutions-IAM5',
-        reason:
-          'grantInvoke(ExportFn) emits lambda:InvokeFunction on <fnArn>:* for ' +
-          'versioned Lambda invocation. CDK-generated; cannot be scoped further.',
-        appliesTo: [{ regex: '/^Resource::<ExportFn.*\\.Arn>:\\*$/g' }],
-      },
-    ], true);
-
-    // X-Ray tracing role (attached to Lambda execution roles by xrayEnabled)
-    for (const fn of lambdaResources) {
-      NagSuppressions.addResourceSuppressions(fn, [
+    NagSuppressions.addResourceSuppressions(
+      qmsFn,
+      [
         {
           id: 'AwsSolutions-IAM5',
           reason:
-            'X-Ray tracing (xrayEnabled: true) requires xray:PutTraceSegments and ' +
-            'xray:PutTelemetryRecords with Resource::*. AWS-managed behavior.',
-          appliesTo: ['Resource::*'],
+            'grantInvoke(ExportFn) emits lambda:InvokeFunction on <fnArn>:* for ' +
+            'versioned Lambda invocation. CDK-generated; cannot be scoped further.',
+          appliesTo: [{ regex: '/^Resource::<ExportFn.*\\.Arn>:\\*$/g' }],
         },
-      ], true);
+      ],
+      true,
+    );
+
+    // X-Ray tracing role (attached to Lambda execution roles by xrayEnabled)
+    for (const fn of lambdaResources) {
+      NagSuppressions.addResourceSuppressions(
+        fn,
+        [
+          {
+            id: 'AwsSolutions-IAM5',
+            reason:
+              'X-Ray tracing (xrayEnabled: true) requires xray:PutTraceSegments and ' +
+              'xray:PutTelemetryRecords with Resource::*. AWS-managed behavior.',
+            appliesTo: ['Resource::*'],
+          },
+        ],
+        true,
+      );
     }
 
     // LogRetention custom resource (CDK-internal, manages CloudWatch log group retention)

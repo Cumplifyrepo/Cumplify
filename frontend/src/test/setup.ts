@@ -16,14 +16,25 @@ vi.mock('next/navigation', () => ({
 
 // Mock next/image
 vi.mock('next/image', () => ({
-  default: (props: Record<string, unknown>) =>
-    ({ $$typeof: Symbol.for('react.element'), type: 'img', props, key: null, ref: null }),
+  default: (props: Record<string, unknown>) => ({
+    $$typeof: Symbol.for('react.element'),
+    type: 'img',
+    props,
+    key: null,
+    ref: null,
+  }),
 }));
 
 // Mock next/link
 vi.mock('next/link', () => ({
   default: ({ children, ...props }: { children: React.ReactNode; href: string }) => {
-    return { $$typeof: Symbol.for('react.element'), type: 'a', props: { ...props, children }, key: null, ref: null };
+    return {
+      $$typeof: Symbol.for('react.element'),
+      type: 'a',
+      props: { ...props, children },
+      key: null,
+      ref: null,
+    };
   },
 }));
 

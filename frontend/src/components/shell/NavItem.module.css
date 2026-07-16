@@ -5,7 +5,9 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--color-text-secondary);
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   position: relative;
 }
 

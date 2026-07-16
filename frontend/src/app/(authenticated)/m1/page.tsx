@@ -3,7 +3,16 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { PageHeader, DataTable, StatusBadge, ClauseChip, ProvenanceLink, PrimaryButton, ErrorState, type Column } from '@/components/shared';
+import {
+  PageHeader,
+  DataTable,
+  StatusBadge,
+  ClauseChip,
+  ProvenanceLink,
+  PrimaryButton,
+  ErrorState,
+  type Column,
+} from '@/components/shared';
 import { FormDrawer, type FieldDef } from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import { useTenantSubscription } from '@/lib/use-tenant-subscription';
@@ -85,7 +94,9 @@ export default function M1ListPage() {
     }
   }, [query, filterStandard, filterStatus]);
 
-  useEffect(() => { fetchDocs(); }, [fetchDocs]);
+  useEffect(() => {
+    fetchDocs();
+  }, [fetchDocs]);
 
   // Real-time: onDocumentStatusChanged patches list
   useTenantSubscription({
@@ -95,23 +106,59 @@ export default function M1ListPage() {
     onData: () => fetchDocs(),
   });
 
-  const columns: Column<Document>[] = useMemo(() => [
-    { key: 'title', header: t('colTitle'), render: (d) => d.title },
-    { key: 'status', header: t('colStatus'), render: (d) => <StatusBadge status={d.status} /> },
-    { key: 'standard', header: t('colStandard'), render: (d) => <ClauseChip standard={d.standard} clauseRef={null} /> },
-    { key: 'docType', header: t('colType'), render: (d) => d.docType.replace(/_/g, ' ') },
-    { key: 'updatedAt', header: t('colUpdated'), render: (d) => (
-      <ProvenanceLink entityId={d.id}>
-        {new Date(d.updatedAt).toLocaleDateString()}
-      </ProvenanceLink>
-    )},
-  ], [t]);
+  const columns: Column<Document>[] = useMemo(
+    () => [
+      { key: 'title', header: t('colTitle'), render: (d) => d.title },
+      { key: 'status', header: t('colStatus'), render: (d) => <StatusBadge status={d.status} /> },
+      {
+        key: 'standard',
+        header: t('colStandard'),
+        render: (d) => <ClauseChip standard={d.standard} clauseRef={null} />,
+      },
+      { key: 'docType', header: t('colType'), render: (d) => d.docType.replace(/_/g, ' ') },
+      {
+        key: 'updatedAt',
+        header: t('colUpdated'),
+        render: (d) => (
+          <ProvenanceLink entityId={d.id}>
+            {new Date(d.updatedAt).toLocaleDateString()}
+          </ProvenanceLink>
+        ),
+      },
+    ],
+    [t],
+  );
 
-  const drawerFields: FieldDef[] = useMemo(() => [
-    { name: 'standard', label: t('fieldStandard'), type: 'select', required: true, options: STANDARDS.filter(Boolean).map((s) => ({ value: s, label: s.replace('ISO', 'ISO ') })), defaultValue: chipStandard || '' },
-    { name: 'docType', label: t('fieldDocType'), type: 'select', required: true, options: DOC_TYPES.map((dt) => ({ value: dt, label: dt.replace(/_/g, ' ') })) },
-    { name: 'title', label: t('fieldTitle'), type: 'text', required: true, defaultValue: chipTitle },
-  ], [t, chipTitle, chipStandard]);
+  const drawerFields: FieldDef[] = useMemo(
+    () => [
+      {
+        name: 'standard',
+        label: t('fieldStandard'),
+        type: 'select',
+        required: true,
+        options: STANDARDS.filter(Boolean).map((s) => ({
+          value: s,
+          label: s.replace('ISO', 'ISO '),
+        })),
+        defaultValue: chipStandard || '',
+      },
+      {
+        name: 'docType',
+        label: t('fieldDocType'),
+        type: 'select',
+        required: true,
+        options: DOC_TYPES.map((dt) => ({ value: dt, label: dt.replace(/_/g, ' ') })),
+      },
+      {
+        name: 'title',
+        label: t('fieldTitle'),
+        type: 'text',
+        required: true,
+        defaultValue: chipTitle,
+      },
+    ],
+    [t, chipTitle, chipStandard],
+  );
 
   async function handleCreate(values: Record<string, string | boolean>) {
     await mutate(CREATE_MUTATION, {
@@ -122,7 +169,15 @@ export default function M1ListPage() {
 
   // Show detail view when a doc is selected
   if (selectedId) {
-    return <DocumentDetail id={selectedId} onBack={() => { setSelectedId(null); router.replace('?', { scroll: false }); }} />;
+    return (
+      <DocumentDetail
+        id={selectedId}
+        onBack={() => {
+          setSelectedId(null);
+          router.replace('?', { scroll: false });
+        }}
+      />
+    );
   }
 
   // G4: ErrorState with retry
@@ -157,7 +212,9 @@ export default function M1ListPage() {
           aria-label={t('filterStatus')}
         >
           {STATUSES.map((s) => (
-            <option key={s || 'all'} value={s}>{s ? tStatus(s) : t('filterAll')}</option>
+            <option key={s || 'all'} value={s}>
+              {s ? tStatus(s) : t('filterAll')}
+            </option>
           ))}
         </select>
       </div>
@@ -169,7 +226,10 @@ export default function M1ListPage() {
           columns={columns}
           data={docs}
           rowKey={(d) => d.id}
-          onRowClick={(d) => { setSelectedId(d.id); router.replace(`?doc=${d.id}`, { scroll: false }); }}
+          onRowClick={(d) => {
+            setSelectedId(d.id);
+            router.replace(`?doc=${d.id}`, { scroll: false });
+          }}
           emptyMessage={t('emptyList')}
         />
       )}

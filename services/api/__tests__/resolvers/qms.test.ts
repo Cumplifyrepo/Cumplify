@@ -28,7 +28,12 @@ vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
 });
 
 vi.mock('@aws-lambda-powertools/logger', () => ({
-  Logger: class { info = vi.fn(); warn = vi.fn(); error = vi.fn(); appendKeys = vi.fn(); },
+  Logger: class {
+    info = vi.fn();
+    warn = vi.fn();
+    error = vi.fn();
+    appendKeys = vi.fn();
+  },
 }));
 
 import { handler } from '../../src/resolvers/qms.js';
@@ -39,7 +44,9 @@ function makeEvent(fieldName: string, args: Record<string, unknown> = {}) {
   return {
     info: { fieldName },
     arguments: args,
-    identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'QualityManager' } },
+    identity: {
+      resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'QualityManager' },
+    },
   };
 }
 
@@ -103,7 +110,17 @@ describe('saveOrgProfile', () => {
     // Call 3: UPDATE current_version
     mockExecute.mockResolvedValueOnce(EMPTY_RESULT);
 
-    const payload = JSON.stringify({ legalName: 'Acme Corp', sites: [{ name: 'Main Plant', address: '123 St' }], employeeCount: 200, industry: 'Manufacturing', productsServices: 'Precision widgets', coreProcesses: ['machining', 'assembly', 'testing'], designResponsibility: true, standardsInScope: ['ISO9001', 'ISO14001'], managementRep: 'Jane Doe' });
+    const payload = JSON.stringify({
+      legalName: 'Acme Corp',
+      sites: [{ name: 'Main Plant', address: '123 St' }],
+      employeeCount: 200,
+      industry: 'Manufacturing',
+      productsServices: 'Precision widgets',
+      coreProcesses: ['machining', 'assembly', 'testing'],
+      designResponsibility: true,
+      standardsInScope: ['ISO9001', 'ISO14001'],
+      managementRep: 'Jane Doe',
+    });
     await handler(makeEvent('saveOrgProfile', { input: { payload } }));
 
     // UPSERT profile
@@ -128,30 +145,61 @@ describe('saveOrgProfile', () => {
     // All in one txn — commit called
     expect(mockCommit).toHaveBeenCalled();
     // Audit event published
-    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
-      detailType: 'Context.Updated',
-    }));
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detailType: 'Context.Updated',
+      }),
+    );
   });
 
   it('rejects invalid payload: missing legalName (zod ORG-1 schema)', async () => {
-    const payload = JSON.stringify({ standardsInScope: ['ISO9001'], sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Mfg', productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: true, managementRep: 'Jane' });
-    await expect(
-      handler(makeEvent('saveOrgProfile', { input: { payload } })),
-    ).rejects.toThrow('INVALID_PAYLOAD');
+    const payload = JSON.stringify({
+      standardsInScope: ['ISO9001'],
+      sites: [{ name: 'HQ' }],
+      employeeCount: 50,
+      industry: 'Mfg',
+      productsServices: 'Widgets',
+      coreProcesses: ['assembly'],
+      designResponsibility: true,
+      managementRep: 'Jane',
+    });
+    await expect(handler(makeEvent('saveOrgProfile', { input: { payload } }))).rejects.toThrow(
+      'INVALID_PAYLOAD',
+    );
   });
 
   it('rejects invalid payload: empty standardsInScope (zod)', async () => {
-    const payload = JSON.stringify({ legalName: 'Acme', standardsInScope: [], sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Mfg', productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: true, managementRep: 'Jane' });
-    await expect(
-      handler(makeEvent('saveOrgProfile', { input: { payload } })),
-    ).rejects.toThrow('INVALID_PAYLOAD');
+    const payload = JSON.stringify({
+      legalName: 'Acme',
+      standardsInScope: [],
+      sites: [{ name: 'HQ' }],
+      employeeCount: 50,
+      industry: 'Mfg',
+      productsServices: 'Widgets',
+      coreProcesses: ['assembly'],
+      designResponsibility: true,
+      managementRep: 'Jane',
+    });
+    await expect(handler(makeEvent('saveOrgProfile', { input: { payload } }))).rejects.toThrow(
+      'INVALID_PAYLOAD',
+    );
   });
 
   it('rejects invalid payload: invalid standard value (zod enum)', async () => {
-    const payload = JSON.stringify({ legalName: 'Acme', standardsInScope: ['ISO99999'], sites: [{ name: 'HQ' }], employeeCount: 50, industry: 'Mfg', productsServices: 'Widgets', coreProcesses: ['assembly'], designResponsibility: true, managementRep: 'Jane' });
-    await expect(
-      handler(makeEvent('saveOrgProfile', { input: { payload } })),
-    ).rejects.toThrow('INVALID_PAYLOAD');
+    const payload = JSON.stringify({
+      legalName: 'Acme',
+      standardsInScope: ['ISO99999'],
+      sites: [{ name: 'HQ' }],
+      employeeCount: 50,
+      industry: 'Mfg',
+      productsServices: 'Widgets',
+      coreProcesses: ['assembly'],
+      designResponsibility: true,
+      managementRep: 'Jane',
+    });
+    await expect(handler(makeEvent('saveOrgProfile', { input: { payload } }))).rejects.toThrow(
+      'INVALID_PAYLOAD',
+    );
   });
 });
 
@@ -160,9 +208,11 @@ describe('saveOrgProfile', () => {
 describe('setClauseApplicability', () => {
   it('EXCLUSION_REQUIRES_JUSTIFICATION when applicable=false and no justification', async () => {
     await expect(
-      handler(makeEvent('setClauseApplicability', {
-        input: { clauseRegistryId: 'c-1', applicable: false, justification: '' },
-      })),
+      handler(
+        makeEvent('setClauseApplicability', {
+          input: { clauseRegistryId: 'c-1', applicable: false, justification: '' },
+        }),
+      ),
     ).rejects.toThrow('EXCLUSION_REQUIRES_JUSTIFICATION');
 
     // No DB call made
@@ -171,13 +221,31 @@ describe('setClauseApplicability', () => {
 
   it('upserts with ON CONFLICT (tenant_id, clause_registry_id) and ::uuid cast', async () => {
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'ca-1' }, { stringValue: 'c-1' }, { booleanValue: false }, { stringValue: 'Not relevant' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'clause_registry_id' }, { name: 'applicable' }, { name: 'justification' }],
+      records: [
+        [
+          { stringValue: 'ca-1' },
+          { stringValue: 'c-1' },
+          { booleanValue: false },
+          { stringValue: 'Not relevant' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'clause_registry_id' },
+        { name: 'applicable' },
+        { name: 'justification' },
+      ],
     });
 
-    await handler(makeEvent('setClauseApplicability', {
-      input: { clauseRegistryId: 'c-1', applicable: false, justification: 'Not relevant to our scope' },
-    }));
+    await handler(
+      makeEvent('setClauseApplicability', {
+        input: {
+          clauseRegistryId: 'c-1',
+          applicable: false,
+          justification: 'Not relevant to our scope',
+        },
+      }),
+    );
 
     const [sql, params] = mockExecute.mock.calls[0];
     expect(sql).toContain('INSERT INTO qms.clause_applicability');
@@ -185,23 +253,37 @@ describe('setClauseApplicability', () => {
     expect(sql).toContain('ON CONFLICT (tenant_id, clause_registry_id)');
     expect(sql).toContain('RETURNING id, clause_registry_id, applicable, justification');
     expect(params).toContainEqual({ name: 'applicable', value: { booleanValue: false } });
-    expect(params).toContainEqual({ name: 'justification', value: { stringValue: 'Not relevant to our scope' } });
+    expect(params).toContainEqual({
+      name: 'justification',
+      value: { stringValue: 'Not relevant to our scope' },
+    });
 
     // Audit event
-    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
-      detailType: 'Scope.Changed',
-    }));
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detailType: 'Scope.Changed',
+      }),
+    );
   });
 
   it('allows applicable=true without justification', async () => {
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'ca-1' }, { stringValue: 'c-1' }, { booleanValue: true }, { isNull: true }]],
-      columnMetadata: [{ name: 'id' }, { name: 'clause_registry_id' }, { name: 'applicable' }, { name: 'justification' }],
+      records: [
+        [{ stringValue: 'ca-1' }, { stringValue: 'c-1' }, { booleanValue: true }, { isNull: true }],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'clause_registry_id' },
+        { name: 'applicable' },
+        { name: 'justification' },
+      ],
     });
 
-    await handler(makeEvent('setClauseApplicability', {
-      input: { clauseRegistryId: 'c-1', applicable: true },
-    }));
+    await handler(
+      makeEvent('setClauseApplicability', {
+        input: { clauseRegistryId: 'c-1', applicable: true },
+      }),
+    );
 
     const [, params] = mockExecute.mock.calls[0];
     expect(params).toContainEqual({ name: 'applicable', value: { booleanValue: true } });
@@ -252,8 +334,25 @@ describe('SCHEMA-5: tenantId from resolverContext only', () => {
 
     await handler({
       info: { fieldName: 'saveOrgProfile' },
-      arguments: { input: { payload: JSON.stringify({ legalName: 'X', sites: [{ name: 'A' }], employeeCount: 10, industry: 'Tech', productsServices: 'SW', coreProcesses: ['dev'], designResponsibility: false, standardsInScope: ['ISO9001'], managementRep: 'Bob' }), tenantId: 'evil' } },
-      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'QualityManager' } },
+      arguments: {
+        input: {
+          payload: JSON.stringify({
+            legalName: 'X',
+            sites: [{ name: 'A' }],
+            employeeCount: 10,
+            industry: 'Tech',
+            productsServices: 'SW',
+            coreProcesses: ['dev'],
+            designResponsibility: false,
+            standardsInScope: ['ISO9001'],
+            managementRep: 'Bob',
+          }),
+          tenantId: 'evil',
+        },
+      },
+      identity: {
+        resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'QualityManager' },
+      },
     });
 
     const [, params] = mockExecute.mock.calls[0];
@@ -267,12 +366,44 @@ describe('SCHEMA-5: tenantId from resolverContext only', () => {
 describe('markSectionReviewed', () => {
   it('stamps reviewed_by/reviewed_at with ::uuid cast on sectionId (run status = complete)', async () => {
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'complete' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
+      records: [
+        [
+          { stringValue: 'sec-1' },
+          { stringValue: 'run-1' },
+          { isNull: true },
+          { stringValue: 'complete' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'run_id' },
+        { name: 'reviewed_at' },
+        { name: 'run_status' },
+      ],
     });
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'sec-1' }, { stringValue: 'hk-1' }, { stringValue: 'prose' }, { stringValue: '[]' }, { isNull: true }, { stringValue: 'user-test' }, { stringValue: '2026-07-15T00:00:00Z' }, { isNull: true }]],
-      columnMetadata: [{ name: 'id' }, { name: 'harmonization_key' }, { name: 'kind' }, { name: 'clause_refs' }, { name: 'content_sha256' }, { name: 'reviewed_by' }, { name: 'reviewed_at' }, { name: 'error' }],
+      records: [
+        [
+          { stringValue: 'sec-1' },
+          { stringValue: 'hk-1' },
+          { stringValue: 'prose' },
+          { stringValue: '[]' },
+          { isNull: true },
+          { stringValue: 'user-test' },
+          { stringValue: '2026-07-15T00:00:00Z' },
+          { isNull: true },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'harmonization_key' },
+        { name: 'kind' },
+        { name: 'clause_refs' },
+        { name: 'content_sha256' },
+        { name: 'reviewed_by' },
+        { name: 'reviewed_at' },
+        { name: 'error' },
+      ],
     });
 
     await handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }));
@@ -291,28 +422,58 @@ describe('markSectionReviewed', () => {
 
   it('RUN_NOT_REVIEWABLE when parent run is running (content not final)', async () => {
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'running' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
+      records: [
+        [
+          { stringValue: 'sec-1' },
+          { stringValue: 'run-1' },
+          { isNull: true },
+          { stringValue: 'running' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'run_id' },
+        { name: 'reviewed_at' },
+        { name: 'run_status' },
+      ],
     });
 
-    await expect(handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }))).rejects.toThrow('RUN_NOT_REVIEWABLE');
+    await expect(
+      handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } })),
+    ).rejects.toThrow('RUN_NOT_REVIEWABLE');
     expect(mockRollback).toHaveBeenCalled();
   });
 
   it('RUN_NOT_REVIEWABLE when parent run is failed', async () => {
     mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'sec-1' }, { stringValue: 'run-1' }, { isNull: true }, { stringValue: 'failed' }]],
-      columnMetadata: [{ name: 'id' }, { name: 'run_id' }, { name: 'reviewed_at' }, { name: 'run_status' }],
+      records: [
+        [
+          { stringValue: 'sec-1' },
+          { stringValue: 'run-1' },
+          { isNull: true },
+          { stringValue: 'failed' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'run_id' },
+        { name: 'reviewed_at' },
+        { name: 'run_status' },
+      ],
     });
 
-    await expect(handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } }))).rejects.toThrow('RUN_NOT_REVIEWABLE');
+    await expect(
+      handler(makeEvent('markSectionReviewed', { input: { sectionId: 'sec-1' } })),
+    ).rejects.toThrow('RUN_NOT_REVIEWABLE');
   });
 
   it('UNAUTHORIZED when role lacks M1 approval permission', async () => {
     const event = {
       info: { fieldName: 'markSectionReviewed' },
       arguments: { input: { sectionId: 'sec-1' } },
-      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' } },
+      identity: {
+        resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' },
+      },
     };
 
     await expect(handler(event)).rejects.toThrow('UNAUTHORIZED');
@@ -328,7 +489,9 @@ describe('canApprove role gate on QMS mutations', () => {
     const event = {
       info: { fieldName: 'saveOrgProfile' },
       arguments: { input: { payload: '{}' } },
-      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' } },
+      identity: {
+        resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' },
+      },
     };
 
     await expect(handler(event)).rejects.toThrow('UNAUTHORIZED');
@@ -339,7 +502,9 @@ describe('canApprove role gate on QMS mutations', () => {
     const event = {
       info: { fieldName: 'setClauseApplicability' },
       arguments: { input: { clauseRegistryId: 'c-1', applicable: true } },
-      identity: { resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' } },
+      identity: {
+        resolverContext: { tenantId: 'tenant-test', sub: 'user-test', role: 'Employee' },
+      },
     };
 
     await expect(handler(event)).rejects.toThrow('UNAUTHORIZED');
@@ -353,7 +518,17 @@ describe('canApprove role gate on QMS mutations', () => {
     });
     mockExecute.mockResolvedValue({ records: [], columnMetadata: [] });
 
-    const payload = JSON.stringify({ legalName: 'X', sites: [{ name: 'A' }], employeeCount: 10, industry: 'Tech', productsServices: 'SW', coreProcesses: ['dev'], designResponsibility: false, standardsInScope: ['ISO9001'], managementRep: 'Bob' });
+    const payload = JSON.stringify({
+      legalName: 'X',
+      sites: [{ name: 'A' }],
+      employeeCount: 10,
+      industry: 'Tech',
+      productsServices: 'SW',
+      coreProcesses: ['dev'],
+      designResponsibility: false,
+      standardsInScope: ['ISO9001'],
+      managementRep: 'Bob',
+    });
     await handler(makeEvent('saveOrgProfile', { input: { payload } }));
 
     // SQL executed (gate passed)

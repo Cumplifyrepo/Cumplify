@@ -19,10 +19,7 @@ import { resolve } from 'node:path';
 import { marshalRow } from '../../src/resolvers/shared.js';
 
 const sdl = readFileSync(resolve(__dirname, '../../schema/schema.graphql'), 'utf8');
-const migration = readFileSync(
-  resolve(__dirname, '../../migrations/011_qms_engine.sql'),
-  'utf8',
-);
+const migration = readFileSync(resolve(__dirname, '../../migrations/011_qms_engine.sql'), 'utf8');
 
 /** Extract the value set of a GraphQL enum block from the SDL. */
 function sdlEnumValues(name: string): Set<string> {
@@ -33,13 +30,11 @@ function sdlEnumValues(name: string): Set<string> {
 
 /** Extract CHECK (status IN (...)) values for a table from migration 011. */
 function checkValues(table: string): Set<string> {
-  const tableDdl = migration.match(
-    new RegExp(`CREATE TABLE ${table} \\(([\\s\\S]*?)\\n\\);`),
-  );
+  const tableDdl = migration.match(new RegExp(`CREATE TABLE ${table} \\(([\\s\\S]*?)\\n\\);`));
   expect(tableDdl, `${table} DDL must exist in 011`).toBeTruthy();
   const check = tableDdl![1].match(/status TEXT[^\n]*CHECK \(status IN \(([^)]*)\)\)/);
   expect(check, `${table}.status CHECK must exist`).toBeTruthy();
-  return new Set(check![1].split(',').map(v => v.trim().replace(/'/g, '')));
+  return new Set(check![1].split(',').map((v) => v.trim().replace(/'/g, '')));
 }
 
 function marshalSingle(column: string, dbValue: string): unknown {
@@ -51,7 +46,7 @@ describe('qms enum reverse-mapping — DB CHECK values ↔ SDL enums', () => {
   it('every generation_runs.status CHECK value maps into GenerationRunStatus', () => {
     const sdlValues = sdlEnumValues('GenerationRunStatus');
     const dbValues = checkValues('qms.generation_runs');
-    const mapped = new Set([...dbValues].map(v => marshalSingle('status', v)));
+    const mapped = new Set([...dbValues].map((v) => marshalSingle('status', v)));
     for (const v of mapped) {
       expect(sdlValues, `mapped value ${v} must be a GenerationRunStatus`).toContain(v);
     }
@@ -63,7 +58,7 @@ describe('qms enum reverse-mapping — DB CHECK values ↔ SDL enums', () => {
     const sdlValues = sdlEnumValues('SectionKind');
     const dbValues = checkValues('qms.generation_sections');
     for (const col of ['kind', 'status']) {
-      const mapped = new Set([...dbValues].map(v => marshalSingle(col, v)));
+      const mapped = new Set([...dbValues].map((v) => marshalSingle(col, v)));
       for (const v of mapped) {
         expect(sdlValues, `mapped ${col}=${v} must be a SectionKind`).toContain(v);
       }

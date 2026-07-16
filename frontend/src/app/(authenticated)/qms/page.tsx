@@ -17,19 +17,64 @@ import styles from './page.module.css';
  */
 
 const VALID_STANDARDS = ['ISO9001', 'ISO14001', 'ISO45001'] as const;
-const INDUSTRY_TAXONOMY = ['Manufacturing', 'Construction', 'Healthcare', 'Technology', 'Food & Beverage', 'Chemicals', 'Automotive', 'Aerospace', 'Pharmaceuticals', 'Energy', 'Mining', 'Logistics', 'Services', 'Other'] as const;
+const INDUSTRY_TAXONOMY = [
+  'Manufacturing',
+  'Construction',
+  'Healthcare',
+  'Technology',
+  'Food & Beverage',
+  'Chemicals',
+  'Automotive',
+  'Aerospace',
+  'Pharmaceuticals',
+  'Energy',
+  'Mining',
+  'Logistics',
+  'Services',
+  'Other',
+] as const;
 
-interface Site { name: string; address?: string; city?: string; state?: string; country?: string; headcount?: number }
+interface Site {
+  name: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  headcount?: number;
+}
 interface OrgProfile {
-  legalName: string; sites: Site[]; employeeCount: number; industry: string;
-  productsServices: string; coreProcesses: string[]; designResponsibility: boolean;
-  standardsInScope: string[]; managementRep: string; targetCertDate?: string;
-  yearFounded?: number; outsourcedProcesses?: string[]; supplyChainShape?: string;
-  existingCertifications?: string[]; manualExists?: boolean;
+  legalName: string;
+  sites: Site[];
+  employeeCount: number;
+  industry: string;
+  productsServices: string;
+  coreProcesses: string[];
+  designResponsibility: boolean;
+  standardsInScope: string[];
+  managementRep: string;
+  targetCertDate?: string;
+  yearFounded?: number;
+  outsourcedProcesses?: string[];
+  supplyChainShape?: string;
+  existingCertifications?: string[];
+  manualExists?: boolean;
 }
 
-interface ClauseEntry { id: string; standard: string; clauseNo: string; clauseTitle: string; intentParaphrase: string; requiredSources: string; sortOrder: number }
-interface Applicability { id: string; clauseRegistryId: string; applicable: boolean; justification: string | null }
+interface ClauseEntry {
+  id: string;
+  standard: string;
+  clauseNo: string;
+  clauseTitle: string;
+  intentParaphrase: string;
+  requiredSources: string;
+  sortOrder: number;
+}
+interface Applicability {
+  id: string;
+  clauseRegistryId: string;
+  applicable: boolean;
+  justification: string | null;
+}
 
 const GET_PROFILE = `query GetOrgProfile { getOrgProfile { id currentVersion payload updatedAt } }`;
 const SAVE_PROFILE = `mutation SaveOrgProfile($input: SaveOrgProfileInput!) { saveOrgProfile(input: $input) { id currentVersion payload updatedAt } }`;
@@ -38,9 +83,16 @@ const LIST_APPLICABILITY = `query ListClauseApplicability { listClauseApplicabil
 const SET_APPLICABILITY = `mutation SetClauseApplicability($input: SetClauseApplicabilityInput!) { setClauseApplicability(input: $input) { id clauseRegistryId applicable justification } }`;
 
 const DEFAULT_PROFILE: OrgProfile = {
-  legalName: '', sites: [{ name: '' }], employeeCount: 0, industry: '',
-  productsServices: '', coreProcesses: [''], designResponsibility: false,
-  standardsInScope: [], managementRep: '', targetCertDate: '',
+  legalName: '',
+  sites: [{ name: '' }],
+  employeeCount: 0,
+  industry: '',
+  productsServices: '',
+  coreProcesses: [''],
+  designResponsibility: false,
+  standardsInScope: [],
+  managementRep: '',
+  targetCertDate: '',
 };
 
 export default function QmsPage() {
@@ -51,7 +103,9 @@ export default function QmsPage() {
   const tViewer = useTranslations('qms.docViewer');
   const { query, mutate } = useGraphQL();
 
-  const [tab, setTab] = useState<'wizard' | 'registry' | 'generation' | 'viewer' | 'diff'>('wizard');
+  const [tab, setTab] = useState<'wizard' | 'registry' | 'generation' | 'viewer' | 'diff'>(
+    'wizard',
+  );
   const [profile, setProfile] = useState<OrgProfile>(DEFAULT_PROFILE);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -74,15 +128,26 @@ export default function QmsPage() {
       setError(false);
       const data = await query<{ getOrgProfile: { payload: string } | null }>(GET_PROFILE);
       if (data.getOrgProfile?.payload) setProfile(JSON.parse(data.getOrgProfile.payload));
-    } catch { setError(true); } finally { setLoading(false); }
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [query]);
 
-  useEffect(() => { fetchProfile(); }, [fetchProfile]);
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   async function handleSaveProfile() {
     setSaving(true);
-    try { await mutate(SAVE_PROFILE, { input: { payload: JSON.stringify(profile) } }); }
-    catch { setError(true); } finally { setSaving(false); }
+    try {
+      await mutate(SAVE_PROFILE, { input: { payload: JSON.stringify(profile) } });
+    } catch {
+      setError(true);
+    } finally {
+      setSaving(false);
+    }
   }
 
   // ─── Registry: Load clauses + applicability ────────────────────────────────
@@ -97,24 +162,44 @@ export default function QmsPage() {
       const appMap = new Map<string, Applicability>();
       for (const a of appData.listClauseApplicability) appMap.set(a.clauseRegistryId, a);
       setApplicability(appMap);
-    } catch { setError(true); } finally { setRegistryLoading(false); }
+    } catch {
+      setError(true);
+    } finally {
+      setRegistryLoading(false);
+    }
   }, [query]);
 
-  useEffect(() => { if (tab === 'registry' || tab === 'generation') fetchRegistry(); }, [tab, fetchRegistry]);
+  useEffect(() => {
+    if (tab === 'registry' || tab === 'generation') fetchRegistry();
+  }, [tab, fetchRegistry]);
 
-  async function handleSetApplicability(clauseId: string, applicable: boolean, justification?: string) {
+  async function handleSetApplicability(
+    clauseId: string,
+    applicable: boolean,
+    justification?: string,
+  ) {
     try {
       const result = await mutate<{ setClauseApplicability: Applicability }>(SET_APPLICABILITY, {
-        input: { clauseRegistryId: clauseId, applicable, justification: justification || undefined },
+        input: {
+          clauseRegistryId: clauseId,
+          applicable,
+          justification: justification || undefined,
+        },
       });
-      setApplicability(prev => new Map(prev).set(clauseId, result.setClauseApplicability));
-    } catch { setError(true); }
+      setApplicability((prev) => new Map(prev).set(clauseId, result.setClauseApplicability));
+    } catch {
+      setError(true);
+    }
   }
 
   // ─── ORG-3: Compute named gaps from loaded profile ─────────────────────────
   function computeNamedGaps(clause: ClauseEntry): string[] {
     let sources: string[] = [];
-    try { sources = JSON.parse(clause.requiredSources) as string[]; } catch { return []; }
+    try {
+      sources = JSON.parse(clause.requiredSources) as string[];
+    } catch {
+      return [];
+    }
 
     const gaps: string[] = [];
     for (const src of sources) {
@@ -122,7 +207,12 @@ export default function QmsPage() {
         // Check if the profile field is filled
         const fieldPath = src.replace('org_profile.', '');
         const value = getNestedValue(profile, fieldPath);
-        if (value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0)) {
+        if (
+          value === undefined ||
+          value === null ||
+          value === '' ||
+          (Array.isArray(value) && value.length === 0)
+        ) {
           gaps.push(src);
         }
       } else if (src.startsWith('register.')) {
@@ -137,12 +227,21 @@ export default function QmsPage() {
   const filteredClauses = useMemo(() => {
     if (showAllStandards) return clauses;
     if (profile.standardsInScope.length === 0) return clauses;
-    return clauses.filter(c => profile.standardsInScope.includes(c.standard));
+    return clauses.filter((c) => profile.standardsInScope.includes(c.standard));
   }, [clauses, profile.standardsInScope, showAllStandards]);
 
   // Registry map by id for GenerationView GAP CTA resolution
   const registryMapById = useMemo(() => {
-    const map = new Map<string, { id: string; standard: string; clauseNo: string; clauseTitle: string; requiredSources: string }>();
+    const map = new Map<
+      string,
+      {
+        id: string;
+        standard: string;
+        clauseNo: string;
+        clauseTitle: string;
+        requiredSources: string;
+      }
+    >();
     for (const c of clauses) map.set(c.id, c);
     return map;
   }, [clauses]);
@@ -180,7 +279,13 @@ export default function QmsPage() {
     return (
       <>
         <PageHeader title={tViewer('diffTitle')} />
-        <DiffView v1={diffV1} v2={diffV2} onBack={() => { setTab('viewer'); }} />
+        <DiffView
+          v1={diffV1}
+          v2={diffV2}
+          onBack={() => {
+            setTab('viewer');
+          }}
+        />
       </>
     );
   }
@@ -189,123 +294,371 @@ export default function QmsPage() {
     <>
       <PageHeader title={t('title')} />
       <div className={styles.tabs}>
-        <button type="button" className={`${styles.tab} ${tab === 'wizard' ? styles.tabActive : ''}`} onClick={() => setTab('wizard')}>{t('tabWizard')}</button>
-        <button type="button" className={`${styles.tab} ${tab === 'registry' ? styles.tabActive : ''}`} onClick={() => setTab('registry')}>{t('tabRegistry')}</button>
-        <button type="button" className={`${styles.tab} ${tab === 'generation' ? styles.tabActive : ''}`} onClick={() => setTab('generation')} data-testid="tab-generation">{tGen('title')}</button>
+        <button
+          type="button"
+          className={`${styles.tab} ${tab === 'wizard' ? styles.tabActive : ''}`}
+          onClick={() => setTab('wizard')}
+        >
+          {t('tabWizard')}
+        </button>
+        <button
+          type="button"
+          className={`${styles.tab} ${tab === 'registry' ? styles.tabActive : ''}`}
+          onClick={() => setTab('registry')}
+        >
+          {t('tabRegistry')}
+        </button>
+        <button
+          type="button"
+          className={`${styles.tab} ${tab === 'generation' ? styles.tabActive : ''}`}
+          onClick={() => setTab('generation')}
+          data-testid="tab-generation"
+        >
+          {tGen('title')}
+        </button>
       </div>
 
-      {tab === 'wizard' && (loading ? <p className={styles.loading}>{tWizard('loading')}</p> : (
-        <div className={styles.wizardSteps}>
-          {/* Step indicators */}
-          <div className={styles.tabs}>
-            {[tWizard('stepBasic'), tWizard('stepSites'), tWizard('stepScope')].map((label, i) => (
-              <button key={i} type="button" className={`${styles.tab} ${step === i ? styles.tabActive : ''}`} onClick={() => setStep(i)}>{label}</button>
-            ))}
-          </div>
+      {tab === 'wizard' &&
+        (loading ? (
+          <p className={styles.loading}>{tWizard('loading')}</p>
+        ) : (
+          <div className={styles.wizardSteps}>
+            {/* Step indicators */}
+            <div className={styles.tabs}>
+              {[tWizard('stepBasic'), tWizard('stepSites'), tWizard('stepScope')].map(
+                (label, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`${styles.tab} ${step === i ? styles.tabActive : ''}`}
+                    onClick={() => setStep(i)}
+                  >
+                    {label}
+                  </button>
+                ),
+              )}
+            </div>
 
-          {step === 0 && (
-            <Panel title={tWizard('stepBasic')}>
-              <div className={styles.fieldGroup}>
-                <WizardField label={tWizard('legalName')} required value={profile.legalName} onChange={v => setProfile(p => ({ ...p, legalName: v }))} />
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel}>{tWizard('industry')}<span className={styles.fieldRequired}>*</span></label>
-                  <select className={styles.fieldInput}
-                    value={INDUSTRY_TAXONOMY.includes(profile.industry as typeof INDUSTRY_TAXONOMY[number]) ? profile.industry : (profile.industry ? 'Other' : '')}
-                    onChange={e => setProfile(p => ({ ...p, industry: e.target.value === 'Other' ? '' : e.target.value }))}>
-                    <option value="">—</option>
-                    {INDUSTRY_TAXONOMY.map(i => <option key={i} value={i}>{i}</option>)}
-                  </select>
-                  {(profile.industry === '' || !INDUSTRY_TAXONOMY.includes(profile.industry as typeof INDUSTRY_TAXONOMY[number])) && (
-                    <input type="text" className={styles.fieldInput} placeholder={tWizard('industryOther')}
-                      value={INDUSTRY_TAXONOMY.includes(profile.industry as typeof INDUSTRY_TAXONOMY[number]) ? '' : profile.industry}
-                      onChange={e => setProfile(p => ({ ...p, industry: e.target.value }))}
-                      style={{ marginTop: 'var(--space-xs)' }} />
-                  )}
-                </div>
-                <WizardField label={tWizard('productsServices')} required value={profile.productsServices} onChange={v => setProfile(p => ({ ...p, productsServices: v }))} />
-                <WizardField label={tWizard('employeeCount')} required value={String(profile.employeeCount || '')} onChange={v => setProfile(p => ({ ...p, employeeCount: Number(v) || 0 }))} type="number" />
-                <WizardField label={tWizard('managementRep')} required value={profile.managementRep} onChange={v => setProfile(p => ({ ...p, managementRep: v }))} />
-                <WizardField label={tWizard('yearFounded')} value={String(profile.yearFounded ?? '')} onChange={v => setProfile(p => ({ ...p, yearFounded: v ? Number(v) : undefined }))} type="number" />
-                <WizardField label={tWizard('supplyChainShape')} value={profile.supplyChainShape ?? ''} onChange={v => setProfile(p => ({ ...p, supplyChainShape: v || undefined }))} />
-                <WizardField label={tWizard('existingCertifications')} value={(profile.existingCertifications ?? []).join(', ')} onChange={v => setProfile(p => ({ ...p, existingCertifications: v ? v.split(',').map(s => s.trim()).filter(Boolean) : undefined }))} />
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel}>{tWizard('manualExists')}</label>
-                  <input type="checkbox" checked={profile.manualExists ?? false} onChange={e => setProfile(p => ({ ...p, manualExists: e.target.checked }))} />
-                </div>
-              </div>
-            </Panel>
-          )}
-
-          {step === 1 && (
-            <Panel title={tWizard('stepSites')}>
-              <div className={styles.fieldGroup}>
-                {profile.sites.map((site, idx) => (
-                  <div key={idx} className={styles.clauseCard}>
-                    <WizardField label={`${tWizard('siteName')} ${idx + 1}`} required value={site.name} onChange={v => updateSite(idx, 'name', v)} />
-                    <WizardField label={tWizard('siteAddress')} value={site.address ?? ''} onChange={v => updateSite(idx, 'address', v)} />
-                    <WizardField label={tWizard('siteCity')} value={site.city ?? ''} onChange={v => updateSite(idx, 'city', v)} />
-                    <WizardField label={tWizard('siteState')} value={site.state ?? ''} onChange={v => updateSite(idx, 'state', v)} />
-                    <WizardField label={tWizard('siteCountry')} value={site.country ?? ''} onChange={v => updateSite(idx, 'country', v)} />
-                    <WizardField label={tWizard('siteHeadcount')} value={String(site.headcount ?? '')} onChange={v => updateSite(idx, 'headcount', v)} type="number" />
-                    {profile.sites.length > 1 && (
-                      <SecondaryButton onClick={() => setProfile(p => ({ ...p, sites: p.sites.filter((_, i) => i !== idx) }))}>{tWizard('removeSite')}</SecondaryButton>
+            {step === 0 && (
+              <Panel title={tWizard('stepBasic')}>
+                <div className={styles.fieldGroup}>
+                  <WizardField
+                    label={tWizard('legalName')}
+                    required
+                    value={profile.legalName}
+                    onChange={(v) => setProfile((p) => ({ ...p, legalName: v }))}
+                  />
+                  <div className={styles.field}>
+                    <label className={styles.fieldLabel}>
+                      {tWizard('industry')}
+                      <span className={styles.fieldRequired}>*</span>
+                    </label>
+                    <select
+                      className={styles.fieldInput}
+                      value={
+                        INDUSTRY_TAXONOMY.includes(
+                          profile.industry as (typeof INDUSTRY_TAXONOMY)[number],
+                        )
+                          ? profile.industry
+                          : profile.industry
+                            ? 'Other'
+                            : ''
+                      }
+                      onChange={(e) =>
+                        setProfile((p) => ({
+                          ...p,
+                          industry: e.target.value === 'Other' ? '' : e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="">—</option>
+                      {INDUSTRY_TAXONOMY.map((i) => (
+                        <option key={i} value={i}>
+                          {i}
+                        </option>
+                      ))}
+                    </select>
+                    {(profile.industry === '' ||
+                      !INDUSTRY_TAXONOMY.includes(
+                        profile.industry as (typeof INDUSTRY_TAXONOMY)[number],
+                      )) && (
+                      <input
+                        type="text"
+                        className={styles.fieldInput}
+                        placeholder={tWizard('industryOther')}
+                        value={
+                          INDUSTRY_TAXONOMY.includes(
+                            profile.industry as (typeof INDUSTRY_TAXONOMY)[number],
+                          )
+                            ? ''
+                            : profile.industry
+                        }
+                        onChange={(e) => setProfile((p) => ({ ...p, industry: e.target.value }))}
+                        style={{ marginTop: 'var(--space-xs)' }}
+                      />
                     )}
                   </div>
-                ))}
-                <SecondaryButton onClick={() => setProfile(p => ({ ...p, sites: [...p.sites, { name: '' }] }))}>{tWizard('addSite')}</SecondaryButton>
-              </div>
-            </Panel>
-          )}
+                  <WizardField
+                    label={tWizard('productsServices')}
+                    required
+                    value={profile.productsServices}
+                    onChange={(v) => setProfile((p) => ({ ...p, productsServices: v }))}
+                  />
+                  <WizardField
+                    label={tWizard('employeeCount')}
+                    required
+                    value={String(profile.employeeCount || '')}
+                    onChange={(v) => setProfile((p) => ({ ...p, employeeCount: Number(v) || 0 }))}
+                    type="number"
+                  />
+                  <WizardField
+                    label={tWizard('managementRep')}
+                    required
+                    value={profile.managementRep}
+                    onChange={(v) => setProfile((p) => ({ ...p, managementRep: v }))}
+                  />
+                  <WizardField
+                    label={tWizard('yearFounded')}
+                    value={String(profile.yearFounded ?? '')}
+                    onChange={(v) =>
+                      setProfile((p) => ({ ...p, yearFounded: v ? Number(v) : undefined }))
+                    }
+                    type="number"
+                  />
+                  <WizardField
+                    label={tWizard('supplyChainShape')}
+                    value={profile.supplyChainShape ?? ''}
+                    onChange={(v) =>
+                      setProfile((p) => ({ ...p, supplyChainShape: v || undefined }))
+                    }
+                  />
+                  <WizardField
+                    label={tWizard('existingCertifications')}
+                    value={(profile.existingCertifications ?? []).join(', ')}
+                    onChange={(v) =>
+                      setProfile((p) => ({
+                        ...p,
+                        existingCertifications: v
+                          ? v
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean)
+                          : undefined,
+                      }))
+                    }
+                  />
+                  <div className={styles.field}>
+                    <label className={styles.fieldLabel}>{tWizard('manualExists')}</label>
+                    <input
+                      type="checkbox"
+                      checked={profile.manualExists ?? false}
+                      onChange={(e) =>
+                        setProfile((p) => ({ ...p, manualExists: e.target.checked }))
+                      }
+                    />
+                  </div>
+                </div>
+              </Panel>
+            )}
 
-          {step === 2 && (
-            <Panel title={tWizard('stepScope')}>
-              <div className={styles.fieldGroup}>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel}>{tWizard('standardsInScope')}<span className={styles.fieldRequired}>*</span></label>
-                  {VALID_STANDARDS.map(s => (
-                    <label key={s} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: 'var(--color-text-body)' }}>
-                      <input type="checkbox" checked={profile.standardsInScope.includes(s)}
-                        onChange={e => setProfile(p => ({ ...p, standardsInScope: e.target.checked ? [...p.standardsInScope, s] : p.standardsInScope.filter(x => x !== s) }))} />
-                      {s.replace('ISO', 'ISO ')}
-                    </label>
+            {step === 1 && (
+              <Panel title={tWizard('stepSites')}>
+                <div className={styles.fieldGroup}>
+                  {profile.sites.map((site, idx) => (
+                    <div key={idx} className={styles.clauseCard}>
+                      <WizardField
+                        label={`${tWizard('siteName')} ${idx + 1}`}
+                        required
+                        value={site.name}
+                        onChange={(v) => updateSite(idx, 'name', v)}
+                      />
+                      <WizardField
+                        label={tWizard('siteAddress')}
+                        value={site.address ?? ''}
+                        onChange={(v) => updateSite(idx, 'address', v)}
+                      />
+                      <WizardField
+                        label={tWizard('siteCity')}
+                        value={site.city ?? ''}
+                        onChange={(v) => updateSite(idx, 'city', v)}
+                      />
+                      <WizardField
+                        label={tWizard('siteState')}
+                        value={site.state ?? ''}
+                        onChange={(v) => updateSite(idx, 'state', v)}
+                      />
+                      <WizardField
+                        label={tWizard('siteCountry')}
+                        value={site.country ?? ''}
+                        onChange={(v) => updateSite(idx, 'country', v)}
+                      />
+                      <WizardField
+                        label={tWizard('siteHeadcount')}
+                        value={String(site.headcount ?? '')}
+                        onChange={(v) => updateSite(idx, 'headcount', v)}
+                        type="number"
+                      />
+                      {profile.sites.length > 1 && (
+                        <SecondaryButton
+                          onClick={() =>
+                            setProfile((p) => ({
+                              ...p,
+                              sites: p.sites.filter((_, i) => i !== idx),
+                            }))
+                          }
+                        >
+                          {tWizard('removeSite')}
+                        </SecondaryButton>
+                      )}
+                    </div>
                   ))}
+                  <SecondaryButton
+                    onClick={() => setProfile((p) => ({ ...p, sites: [...p.sites, { name: '' }] }))}
+                  >
+                    {tWizard('addSite')}
+                  </SecondaryButton>
                 </div>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel}>{tWizard('designResponsibility')}</label>
-                  <input type="checkbox" checked={profile.designResponsibility} onChange={e => setProfile(p => ({ ...p, designResponsibility: e.target.checked }))} />
+              </Panel>
+            )}
+
+            {step === 2 && (
+              <Panel title={tWizard('stepScope')}>
+                <div className={styles.fieldGroup}>
+                  <div className={styles.field}>
+                    <label className={styles.fieldLabel}>
+                      {tWizard('standardsInScope')}
+                      <span className={styles.fieldRequired}>*</span>
+                    </label>
+                    {VALID_STANDARDS.map((s) => (
+                      <label
+                        key={s}
+                        style={{
+                          display: 'flex',
+                          gap: '8px',
+                          fontSize: '13px',
+                          color: 'var(--color-text-body)',
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={profile.standardsInScope.includes(s)}
+                          onChange={(e) =>
+                            setProfile((p) => ({
+                              ...p,
+                              standardsInScope: e.target.checked
+                                ? [...p.standardsInScope, s]
+                                : p.standardsInScope.filter((x) => x !== s),
+                            }))
+                          }
+                        />
+                        {s.replace('ISO', 'ISO ')}
+                      </label>
+                    ))}
+                  </div>
+                  <div className={styles.field}>
+                    <label className={styles.fieldLabel}>{tWizard('designResponsibility')}</label>
+                    <input
+                      type="checkbox"
+                      checked={profile.designResponsibility}
+                      onChange={(e) =>
+                        setProfile((p) => ({ ...p, designResponsibility: e.target.checked }))
+                      }
+                    />
+                  </div>
+                  <WizardField
+                    label={tWizard('coreProcesses')}
+                    required
+                    value={profile.coreProcesses.join(', ')}
+                    onChange={(v) =>
+                      setProfile((p) => ({
+                        ...p,
+                        coreProcesses: v
+                          .split(',')
+                          .map((s) => s.trim())
+                          .filter(Boolean),
+                      }))
+                    }
+                  />
+                  <WizardField
+                    label={tWizard('outsourcedProcesses')}
+                    value={(profile.outsourcedProcesses ?? []).join(', ')}
+                    onChange={(v) =>
+                      setProfile((p) => ({
+                        ...p,
+                        outsourcedProcesses: v
+                          ? v
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean)
+                          : undefined,
+                      }))
+                    }
+                  />
+                  <WizardField
+                    label={tWizard('targetCertDate')}
+                    value={profile.targetCertDate ?? ''}
+                    onChange={(v) => setProfile((p) => ({ ...p, targetCertDate: v || undefined }))}
+                    type="date"
+                  />
                 </div>
-                <WizardField label={tWizard('coreProcesses')} required value={profile.coreProcesses.join(', ')} onChange={v => setProfile(p => ({ ...p, coreProcesses: v.split(',').map(s => s.trim()).filter(Boolean) }))} />
-                <WizardField label={tWizard('outsourcedProcesses')} value={(profile.outsourcedProcesses ?? []).join(', ')} onChange={v => setProfile(p => ({ ...p, outsourcedProcesses: v ? v.split(',').map(s => s.trim()).filter(Boolean) : undefined }))} />
-                <WizardField label={tWizard('targetCertDate')} value={profile.targetCertDate ?? ''} onChange={v => setProfile(p => ({ ...p, targetCertDate: v || undefined }))} type="date" />
-              </div>
-            </Panel>
-          )}
+              </Panel>
+            )}
 
-          <div className={styles.actions}>
-            {step > 0 && <SecondaryButton onClick={() => setStep(s => s - 1)}>{tWizard('prev')}</SecondaryButton>}
-            {step < 2 && <PrimaryButton onClick={() => setStep(s => s + 1)}>{tWizard('next')}</PrimaryButton>}
-            <PrimaryButton onClick={handleSaveProfile} disabled={saving}>{saving ? tWizard('saving') : tWizard('save')}</PrimaryButton>
+            <div className={styles.actions}>
+              {step > 0 && (
+                <SecondaryButton onClick={() => setStep((s) => s - 1)}>
+                  {tWizard('prev')}
+                </SecondaryButton>
+              )}
+              {step < 2 && (
+                <PrimaryButton onClick={() => setStep((s) => s + 1)}>
+                  {tWizard('next')}
+                </PrimaryButton>
+              )}
+              <PrimaryButton onClick={handleSaveProfile} disabled={saving}>
+                {saving ? tWizard('saving') : tWizard('save')}
+              </PrimaryButton>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
 
-      {tab === 'registry' && (registryLoading ? <p className={styles.loading}>{tRegistry('loading')}</p> : (
-        <>
-          <div className={styles.clauseApplicability}>
-            <label style={{ fontSize: '13px', color: 'var(--color-text-secondary)', display: 'flex', gap: '6px', alignItems: 'center' }}>
-              <input type="checkbox" checked={showAllStandards} onChange={e => setShowAllStandards(e.target.checked)} />
-              {tRegistry('showAll')}
-            </label>
-          </div>
-          <div className={styles.clauseList} data-testid="clause-list">
-            {filteredClauses.map(clause => (
-              <ClauseCard key={clause.id} clause={clause} applicability={applicability.get(clause.id)}
-                onSetApplicability={handleSetApplicability} tRegistry={tRegistry}
-                namedGaps={computeNamedGaps(clause)} />
-            ))}
-          </div>
-        </>
-      ))}
+      {tab === 'registry' &&
+        (registryLoading ? (
+          <p className={styles.loading}>{tRegistry('loading')}</p>
+        ) : (
+          <>
+            <div className={styles.clauseApplicability}>
+              <label
+                style={{
+                  fontSize: '13px',
+                  color: 'var(--color-text-secondary)',
+                  display: 'flex',
+                  gap: '6px',
+                  alignItems: 'center',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={showAllStandards}
+                  onChange={(e) => setShowAllStandards(e.target.checked)}
+                />
+                {tRegistry('showAll')}
+              </label>
+            </div>
+            <div className={styles.clauseList} data-testid="clause-list">
+              {filteredClauses.map((clause) => (
+                <ClauseCard
+                  key={clause.id}
+                  clause={clause}
+                  applicability={applicability.get(clause.id)}
+                  onSetApplicability={handleSetApplicability}
+                  tRegistry={tRegistry}
+                  namedGaps={computeNamedGaps(clause)}
+                />
+              ))}
+            </div>
+          </>
+        ))}
 
       {tab === 'generation' && (
         <GenerationView onViewDocument={handleViewDocument} registryMap={registryMapById} />
@@ -314,9 +667,17 @@ export default function QmsPage() {
   );
 
   function updateSite(idx: number, field: string, value: string) {
-    setProfile(p => ({
+    setProfile((p) => ({
       ...p,
-      sites: p.sites.map((s, i) => i === idx ? { ...s, [field]: field === 'headcount' ? (value ? Number(value) : undefined) : (value || undefined) } : s),
+      sites: p.sites.map((s, i) =>
+        i === idx
+          ? {
+              ...s,
+              [field]:
+                field === 'headcount' ? (value ? Number(value) : undefined) : value || undefined,
+            }
+          : s,
+      ),
     }));
   }
 }
@@ -333,23 +694,49 @@ function getNestedValue(obj: unknown, path: string): unknown {
   return current;
 }
 
-function WizardField({ label, required, value, onChange, type = 'text' }: {
-  label: string; required?: boolean; value: string; onChange: (v: string) => void; type?: string;
+function WizardField({
+  label,
+  required,
+  value,
+  onChange,
+  type = 'text',
+}: {
+  label: string;
+  required?: boolean;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
 }) {
   return (
     <div className={styles.field}>
-      <label className={styles.fieldLabel}>{label}{required && <span className={styles.fieldRequired}>*</span>}</label>
-      <input type={type} className={styles.fieldInput} value={value} onChange={e => onChange(e.target.value)} />
+      <label className={styles.fieldLabel}>
+        {label}
+        {required && <span className={styles.fieldRequired}>*</span>}
+      </label>
+      <input
+        type={type}
+        className={styles.fieldInput}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </div>
   );
 }
 
 // ─── ClauseCard (ORG-3 computed named gaps + ORG-4 exclusion) ─────────────────
 
-function ClauseCard({ clause, applicability: app, onSetApplicability, tRegistry, namedGaps }: {
-  clause: ClauseEntry; applicability: Applicability | undefined;
+function ClauseCard({
+  clause,
+  applicability: app,
+  onSetApplicability,
+  tRegistry,
+  namedGaps,
+}: {
+  clause: ClauseEntry;
+  applicability: Applicability | undefined;
   onSetApplicability: (id: string, applicable: boolean, justification?: string) => void;
-  tRegistry: (key: string) => string; namedGaps: string[];
+  tRegistry: (key: string) => string;
+  namedGaps: string[];
 }) {
   const [justification, setJustification] = useState(app?.justification ?? '');
   const isExcluded = app?.applicable === false;
@@ -368,7 +755,12 @@ function ClauseCard({ clause, applicability: app, onSetApplicability, tRegistry,
           <strong>{tRegistry('namedGaps')}:</strong>
           {namedGaps.map((gap, i) => (
             <div key={i} className={styles.clauseGapItem}>
-              {gap.startsWith('register.') ? tRegistry('requiresRegisterData').replace('{register}', gap.replace('register.', '')) : gap}
+              {gap.startsWith('register.')
+                ? tRegistry('requiresRegisterData').replace(
+                    '{register}',
+                    gap.replace('register.', ''),
+                  )
+                : gap}
             </div>
           ))}
         </div>
@@ -378,16 +770,30 @@ function ClauseCard({ clause, applicability: app, onSetApplicability, tRegistry,
       <div className={styles.clauseApplicability}>
         {isExcluded ? (
           <>
-            <span className={styles.naJustified}>{tRegistry('naJustified')}: {app?.justification}</span>
-            <SecondaryButton onClick={() => onSetApplicability(clause.id, true)}>{tRegistry('markApplicable')}</SecondaryButton>
+            <span className={styles.naJustified}>
+              {tRegistry('naJustified')}: {app?.justification}
+            </span>
+            <SecondaryButton onClick={() => onSetApplicability(clause.id, true)}>
+              {tRegistry('markApplicable')}
+            </SecondaryButton>
           </>
         ) : (
           <>
-            <input type="text" className={`${styles.fieldInput} ${styles.justificationInput}`}
-              placeholder={tRegistry('justificationPlaceholder')} value={justification}
-              onChange={e => setJustification(e.target.value)} data-testid={`justification-${clause.clauseNo}`} />
-            <SecondaryButton onClick={() => { if (justification.trim()) onSetApplicability(clause.id, false, justification); }}
-              disabled={!justification.trim()} data-testid={`exclude-btn-${clause.clauseNo}`}>
+            <input
+              type="text"
+              className={`${styles.fieldInput} ${styles.justificationInput}`}
+              placeholder={tRegistry('justificationPlaceholder')}
+              value={justification}
+              onChange={(e) => setJustification(e.target.value)}
+              data-testid={`justification-${clause.clauseNo}`}
+            />
+            <SecondaryButton
+              onClick={() => {
+                if (justification.trim()) onSetApplicability(clause.id, false, justification);
+              }}
+              disabled={!justification.trim()}
+              data-testid={`exclude-btn-${clause.clauseNo}`}
+            >
               {tRegistry('markExcluded')}
             </SecondaryButton>
           </>

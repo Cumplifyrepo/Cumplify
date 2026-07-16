@@ -36,9 +36,9 @@ describe('workload/management account boundary guardrail', () => {
   });
 
   it('throws if any workload env targets the management account', () => {
-    expect(() =>
-      assertWorkloadAccountBoundary({ dev: cfg(MGMT_ACCOUNT) }),
-    ).toThrow(/management account/i);
+    expect(() => assertWorkloadAccountBoundary({ dev: cfg(MGMT_ACCOUNT) })).toThrow(
+      /management account/i,
+    );
   });
 
   it('throws on account collision between two envs', () => {

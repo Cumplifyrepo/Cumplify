@@ -48,14 +48,18 @@ export function DiffView({ v1, v2, onBack }: DiffViewProps) {
       setLoading(true);
       setError(null);
       const data = await query<{ getDocumentVersionDiff: DiffResult | null }>(
-        GET_DOCUMENT_VERSION_DIFF, { v1, v2 }
+        GET_DOCUMENT_VERSION_DIFF,
+        { v1, v2 },
       );
       if (!data.getDocumentVersionDiff) {
         setError('unavailable');
       } else {
         setDiff(data.getDocumentVersionDiff);
         try {
-          const parsed = JSON.parse(data.getDocumentVersionDiff.content) as Record<string, SectionDiff>;
+          const parsed = JSON.parse(data.getDocumentVersionDiff.content) as Record<
+            string,
+            SectionDiff
+          >;
           setParsedContent(parsed);
         } catch {
           setParsedContent(null);
@@ -65,10 +69,14 @@ export function DiffView({ v1, v2, onBack }: DiffViewProps) {
       const msg = e instanceof Error ? e.message : '';
       if (msg.includes('CONTENT_UNAVAILABLE')) setError('unavailable');
       else setError('load');
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   }, [v1, v2, query]);
 
-  useEffect(() => { fetchDiff(); }, [fetchDiff]);
+  useEffect(() => {
+    fetchDiff();
+  }, [fetchDiff]);
 
   if (loading) return <p className={styles.loading}>{t('diffTitle')}</p>;
   if (error === 'load') return <ErrorState onRetry={fetchDiff} />;
@@ -76,7 +84,9 @@ export function DiffView({ v1, v2, onBack }: DiffViewProps) {
   return (
     <div className={styles.diffView} data-testid="diff-view">
       <div className={styles.viewerHeader}>
-        <SecondaryButton onClick={onBack} data-testid="diff-back">{t('back')}</SecondaryButton>
+        <SecondaryButton onClick={onBack} data-testid="diff-back">
+          {t('back')}
+        </SecondaryButton>
         <h2 className={styles.viewerTitle}>{t('diffTitle')}</h2>
       </div>
 
@@ -89,8 +99,12 @@ export function DiffView({ v1, v2, onBack }: DiffViewProps) {
       {diff && (
         <>
           <div className={styles.diffSummary} data-testid="diff-summary">
-            <span className={styles.diffAdditions}>+{diff.additions} {t('additions')}</span>
-            <span className={styles.diffDeletions}>-{diff.deletions} {t('deletions')}</span>
+            <span className={styles.diffAdditions}>
+              +{diff.additions} {t('additions')}
+            </span>
+            <span className={styles.diffDeletions}>
+              -{diff.deletions} {t('deletions')}
+            </span>
           </div>
 
           {parsedContent && Object.keys(parsedContent).length > 0 && (
@@ -100,14 +114,20 @@ export function DiffView({ v1, v2, onBack }: DiffViewProps) {
                   <div className={styles.diffSectionHeader}>
                     <span className={styles.sectionKey}>{key}</span>
                     {sectionDiff.kindChange && (
-                      <span className={styles.kindChangeLabel}>{t('kindChange')}: {sectionDiff.kindChange}</span>
+                      <span className={styles.kindChangeLabel}>
+                        {t('kindChange')}: {sectionDiff.kindChange}
+                      </span>
                     )}
                   </div>
                   {sectionDiff.removed.map((line, i) => (
-                    <div key={`r-${i}`} className={styles.diffRemoved}>{line}</div>
+                    <div key={`r-${i}`} className={styles.diffRemoved}>
+                      {line}
+                    </div>
                   ))}
                   {sectionDiff.added.map((line, i) => (
-                    <div key={`a-${i}`} className={styles.diffAdded}>{line}</div>
+                    <div key={`a-${i}`} className={styles.diffAdded}>
+                      {line}
+                    </div>
                   ))}
                 </div>
               ))}

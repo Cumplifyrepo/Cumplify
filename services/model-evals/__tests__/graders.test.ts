@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { scoreExactMatch, computeF1, computeSetF1, scoreMultiLabel } from '../graders/exact-match.js';
+import {
+  scoreExactMatch,
+  computeF1,
+  computeSetF1,
+  scoreMultiLabel,
+} from '../graders/exact-match.js';
 import { scoreSchemaValidation } from '../graders/schema-validator.js';
 import { scoreClauseCitation } from '../graders/clause-citation.js';
 import { aggregateRubricScores, type RubricScore } from '../graders/rubric.js';
@@ -23,7 +28,9 @@ describe('exact-match grader', () => {
     });
 
     it('ignores prose mentioning the correct label if not in ANSWER: line', () => {
-      expect(scoreExactMatch('Based on R-4, hazard-q is the target.\nANSWER: nc-triage', 'hazard-q')).toBe(0.0);
+      expect(
+        scoreExactMatch('Based on R-4, hazard-q is the target.\nANSWER: nc-triage', 'hazard-q'),
+      ).toBe(0.0);
     });
   });
 
@@ -52,10 +59,12 @@ describe('exact-match grader', () => {
 
 describe('multi-label set F1 grader', () => {
   it('returns 1.0 for exact match on 4-queue event', () => {
-    expect(computeSetF1(
-      'audit-sink, capa-intake, records-q, review-fanout',
-      'audit-sink,capa-intake,records-q,review-fanout',
-    )).toBe(1.0);
+    expect(
+      computeSetF1(
+        'audit-sink, capa-intake, records-q, review-fanout',
+        'audit-sink,capa-intake,records-q,review-fanout',
+      ),
+    ).toBe(1.0);
   });
 
   it('returns 1.0 for single-queue event', () => {
@@ -73,7 +82,10 @@ describe('multi-label set F1 grader', () => {
   it('returns partial F1 for partial overlap', () => {
     // predicted: {audit-sink, capa-intake}, expected: {audit-sink, capa-intake, records-q, review-fanout}
     // intersection=2, precision=2/2=1, recall=2/4=0.5, F1=2*1*0.5/(1+0.5)=0.667
-    const f1 = computeSetF1('audit-sink, capa-intake', 'audit-sink,capa-intake,records-q,review-fanout');
+    const f1 = computeSetF1(
+      'audit-sink, capa-intake',
+      'audit-sink,capa-intake,records-q,review-fanout',
+    );
     expect(f1).toBeCloseTo(2 / 3, 3);
   });
 
@@ -90,30 +102,58 @@ describe('multi-label set F1 grader', () => {
   });
 
   it('scoreMultiLabel normalizes and dedupes labels from ANSWER: line', () => {
-    expect(scoreMultiLabel('ANSWER: Audit-Sink, AUDIT-SINK, records-q', 'audit-sink,records-q')).toBe(1.0);
+    expect(
+      scoreMultiLabel('ANSWER: Audit-Sink, AUDIT-SINK, records-q', 'audit-sink,records-q'),
+    ).toBe(1.0);
   });
 });
 
 describe('schema-validator grader', () => {
   it('returns 1.0 for valid JSON with all required fields', () => {
     const response = JSON.stringify({ name: 'test', status: 'open', priority: 'high' });
-    const schema = { type: 'object', required: ['name', 'status', 'priority'], properties: { name: { type: 'string' }, status: { type: 'string' }, priority: { type: 'string' } } };
+    const schema = {
+      type: 'object',
+      required: ['name', 'status', 'priority'],
+      properties: {
+        name: { type: 'string' },
+        status: { type: 'string' },
+        priority: { type: 'string' },
+      },
+    };
     expect(scoreSchemaValidation(response, schema)).toBe(1.0);
   });
 
   it('returns partial credit for missing fields', () => {
     const response = JSON.stringify({ name: 'test' });
-    const schema = { type: 'object', required: ['name', 'status', 'priority'], properties: { name: { type: 'string' }, status: { type: 'string' }, priority: { type: 'string' } } };
+    const schema = {
+      type: 'object',
+      required: ['name', 'status', 'priority'],
+      properties: {
+        name: { type: 'string' },
+        status: { type: 'string' },
+        priority: { type: 'string' },
+      },
+    };
     expect(scoreSchemaValidation(response, schema)).toBeCloseTo(1 / 3);
   });
 
   it('returns 0.0 for invalid JSON', () => {
-    expect(scoreSchemaValidation('not json at all', { type: 'object', required: ['field'], properties: { field: { type: 'string' } } })).toBe(0);
+    expect(
+      scoreSchemaValidation('not json at all', {
+        type: 'object',
+        required: ['field'],
+        properties: { field: { type: 'string' } },
+      }),
+    ).toBe(0);
   });
 
   it('extracts JSON from markdown code blocks', () => {
     const response = '```json\n{"name": "test", "status": "done"}\n```';
-    const schema = { type: 'object', required: ['name', 'status'], properties: { name: { type: 'string' }, status: { type: 'string' } } };
+    const schema = {
+      type: 'object',
+      required: ['name', 'status'],
+      properties: { name: { type: 'string' }, status: { type: 'string' } },
+    };
     expect(scoreSchemaValidation(response, schema)).toBe(1.0);
   });
 
@@ -130,7 +170,9 @@ describe('clause-citation grader', () => {
 
   it('returns partial credit for partially cited clauses', () => {
     const response = 'Clause 10.2 applies here but clause 6.1 is also relevant.';
-    expect(scoreClauseCitation(response, ['ISO 9001 10.2', 'ISO 9001 8.1', 'ISO 9001 6.1'])).toBeCloseTo(2 / 3);
+    expect(
+      scoreClauseCitation(response, ['ISO 9001 10.2', 'ISO 9001 8.1', 'ISO 9001 6.1']),
+    ).toBeCloseTo(2 / 3);
   });
 
   it('returns 0.0 when no clauses are cited', () => {
@@ -151,8 +193,20 @@ describe('clause-citation grader', () => {
 describe('rubric grader', () => {
   it('aggregates scores and passes when mean >= 4.0', () => {
     const scores: RubricScore[] = [
-      { taskId: 't1', candidateModelId: 'm1', dimensions: { accuracy: 5, completeness: 4 }, gradedBy: 'architect', gradedAt: '2026-07-05' },
-      { taskId: 't2', candidateModelId: 'm1', dimensions: { accuracy: 4, completeness: 4 }, gradedBy: 'architect', gradedAt: '2026-07-05' },
+      {
+        taskId: 't1',
+        candidateModelId: 'm1',
+        dimensions: { accuracy: 5, completeness: 4 },
+        gradedBy: 'architect',
+        gradedAt: '2026-07-05',
+      },
+      {
+        taskId: 't2',
+        candidateModelId: 'm1',
+        dimensions: { accuracy: 4, completeness: 4 },
+        gradedBy: 'architect',
+        gradedAt: '2026-07-05',
+      },
     ];
     const result = aggregateRubricScores(scores);
     expect(result.meanScore).toBe(4.25);
@@ -162,7 +216,13 @@ describe('rubric grader', () => {
 
   it('fails when mean < 4.0', () => {
     const scores: RubricScore[] = [
-      { taskId: 't1', candidateModelId: 'm1', dimensions: { accuracy: 3, completeness: 3 }, gradedBy: 'architect', gradedAt: '2026-07-05' },
+      {
+        taskId: 't1',
+        candidateModelId: 'm1',
+        dimensions: { accuracy: 3, completeness: 3 },
+        gradedBy: 'architect',
+        gradedAt: '2026-07-05',
+      },
     ];
     const result = aggregateRubricScores(scores);
     expect(result.meanScore).toBe(3.0);
@@ -171,8 +231,20 @@ describe('rubric grader', () => {
 
   it('fails on catastrophic failure (any dimension = 1)', () => {
     const scores: RubricScore[] = [
-      { taskId: 't1', candidateModelId: 'm1', dimensions: { accuracy: 5, completeness: 1 }, gradedBy: 'architect', gradedAt: '2026-07-05' },
-      { taskId: 't2', candidateModelId: 'm1', dimensions: { accuracy: 5, completeness: 5 }, gradedBy: 'architect', gradedAt: '2026-07-05' },
+      {
+        taskId: 't1',
+        candidateModelId: 'm1',
+        dimensions: { accuracy: 5, completeness: 1 },
+        gradedBy: 'architect',
+        gradedAt: '2026-07-05',
+      },
+      {
+        taskId: 't2',
+        candidateModelId: 'm1',
+        dimensions: { accuracy: 5, completeness: 5 },
+        gradedBy: 'architect',
+        gradedAt: '2026-07-05',
+      },
     ];
     const result = aggregateRubricScores(scores);
     expect(result.meanScore).toBe(4.0);
@@ -187,19 +259,20 @@ describe('rubric grader', () => {
   });
 });
 
-
 // FINDING-J / FINDING-K targeted tests
 
 describe('schema-validator with ANSWER: line (FINDING-J)', () => {
   const schema = { completedSection: 'string', references: 'string', clauseAlignment: 'string' };
 
   it('scores 1.0 when ANSWER: line contains valid JSON with all required fields', () => {
-    const response = 'Here is my analysis...\nANSWER: {"completedSection": "text", "references": "ISO 9001", "clauseAlignment": "aligned"}';
+    const response =
+      'Here is my analysis...\nANSWER: {"completedSection": "text", "references": "ISO 9001", "clauseAlignment": "aligned"}';
     expect(scoreSchemaValidation(response, schema)).toBe(1.0);
   });
 
   it('scores 1.0 when response has JSON in ```json fences (falls back to full response)', () => {
-    const response = 'Analysis:\n```json\n{"completedSection": "x", "references": "y", "clauseAlignment": "z"}\n```';
+    const response =
+      'Analysis:\n```json\n{"completedSection": "x", "references": "y", "clauseAlignment": "z"}\n```';
     expect(scoreSchemaValidation(response, schema)).toBe(1.0);
   });
 

@@ -134,17 +134,11 @@ export function AskPanel() {
               {msg.citations.length > 0 ? (
                 <div className={styles.citationRow}>
                   {msg.citations.map((ref) => (
-                    <ClauseChip
-                      key={ref}
-                      standard={msg.standard}
-                      clauseRef={ref}
-                    />
+                    <ClauseChip key={ref} standard={msg.standard} clauseRef={ref} />
                   ))}
                 </div>
               ) : (
-                <span className={styles.generalGuidanceBanner}>
-                  {t('generalGuidance')}
-                </span>
+                <span className={styles.generalGuidanceBanner}>{t('generalGuidance')}</span>
               )}
               {/* ASK-4: Action chips */}
               <div className={styles.chipRow}>

@@ -3,7 +3,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { PageHeader, DataTable, StatusBadge, PrimaryButton, ErrorState, type Column } from '@/components/shared';
+import {
+  PageHeader,
+  DataTable,
+  StatusBadge,
+  PrimaryButton,
+  ErrorState,
+  type Column,
+} from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import { FormRecordDetail } from './_detail/FormRecordDetail';
 import styles from './page.module.css';
@@ -85,7 +92,7 @@ export default function FormsPage() {
     const recParam = searchParams.get('rec');
     if (recParam) setSelectedRecordId(recParam);
     else if (tplParam && templates.length > 0) {
-      const tpl = templates.find(t => t.id === tplParam);
+      const tpl = templates.find((t) => t.id === tplParam);
       if (tpl) setSelectedTemplate(tpl);
     }
   }, [searchParams, templates]);
@@ -102,19 +109,24 @@ export default function FormsPage() {
     }
   }, [query]);
 
-  useEffect(() => { fetchTemplates(); }, [fetchTemplates]);
+  useEffect(() => {
+    fetchTemplates();
+  }, [fetchTemplates]);
 
-  const fetchRecords = useCallback(async (templateId: string) => {
-    try {
-      setRecordsLoading(true);
-      const data = await query<{ listFormRecords: FormRecord[] }>(LIST_RECORDS, { templateId });
-      setRecords(data.listFormRecords);
-    } catch {
-      setError(true);
-    } finally {
-      setRecordsLoading(false);
-    }
-  }, [query]);
+  const fetchRecords = useCallback(
+    async (templateId: string) => {
+      try {
+        setRecordsLoading(true);
+        const data = await query<{ listFormRecords: FormRecord[] }>(LIST_RECORDS, { templateId });
+        setRecords(data.listFormRecords);
+      } catch {
+        setError(true);
+      } finally {
+        setRecordsLoading(false);
+      }
+    },
+    [query],
+  );
 
   useEffect(() => {
     if (selectedTemplate) fetchRecords(selectedTemplate.id);
@@ -132,15 +144,23 @@ export default function FormsPage() {
 
   // Filter templates by standard
   const filteredTemplates = filterStandard
-    ? templates.filter(t => t.standards.includes(filterStandard))
+    ? templates.filter((t) => t.standards.includes(filterStandard))
     : templates;
 
   // Resolve i18n keys for template display
   function tplTitle(tpl: FormTemplate): string {
-    try { return t(tpl.titleKey.replace('forms.', '')); } catch { return tpl.key; }
+    try {
+      return t(tpl.titleKey.replace('forms.', ''));
+    } catch {
+      return tpl.key;
+    }
   }
   function tplDesc(tpl: FormTemplate): string {
-    try { return t(tpl.descriptionKey.replace('forms.', '')); } catch { return ''; }
+    try {
+      return t(tpl.descriptionKey.replace('forms.', ''));
+    } catch {
+      return '';
+    }
   }
 
   // ─── View 3: Form record detail ────────────────────────────────────────────
@@ -160,17 +180,39 @@ export default function FormsPage() {
   // ─── View 2: Record register per template ──────────────────────────────────
   if (selectedTemplate) {
     const columns: Column<FormRecord>[] = [
-      { key: 'status', header: tRegister('colStatus'), render: (r) => <StatusBadge status={r.status} /> },
-      { key: 'completion', header: tRegister('colCompletion'), render: (r) => (
-        <div className={styles.completionBar}>
-          <div className={styles.completionTrack}>
-            <div className={styles.completionFill} style={{ width: r.completion.fieldsTotal > 0 ? `${(r.completion.fieldsFilled / r.completion.fieldsTotal) * 100}%` : '0%' }} />
+      {
+        key: 'status',
+        header: tRegister('colStatus'),
+        render: (r) => <StatusBadge status={r.status} />,
+      },
+      {
+        key: 'completion',
+        header: tRegister('colCompletion'),
+        render: (r) => (
+          <div className={styles.completionBar}>
+            <div className={styles.completionTrack}>
+              <div
+                className={styles.completionFill}
+                style={{
+                  width:
+                    r.completion.fieldsTotal > 0
+                      ? `${(r.completion.fieldsFilled / r.completion.fieldsTotal) * 100}%`
+                      : '0%',
+                }}
+              />
+            </div>
+            <span>
+              {r.completion.fieldsFilled}/{r.completion.fieldsTotal}
+            </span>
           </div>
-          <span>{r.completion.fieldsFilled}/{r.completion.fieldsTotal}</span>
-        </div>
-      )},
+        ),
+      },
       { key: 'openedBy', header: tRegister('colOpenedBy'), render: (r) => r.openedBy },
-      { key: 'updatedAt', header: tRegister('colUpdated'), render: (r) => new Date(r.updatedAt).toLocaleDateString() },
+      {
+        key: 'updatedAt',
+        header: tRegister('colUpdated'),
+        render: (r) => new Date(r.updatedAt).toLocaleDateString(),
+      },
     ];
 
     return (
@@ -180,7 +222,14 @@ export default function FormsPage() {
           actions={
             <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
               <PrimaryButton onClick={handleCreateRecord}>{tRegister('newRecord')}</PrimaryButton>
-              <PrimaryButton onClick={() => { setSelectedTemplate(null); router.replace('?', { scroll: false }); }}>{tRegister('backToCatalog')}</PrimaryButton>
+              <PrimaryButton
+                onClick={() => {
+                  setSelectedTemplate(null);
+                  router.replace('?', { scroll: false });
+                }}
+              >
+                {tRegister('backToCatalog')}
+              </PrimaryButton>
             </div>
           }
         />
@@ -191,7 +240,10 @@ export default function FormsPage() {
             columns={columns}
             data={records}
             rowKey={(r) => r.id}
-            onRowClick={(r) => { setSelectedRecordId(r.id); router.replace(`?tpl=${selectedTemplate.id}&rec=${r.id}`, { scroll: false }); }}
+            onRowClick={(r) => {
+              setSelectedRecordId(r.id);
+              router.replace(`?tpl=${selectedTemplate.id}&rec=${r.id}`, { scroll: false });
+            }}
             emptyMessage={tRegister('empty')}
           />
         )}
@@ -231,19 +283,33 @@ export default function FormsPage() {
             <div
               key={tpl.id}
               className={styles.card}
-              onClick={() => { setSelectedTemplate(tpl); router.replace(`?tpl=${tpl.id}`, { scroll: false }); }}
+              onClick={() => {
+                setSelectedTemplate(tpl);
+                router.replace(`?tpl=${tpl.id}`, { scroll: false });
+              }}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter') { setSelectedTemplate(tpl); router.replace(`?tpl=${tpl.id}`, { scroll: false }); } }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setSelectedTemplate(tpl);
+                  router.replace(`?tpl=${tpl.id}`, { scroll: false });
+                }
+              }}
             >
               <h3 className={styles.cardTitle}>{tplTitle(tpl)}</h3>
               <p className={styles.cardDesc}>{tplDesc(tpl)}</p>
               <div className={styles.cardChips}>
                 {/* BC-1: counts from API sectionCount/fieldCount — never client-computed */}
-                <span className={styles.chip}>{tpl.sectionCount} {tCatalog('sections')}</span>
-                <span className={styles.chip}>{tpl.fieldCount} {tCatalog('fields')}</span>
+                <span className={styles.chip}>
+                  {tpl.sectionCount} {tCatalog('sections')}
+                </span>
+                <span className={styles.chip}>
+                  {tpl.fieldCount} {tCatalog('fields')}
+                </span>
                 {tpl.clauseRefs.map((c) => (
-                  <span key={c} className={`${styles.chip} ${styles.chipAccent}`}>{c}</span>
+                  <span key={c} className={`${styles.chip} ${styles.chipAccent}`}>
+                    {c}
+                  </span>
                 ))}
               </div>
             </div>

@@ -21,8 +21,9 @@ describe('payloadHash key-order canonicalization (Task-11 live fix)', () => {
   });
 
   it('different VALUES still produce different hashes', () => {
-    expect(computePayloadHash({ before: null, after: { tool: 'a' } }))
-      .not.toBe(computePayloadHash({ before: null, after: { tool: 'b' } }));
+    expect(computePayloadHash({ before: null, after: { tool: 'a' } })).not.toBe(
+      computePayloadHash({ before: null, after: { tool: 'b' } }),
+    );
   });
 
   it('absent before/after default to null (constant hash preserved)', () => {

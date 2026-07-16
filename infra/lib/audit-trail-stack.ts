@@ -92,14 +92,10 @@ export class AuditTrailStack extends cdk.Stack {
     });
 
     // Import audit-sink queue for consumer ESM
-    const auditSinkQueue = sqs.Queue.fromQueueArn(
-      this, 'AuditSinkQueue', props.auditSinkQueueArn,
-    );
+    const auditSinkQueue = sqs.Queue.fromQueueArn(this, 'AuditSinkQueue', props.auditSinkQueueArn);
 
     // Import audit-sink DLQ for poison send grant
-    const auditSinkDlq = sqs.Queue.fromQueueArn(
-      this, 'AuditSinkDlq', props.auditSinkDlqArn,
-    );
+    const auditSinkDlq = sqs.Queue.fromQueueArn(this, 'AuditSinkDlq', props.auditSinkDlqArn);
 
     // ─── Shared Lambda props ────────────────────────────────────────────────
     const commonLambdaProps = {
@@ -127,17 +123,24 @@ export class AuditTrailStack extends cdk.Stack {
     // BatchWriteItem — the append path never mutates existing items. (Gate FINDING-1:
     // grantReadWriteData was over-broad, allowing UpdateItem on non-audit partitions.)
     table.grant(consumerFn, 'dynamodb:Query', 'dynamodb:PutItem');
-    props.dynamodbKey.grant(consumerFn,
-      'kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt*',
-      'kms:GenerateDataKey*', 'kms:DescribeKey', 'kms:CreateGrant',
+    props.dynamodbKey.grant(
+      consumerFn,
+      'kms:Encrypt',
+      'kms:Decrypt',
+      'kms:ReEncrypt*',
+      'kms:GenerateDataKey*',
+      'kms:DescribeKey',
+      'kms:CreateGrant',
     );
     auditSinkDlq.grantSendMessages(consumerFn);
 
     // Consumer ESM on audit-sink FIFO queue
-    consumerFn.addEventSource(new SqsEventSource(auditSinkQueue, {
-      batchSize: 5,
-      reportBatchItemFailures: true,
-    }));
+    consumerFn.addEventSource(
+      new SqsEventSource(auditSinkQueue, {
+        batchSize: 5,
+        reportBatchItemFailures: true,
+      }),
+    );
 
     // ─── WORM Sealer Lambda ─────────────────────────────────────────────────
     const sealerFn = new NodejsFunction(this, 'WormSealerFn', {
@@ -156,31 +159,35 @@ export class AuditTrailStack extends cdk.Stack {
     // Sealer needs: KMS decrypt (stream), S3 put + retention, KMS encrypt (S3)
     props.dynamodbKey.grantDecrypt(sealerFn);
     auditArchiveBucket.grantPut(sealerFn);
-    sealerFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['s3:PutObjectRetention'],
-      resources: [auditArchiveBucket.arnForObjects('*')],
-    }));
+    sealerFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:PutObjectRetention'],
+        resources: [auditArchiveBucket.arnForObjects('*')],
+      }),
+    );
     props.s3GeneralKey.grantEncrypt(sealerFn);
 
     // Sealer ESM (FIX-4: itemType filter, FIX-5: native FilterCriteria)
-    sealerFn.addEventSource(new DynamoEventSource(table, {
-      startingPosition: lambda.StartingPosition.LATEST,
-      batchSize: 10,
-      maxBatchingWindow: cdk.Duration.seconds(5),
-      bisectBatchOnError: true,
-      retryAttempts: 3,
-      onFailure: new destinations.SqsDestination(sealerDlq),
-      filters: [
-        FilterCriteria.filter({
-          eventName: FilterRule.isEqual('INSERT'),
-          dynamodb: {
-            NewImage: {
-              itemType: { S: FilterRule.isEqual('AUDITLOG') },
+    sealerFn.addEventSource(
+      new DynamoEventSource(table, {
+        startingPosition: lambda.StartingPosition.LATEST,
+        batchSize: 10,
+        maxBatchingWindow: cdk.Duration.seconds(5),
+        bisectBatchOnError: true,
+        retryAttempts: 3,
+        onFailure: new destinations.SqsDestination(sealerDlq),
+        filters: [
+          FilterCriteria.filter({
+            eventName: FilterRule.isEqual('INSERT'),
+            dynamodb: {
+              NewImage: {
+                itemType: { S: FilterRule.isEqual('AUDITLOG') },
+              },
             },
-          },
-        }),
-      ],
-    }));
+          }),
+        ],
+      }),
+    );
 
     // ─── Tamper-Tripwire Lambda ─────────────────────────────────────────────
     const tripwireFn = new NodejsFunction(this, 'TamperTripwireFn', {
@@ -196,38 +203,47 @@ export class AuditTrailStack extends cdk.Stack {
 
     // Tripwire needs: KMS decrypt (stream), CloudWatch PutMetricData
     props.dynamodbKey.grantDecrypt(tripwireFn);
-    tripwireFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['cloudwatch:PutMetricData'],
-      resources: ['*'],
-      conditions: {
-        StringEquals: { 'cloudwatch:namespace': 'Cumplify/AuditTrail' },
-      },
-    }));
-    NagSuppressions.addResourceSuppressions(tripwireFn.role!, [
-      {
-        id: 'AwsSolutions-IAM5',
-        reason: 'cloudwatch:PutMetricData does not support resource-level permissions (AWS API limitation). Scoped by namespace condition.',
-      },
-    ], true);
+    tripwireFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['cloudwatch:PutMetricData'],
+        resources: ['*'],
+        conditions: {
+          StringEquals: { 'cloudwatch:namespace': 'Cumplify/AuditTrail' },
+        },
+      }),
+    );
+    NagSuppressions.addResourceSuppressions(
+      tripwireFn.role!,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'cloudwatch:PutMetricData does not support resource-level permissions (AWS API limitation). Scoped by namespace condition.',
+        },
+      ],
+      true,
+    );
 
     // Tripwire ESM (FIX-4: itemType on OldImage, FIX-5: native FilterCriteria, AMEND-2)
-    tripwireFn.addEventSource(new DynamoEventSource(table, {
-      startingPosition: lambda.StartingPosition.LATEST,
-      batchSize: 10,
-      bisectBatchOnError: true,
-      retryAttempts: 3,
-      onFailure: new destinations.SqsDestination(tripwireDlq),
-      filters: [
-        FilterCriteria.filter({
-          eventName: FilterRule.or('MODIFY', 'REMOVE'),
-          dynamodb: {
-            OldImage: {
-              itemType: { S: FilterRule.isEqual('AUDITLOG') },
+    tripwireFn.addEventSource(
+      new DynamoEventSource(table, {
+        startingPosition: lambda.StartingPosition.LATEST,
+        batchSize: 10,
+        bisectBatchOnError: true,
+        retryAttempts: 3,
+        onFailure: new destinations.SqsDestination(tripwireDlq),
+        filters: [
+          FilterCriteria.filter({
+            eventName: FilterRule.or('MODIFY', 'REMOVE'),
+            dynamodb: {
+              OldImage: {
+                itemType: { S: FilterRule.isEqual('AUDITLOG') },
+              },
             },
-          },
-        }),
-      ],
-    }));
+          }),
+        ],
+      }),
+    );
 
     // ─── Chain-Verifier Lambda ──────────────────────────────────────────────
     const verifierFn = new NodejsFunction(this, 'ChainVerifierFn', {
@@ -248,25 +264,37 @@ export class AuditTrailStack extends cdk.Stack {
     // it is read-only over the trail; watermark is an append-once/overwrite Put.
     // (Gate FINDING-1: grantReadWriteData was over-broad.)
     table.grant(verifierFn, 'dynamodb:Query', 'dynamodb:GetItem', 'dynamodb:PutItem');
-    props.dynamodbKey.grant(verifierFn,
-      'kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt*',
-      'kms:GenerateDataKey*', 'kms:DescribeKey', 'kms:CreateGrant',
+    props.dynamodbKey.grant(
+      verifierFn,
+      'kms:Encrypt',
+      'kms:Decrypt',
+      'kms:ReEncrypt*',
+      'kms:GenerateDataKey*',
+      'kms:DescribeKey',
+      'kms:CreateGrant',
     );
     auditArchiveBucket.grantRead(verifierFn);
     props.s3GeneralKey.grantDecrypt(verifierFn);
-    verifierFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['cloudwatch:PutMetricData'],
-      resources: ['*'],
-      conditions: {
-        StringEquals: { 'cloudwatch:namespace': 'Cumplify/AuditTrail' },
-      },
-    }));
-    NagSuppressions.addResourceSuppressions(verifierFn.role!, [
-      {
-        id: 'AwsSolutions-IAM5',
-        reason: 'cloudwatch:PutMetricData does not support resource-level permissions. S3 read grant uses /* suffix (CDK default). Both scoped appropriately.',
-      },
-    ], true);
+    verifierFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['cloudwatch:PutMetricData'],
+        resources: ['*'],
+        conditions: {
+          StringEquals: { 'cloudwatch:namespace': 'Cumplify/AuditTrail' },
+        },
+      }),
+    );
+    NagSuppressions.addResourceSuppressions(
+      verifierFn.role!,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'cloudwatch:PutMetricData does not support resource-level permissions. S3 read grant uses /* suffix (CDK default). Both scoped appropriately.',
+        },
+      ],
+      true,
+    );
 
     // ─── IAM Deny Policy (FIX-2: 5 actions) — REQUIRES-HUMAN ───────────────
     const auditLogDenyPolicy = new iam.ManagedPolicy(this, 'AuditLogDenyPolicy', {
@@ -368,23 +396,30 @@ export class AuditTrailStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'ConsumerLogGroup', { value: consumerFn.logGroup.logGroupName });
 
     // ─── CDK Nag Suppressions ───────────────────────────────────────────────
-    NagSuppressions.addResourceSuppressions(this, [
-      {
-        id: 'AwsSolutions-IAM4',
-        reason: 'Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal policy for Lambda logging.',
-      },
-      {
-        id: 'AwsSolutions-IAM5',
-        reason: 'Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key resources, and S3 grants use /* for object ARNs. All scoped to specific resources.',
-      },
-      {
-        id: 'AwsSolutions-L1',
-        reason: 'Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.',
-      },
-      {
-        id: 'AwsSolutions-S1',
-        reason: 'Audit-archive bucket has access logging enabled (to dedicated access-logs bucket). Only the access-logs bucket itself lacks self-logging (suppressed separately).',
-      },
-    ], true);
+    NagSuppressions.addResourceSuppressions(
+      this,
+      [
+        {
+          id: 'AwsSolutions-IAM4',
+          reason:
+            'Lambda execution roles use AWSLambdaBasicExecutionRole (CDK-generated). Standard minimal policy for Lambda logging.',
+        },
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'Lambda roles have wildcard on log stream name (CDK default), KMS grants use /* for key resources, and S3 grants use /* for object ARNs. All scoped to specific resources.',
+        },
+        {
+          id: 'AwsSolutions-L1',
+          reason: 'Lambda uses NODEJS_22_X — latest LTS. CDK Nag may not recognize newer runtimes.',
+        },
+        {
+          id: 'AwsSolutions-S1',
+          reason:
+            'Audit-archive bucket has access logging enabled (to dedicated access-logs bucket). Only the access-logs bucket itself lacks self-logging (suppressed separately).',
+        },
+      ],
+      true,
+    );
   }
 }

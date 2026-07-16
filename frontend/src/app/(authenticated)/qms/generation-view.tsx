@@ -2,7 +2,13 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { Panel, PrimaryButton, SecondaryButton, StatusBadge, ErrorState } from '@/components/shared';
+import {
+  Panel,
+  PrimaryButton,
+  SecondaryButton,
+  StatusBadge,
+  ErrorState,
+} from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import { canApprove } from '@/lib/role-matrix';
@@ -123,34 +129,58 @@ export function GenerationView({ onViewDocument, registryMap }: GenerationViewPr
     try {
       setLoading(true);
       setError(null);
-      const data = await query<{ listGenerationRuns: GenerationRun[] }>(LIST_GENERATION_RUNS, { limit: 10 });
+      const data = await query<{ listGenerationRuns: GenerationRun[] }>(LIST_GENERATION_RUNS, {
+        limit: 10,
+      });
       setRuns(data.listGenerationRuns);
       if (data.listGenerationRuns.length > 0) {
         setActiveRun(data.listGenerationRuns[0]);
       }
-    } catch { setError('load'); } finally { setLoading(false); }
+    } catch {
+      setError('load');
+    } finally {
+      setLoading(false);
+    }
   }, [query]);
 
-  useEffect(() => { fetchRuns(); }, [fetchRuns]);
+  useEffect(() => {
+    fetchRuns();
+  }, [fetchRuns]);
 
   // ─── Refetch active run ────────────────────────────────────────────────────
   const refetchActiveRun = useCallback(async () => {
     if (!activeRun) return;
     try {
-      const data = await query<{ getGenerationRun: GenerationRun }>(GET_GENERATION_RUN, { id: activeRun.id });
+      const data = await query<{ getGenerationRun: GenerationRun }>(GET_GENERATION_RUN, {
+        id: activeRun.id,
+      });
       setActiveRun(data.getGenerationRun);
-      setRuns(prev => prev.map(r => r.id === data.getGenerationRun.id ? data.getGenerationRun : r));
-    } catch { /* fallback: user can retry manually */ }
+      setRuns((prev) =>
+        prev.map((r) => (r.id === data.getGenerationRun.id ? data.getGenerationRun : r)),
+      );
+    } catch {
+      /* fallback: user can retry manually */
+    }
   }, [activeRun, query]);
 
   // ─── Polling fallback: 10s while RUNNING ───────────────────────────────────
   useEffect(() => {
     if (activeRun?.status === 'RUNNING') {
-      pollTimer.current = setInterval(() => { refetchActiveRun(); }, 10_000);
+      pollTimer.current = setInterval(() => {
+        refetchActiveRun();
+      }, 10_000);
     } else {
-      if (pollTimer.current) { clearInterval(pollTimer.current); pollTimer.current = null; }
+      if (pollTimer.current) {
+        clearInterval(pollTimer.current);
+        pollTimer.current = null;
+      }
     }
-    return () => { if (pollTimer.current) { clearInterval(pollTimer.current); pollTimer.current = null; } };
+    return () => {
+      if (pollTimer.current) {
+        clearInterval(pollTimer.current);
+        pollTimer.current = null;
+      }
+    };
   }, [activeRun?.status, refetchActiveRun]);
 
   // ─── WebSocket: live progress ──────────────────────────────────────────────
@@ -164,14 +194,17 @@ export function GenerationView({ onViewDocument, registryMap }: GenerationViewPr
       }
       if (evt.type === 'Generation.RunCompleted') {
         refetchActiveRun();
-      } else if (evt.type === 'Generation.SectionComposed' || evt.type === 'Generation.SectionFailed') {
-        setActiveRun(prev => {
+      } else if (
+        evt.type === 'Generation.SectionComposed' ||
+        evt.type === 'Generation.SectionFailed'
+      ) {
+        setActiveRun((prev) => {
           if (!prev) return prev;
           const kind = evt.kind ?? (evt.type === 'Generation.SectionFailed' ? 'FAILED' : 'PROSE');
-          const sections = prev.sections.map(s =>
-            s.harmonizationKey === evt.harmonizationKey ? { ...s, kind } : s
+          const sections = prev.sections.map((s) =>
+            s.harmonizationKey === evt.harmonizationKey ? { ...s, kind } : s,
           );
-          if (!sections.find(s => s.harmonizationKey === evt.harmonizationKey)) {
+          if (!sections.find((s) => s.harmonizationKey === evt.harmonizationKey)) {
             sections.push({
               id: `pending-${evt.harmonizationKey}`,
               harmonizationKey: evt.harmonizationKey ?? '',
@@ -195,27 +228,38 @@ export function GenerationView({ onViewDocument, registryMap }: GenerationViewPr
     setGenerating(true);
     setError(null);
     try {
-      const data = await mutate<{ generateImsManual: GenerationRun }>(GENERATE_IMS_MANUAL, { input: {} });
+      const data = await mutate<{ generateImsManual: GenerationRun }>(GENERATE_IMS_MANUAL, {
+        input: {},
+      });
       setActiveRun(data.generateImsManual);
-      setRuns(prev => [data.generateImsManual, ...prev]);
+      setRuns((prev) => [data.generateImsManual, ...prev]);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : '';
       if (msg.includes('ORG_PROFILE_REQUIRED')) setError('profileRequired');
       else if (msg.includes('NO_STANDARDS_IN_SCOPE')) setError('noStandards');
       else if (msg.includes('GENERATION_UNAVAILABLE')) setError('unavailable');
       else setError('unavailable');
-    } finally { setGenerating(false); }
+    } finally {
+      setGenerating(false);
+    }
   }
 
   // ─── Mark section reviewed ─────────────────────────────────────────────────
   async function handleMarkReviewed(sectionId: string) {
     try {
-      const data = await mutate<{ markSectionReviewed: GenerationSection }>(MARK_SECTION_REVIEWED, { input: { sectionId } });
-      setActiveRun(prev => {
-        if (!prev) return prev;
-        return { ...prev, sections: prev.sections.map(s => s.id === sectionId ? data.markSectionReviewed : s) };
+      const data = await mutate<{ markSectionReviewed: GenerationSection }>(MARK_SECTION_REVIEWED, {
+        input: { sectionId },
       });
-    } catch { /* server enforces; silent on failure */ }
+      setActiveRun((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          sections: prev.sections.map((s) => (s.id === sectionId ? data.markSectionReviewed : s)),
+        };
+      });
+    } catch {
+      /* server enforces; silent on failure */
+    }
   }
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -253,12 +297,24 @@ export function GenerationView({ onViewDocument, registryMap }: GenerationViewPr
       {activeRun && (
         <Panel title={t('runStatus')}>
           <div className={styles.runHeader}>
-            <StatusBadge status={activeRun.status === 'RUNNING' ? 'IN_PROGRESS' : activeRun.status === 'COMPLETE' ? 'APPROVED' : 'REJECTED'} />
+            <StatusBadge
+              status={
+                activeRun.status === 'RUNNING'
+                  ? 'IN_PROGRESS'
+                  : activeRun.status === 'COMPLETE'
+                    ? 'APPROVED'
+                    : 'REJECTED'
+              }
+            />
             <span className={styles.runMeta}>
-              {activeRun.sections.length} {t('sectionCount')} &middot; {activeRun.gapCount} {t('gapSection')}
+              {activeRun.sections.length} {t('sectionCount')} &middot; {activeRun.gapCount}{' '}
+              {t('gapSection')}
             </span>
             {activeRun.manualDocumentId && (
-              <SecondaryButton onClick={() => onViewDocument(activeRun.manualDocumentId!)} data-testid="view-manual-btn">
+              <SecondaryButton
+                onClick={() => onViewDocument(activeRun.manualDocumentId!)}
+                data-testid="view-manual-btn"
+              >
                 {t('title')}
               </SecondaryButton>
             )}
@@ -266,7 +322,7 @@ export function GenerationView({ onViewDocument, registryMap }: GenerationViewPr
 
           {/* Section list */}
           <div className={styles.sectionList} data-testid="section-list">
-            {activeRun.sections.map(section => (
+            {activeRun.sections.map((section) => (
               <SectionRow
                 key={section.id}
                 section={section}
@@ -284,11 +340,26 @@ export function GenerationView({ onViewDocument, registryMap }: GenerationViewPr
       {runs.length > 1 && (
         <Panel title={t('runStatus')}>
           <div className={styles.runHistory}>
-            {runs.slice(1).map(run => (
-              <button key={run.id} type="button" className={styles.runHistoryItem}
-                onClick={() => setActiveRun(run)} data-testid={`run-${run.id}`}>
-                <StatusBadge status={run.status === 'COMPLETE' ? 'APPROVED' : run.status === 'RUNNING' ? 'IN_PROGRESS' : 'REJECTED'} />
-                <span className={styles.runMeta}>{new Date(run.startedAt).toLocaleDateString()}</span>
+            {runs.slice(1).map((run) => (
+              <button
+                key={run.id}
+                type="button"
+                className={styles.runHistoryItem}
+                onClick={() => setActiveRun(run)}
+                data-testid={`run-${run.id}`}
+              >
+                <StatusBadge
+                  status={
+                    run.status === 'COMPLETE'
+                      ? 'APPROVED'
+                      : run.status === 'RUNNING'
+                        ? 'IN_PROGRESS'
+                        : 'REJECTED'
+                  }
+                />
+                <span className={styles.runMeta}>
+                  {new Date(run.startedAt).toLocaleDateString()}
+                </span>
               </button>
             ))}
           </div>
@@ -300,7 +371,13 @@ export function GenerationView({ onViewDocument, registryMap }: GenerationViewPr
 
 // ─── Section Row ─────────────────────────────────────────────────────────────
 
-function SectionRow({ section, registryMap, canReview, onMarkReviewed, t }: {
+function SectionRow({
+  section,
+  registryMap,
+  canReview,
+  onMarkReviewed,
+  t,
+}: {
   section: GenerationSection;
   registryMap: Map<string, RegistryEntry>;
   canReview: boolean;
@@ -312,18 +389,28 @@ function SectionRow({ section, registryMap, canReview, onMarkReviewed, t }: {
 
   // clauseRefs is AWSJSON of clause_registry_ids (UUIDs) — resolve via registryMap
   let registryIds: string[] = [];
-  try { registryIds = JSON.parse(section.clauseRefs) as string[]; } catch { /* empty */ }
-  const resolvedEntries = registryIds.map(id => registryMap.get(id)).filter(Boolean) as RegistryEntry[];
+  try {
+    registryIds = JSON.parse(section.clauseRefs) as string[];
+  } catch {
+    /* empty */
+  }
+  const resolvedEntries = registryIds
+    .map((id) => registryMap.get(id))
+    .filter(Boolean) as RegistryEntry[];
 
   // GAP CTA: derive from requiredSources of the resolved registry entries
   const gapSources: Array<{ source: string; link: { path: string; labelKey: string } }> = [];
   if (section.kind === 'GAP') {
     for (const entry of resolvedEntries) {
       let sources: string[] = [];
-      try { sources = JSON.parse(entry.requiredSources) as string[]; } catch { /* skip */ }
+      try {
+        sources = JSON.parse(entry.requiredSources) as string[];
+      } catch {
+        /* skip */
+      }
       for (const src of sources) {
         const link = GAP_SOURCE_LINKS[src];
-        if (link && !gapSources.find(g => g.source === src)) {
+        if (link && !gapSources.find((g) => g.source === src)) {
           gapSources.push({ source: src, link });
         }
       }
@@ -331,13 +418,16 @@ function SectionRow({ section, registryMap, canReview, onMarkReviewed, t }: {
   }
 
   return (
-    <div className={`${styles.sectionRow} ${kindClass}`} data-testid={`section-${section.harmonizationKey}`}>
+    <div
+      className={`${styles.sectionRow} ${kindClass}`}
+      data-testid={`section-${section.harmonizationKey}`}
+    >
       <div className={styles.sectionHeader}>
         <span className={styles.sectionKey}>{section.harmonizationKey}</span>
         <span className={`${styles.sectionKind} ${kindClass}`}>{kindLabel}</span>
         {resolvedEntries.length > 0 && (
           <span className={styles.sectionClauses}>
-            {resolvedEntries.map(e => `${e.standard} ${e.clauseNo}`).join(', ')}
+            {resolvedEntries.map((e) => `${e.standard} ${e.clauseNo}`).join(', ')}
           </span>
         )}
       </div>
@@ -361,14 +451,21 @@ function SectionRow({ section, registryMap, canReview, onMarkReviewed, t }: {
       {/* Review state */}
       <div className={styles.sectionReview}>
         {section.reviewedBy ? (
-          <span className={styles.reviewedLabel} data-testid={`reviewed-${section.harmonizationKey}`}>
-            {t('reviewed')} &middot; {section.reviewedBy} &middot; {section.reviewedAt ? new Date(section.reviewedAt).toLocaleDateString() : ''}
+          <span
+            className={styles.reviewedLabel}
+            data-testid={`reviewed-${section.harmonizationKey}`}
+          >
+            {t('reviewed')} &middot; {section.reviewedBy} &middot;{' '}
+            {section.reviewedAt ? new Date(section.reviewedAt).toLocaleDateString() : ''}
           </span>
         ) : (
           <>
             <span className={styles.unreviewedLabel}>{t('unreviewed')}</span>
             {canReview && section.kind === 'PROSE' && (
-              <SecondaryButton onClick={() => onMarkReviewed(section.id)} data-testid={`review-btn-${section.harmonizationKey}`}>
+              <SecondaryButton
+                onClick={() => onMarkReviewed(section.id)}
+                data-testid={`review-btn-${section.harmonizationKey}`}
+              >
                 {t('markReviewed')}
               </SecondaryButton>
             )}
@@ -381,20 +478,30 @@ function SectionRow({ section, registryMap, canReview, onMarkReviewed, t }: {
 
 function getKindLabel(kind: SectionKind, t: (key: string) => string): string {
   switch (kind) {
-    case 'PROSE': return t('proseSection');
-    case 'GAP': return t('gapSection');
-    case 'NA_JUSTIFIED': return t('naSection');
-    case 'FAILED': return t('failedSection');
-    case 'PENDING': return t('pendingSection');
+    case 'PROSE':
+      return t('proseSection');
+    case 'GAP':
+      return t('gapSection');
+    case 'NA_JUSTIFIED':
+      return t('naSection');
+    case 'FAILED':
+      return t('failedSection');
+    case 'PENDING':
+      return t('pendingSection');
   }
 }
 
 function getKindClass(kind: SectionKind): string {
   switch (kind) {
-    case 'PROSE': return styles.kindProse ?? '';
-    case 'GAP': return styles.kindGap ?? '';
-    case 'NA_JUSTIFIED': return styles.kindNa ?? '';
-    case 'FAILED': return styles.kindFailed ?? '';
-    case 'PENDING': return styles.kindPending ?? '';
+    case 'PROSE':
+      return styles.kindProse ?? '';
+    case 'GAP':
+      return styles.kindGap ?? '';
+    case 'NA_JUSTIFIED':
+      return styles.kindNa ?? '';
+    case 'FAILED':
+      return styles.kindFailed ?? '';
+    case 'PENDING':
+      return styles.kindPending ?? '';
   }
 }
