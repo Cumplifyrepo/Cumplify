@@ -51,14 +51,16 @@ async function createAuditProgramme(event: AppSyncEvent, tenantId: string, actor
       ],
     );
     await txn.commit();
+    const programme = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M3',
       clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
       detailType: 'Audit.ProgrammeCreated', source: 'cumplify.m3.audit-studio',
-      payload: { input },
+      entityId: String(programme?.id ?? ''),
+      payload: { programmeId: programme?.id, input },
     });
     logger.info('Audit programme created', { tenantId });
-    return marshalOne(result);
+    return programme;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -81,14 +83,16 @@ async function scheduleAudit(event: AppSyncEvent, tenantId: string, actor: strin
       ],
     );
     await txn.commit();
+    const audit = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M3',
       clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
       detailType: 'Audit.Scheduled', source: 'cumplify.m3.audit-studio',
-      payload: { programmeId: input.programmeId, plannedDate: input.plannedDate },
+      entityId: String(audit?.id ?? ''), // the Audit row the mutation returns
+      payload: { auditId: audit?.id, programmeId: input.programmeId, plannedDate: input.plannedDate },
     });
     logger.info('Audit scheduled', { tenantId });
-    return marshalOne(result);
+    return audit;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -113,13 +117,15 @@ async function recordFinding(event: AppSyncEvent, tenantId: string, actor: strin
       ],
     );
     await txn.commit();
+    const finding = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M3',
       clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
       detailType: 'Audit.FindingRaised', source: 'cumplify.m3.audit-studio',
-      payload: { auditId: input.auditId, findingType: input.findingType, clauseRef: input.clauseRef },
+      entityId: String(finding?.id ?? ''), // the AuditFinding row the mutation returns
+      payload: { findingId: finding?.id, auditId: input.auditId, findingType: input.findingType, clauseRef: input.clauseRef },
     });
-    return marshalOne(result);
+    return finding;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -137,6 +143,7 @@ async function completeAudit(event: AppSyncEvent, tenantId: string, actor: strin
       tenantId, actor, module: 'M3',
       clauseRef: 'ISO 9001 9.2', standard: 'ISO9001',
       detailType: 'Audit.Completed', source: 'cumplify.m3.audit-studio',
+      entityId: id,
       payload: { auditId: id },
     });
     return marshalOne(result);
@@ -259,6 +266,7 @@ async function generateAuditChecklist(event: AppSyncEvent, tenantId: string, act
       tenantId, actor, module: 'M3',
       clauseRef: '9.2', standard: auditStandard as 'ISO9001' | 'ISO14001' | 'ISO45001',
       detailType: 'Audit.ChecklistGenerated', source: 'cumplify.m3.audit-studio',
+      entityId: auditId, // checklist rows are many — the audit is the entity
       payload: { auditId, standard: auditStandard, clauseCount: clauseResult.records.length, insertedCount },
     });
 

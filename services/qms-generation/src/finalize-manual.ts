@@ -303,6 +303,7 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
     standard: 'IMS',
     detailType: 'Generation.RunCompleted',
     source: 'cumplify.qms.docgen',
+    entityId: runId,
     payload: { runId, status, summary, manualDocumentId, documentsCreated },
   });
   await publishGenerationEvent({

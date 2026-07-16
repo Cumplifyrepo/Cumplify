@@ -107,6 +107,71 @@ describe('appendAuditEvent', () => {
     });
   });
 
+  describe('entityId + GSI1 stamping (sparse index)', () => {
+    const writtenItem = () => {
+      const calls = ddbMock.commandCalls(TransactWriteItemsCommand);
+      expect(calls.length).toBeGreaterThan(0);
+      const put = calls[0].args[0].input.TransactItems![0].Put!;
+      return put.Item as Record<string, { S?: string }>;
+    };
+
+    it('stamps entityId + GSI1PK/GSI1SK when entityId is provided', async () => {
+      ddbMock.on(QueryCommand).resolves({ Items: [] });
+      ddbMock.on(TransactWriteItemsCommand).resolves({});
+
+      const result = await appendAuditEvent(
+        { ...baseInput, entityId: 'row-uuid-42' },
+        'CAPA.Closed',
+      );
+
+      const item = writtenItem();
+      expect(item.entityId?.S).toBe('row-uuid-42');
+      expect(item.GSI1PK?.S).toBe('TENANT#tenant-001#ENTITY#row-uuid-42');
+      // GSI1SK mirrors SK so per-entity order matches partition order
+      expect(item.GSI1SK?.S).toBe(result.sk);
+      // Leading TENANT#<id># satisfies the tenant-data role LeadingKeys condition
+      expect(item.GSI1PK!.S!.startsWith('TENANT#tenant-001#')).toBe(true);
+    });
+
+    it('omits ALL GSI attributes when entityId is absent (sparse)', async () => {
+      ddbMock.on(QueryCommand).resolves({ Items: [] });
+      ddbMock.on(TransactWriteItemsCommand).resolves({});
+
+      await appendAuditEvent(baseInput, 'CAPA.Closed');
+
+      const item = writtenItem();
+      expect(item.entityId).toBeUndefined();
+      expect(item.GSI1PK).toBeUndefined();
+      expect(item.GSI1SK).toBeUndefined();
+    });
+
+    it('treats empty-string entityId as no entity (no GSI attributes)', async () => {
+      ddbMock.on(QueryCommand).resolves({ Items: [] });
+      ddbMock.on(TransactWriteItemsCommand).resolves({});
+
+      await appendAuditEvent({ ...baseInput, entityId: '' }, 'CAPA.Closed');
+
+      const item = writtenItem();
+      expect(item.entityId).toBeUndefined();
+      expect(item.GSI1PK).toBeUndefined();
+      expect(item.GSI1SK).toBeUndefined();
+    });
+
+    it('keeps GSI attributes OUT of the hash chain (payloadHash covers payload only)', async () => {
+      ddbMock.on(QueryCommand).resolves({ Items: [] });
+      ddbMock.on(TransactWriteItemsCommand).resolves({});
+
+      const withEntity = await appendAuditEvent(
+        { ...baseInput, entityId: 'row-uuid-42' },
+        'CAPA.Closed',
+      );
+
+      // Identical payload with no entityId hashes identically — stamping is
+      // metadata, never chain content.
+      expect(withEntity.payloadHash).toBe(computePayloadHash(baseInput.payload));
+    });
+  });
+
   describe('400KB item size guard (REV-2)', () => {
     it('throws ItemSizeExceededError for oversized payload', async () => {
       ddbMock.on(QueryCommand).resolves({ Items: [] });

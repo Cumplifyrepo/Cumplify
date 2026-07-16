@@ -418,6 +418,7 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
     standard: 'IMS',
     detailType: 'Generation.SectionRegenerated',
     source: 'cumplify.qms.docgen',
+    entityId: sectionId,
     payload: audit,
   });
 

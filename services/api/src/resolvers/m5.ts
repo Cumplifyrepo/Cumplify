@@ -89,6 +89,7 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
       tenantId, actor, module: 'M5',
       clauseRef: 'ISO 9001 6.1', standard: 'ISO9001',
       detailType: 'Risk.Created', source: 'cumplify.m5.risk',
+      entityId: String(risk?.id ?? ''),
       payload: { riskId: risk?.id, category, description: input.description },
     });
 
@@ -120,14 +121,16 @@ async function addRiskTreatment(event: AppSyncEvent, tenantId: string, actor: st
     );
     await txn.commit();
 
+    const treatment = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M5',
       clauseRef: 'ISO 9001 6.1', standard: 'ISO9001',
       detailType: 'Risk.TreatmentAdded', source: 'cumplify.m5.risk',
-      payload: { riskId: input.riskId, input },
+      entityId: String(treatment?.id ?? ''), // the RiskTreatment row the mutation returns
+      payload: { treatmentId: treatment?.id, riskId: input.riskId, input },
     });
 
-    return marshalOne(result);
+    return treatment;
   } catch (err) {
     await txn.rollback();
     throw err;
@@ -153,14 +156,16 @@ async function createChangePlan(event: AppSyncEvent, tenantId: string, actor: st
     );
     await txn.commit();
 
+    const plan = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M5',
       clauseRef: 'ISO 9001 6.3', standard: 'ISO9001',
       detailType: 'Change.Planned', source: 'cumplify.m5.risk',
-      payload: { input },
+      entityId: String(plan?.id ?? ''),
+      payload: { changePlanId: plan?.id, input },
     });
 
-    return marshalOne(result);
+    return plan;
   } catch (err) {
     await txn.rollback();
     throw err;

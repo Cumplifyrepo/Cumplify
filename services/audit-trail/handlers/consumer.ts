@@ -24,6 +24,7 @@ const businessLogic = async (event: CumplifyEvent, detailType: string): Promise<
         module: event.module,
         clauseRef: event.clauseRef,
         standard: event.standard,
+        entityId: event.entityId,
         payload: event.payload as Record<string, unknown>,
       },
       detailType,

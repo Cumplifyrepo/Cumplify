@@ -167,6 +167,7 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
     detailType,
     source: 'cumplify.hitl.approval',
     timestamp: auditEventTimestamp,
+    entityId: hitlItemId,
     payload: {
       hitlItemId,
       decision,

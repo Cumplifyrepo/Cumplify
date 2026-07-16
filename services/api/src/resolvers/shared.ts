@@ -199,6 +199,14 @@ export interface PublishAuditEventOptions {
   standard: 'ISO9001' | 'ISO14001' | 'ISO45001' | 'IMS';
   detailType: string;
   source: string;
+  /**
+   * Normalized id of the domain row this event is about — the id of the row
+   * the mutation returns (marshalOne(result).id); blocked/negative events
+   * carry the id of the row the attempt targeted. REQUIRED so every call
+   * site declares it (compiler-enforced). Pass '' only when the event has no
+   * domain row — no GSI stamping, getAuditTrail falls back to partition scan.
+   */
+  entityId: string;
   payload: Record<string, unknown>;
   /** Envelope timestamp override — pass when the caller must return the exact sealed value. */
   timestamp?: string;
@@ -216,6 +224,7 @@ export async function publishAuditEvent(opts: PublishAuditEventOptions): Promise
       module: opts.module,
       clauseRef: opts.clauseRef,
       standard: opts.standard,
+      entityId: opts.entityId,
       payload: opts.payload,
     },
   });

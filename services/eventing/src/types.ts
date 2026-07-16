@@ -11,6 +11,15 @@ export interface CumplifyEvent<T = Record<string, unknown>> {
   clauseRef: string; // ISO clause string
   standard: 'ISO9001' | 'ISO14001' | 'ISO45001' | 'IMS'; // IMS = integrated-manual artifacts (spec-40 BC-6)
   auditTrail: boolean; // true = routes to audit-sink (R-3)
+  /**
+   * Normalized id of the domain row this event is about — the id of the row
+   * the triggering mutation returns (blocked/negative events carry the id of
+   * the row the attempt targeted). The audit-trail appender stamps it as a
+   * GSI1 key on the ledger item so getAuditTrail can Query per entity instead
+   * of scanning the tenant partition. Optional at the envelope level so
+   * pre-existing publishers keep working; empty string = no entity, no GSI.
+   */
+  entityId?: string;
   payload: T;
 }
 

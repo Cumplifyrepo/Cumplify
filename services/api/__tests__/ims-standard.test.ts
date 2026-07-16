@@ -52,7 +52,7 @@ describe('IMS as first-class standard (BC-6)', () => {
     const opts: PublishAuditEventOptions = {
       tenantId: 't', actor: 'a', module: 'M1', clauseRef: '4.3',
       standard: 'IMS',
-      detailType: 'x', source: 'y', payload: {},
+      detailType: 'x', source: 'y', entityId: 'e', payload: {},
     };
     expect(opts.standard).toBe('IMS');
   });

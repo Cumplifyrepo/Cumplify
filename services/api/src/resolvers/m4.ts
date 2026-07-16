@@ -54,14 +54,16 @@ async function registerRecord(event: AppSyncEvent, tenantId: string, actor: stri
       ],
     );
     await txn.commit();
+    const record = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M4',
       clauseRef: 'ISO 9001 7.5.3', standard: 'ISO9001',
       detailType: 'Record.Registered', source: 'cumplify.m4.records',
-      payload: { input },
+      entityId: String(record?.id ?? ''),
+      payload: { recordId: record?.id, input },
     });
     logger.info('Record registered', { tenantId });
-    return marshalOne(result);
+    return record;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -86,6 +88,7 @@ async function registerMeasuringResource(event: AppSyncEvent, tenantId: string, 
       tenantId, actor, module: 'M4',
       clauseRef: 'ISO 9001 7.1.5.1', standard: 'ISO9001',
       detailType: 'MeasuringResource.Registered', source: 'cumplify.m4.records',
+      entityId: String(resource?.id ?? ''),
       payload: { resourceId: resource?.id, assetTag: input.assetTag },
     });
     logger.info('Measuring resource registered', { tenantId });
@@ -112,14 +115,16 @@ async function recordCalibration(event: AppSyncEvent, tenantId: string, actor: s
       ],
     );
     await txn.commit();
+    const calibration = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M4',
       clauseRef: 'ISO 9001 7.1.5.2', standard: 'ISO9001',
       detailType: 'Calibration.Recorded', source: 'cumplify.m4.records',
-      payload: { measuringResourceId: input.measuringResourceId, result: input.result },
+      entityId: String(calibration?.id ?? ''), // the CalibrationRecord row the mutation returns
+      payload: { calibrationId: calibration?.id, measuringResourceId: input.measuringResourceId, result: input.result },
     });
     logger.info('Calibration recorded', { tenantId });
-    return marshalOne(result);
+    return calibration;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -140,13 +145,15 @@ async function createRetentionPolicy(event: AppSyncEvent, tenantId: string, acto
       ],
     );
     await txn.commit();
+    const policy = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M4',
       clauseRef: 'ISO 9001 7.5.3', standard: 'ISO9001',
       detailType: 'Record.RetentionPolicySet', source: 'cumplify.m4.records',
-      payload: { recordType: input.recordType, retentionYears: input.retentionYears },
+      entityId: String(policy?.id ?? ''), // the RetentionPolicy row the mutation returns
+      payload: { retentionPolicyId: policy?.id, recordType: input.recordType, retentionYears: input.retentionYears },
     });
-    return marshalOne(result);
+    return policy;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -180,21 +187,65 @@ async function listCalibrationsDue(event: AppSyncEvent, tenantId: string) {
 /**
  * getAuditTrail — reads the real audit ledger (services/audit-trail,
  * DynamoDB CumplifyCore, PK=TENANT#<id>#AUDITLOG) via the tenant-data role.
- * The ledger has no entityId attribute (events are appended per-tenant,
- * chronologically hash-chained — see services/audit-trail/src/appender.ts) —
- * there is no GSI to look up "events for entity X" directly. Interim
- * approach: query the tenant's partition (most recent first, capped) and
- * match entityId against the serialized payload, since every publisher puts
- * the relevant row id somewhere in payload under an inconsistent key name
- * (policyId, riskId, versionId, ncId, ...). A normalized entityId attribute
- * + GSI is the correct long-term fix but touches every publishAuditEvent
- * call site — flagged for a follow-up, not attempted here.
+ *
+ * Primary path: Query GSI1 on GSI1PK = TENANT#<id>#ENTITY#<entityId> — the
+ * appender stamps this key on every item whose envelope carried a normalized
+ * entityId (every publishAuditEvent call site declares one; the leading
+ * TENANT#<id># satisfies the tenant-data role's LeadingKeys condition on
+ * index/*). Fallback (GSI returns ZERO items): the pre-GSI partition scan
+ * with substring payload match — covers events appended before the entityId
+ * attribute existed. Mixed pre/post-migration entities return only the GSI
+ * hits; a ledger backfill (new attributes only, chain untouched) is the
+ * upgrade path if that ever matters in practice.
  */
 async function getAuditTrail(event: AppSyncEvent, tenantId: string) {
   const entityId = event.arguments.entityId as string;
   const ddb = await getTenantDdbClient(tenantId);
-  const pk = `TENANT#${tenantId}#AUDITLOG`;
+
+  const shape = (item: Record<string, unknown>) => ({
+    tenantId,
+    eventId: item.eventId,
+    eventType: item.eventType,
+    actor: item.actor,
+    module: item.module,
+    clauseRef: item.clauseRef,
+    standard: item.standard,
+    timestamp: item.eventTimestamp,
+    payloadHash: item.payloadHash,
+    prevHash: item.prevHash ?? null,
+    payload: item.payload ?? null,
+  });
+
+  // Primary: per-entity GSI query (paginated, most recent first)
+  const gsiMatches: Record<string, unknown>[] = [];
+  let gsiLastKey: Record<string, unknown> | undefined;
+  do {
+    const resp = await ddb.send(new QueryCommand({
+      TableName: TABLE_NAME,
+      IndexName: 'GSI1',
+      KeyConditionExpression: 'GSI1PK = :gpk', // :gpk = TENANT#<tenantId>#ENTITY#<entityId> (FF-5)
+      // The itemType filter keeps this query audit-ledger-only even if another
+      // item type ever adopts GSI1 (today the ledger is its sole writer).
+      FilterExpression: 'itemType = :audit',
+      ExpressionAttributeValues: {
+        ':gpk': { S: `TENANT#${tenantId}#ENTITY#${entityId}` },
+        ':audit': { S: 'AUDITLOG' },
+      },
+      ScanIndexForward: false,
+      ExclusiveStartKey: gsiLastKey as never,
+    }));
+    for (const raw of resp.Items ?? []) {
+      gsiMatches.push(shape(unmarshall(raw)));
+    }
+    gsiLastKey = resp.LastEvaluatedKey as Record<string, unknown> | undefined;
+  } while (gsiLastKey);
+
+  if (gsiMatches.length > 0) return gsiMatches;
+
+  // Fallback: pre-migration events (no entityId attribute) — partition scan
+  // with substring payload match, most recent first, capped.
   const matches: Record<string, unknown>[] = [];
+  const pk = `TENANT#${tenantId}#AUDITLOG`;
   let lastKey: Record<string, unknown> | undefined;
   let pages = 0;
 
@@ -209,19 +260,7 @@ async function getAuditTrail(event: AppSyncEvent, tenantId: string) {
     for (const raw of resp.Items ?? []) {
       const item = unmarshall(raw);
       if (JSON.stringify(item.payload ?? {}).includes(entityId)) {
-        matches.push({
-          tenantId,
-          eventId: item.eventId,
-          eventType: item.eventType,
-          actor: item.actor,
-          module: item.module,
-          clauseRef: item.clauseRef,
-          standard: item.standard,
-          timestamp: item.eventTimestamp,
-          payloadHash: item.payloadHash,
-          prevHash: item.prevHash ?? null,
-          payload: item.payload ?? null,
-        });
+        matches.push(shape(item));
       }
     }
     lastKey = resp.LastEvaluatedKey as Record<string, unknown> | undefined;

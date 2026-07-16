@@ -284,6 +284,7 @@ async function saveOrgProfile(event: AppSyncEvent, tenantId: string, actor: stri
       tenantId, actor, module: 'M1',
       clauseRef: '4.1', standard: 'ISO9001',
       detailType: 'Context.Updated', source: 'cumplify.qms.document-engine',
+      entityId: profileId,
       payload: { profileId, version: newVersion },
     });
 
@@ -325,15 +326,17 @@ async function setClauseApplicability(event: AppSyncEvent, tenantId: string, act
 
     await txn.commit();
 
+    const applicability = marshalOne(result);
     // Audit event: Scope.Changed (already registered)
     await publishAuditEvent({
       tenantId, actor, module: 'M1',
       clauseRef: '4.3', standard: 'ISO9001',
       detailType: 'Scope.Changed', source: 'cumplify.qms.document-engine',
-      payload: { clauseRegistryId: input.clauseRegistryId, applicable: input.applicable },
+      entityId: String(applicability?.id ?? ''), // the ClauseApplicability row the mutation returns
+      payload: { applicabilityId: applicability?.id, clauseRegistryId: input.clauseRegistryId, applicable: input.applicable },
     });
 
-    return marshalOne(result);
+    return applicability;
   } catch (err) {
     try { await txn.rollback(); } catch { /* never mask */ }
     throw err;

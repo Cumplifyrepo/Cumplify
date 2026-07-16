@@ -67,12 +67,14 @@ async function createDocumentDraft(event: AppSyncEvent, tenantId: string, actor:
       ],
     );
     await txn.commit();
+    const doc = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
       detailType: 'Document.DraftCreated', source: 'cumplify.m1.document-studio',
-      payload: { input },
+      entityId: String(doc?.id ?? ''),
+      payload: { documentId: doc?.id, input },
     });
-    return marshalOne(result);
+    return doc;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -124,6 +126,7 @@ async function submitDocumentForApproval(event: AppSyncEvent, tenantId: string, 
     await publishAuditEvent({
       tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
       detailType: 'Document.SubmittedForApproval', source: 'cumplify.m1.document-studio',
+      entityId: id,
       payload: { documentId: id },
     });
     return marshalOne(result);
@@ -151,6 +154,7 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
         await publishAuditEvent({
           tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
           detailType: 'Security.SodViolationBlocked', source: 'cumplify.m1.document-studio',
+          entityId: input.versionId as string, // blocked events carry the targeted row id
           payload: { versionId: input.versionId, attemptedBy: actor, createdBy },
         });
         throw new Error('SOD_VIOLATION');
@@ -168,12 +172,14 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
       ],
     );
     await txn.commit();
+    const approval = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.2', standard: 'ISO9001',
       detailType: 'Document.Approved', source: 'cumplify.m1.document-studio',
-      payload: { versionId: input.versionId, decision: input.decision },
+      entityId: String(approval?.id ?? ''), // the DocumentApproval row the mutation returns
+      payload: { approvalId: approval?.id, versionId: input.versionId, decision: input.decision },
     });
-    return marshalOne(result);
+    return approval;
   } catch (err) {
     if ((err as Error).message !== 'SOD_VIOLATION') {
       try { await txn.rollback(); } catch { /* never mask */ }
@@ -301,7 +307,8 @@ async function publishControlledDocument(event: AppSyncEvent, tenantId: string, 
     await publishAuditEvent({
       tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.3', standard: 'ISO9001',
       detailType: 'Document.Published', source: 'cumplify.m1.document-studio',
-      payload: { versionId, ...sealed },
+      entityId: meta.documentId, // mutation returns the document (RETURNING d.*)
+      payload: { versionId, documentId: meta.documentId, ...sealed },
     });
     return marshalOne(result);
   } catch (err) {
@@ -326,6 +333,7 @@ async function updatePolicy(event: AppSyncEvent, tenantId: string, actor: string
     await publishAuditEvent({
       tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 5.2', standard: 'ISO9001',
       detailType: 'Policy.Updated', source: 'cumplify.m1.document-studio',
+      entityId: input.id as string,
       payload: { policyId: input.id },
     });
     return marshalOne(result);
@@ -350,6 +358,7 @@ async function updateImsScope(event: AppSyncEvent, tenantId: string, actor: stri
     await publishAuditEvent({
       tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 4.3', standard: 'ISO9001',
       detailType: 'Scope.Changed', source: 'cumplify.m1.document-studio',
+      entityId: input.id as string,
       payload: { scopeId: input.id },
     });
     return marshalOne(result);

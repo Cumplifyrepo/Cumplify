@@ -26,6 +26,12 @@ interface CumplifyEvent<T = Record<string, unknown>> {
   clauseRef: string;      // ISO clause string (e.g., "ISO 9001 10.2")
   standard: 'ISO9001' | 'ISO14001' | 'ISO45001';
   auditTrail: boolean;    // true = routes to audit-sink (R-3); stamped by publisher from registry
+  entityId?: string;      // normalized id of the domain row the event is about — the row the
+                          // triggering mutation returns (blocked events: the targeted row).
+                          // The audit-trail appender stamps it as GSI1PK=TENANT#<t>#ENTITY#<id>
+                          // on the ledger item (sparse — absent/'' = no GSI stamping). Added
+                          // 2026-07-16 (entityId+GSI follow-up); optional so pre-existing
+                          // publishers stay valid.
   payload: T;             // domain-specific
 }
 ```

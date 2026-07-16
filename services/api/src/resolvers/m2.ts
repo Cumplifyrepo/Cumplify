@@ -60,14 +60,17 @@ async function raiseNonconformity(event: AppSyncEvent, tenantId: string, actor: 
       ],
     );
     await txn.commit();
+    const nc = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'NC.Raised', source: 'cumplify.m2.capa',
-      payload: { input },
+      entityId: String(nc?.id ?? ''),
+      // F-A fix: agents consuming NC.Raised need the real ncId (was input-only)
+      payload: { ncId: nc?.id, input },
     });
     logger.info('Nonconformity raised', { tenantId });
-    return marshalOne(result);
+    return nc;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -104,13 +107,15 @@ async function recordRootCause(event: AppSyncEvent, tenantId: string, actor: str
       [{ name: 'ncId', value: { stringValue: input.ncId as string } }],
     );
     await txn.commit();
+    const rca = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.RootCauseRecorded', source: 'cumplify.m2.capa',
-      payload: { ncId: input.ncId, method },
+      entityId: String(rca?.id ?? ''), // the RootCauseAnalysis row the mutation returns
+      payload: { rootCauseAnalysisId: rca?.id, ncId: input.ncId, method },
     });
-    return marshalOne(result);
+    return rca;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -137,14 +142,16 @@ async function createCorrectiveAction(event: AppSyncEvent, tenantId: string, act
       ],
     );
     await txn.commit();
+    const ca = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.Opened', source: 'cumplify.m2.capa',
-      payload: { ncId: input.ncId, input },
+      entityId: String(ca?.id ?? ''), // the CorrectiveAction row the mutation returns
+      payload: { correctiveActionId: ca?.id, ncId: input.ncId, input },
     });
     logger.info('Corrective action created', { tenantId });
-    return marshalOne(result);
+    return ca;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -167,6 +174,7 @@ async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.Closed', source: 'cumplify.m2.capa',
+      entityId: input.id as string,
       payload: { correctiveActionId: input.id, closureNotes: (input.closureNotes as string) ?? null },
     });
     return marshalOne(result);
@@ -204,13 +212,15 @@ async function verifyEffectiveness(event: AppSyncEvent, tenantId: string, actor:
       );
     }
     await txn.commit();
+    const check = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 10.2', standard: 'ISO9001',
       detailType: 'CAPA.EffectivenessVerified', source: 'cumplify.m2.capa',
-      payload: { correctiveActionId: input.correctiveActionId, effective },
+      entityId: String(check?.id ?? ''), // the CapaEffectivenessCheck row the mutation returns
+      payload: { effectivenessCheckId: check?.id, correctiveActionId: input.correctiveActionId, effective },
     });
-    return marshalOne(result);
+    return check;
   } catch (err) { await txn.rollback(); throw err; }
 }
 
@@ -231,13 +241,15 @@ async function disposeNonconformingOutput(event: AppSyncEvent, tenantId: string,
       ],
     );
     await txn.commit();
+    const output = marshalOne(result);
     await publishAuditEvent({
       tenantId, actor, module: 'M2',
       clauseRef: 'ISO 9001 8.7', standard: 'ISO9001',
       detailType: 'CAPA.OutputDisposed', source: 'cumplify.m2.capa',
-      payload: { ncId: input.ncId, disposition: input.disposition },
+      entityId: String(output?.id ?? ''), // the NonconformingOutput row the mutation returns
+      payload: { nonconformingOutputId: output?.id, ncId: input.ncId, disposition: input.disposition },
     });
-    return marshalOne(result);
+    return output;
   } catch (err) { await txn.rollback(); throw err; }
 }
 

@@ -659,6 +659,7 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
         standard: currentValues['standard'] as 'ISO9001' | 'ISO14001' | 'ISO45001',
         detailType: 'FormRecord.Submitted',
         source: 'cumplify.forms',
+        entityId: recordId,
         payload: { recordId, templateId, mapsTo, ncId },
       });
     } else {
@@ -687,6 +688,7 @@ async function submitFormRecord(event: AppSyncEvent, tenantId: string, actor: st
         standard: tplStandards[0] as 'ISO9001' | 'ISO14001' | 'ISO45001',
         detailType: 'FormRecord.Submitted',
         source: 'cumplify.forms',
+        entityId: recordId,
         payload: { recordId, templateId, mapsTo },
       });
     }
@@ -753,6 +755,7 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
         standard: (tplStandards?.[0] ?? (() => { throw new Error('TEMPLATE_METADATA_MISSING'); })()) as 'ISO9001' | 'ISO14001' | 'ISO45001',
         detailType: 'Security.SodViolationBlocked',
         source: 'cumplify.forms',
+        entityId: recordId, // blocked events carry the targeted row id
         payload: { recordId, attemptedBy: actor, openedBy, completedBy, reason: 'approver must differ from opened_by and completed_by' },
       });
       throw new Error('SOD_VIOLATION');
@@ -792,6 +795,7 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
       standard: tplStandards[0] as 'ISO9001' | 'ISO14001' | 'ISO45001',
       detailType: 'FormRecord.Approved',
       source: 'cumplify.forms',
+      entityId: recordId,
       payload: { recordId, templateId, approvedBy: actor, ...sealed },
     });
 
@@ -863,6 +867,7 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
       standard: tplStandards[0] as 'ISO9001' | 'ISO14001' | 'ISO45001',
       detailType: 'FormRecord.Reopened',
       source: 'cumplify.forms',
+      entityId: recordId,
       payload: { recordId, justification },
     });
 

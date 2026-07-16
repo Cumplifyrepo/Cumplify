@@ -336,6 +336,7 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
     standard: 'IMS',
     detailType: sectionStatus === 'failed' ? 'Generation.SectionFailed' : 'Generation.SectionComposed',
     source: 'cumplify.qms.docgen',
+    entityId: sectionId,
     payload: { runId, sectionId, harmonizationKey: sectionKey, ...auditPayload },
   });
   await publishGenerationEvent({

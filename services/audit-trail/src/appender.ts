@@ -33,6 +33,8 @@ export interface AppendInput {
   module: string;
   clauseRef: string;
   standard: 'ISO9001' | 'ISO14001' | 'ISO45001' | 'IMS'; // IMS = integrated-manual artifacts (spec-40 BC-6)
+  /** Normalized domain-row id (envelope entityId). Non-empty → GSI1 stamping. */
+  entityId?: string;
   payload: Record<string, unknown>;
 }
 
@@ -104,6 +106,18 @@ export async function appendAuditEvent(
   // ES-3 future-proofing: docVersionHash
   if (input.payload.docVersionHash) {
     item.docVersionHash = input.payload.docVersionHash;
+  }
+
+  // Per-entity lookup (GSI1, sparse): only stamped when the publisher supplied
+  // a non-empty entityId. GSI keys sit OUTSIDE the hash chain by construction —
+  // payloadHash covers payload only, prevHash covers (PK, SK, payloadHash) —
+  // so pre-existing items and the verifier are unaffected. GSI1PK leads with
+  // TENANT#<id># to satisfy the tenant-data role's LeadingKeys condition on
+  // index/* (FF-5).
+  if (input.entityId) {
+    item.entityId = input.entityId;
+    item.GSI1PK = `TENANT#${tenantId}#ENTITY#${input.entityId}`;
+    item.GSI1SK = sk;
   }
 
   // 5. Item size guard (REV-2)

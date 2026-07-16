@@ -161,45 +161,57 @@ describe('m4 listCalibrationsDue — table/arg fix regression', () => {
   });
 });
 
-describe('m4 getAuditTrail — data-store + argument-shape fix regression', () => {
-  it('queries DynamoDB by tenant partition (not RDS m4.audit_trail) using the bare entityId arg', async () => {
+describe('m4 getAuditTrail — GSI1 per-entity query + pre-migration fallback', () => {
+  const ledgerItem = (id: string, ts: string, payloadRiskId: string) => ({
+    PK: { S: 'TENANT#tenant-test#AUDITLOG' },
+    SK: { S: `EVENT#${ts}#${id}` },
+    eventId: { S: id },
+    eventType: { S: 'Risk.Created' },
+    actor: { S: 'user-1' },
+    module: { S: 'M5' },
+    clauseRef: { S: 'ISO 9001 6.1' },
+    standard: { S: 'ISO9001' },
+    eventTimestamp: { S: ts },
+    payloadHash: { S: `hash-${id}` },
+    payload: { M: { riskId: { S: payloadRiskId } } },
+  });
+
+  it('queries GSI1 on TENANT#<t>#ENTITY#<entityId> first and returns its hits directly', async () => {
     mockDdbSend.mockResolvedValueOnce({
-      Items: [
-        {
-          PK: { S: 'TENANT#tenant-test#AUDITLOG' },
-          SK: { S: 'EVENT#2027-01-01T00:00:00.000Z#evt-1' },
-          eventId: { S: 'evt-1' },
-          eventType: { S: 'Risk.Created' },
-          actor: { S: 'user-1' },
-          module: { S: 'M5' },
-          clauseRef: { S: 'ISO 9001 6.1' },
-          standard: { S: 'ISO9001' },
-          eventTimestamp: { S: '2027-01-01T00:00:00.000Z' },
-          payloadHash: { S: 'hash1' },
-          payload: { M: { riskId: { S: 'risk-42' } } },
-        },
-        {
-          PK: { S: 'TENANT#tenant-test#AUDITLOG' },
-          SK: { S: 'EVENT#2027-01-01T00:00:01.000Z#evt-2' },
-          eventId: { S: 'evt-2' },
-          eventType: { S: 'Risk.Created' },
-          actor: { S: 'user-1' },
-          module: { S: 'M5' },
-          clauseRef: { S: 'ISO 9001 6.1' },
-          standard: { S: 'ISO9001' },
-          eventTimestamp: { S: '2027-01-01T00:00:01.000Z' },
-          payloadHash: { S: 'hash2' },
-          payload: { M: { riskId: { S: 'risk-99' } } },
-        },
-      ],
+      Items: [ledgerItem('evt-1', '2027-01-01T00:00:00.000Z', 'risk-42')],
     });
 
     const result = await m4Handler(makeEvent('getAuditTrail', { entityId: 'risk-42' })) as Array<Record<string, unknown>>;
 
     expect(mockExecute).not.toHaveBeenCalled();
-    const [ddbCall] = mockDdbSend.mock.calls[0];
-    expect(ddbCall.input.TableName).toBe('CumplifyCore-test');
-    expect(ddbCall.input.ExpressionAttributeValues[':pk']).toEqual({ S: 'TENANT#tenant-test#AUDITLOG' });
+    expect(mockDdbSend).toHaveBeenCalledTimes(1); // GSI hit → NO fallback scan
+    const [gsiCall] = mockDdbSend.mock.calls[0];
+    expect(gsiCall.input.TableName).toBe('CumplifyCore-test');
+    expect(gsiCall.input.IndexName).toBe('GSI1');
+    expect(gsiCall.input.ExpressionAttributeValues[':gpk']).toEqual({ S: 'TENANT#tenant-test#ENTITY#risk-42' });
+    expect(gsiCall.input.ExpressionAttributeValues[':audit']).toEqual({ S: 'AUDITLOG' });
+    expect(result).toHaveLength(1);
+    expect(result[0].eventId).toBe('evt-1');
+    expect(result[0].timestamp).toBe('2027-01-01T00:00:00.000Z');
+  });
+
+  it('falls back to the tenant-partition substring scan when the GSI has zero items (pre-migration events)', async () => {
+    mockDdbSend
+      .mockResolvedValueOnce({ Items: [] }) // GSI miss
+      .mockResolvedValueOnce({
+        Items: [
+          ledgerItem('evt-1', '2027-01-01T00:00:00.000Z', 'risk-42'),
+          ledgerItem('evt-2', '2027-01-01T00:00:01.000Z', 'risk-99'),
+        ],
+      });
+
+    const result = await m4Handler(makeEvent('getAuditTrail', { entityId: 'risk-42' })) as Array<Record<string, unknown>>;
+
+    expect(mockDdbSend).toHaveBeenCalledTimes(2);
+    const [fallbackCall] = mockDdbSend.mock.calls[1];
+    expect(fallbackCall.input.IndexName).toBeUndefined(); // base-table partition query
+    expect(fallbackCall.input.ExpressionAttributeValues[':pk']).toEqual({ S: 'TENANT#tenant-test#AUDITLOG' });
+    // Substring match still filters to the requested entity
     expect(result).toHaveLength(1);
     expect(result[0].eventId).toBe('evt-1');
   });
