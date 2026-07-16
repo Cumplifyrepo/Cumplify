@@ -85,7 +85,7 @@
   - **Evidence:** `cdk synth` passes, CDK Nag clean
   - **ACC mapping:** L1-1, L1-2, CDK-1, CDK-2, CDK-3, CDK-4
 
-- [ ] **Task 7 — Deploy grounding guardrails to dev + empirical probes** [ARCHITECT] D3
+- [x] **Task 7 — Deploy grounding guardrails to dev + empirical probes** [ARCHITECT] D3
   - Deploy AiStack to dev (697114252993)
   - Readback (`aws bedrock get-guardrail`, readonly):
     - AgentGuardrail: PROMPT_ATTACK + 5 PII + grounding 0.85 + relevance 0.75, NO CrossRegionConfig

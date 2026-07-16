@@ -1,0 +1,60 @@
+# Task 7 — Deploy grounding guardrails to dev + empirical probes [ARCHITECT]
+# Executed: 2026-07-16T21:29–21:34Z | all exit codes 0 unless noted
+
+## Deploy
+- Vehicle: CumplifyPipeline execution 3fe45551 (source 4877f6d, webhook),
+  Build → UpdatePipeline (no-op) → Assets → **Dev Succeeded 21:29Z**.
+- Pipeline was RED all day (three stacked breaks, fixed this session — see
+  pipeline-incident section of phase-2-3-validation + memory):
+  1. content-ref-tripwire shelled `git grep`; CodeBuild zip artifact has no
+     .git → fixed 1fa2c17 (fs walk).
+  2. frontend deps never installed in synth step → fixed 4526d2f/4877f6d
+     (`cd frontend && npm ci`; --prefix form was unreliable).
+  3. In-flight old-source execution's SELF-MUTATE stage reverted fix #2 and
+     restart-spawned a doomed run — resolved by stopping in-flight executions
+     and redeploying the pipeline definition from matching source (4877f6d).
+- Last successful Dev deploy before this: execution a3b607ea (pre-spec-35).
+  This deploy carries ALL spec-35 code to date (Tasks 1–4, 6, 8–13 + F-1).
+
+## Readback (readonly profile, 21:32:50Z, exit 0)
+| Guardrail | ID | Config confirmed |
+|---|---|---|
+| cumplify-agent-guardrail-dev | yq8xe6y2iqbs | GROUNDING 0.85 + RELEVANCE 0.75; PROMPT_ATTACK; 5 PII; crossRegion null |
+| cumplify-recordwrite-guardrail-dev | x1kkn4njyfpb (NEW) | GROUNDING 0.90 + RELEVANCE 0.75; PROMPT_ATTACK; 5 PII; crossRegion null |
+| cumplify-docgen-guardrail-dev | g8sg61low9xn | UNCHANGED: grounding null, 2 PII (SSN/card) |
+
+F-1 binding live: AiInvokerFn `Handler: index.handler` (lastModified
+2026-07-16T21:29:45Z — this deploy). Pre-deploy baseline was `index.invoke`
+(captured 20:0xZ, same session).
+
+## M-4b — weight row (dev-admin Query, KMS CMK on table blocks readonly reads)
+PK=MODELWEIGHT#amazon.titan-embed-text-v2:0, SK=VERSION#20260716,
+wIn=20, wOut=0 — weight-seeder custom resource ran on deploy. Exit 0.
+
+## M-4c — embed-op binding probe (dev-admin lambda invoke, 21:32:58Z)
+Payload {op:'embed', tenantId:'probe-spec35-t7', text:'grounding layer probe'}
+→ StatusCode 200, FunctionError null, **1024 dims, tokenCount 5,
+credits 0.0001** (5 × 20 / 1M — metering math exact).
+Meter row verified: TENANT#probe-spec35-t7#METER / MONTH#202607
+creditsUsed=0.0001, lastUpdated=21:32:58.995Z — full metering chain LIVE.
+
+## M-4a + back-compat — plain invoke, NO groundingContext, NO op (21:34:05Z)
+Payload {seat:'lightweight', messages:[user:'Reply with exactly: OK']}
+→ StatusCode 200, FunctionError null, text='OK', stopReason=end_turn,
+guardrailEvidence=None, credits=0.00078.
+**Skip-when-absent PINNED EMPIRICALLY:** the expanded AgentGuardrail
+(grounding policy attached) rode this Converse call inline with no
+grounding_source qualifiers present → NOT blocked. Back-compat: payload
+without `op` reached the invoke path unchanged.
+
+## Defect DISCOVERED by first M-4a attempt (pre-existing, NOT spec-35)
+Register↔weight-seed drift: seats `micro` → us.amazon.nova-2-lite-v1:0 and
+`snapshot` → zai.glm-4.7-flash have NO MODELWEIGHT seed entry — any dev
+invocation on those seats throws `No MODELWEIGHT# entry found` at
+loadWeights (probe reproduced live, FunctionError Unhandled). Owns to the
+model-register/weights lane: add both seed entries (live-priced) or amend
+the register. FLAGGED TO OWNER.
+
+## Verdict
+Task 7 CLOSED: deploy witnessed, 3-guardrail readback exact, M-4a/b/c all
+PASS. ACC-6 partial leg satisfied for the grounding guardrails.
