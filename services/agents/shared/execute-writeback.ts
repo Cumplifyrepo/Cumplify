@@ -19,6 +19,11 @@
  * M-2 (Task 8R): created_by persists full actor (agent:<name>+human:<sub>).
  *
  * H-3 (Task 8R): uses publishAuditEvent from eventing publisher (ULID, registry).
+ *
+ * 2026-07-16 (owner-approved cleanup): Agent.WritebackCommitted now carries
+ * the written row's id as envelope entityId (writtenRow captures RETURNING
+ * id) — feeds the audit ledger's GSI1 per-entity lookup. records-retention-
+ * schedule SQL rewritten to migration-005 truth (see fn comment).
  */
 
 import {
@@ -263,6 +268,18 @@ async function dispatchToolWrite(
 
 // ─── Tool-specific write implementations ────────────────────────────────────
 
+/**
+ * Extract the written row's id from a RETURNING result (id is the FIRST
+ * column of every tool's RETURNING clause). Feeds the envelope entityId on
+ * Agent.WritebackCommitted — before 2026-07-16 these events carried no row
+ * id at all, so neither the audit GSI nor the substring fallback could
+ * associate them with an entity.
+ */
+function writtenRow(result: { records?: unknown[][] }): { records: number; id: string | null } {
+  const first = result.records?.[0]?.[0] as { stringValue?: string } | undefined;
+  return { records: result.records?.length ?? 0, id: first?.stringValue ?? null };
+}
+
 async function executeCapaOpen(
   args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
 ): Promise<Record<string, unknown>> {
@@ -281,7 +298,7 @@ async function executeCapaOpen(
       { name: 'actor', value: { stringValue: actor } },
     ],
   }));
-  return { records: result.records?.length ?? 0 };
+  return writtenRow(result);
 }
 
 async function executeCapaVerifyEffectiveness(
@@ -300,7 +317,7 @@ async function executeCapaVerifyEffectiveness(
       { name: 'actor', value: { stringValue: actor } },
     ],
   }));
-  return { records: result.records?.length ?? 0 };
+  return writtenRow(result);
 }
 
 async function executeDocPublish(
@@ -313,7 +330,7 @@ async function executeDocPublish(
           RETURNING id, status`,
     parameters: [{ name: 'docId', value: { stringValue: args.docId as string } }],
   }));
-  return { records: result.records?.length ?? 0 };
+  return writtenRow(result);
 }
 
 async function executeDocVersionControl(
@@ -338,7 +355,7 @@ async function executeDocVersionControl(
       { name: 'actor', value: { stringValue: actor } },
     ],
   }));
-  return { records: result.records?.length ?? 0 };
+  return writtenRow(result);
 }
 
 async function executeAuditFindingWrite(
@@ -360,7 +377,7 @@ async function executeAuditFindingWrite(
       { name: 'actor', value: { stringValue: actor } },
     ],
   }));
-  return { records: result.records?.length ?? 0 };
+  return writtenRow(result);
 }
 
 async function executeChecklistGen(
@@ -380,30 +397,76 @@ async function executeChecklistGen(
       { name: 'actor', value: { stringValue: actor } },
     ],
   }));
-  return { records: result.records?.length ?? 0 };
+  return writtenRow(result);
 }
 
 async function executeRecordsRetentionSchedule(
   args: Record<string, unknown>, _tenantId: string, transactionId: string, actor: string,
 ): Promise<Record<string, unknown>> {
-  // records-retention-schedule modifies retention policy metadata in m4
-  const result = await rds.send(new ExecuteStatementCommand({
+  // REWRITTEN 2026-07-16 (architect, owner-approved cleanup): the previous SQL
+  // targeted columns that never existed (record_category/retention_period/
+  // justification — migration 005 is record_type/retention_years/
+  // disposition_rule) AND used ON CONFLICT (tenant_id, record_category) with
+  // NO unique constraint on the table — every live call failed. Same
+  // stale-draft-schema class as dd605b0; never exercised (ACC-3 ran capa-open).
+  //
+  // Tool contract (records-vault/tools.ts): {category, retentionPeriod
+  // ('7-year'|'permanent'|...), justification}. Mapping:
+  // - record_type := category
+  // - retention_years := leading integer of retentionPeriod; 'permanent' is
+  //   UNREPRESENTABLE (retention_years INTEGER NOT NULL) → loud typed throw,
+  //   never a silent sentinel (needs a schema decision if wanted).
+  // - disposition_rule := 'review_before_disposal' (the platform default the
+  //   m1 sealing path seeds — established convention, not invented data).
+  // - justification has no column → preserved verbatim in the audit payload
+  //   (closeCapa closureNotes precedent).
+  // Upsert = SELECT then UPDATE-or-INSERT (no unique constraint to CONFLICT
+  // on); RLS + explicit tenant filter scope both statements.
+  const category = args.category as string;
+  const rawPeriod = String(args.retentionPeriod ?? '');
+  const yearsMatch = rawPeriod.match(/^(\d+)/);
+  if (!yearsMatch) {
+    throw new Error(
+      `RETENTION_PERIOD_UNREPRESENTABLE: '${rawPeriod}' has no leading integer — ` +
+      `m4.retention_policies.retention_years is INTEGER NOT NULL ('permanent' ` +
+      `retention needs a schema decision before this tool can express it).`,
+    );
+  }
+  const years = Number(yearsMatch[1]);
+
+  const existing = await rds.send(new ExecuteStatementCommand({
     resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
-    sql: `INSERT INTO m4.retention_policies (tenant_id, record_category, retention_period, justification, created_by)
-          VALUES (current_setting('app.tenant_id'), :category, :retentionPeriod, :justification, :actor)
-          ON CONFLICT (tenant_id, record_category) DO UPDATE SET
-            retention_period = EXCLUDED.retention_period,
-            justification = EXCLUDED.justification,
-            updated_at = NOW()
-          RETURNING record_category, retention_period`,
-    parameters: [
-      { name: 'category', value: { stringValue: args.category as string } },
-      { name: 'retentionPeriod', value: { stringValue: args.retentionPeriod as string } },
-      { name: 'justification', value: { stringValue: args.justification as string } },
-      { name: 'actor', value: { stringValue: actor } },
-    ],
+    sql: `SELECT id FROM m4.retention_policies
+          WHERE tenant_id = current_setting('app.tenant_id') AND record_type = :recordType
+          LIMIT 1`,
+    parameters: [{ name: 'recordType', value: { stringValue: category } }],
   }));
-  return { records: result.records?.length ?? 0 };
+  const existingId = (existing.records?.[0]?.[0] as { stringValue?: string } | undefined)?.stringValue;
+
+  const result = existingId
+    ? await rds.send(new ExecuteStatementCommand({
+        resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
+        sql: `UPDATE m4.retention_policies
+              SET retention_years = :years, updated_at = NOW(), version = version + 1
+              WHERE id = :id::uuid AND tenant_id = current_setting('app.tenant_id')
+              RETURNING id, record_type, retention_years`,
+        parameters: [
+          { name: 'years', value: { longValue: years } },
+          { name: 'id', value: { stringValue: existingId } },
+        ],
+      }))
+    : await rds.send(new ExecuteStatementCommand({
+        resourceArn: CLUSTER_ARN, secretArn: SECRET_ARN, database: DB_NAME, transactionId,
+        sql: `INSERT INTO m4.retention_policies (tenant_id, record_type, retention_years, disposition_rule, created_by)
+              VALUES (current_setting('app.tenant_id'), :recordType, :years, 'review_before_disposal', :actor)
+              RETURNING id, record_type, retention_years`,
+        parameters: [
+          { name: 'recordType', value: { stringValue: category } },
+          { name: 'years', value: { longValue: years } },
+          { name: 'actor', value: { stringValue: actor } },
+        ],
+      }));
+  return writtenRow(result);
 }
 
 /**
@@ -440,6 +503,9 @@ async function emitWritebackAuditEvent(opts: {
       module,
       clauseRef: 'agent-writeback',
       standard: opts.standard,
+      // 2026-07-16: the written row's id (every tool's RETURNING has id first;
+      // writtenRow captures it). Feeds the audit ledger's GSI1 per-entity key.
+      entityId: String(opts.writeResult.id ?? ''),
       payload: {
         before: null,
         after: { tool: opts.proposedAction.tool, result: opts.writeResult },
