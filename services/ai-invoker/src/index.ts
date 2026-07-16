@@ -1,9 +1,11 @@
 /**
- * AI Invoker — public invoke() API.
+ * AI Invoker — Lambda entry point + public invoke() API.
  * The ONE DOOR through which every Bedrock model call passes (steering 12).
  *
- * Design §1.2: orchestrates Register resolution, credit pre-check, Converse,
- * schema-retry (Workhorse), metering, and telemetry.
+ * Design §2.2 (F-1): Lambda entry dispatches on op discriminator:
+ *   {op:'embed'} → embed.ts; absent op = invoke path (back-compat).
+ * Design §1.2: invoke() orchestrates Register resolution, credit pre-check,
+ * Converse, schema-retry (Workhorse), metering, and telemetry.
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
@@ -13,16 +15,30 @@ import { computeCredits, loadWeights, incrementMeter, emitCreditsTelemetry } fro
 import { checkCreditBalance } from './credit-precheck.js';
 import { assertSchemaValid } from './schema-retry.js';
 import { buildGuardrailConfig } from './guardrail.js';
+import { embed } from './embed.js';
 import { InvokeError, SEAT_DEFAULTS } from './types.js';
-import type { InvokeRequest, InvokeResponse, TokenUsage } from './types.js';
+import type { InvokeRequest, InvokeResponse, TokenUsage, EmbedOp, EmbedResult } from './types.js';
 
 const logger = new Logger({ serviceName: 'ai-invoker' });
 
 export type { InvokeRequest, InvokeResponse } from './types.js';
+export type { EmbedRequest, EmbedResult, EmbedOp } from './types.js';
 export { InvokeError } from './types.js';
 export type { SeatId, CompiledRegister, ModelWeight } from './types.js';
 export { DOC_COMPOSER_OUTPUT_SCHEMA } from './doc-composer-schema.js';
 export type { DocComposerOutput } from './doc-composer-schema.js';
+
+/**
+ * Lambda entry point — dispatches on op discriminator (spec-35 §2.2, F-1).
+ * - {op:'embed', ...} → embed path (EMB-1..5)
+ * - absent op / {op:'invoke', ...} → existing invoke path (back-compat)
+ */
+export async function handler(event: InvokeRequest | EmbedOp): Promise<InvokeResponse | EmbedResult> {
+  if ('op' in event && event.op === 'embed') {
+    return embed(event);
+  }
+  return invoke(event as InvokeRequest);
+}
 
 /**
  * Invoke a model through the one-door serving path.

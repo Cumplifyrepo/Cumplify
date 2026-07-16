@@ -137,7 +137,7 @@ export class AiStack extends cdk.Stack {
     // ─── AI Invoker Lambda (the ONE DOOR) ──────────────────────────────────
     const aiInvoker = new NodejsFunction(this, 'AiInvokerFn', {
       entry: 'services/ai-invoker/src/index.ts',
-      handler: 'invoke',
+      handler: 'handler',
       runtime: lambda.Runtime.NODEJS_22_X,
       architecture: lambda.Architecture.ARM_64,
       memorySize: 512,

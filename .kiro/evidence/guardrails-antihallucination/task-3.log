@@ -1,0 +1,45 @@
+# Task 3 — embed.ts + entry dispatch + F-1 CDK binding + types
+# Executed: 2026-07-16T15:01Z
+# Base commit: b6f2c39
+
+## Changes
+- services/ai-invoker/src/types.ts: added EmbedRequest, EmbedResult, EmbedOp types
+- services/ai-invoker/src/embed.ts: NEW — embed() function
+  - Calls bedrock:InvokeModel on amazon.titan-embed-text-v2:0 ({inputText, dimensions:1024})
+  - Reads inputTextTokenCount, loads weights, computes/meters credits, emits telemetry
+  - NOT exported from package index (EMB-2)
+  - Does NOT implement AOSS retry (EMB-5)
+- services/ai-invoker/src/index.ts: added handler() export (dispatch)
+  - {op:'embed'} → embed(); absent op → invoke() (back-compat)
+  - invoke() stays exported for tests + type consumers
+- infra/lib/ai-stack.ts: AiInvokerFn handler: 'invoke' → handler: 'handler' (F-1 binding)
+
+## Evidence: dispatch unit tests
+Command: npx vitest run services/ai-invoker/__tests__/dispatch.test.ts
+Exit code: 0
+Result: 2 tests passed
+  ✓ routes {op:"embed"} to embed()
+  ✓ routes absent op to invoke() (back-compat)
+
+## Evidence: embed unit tests
+Command: npx vitest run services/ai-invoker/__tests__/embed.test.ts
+Exit code: 0
+Result: 4 tests passed
+  ✓ calls InvokeModel with correct model and body shape
+  ✓ meters credits correctly (inputTokens × wIn / 1M)
+  ✓ emits telemetry with correct attribution fields
+  ✓ does NOT implement AOSS retry (EMB-5)
+
+## Evidence: TypeScript compilation
+Command: npx tsc --noEmit --project services/ai-invoker/tsconfig.json
+Exit code: 0
+
+## Evidence: CDK synth (handler binding)
+Command: npx cdk synth --quiet -c env=dev
+Exit code: 0
+Result: Successfully synthesized
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 78 files passed, 0 failed

@@ -169,3 +169,24 @@ export const SEAT_DEFAULTS: Record<SeatTier, SeatDefaults> = {
   // spec-40: fact-grounded prose — low temperature, full-section budget
   'doc-composer': { temperature: 0.2, maxTokens: 4096 },
 };
+
+// ─── Embed Door (spec-35, EMB-1..5) ───────────────────────────────────────
+
+/** Request for the embed operation (dispatched via op:'embed') */
+export interface EmbedRequest {
+  tenantId: string;
+  agent: string;
+  module: string;
+  feature: string;
+  text: string;
+}
+
+/** Result from the embed operation */
+export interface EmbedResult {
+  embedding: number[];
+  tokenCount: number;
+  credits: number;
+}
+
+/** Discriminated embed operation payload (op field present = embed path) */
+export type EmbedOp = { op: 'embed' } & EmbedRequest;

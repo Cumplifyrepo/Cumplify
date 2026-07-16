@@ -29,7 +29,7 @@
   - **Evidence:** JSON valid, computeCredits unit test passes
   - **ACC mapping:** EMB-3
 
-- [ ] **Task 3 — Implement embed() + invoker entry dispatch + CDK binding** [KIRO] D2
+- [x] **Task 3 — Implement embed() + invoker entry dispatch + CDK binding** [KIRO] D2
   - Create `services/ai-invoker/src/embed.ts`:
     - `embed(req: EmbedRequest): Promise<EmbedResult>`
     - Calls bedrock:InvokeModel on `amazon.titan-embed-text-v2:0` ({inputText, dimensions:1024})
