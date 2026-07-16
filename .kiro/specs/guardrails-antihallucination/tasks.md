@@ -90,6 +90,9 @@
     - DocGenGuardrail: UNCHANGED
   - **(M-4a)** Empirical no-source probe: live invoke WITHOUT grounding source → NOT blocked
   - **(M-4b)** Weight seed verify: DDB GetItem `MODELWEIGHT#amazon.titan-embed-text-v2:0` exists
+  - **(M-4c, F-1)** Embed-op binding probe: live micro-invoke of the DEPLOYED invoker Lambda
+    with `{op:'embed', text:'probe', ...}` → assert 1024-dim embedding + meter increment;
+    plus back-compat probe (payload without `op` → normal invoke path unaffected)
   - **Evidence:** Readback table + probe outputs + DDB row
   - **ACC mapping:** ACC-6 (partial)
 
