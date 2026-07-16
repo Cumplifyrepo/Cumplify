@@ -23,12 +23,38 @@ import {
   extractContext,
   beginTenantTransaction,
   publishAuditEvent,
+  getTenantDdbClient,
+  TABLE_NAME,
   type TenantTransaction,
   type DataApiResult,
 } from './shared.js';
 import type { SqlParameter } from '@aws-sdk/client-rds-data';
+import { S3Client, GetObjectCommand, PutObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { GetItemCommand } from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+// PDF labels resolve from the SAME catalogs the UI renders (BC-7 single
+// source): bundle-time JSON import — catalog edits ship with the next deploy,
+// and the seed↔catalog contract is pinned hermetically (qms-forms-catalog).
+import enMessages from '../../../../frontend/messages/en.json';
+import esMessages from '../../../../frontend/messages/es.json';
+import ptMessages from '../../../../frontend/messages/pt.json';
 
 const logger = new Logger({ serviceName: 'resolver-forms' });
+const s3 = new S3Client({});
+const lambdaClient = new LambdaClient({});
+
+// Task 8 (REC-7): record PDF export + approved-record sealing. Env mirrors
+// the m1 sealing block (spec-40 Task 9) — GOVERNANCE dev / COMPLIANCE prod.
+const CONTENT_BUCKET = process.env.CONTENT_BUCKET ?? '';
+const EVIDENCE_BUCKET = process.env.EVIDENCE_BUCKET ?? '';
+const EVIDENCE_LOCK_MODE = process.env.EVIDENCE_LOCK_MODE ?? 'GOVERNANCE';
+const PDF_RENDER_FN = process.env.PDF_RENDER_FN ?? '';
+const DEFAULT_RETENTION_YEARS = 7;
+const EXPORT_URL_TTL_SECONDS = 15 * 60;
+
+const MESSAGES: Record<string, unknown> = { en: enMessages, es: esMessages, pt: ptMessages };
 
 interface AppSyncEvent {
   info: { fieldName: string };
@@ -101,7 +127,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'reopenFormRecord':
       return reopenFormRecord(event, tenantId, sub);
     case 'exportFormRecordPdf':
-      throw new Error('NOT_IMPLEMENTED: exportFormRecordPdf gated on spec-40 BC-10');
+      return exportFormRecordPdf(event, tenantId);
     default:
       throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
@@ -685,6 +711,16 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
       { name: 'id', value: { stringValue: recordId } },
     ]);
 
+    // Task 8 (REC-7): seal the approved record — PDF → EvidenceVault with
+    // per-object retention + m4.records pointer, SAME txn as the flip. A
+    // seal failure rolls the approval back (catch below): no
+    // approved-but-unsealed records. Unconfigured env (hermetic lane) skips
+    // honestly — the audit payload carries sealed:false + reason.
+    let sealed: Record<string, unknown> = { sealed: false, reason: 'SEAL_NOT_CONFIGURED' };
+    if (CONTENT_BUCKET && EVIDENCE_BUCKET && PDF_RENDER_FN) {
+      sealed = await sealApprovedRecord(txn, tenantId, recordId, actor, (tplStandards ?? []) as string[]);
+    }
+
     await txn.commit();
 
     // Audit event — dynamic standard/clauseRef from template
@@ -699,7 +735,7 @@ async function approveFormRecord(event: AppSyncEvent, tenantId: string, actor: s
       standard: tplStandards[0] as 'ISO9001' | 'ISO14001' | 'ISO45001',
       detailType: 'FormRecord.Approved',
       source: 'cumplify.forms',
-      payload: { recordId, templateId, approvedBy: actor },
+      payload: { recordId, templateId, approvedBy: actor, ...sealed },
     });
 
     return getFormRecordById(recordId, tenantId);
@@ -778,6 +814,373 @@ async function reopenFormRecord(event: AppSyncEvent, tenantId: string, actor: st
     try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
   }
+}
+
+// ─── Task 8 (REC-7): record PDF export + sealing ─────────────────────────────
+
+/**
+ * exportFormRecordPdf — REC-7: "export ANY record to PDF" (no status guard).
+ * Builds the record content JSON (labels resolved to the tenant's document
+ * locale), writes it to the GeneralBucket content plane, renders via the
+ * shared PdfRenderFn (sha-cached: unchanged records skip chromium), and
+ * returns a 15-minute presigned URL (STO-4 parity with requestImsExport).
+ */
+async function exportFormRecordPdf(event: AppSyncEvent, tenantId: string): Promise<unknown> {
+  const recordId = event.arguments.recordId as string;
+  if (!recordId) throw new Error('BAD_REQUEST: recordId required');
+  if (!CONTENT_BUCKET || !PDF_RENDER_FN) throw new Error('EXPORT_NOT_CONFIGURED');
+
+  const locale = await getTenantDocumentLocale(tenantId);
+  const txn = await beginTenantTransaction(tenantId);
+  let built: BuiltRecordContent;
+  try {
+    built = await buildRecordContent(txn, recordId, locale);
+    await txn.commit();
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask the original error */ }
+    throw err;
+  }
+
+  const rendered = await renderRecordPdf(tenantId, recordId, built);
+  const url = await getSignedUrl(
+    s3,
+    new GetObjectCommand({ Bucket: CONTENT_BUCKET, Key: rendered.pdfKey }),
+    { expiresIn: EXPORT_URL_TTL_SECONDS },
+  );
+  const expiresAt = new Date(Date.now() + EXPORT_URL_TTL_SECONDS * 1000).toISOString();
+  return { url, expiresAt };
+}
+
+/**
+ * Seal an approved record (REC-7/ACC-7). Runs INSIDE approveFormRecord's
+ * transaction AFTER the status flip (the content build re-reads the row, so
+ * the sealed PDF shows APPROVED + approver). Mirrors the m1 STO-5 discipline:
+ * per-object ObjectLockRetainUntilDate from the tenant's m4.retention_policies
+ * row (default seeded if absent), m4.records pointer row carrying retain_until
+ * == object_lock_until, forms.records.m4_record_id stamped in the SAME txn —
+ * a failed seal rolls back the approval (no approved-but-unsealed records).
+ */
+async function sealApprovedRecord(
+  txn: TenantTransaction,
+  tenantId: string,
+  recordId: string,
+  actor: string,
+  templateStandards: string[],
+): Promise<Record<string, unknown>> {
+  // Tenant retention policy (RLS-scoped); seed the default row if absent.
+  const polRes = await txn.execute(
+    `SELECT retention_years FROM m4.retention_policies
+     WHERE record_type = 'form_record' LIMIT 1`,
+  );
+  let years = DEFAULT_RETENTION_YEARS;
+  const polRows = marshalRecordRows(polRes);
+  if (polRows.length > 0) {
+    years = polRows[0].retentionYears as number;
+  } else {
+    await txn.execute(
+      `INSERT INTO m4.retention_policies (tenant_id, record_type, retention_years, disposition_rule, created_by)
+       VALUES (:tenantId, 'form_record', :years, 'review_before_disposal', :actor)`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'years', value: { longValue: DEFAULT_RETENTION_YEARS } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
+  }
+
+  const locale = await getTenantDocumentLocale(tenantId);
+  const built = await buildRecordContent(txn, recordId, locale);
+  const rendered = await renderRecordPdf(tenantId, recordId, built);
+
+  const retainUntil = new Date(Date.now() + years * 365.25 * 24 * 3600 * 1000);
+  const sealedKey = `tenants/${tenantId}/sealed/records/${recordId}-${rendered.sha256.slice(0, 12)}.pdf`;
+  await s3.send(new CopyObjectCommand({
+    Bucket: EVIDENCE_BUCKET,
+    Key: sealedKey,
+    CopySource: encodeURIComponent(`${CONTENT_BUCKET}/${rendered.pdfKey}`),
+    ObjectLockMode: EVIDENCE_LOCK_MODE as 'GOVERNANCE' | 'COMPLIANCE',
+    ObjectLockRetainUntilDate: retainUntil,
+  }));
+
+  // BC-6: multi-standard templates seal as 'IMS' (m4.records CHECK widened in 011).
+  const effective = effectiveStandard(templateStandards);
+  const m4Res = await txn.execute(
+    `INSERT INTO m4.records
+       (tenant_id, standard, record_type, source_module, retention_class,
+        retain_until, s3_object_ref, object_lock_until, created_by)
+     VALUES (:tenantId, :standard, 'form_record', 'M4', :retClass,
+             :retainUntil::timestamptz, :objectRef, :retainUntil::timestamptz, :actor)
+     RETURNING id`,
+    [
+      { name: 'tenantId', value: { stringValue: tenantId } },
+      { name: 'standard', value: { stringValue: effective } },
+      { name: 'retClass', value: { stringValue: `${years}y` } },
+      { name: 'retainUntil', value: { stringValue: retainUntil.toISOString() } },
+      { name: 'objectRef', value: { stringValue: `s3://${EVIDENCE_BUCKET}/${sealedKey}` } },
+      { name: 'actor', value: { stringValue: actor } },
+    ],
+  );
+  const m4RecordId = unwrapField((m4Res.records![0] as Array<Record<string, unknown>>)[0]) as string;
+
+  // ACC-7: pointer stamped in the SAME transaction as the approval flip.
+  await txn.execute(
+    `UPDATE forms.records SET m4_record_id = :m4Id::uuid, updated_at = NOW() WHERE id = :id::uuid`,
+    [
+      { name: 'm4Id', value: { stringValue: m4RecordId } },
+      { name: 'id', value: { stringValue: recordId } },
+    ],
+  );
+
+  return {
+    sealed: true, sealedKey, m4RecordId, retentionYears: years,
+    lockMode: EVIDENCE_LOCK_MODE, retainUntil: retainUntil.toISOString(),
+  };
+}
+
+interface BuiltRecordContent {
+  content: Record<string, unknown>;
+  title: string;
+  standard: string;
+  versionNo: number;
+}
+
+function recordContentKey(tenantId: string, recordId: string): string {
+  return `tenants/${tenantId}/records/${recordId}.json`;
+}
+
+/**
+ * Effective standard for a template's standards[] array: seed rows carry
+ * 'IMS' alongside the concrete standards (BC-6), so strip it — exactly one
+ * concrete standard left means a single-standard template, anything else
+ * seals/renders as IMS.
+ */
+function effectiveStandard(standards: string[]): string {
+  const concrete = (standards ?? []).filter(s => s !== 'IMS');
+  return concrete.length === 1 ? concrete[0] : 'IMS';
+}
+
+/** Upload the content JSON and render it through the shared PdfRenderFn. */
+async function renderRecordPdf(
+  tenantId: string,
+  recordId: string,
+  built: BuiltRecordContent,
+): Promise<{ pdfKey: string; sha256: string }> {
+  const contentKey = recordContentKey(tenantId, recordId);
+  await s3.send(new PutObjectCommand({
+    Bucket: CONTENT_BUCKET,
+    Key: contentKey,
+    Body: JSON.stringify(built.content),
+    ContentType: 'application/json',
+  }));
+
+  const invoke = await lambdaClient.send(new InvokeCommand({
+    FunctionName: PDF_RENDER_FN,
+    Payload: JSON.stringify({
+      tenantId,
+      documents: [{
+        documentId: recordId,
+        versionId: `${recordId}-v${built.versionNo}`,
+        contentKey,
+        title: built.title,
+        docType: 'form_record',
+        standard: built.standard,
+        versionNo: built.versionNo,
+      }],
+    }),
+  }));
+  if (invoke.FunctionError) {
+    logger.error('record PDF render failed', { raw: new TextDecoder().decode(invoke.Payload) });
+    throw new Error('RENDER_FAILED');
+  }
+  const { results } = JSON.parse(new TextDecoder().decode(invoke.Payload)) as {
+    results: Array<{ pdfKey: string; sha256: string }>;
+  };
+  if (!results?.[0]?.pdfKey) throw new Error('RENDER_FAILED');
+  return { pdfKey: results[0].pdfKey, sha256: results[0].sha256 };
+}
+
+/**
+ * Build the form_record content JSON (pdf-export template contract). All
+ * labels are resolved HERE from the shared i18n catalogs — the PDF service
+ * renders strings it is given. Reads run inside the caller's transaction, so
+ * a seal after the approval UPDATE sees the approved row.
+ */
+async function buildRecordContent(
+  txn: TenantTransaction,
+  recordId: string,
+  locale: string,
+): Promise<BuiltRecordContent> {
+  const recResult = await txn.execute(`
+    SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by, r.completed_at,
+           r.approved_by, r.approved_at, r.m2_nc_id, r.version, r.created_at, r.updated_at
+    FROM forms.records r WHERE r.id = :id::uuid
+  `, [{ name: 'id', value: { stringValue: recordId } }]);
+  const recRows = marshalRecordRows(recResult);
+  if (recRows.length === 0) throw new Error('RECORD_NOT_FOUND');
+  const rec = recRows[0];
+  const templateId = rec.templateId as string;
+
+  const tplResult = await txn.execute(`
+    SELECT key, title_key, category, clause_refs, standards, requires_approval
+    FROM forms.templates WHERE id = :id::uuid
+  `, [{ name: 'id', value: { stringValue: templateId } }]);
+  const tpl = marshalRecordRows(tplResult)[0];
+  if (!tpl) throw new Error('TEMPLATE_METADATA_MISSING');
+  const standards = (tpl.standards as string[]) ?? [];
+  const title = resolveLabel(locale, tpl.titleKey as string);
+
+  const sectionsResult = await txn.execute(`
+    SELECT s.id, s.section_key, s.title_key
+    FROM forms.template_sections s
+    WHERE s.template_id = :id::uuid ORDER BY s.sort_order
+  `, [{ name: 'id', value: { stringValue: templateId } }]);
+  const sections = marshalRecordRows(sectionsResult);
+
+  const fieldsResult = await txn.execute(`
+    SELECT f.id, f.section_id, f.field_key, f.label_key, f.field_type, f.required, f.relation_target
+    FROM forms.template_fields f
+    JOIN forms.template_sections s ON f.section_id = s.id
+    WHERE s.template_id = :id::uuid ORDER BY s.sort_order, f.sort_order
+  `, [{ name: 'id', value: { stringValue: templateId } }]);
+  const fields = marshalRecordRows(fieldsResult);
+
+  const valuesResult = await txn.execute(`
+    SELECT f.field_key, rv.value_text, rv.value_number, rv.value_date,
+           rv.value_bool, rv.value_uuid, rv.value_json
+    FROM forms.record_values rv
+    JOIN forms.template_fields f ON rv.field_id = f.id
+    WHERE rv.record_id = :id::uuid
+  `, [{ name: 'id', value: { stringValue: recordId } }]);
+  const values = marshalValues(valuesResult);
+
+  // Clause relations render as "ISO9001 8.7 — Title", not a bare UUID.
+  // Other relation targets render the UUID (display resolution per target
+  // table is a named carry-forward, not silently pretty-printed).
+  const clauseDisplay = new Map<string, string>();
+  for (const f of fields) {
+    if (f.relationTarget !== 'clause') continue;
+    const v = values[f.fieldKey as string];
+    if (typeof v !== 'string' || clauseDisplay.has(v)) continue;
+    const clauseRes = await txn.execute(
+      `SELECT standard, clause_no, clause_title FROM qms.clause_registry WHERE id = :id::uuid`,
+      [{ name: 'id', value: { stringValue: v } }],
+    );
+    const row = marshalRecordRows(clauseRes)[0];
+    if (row) clauseDisplay.set(v, `${row.standard} ${row.clauseNo} — ${row.clauseTitle}`);
+  }
+
+  const recordSections = sections.map(sec => ({
+    key: sec.sectionKey as string,
+    title: resolveLabel(locale, sec.titleKey as string),
+    fields: fields
+      .filter(f => f.sectionId === sec.id)
+      .map(f => {
+        const raw = values[f.fieldKey as string];
+        const filled = raw !== null && raw !== undefined;
+        return {
+          key: f.fieldKey as string,
+          label: resolveLabel(locale, f.labelKey as string),
+          type: f.fieldType as string,
+          required: f.required === true,
+          filled,
+          display: filled ? formatFieldValue(f.fieldType as string, f.relationTarget as string | null, raw, locale, clauseDisplay) : '',
+        };
+      }),
+  }));
+
+  const content = {
+    kind: 'form_record',
+    locale,
+    template: {
+      key: tpl.key,
+      title,
+      category: tpl.category,
+      clauseRefs: tpl.clauseRefs ?? [],
+      standards,
+      requiresApproval: tpl.requiresApproval === true,
+    },
+    record: {
+      id: rec.id,
+      status: rec.status,
+      openedBy: rec.openedBy,
+      completedBy: rec.completedBy ?? null,
+      completedAt: rec.completedAt ?? null,
+      approvedBy: rec.approvedBy ?? null,
+      approvedAt: rec.approvedAt ?? null,
+      m2NcId: rec.m2NcId ?? null,
+      createdAt: rec.createdAt,
+      updatedAt: rec.updatedAt,
+    },
+    recordSections,
+  };
+
+  return {
+    content,
+    title,
+    standard: effectiveStandard(standards),
+    versionNo: (rec.version as number) ?? 1,
+  };
+}
+
+/** Human display for a typed record value (labels/booleans localized). */
+function formatFieldValue(
+  fieldType: string,
+  relationTarget: string | null,
+  raw: unknown,
+  locale: string,
+  clauseDisplay: Map<string, string>,
+): string {
+  switch (fieldType) {
+    case 'checkbox':
+      return raw === true ? resolveLabel(locale, 'forms.pdf.yes') : resolveLabel(locale, 'forms.pdf.no');
+    case 'multiselect': {
+      try {
+        const arr = JSON.parse(String(raw)) as unknown;
+        if (Array.isArray(arr)) return arr.map(String).join(', ');
+      } catch { /* fall through to String(raw) */ }
+      return String(raw);
+    }
+    case 'date':
+      return String(raw).slice(0, 10);
+    case 'relation':
+      if (relationTarget === 'clause') return clauseDisplay.get(String(raw)) ?? String(raw);
+      return String(raw);
+    default:
+      return String(raw);
+  }
+}
+
+/**
+ * Tenant document locale (same DDB item getTenantSettings reads — META/ORG).
+ * Defaults gracefully to 'en' like getTenantSettings itself: locale is a
+ * rendering preference, not a correctness gate.
+ */
+async function getTenantDocumentLocale(tenantId: string): Promise<string> {
+  try {
+    const ddb = await getTenantDdbClient(tenantId);
+    const result = await ddb.send(new GetItemCommand({
+      TableName: TABLE_NAME,
+      Key: marshall({ PK: `TENANT#${tenantId}#META`, SK: 'ORG' }),
+    }));
+    const loc = result.Item ? (unmarshall(result.Item).documentLocale as string | undefined) : undefined;
+    return loc && loc in MESSAGES ? loc : 'en';
+  } catch (err) {
+    logger.warn('documentLocale read failed — defaulting to en', { error: (err as Error).message });
+    return 'en';
+  }
+}
+
+/** Resolve an i18n catalog key to the locale's string (en fallback, then the key itself). */
+function resolveLabel(locale: string, key: string): string {
+  const walk = (root: unknown): unknown =>
+    key.split('.').reduce<unknown>(
+      (o, part) => (o && typeof o === 'object' ? (o as Record<string, unknown>)[part] : undefined),
+      root,
+    );
+  const v = walk(MESSAGES[locale] ?? MESSAGES.en) ?? walk(MESSAGES.en);
+  if (typeof v === 'string') return v;
+  logger.warn('i18n key missing from catalogs — rendering the key', { key, locale });
+  return key;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

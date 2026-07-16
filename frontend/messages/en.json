@@ -291,6 +291,7 @@
     "fieldImpactAssessment": "Impact assessment"
   },
   "forms": {
+    "pdf": { "yes": "Yes", "no": "No" },
     "tpl": {
       "ncr": { "title": "Nonconformity & Corrective Action (NCR)", "desc": "Record nonconformities, containment, disposition, root cause analysis, and corrective actions per Clause 8.7 / 10.2" },
       "mgmtReview": { "title": "Management Review Minutes", "desc": "Document management review inputs (9.3.2) and outputs (9.3.3) across all standards in scope" },

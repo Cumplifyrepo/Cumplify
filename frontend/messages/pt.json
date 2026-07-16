@@ -291,6 +291,7 @@
     "fieldImpactAssessment": "Avaliação de impacto"
   },
   "forms": {
+    "pdf": { "yes": "Sim", "no": "Não" },
     "tpl": {
       "ncr": { "title": "Não Conformidade e Ação Corretiva (NCR)", "desc": "Registrar não conformidades, contenção, disposição, análise de causa raiz e ações corretivas conforme Cláusula 8.7 / 10.2" },
       "mgmtReview": { "title": "Ata de Análise Crítica pela Direção", "desc": "Documentar entradas (9.3.2) e saídas (9.3.3) da análise crítica pela direção" },

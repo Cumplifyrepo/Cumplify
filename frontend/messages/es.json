@@ -291,6 +291,7 @@
     "fieldImpactAssessment": "Evaluación de impacto"
   },
   "forms": {
+    "pdf": { "yes": "Sí", "no": "No" },
     "tpl": {
       "ncr": { "title": "No Conformidad y Acción Correctiva (NCR)", "desc": "Registrar no conformidades, contención, disposición, análisis de causa raíz y acciones correctivas según Cláusula 8.7 / 10.2" },
       "mgmtReview": { "title": "Acta de Revisión por la Dirección", "desc": "Documentar entradas (9.3.2) y salidas (9.3.3) de la revisión por la dirección" },

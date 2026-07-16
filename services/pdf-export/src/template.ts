@@ -75,14 +75,45 @@ interface MasterEntry {
   versionNo: number;
 }
 
+// Form-record content (spec-41 Task 8). Built by the forms resolver with
+// ALL labels already resolved to the tenant's document locale — this service
+// renders strings it is given and never touches an i18n catalog.
+export interface RecordFieldView {
+  key: string;
+  label: string;
+  type: string;
+  required: boolean;
+  filled: boolean;
+  display: string;
+}
+
+export interface RecordSectionView {
+  key: string;
+  title: string;
+  fields: RecordFieldView[];
+}
+
+export interface RecordView {
+  id: string;
+  status: string;
+  openedBy: string;
+  completedBy?: string | null;
+  completedAt?: string | null;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  m2NcId?: string | null;
+}
+
 export interface ContentJson {
-  kind?: 'correlation_matrix' | 'master_list';
+  kind?: 'correlation_matrix' | 'master_list' | 'form_record';
   frontMatter?: FrontMatter;
   sections?: ContentSection[];
   standards?: string[];
   rows?: MatrixRow[];
   entries?: MasterEntry[];
   locale?: string;
+  record?: RecordView;
+  recordSections?: RecordSectionView[];
 }
 
 /** HTML-escape tenant-sourced strings (content JSON carries tenant data). */
@@ -235,9 +266,36 @@ function masterListDocument(meta: DocMeta, content: ContentJson): string {
   return shell(meta, `${qmsInfoBlock(meta)}<table class="grid">${header}${rows}</table>`);
 }
 
+function recordDocument(meta: DocMeta, content: ContentJson): string {
+  const rec = content.record;
+  const extra: Array<[string, string]> = [];
+  if (rec) {
+    extra.push(['Status', rec.status]);
+    extra.push(['Opened by', rec.openedBy]);
+    if (rec.completedBy) {
+      extra.push(['Completed by', `${rec.completedBy}${rec.completedAt ? ` — ${rec.completedAt.slice(0, 10)}` : ''}`]);
+    }
+    if (rec.approvedBy) {
+      extra.push(['Approved by', `${rec.approvedBy}${rec.approvedAt ? ` — ${rec.approvedAt.slice(0, 10)}` : ''}`]);
+    }
+    if (rec.m2NcId) extra.push(['Nonconformity ID', rec.m2NcId]);
+  }
+  const sections = (content.recordSections ?? []).map(s => {
+    const rows = s.fields.map(f =>
+      `<tr><td style="width:38%">${esc(f.label)}${f.required ? ' *' : ''}</td>
+       <td>${f.filled ? esc(f.display) : '—'}</td></tr>`,
+    ).join('\n');
+    return `<div class="section">
+      <div class="section-head"><span class="section-title">${esc(s.title)}</span></div>
+      <table class="grid">${rows}</table></div>`;
+  }).join('\n');
+  return shell(meta, `${qmsInfoBlock(meta, extra)}${sections}`);
+}
+
 /** Entry point: pick the template by content kind. */
 export function buildDocumentHtml(meta: DocMeta, content: ContentJson): string {
   if (content.kind === 'correlation_matrix') return matrixDocument(meta, content);
   if (content.kind === 'master_list') return masterListDocument(meta, content);
+  if (content.kind === 'form_record') return recordDocument(meta, content);
   return sectionsDocument(meta, content);
 }

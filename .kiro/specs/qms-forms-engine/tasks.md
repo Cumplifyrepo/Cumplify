@@ -68,9 +68,9 @@
 
 ## Task 8 — Record PDF + sealing (REC-7) [ARCHITECT]
 
-- [ ] `exportFormRecordPdf` via spec-40 `PdfRenderFn` (record layout template); approved-record sealing → EvidenceVault per-object retain-until from `m4.retention_policies` → `m4.records` pointer row with `retain_until` (ACC-7).
+- [x] `exportFormRecordPdf` via spec-40 `PdfRenderFn` (record layout template); approved-record sealing → EvidenceVault per-object retain-until from `m4.retention_policies` → `m4.records` pointer row with `retain_until` (ACC-7). D3 2026-07-16: deployed + live readback exit 0 — presigned URL served real PDF bytes; S3 Object-Lock retention == `m4.retain_until` == `object_lock_until` to the ms (GOVERNANCE, 7y default self-seeded); `forms.records.m4_record_id` stamped same-txn; SoD/immutability/not-found negatives live; `FormRecord.Approved` ledger event carries the seal. Labels resolve from the shared frontend catalogs (BC-7 single source; seed↔catalog contract now pinned hermetically).
 
-**Depends on:** Task 6 + spec-40 Task 9. **D-rung:** D3. **Evidence:** `task-8-pdf-seal.log`
+**Depends on:** Task 6 + spec-40 Task 9. **D-rung:** D3 ✓. **Evidence:** `task-8-pdf-seal.log`
 
 ## Task 9 — Internal Audit checklist generator (OQ-1 resolution) [KIRO]
 

@@ -797,6 +797,58 @@ export class ApiStack extends cdk.Stack {
     }));
     props.dynamodbKey.grantDecrypt(formsFn);
 
+    // Spec-41 Task 8 (REC-7): record PDF export + approved-record sealing.
+    // Mirrors the m1 STO-5 block above: content JSON + PDFs live in the
+    // GeneralBucket tenant prefix (Get for CopyObject source + presigned
+    // reads, Put for the record content JSON); sealed copies land in the
+    // EvidenceVault with per-object retention. Both buckets share
+    // s3GeneralKey, so grantEncryptDecrypt covers writes and presigned GETs.
+    formsFn.addEnvironment('CONTENT_BUCKET', props.generalBucketName);
+    formsFn.addEnvironment('EVIDENCE_BUCKET', props.evidenceBucketName);
+    formsFn.addEnvironment('EVIDENCE_LOCK_MODE', envConfig.evidenceRetentionMode);
+    formsFn.addEnvironment('PDF_RENDER_FN', pdfRenderFn.functionName);
+    formsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['s3:GetObject', 's3:PutObject'],
+      resources: [`${props.generalBucketArn}/tenants/*`],
+    }));
+    formsFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['s3:PutObject', 's3:PutObjectRetention'],
+      resources: [`${props.evidenceBucketArn}/tenants/*`],
+    }));
+    props.s3GeneralKey.grantEncryptDecrypt(formsFn);
+    pdfRenderFn.grantInvoke(formsFn);
+    // formsFn stays OUTSIDE the blanket lambdaResources IAM5 list (qmsFn
+    // philosophy: future real wildcards must still fail synth) — every
+    // suppression here is a targeted appliesTo:
+    // 1. grantInvoke emits lambda:InvokeFunction on <fnArn>:* (qmsFn→ExportFn class).
+    // 2. Tenant-prefix S3 access is inherently /tenants/* — object keys are
+    //    per-tenant/per-record; the same scoping every PDF-pipeline fn uses.
+    NagSuppressions.addResourceSuppressions(formsFn, [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'grantInvoke(PdfRenderFn) emits lambda:InvokeFunction on <fnArn>:* for ' +
+          'versioned Lambda invocation. CDK-generated; cannot be scoped further.',
+        appliesTo: [{ regex: '/^Resource::<PdfRenderFn.*\\.Arn>:\\*$/g' }],
+      },
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'Record content JSONs, cached PDFs and sealed copies live under per-tenant ' +
+          'object keys — access is scoped to the tenants/ prefix of the two content ' +
+          'buckets, the same pattern as PdfRenderFn/ExportFn/M1.',
+        appliesTo: [{ regex: '/^Resource::.*\\.Arn>\\/tenants\\/\\*$/g' }],
+      },
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'kms.grantEncryptDecrypt on the S3 content CMK emits the standard ' +
+          'kms:ReEncrypt*/kms:GenerateDataKey* action wildcards (CDK-generated, ' +
+          'key-scoped resource).',
+        appliesTo: ['Action::kms:ReEncrypt*', 'Action::kms:GenerateDataKey*'],
+      },
+    ], true);
+
     const formsDS = api.addLambdaDataSource('FormsDataSource', formsFn);
 
     // Query resolvers (Spec 41)

@@ -1,0 +1,156 @@
+# Task 8 — Record PDF + sealing (REC-7) [ARCHITECT]
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-16T12:35:00Z
+# Base commit: f93fca1 (spec-40 T12)
+# Executed end-to-end by the architect (D3: deployed + live readback, exit 0).
+
+## What shipped
+
+`exportFormRecordPdf` (REC-7 "export ANY record") + approved-record sealing
+(ACC-7), reusing the spec-40 Task 9 infrastructure exactly as designed (D-5:
+one PDF pipeline, one retention discipline):
+
+1. **Content plane** — `buildRecordContent` (forms.ts) reads record + template
+   + sections + fields + values + clause-registry display rows in ONE tenant
+   transaction (RLS), resolves every `title_key`/`label_key` from the SHARED
+   `frontend/messages/{en,es,pt}.json` catalogs (bundle-time JSON import —
+   BC-7 single source, no drift copy), and writes a `kind:'form_record'`
+   content JSON to `tenants/<t>/records/<recordId>.json` (GeneralBucket).
+   Locale = tenant `documentLocale` (same DDB META/ORG item getTenantSettings
+   reads; graceful `en` default). Deterministic serialization → PdfRenderFn's
+   body-sha cache: unchanged records never relaunch chromium.
+2. **Render** — `template.ts` gains a `form_record` layout (meta block with
+   Status/Opened/Completed/Approved rows + per-section label/value tables,
+   required `*` markers, `—` for unfilled, everything HTML-escaped). Same
+   brand shell as controlled documents; PdfRenderFn itself UNCHANGED (kind
+   dispatch is inside buildDocumentHtml).
+3. **Export** — `exportFormRecordPdf(recordId)`: build → upload JSON → invoke
+   PdfRenderFn → presign the cached pdfKey GET 15 min (STO-4 parity). Typed
+   errors: RECORD_NOT_FOUND / EXPORT_NOT_CONFIGURED / RENDER_FAILED.
+4. **Seal on approve** — inside `approveFormRecord`'s txn AFTER the status
+   flip (content re-read sees APPROVED + approver): retention policy
+   `record_type='form_record'` (default 7y `review_before_disposal` seeded if
+   absent — m1 pattern), render, CopyObject → EvidenceVault
+   `tenants/<t>/sealed/records/<recordId>-<sha12>.pdf` with per-object
+   `ObjectLockRetainUntilDate` (mode from env: GOVERNANCE dev / COMPLIANCE
+   prod — BC-10, bucket default is safety net only), INSERT `m4.records`
+   (retain_until == object_lock_until, `record_type='form_record'`,
+   `source_module='M4'`, standard per BC-6 below) RETURNING id →
+   `forms.records.m4_record_id` stamped in the SAME transaction (ACC-7).
+   Seal failure → rollback → approval blocked (no approved-but-unsealed
+   records). Unconfigured env (hermetic lane) skips honestly: audit payload
+   `sealed:false, reason:'SEAL_NOT_CONFIGURED'`.
+5. **BC-6 standard derivation** — seed `standards[]` carries `'IMS'` alongside
+   concrete standards, so: strip `IMS`; exactly one concrete left → that
+   standard; else `IMS` (m4.records CHECK widened in 011). Pinned both ways.
+6. **Audit** — `FormRecord.Approved` payload now carries the seal record
+   (`sealed`, `sealedKey`, `m4RecordId`, `retentionYears`, `lockMode`,
+   `retainUntil`); no new detailTypes → no registry change needed.
+
+## Deliverables
+
+| File | Purpose |
+|------|---------|
+| `services/api/src/resolvers/forms.ts` | exportFormRecordPdf + sealApprovedRecord + buildRecordContent + label resolution (catalog import) |
+| `services/pdf-export/src/template.ts` | `form_record` layout + Record* view types |
+| `infra/lib/api-stack.ts` | FormsFn env (CONTENT/EVIDENCE buckets, lock mode, PDF_RENDER_FN), tenants/* S3 grants, s3GeneralKey encryptDecrypt, grantInvoke(PdfRenderFn), TARGETED Nag suppressions (formsFn kept OUT of the blanket list, qmsFn philosophy) |
+| `frontend/messages/{en,es,pt}.json` | `forms.pdf.yes/no` (checkbox display; same commit per i18n rule) |
+| `services/api/__tests__/resolvers/forms-export-seal.test.ts` | 10 hermetic tests (below) |
+| `services/api/__tests__/forms-i18n-labels.test.ts` | seed↔catalog contract: every 013 forms.* key resolves in en/es/pt (137 keys) — PDF makes drift customer-visible, now impossible |
+| `services/pdf-export/__tests__/template-record.unit.test.ts` | 5 layout tests: lifecycle rows, required marker, em-dash unfilled, HTML-escape injection, no [object Object] |
+
+Hermetic pins (forms-export-seal.test.ts): content JSON labels asserted
+against the REAL catalogs (never string literals), `::uuid` casts on every
+record-plane SELECT (M3 Data-API lesson), policy-driven 3y retention (BC-10 —
+NOT the default), retain_until bound once used twice with `::timestamptz`,
+m4_record_id stamped before commit (invocationCallOrder), sealed JSON shows
+APPROVED (stateful mock), IMS + single-standard derivation, render-failure →
+rollback + no audit, SoD path touches zero S3, SEAL_NOT_CONFIGURED honest
+skip (fresh module import with env cleared), es documentLocale → es labels.
+
+## Gates executed (2026-07-16, architect machine)
+
+| Gate | Command | Exit | Result |
+|------|---------|------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | clean |
+| Unit (backend) | `npx vitest run` | 0 | 874 passed, 3 skipped (was 855+3; +19 new) |
+| Unit (frontend) | `cd frontend && npx vitest run` | 0 | 121 passed |
+| i18n | `npm run i18n:check` (frontend) | 0 | no hardcoded strings |
+| Stage synth (Nag) | `npx cdk synth 'CumplifyPipeline/Dev/ApiStack' --quiet` | 0 | 0 AwsSolutions errors (targeted suppressions correct) |
+| Deploy | `cdk deploy 'CumplifyPipeline/Dev/ApiStack' --exclusively` | 0 | 116.01s |
+
+FormsFn = `Dev-ApiStack-FormsFn1509D4AD-Io5qg9O62bLQ`; live env verified
+post-deploy (CONTENT_BUCKET/EVIDENCE_BUCKET/EVIDENCE_LOCK_MODE=GOVERNANCE/
+PDF_RENDER_FN all present, readback row 0 in effect).
+
+## Live readback (D3) — direct FormsFn invokes, tenant-arch-smoke
+
+Script: session scratchpad `t8-readback.mjs`
+(sha256 5ca9b13f00fc28d394e74846bcf8808b2577a64dfb18270163c9f2932cf4b90c);
+template: management_review (requires_approval=true, maps_to NULL — no m2
+writes). Output sha256
+3d12b24741b03ed875c5ba3e568a98884fbe807e45ad8df593032976c60c92c4, EXIT 0.
+
+```
+PASS  createFormRecord  2026-07-16T12:30:38.075Z recordId=7ab1757a-4d84-40d9-b336-ee3175dff36f status=DRAFT
+PASS  saveFormRecordValues (15 required)  2026-07-16T12:30:39.584Z filled=15/19 requiredMissing=[]
+PASS  exportFormRecordPdf returns presigned url  2026-07-16T12:30:45.114Z expiresAt=2026-07-16T12:45:44.782Z
+PASS  presigned URL serves a real PDF  2026-07-16T12:30:45.359Z http=200 magic=%PDF- bytes=43721
+PASS  export of unknown record → RECORD_NOT_FOUND  2026-07-16T12:30:45.599Z err=RECORD_NOT_FOUND
+PASS  submitFormRecord → COMPLETE  2026-07-16T12:30:46.303Z status=COMPLETE
+PASS  same-actor approve → SOD_VIOLATION (live)  2026-07-16T12:30:46.539Z err=SOD_VIOLATION
+PASS  approveFormRecord (second identity) → APPROVED  2026-07-16T12:30:48.260Z status=APPROVED
+PASS  forms.records.m4_record_id stamped  2026-07-16T12:30:48.562Z status=approved m4_record_id=6c361893-db94-4fa9-aac7-3303b94c50f2
+PASS  m4.records pointer row (ACC-7 columns written)  2026-07-16T12:30:48.631Z {"standard":"IMS","record_type":"form_record","source_module":"M4","retention_class":"7y","retain_until":"2033-07-16 06:30:47.704","object_lock_until":"2033-07-16 06:30:47.704","s3_object_ref":"s3://dev-datastack-evidencevault2b2802b4-9gbjwnn7s30y/tenants/tenant-arch-smoke/sealed/records/7ab1757a-4d84-40d9-b336-ee3175dff36f-447c86d0243f.pdf"}
+PASS  form_record retention policy row (default seeded)  2026-07-16T12:30:48.692Z {"record_type":"form_record","retention_years":7,"disposition_rule":"review_before_disposal"}
+PASS  S3 Object-Lock retention == m4.retain_until (to the ms)  2026-07-16T12:30:48.985Z mode=GOVERNANCE s3=2033-07-16T06:30:47.704Z db=2033-07-16 06:30:47.704 sealedBytes=45293 type=application/pdf
+PASS  approved record is immutable (RECORD_IMMUTABLE)  2026-07-16T12:30:49.153Z err=RECORD_IMMUTABLE
+```
+
+Key behavioral proofs:
+- **REC-7 export**: presigned URL served real PDF bytes (`%PDF-`, 43,721 B)
+  for an IN_PROGRESS record ("export any record").
+- **ACC-7**: `m4.records` row written with `retain_until` ==
+  `object_lock_until` == live S3 `GetObjectRetention` **to the millisecond**
+  (2033-07-16T06:30:47.704Z, GOVERNANCE, 7y default policy self-seeded);
+  `forms.records.m4_record_id` → 6c361893-db94-4fa9-aac7-3303b94c50f2.
+- **Sealed content is the approved state**: sealed PDF is a different body
+  (45,293 B) than the pre-submit export (43,721 B) — post-flip re-render.
+- **Ledger (BC-5)**: DDB AUDITLOG carries the full chain for the run —
+  `FormRecord.Submitted` (12:30:47.773Z) → `Security.SodViolationBlocked`
+  (12:30:47.915Z, the same-actor attempt, write blocked live) →
+  `FormRecord.Approved` (12:30:48.182Z) with payload
+  `{sealed:true, m4RecordId:6c361893…, retainUntil:2033-07-16T06:30:47.704Z,
+  lockMode:GOVERNANCE, sealedKey:tenants/…/sealed/records/7ab1757a…-447c86d0243f.pdf}`,
+  prevHash chain intact.
+- **Negatives live**: unknown record → RECORD_NOT_FOUND; same-actor approve →
+  SOD_VIOLATION (zero writes); approved record → RECORD_IMMUTABLE.
+
+## Carry-forwards (named, non-blocking)
+
+1. Non-`clause` relation values render as bare UUIDs in the PDF (clause
+   relations dereference via the registry: "ISO9001 8.7 — Title"). Per-target
+   display resolution (NC description, audit title, …) is a follow-up, not
+   silently pretty-printed.
+2. PDF chrome (table headers, "Controlled Document" stamp, meta row labels)
+   is English by template convention (same as the spec-40 manual PDFs); field
+   labels + booleans localize via tenant `documentLocale`. Localized chrome =
+   owner call.
+3. Re-approval after reopen seals a NEW content-addressed object
+   (`<recordId>-<sha12>.pdf`) + new m4 row and repoints `m4_record_id`; the
+   prior sealed object stays locked (by design — each approval is evidence).
+4. Audit-event `standard` on FormRecord.* stays `tplStandards[0]` (Task 5/6
+   convention) while the m4 row uses the BC-6 IMS derivation — the readback
+   shows ISO9001 (event) vs IMS (m4 row). Consistency review candidate when
+   the IMS enum reaches the event path (TODO-011 note already in forms.ts).
+
+## Purge list additions (tenant-arch-smoke)
+
+- `forms.records` 7ab1757a-4d84-40d9-b336-ee3175dff36f + its record_values
+- `m4.records` 6c361893-db94-4fa9-aac7-3303b94c50f2
+- `m4.retention_policies` (tenant-arch-smoke, form_record, 7y)
+- EvidenceVault `tenants/tenant-arch-smoke/sealed/records/7ab1757a-…-447c86d0243f.pdf`
+  (GOVERNANCE-locked until 2033-07-16 — bypass + versionId required)
+- GeneralBucket `tenants/tenant-arch-smoke/records/7ab1757a-….json` +
+  `tenants/tenant-arch-smoke/pdf/7ab1757a-…-*.pdf`
+- 3 AUDITLOG items (whole-partition purge only, hash chain)
