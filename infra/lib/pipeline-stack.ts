@@ -35,8 +35,9 @@ export class PipelineStack extends cdk.Stack {
           'npm ci',
           // frontend has its own package tree; `npm run test` chains its vitest
           // suite, which cannot start without these deps (build 19b6d892 failed
-          // on UNRESOLVED_IMPORT @vitejs/plugin-react — root ci only).
-          'npm ci --prefix frontend',
+          // on UNRESOLVED_IMPORT @vitejs/plugin-react — root ci only). Plain cd
+          // form — npm's --prefix flag has install-target quirks.
+          'cd frontend && npm ci && cd ..',
           'npm run test',
           'npm audit --audit-level=high',
           'npx cdk synth --all',
