@@ -1,0 +1,78 @@
+# Task 20 — Deploy + live ACC-1/ACC-2 readback [ARCHITECT]
+# Executed: 2026-07-16T21:29Z–23:06Z | exit codes 0 unless noted
+
+## Step-0 deploy (witnessed) — WITH INCIDENT
+- Pipeline a41a7b92 (source 70476fb) deployed Dev 22:29Z... and TOOK THE
+  INVOKER DOWN: prompt-library.ts read its blocks via
+  fileURLToPath(import.meta.url) at module scope — undefined in the CJS
+  esbuild bundle → TypeError at import → EVERY invoker call Unhandled.
+  Same failure class register-resolver.ts already documents; Task 17's
+  design note said "esbuild inline via static import" and the
+  implementation deviated. Vitest (ESM) structurally cannot catch this.
+- HOTFIX 2e3e384: blocks inlined as constants + parity tests vs
+  prompts/shared/*.md (root suite 975/0, tsc 0).
+- GitHub API incident then blocked the pipeline Source ("GitHub returned
+  an Internal Error", 7+ consecutive executions ~22:36–23:00Z; git plane
+  unaffected). With dev's invoker DOWN, architect direct-deployed
+  CumplifyPipeline/Dev/AiStack from the clean 2e3e384 tree (66s, exit 0).
+  Pipeline re-verification run owed when GitHub recovers.
+
+## ACC-1 — grounded advisory response passes (LIVE, invoker level) : PASS
+23:04:39Z, guru-9001 seat (qwen.qwen3-next-80b-a3b), synthetic 4.1/4.2
+chunks in groundingContext, natural-phrasing question.
+→ delivered unmodified, stopReason end_turn, groundingScore 0.85,
+relevanceScore 1.0, flagged=false, 2 citations, usage 760/62 metered.
+Event log for this invocation: ONE Ai.GuardrailChecked, **NO
+Ai.GroundingBlocked** (23:04:42Z) — exactly ACC-1's evidence contract.
+
+## ACC-2 — fabricated clause → honest-miss (LIVE, end-to-end) : PASS
+23:05:34Z, same seat, question about fabricated "clause 99.9 cryptocurrency
+transaction audits", real model answer produced (usage 779/201).
+→ check #1 blocked (grounding 0.02, relevance 1.0) → retry converse with
+verbatim source injection → check #2 blocked (grounding 0, relevance ~0)
+→ response REPLACED by honest-miss template, stopReason grounding_blocked,
+flagged=true. Event log: TWO Ai.GuardrailChecked + ONE Ai.GroundingBlocked
+(23:05:37–38Z). The L1 on-block behavior from Part 35, proven live.
+
+## Full-chain leg (guru handler → embed → AOSS → invoke) : CARRIED
+23:06:14Z Guru9001Fn probe: answer delivered BUT via the dormant path —
+guru Lambda's AOSS retrieval failed `AOSS search failed: 401` (agents-
+retrieval log, xray 1-6a5963e4-...). The embed leg worked (no embed error);
+the ACCESS leg is the pre-existing F-B carry: the design §15 routed-
+findings table marked F-B resolved by §4 handler wiring, but the 401 is
+access/signing-level, not handler code. Data-access policy readback
+(cumplify-ai-access-dev): Guru9001/14001/45001 + CapaGuru service roles ARE
+listed as principals with index/cumplify-iso-kb/* access → 401 despite
+policy points at aoss-signed-client signing or index-level mismatch.
+Full-chain grounded proof re-probes after FIX-T20-3.
+
+## New findings (ordered to next Kiro wave)
+- **T20-1 (M):** invoke() does not short-circuit when converse returns
+  stopReason='guardrail_intervened' (inline input block). It grounding-
+  checks the BLOCKED MESSAGING text ("Request blocked by content policy."
+  → scores 0/0.14), burns a doomed retry converse + 2 ApplyGuardrail
+  calls, publishes a semantically WRONG Ai.GroundingBlocked, and returns
+  honest-miss instead of the content-policy message. Reproduced live
+  23:02Z. FIX: detect guardrail_intervened after converse → return the
+  blocked messaging directly (no grounding flow, no GroundingBlocked;
+  optional Ai.GuardrailChecked with policy 'prompt-attack').
+- **T20-2 (M):** Task 19's handler rewrite DROPPED retrieval-chunk
+  injection into the model prompt — chunks ride only groundingContext (the
+  post-check side), so first-pass answers are generated BLIND and only the
+  retry sees the source (ACC-1 v2 response literally said the source was
+  unavailable). RAG must be restored: include retrieved chunks in the
+  prompt (old handler line-47 pattern) AND keep groundingContext.
+- **T20-3 (M, infra+code):** AOSS 401 for guru handler runtime role despite
+  data-access policy listing it — diagnose aoss-signed-client (SigV4
+  service name / signing region) and index existence; F-B remains OPEN
+  until a live retrieval round-trip is evidenced.
+- **Note (owner visibility):** PROMPT_ATTACK HIGH flags instruction-like
+  user phrasing ("Answer in one sentence using only the source") as
+  injection — with T20-1 fixed the failure mode becomes an honest policy
+  message, but sensitivity may warrant calibration review later.
+
+## Verdict
+Task 20 CLOSED: step-0 deploy witnessed (incident handled), ACC-1 and
+ACC-2 live legs PROVEN at the one-door with exact event evidence; the
+handler→AOSS full-chain grounded leg is a NAMED CARRY on FIX-T20-2/T20-3
+with an architect re-probe to follow.

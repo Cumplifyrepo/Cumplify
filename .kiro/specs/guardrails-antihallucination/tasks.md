@@ -213,7 +213,11 @@
   - **Evidence:** Unit tests: embed transport called, groundingContext assembled, query truncated
   - **ACC mapping:** L1-11, EMB-5
 
-- [ ] **Task 20 — Deploy + live ACC-1/ACC-2 readback** [ARCHITECT] D3
+- [x] **Task 20 — Deploy + live ACC-1/ACC-2 readback** [ARCHITECT] D3
+  - **CLOSED with carries (task-20.log):** ACC-1 + ACC-2 PROVEN LIVE at the one-door
+    (exact event evidence); handler→AOSS full-chain grounded leg CARRIED on
+    FIX-T20-2/T20-3 (RAG chunk injection dropped in Task 19; pre-existing AOSS 401 =
+    F-B still open) — architect re-probe follows the fix wave
   - **Step 0:** Deploy AiStack (invoker + handler code from Phases 3-6) to dev
   - **ACC-1:** Grounded question → response delivered, no Ai.GroundingBlocked, evidence present
   - **ACC-2:** Fabricated-clause question → honest-miss template, Ai.GroundingBlocked emitted
