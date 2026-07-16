@@ -1,0 +1,67 @@
+# FIX-T20-3 — Diagnose guru→AOSS 401
+# Status: BLOCKED (infra change required — architect lane)
+
+## Root Cause (CONFIRMED)
+
+The 401 is NOT a SigV4 signing error. The SigV4 client is correctly
+configured (service:'aoss', region from AWS_REGION, applyChecksum:true).
+The index name ('cumplify-iso-kb') matches the data-access policy
+resource pattern (index/cumplify-iso-kb/*).
+
+The root cause is **NETWORK POLICY DENIAL**:
+
+1. The AOSS network policy for cumplify-iso-kb (in data-stack.ts, line ~280)
+   sets `AllowFromPublic: false` and restricts access to
+   `SourceVPCEs: [aossVpcEndpointId]`.
+
+2. The guru handler Lambdas (created via `createAgentHandler` factory,
+   ai-stack.ts line ~692) are NOT VPC-placed — no `vpc`, `vpcSubnets`,
+   or `securityGroups` in the NodejsFunction definition.
+
+3. Because the Lambdas run outside the VPC, their AOSS requests never
+   traverse the OpenSearch Serverless VPC endpoint. The network policy
+   rejects the request at the AOSS data-plane level → 401.
+
+4. Proof: applyTemplateFn (line 1189) and aossProverFn (line 1223) ARE
+   VPC-placed and CAN reach AOSS successfully. They use the same
+   signed client code.
+
+## Fix Required (architect lane — infra change)
+
+Option A (minimal): Add VPC placement to the guru handlers only:
+```typescript
+const guruHandlerOpts = {
+  vpc: props.vpc,
+  vpcSubnets: { subnets: props.privateSubnets },
+};
+```
+
+Option B (uniform): Add VPC placement to the `createAgentHandler` factory
+so ALL agent handlers can reach AOSS. This makes sense since the
+AgentHandlerReadOnlyPolicy already grants aoss:APIAccessAll.
+
+Both options also need a security group allowing HTTPS egress to the
+VPC endpoint (443 outbound to the AOSS endpoint SG).
+
+The Lambda timeout should remain >= 60s (already 60s, compliant with
+02-aoss-rule).
+
+## NOT a code-level fix
+
+The aoss-signed-client.ts is correctly implemented:
+- service: 'aoss' ✓ (not 'es')
+- region: process.env.AWS_REGION ?? 'us-east-1' ✓
+- applyChecksum: true ✓ (x-amz-content-sha256 header)
+- The request path: /${indexName}/_search ✓
+- The host header: derived from endpoint URL ✓
+
+The IAM layer is also correct:
+- IAM policy: aoss:APIAccessAll on all 3 collection ARNs (via AgentHandlerReadOnlyPolicy)
+- AOSS data-access policy: guru role ARNs listed in Principal array
+  with ReadDocument + DescribeIndex on index/cumplify-iso-kb/*
+
+## Blocked On
+
+Architect to apply Option A or B in ai-stack.ts (VPC placement for
+agent handlers) and re-deploy. Once deployed, the full-chain grounded
+proof re-probe (guru→embed→AOSS→invoke) should succeed.
