@@ -215,10 +215,9 @@ describe('invoke() grounding orchestration (Task 13)', () => {
     expect(response.guardrailEvidence!.groundingScore).toBe(0.35);
     // Ai.GroundingBlocked event emitted (check EventBridge was called)
     const ebCalls = mockEbSend.mock.calls;
-    const groundingBlockedCall = ebCalls.find((c: any) => {
-      const detail = JSON.parse((c[0] as any).input.Entries[0].Detail);
-      return (c[0] as any).input.Entries[0].DetailType === 'Ai.GroundingBlocked';
-    });
+    const groundingBlockedCall = ebCalls.find(
+      (c: any) => (c[0] as any).input.Entries[0].DetailType === 'Ai.GroundingBlocked',
+    );
     expect(groundingBlockedCall).toBeDefined();
   });
 
@@ -226,16 +225,17 @@ describe('invoke() grounding orchestration (Task 13)', () => {
     mockConverseSend.mockResolvedValueOnce(mockConverseResponse('draft'));
 
     await invoke({
-      seat: 'editor-ai', // default temp 0.4
+      seat: 'editor-ai',
+      temperature: 0.4, // explicit request above the record-write cap
       messages: [{ role: 'user', content: [{ text: 'draft' }] }],
       tenantId: 't1', agent: 'editor-ai', module: 'M1', feature: 'record-write',
     });
 
-    // Check the Converse call temperature
-    const converseCmd = mockConverseSend.mock.calls[0][0] as { input: { inferenceConfig: { temperature: number } } };
-    // Nova with tools uses greedy decoding, but without tools it should respect seat temp
-    // The temperature is set in converseParams which converse() receives
-    // Since this is mocked, we verify the invoke logic by checking it called converse at all
-    expect(mockConverseSend).toHaveBeenCalledTimes(1);
+    // Tool-less call: converse builds inferenceConfig.temperature from params —
+    // the L4-5 cap must have clamped 0.4 → 0.3 before the command was built.
+    const converseCmd = mockConverseSend.mock.calls[0][0] as {
+      input: { inferenceConfig: { temperature: number } };
+    };
+    expect(converseCmd.input.inferenceConfig.temperature).toBe(0.3);
   });
 });

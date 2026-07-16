@@ -147,9 +147,12 @@ describe('AiStack', () => {
 
     it('is a distinct resource from the agent guardrail', () => {
       const byName = guardrailsByName();
+      // spec-35 Task 6 adds recordwrite (grounding 0.90); Task 25 adds
+      // arclause + aradvisory (AR-only) — extend this inventory then.
       expect(Object.keys(byName).sort()).toEqual([
         'cumplify-agent-guardrail-dev',
         'cumplify-docgen-guardrail-dev',
+        'cumplify-recordwrite-guardrail-dev',
       ]);
     });
 

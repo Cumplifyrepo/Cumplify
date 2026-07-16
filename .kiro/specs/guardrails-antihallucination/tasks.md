@@ -59,10 +59,13 @@
   - **Evidence:** Unit test: createEmbedFn invokes Lambda with op:'embed', parses result
   - **ACC mapping:** EMB-2 (transport enforcement)
 
-- [ ] **Task 5 — Confirm Titan Embed v2 IAM sufficiency** [REQUIRES-HUMAN] D3
+- [x] **Task 5 — Confirm Titan Embed v2 IAM sufficiency** [REQUIRES-HUMAN] D3
   - Model access PROVEN LIVE (architect micro-invoke 2026-07-16)
   - Scope: owner sign-off confirming existing IAM suffices
-  - **Evidence:** Owner sign-off recorded
+  - **Evidence:** Owner sign-off recorded — Julio, 2026-07-16 working session ("task 5
+    approved"); statement signed: existing `bedrock:InvokeModel` + `bedrock:ApplyGuardrail`
+    on Resource:'*' (ai-stack.ts:157-164) covers Titan Embed v2; NO new IAM statement.
+    Log: .kiro/evidence/guardrails-antihallucination/task-5.log
   - **ACC mapping:** EMB-6, ACC-7 (partial)
 
 ---
@@ -145,9 +148,11 @@
 
 - [x] **Task 13 — Integrate grounding into invoke() orchestration** [KIRO] D2
   - After converse(): if groundingContext present → validate caps → split → checkGrounding
-  - Emit Ai.GuardrailChecked per check
+  - Emit Ai.GuardrailChecked per check — **OUTSTANDING (validation V-2): not implemented;
+    fix ordered with the Phase 4-6 wave**
   - On block: retry flow; attach guardrailEvidence to response
-  - Wrap request.system through buildSystemPrompt() (§7.2)
+  - ~~Wrap request.system through buildSystemPrompt() (§7.2)~~ — duplicate of Task 17's
+    scope (D3 review nit); lands with Task 17
   - Dormant when groundingContext absent
   - **Evidence:** Integration test (mocked): with/without groundingContext paths verified
   - **ACC mapping:** ACC-1, ACC-2 (mocked)

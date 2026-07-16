@@ -1,0 +1,14 @@
+# Task 5 — Titan Embed v2 IAM sufficiency [REQUIRES-HUMAN]
+# Recorded: 2026-07-16T20:05Z (architect, on owner instruction)
+
+## Owner sign-off
+- Approver: Julio (owner), 2026-07-16 working session, verbatim: "task 5 approved"
+- Statement signed off: the invoker role's existing policy
+  (infra/lib/ai-stack.ts:157-164) — Allow bedrock:InvokeModel +
+  bedrock:ApplyGuardrail on Resource:'*' — covers amazon.titan-embed-text-v2:0
+  via the same bedrock:InvokeModel action. NO new IAM statement required.
+- Supporting facts presented at sign-off:
+  1. Live model-access proof: architect micro-invoke 2026-07-16 (dev-admin) —
+     1024 dims + inputTextTokenCount returned.
+  2. On-disk policy read of ai-stack.ts:157-164 (same session).
+- Effect: EMB-6 gate CLEARED. Task 7 architect deploy unblocked.
