@@ -161,7 +161,7 @@
 
 ## Phase 4: Layer 3 — Hop Check
 
-- [ ] **Task 14 — Implement hop guardrail check** [KIRO] D2
+- [x] **Task 14 — Implement hop guardrail check** [KIRO] D2
   - Create `services/ai-invoker/src/hop-check.ts`
   - ApplyGuardrail on hop payload (source:'INPUT', agent guardrail)
   - On BLOCK: publish Ai.HopBlocked (entityId:''), return error
@@ -169,7 +169,7 @@
   - **Evidence:** Unit tests: clean passes, injection blocks + event
   - **ACC mapping:** L3-1, L3-2, L3-3, L3-4, ACC-4 (unit)
 
-- [ ] **Task 15 — Integrate hop check into tool-use path** [KIRO] D2
+- [x] **Task 15 — Integrate hop check into tool-use path** [KIRO] D2
   - When stopReason=tool_use + agent-routing tool → checkHopPayload()
   - Agent-routing tool name registry
   - **Evidence:** Integration test: injection → blocked
@@ -179,19 +179,19 @@
 
 ## Phase 5: Layer 4 — Shared Prompt Library
 
-- [ ] **Task 16 — Create shared prompt library** [KIRO] D2
+- [x] **Task 16 — Create shared prompt library** [KIRO] D2
   - Create `prompts/shared/{structural-honesty,licensed-uncertainty,retrieval-first,relative-date}.md`
   - **Evidence:** Files exist, factual-claim-free
   - **ACC mapping:** L4-1, L4-2, L4-3, L4-6, L4-7
 
-- [ ] **Task 17 — Implement prompt-library injection** [KIRO] D2
+- [x] **Task 17 — Implement prompt-library injection** [KIRO] D2
   - Create `services/ai-invoker/src/prompt-library.ts`:
     - `buildSystemPrompt(basePrompt: string): string` — prepends four shared blocks
   - Wire into index.ts: wrap request.system before converse()
   - **Evidence:** Unit test: output contains all four blocks + base
   - **ACC mapping:** L4-1
 
-- [ ] **Task 18 — Temperature enforcement for record-write** [KIRO] D2
+- [x] **Task 18 — Temperature enforcement for record-write** [KIRO] D2
   - Cap at 0.3 when feature='record-write'
   - **Evidence:** Unit test: editor-ai (0.4) + record-write → 0.3
   - **ACC mapping:** L4-5
@@ -200,7 +200,10 @@
 
 ## Phase 6: Handler Wiring
 
-- [ ] **Task 19 — Wire guru + copilot handlers with embed→retrieve→groundingContext** [KIRO] D2
+- [x] **Task 19 — Wire guru + copilot handlers with embed→retrieve→groundingContext** [KIRO] D2
+  - **Copilot leg: NAMED CARRY** — no copilot handler exists in the codebase (belongs to a
+    future spec); the three guru handlers are wired ✓. The carry re-attaches when the
+    copilot handler spec lands (validated by architect 2026-07-16).
   - Update guru-9001, guru-14001, guru-45001, copilot handlers:
     1. `const embedFn = createEmbedFn()` (invoke-transport.ts — NEVER import embed.ts)
     2. `const {embedding} = await embedFn({tenantId, agent, module, feature, text: question})`

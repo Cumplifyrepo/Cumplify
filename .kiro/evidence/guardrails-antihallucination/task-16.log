@@ -1,0 +1,27 @@
+# Task 16 Evidence — prompts/shared/ four instruction files
+# Timestamp: 2026-07-16T18:07Z
+# Agent: Kiro build agent
+
+## Implementation
+Created four factual-claim-free instruction files at prompts/shared/:
+
+1. `structural-honesty.md` — citation-or-silence rule, claim formatting, honesty over completeness
+2. `licensed-uncertainty.md` — "the standard does not specify this" as rewarded pattern
+3. `retrieval-first.md` — retrieve before asserting, prohibited post-hoc decoration
+4. `relative-date.md` — never state absolute dates from memory, only from retrieval
+
+## Factual-Claim-Free Verification
+- No specific ISO clause numbers stated as facts
+- No specific standard edition dates asserted
+- Format examples use placeholder patterns (ISO XXXXX X.X.X)
+- Tested via prompt-library.test.ts clause-pattern regex assertion
+
+## Verification Commands
+```
+npx tsc --noEmit
+Exit code: 0
+
+npx vitest run services/ai-invoker/__tests__/prompt-library.test.ts
+Exit code: 0
+Tests: 9 passed (9)
+```

@@ -84,6 +84,8 @@ export interface InvokeRequest {
   };
   /** Tenant document locale for honest-miss template (defaults to 'en') */
   locale?: 'en' | 'es' | 'pt';
+  /** ISO standard for event attribution (FIX-V3: threaded to grounding events; defaults 'ISO9001') */
+  standard?: 'ISO9001' | 'ISO14001' | 'ISO45001';
 }
 
 /** Converse API message shape */

@@ -172,29 +172,36 @@ export async function checkGrounding(params: {
 
 /**
  * Parse ApplyGuardrail response to extract grounding/relevance scores and verdict.
+ *
+ * FIX-V1: verdict is derived from the contextualGroundingPolicy FILTERS' own
+ * `action === 'BLOCKED'` (grounding + relevance), NOT the top-level ApplyGuardrail
+ * action. The top-level action is GUARDRAIL_INTERVENED whenever ANY policy fires
+ * (e.g. PII anonymization on output) — reading it as a grounding block causes
+ * false retries/honest-miss on legitimate answers that merely had PII masked.
  */
 export function parseGroundingResponse(response: ApplyGuardrailCommandOutput): GroundingResult {
-  const action = response.action ?? 'NONE';
-  const verdict: 'pass' | 'blocked' = action === 'GUARDRAIL_INTERVENED' ? 'blocked' : 'pass';
-
-  // Extract scores from assessments
+  // Extract scores and per-filter action from contextualGroundingPolicy assessments
   let groundingScore = 1.0;
   let relevanceScore = 1.0;
+  let groundingBlocked = false;
 
   const assessments = response.assessments ?? [];
   for (const assessment of assessments) {
     const filters =
       (assessment as any).contextualGroundingPolicy?.filters ?? [];
     for (const filter of filters) {
-      if (filter.type === 'GROUNDING' && typeof filter.score === 'number') {
-        groundingScore = filter.score;
+      if (filter.type === 'GROUNDING') {
+        if (typeof filter.score === 'number') groundingScore = filter.score;
+        if (filter.action === 'BLOCKED') groundingBlocked = true;
       }
-      if (filter.type === 'RELEVANCE' && typeof filter.score === 'number') {
-        relevanceScore = filter.score;
+      if (filter.type === 'RELEVANCE') {
+        if (typeof filter.score === 'number') relevanceScore = filter.score;
+        if (filter.action === 'BLOCKED') groundingBlocked = true;
       }
     }
   }
 
+  const verdict: 'pass' | 'blocked' = groundingBlocked ? 'blocked' : 'pass';
   return { verdict, groundingScore, relevanceScore };
 }
 
@@ -265,6 +272,8 @@ export async function runGroundingFlow(params: {
   groundingContext: GroundingContext;
   responseText: string;
   locale?: string;
+  /** ISO standard for event attribution (FIX-V3, defaults 'ISO9001') */
+  standard?: 'ISO9001' | 'ISO14001' | 'ISO45001';
   /** For event attribution */
   tenantId: string;
   agent: string;
@@ -282,11 +291,36 @@ export async function runGroundingFlow(params: {
   let anyBlocked = false;
 
   for (const section of sections) {
+    const startMs = Date.now();
     const result = await checkGrounding({
       guardrailConfig,
       groundingSource: validCtx.source,
       query: validCtx.query,
       content: section,
+    });
+    const latencyMs = Date.now() - startMs;
+
+    // FIX-V2: Emit Ai.GuardrailChecked per section check (TEL-1)
+    await publish({
+      busName: process.env.BUS_NAME ?? 'cumplify-events',
+      source: 'cumplify.ai-invoker',
+      detailType: 'Ai.GuardrailChecked',
+      event: {
+        tenantId: params.tenantId,
+        timestamp: new Date().toISOString(),
+        actor: params.agent,
+        module: params.module,
+        clauseRef: '',
+        standard: params.standard ?? 'ISO9001',
+        entityId: '',
+        payload: {
+          guardrailPolicy: 'grounding',
+          verdict: result.verdict,
+          groundingScore: result.groundingScore,
+          relevanceScore: result.relevanceScore,
+          latencyMs,
+        },
+      },
     });
 
     if (result.groundingScore < worstGrounding) worstGrounding = result.groundingScore;
@@ -334,8 +368,10 @@ export async function emitGroundingBlockedAndHonestMiss(params: {
   groundingScore: number;
   relevanceScore: number;
   locale?: string;
+  /** ISO standard for event attribution (FIX-V3, defaults 'ISO9001') */
+  standard?: 'ISO9001' | 'ISO14001' | 'ISO45001';
 }): Promise<string> {
-  const { tenantId, agent, module, groundingScore, relevanceScore, locale } = params;
+  const { tenantId, agent, module, groundingScore, relevanceScore, locale, standard } = params;
 
   await publish({
     busName: process.env.BUS_NAME ?? 'cumplify-events',
@@ -347,7 +383,9 @@ export async function emitGroundingBlockedAndHonestMiss(params: {
       actor: agent,
       module,
       clauseRef: '',
-      standard: 'ISO9001',
+      // FIX-V3: Use the standard passed from the invoking handler; defaults ISO9001
+      // until Task 19 handlers pass theirs explicitly.
+      standard: standard ?? 'ISO9001',
       entityId: '',
       payload: {
         tenantId,

@@ -16,23 +16,23 @@ const HONEST_MISS_TEMPLATES: Record<SupportedLocale, string> = {
 
 _This response was generated because the AI system's grounding check indicated insufficient evidence to support a reliable answer._`,
 
-  es: `No fue posible proporcionar una respuesta con fundamento suficiente a su consulta. La informacion disponible en la base de conocimiento no alcanzo el umbral de confianza requerido para este tipo de respuesta.
+  es: `No fue posible proporcionar una respuesta con fundamento suficiente a su consulta. La información disponible en la base de conocimiento no alcanzó el umbral de confianza requerido para este tipo de respuesta.
 
-**Que puede hacer:**
-- Reformule su pregunta con terminos mas especificos
-- Contacte a su Representante del SIG para orientacion sobre este tema
-- Consulte directamente la clausula relevante de la norma
+**Qué puede hacer:**
+- Reformule su pregunta con términos más específicos
+- Contacte a su Representante del SIG para orientación sobre este tema
+- Consulte directamente la cláusula relevante de la norma
 
-_Esta respuesta fue generada porque la verificacion de fundamentacion del sistema de IA indico evidencia insuficiente para respaldar una respuesta confiable._`,
+_Esta respuesta fue generada porque la verificación de fundamentación del sistema de IA indicó evidencia insuficiente para respaldar una respuesta confiable._`,
 
-  pt: `Nao foi possivel fornecer uma resposta com fundamentacao suficiente para sua consulta. As informacoes disponiveis na base de conhecimento nao atingiram o limiar de confianca exigido para este tipo de resposta.
+  pt: `Não foi possível fornecer uma resposta com fundamentação suficiente para sua consulta. As informações disponíveis na base de conhecimento não atingiram o limiar de confiança exigido para este tipo de resposta.
 
-**O que voce pode fazer:**
-- Reformule sua pergunta com termos mais especificos
-- Entre em contato com seu Representante do SGI para orientacao sobre este tema
-- Consulte diretamente a clausula relevante da norma
+**O que você pode fazer:**
+- Reformule sua pergunta com termos mais específicos
+- Entre em contato com seu Representante do SGI para orientação sobre este tema
+- Consulte diretamente a cláusula relevante da norma
 
-_Esta resposta foi gerada porque a verificacao de fundamentacao do sistema de IA indicou evidencia insuficiente para sustentar uma resposta confiavel._`,
+_Esta resposta foi gerada porque a verificação de fundamentação do sistema de IA indicou evidência insuficiente para sustentar uma resposta confiável._`,
 };
 
 /**

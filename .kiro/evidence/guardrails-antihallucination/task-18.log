@@ -1,0 +1,45 @@
+# Task 18 Evidence — Temperature enforcement for record-write (L4-5)
+# Timestamp: 2026-07-16T18:10Z
+# Agent: Kiro build agent
+
+## Status: VERIFIED (already implemented in Phase 2/3, validated this wave)
+
+## Implementation Location
+- `services/ai-invoker/src/index.ts` lines ~78-80:
+  ```typescript
+  // L4-5: record-writing paths MUST use ≤ 0.3
+  if (feature === 'record-write' && temperature > 0.3) {
+    temperature = 0.3;
+  }
+  ```
+
+## Test Evidence
+- File: `services/ai-invoker/__tests__/invoke-grounding.test.ts`
+- Test: "enforces temperature ≤ 0.3 for record-write feature (L4-5)"
+  - seat: 'editor-ai' (default temp 0.4)
+  - explicit temperature: 0.4
+  - feature: 'record-write'
+  - Asserts: converseCmd.input.inferenceConfig.temperature === 0.3
+  - Result: PASSES
+
+## Architect Validation (Phase 2/3 validation report)
+- V-5: Test was REWRITTEN by the architect in the validation commit (5cb8f5c)
+  to correctly exercise the temperature clamp. The previous version was vacuous.
+- The rewritten test uses explicit temperature:0.4 + feature:'record-write'
+  and asserts the Converse command received temperature=0.3.
+
+## Verification Commands
+```
+npx vitest run services/ai-invoker/__tests__/invoke-grounding.test.ts
+Exit code: 0
+Tests: 5 passed (5)
+  ✓ enforces temperature ≤ 0.3 for record-write feature (L4-5)
+
+npx vitest run (ROOT)
+Exit code: 0
+Test Files: 92 passed | 1 skipped (93)
+Tests: 970 passed | 3 skipped (973)
+
+npx tsc --noEmit
+Exit code: 0
+```

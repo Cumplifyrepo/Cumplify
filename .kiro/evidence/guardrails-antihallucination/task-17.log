@@ -1,0 +1,37 @@
+# Task 17 Evidence — prompt-library.ts buildSystemPrompt + index.ts wiring
+# Timestamp: 2026-07-16T18:07Z
+# Agent: Kiro build agent
+
+## Implementation
+- Created `services/ai-invoker/src/prompt-library.ts`:
+  - Loads four .md files from prompts/shared/ at module init (Lambda cold-start cache)
+  - `buildSystemPrompt(basePrompt: string): string` — prepends four blocks, joins with '\n\n'
+  - Order: structural-honesty → licensed-uncertainty → retrieval-first → relative-date → basePrompt
+  - Graceful fallback: missing file → empty string (test environments)
+  - Exports PROMPT_BLOCKS for testing
+
+- Wired into `services/ai-invoker/src/index.ts`:
+  - `const systemPrompt = request.system ? buildSystemPrompt(request.system) : undefined;`
+  - Passed to converseParams.system (replaces raw request.system)
+  - This also closes Task 13's struck-through bullet (§7.2 system prompt wrapping)
+
+## Test Evidence
+- File: `services/ai-invoker/__tests__/prompt-library.test.ts`
+- 9 unit tests:
+  - Prepends all four blocks in correct order before base prompt
+  - Contains all four file contents
+  - Base prompt appears at end
+  - Empty base handled gracefully
+  - Individual block content assertions (citation-or-silence, rewarded pattern, etc.)
+  - No specific ISO clause facts in blocks (factual-claim-free assertion)
+
+## Verification Commands
+```
+npx tsc --noEmit
+Exit code: 0
+
+npx vitest run
+Exit code: 0
+Test Files: 92 passed | 1 skipped (93)
+Tests: 970 passed | 3 skipped (973)
+```

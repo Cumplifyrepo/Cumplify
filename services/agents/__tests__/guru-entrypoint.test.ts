@@ -6,6 +6,9 @@
  * would fail with Runtime.HandlerNotFound. Also pins the security contract:
  * tenantId comes ONLY from the authorizer's resolverContext (fail-closed),
  * never from client arguments.
+ *
+ * Task 19 update: handlers now call embedFn() + retrieve() before invoke().
+ * Mock must return distinct shapes per call (embed → invoke).
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -23,6 +26,16 @@ vi.mock('@aws-sdk/client-lambda', () => ({
   },
 }));
 
+// Mock AOSS retrieval — Task 19 handlers call retrieve() after embed
+vi.mock('../shared/retrieval.js', () => ({
+  retrieve: vi.fn().mockResolvedValue({
+    chunks: [{ text: '[ISO 9001 4.1] Context of the organization', score: 0.92, metadata: {} }],
+    latencyMs: 150,
+    coldStart: false,
+    attempts: 1,
+  }),
+}));
+
 vi.stubEnv('AI_INVOKER_ARN', 'arn:aws:lambda:us-east-1:000000000000:function:ai-invoker');
 vi.stubEnv('AOSS_ISO_KB_ENDPOINT', 'https://example.aoss.amazonaws.com');
 
@@ -32,6 +45,14 @@ const GURUS = [
   { name: 'guru-45001', mod: () => import('../guru-45001/handler.js') },
 ] as const;
 
+function embedPayload(): Uint8Array {
+  return Buffer.from(JSON.stringify({
+    embedding: new Array(1024).fill(0.01),
+    tokenCount: 5,
+    credits: 0.002,
+  }));
+}
+
 function invokerPayload(text: string): Uint8Array {
   return Buffer.from(JSON.stringify({ text, usage: { inputTokens: 1, outputTokens: 1 } }));
 }
@@ -39,7 +60,10 @@ function invokerPayload(text: string): Uint8Array {
 describe('guru AppSync entrypoints', () => {
   beforeEach(() => {
     mockSend.mockReset();
-    mockSend.mockResolvedValue({ Payload: invokerPayload('advisory answer') });
+    // First call = embed, second call = invoke
+    mockSend
+      .mockResolvedValueOnce({ Payload: embedPayload() })
+      .mockResolvedValueOnce({ Payload: invokerPayload('advisory answer') });
   });
 
   for (const guru of GURUS) {
@@ -64,15 +88,48 @@ describe('guru AppSync entrypoints', () => {
         expect(mockSend).not.toHaveBeenCalled();
       });
 
-      it('answers with tenantId from resolverContext; no vector → ungrounded (no AOSS call)', async () => {
+      it('calls embedFn then invokeFn with groundingContext assembled', async () => {
+        // Reset to provide fresh per-test mocks
+        mockSend.mockReset();
+        mockSend
+          .mockResolvedValueOnce({ Payload: embedPayload() })
+          .mockResolvedValueOnce({ Payload: invokerPayload('grounded answer') });
+
         const { handler } = (await guru.mod()) as { handler: (e: unknown) => Promise<string> };
         const answer = await handler({
           arguments: { question: 'What is clause 4.1?' },
           identity: { resolverContext: { tenantId: 'tenant-AAA' } },
         });
-        expect(answer).toBe('advisory answer');
-        // one-door transport used exactly once
-        expect(mockSend).toHaveBeenCalledTimes(1);
+        expect(answer).toBe('grounded answer');
+        // Two Lambda calls: embed + invoke
+        expect(mockSend).toHaveBeenCalledTimes(2);
+
+        // Second call (invoke) should have groundingContext
+        const invokePayload = JSON.parse(
+          Buffer.from((mockSend.mock.calls[1][0] as any).input.Payload).toString(),
+        );
+        expect(invokePayload.groundingContext).toBeDefined();
+        expect(invokePayload.groundingContext.source).toContain('ISO 9001 4.1');
+        expect(invokePayload.groundingContext.query).toBe('What is clause 4.1?');
+      });
+
+      it('truncates query to 1,000 chars for groundingContext', async () => {
+        mockSend.mockReset();
+        mockSend
+          .mockResolvedValueOnce({ Payload: embedPayload() })
+          .mockResolvedValueOnce({ Payload: invokerPayload('answer') });
+
+        const { handler } = (await guru.mod()) as { handler: (e: unknown) => Promise<string> };
+        const longQuestion = 'x'.repeat(2000);
+        await handler({
+          arguments: { question: longQuestion },
+          identity: { resolverContext: { tenantId: 'tenant-AAA' } },
+        });
+
+        const invokePayload = JSON.parse(
+          Buffer.from((mockSend.mock.calls[1][0] as any).input.Payload).toString(),
+        );
+        expect(invokePayload.groundingContext.query.length).toBe(1000);
       });
     });
   }

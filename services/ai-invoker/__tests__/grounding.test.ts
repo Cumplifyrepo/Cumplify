@@ -120,8 +120,8 @@ describe('checkGrounding', () => {
       assessments: [{
         contextualGroundingPolicy: {
           filters: [
-            { type: 'GROUNDING', score: 0.92 },
-            { type: 'RELEVANCE', score: 0.88 },
+            { type: 'GROUNDING', score: 0.92, action: 'NONE' },
+            { type: 'RELEVANCE', score: 0.88, action: 'NONE' },
           ],
         },
       }],
@@ -149,14 +149,14 @@ describe('checkGrounding', () => {
     expect(result.relevanceScore).toBe(0.88);
   });
 
-  it('returns blocked verdict on GUARDRAIL_INTERVENED', async () => {
+  it('returns blocked verdict when filters have action BLOCKED', async () => {
     mockSend.mockResolvedValueOnce({
       action: 'GUARDRAIL_INTERVENED',
       assessments: [{
         contextualGroundingPolicy: {
           filters: [
-            { type: 'GROUNDING', score: 0.42 },
-            { type: 'RELEVANCE', score: 0.65 },
+            { type: 'GROUNDING', score: 0.42, action: 'BLOCKED' },
+            { type: 'RELEVANCE', score: 0.65, action: 'BLOCKED' },
           ],
         },
       }],
@@ -181,6 +181,65 @@ describe('parseGroundingResponse', () => {
     expect(result.verdict).toBe('pass');
     expect(result.groundingScore).toBe(1.0);
     expect(result.relevanceScore).toBe(1.0);
+  });
+
+  it('derives blocked from contextualGroundingPolicy filters action, not top-level (FIX-V1)', () => {
+    // Grounding filter explicitly BLOCKED
+    const result = parseGroundingResponse({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{
+        contextualGroundingPolicy: {
+          filters: [
+            { type: 'GROUNDING', score: 0.42, action: 'BLOCKED' },
+            { type: 'RELEVANCE', score: 0.80, action: 'NONE' },
+          ],
+        },
+      }],
+    } as any);
+    expect(result.verdict).toBe('blocked');
+    expect(result.groundingScore).toBe(0.42);
+    expect(result.relevanceScore).toBe(0.80);
+  });
+
+  it('returns pass when PII intervened but grounding filters passed (FIX-V1 mixed assessment)', () => {
+    // Top-level action is GUARDRAIL_INTERVENED because PII anonymized output,
+    // but the contextualGroundingPolicy filters both passed (action: NONE).
+    // Before FIX-V1 this would incorrectly return 'blocked'.
+    const result = parseGroundingResponse({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{
+        sensitiveInformationPolicy: {
+          piiEntities: [{ type: 'NAME', match: 'John', action: 'ANONYMIZED' }],
+          regexes: [],
+        },
+        contextualGroundingPolicy: {
+          filters: [
+            { type: 'GROUNDING', score: 0.92, action: 'NONE' },
+            { type: 'RELEVANCE', score: 0.88, action: 'NONE' },
+          ],
+        },
+      }],
+    } as any);
+    expect(result.verdict).toBe('pass');
+    expect(result.groundingScore).toBe(0.92);
+    expect(result.relevanceScore).toBe(0.88);
+  });
+
+  it('returns blocked when relevance filter is BLOCKED', () => {
+    const result = parseGroundingResponse({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{
+        contextualGroundingPolicy: {
+          filters: [
+            { type: 'GROUNDING', score: 0.90, action: 'NONE' },
+            { type: 'RELEVANCE', score: 0.50, action: 'BLOCKED' },
+          ],
+        },
+      }],
+    } as any);
+    expect(result.verdict).toBe('blocked');
+    expect(result.groundingScore).toBe(0.90);
+    expect(result.relevanceScore).toBe(0.50);
   });
 });
 

@@ -21,6 +21,8 @@ import {
   emitGroundingBlockedAndHonestMiss,
   GROUNDING_RETRY_INSTRUCTION,
 } from './grounding.js';
+import { checkHopPayload, isAgentRoutingTool } from './hop-check.js';
+import { buildSystemPrompt } from './prompt-library.js';
 import { InvokeError, SEAT_DEFAULTS } from './types.js';
 import type {
   InvokeRequest,
@@ -87,10 +89,14 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   // Step 3+4: Build params and call Converse
   // Seat-routed (spec-35 §1.2): doc-composer→DocGen, record-write→RecordWrite, else→Agent
   const guardrailConfig = buildGuardrailConfig(seat, feature);
+
+  // L4 (§7.2): Wrap base system prompt with shared instruction blocks
+  const systemPrompt = request.system ? buildSystemPrompt(request.system) : undefined;
+
   const converseParams = {
     modelId,
     messages: request.messages,
-    system: request.system,
+    system: systemPrompt,
     tools: request.tools,
     temperature,
     maxTokens,
@@ -103,6 +109,30 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   let usage = result.usage;
   let guardrailEvidence: GuardrailEvidenceData | undefined;
 
+  // ─── Spec-35 L3: Hop guardrail check (Task 15) ────────────────────────────
+  // When stopReason='tool_use' + tool is in agent-routing registry → screen payload.
+  // On block: throws HOP_BLOCKED (meters usage before throw).
+  if (result.stopReason === 'tool_use' && result.toolUseBlocks.length > 0) {
+    for (const toolBlock of result.toolUseBlocks) {
+      if (isAgentRoutingTool(toolBlock.name)) {
+        // Extract target agent from tool input if available
+        const inputObj = toolBlock.input as Record<string, unknown> | undefined;
+        const targetAgent = (inputObj?.targetAgent as string) ?? (inputObj?.agent as string) ?? 'unknown';
+
+        await checkHopPayload({
+          guardrailConfig: guardrailConfig!,
+          toolInput: toolBlock.input,
+          toolName: toolBlock.name,
+          sourceAgent: agent,
+          targetAgent,
+          tenantId,
+          module,
+          standard: request.standard,
+        });
+      }
+    }
+  }
+
   // ─── Spec-35 L1: Post-response grounding check ──────────────────────────
   // Dormant when groundingContext absent (non-KB-grounded invocations pass through)
   if (request.groundingContext) {
@@ -111,6 +141,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
       groundingContext: request.groundingContext,
       responseText: result.text,
       locale: request.locale,
+      standard: request.standard,
       tenantId,
       agent,
       module,
@@ -139,6 +170,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
         groundingContext: request.groundingContext,
         responseText: retryResult.text,
         locale: request.locale,
+        standard: request.standard,
         tenantId,
         agent,
         module,
@@ -153,6 +185,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
           groundingScore: retryGroundingResult.groundingScore,
           relevanceScore: retryGroundingResult.relevanceScore,
           locale: request.locale,
+          standard: request.standard,
         });
 
         // Meter consumed usage before returning honest-miss

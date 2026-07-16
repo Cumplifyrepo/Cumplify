@@ -1,0 +1,44 @@
+# FIX-V1 through V4 Evidence — Phase 2/3 validation findings
+# Timestamp: 2026-07-16T18:01Z
+# Agent: Kiro build agent
+
+## FIX-V1: parseGroundingResponse verdict from filter-level action (not top-level)
+- File: services/ai-invoker/src/grounding.ts
+- Change: Verdict now derived from contextualGroundingPolicy filters' `action === 'BLOCKED'`
+  (grounding + relevance), NOT the top-level ApplyGuardrail response action.
+- Why: A PII anonymization policy setting GUARDRAIL_INTERVENED at top level was incorrectly
+  read as a grounding block → false retry/honest-miss on legitimate answers.
+- Test added: "returns pass when PII intervened but grounding filters passed (FIX-V1 mixed assessment)"
+- All existing mocks updated to include `action: 'BLOCKED'` / `action: 'NONE'` on filter objects.
+
+## FIX-V2: Emit Ai.GuardrailChecked per section check
+- File: services/ai-invoker/src/grounding.ts (runGroundingFlow)
+- Change: After each checkGrounding() call, publishes Ai.GuardrailChecked via eventing publish()
+  with payload: {guardrailPolicy:'grounding', verdict, groundingScore, relevanceScore, latencyMs}
+- entityId: '' (invoker has no domain row at check time)
+- Test: grounding-flow.test.ts beforeEach now mocks EB for runGroundingFlow tests
+
+## FIX-V3: Optional InvokeRequest.standard threaded through grounding flow
+- Files: types.ts, grounding.ts, index.ts
+- Change: Added `standard?: 'ISO9001' | 'ISO14001' | 'ISO45001'` to InvokeRequest
+- Threaded to: runGroundingFlow params, Ai.GuardrailChecked events, emitGroundingBlockedAndHonestMiss
+- Default: 'ISO9001' with comment "until Task 19 handlers pass theirs explicitly"
+- Task 19 handlers now pass ISO9001/14001/45001 explicitly
+
+## FIX-V4: Restored diacritics in honest-miss templates
+- Files: honest-miss.ts, prompts/templates/honest-miss.es.md, prompts/templates/honest-miss.pt.md
+- ES restored: información, alcanzó, Qué, términos, más, específicos, orientación, cláusula, verificación, fundamentación, indicó
+- PT restored: Não, possível, fundamentação, informações, disponíveis, atingiram, confiança, você, específicos, orientação, cláusula, verificação, evidência, confiável
+- Test updated: honest-miss.test.ts assertion changed to "Não foi possível fornecer"
+
+## Verification Commands (at commit point)
+```
+npx tsc --noEmit
+Exit code: 0
+
+npx vitest run (ROOT — services/ + infra/)
+Exit code: 0
+Test Files: 92 passed | 1 skipped (93)
+Tests: 970 passed | 3 skipped (973)
+Duration: 21.52s
+```

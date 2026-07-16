@@ -78,8 +78,8 @@ function mockGroundingPass(groundingScore: number, relevanceScore: number) {
     assessments: [{
       contextualGroundingPolicy: {
         filters: [
-          { type: 'GROUNDING', score: groundingScore },
-          { type: 'RELEVANCE', score: relevanceScore },
+          { type: 'GROUNDING', score: groundingScore, action: 'NONE' },
+          { type: 'RELEVANCE', score: relevanceScore, action: 'NONE' },
         ],
       },
     }],
@@ -92,8 +92,8 @@ function mockGroundingBlock(groundingScore: number, relevanceScore: number) {
     assessments: [{
       contextualGroundingPolicy: {
         filters: [
-          { type: 'GROUNDING', score: groundingScore },
-          { type: 'RELEVANCE', score: relevanceScore },
+          { type: 'GROUNDING', score: groundingScore, action: 'BLOCKED' },
+          { type: 'RELEVANCE', score: relevanceScore, action: 'BLOCKED' },
         ],
       },
     }],

@@ -21,7 +21,7 @@ describe('getHonestMissTemplate', () => {
 
   it('returns Portuguese template for locale "pt"', () => {
     const template = getHonestMissTemplate('pt');
-    expect(template).toContain('Nao foi possivel fornecer');
+    expect(template).toContain('Não foi possível fornecer');
     expect(template).toContain('Representante do SGI');
   });
 

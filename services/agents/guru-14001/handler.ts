@@ -2,73 +2,92 @@
  * ISO14001Guru agent handler — AppSync resolver (user-triggered, NOT SQS consumer).
  * Advisory-only: retrieves ISO 14001 clause context and answers questions.
  *
- * Flow: AppSync query → retrieve ISO KB (AOSS) → invoke Converse via Lambda
- * transport (one-door) → return answer.
+ * Flow: AppSync query → embed(question) → retrieve ISO KB (AOSS, 45s budget) →
+ * invoke Converse via Lambda transport (one-door) with groundingContext → return answer.
  * No tool-loop needed (no tools, advisory only).
  *
- * C-1 (BINDING): uses createInvokeFn() Lambda transport to reach AI Invoker.
- * NEVER imports invoke() directly from ai-invoker.
+ * C-1 (BINDING): uses createInvokeFn() + createEmbedFn() Lambda transport.
+ * NEVER imports invoke() or embed() directly from ai-invoker.
+ *
+ * Task 19: embed→retrieve→groundingContext wiring (spec-35 L1-11).
  */
 
 import { retrieve } from '../shared/retrieval.js';
-import { createInvokeFn } from '../shared/invoke-transport.js';
+import { createInvokeFn, createEmbedFn } from '../shared/invoke-transport.js';
 import { ISO14001_GURU_PROMPT } from './prompt.js';
 
 const AOSS_ISO_KB_ENDPOINT = process.env.AOSS_ISO_KB_ENDPOINT!;
 
 const invokeFn = createInvokeFn();
+const embedFn = createEmbedFn();
 
 export async function handleQuery(
   tenantId: string,
   question: string,
-  queryVector?: number[],
+  locale?: 'en' | 'es' | 'pt',
 ): Promise<string> {
-  // Retrieve relevant ISO 14001 clause text
-  let groundingContext = '';
-  // Retrieval requires a 1024-dim query vector; skip grounding when absent
-  // (embed() door is BLOCKED-ON-DESIGN — vector arrives via the API arg for now).
+  // Task 19 step 4: truncate query to 1,000 chars for grounding context
+  const truncatedQuery = question.slice(0, 1000);
+
+  // Task 19 step 2: embed the question via the one-door embed path
+  const { embedding } = await embedFn({
+    tenantId,
+    agent: 'ISO14001Guru',
+    module: 'advisory',
+    feature: 'clause-qa',
+    text: truncatedQuery,
+  });
+
+  // Task 19 step 3: retrieve under the 45s budget (L1-11, 02-aoss-rule)
+  let groundingSource = '';
   try {
-    if (!queryVector) throw new Error('no query vector');
     const results = await retrieve({
       tenantId,
       collectionEndpoint: AOSS_ISO_KB_ENDPOINT,
       indexName: 'cumplify-iso-kb',
-      queryText: question,
-      queryVector,
+      queryText: truncatedQuery,
+      queryVector: embedding,
       topK: 5,
     });
-    groundingContext = results.chunks.map((c) => c.text).join('\n---\n');
+    // Task 19 step 4: chunks joined with '\n---\n'
+    groundingSource = results.chunks.map((c) => c.text).join('\n---\n');
   } catch {
-    // Retrieval failure — respond without grounding
+    // Retrieval failure (incl. AOSS cold-start timeout) — respond without grounding.
+    // The invoker's dormant path handles the absent groundingContext gracefully.
   }
-
-  const userMessage = [
-    question,
-    groundingContext ? `\nRelevant ISO 14001:2015 clauses:\n${groundingContext}` : '',
-  ].join('');
 
   const response = await invokeFn({
     seat: 'guru-14001',
     system: ISO14001_GURU_PROMPT,
-    messages: [{ role: 'user', content: [{ text: userMessage }] }],
+    messages: [{ role: 'user', content: [{ text: question }] }],
     tools: [],
     tenantId,
     agent: 'ISO14001Guru',
     module: 'advisory',
     feature: 'clause-qa',
+    // Task 19 step 5: locale + standard threaded (FIX-V3)
+    locale: locale ?? 'en',
+    standard: 'ISO14001',
+    // groundingContext: present when retrieval succeeded → triggers L1 grounding check
+    ...(groundingSource && {
+      groundingContext: {
+        source: groundingSource,
+        query: truncatedQuery,
+      },
+    }),
   });
 
   return response.text || 'Unable to generate a response.';
 }
 
 /**
- * AppSync direct-Lambda-resolver entrypoint (Task 8R-2 hotfix, architect).
- * - question/queryVector come from event.arguments (schema: askISO14001).
+ * AppSync direct-Lambda-resolver entrypoint.
+ * - question comes from event.arguments (schema: askISO14001).
  * - tenantId comes ONLY from the Lambda authorizer's resolverContext (verified
  *   claim) — NEVER from client arguments. Fail-closed if absent.
  */
 interface AppSyncGuruEvent {
-  arguments: { question: string; queryVector?: string };
+  arguments: { question: string; locale?: string };
   identity?: { resolverContext?: { tenantId?: string } };
 }
 
@@ -77,8 +96,6 @@ export async function handler(event: AppSyncGuruEvent): Promise<string> {
   if (!tenantId) {
     throw new Error('Unauthorized: missing tenantId in resolver context');
   }
-  const queryVector = event.arguments.queryVector
-    ? (JSON.parse(event.arguments.queryVector) as number[])
-    : undefined;
-  return handleQuery(tenantId, event.arguments.question, queryVector);
+  const locale = (event.arguments.locale as 'en' | 'es' | 'pt') ?? undefined;
+  return handleQuery(tenantId, event.arguments.question, locale);
 }

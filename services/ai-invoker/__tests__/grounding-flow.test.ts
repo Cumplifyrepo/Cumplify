@@ -49,6 +49,8 @@ describe('runGroundingFlow', () => {
     mockBedrockSend.mockReset();
     mockEbSend.mockReset();
     resetGroundingClient();
+    // FIX-V2: runGroundingFlow now emits Ai.GuardrailChecked per section check
+    mockEbSend.mockResolvedValue({ FailedEntryCount: 0, Entries: [{ EventId: 'e1' }] });
   });
 
   it('returns pass result when grounding check passes', async () => {
@@ -57,8 +59,8 @@ describe('runGroundingFlow', () => {
       assessments: [{
         contextualGroundingPolicy: {
           filters: [
-            { type: 'GROUNDING', score: 0.92 },
-            { type: 'RELEVANCE', score: 0.88 },
+            { type: 'GROUNDING', score: 0.92, action: 'NONE' },
+            { type: 'RELEVANCE', score: 0.88, action: 'NONE' },
           ],
         },
       }],
@@ -88,8 +90,8 @@ describe('runGroundingFlow', () => {
       assessments: [{
         contextualGroundingPolicy: {
           filters: [
-            { type: 'GROUNDING', score: 0.40 },
-            { type: 'RELEVANCE', score: 0.60 },
+            { type: 'GROUNDING', score: 0.40, action: 'BLOCKED' },
+            { type: 'RELEVANCE', score: 0.60, action: 'BLOCKED' },
           ],
         },
       }],
@@ -121,8 +123,8 @@ describe('runGroundingFlow', () => {
         assessments: [{
           contextualGroundingPolicy: {
             filters: [
-              { type: 'GROUNDING', score: 0.95 },
-              { type: 'RELEVANCE', score: 0.90 },
+              { type: 'GROUNDING', score: 0.95, action: 'NONE' },
+              { type: 'RELEVANCE', score: 0.90, action: 'NONE' },
             ],
           },
         }],
@@ -132,8 +134,8 @@ describe('runGroundingFlow', () => {
         assessments: [{
           contextualGroundingPolicy: {
             filters: [
-              { type: 'GROUNDING', score: 0.50 },
-              { type: 'RELEVANCE', score: 0.70 },
+              { type: 'GROUNDING', score: 0.50, action: 'BLOCKED' },
+              { type: 'RELEVANCE', score: 0.70, action: 'BLOCKED' },
             ],
           },
         }],

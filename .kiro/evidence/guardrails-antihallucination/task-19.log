@@ -1,0 +1,48 @@
+# Task 19 Evidence — Handler wiring: embed→retrieve→groundingContext
+# Timestamp: 2026-07-16T18:10Z
+# Agent: Kiro build agent
+
+## Implementation
+Rewrote all three guru handlers to the Task 19 specification:
+
+### services/agents/guru-9001/handler.ts
+- `const embedFn = createEmbedFn()` — transport, NEVER imports embed.ts
+- `const { embedding } = await embedFn({tenantId, agent:'ISO9001Guru', ...})`
+- `const chunks = await retrieve({..., queryVector: embedding})` — 45s budget (AOSS rule)
+- `groundingContext: { source: chunks.join('\n---\n'), query: question.slice(0,1000) }`
+- `locale: locale ?? 'en'`
+- `standard: 'ISO9001'`
+
+### services/agents/guru-14001/handler.ts
+- Same pattern as guru-9001
+- `standard: 'ISO14001'`
+
+### services/agents/guru-45001/handler.ts
+- Same pattern as guru-9001
+- `standard: 'ISO45001'`
+
+### Key design decisions:
+- `query.slice(0,1000)` — truncation per Task 19 spec
+- Chunks joined with `'\n---\n'` — citation construction delimiter
+- Retrieval failure → silent catch → no groundingContext (dormant path)
+- Removed old `queryVector` API argument (embed is now internal)
+- Copilot handler: does not exist yet in codebase — BLOCKED on future spec. Only guru handlers wired.
+
+## Test Evidence
+- File: `services/agents/__tests__/guru-entrypoint.test.ts`
+- 12 tests (4 per guru × 3 gurus):
+  - handler entrypoint exported
+  - FAIL-CLOSED: no tenantId → Unauthorized (security contract preserved)
+  - embedFn called, then invokeFn with groundingContext assembled (source contains chunks, query = question)
+  - Query truncated to 1,000 chars
+
+## Verification Commands
+```
+npx tsc --noEmit
+Exit code: 0
+
+npx vitest run
+Exit code: 0
+Test Files: 92 passed | 1 skipped (93)
+Tests: 970 passed | 3 skipped (973)
+```
