@@ -18,6 +18,7 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import {
   extractContext,
   beginTenantTransaction,
@@ -29,6 +30,8 @@ import type { SqlParameter } from '@aws-sdk/client-rds-data';
 import { canApprove } from '../permissions/role-matrix.js';
 
 const sfnClient = new SFNClient({});
+const lambdaClient = new LambdaClient({});
+const EXPORT_FN = process.env.EXPORT_FN ?? '';
 
 import { z } from 'zod';
 
@@ -87,6 +90,7 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
     case 'listGenerationRuns': return listGenerationRuns(event, tenantId);
     case 'markSectionReviewed': return requireM1Role(role, () => markSectionReviewed(event, tenantId, sub));
     case 'generateImsManual': return requireM1Role(role, () => generateImsManual(event, tenantId, sub));
+    case 'requestImsExport': return requestImsExport(event, tenantId);
     // regenerateSection (GEN-6): deferred to the Task 6/7 wave — it creates a
     // new document version on the affected docs, which needs FinalizeManual's
     // m1 writes. Deferred = reported here + in Task-5 evidence, not omitted.
@@ -480,4 +484,77 @@ async function generateImsManual(event: AppSyncEvent, tenantId: string, actor: s
   }
 
   return run;
+}
+
+// ─── STO-4: IMS ZIP export (spec-40 Task 9) ──────────────────────────────────
+// SQL here, S3/zip in ExportFn. The export SET is resolved by ExportFn from
+// the master-list content (SQL cannot link master list → manual; that linkage
+// lives only in the master-list entries JSON).
+async function requestImsExport(event: AppSyncEvent, tenantId: string) {
+  const documentId = event.arguments.documentId as string;
+  if (!documentId) throw new Error('BAD_REQUEST: documentId required');
+  if (!EXPORT_FN) throw new Error('EXPORT_NOT_AVAILABLE');
+
+  const txn = await beginTenantTransaction(tenantId);
+  let manual: Record<string, unknown> | null = null;
+  let candidates: Record<string, unknown>[] = [];
+  try {
+    const manualRes = await txn.execute(
+      `SELECT d.id AS document_id, d.title, d.doc_type, d.standard,
+              v.id AS version_id, v.version_no, v.content_ref
+       FROM m1.documents d
+       JOIN m1.document_versions v ON v.document_id = d.id
+       WHERE d.id = :documentId::uuid
+       ORDER BY v.version_no DESC LIMIT 1`,
+      [{ name: 'documentId', value: { stringValue: documentId } }],
+    );
+    manual = marshalOne(manualRes) as Record<string, unknown> | null;
+    const candRes = await txn.execute(
+      `SELECT DISTINCT ON (d.id)
+              d.id AS document_id, d.title, d.standard,
+              v.id AS version_id, v.version_no, v.content_ref
+       FROM m1.documents d
+       JOIN m1.document_versions v ON v.document_id = d.id
+       WHERE d.doc_type = 'master_list'
+       ORDER BY d.id, v.version_no DESC`,
+    );
+    candidates = marshalMany(candRes) as Record<string, unknown>[];
+    await txn.commit();
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
+
+  if (!manual || !manual.contentRef) throw new Error('DOCUMENT_NOT_FOUND');
+  if (candidates.length === 0) throw new Error('EXPORT_SET_NOT_FOUND');
+
+  const payload = {
+    tenantId,
+    manual: {
+      documentId: manual.documentId, versionId: manual.versionId,
+      contentKey: manual.contentRef, title: manual.title, docType: manual.docType,
+      standard: manual.standard, versionNo: manual.versionNo,
+    },
+    masterListCandidates: candidates.map(c => ({
+      documentId: c.documentId, versionId: c.versionId, contentKey: c.contentRef,
+      title: c.title, standard: c.standard, versionNo: c.versionNo,
+    })),
+  };
+  const invoke = await lambdaClient.send(new InvokeCommand({
+    FunctionName: EXPORT_FN,
+    Payload: JSON.stringify(payload),
+  }));
+  if (invoke.FunctionError) {
+    const raw = new TextDecoder().decode(invoke.Payload);
+    logger.error('ExportFn failed', { raw });
+    // Relay ExportFn's typed errors (EXPORT_SET_NOT_FOUND etc.) to the client
+    try {
+      const parsed = JSON.parse(raw) as { errorMessage?: string };
+      throw new Error(parsed.errorMessage ?? 'EXPORT_FAILED');
+    } catch (e) {
+      if (e instanceof Error && e.message !== raw) throw e;
+      throw new Error('EXPORT_FAILED');
+    }
+  }
+  return JSON.parse(new TextDecoder().decode(invoke.Payload)) as { url: string; expiresAt: string };
 }

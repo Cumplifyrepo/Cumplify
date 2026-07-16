@@ -8,11 +8,19 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { extractContext, beginTenantTransaction, publishAuditEvent, marshalOne, marshalMany } from './shared.js';
 import { mapEnum, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP } from './enum-mappings.js';
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 
 const logger = new Logger({ serviceName: 'resolver-m1' });
 const s3 = new S3Client({});
+const lambdaClient = new LambdaClient({});
 const CONTENT_BUCKET = process.env.CONTENT_BUCKET ?? '';
+// Task 9 sealing (STO-5). Lock mode is env-parameterized like the bucket
+// default (GOVERNANCE dev / COMPLIANCE prod) — BC-10.
+const EVIDENCE_BUCKET = process.env.EVIDENCE_BUCKET ?? '';
+const EVIDENCE_LOCK_MODE = process.env.EVIDENCE_LOCK_MODE ?? 'GOVERNANCE';
+const PDF_RENDER_FN = process.env.PDF_RENDER_FN ?? '';
+const DEFAULT_RETENTION_YEARS = 7;
 
 interface AppSyncEvent {
   info: { fieldName: string };
@@ -174,24 +182,132 @@ async function approveDocumentVersion(event: AppSyncEvent, tenantId: string, act
   }
 }
 
+/**
+ * Publish + SEAL (STO-5, spec-40 Task 9). On publish of an approved version:
+ * render the final PDF (PdfRenderFn) and CopyObject it into the EvidenceVault
+ * with a PER-OBJECT ObjectLockRetainUntilDate derived from the tenant's
+ * m4.retention_policies row (record_type='controlled_document'; default row
+ * seeded if absent). The bucket default is a safety net ONLY (BC-10).
+ * The m4.records pointer row (retain_until / object_lock_until /
+ * s3_object_ref) commits in the SAME transaction as the status flip — a
+ * failed seal rolls back the publish (no published-but-unsealed documents).
+ * Exception: versions with an empty content_ref (agent-writeback docs, the
+ * one documented content-plane exemption) publish WITHOUT sealing — blocking
+ * them would regress the pre-existing M1 publish flow; the audit payload
+ * carries sealed:false + reason.
+ */
 async function publishControlledDocument(event: AppSyncEvent, tenantId: string, actor: string) {
   const versionId = event.arguments.versionId as string;
   const txn = await beginTenantTransaction(tenantId);
   try {
+    const metaRes = await txn.execute(
+      `SELECT v.content_ref, v.version_no, d.id AS document_id, d.title, d.doc_type, d.standard
+       FROM m1.document_versions v JOIN m1.documents d ON d.id = v.document_id
+       WHERE v.id = :versionId::uuid`,
+      [{ name: 'versionId', value: { stringValue: versionId } }],
+    );
+    const meta = marshalOne(metaRes) as {
+      contentRef: string | null; versionNo: number; documentId: string;
+      title: string; docType: string; standard: string;
+    } | null;
+    if (!meta) {
+      try { await txn.rollback(); } catch { /* never mask */ }
+      throw new Error('VERSION_NOT_FOUND');
+    }
+
     const result = await txn.execute(
       `UPDATE m1.documents d SET status = 'approved', updated_at = NOW()
        FROM m1.document_versions v WHERE v.id = :versionId::uuid AND v.document_id = d.id
        RETURNING d.*`,
       [{ name: 'versionId', value: { stringValue: versionId } }],
     );
+
+    let sealed: Record<string, unknown> = { sealed: false, reason: 'CONTENT_UNAVAILABLE' };
+    if (meta.contentRef && EVIDENCE_BUCKET && PDF_RENDER_FN) {
+      // Tenant retention policy (RLS-scoped); seed the default row if absent.
+      const polRes = await txn.execute(
+        `SELECT retention_years FROM m4.retention_policies
+         WHERE record_type = 'controlled_document' LIMIT 1`,
+      );
+      const pol = marshalOne(polRes) as { retentionYears: number } | null;
+      let years = pol?.retentionYears ?? DEFAULT_RETENTION_YEARS;
+      if (!pol) {
+        await txn.execute(
+          `INSERT INTO m4.retention_policies (tenant_id, record_type, retention_years, disposition_rule, created_by)
+           VALUES (:tenantId, 'controlled_document', :years, 'review_before_disposal', :actor)`,
+          [
+            { name: 'tenantId', value: { stringValue: tenantId } },
+            { name: 'years', value: { longValue: DEFAULT_RETENTION_YEARS } },
+            { name: 'actor', value: { stringValue: actor } },
+          ],
+        );
+        years = DEFAULT_RETENTION_YEARS;
+      }
+
+      // Render the final PDF (sha-cached inside PdfRenderFn).
+      const invoke = await lambdaClient.send(new InvokeCommand({
+        FunctionName: PDF_RENDER_FN,
+        Payload: JSON.stringify({
+          tenantId,
+          documents: [{
+            documentId: meta.documentId, versionId, contentKey: meta.contentRef,
+            title: meta.title, docType: meta.docType, standard: meta.standard,
+            versionNo: meta.versionNo,
+          }],
+        }),
+      }));
+      if (invoke.FunctionError) {
+        logger.error('seal render failed', { raw: new TextDecoder().decode(invoke.Payload) });
+        throw new Error('SEAL_FAILED');
+      }
+      const { results } = JSON.parse(new TextDecoder().decode(invoke.Payload)) as {
+        results: Array<{ pdfKey: string; sha256: string }>;
+      };
+      const pdfKey = results[0]?.pdfKey;
+      if (!pdfKey) throw new Error('SEAL_FAILED');
+
+      const retainUntil = new Date(Date.now() + years * 365.25 * 24 * 3600 * 1000);
+      const sealedKey = `tenants/${tenantId}/sealed/${versionId}.pdf`;
+      await s3.send(new CopyObjectCommand({
+        Bucket: EVIDENCE_BUCKET,
+        Key: sealedKey,
+        CopySource: encodeURIComponent(`${CONTENT_BUCKET}/${pdfKey}`),
+        ObjectLockMode: EVIDENCE_LOCK_MODE as 'GOVERNANCE' | 'COMPLIANCE',
+        ObjectLockRetainUntilDate: retainUntil,
+      }));
+
+      await txn.execute(
+        `INSERT INTO m4.records
+           (tenant_id, standard, record_type, source_module, retention_class,
+            retain_until, s3_object_ref, object_lock_until, created_by)
+         VALUES (:tenantId, :standard, 'controlled_document', 'M1', :retClass,
+                 :retainUntil::timestamptz, :objectRef, :retainUntil::timestamptz, :actor)`,
+        [
+          { name: 'tenantId', value: { stringValue: tenantId } },
+          { name: 'standard', value: { stringValue: meta.standard } },
+          { name: 'retClass', value: { stringValue: `${years}y` } },
+          { name: 'retainUntil', value: { stringValue: retainUntil.toISOString() } },
+          { name: 'objectRef', value: { stringValue: `s3://${EVIDENCE_BUCKET}/${sealedKey}` } },
+          { name: 'actor', value: { stringValue: actor } },
+        ],
+      );
+      sealed = {
+        sealed: true, sealedKey, retentionYears: years,
+        lockMode: EVIDENCE_LOCK_MODE, retainUntil: retainUntil.toISOString(),
+      };
+    }
+
     await txn.commit();
     await publishAuditEvent({
       tenantId, actor, module: 'M1', clauseRef: 'ISO 9001 7.5.3', standard: 'ISO9001',
       detailType: 'Document.Published', source: 'cumplify.m1.document-studio',
-      payload: { versionId },
+      payload: { versionId, ...sealed },
     });
     return marshalOne(result);
-  } catch (err) { await txn.rollback(); throw err; }
+  } catch (err) {
+    try { await txn.rollback(); } catch { /* never mask */ }
+    throw err;
+  }
 }
 
 async function updatePolicy(event: AppSyncEvent, tenantId: string, actor: string) {

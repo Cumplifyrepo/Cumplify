@@ -47,6 +47,7 @@ export class DataStack extends cdk.Stack {
   public readonly clusterArn: string;
   public readonly dbSecretArn: string;
   public readonly evidenceBucketArn: string;
+  public readonly evidenceBucketName: string;
   /** GeneralBucket (working data) — consumed by AiStack's generation plane (spec 40) */
   public readonly generalBucketName: string;
   public readonly generalBucketArn: string;
@@ -424,6 +425,7 @@ export class DataStack extends cdk.Stack {
     });
 
     this.evidenceBucketArn = evidenceBucket.bucketArn;
+    this.evidenceBucketName = evidenceBucket.bucketName;
 
     // -----------------------------------------------------------------------
     // S3 General/Static bucket (AC-4.6)

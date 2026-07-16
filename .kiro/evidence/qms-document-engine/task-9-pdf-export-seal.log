@@ -1,0 +1,140 @@
+# Task 9 — PDF render + ZIP export + sealing (STO-3..5) [ARCHITECT]
+# Evidence log — executed 2026-07-15/16 (UTC), D3 (live dev readback)
+# Deploy: Dev-DataStack + Dev-ApiStack, cdk deploy exit 0, 335.34s total.
+
+## Gate Results (architect-executed)
+
+| Gate | Result | Detail |
+|------|--------|--------|
+| tsc --noEmit | PASS | 0 errors |
+| vitest run (hermetic) | PASS | 75 files (74+1 skipped), 841 tests (838+3 skipped) |
+| cdk synth CumplifyPipeline/Dev/* | PASS | exit 0, 0 Nag errors (after 1 fix round, below) |
+| api-stack.unit pins | PASS | 16/16 — no new DS, no new resolver, counts unchanged |
+
+Synth round 1 FAILED (exit 1): IAM5[Resource::<ExportFn.Arn>:*] — grantInvoke(ExportFn)
+on QmsFn emits lambda:InvokeFunction on <fnArn>:* and QmsFn is intentionally NOT in the
+blanket lambdaResources suppression list. Fixed with a TARGETED appliesTo-regex
+suppression on QmsFn only (same class as NAG-3; blanket rejected so future real
+wildcards on QmsFn still fail synth). The Deploy-1 "Nag is synth-only" lesson held.
+
+## What shipped
+
+- services/pdf-export/src/template.ts — controlled-document HTML (STO-3): branded
+  header (accent rgb(0,101,248) from design-tokens framer values, pinned literal),
+  CONTROLLED stamp, QMS Required Document Information block, numbered clauses,
+  BC-1 disclaimer from frontMatter.purpose, gap/na/failed blocks distinct,
+  HTML-escaping of all tenant-sourced strings. Handles all 4 content kinds
+  (manual/clause sections, correlation_matrix, master_list) on the REAL derive.ts
+  shapes. White print theme (app UI is dark; a controlled document is not).
+  Font: Inter with Helvetica/Arial fallback (chromium-in-Lambda has no Inter).
+- services/pdf-export/src/render.ts — PdfRenderFn: puppeteer-core 25.3.0 +
+  @sparticuz/chromium 149.0.0, X86_64 (sparticuz is not ARM — sole divergence from
+  the ARM default, documented), 2048MB/120s, bundling.nodeModules (binary never
+  esbuild-bundled). One browser per invocation, page concurrency 4. PDF cache:
+  tenants/<t>/pdf/<docId>-<bodySha12>.pdf — sha of the FETCHED body, cannot serve
+  stale; HeadObject skip; fully-cached batches never launch chromium. Tenant key
+  guard on every contentKey.
+- services/pdf-export/src/export.ts — ExportFn (STO-4): resolves the export set
+  from the master-list content (entries + the master list itself; manual entry
+  upgraded to its CURRENT latest version), renders via PdfRenderFn, fflate ZIP
+  (manual = 00- first), uploads to tenants/<t>/exports/, presigned GET 15 min.
+- services/api/src/resolvers/qms.ts — requestImsExport: SQL only (manual latest
+  version + master-list candidates), dispatches to ExportFn; typed
+  DOCUMENT_NOT_FOUND / EXPORT_SET_NOT_FOUND / relayed ExportFn errors. Resolver
+  stayed on qmsDS (no CFN resolver churn; no schema change; no new data source).
+- services/api/src/resolvers/m1.ts — publishControlledDocument SEAL hook (STO-5):
+  render final PDF → CopyObject → EvidenceVault with PER-OBJECT
+  ObjectLockRetainUntilDate = NOW() + m4.retention_policies.retention_years
+  (record_type='controlled_document'; default 7y/review_before_disposal row
+  seeded if absent) + ObjectLockMode from env (GOVERNANCE dev / COMPLIANCE prod —
+  BC-10). m4.records pointer row (retain_until, object_lock_until, s3_object_ref
+  — the columns that existed and were never written) commits in the SAME txn as
+  the status flip; audit publish AFTER commit. Seal failure → rollback → typed
+  SEAL_FAILED (publish blocked). DOCUMENTED EXEMPTION: empty content_ref
+  (agent-writeback docs) publishes WITHOUT sealing, audit carries sealed:false +
+  reason — blocking would regress the pre-existing M1 publish flow.
+- infra: PdfRenderFn + ExportFn in ApiStack; grants scoped to tenants/* on both
+  buckets; s3:PutObjectRetention on EvidenceVault only for M1; s3GeneralKey
+  encrypt/decrypt (EvidenceVault shares the key); DataStack exports
+  evidenceBucketName; stage plumbs evidence props (DataStack deployed FIRST —
+  T5 cross-stack-export lesson applied).
+
+## Hermetic tests (new: 26; touched: m1-diff mock += CopyObjectCommand)
+
+- template.unit.test.ts (11): 4 kinds, CONTROLLED stamp, QMS info block, BC-1 from
+  purpose, numbered clause order, gap missingSources distinct + never prose-styled,
+  na/failed markers, script-injection escaping, matrix per-standard columns,
+  master-list register table, esc().
+- render-export.unit.test.ts (7): tenant-key guard, sha-keyed cache stability,
+  fully-cached batch never launches chromium + zero PutObject, cross-tenant/empty
+  batch rejection, master-list candidate resolution (skips non-matching), real ZIP
+  bytes (PK magic) w/ 00- manual first + presign 900s, EXPORT_SET_NOT_FOUND,
+  RENDER_FAILED on FunctionError.
+- m1-seal.test.ts (6): per-object retention from tenant policy (5y ±60s window),
+  CopyObject → evidence bucket w/ GOVERNANCE mode, m4.records params
+  (retain_until==object_lock_until, s3:// ref, retClass), commit-BEFORE-audit
+  ordering, default-7y seed when policy absent, empty-content_ref exemption (no
+  invoke/no S3/sealed:false), render-failure rollback (SEAL_FAILED, NO audit, NO
+  commit), CopyObject-failure rollback, VERSION_NOT_FOUND.
+- qms-export.test.ts (5): invoke payload (manual latest version ORDER BY
+  version_no DESC + ::uuid + DISTINCT ON candidates), DOCUMENT_NOT_FOUND,
+  EXPORT_SET_NOT_FOUND (no master list), typed-error relay, BAD_REQUEST.
+- NOT covered hermetically (by design): the chromium render path itself — that is
+  exactly what the D3 live readback exercises below.
+
+## LIVE READBACK (dev, tenant-arch-smoke, 2026-07-16 00:18–00:21Z)
+
+### (a) PDF gate (STO-3 + task cold-start gate) — PASS, NO container fallback
+| Probe | Result |
+|-------|--------|
+| Cold start | Init Duration 299.03 ms; render Duration 3444.14 ms (full 36-section manual); Max Memory 525 MB of 2048 |
+| Invoke wall-clock (force re-render) | 6.23 s, FunctionError none |
+| Artifact | tenants/.../pdf/061116ca...-97b9216620fc.pdf — application/pdf, 165,746 B, magic %PDF-1.4, sha256 10d5524335837f2f1bb0... |
+| Cache-key cross-proof | pdfKey sha prefix 97b9216620fc == the T6 sha-verified manual content JSON sha |
+GATE DECISION: bundle + cold-start comfortably inside budget → esbuild/nodeModules
+packaging stands; container-image fallback NOT taken.
+
+### (b) requestImsExport end-to-end (STO-4 / ACC-8) — PASS
+| Probe | Result |
+|-------|--------|
+| QmsFn resolver-shaped invoke → ExportFn → PdfRenderFn (38 renders + 1 cache hit) | 9.20 s wall-clock end-to-end (AppSync 30 s cap: OK); warm batch REPORT: 4507 ms |
+| Presigned URL | GET 200; expiresAt = invoke + 15 min (2026-07-16T00:35:03Z) |
+| ZIP | 1,095,179 B, sha256 f6d30c84a34fd6a11e01...; 39 entries; ALL 39 carry %PDF magic |
+| Ordering | 00-integrated-management-system-manual.pdf first; ...37-standards-correlation-matrix, 38-documented-information-master-list |
+
+### (c) Sealing on publishControlledDocument (STO-5 / BC-10 residue) — PASS
+Target: clause doc "General (10.1)" efdc615f, version 4aad589f (dev = GOVERNANCE,
+so the 7-year object is bypass-deletable; purge list updated).
+| Probe | Result |
+|-------|--------|
+| Mutation | FunctionError none; returned doc status APPROVED (enums marshalled) |
+| EvidenceVault object | tenants/.../sealed/4aad589f....pdf — application/pdf, 35,005 B, SSE aws:kms |
+| get-object-retention | Mode GOVERNANCE, RetainUntilDate 2033-07-15T18:21:13.282Z = NOW()+7y — PER-OBJECT retention OVERRIDES the 1-day dev bucket default |
+| m4.retention_policies | seeded: controlled_document / 7 / review_before_disposal / architect-readback |
+| m4.records pointer | IMS / 7y / retain_until == object_lock_until == 2033-07-15 18:21:13.282 (ms-identical to S3) / s3://...sealed/4aad589f....pdf |
+| Audit (hash-chained) | SK EVENT#2026-07-16T00:21:15.305Z#01KXM4S1R6... payload {sealed:true, sealedKey, retentionYears:7, lockMode:GOVERNANCE, retainUntil:2033-07-15T18:21:13.282Z} — prevHash present |
+
+Readback fix round: first seal probe invoked function name "None" (my script's
+starts_with(M1Fn) lookup — real name is ResolverM1Fn...). Re-ran with the correct
+name; results above.
+
+## Carry-forwards (reported, no round)
+- Export pins clause docs at the master-list contentRef (v1). Correct today (no v2
+  exists; regenerateSection deferred) — revisit at the regenerateSection wave:
+  export should re-resolve latest versions per document.
+- Publish/seal has no approval-state precondition (pre-existing publishControlled-
+  Document behavior; APR flow enforces at submit/approve). If the owner wants
+  publish gated on an approved version, that is a follow-up rule, not Task 9.
+- Inter font not embedded in Lambda chromium — Helvetica/Arial fallback. Visual
+  parity acceptable for controlled docs; embed Inter via fontconfig if owner wants
+  pixel parity.
+- Frontend export button (T11) goes live with this deploy — no frontend change
+  needed (it already handles success via window.open).
+
+## Purge list additions (tenant-arch-smoke, all created_by=architect-readback)
+- EvidenceVault: tenants/tenant-arch-smoke/sealed/4aad589f-90eb-4443-805e-aeb056247e11.pdf
+  (GOVERNANCE until 2033-07-15 — delete needs s3:BypassGovernanceRetention + version id)
+- GeneralBucket: tenants/tenant-arch-smoke/pdf/* (39 PDFs), tenants/tenant-arch-smoke/exports/ims-061116ca-*.zip
+- m4.retention_policies controlled_document row; m4.records controlled_document row
+- m1.documents efdc615f status draft→approved (readback flip)
+- AUDITLOG partition: +1 hash-chained item (whole-partition purge only)

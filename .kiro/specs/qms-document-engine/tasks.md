@@ -90,9 +90,9 @@
 
 ## Task 9 — PDF render + ZIP export + sealing (STO-3..5) [ARCHITECT]
 
-- [ ] `PdfRenderFn` (puppeteer-core + @sparticuz/chromium, x86_64): controlled-document HTML template from `design-tokens.ts` (branded header, CONTROLLED stamp, QMS info block). **Gate:** if bundle/cold-start fails readback → container-image fallback, STOP and re-evidence.
-- [ ] `requestImsExport` → ZIP (manual + clause docs + matrix + master list) → presigned URL (15 min).
-- [ ] Sealing on `publishControlledDocument`: per-object `ObjectLockRetainUntilDate` from tenant `m4.retention_policies` (seed default policy row if absent); write the `m4.records` pointer row (`retain_until`, `object_lock_until`, `s3_object_ref`). Bucket default stays safety-net only (BC-10 residue).
+- [x] `PdfRenderFn` (puppeteer-core + @sparticuz/chromium, x86_64): controlled-document HTML template from `design-tokens.ts` (branded header, CONTROLLED stamp, QMS info block). **Gate:** if bundle/cold-start fails readback → container-image fallback, STOP and re-evidence. → Gate PASSED live (Init 299 ms, manual render 3.44 s @ 525 MB); fallback not taken.
+- [x] `requestImsExport` → ZIP (manual + clause docs + matrix + master list) → presigned URL (15 min). → Live: 39/39 valid PDFs, manual 00- first, 9.2 s e2e.
+- [x] Sealing on `publishControlledDocument`: per-object `ObjectLockRetainUntilDate` from tenant `m4.retention_policies` (seed default policy row if absent); write the `m4.records` pointer row (`retain_until`, `object_lock_until`, `s3_object_ref`). Bucket default stays safety-net only (BC-10 residue). → Live: GOVERNANCE +7y per-object over 1-day dev default; pointer row + hash-chained audit verified. Documented exemption: empty `content_ref` (agent-writeback) publishes unsealed with `sealed:false` in the audit payload.
 
 **Depends on:** Task 6. **D-rung:** D3. **Evidence:** `task-9-pdf-export-seal.log`
 

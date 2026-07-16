@@ -122,6 +122,8 @@ export class CumplifyStage extends cdk.Stage {
       generalBucketName: dataStack.generalBucketName,
       generalBucketArn: dataStack.generalBucketArn,
       s3GeneralKey: securityStack.outputs.s3GeneralKey,
+      evidenceBucketName: dataStack.evidenceBucketName,
+      evidenceBucketArn: dataStack.evidenceBucketArn,
     });
     apiStack.addDependency(dataStack);
     apiStack.addDependency(identityStack);

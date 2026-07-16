@@ -55,6 +55,9 @@ export interface ApiStackProps extends cdk.StackProps {
   readonly generalBucketName: string;
   readonly generalBucketArn: string;
   readonly s3GeneralKey: kms.IKey;
+  // DataStack — EvidenceVault (spec 40 Task 9: sealing on publishControlledDocument)
+  readonly evidenceBucketName: string;
+  readonly evidenceBucketArn: string;
 }
 
 export class ApiStack extends cdk.Stack {
@@ -413,6 +416,73 @@ export class ApiStack extends cdk.Stack {
       resources: [`${props.generalBucketArn}/tenants/*`],
     }));
     props.s3GeneralKey.grantDecrypt(resolverFns[0]);
+
+    // ─── Spec 40 Task 9: PDF render + IMS export + sealing ───────────────────
+    // PdfRenderFn: puppeteer-core + @sparticuz/chromium. X86_64 ONLY — the
+    // sparticuz chromium build is not ARM; this function alone diverges from
+    // the repo's ARM default (design §5, documented). Chromium ships via
+    // bundling.nodeModules (installed into the asset's node_modules — the
+    // binary must stay a real file, never esbuild-bundled).
+    const pdfRenderFn = new NodejsFunction(this, 'PdfRenderFn', {
+      entry: 'services/pdf-export/src/render.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.X86_64,
+      memorySize: 2048,
+      timeout: cdk.Duration.seconds(120),
+      bundling: {
+        externalModules: [],
+        target: 'node22',
+        nodeModules: ['@sparticuz/chromium', 'puppeteer-core'],
+      },
+      environment: {
+        CONTENT_BUCKET: props.generalBucketName,
+        POWERTOOLS_SERVICE_NAME: 'pdf-render',
+      },
+    });
+    pdfRenderFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['s3:GetObject', 's3:PutObject'],
+      resources: [`${props.generalBucketArn}/tenants/*`],
+    }));
+    props.s3GeneralKey.grantEncryptDecrypt(pdfRenderFn);
+
+    // ExportFn (STO-4): assembles the IMS ZIP + presigned URL. No chromium —
+    // stays on the ARM default. Invoked by QmsFn's requestImsExport case.
+    const exportFn = new NodejsFunction(this, 'ExportFn', {
+      entry: 'services/pdf-export/src/export.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 1024,
+      timeout: cdk.Duration.seconds(60),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        CONTENT_BUCKET: props.generalBucketName,
+        PDF_RENDER_FN: pdfRenderFn.functionName,
+        POWERTOOLS_SERVICE_NAME: 'ims-export',
+      },
+    });
+    exportFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['s3:GetObject', 's3:PutObject'],
+      resources: [`${props.generalBucketArn}/tenants/*`],
+    }));
+    props.s3GeneralKey.grantEncryptDecrypt(exportFn);
+    pdfRenderFn.grantInvoke(exportFn);
+
+    // M1 sealing (STO-5): render final PDF + CopyObject → EvidenceVault with
+    // per-object ObjectLockRetainUntilDate (BC-10: bucket default = safety
+    // net only). Source-side s3:GetObject on GeneralBucket already granted
+    // above (Task 7); EvidenceVault shares s3GeneralKey, so grantEncrypt
+    // covers the destination write.
+    resolverFns[0].addEnvironment('EVIDENCE_BUCKET', props.evidenceBucketName);
+    resolverFns[0].addEnvironment('EVIDENCE_LOCK_MODE', envConfig.evidenceRetentionMode);
+    resolverFns[0].addEnvironment('PDF_RENDER_FN', pdfRenderFn.functionName);
+    resolverFns[0].addToRolePolicy(new iam.PolicyStatement({
+      actions: ['s3:PutObject', 's3:PutObjectRetention'],
+      resources: [`${props.evidenceBucketArn}/tenants/*`],
+    }));
+    props.s3GeneralKey.grantEncrypt(resolverFns[0]);
+    pdfRenderFn.grantInvoke(resolverFns[0]);
 
     // Lambda data sources — one per module
     const m1DS = api.addLambdaDataSource('M1DataSource', resolverFns[0]);
@@ -797,6 +867,9 @@ export class ApiStack extends cdk.Stack {
       resources: [tenantDataRole.roleArn],
     }));
     props.dynamodbKey.grantDecrypt(qmsFn);
+    // Task 9: requestImsExport dispatches to ExportFn (SQL in QmsFn, S3/zip there)
+    qmsFn.addEnvironment('EXPORT_FN', exportFn.functionName);
+    exportFn.grantInvoke(qmsFn);
 
     const qmsDS = api.addLambdaDataSource('QmsDataSource', qmsFn);
 
@@ -880,7 +953,7 @@ export class ApiStack extends cdk.Stack {
     );
 
     // FIX-3(a): IAM5 on Lambda log-group wildcards only (not the DDB grant)
-    const lambdaResources = [authorizerFn, migratorFn, ...resolverFns, hitlApprovalFn, hitlQueryFn, profileFn];
+    const lambdaResources = [authorizerFn, migratorFn, ...resolverFns, hitlApprovalFn, hitlQueryFn, profileFn, pdfRenderFn, exportFn];
     for (const fn of lambdaResources) {
       NagSuppressions.addResourceSuppressions(fn, [
         {
@@ -946,6 +1019,20 @@ export class ApiStack extends cdk.Stack {
         },
       ], true);
     }
+
+    // Task 9: qmsFn invokes ExportFn via grantInvoke — CDK grants
+    // lambda:InvokeFunction on <fnArn>:* for versioned invocation (same class
+    // as NAG-3). Targeted appliesTo, NOT a blanket: qmsFn stays outside
+    // lambdaResources so future real wildcards on it still fail synth.
+    NagSuppressions.addResourceSuppressions(qmsFn, [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'grantInvoke(ExportFn) emits lambda:InvokeFunction on <fnArn>:* for ' +
+          'versioned Lambda invocation. CDK-generated; cannot be scoped further.',
+        appliesTo: [{ regex: '/^Resource::<ExportFn.*\\.Arn>:\\*$/g' }],
+      },
+    ], true);
 
     // X-Ray tracing role (attached to Lambda execution roles by xrayEnabled)
     for (const fn of lambdaResources) {

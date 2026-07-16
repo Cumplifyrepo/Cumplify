@@ -41,6 +41,7 @@ vi.mock('@aws-lambda-powertools/logger', () => ({
 vi.mock('@aws-sdk/client-s3', () => ({
   S3Client: class { send = mockS3Send; },
   GetObjectCommand: class { constructor(public input: unknown) {} },
+  CopyObjectCommand: class { constructor(public input: unknown) {} },
 }));
 
 import { handler } from '../../src/resolvers/m1.js';
