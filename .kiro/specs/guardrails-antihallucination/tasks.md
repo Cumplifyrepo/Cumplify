@@ -109,7 +109,7 @@
   - **Evidence:** Unit tests for all five routing paths
   - **ACC mapping:** INV-1, CDK-4
 
-- [ ] **Task 9 — Implement grounding check module** [KIRO] D2
+- [x] **Task 9 — Implement grounding check module** [KIRO] D2
   - Create `services/ai-invoker/src/grounding.ts`:
     - `splitForGroundingCheck(text)` — markdown header split, 4k paragraph fallback
     - `validateGroundingContext(ctx)` — truncate source at 100k, query at 1,000 chars

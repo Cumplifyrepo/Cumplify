@@ -1,0 +1,29 @@
+# Task 9 — Grounding check module
+# Executed: 2026-07-16T15:20Z
+# Base commit: f52162b
+
+## Changes
+- services/ai-invoker/src/grounding.ts: NEW module
+  - validateGroundingContext(): source ≤100k, query ≤1,000 (word boundary truncation)
+  - splitForGroundingCheck(): markdown headers primary, 4k paragraph fallback
+  - chunkAtParagraphs(): paragraph-boundary chunking
+  - checkGrounding(): ApplyGuardrail with qualifiers (source:'OUTPUT')
+  - parseGroundingResponse(): extract grounding/relevance scores + verdict
+  - buildCitations(): split on \n---\n, extract [ISO XXXXX X.X], top-5, 200-char preview
+- services/ai-invoker/__tests__/grounding.test.ts: NEW — 17 tests
+
+## Evidence: unit tests
+Command: npx vitest run services/ai-invoker/__tests__/grounding.test.ts
+Exit code: 0
+Result: 17 tests passed
+  - 4 splitForGroundingCheck (≤5k pass-through, ## split, ### split, paragraph fallback)
+  - 2 chunkAtParagraphs
+  - 4 validateGroundingContext (within caps, source truncation, query word boundary, no-space)
+  - 2 checkGrounding (pass + blocked with correct qualifiers)
+  - 1 parseGroundingResponse (empty assessments default)
+  - 4 buildCitations (clauseRef extraction, no match, top-5 limit, 200-char truncation)
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 80 files passed, 0 failed
