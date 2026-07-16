@@ -1,0 +1,22 @@
+# Task 8 — 5-guardrail routing in guardrail.ts
+# Executed: 2026-07-16T15:18Z
+# Base commit: 92d0bab
+
+## Changes
+- services/ai-invoker/src/guardrail.ts: REWRITTEN for 5-guardrail topology
+  - buildGuardrailConfig(seat, feature?): doc-composer→DOCGEN, record-write→RECORDWRITE, else→GUARDRAIL
+  - buildArClauseGuardrailConfig(): ARCLAUSE_GUARDRAIL env vars
+  - buildArAdvisoryGuardrailConfig(): ARADVISORY_GUARDRAIL env vars
+  - Internal envGuardrail(prefix) helper
+- services/ai-invoker/src/index.ts: pass feature to buildGuardrailConfig(seat, feature)
+- services/ai-invoker/__tests__/guardrail.test.ts: NEW — 8 tests
+
+## Evidence: unit tests
+Command: npx vitest run services/ai-invoker/__tests__/guardrail.test.ts
+Exit code: 0
+Result: 8 tests passed (5 routing + 3 AR config)
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 79 files passed, 0 failed

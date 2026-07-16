@@ -1,12 +1,14 @@
 /**
- * Guardrail config builder (CDK-5B/D-5, spec-40 §4.4).
- * Attaches CfnGuardrail (PII anonymize/block + PROMPT_ATTACK) via Converse guardrailConfig.
+ * Guardrail config builder — 5-guardrail topology (spec-35 §1.1).
  *
- * Two guardrail seats (BC-5, owner-approved 2026-07-14):
- * - agent guardrail (GUARDRAIL_*): anonymizes NAME/EMAIL/PHONE — every seat by default.
- * - docgen guardrail (DOCGEN_GUARDRAIL_*): NO anonymization (ACC-9 — the tenant's
- *   own names must survive into their Quality Manual); SSN/card BLOCK +
- *   PROMPT_ATTACK retained. ONLY the doc-composer seat routes here.
+ * Routing priority:
+ * 1. doc-composer seat → DocGen guardrail (no grounding, no AR)
+ * 2. feature === 'record-write' → RecordWrite guardrail (grounding 0.90)
+ * 3. All other seats → Agent guardrail (grounding 0.85)
+ *
+ * AR guardrails (ArClause + ArAdvisory) are invoked post-response by ar-check.ts
+ * via buildArClauseGuardrailConfig() / buildArAdvisoryGuardrailConfig() — NOT
+ * attached to the inline Converse guardrailConfig.
  */
 
 import type { SeatId } from './types.js';
@@ -17,16 +19,13 @@ export interface GuardrailConfig {
 }
 
 /**
- * Build guardrailConfig for a seat from environment variables.
- * Returns undefined if the seat's guardrail is not configured (dev/test environments).
+ * Resolve a guardrail config from environment variable prefix.
+ * Returns undefined if the guardrail is not configured (dev/test environments
+ * without deployment, or AR guardrails before Task 25).
  */
-export function buildGuardrailConfig(seat: SeatId): GuardrailConfig | undefined {
-  const guardrailId =
-    seat === 'doc-composer' ? process.env.DOCGEN_GUARDRAIL_ID : process.env.GUARDRAIL_ID;
-  const guardrailVersion =
-    (seat === 'doc-composer'
-      ? process.env.DOCGEN_GUARDRAIL_VERSION
-      : process.env.GUARDRAIL_VERSION) ?? 'DRAFT';
+function envGuardrail(prefix: string): GuardrailConfig | undefined {
+  const guardrailId = process.env[`${prefix}_ID`];
+  const guardrailVersion = process.env[`${prefix}_VERSION`] ?? 'DRAFT';
 
   if (!guardrailId) {
     return undefined;
@@ -36,4 +35,40 @@ export function buildGuardrailConfig(seat: SeatId): GuardrailConfig | undefined 
     guardrailIdentifier: guardrailId,
     guardrailVersion,
   };
+}
+
+/**
+ * Build the inline Converse guardrailConfig for a seat + feature.
+ * This is the guardrail passed to the Converse API call (content + PII + grounding).
+ */
+export function buildGuardrailConfig(
+  seat: SeatId,
+  feature?: string,
+): GuardrailConfig | undefined {
+  // Priority 1: doc-composer → DocGen guardrail (no grounding, no AR)
+  if (seat === 'doc-composer') {
+    return envGuardrail('DOCGEN_GUARDRAIL');
+  }
+  // Priority 2: record-write feature → RecordWrite guardrail (grounding 0.90)
+  if (feature === 'record-write') {
+    return envGuardrail('RECORDWRITE_GUARDRAIL');
+  }
+  // Priority 3: all other seats → Agent guardrail (grounding 0.85)
+  return envGuardrail('GUARDRAIL');
+}
+
+/**
+ * Build AR-clause guardrail config (clause-canon policy only).
+ * Invoked post-response by ar-check.ts on clause-citing paths.
+ */
+export function buildArClauseGuardrailConfig(): GuardrailConfig | undefined {
+  return envGuardrail('ARCLAUSE_GUARDRAIL');
+}
+
+/**
+ * Build AR-advisory guardrail config (role-permissions + plan-entitlements).
+ * Invoked post-response by ar-check.ts on role/plan advisory paths.
+ */
+export function buildArAdvisoryGuardrailConfig(): GuardrailConfig | undefined {
+  return envGuardrail('ARADVISORY_GUARDRAIL');
 }

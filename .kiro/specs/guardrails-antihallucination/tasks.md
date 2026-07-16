@@ -100,7 +100,7 @@
 
 ## Phase 3: Invoker Integration (L1, INV-1..4)
 
-- [ ] **Task 8 — Extend guardrail routing (5-guardrail)** [KIRO] D2
+- [x] **Task 8 — Extend guardrail routing (5-guardrail)** [KIRO] D2
   - Update `services/ai-invoker/src/guardrail.ts`:
     - `buildGuardrailConfig(seat, feature?)`: doc-composer→DOCGEN, record-write→RECORDWRITE, else→GUARDRAIL
     - `buildArClauseGuardrailConfig()`: returns ARCLAUSE_GUARDRAIL config

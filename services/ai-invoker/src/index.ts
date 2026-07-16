@@ -65,8 +65,8 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   const maxTokens = request.maxTokens ?? defaults.maxTokens;
 
   // Step 3+4: Build params and call Converse (with optional schema-retry)
-  // Seat-routed (spec-40 §4.4): doc-composer → DocGenGuardrail, else agent guardrail
-  const guardrailConfig = buildGuardrailConfig(seat);
+  // Seat-routed (spec-35 §1.2): doc-composer→DocGen, record-write→RecordWrite, else→Agent
+  const guardrailConfig = buildGuardrailConfig(seat, feature);
   const converseParams = {
     modelId,
     messages: request.messages,
