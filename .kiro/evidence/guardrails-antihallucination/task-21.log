@@ -1,0 +1,21 @@
+# Task 21 — contracts/clause-corpus-map.md (BC-2)
+# Executed: 2026-07-16T23:35Z | exit 0
+
+## Deliverable
+contracts/clause-corpus-map.md — canonical {standard, edition, clause_number, title}
+tuples for all three standards (ISO 9001:2015, ISO 14001:2015, ISO 45001:2018).
+
+Derived from docs/architecture/iso-requirements-map.md. Contains ONLY the four
+tuple fields — no ISO body text (copyright compliance). All sub-clauses from
+clauses 4–10 of each standard are represented.
+
+Counts:
+- ISO 9001:2015 — 67 clause tuples
+- ISO 14001:2015 — 38 clause tuples
+- ISO 45001:2018 — 46 clause tuples
+- Total: 151 canonical clause entries
+
+## Evidence
+- tsc --noEmit: exit 0
+- npx vitest run: 981 passed / 0 failed (92 files + 1 skipped)
+- No test changes needed (data contract file, not code)
