@@ -229,7 +229,7 @@
 
 ## Phase 7: Layer 2 — Automated Reasoning Policies
 
-- [ ] **Task 21 — Author contracts/clause-corpus-map.md** [KIRO] D2
+- [x] **Task 21 — Author contracts/clause-corpus-map.md** [KIRO] D2
   - Extract {standard, edition, clause_number, title} tuples from iso-requirements-map.md
   - BC-2: tuples only, NO ISO body text
   - **Evidence:** File exists, all three standards, no prose
@@ -308,7 +308,7 @@
 
 ## Phase 8: Layer 5 — HITL Card Data Contract + Producer Chain
 
-- [ ] **Task 30 — Extend GuardrailEvidence GraphQL type** [KIRO] D2
+- [x] **Task 30 — Extend GuardrailEvidence GraphQL type** [KIRO] D2
   - In `services/api/schema/schema.graphql`:
     - Add `relevanceScore: Float` to GuardrailEvidence
     - Add `flagged: Boolean` to GuardrailEvidence
@@ -318,7 +318,7 @@
   - **Evidence:** `npm run test` green
   - **ACC mapping:** L5-1, L5-4
 
-- [ ] **Task 31 — L5 producer chain: guardrailEvidence → HITL item** [KIRO] D2
+- [x] **Task 31 — L5 producer chain: guardrailEvidence → HITL item** [KIRO] D2
   - Extend `services/agents/shared/store-token.ts`:
     - Add `guardrailEvidence?: GuardrailEvidenceData` to StoreTokenInput.input
     - Add to UpdateExpression: `guardrailEvidence = :evidence`
@@ -333,7 +333,7 @@
     tool-loop → hitl → store-token chain passes evidence through
   - **ACC mapping:** L5-1 (producer), H-3 D2
 
-- [ ] **Task 32 — L5-2 flagged-approval justification enforcement** [KIRO] D2
+- [x] **Task 32 — L5-2 flagged-approval justification enforcement** [KIRO] D2
   - HITL approval resolver: when guardrailEvidence.flagged=true → require justification
   - Stamp flaggedApproval on sealed event payload (Hitl.Approved, auditTrail:true)
   - **Evidence:** Unit test: approve without justification → error; with → sealed event ok
@@ -343,12 +343,12 @@
 
 ## Phase 9: Integration Acceptance Tests
 
-- [ ] **Task 33 — ACC-1: Grounded response passes (mocked)** [KIRO] D2
+- [x] **Task 33 — ACC-1: Grounded response passes (mocked)** [KIRO] D2
   - Invoke with groundingContext, score > 0.85 → delivered, no event, evidence present
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-1 (D2 mocked)
 
-- [ ] **Task 34 — ACC-2: Ungrounded → honest-miss (mocked)** [KIRO] D2
+- [x] **Task 34 — ACC-2: Ungrounded → honest-miss (mocked)** [KIRO] D2
   - Invoke with groundingContext, score < 0.85, retry fails → honest-miss + event
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-2 (D2 mocked)
@@ -358,12 +358,12 @@
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-3
 
-- [ ] **Task 36 — ACC-4: Hop injection → blocked (mocked)** [KIRO] D2
+- [x] **Task 36 — ACC-4: Hop injection → blocked (mocked)** [KIRO] D2
   - tool_use with injection → blocked, Ai.HopBlocked emitted
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-4
 
-- [ ] **Task 37 — ACC-5: Flagged approval requires justification** [KIRO] D2
+- [x] **Task 37 — ACC-5: Flagged approval requires justification** [KIRO] D2
   - HitlItem with flagged=true: approve without justification → error; with → sealed
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-5
