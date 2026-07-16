@@ -1,0 +1,29 @@
+# Task 6 — CDK guardrail expansion (AgentGuardrail grounding + RecordWriteGuardrail)
+# Executed: 2026-07-16T15:15Z
+# Base commit: d9dcd19
+
+## Changes
+- infra/lib/ai-stack.ts:
+  - AgentGuardrail: added contextualGroundingPolicyConfig (GROUNDING 0.85, RELEVANCE 0.75)
+    Existing contentPolicyConfig (PROMPT_ATTACK) and sensitiveInformationPolicyConfig (5 PII)
+    preserved VERBATIM (L1-2). NO CrossRegionConfig.
+  - NEW RecordWriteGuardrail: same content+PII policies, grounding 0.90, relevance 0.75.
+    NO CrossRegionConfig. Env vars RECORDWRITE_GUARDRAIL_ID/VERSION added to invoker.
+  - CfnOutput: RecordWriteGuardrailId, RecordWriteGuardrailVersion (F-9 convention)
+  - DocGenGuardrail: UNTOUCHED
+  - NO AR guardrails created (wait for Task 25)
+
+## Evidence: cdk synth
+Command: npx cdk synth --quiet -c env=dev
+Exit code: 0
+Result: Successfully synthesized
+
+## Evidence: CDK Nag
+Command: grep "Non-Compliant" cdk.out/AwsSolutions-Dev-Dev-AiStack-NagReport.csv | wc -l
+Exit code: 0
+Result: 0 non-compliant findings
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 79 files passed, 0 failed

@@ -69,7 +69,7 @@
 
 ## Phase 2: CDK Guardrail Expansion (L1-1, L1-2, CDK-1..5)
 
-- [ ] **Task 6 — Expand AgentGuardrail + add RecordWriteGuardrail** [KIRO] D2
+- [x] **Task 6 — Expand AgentGuardrail + add RecordWriteGuardrail** [KIRO] D2
   - In `infra/lib/ai-stack.ts`:
     - Add `contextualGroundingPolicyConfig` to existing `AgentGuardrail`:
       GROUNDING 0.85, RELEVANCE 0.75. NO CrossRegionConfig. Preserve existing

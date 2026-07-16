@@ -95,7 +95,7 @@ export class AiStack extends cdk.Stack {
       props.deliveryFailureDlqArn,
     );
 
-    // ─── CfnGuardrail (PII + PROMPT_ATTACK) ───────────────────────────────
+    // ─── CfnGuardrail (PII + PROMPT_ATTACK + Contextual Grounding) ──────────
     const guardrail = new bedrock.CfnGuardrail(this, 'AgentGuardrail', {
       name: `cumplify-agent-guardrail-${envConfig.envName}`,
       blockedInputMessaging: 'Request blocked by content policy.',
@@ -110,6 +110,41 @@ export class AiStack extends cdk.Stack {
           { type: 'NAME', action: 'ANONYMIZE' },
           { type: 'US_SOCIAL_SECURITY_NUMBER', action: 'BLOCK' },
           { type: 'CREDIT_DEBIT_CARD_NUMBER', action: 'BLOCK' },
+        ],
+      },
+      // spec-35 L1-1: contextual grounding (advisory threshold 0.85, relevance 0.75)
+      // NO CrossRegionConfig (grounding-only; AR quarantined to separate guardrails)
+      contextualGroundingPolicyConfig: {
+        filtersConfig: [
+          { type: 'GROUNDING', threshold: 0.85 },
+          { type: 'RELEVANCE', threshold: 0.75 },
+        ],
+      },
+    });
+
+    // ─── Record-write CfnGuardrail (spec-35 CDK-4: grounding 0.90) ────────
+    // Higher grounding threshold for record-writing drafts (Part 35 L1).
+    // Same content + PII policies as AgentGuardrail. NO CrossRegionConfig.
+    const recordWriteGuardrail = new bedrock.CfnGuardrail(this, 'RecordWriteGuardrail', {
+      name: `cumplify-recordwrite-guardrail-${envConfig.envName}`,
+      blockedInputMessaging: 'Request blocked by content policy.',
+      blockedOutputsMessaging: 'Response blocked by content policy.',
+      contentPolicyConfig: {
+        filtersConfig: [{ type: 'PROMPT_ATTACK', inputStrength: 'HIGH', outputStrength: 'NONE' }],
+      },
+      sensitiveInformationPolicyConfig: {
+        piiEntitiesConfig: [
+          { type: 'EMAIL', action: 'ANONYMIZE' },
+          { type: 'PHONE', action: 'ANONYMIZE' },
+          { type: 'NAME', action: 'ANONYMIZE' },
+          { type: 'US_SOCIAL_SECURITY_NUMBER', action: 'BLOCK' },
+          { type: 'CREDIT_DEBIT_CARD_NUMBER', action: 'BLOCK' },
+        ],
+      },
+      contextualGroundingPolicyConfig: {
+        filtersConfig: [
+          { type: 'GROUNDING', threshold: 0.90 },
+          { type: 'RELEVANCE', threshold: 0.75 },
         ],
       },
     });
@@ -150,6 +185,8 @@ export class AiStack extends cdk.Stack {
         GUARDRAIL_VERSION: guardrail.attrVersion,
         DOCGEN_GUARDRAIL_ID: docGenGuardrail.attrGuardrailId,
         DOCGEN_GUARDRAIL_VERSION: docGenGuardrail.attrVersion,
+        RECORDWRITE_GUARDRAIL_ID: recordWriteGuardrail.attrGuardrailId,
+        RECORDWRITE_GUARDRAIL_VERSION: recordWriteGuardrail.attrVersion,
         POWERTOOLS_SERVICE_NAME: 'ai-invoker',
       },
     });
@@ -1030,6 +1067,8 @@ export class AiStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, 'DocGenStateMachineArn', { value: docGenStateMachine.stateMachineArn });
+    new cdk.CfnOutput(this, 'RecordWriteGuardrailId', { value: recordWriteGuardrail.attrGuardrailId });
+    new cdk.CfnOutput(this, 'RecordWriteGuardrailVersion', { value: recordWriteGuardrail.attrVersion });
     new cdk.CfnOutput(this, 'SeedSectionsFnArn', { value: seedSectionsFn.functionArn });
     new cdk.CfnOutput(this, 'ComposeSectionFnArn', { value: composeSectionFn.functionArn });
     new cdk.CfnOutput(this, 'FinalizeManualFnArn', { value: finalizeManualFn.functionArn });
