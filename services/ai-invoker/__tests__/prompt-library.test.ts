@@ -76,3 +76,26 @@ describe('PROMPT_BLOCKS', () => {
     }
   });
 });
+
+// ─── Parity: inline constants MUST match prompts/shared/*.md (single source) ─
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+describe('prompt-library parity with prompts/shared/ (bundling-safety)', () => {
+  const REPO_ROOT = resolve(__dirname, '../../..');
+  const cases: Array<[keyof typeof PROMPT_BLOCKS, string]> = [
+    ['STRUCTURAL_HONESTY', 'structural-honesty.md'],
+    ['LICENSED_UNCERTAINTY', 'licensed-uncertainty.md'],
+    ['RETRIEVAL_FIRST', 'retrieval-first.md'],
+    ['RELATIVE_DATE', 'relative-date.md'],
+  ];
+
+  it.each(cases)('%s matches prompts/shared/%s verbatim', (constName, file) => {
+    const fileContent = readFileSync(resolve(REPO_ROOT, 'prompts', 'shared', file), 'utf-8').trim();
+    expect(PROMPT_BLOCKS[constName]).toBe(fileContent);
+  });
+
+  it('no block is empty (the runtime-read variant silently degraded to empty in Lambda)', () => {
+    for (const v of Object.values(PROMPT_BLOCKS)) expect(v.length).toBeGreaterThan(100);
+  });
+});
