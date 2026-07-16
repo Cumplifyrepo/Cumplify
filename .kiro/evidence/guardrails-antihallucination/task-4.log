@@ -1,0 +1,26 @@
+# Task 4 — createEmbedFn() in invoke-transport.ts
+# Executed: 2026-07-16T15:04Z
+# Base commit: 843259d
+
+## Changes
+- services/agents/shared/invoke-transport.ts:
+  - Added EmbedFn type export
+  - Added createEmbedFn() — sends {op:'embed', ...request} to AI_INVOKER_ARN
+  - Same LambdaClient, same one-door ARN, same error handling pattern
+  - Updated import to include EmbedRequest, EmbedResult from types.ts
+  - Updated module doc: "MUST NOT import invoke() or embed() directly"
+- services/agents/shared/__tests__/invoke-transport.test.ts: NEW — 4 tests
+
+## Evidence: unit tests
+Command: npx vitest run services/agents/shared/__tests__/invoke-transport.test.ts
+Exit code: 0
+Result: 4 tests passed
+  ✓ createEmbedFn > sends payload with op:"embed" to AI_INVOKER_ARN
+  ✓ createEmbedFn > throws on FunctionError
+  ✓ createEmbedFn > throws on empty payload
+  ✓ createInvokeFn (back-compat) > sends InvokeRequest WITHOUT op field
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 79 files passed, 0 failed

@@ -49,7 +49,7 @@
     metering verified; cdk synth passes with handler binding change
   - **ACC mapping:** EMB-1, EMB-2, EMB-4, EMB-5
 
-- [ ] **Task 4 — Embed transport in invoke-transport.ts** [KIRO] D2
+- [x] **Task 4 — Embed transport in invoke-transport.ts** [KIRO] D2
   - Add `createEmbedFn()` to `services/agents/shared/invoke-transport.ts`:
     - Same AI_INVOKER_ARN, same LambdaClient
     - Payload: `{op: 'embed', ...request}`
