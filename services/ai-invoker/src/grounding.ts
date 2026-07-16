@@ -270,7 +270,7 @@ export async function runGroundingFlow(params: {
   agent: string;
   module: string;
 }): Promise<GroundingFlowResult> {
-  const { guardrailConfig, groundingContext, responseText, locale, tenantId, agent, module } = params;
+  const { guardrailConfig, groundingContext, responseText } = params;
   const validCtx = validateGroundingContext(groundingContext);
 
   // Split response into sections for checking

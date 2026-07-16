@@ -135,7 +135,7 @@
   - **Evidence:** Templates exist, no clauseRefs, loader returns correct locale
   - **ACC mapping:** INV-2
 
-- [ ] **Task 12 — Extend InvokeRequest/InvokeResponse types** [KIRO] D2
+- [x] **Task 12 — Extend InvokeRequest/InvokeResponse types** [KIRO] D2
   - Add groundingContext, locale to InvokeRequest
   - Add guardrailEvidence to InvokeResponse
   - Add error codes: GROUNDING_BLOCKED, AR_REJECTED, HOP_BLOCKED, STREAMING_BLOCKED

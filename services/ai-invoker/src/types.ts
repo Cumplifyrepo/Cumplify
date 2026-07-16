@@ -77,6 +77,13 @@ export interface InvokeRequest {
   feature: string;
   /** Set true to skip credit pre-check (incident/HITL exemption) */
   creditExempt?: boolean;
+  /** Retrieved KB chunks for grounding check (L1). Omit for non-grounded calls. */
+  groundingContext?: {
+    source: string; // concatenated retrieval chunks (≤100,000 chars)
+    query: string;  // original user question (≤1,000 chars)
+  };
+  /** Tenant document locale for honest-miss template (defaults to 'en') */
+  locale?: 'en' | 'es' | 'pt';
 }
 
 /** Converse API message shape */
@@ -117,6 +124,24 @@ export interface InvokeResponse {
   credits: number;
   modelId: string;
   seat: SeatId;
+  /** Guardrail evidence for HITL cards (L5). Present when groundingContext was provided. */
+  guardrailEvidence?: GuardrailEvidenceData;
+}
+
+/** Guardrail evidence data attached to InvokeResponse for HITL cards */
+export interface GuardrailEvidenceData {
+  groundingScore: number | null;
+  relevanceScore: number | null;
+  arVerdict: 'pass' | 'fail' | null;
+  arDetails: string | null;
+  citations: GuardrailCitation[];
+  flagged: boolean;
+}
+
+export interface GuardrailCitation {
+  clauseRef: string;
+  sourceChunk: string;
+  score: number;
 }
 
 export interface ToolUseBlock {
@@ -139,7 +164,11 @@ export type InvokeErrorCode =
   | 'PAUSED_FOR_CREDITS'
   | 'SCHEMA_VALIDATION_ERROR'
   | 'INVOCATION_ERROR'
-  | 'GUARDRAIL_BLOCKED';
+  | 'GUARDRAIL_BLOCKED'
+  | 'GROUNDING_BLOCKED'
+  | 'AR_REJECTED'
+  | 'HOP_BLOCKED'
+  | 'STREAMING_BLOCKED';
 
 export class InvokeError extends Error {
   constructor(

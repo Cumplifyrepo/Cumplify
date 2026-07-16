@@ -23,6 +23,7 @@ const logger = new Logger({ serviceName: 'ai-invoker' });
 
 export type { InvokeRequest, InvokeResponse } from './types.js';
 export type { EmbedRequest, EmbedResult, EmbedOp } from './types.js';
+export type { GuardrailEvidenceData, GuardrailCitation } from './types.js';
 export { InvokeError } from './types.js';
 export type { SeatId, CompiledRegister, ModelWeight } from './types.js';
 export { DOC_COMPOSER_OUTPUT_SCHEMA } from './doc-composer-schema.js';

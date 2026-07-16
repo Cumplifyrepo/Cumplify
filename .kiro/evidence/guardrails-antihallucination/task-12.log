@@ -1,0 +1,24 @@
+# Task 12 — InvokeRequest/InvokeResponse type extensions
+# Executed: 2026-07-16T15:26Z
+# Base commit: a009169
+
+## Changes
+- services/ai-invoker/src/types.ts:
+  - InvokeRequest: added groundingContext?: {source, query}, locale?: 'en'|'es'|'pt'
+  - InvokeResponse: added guardrailEvidence?: GuardrailEvidenceData
+  - NEW: GuardrailEvidenceData interface (groundingScore, relevanceScore, arVerdict, arDetails, citations, flagged)
+  - NEW: GuardrailCitation interface (clauseRef, sourceChunk, score)
+  - InvokeErrorCode: added GROUNDING_BLOCKED, AR_REJECTED, HOP_BLOCKED, STREAMING_BLOCKED
+- services/ai-invoker/src/index.ts: export GuardrailEvidenceData + GuardrailCitation types
+- services/ai-invoker/src/grounding.ts: fixed unused-variable tsc errors (destructuring)
+- services/ai-invoker/__tests__/guardrail.test.ts: fixed unused import (vi)
+
+## Evidence: TypeScript compilation
+Command: npx tsc --noEmit
+Exit code: 0
+Result: clean (zero errors)
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 82 files passed, 0 failed

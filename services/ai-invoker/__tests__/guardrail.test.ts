@@ -4,7 +4,7 @@
  * other→GUARDRAIL, AR guardrails (ARCLAUSE/ARADVISORY) accessed separately.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 describe('buildGuardrailConfig (5-guardrail routing)', () => {
   const originalEnv = process.env;
