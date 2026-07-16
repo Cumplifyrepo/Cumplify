@@ -131,6 +131,34 @@ describe('guru AppSync entrypoints', () => {
         );
         expect(invokePayload.groundingContext.query.length).toBe(1000);
       });
+
+      it('FIX-T20-2: converse messages contain chunk text when retrieval returned chunks', async () => {
+        mockSend.mockReset();
+        mockSend
+          .mockResolvedValueOnce({ Payload: embedPayload() })
+          .mockResolvedValueOnce({ Payload: invokerPayload('grounded answer') });
+
+        const { handler } = (await guru.mod()) as { handler: (e: unknown) => Promise<string> };
+        await handler({
+          arguments: { question: 'What is clause 4.1?' },
+          identity: { resolverContext: { tenantId: 'tenant-BBB' } },
+        });
+
+        // Invoke payload should carry the chunks in messages (not just groundingContext)
+        const invokePayload = JSON.parse(
+          Buffer.from((mockSend.mock.calls[1][0] as any).input.Payload).toString(),
+        );
+        const messages = invokePayload.messages;
+        expect(messages).toHaveLength(1); // single user message with multiple content blocks
+        const userMsg = messages[0];
+        expect(userMsg.role).toBe('user');
+        // Multiple content blocks: question + chunks
+        expect(userMsg.content.length).toBeGreaterThanOrEqual(2);
+        // The chunks should appear in the message content
+        const allText = userMsg.content.map((b: { text: string }) => b.text).join('');
+        expect(allText).toContain('Context of the organization');
+        expect(allText).toContain('Relevant ISO');
+      });
     });
   }
 });

@@ -1,0 +1,21 @@
+# FIX-T20-2 — Restore RAG chunks in guru model prompt
+# Executed: 2026-07-16T23:23Z | exit 0
+
+## Fix
+All three guru handlers (9001/14001/45001) now include retrieved chunks in
+the user message content (as a second text block: "Relevant ISO XXXXX clauses:\n<chunks>")
+so the model sees the source material during first-pass generation. The
+groundingContext field is ALSO still populated for the post-response grounding
+check. This restores the pre-Task-19 pattern where chunks reached both the
+model prompt AND the grounding verifier.
+
+## Evidence
+- tsc --noEmit: exit 0
+- npx vitest run: 979 passed / 0 failed (92 files + 1 skipped)
+
+### New tests (3, one per guru)
+'FIX-T20-2: converse messages contain chunk text when retrieval returned chunks'
+- Asserts: invoke payload messages[0].content has >= 2 blocks
+- Asserts: chunk text ("Context of the organization") appears in message content
+- Asserts: "Relevant ISO" prefix present
+- All three gurus (9001/14001/45001) verified

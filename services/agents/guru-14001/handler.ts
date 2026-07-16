@@ -56,10 +56,18 @@ export async function handleQuery(
     // The invoker's dormant path handles the absent groundingContext gracefully.
   }
 
+  // FIX-T20-2: Include retrieved chunks in the model prompt so the first-pass
+  // answer is grounded (pre-Task-19 pattern). groundingContext still carries the
+  // same source for the post-check — both paths see the chunks.
+  const userContent: Array<{ text: string }> = [{ text: question }];
+  if (groundingSource) {
+    userContent.push({ text: `\nRelevant ISO 14001 clauses:\n${groundingSource}` });
+  }
+
   const response = await invokeFn({
     seat: 'guru-14001',
     system: ISO14001_GURU_PROMPT,
-    messages: [{ role: 'user', content: [{ text: question }] }],
+    messages: [{ role: 'user', content: userContent }],
     tools: [],
     tenantId,
     agent: 'ISO14001Guru',
