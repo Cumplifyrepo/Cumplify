@@ -560,7 +560,8 @@ type Query {
   # Spec 41 — QMS Forms & Records Engine
   listFormTemplates: [FormTemplate!]! @aws_lambda
   getFormTemplate(id: ID!): FormTemplate @aws_lambda
-  listFormRecords(templateId: ID!, status: FormRecordStatus): [FormRecord!]! @aws_lambda
+  # Task 10 (OQ-2 gate): paginated, newest first — server default 100, cap 500.
+  listFormRecords(templateId: ID!, status: FormRecordStatus, limit: Int, offset: Int): [FormRecord!]! @aws_lambda
   getFormRecord(id: ID!): FormRecord @aws_lambda
 
   # Spec 40 — QMS Document Engine

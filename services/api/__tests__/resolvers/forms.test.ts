@@ -193,6 +193,72 @@ describe('listFormRecords', () => {
     expect(sql).toContain('AND r.status = :status');
     expect(params).toContainEqual({ name: 'status', value: { stringValue: 'draft' } });
   });
+
+  // Task 10 (OQ-2 gate): the accepted N+1 was a 30s Lambda timeout at 10k
+  // records — completion inputs must ride the listing itself.
+  it('is exactly 2 round trips: LATERAL completion aggregate + one fields query (never per-record)', async () => {
+    mockExecute.mockReset();
+    // Call 1: listing with aggregate columns (2 records)
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'rec-1' }, { stringValue: 'tpl-1' }, { stringValue: 'draft' }, { stringValue: 'u' },
+          { isNull: true }, { isNull: true }, { stringValue: 't' }, { stringValue: 't' },
+          { longValue: 1 }, { arrayValue: { stringValues: ['ncr_number'] } }],
+        [{ stringValue: 'rec-2' }, { stringValue: 'tpl-1' }, { stringValue: 'draft' }, { stringValue: 'u' },
+          { isNull: true }, { isNull: true }, { stringValue: 't' }, { stringValue: 't' },
+          { isNull: true }, { isNull: true }],
+      ],
+      columnMetadata: [
+        { name: 'id' }, { name: 'template_id' }, { name: 'status' }, { name: 'opened_by' },
+        { name: 'completed_by' }, { name: 'm2_nc_id' }, { name: 'created_at' }, { name: 'updated_at' },
+        { name: 'filled_count' }, { name: 'filled_keys' },
+      ],
+    });
+    // Call 2: fields meta
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [{ stringValue: 'ncr_number' }, { booleanValue: true }],
+        [{ stringValue: 'severity' }, { booleanValue: true }],
+      ],
+      columnMetadata: [{ name: 'field_key' }, { name: 'required' }],
+    });
+
+    const result = await handler(makeEvent('listFormRecords', { templateId: 'tpl-1' })) as Array<Record<string, unknown>>;
+
+    expect(mockExecute).toHaveBeenCalledTimes(2);
+    const listSql = mockExecute.mock.calls[0][0] as string;
+    expect(listSql).toContain('LEFT JOIN LATERAL');
+    expect(listSql).toContain('array_agg(f.field_key)');
+    expect(listSql).toContain('LIMIT :limit OFFSET :offset');
+    // Page-first pin: LIMIT lives in the inner subquery, the aggregate runs
+    // over the page only (top-level LATERAL = 10k executions before the sort)
+    expect(listSql.indexOf('LIMIT :limit')).toBeLessThan(listSql.indexOf('LEFT JOIN LATERAL'));
+
+    // Completion computed from the aggregate (no aggregate leak into the result)
+    expect(result[0].completion).toEqual({ fieldsFilled: 1, fieldsTotal: 2, requiredMissing: ['severity'] });
+    expect(result[1].completion).toEqual({ fieldsFilled: 0, fieldsTotal: 2, requiredMissing: ['ncr_number', 'severity'] });
+    expect(result[0].filledKeys).toBeUndefined();
+    expect(result[0].filledCount).toBeUndefined();
+  });
+
+  it('paginates: default limit 100, caller limit clamped to 500, offset floor 0', async () => {
+    await handler(makeEvent('listFormRecords', { templateId: 'tpl-1' }));
+    let params = mockExecute.mock.calls[0][1] as Array<{ name: string; value: Record<string, unknown> }>;
+    expect(params).toContainEqual({ name: 'limit', value: { longValue: 100 } });
+    expect(params).toContainEqual({ name: 'offset', value: { longValue: 0 } });
+
+    mockExecute.mockClear();
+    await handler(makeEvent('listFormRecords', { templateId: 'tpl-1', limit: 9999, offset: -5 }));
+    params = mockExecute.mock.calls[0][1] as Array<{ name: string; value: Record<string, unknown> }>;
+    expect(params).toContainEqual({ name: 'limit', value: { longValue: 500 } });
+    expect(params).toContainEqual({ name: 'offset', value: { longValue: 0 } });
+
+    mockExecute.mockClear();
+    await handler(makeEvent('listFormRecords', { templateId: 'tpl-1', limit: 25, offset: 50 }));
+    params = mockExecute.mock.calls[0][1] as Array<{ name: string; value: Record<string, unknown> }>;
+    expect(params).toContainEqual({ name: 'limit', value: { longValue: 25 } });
+    expect(params).toContainEqual({ name: 'offset', value: { longValue: 50 } });
+  });
 });
 
 // ─── getFormRecord + FormCompletion ───────────────────────────────────────────
@@ -220,7 +286,8 @@ describe('getFormRecord + server-computed FormCompletion', () => {
         { name: 'value_date' }, { name: 'value_bool' }, { name: 'value_uuid' }, { name: 'value_json' },
       ],
     });
-    // Call 3: totals (template fields for completion)
+    // Call 3: template field meta (Task 10: single fields query — filled
+    // keys come from the values already fetched in call 2, never a 4th trip)
     mockExecute.mockResolvedValueOnce({
       records: [
         [{ stringValue: 'ncr_number' }, { booleanValue: true }],
@@ -229,27 +296,20 @@ describe('getFormRecord + server-computed FormCompletion', () => {
       ],
       columnMetadata: [{ name: 'field_key' }, { name: 'required' }],
     });
-    // Call 4: filled fields for completion
-    mockExecute.mockResolvedValueOnce({
-      records: [[{ stringValue: 'ncr_number' }]],
-      columnMetadata: [{ name: 'field_key' }],
-    });
   });
 
-  it('computes FormCompletion server-side via SQL JOINs on record_values + template_fields', async () => {
+  it('computes FormCompletion server-side from fields meta + fetched values (3 round trips)', async () => {
     const result = await handler(makeEvent('getFormRecord', { id: 'rec-1' })) as Record<string, unknown>;
 
-    // Completion query hits forms.template_fields joined to template_sections
+    // Fields-meta query hits forms.template_fields joined to template_sections
     const totalsSql = mockExecute.mock.calls[2][0] as string;
     expect(totalsSql).toContain('forms.template_fields');
     expect(totalsSql).toContain('forms.template_sections');
     expect(totalsSql).toContain('field_key');
     expect(totalsSql).toContain('required');
 
-    // Filled query hits forms.record_values joined to template_fields
-    const filledSql = mockExecute.mock.calls[3][0] as string;
-    expect(filledSql).toContain('forms.record_values');
-    expect(filledSql).toContain('forms.template_fields');
+    // Task 10 pin: exactly 3 queries — record, values, fields meta
+    expect(mockExecute).toHaveBeenCalledTimes(3);
 
     // Result has server-computed completion
     const completion = result.completion as Record<string, unknown>;

@@ -204,39 +204,68 @@ async function getFormTemplate(event: AppSyncEvent): Promise<unknown> {
 /**
  * listFormRecords — tenant-scoped record listing per template.
  * NOTE: This closes the standing BLOCKED listRecords item from frontend-app Task 29.
- * Server-computed FormCompletion joined to each record.
+ *
+ * Task 10 (OQ-2 gate) rework: the original per-record computeCompletion was
+ * 1 + 2N Data API round trips — a 30s Lambda timeout at 10k records. The
+ * completion inputs now ride the listing itself (LATERAL aggregate per
+ * returned row) + ONE template-fields query: 2 round trips regardless of
+ * page size. Paginated (default 100, cap 500, newest first) — an unpaginated
+ * 10k-row response would also breach the AppSync 1MB response limit.
  */
+const LIST_DEFAULT_LIMIT = 100;
+const LIST_MAX_LIMIT = 500;
+
 async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<unknown[]> {
   const templateId = event.arguments.templateId as string;
   const status = event.arguments.status as string | undefined;
+  const limit = Math.min(Math.max(1, (event.arguments.limit as number | undefined) ?? LIST_DEFAULT_LIMIT), LIST_MAX_LIMIT);
+  const offset = Math.max(0, (event.arguments.offset as number | undefined) ?? 0);
   const txn = await beginTenantTransaction(tenantId);
   try {
-    let sql = `
-      SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
-             r.m2_nc_id, r.created_at, r.updated_at
-      FROM forms.records r
-      WHERE r.template_id = :templateId::uuid
-    `;
+    let where = `WHERE r.template_id = :templateId::uuid`;
     const params: SqlParameter[] = [
       { name: 'templateId', value: { stringValue: templateId } },
+      { name: 'limit', value: { longValue: limit } },
+      { name: 'offset', value: { longValue: offset } },
     ];
     if (status) {
-      sql += ` AND r.status = :status`;
+      where += ` AND r.status = :status`;
       params.push({ name: 'status', value: { stringValue: status.toLowerCase() } });
     }
-    sql += ` ORDER BY r.created_at DESC`;
 
-    const result = await txn.execute(sql, params);
-    const records = marshalRecordRows(result);
-
-    // Server-computed completion for each record
-    for (const rec of records) {
-      rec.completion = await computeCompletion(txn, rec.id as string, templateId);
-      rec.values = '{}'; // Values returned on getFormRecord only (list is lightweight)
-    }
-
+    // Page FIRST (inner LIMIT), THEN the completion aggregate — a top-level
+    // LATERAL runs for every candidate row BEFORE the sort+limit (measured:
+    // 10k aggregate executions ≈ 340ms; paged: 100 ≈ 3ms). Ordered walk of
+    // idx_forms_records_register (migration 017) serves the page directly.
+    const result = await txn.execute(`
+      SELECT page.*, c.filled_count, c.filled_keys
+      FROM (
+        SELECT r.id, r.template_id, r.status, r.opened_by, r.completed_by,
+               r.m2_nc_id, r.created_at, r.updated_at
+        FROM forms.records r
+        ${where}
+        ORDER BY r.created_at DESC
+        LIMIT :limit OFFSET :offset
+      ) page
+      LEFT JOIN LATERAL (
+        SELECT COUNT(*)::int AS filled_count, array_agg(f.field_key) AS filled_keys
+        FROM forms.record_values rv
+        JOIN forms.template_fields f ON rv.field_id = f.id
+        WHERE rv.record_id = page.id
+      ) c ON true
+      ORDER BY page.created_at DESC
+    `, params);
+    const fieldsMeta = await fetchTemplateFieldMeta(txn, templateId);
     await txn.commit();
-    return records;
+
+    return marshalRecordRows(result).map(rec => {
+      const filledKeys = new Set((rec.filledKeys as string[] | null) ?? []);
+      rec.completion = completionFrom(fieldsMeta, filledKeys);
+      rec.values = '{}'; // Values returned on getFormRecord only (list is lightweight)
+      delete rec.filledCount;
+      delete rec.filledKeys;
+      return rec;
+    });
   } catch (err) {
     try { await txn.rollback(); } catch { /* never mask the original error */ }
     throw err;
@@ -269,8 +298,12 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
       WHERE rv.record_id = :id::uuid
     `, [{ name: 'id', value: { stringValue: recordId } }]);
 
-    rec.values = JSON.stringify(marshalValues(valResult));
-    rec.completion = await computeCompletion(txn, recordId, rec.templateId as string);
+    const values = marshalValues(valResult);
+    rec.values = JSON.stringify(values);
+    // Task 10: completion from the values already fetched + one fields query
+    // (was computeCompletion = 2 extra round trips per read).
+    const fieldsMeta = await fetchTemplateFieldMeta(txn, rec.templateId as string);
+    rec.completion = completionFrom(fieldsMeta, new Set(Object.keys(values)));
 
     await txn.commit();
     return rec;
@@ -299,8 +332,10 @@ async function createFormRecord(event: AppSyncEvent, tenantId: string, actor: st
       { name: 'actor', value: { stringValue: actor } },
     ]);
     const rec = marshalRecordRows(result)[0];
-    // BUG-1 fix: compute real completion from catalog (not hardcoded 0/0/[])
-    rec.completion = await computeCompletion(txn, rec.id as string, templateId);
+    // BUG-1 fix: compute real completion from catalog (not hardcoded 0/0/[]).
+    // Task 10: fresh record has zero filled fields — one fields query suffices.
+    const fieldsMeta = await fetchTemplateFieldMeta(txn, templateId);
+    rec.completion = completionFrom(fieldsMeta, new Set());
     rec.values = '{}';
     await txn.commit();
     return rec;
@@ -1185,38 +1220,34 @@ function resolveLabel(locale: string, key: string): string {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Compute FormCompletion server-side (design §2.4). */
-async function computeCompletion(
+/**
+ * Template field metadata for completion (Task 10 shape: fetched ONCE per
+ * call, completion computed in code — never per-record round trips).
+ */
+async function fetchTemplateFieldMeta(
   txn: TenantTransaction,
-  recordId: string,
   templateId: string,
-): Promise<{ fieldsFilled: number; fieldsTotal: number; requiredMissing: string[] }> {
-  // Total fields + required fields for the template
-  const totalsResult = await txn.execute(`
+): Promise<Array<{ fieldKey: string; required: boolean }>> {
+  const result = await txn.execute(`
     SELECT f.field_key, f.required
     FROM forms.template_fields f
     JOIN forms.template_sections s ON f.section_id = s.id
     WHERE s.template_id = :templateId::uuid
   `, [{ name: 'templateId', value: { stringValue: templateId } }]);
+  const allKeys = extractFieldKeys(result);
+  const requiredKeys = new Set(extractRequiredFieldKeys(result));
+  return allKeys.map(k => ({ fieldKey: k, required: requiredKeys.has(k) }));
+}
 
-  // Filled fields for this record
-  const filledResult = await txn.execute(`
-    SELECT f.field_key
-    FROM forms.record_values rv
-    JOIN forms.template_fields f ON rv.field_id = f.id
-    WHERE rv.record_id = :recordId::uuid
-  `, [{ name: 'recordId', value: { stringValue: recordId } }]);
-
-  const allFields = extractFieldKeys(totalsResult);
-  const requiredFields = extractRequiredFieldKeys(totalsResult);
-  const filledKeys = new Set(extractFilledFieldKeys(filledResult));
-
-  const requiredMissing = requiredFields.filter(k => !filledKeys.has(k));
-
+/** Compute FormCompletion (design §2.4) from field meta + filled keys. */
+function completionFrom(
+  fieldsMeta: Array<{ fieldKey: string; required: boolean }>,
+  filledKeys: Set<string>,
+): { fieldsFilled: number; fieldsTotal: number; requiredMissing: string[] } {
   return {
     fieldsFilled: filledKeys.size,
-    fieldsTotal: allFields.length,
-    requiredMissing,
+    fieldsTotal: fieldsMeta.length,
+    requiredMissing: fieldsMeta.filter(f => f.required && !filledKeys.has(f.fieldKey)).map(f => f.fieldKey),
   };
 }
 
@@ -1232,7 +1263,6 @@ async function getFormRecordById(recordId: string, tenantId: string): Promise<un
     const rows = marshalRecordRows(result);
     if (rows.length === 0) throw new Error('RECORD_NOT_FOUND');
     const rec = rows[0];
-    rec.completion = await computeCompletion(txn, recordId, rec.templateId as string);
 
     const valResult = await txn.execute(`
       SELECT f.field_key, rv.value_text, rv.value_number, rv.value_date,
@@ -1241,7 +1271,10 @@ async function getFormRecordById(recordId: string, tenantId: string): Promise<un
       JOIN forms.template_fields f ON rv.field_id = f.id
       WHERE rv.record_id = :id::uuid
     `, [{ name: 'id', value: { stringValue: recordId } }]);
-    rec.values = JSON.stringify(marshalValues(valResult));
+    const values = marshalValues(valResult);
+    rec.values = JSON.stringify(values);
+    const fieldsMeta = await fetchTemplateFieldMeta(txn, rec.templateId as string);
+    rec.completion = completionFrom(fieldsMeta, new Set(Object.keys(values)));
 
     await txn.commit();
     return rec;
@@ -1456,13 +1489,3 @@ function extractRequiredFieldKeys(result: DataApiResult): string[] {
   return keys;
 }
 
-function extractFilledFieldKeys(result: DataApiResult): string[] {
-  const keys: string[] = [];
-  if (!result.records || !result.columnMetadata) return keys;
-  const keyIdx = result.columnMetadata.findIndex(c => c.name === 'field_key');
-  if (keyIdx < 0) return keys;
-  for (const row of result.records) {
-    keys.push(unwrapField(row[keyIdx]) as string);
-  }
-  return keys;
-}

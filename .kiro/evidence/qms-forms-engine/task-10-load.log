@@ -1,0 +1,120 @@
+# Task 10 — RLS load test (OQ-2 gate) [ARCHITECT]
+# Evidence log (rule 7/8: evidence + checkbox in same commit)
+# Timestamp: 2026-07-16T13:05:00Z
+# Base commit: 3f5cb89 (Task 8)
+# Executed end-to-end by the architect. D3: live dev, real FormsFn (app_role,
+# FORCE RLS) — the gate metric is the Lambda-reported Duration (server-side);
+# client wall-clock recorded alongside for context.
+
+## Setup
+
+Seed: 10,000 records × 30 typed fields for TWO tenants (tenant-load-a /
+tenant-load-b) against the NCR template (35 fields, first 30 by sort order —
+text/date/user/select/relation/checkbox/multiselect all exercised; relation
+values point at a real clause-registry row). 20,000 `forms.records` +
+600,000 `forms.record_values` total, inserted in 10 batch-transactions per
+tenant. Counts verified per tenant: records=10000, values=300000 each.
+
+FINDING (seed): the RDS master role BYPASSES RLS on Aurora — a values-INSERT
+scoped only by `opened_by` matched the OTHER tenant's rows (caught by the
+UNIQUE(record_id, field_id) violation, batch rolled back, reseeded with an
+explicit tenant filter). Consequence recorded: master-credential SQL is NOT
+RLS-scoped; every measurement below therefore runs through FormsFn (app_role),
+and the cross-tenant probe is part of the gate.
+
+## The gate, round by round
+
+### Round 1 — BASELINE: FAIL (both surfaces)
+
+| Surface | Result |
+|---|---|
+| `listFormRecords` | **Lambda timeout at 30.00s** (both tenants). The Task-3-accepted completion N+1 = 1 + 2×10,000 Data API round trips. Would also breach the AppSync 1MB response cap (10k rows unpaginated). |
+| `getFormRecord` | wall p95 582ms / 486ms — borderline FAIL (4 sequential Data API round trips per read). |
+
+### Rework 1 — N+1 removal + pagination (forms.ts, schema.graphql)
+
+- `listFormRecords`: completion inputs ride the listing (LATERAL aggregate:
+  `COUNT(*)` + `array_agg(field_key)` per row) + ONE template-fields query —
+  2 round trips regardless of page size. SDL += optional `limit`/`offset`
+  (server default 100, cap 500, newest first — documented, not silent).
+- `getFormRecord` / `getFormRecordById` / `createFormRecord`: completion
+  computed in code from the fields+values queries already made
+  (`fetchTemplateFieldMeta` + `completionFrom`); `computeCompletion`'s 2
+  extra round trips per read deleted.
+
+### Round 2 — INTERMEDIATE: record read PASS, listing still FAIL
+
+Lambda p95: get 301/296ms PASS; list 598/883ms FAIL (p50 436/522). EXPLAIN
+ANALYZE as app_role showed why: a top-level LATERAL executes for ALL 10,000
+candidate rows BEFORE the sort+LIMIT — aggregate loops=10000, 348.867ms
+execution, and the scan used idx_forms_records_tenant then filtered
+template_id and top-N-sorted 10k rows per call.
+
+### Rework 2 — page-first subquery + migration 017 (the named index rework)
+
+- Query rewritten: inner `ORDER BY created_at DESC LIMIT :limit OFFSET
+  :offset` subquery FIRST, LATERAL aggregate over the returned page only
+  (100 executions, ~3ms). Hermetic pin: `LIMIT :limit` must appear BEFORE
+  `LEFT JOIN LATERAL` in the SQL.
+- Migration `017_forms_register_index.sql`: `idx_forms_records_register
+  (tenant_id, template_id, created_at DESC)` — the listing page is an
+  ordered index walk under the RLS predicate; drops
+  `idx_forms_records_template` (exact prefix, redundant). Applied via the
+  ApiStack migrator (deploy 3), `_migrations` row
+  `017_forms_register_index.sql` checksum 469330ae1775d059 verified; live
+  `pg_indexes` shows register index present, template index gone.
+
+### Round 3 — FINAL: **PASS** (2026-07-16 ~12:58Z, exit 0)
+
+| Surface (Lambda-reported Duration, n per tenant) | tenant-load-a | tenant-load-b | target | verdict |
+|---|---|---|---|---|
+| register listing p95 (n=30) | **235 ms** | **269 ms** | <500 ms | **PASS** |
+| register listing p50 | 162 ms | 164 ms | — | |
+| record read p95 (n=100) | **266 ms** | **272 ms** | <500 ms | **PASS** |
+| record read p50 | 199 ms | 195 ms | — | |
+
+Wall-clock (client, includes local network) also passes everywhere: list p95
+336/310ms, get p95 406/417ms. Cross-tenant at scale: tenant-b reading a
+tenant-a record id → RECORD_NOT_FOUND (RLS denial through the resolver).
+Isolation of the page contents is RLS-enforced in the same SQL.
+
+## Gates executed
+
+| Gate | Command | Exit | Result |
+|------|---------|------|--------|
+| TypeScript | `npx tsc --noEmit` | 0 | clean |
+| Unit (backend) | `npx vitest run` | 0 | 876 passed, 3 skipped (+2 net: 2-round-trip pin, pagination clamps, page-first pin; getFormRecord test updated to the 3-trip shape) |
+| Unit (frontend) | `cd frontend && npx vitest run` | 0 | 121 passed |
+| Deploys | `cdk deploy 'CumplifyPipeline/Dev/ApiStack' --exclusively` ×2 | 0, 0 | 62.04s (rework 1), 70.46s (rework 2 + migration 017) |
+| Purge | batched DELETE per tenant, cascade to values | 0 | REMAINING: records=0 values=0 |
+
+## Artifacts (session scratchpad; sha256 first 16)
+
+| Script | sha256₁₆ | Purpose |
+|---|---|---|
+| t10-seed.mjs | c162e24e21466c9f | batch seed through set_config transactions |
+| t10-measure.mjs | c7859d76e1514f86 | FormsFn invoke harness, wall + Lambda REPORT duration, p50/p95, cross-tenant probe |
+| t10-explain.mjs | 9f397367856c67b4 | EXPLAIN ANALYZE as app_role (the round-2 diagnosis) |
+| t10-purge.mjs | efe27155f2d17fd7 | batched purge + zero-count verification |
+| t10-outputs.txt | c0f277d3d4f8e3ec | verbatim gate outputs, all three rounds |
+
+## Carry-forwards (named, non-blocking)
+
+1. Frontend register view calls `listFormRecords` without `limit` → shows the
+   newest 100. Pagination controls (offset paging or infinite scroll) are a
+   frontend follow-up; the SDL args are live and documented.
+2. OFFSET pagination degrades linearly on deep pages (offset 9900 walks the
+   index past 9900 entries). Fine at wave-1 scale; keyset pagination
+   (`created_at < :cursor`) is the upgrade path if registers grow past ~100k
+   records per template.
+3. Master-role SQL bypasses RLS (BYPASSRLS on Aurora master) — recorded as a
+   standing operational fact: never validate isolation with master
+   credentials; the int-lane denial suite + resolver-path probes are the
+   valid instruments.
+
+## Purge
+
+tenant-load-a / tenant-load-b fully deleted (batched, FK cascade), live
+zero-count verified. No S3, DDB, or m2–m5 side effects existed (records were
+draft/in_progress only; no submits, no seals). Nothing added to the standing
+purge list.

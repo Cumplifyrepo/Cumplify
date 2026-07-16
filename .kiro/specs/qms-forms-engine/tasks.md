@@ -81,9 +81,9 @@
 
 ## Task 10 — RLS load test (OQ-2 gate) [ARCHITECT]
 
-- [ ] Seed 10k records × 30 fields for two tenants; register listing + record read p95 under FORCE RLS; target p95 < 500 ms. Miss → index/partition rework BEFORE catalog-wide rollout (documented gate).
+- [x] Seed 10k records × 30 fields for two tenants; register listing + record read p95 under FORCE RLS; target p95 < 500 ms. Miss → index/partition rework BEFORE catalog-wide rollout (documented gate). GATE EXERCISED AS DESIGNED 2026-07-16: baseline FAILED (listing = 30s Lambda timeout via the Task-3-accepted completion N+1; read p95 borderline) → rework 1 (LATERAL completion aggregate + `limit`/`offset` pagination, 3-trip reads) → still FAIL on listing p95 (top-level LATERAL ran pre-LIMIT over all 10k, EXPLAIN-proven) → rework 2 (page-first subquery + migration 017 ordered register index). FINAL PASS: listing p95 235/269 ms, read p95 266/272 ms (Lambda-reported, both tenants); cross-tenant read at scale → RECORD_NOT_FOUND. Load tenants purged to zero.
 
-**Depends on:** Task 3. **D-rung:** D3 (int lane, live dev). **Evidence:** `task-10-load.log`
+**Depends on:** Task 3. **D-rung:** D3 ✓. **Evidence:** `task-10-load.log`
 
 ## Task 11 — ACC readback pass [ARCHITECT; ACC-4/ACC-5 witnessed → D5]
 
