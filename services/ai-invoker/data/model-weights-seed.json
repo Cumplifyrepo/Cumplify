@@ -1,7 +1,7 @@
 {
   "capturedAt": "2026-07-10T01:15:00Z",
   "sourceCommit": "a9f41423ebd90603e67fe16e8a071a4d5df18253",
-  "source": "AWS Pricing API (GetProducts, ServiceCode=AmazonBedrock, regionCode=us-east-1) via services/model-evals/src/pricing.ts fetchPricing() + direct cache-read dimension query; evidence .kiro/evidence/agents-existing-8/task-2-pricing-seed.log | zai.glm-5 added 2026-07-10 (Task 14 assignment): live-API re-verified $1.00/$3.20 per M via fetchPricing() at compile time",
+  "source": "AWS Pricing API (GetProducts, ServiceCode=AmazonBedrock, regionCode=us-east-1) via services/model-evals/src/pricing.ts fetchPricing() + direct cache-read dimension query; evidence .kiro/evidence/agents-existing-8/task-2-pricing-seed.log | zai.glm-5 added 2026-07-10 (Task 14 assignment): live-API re-verified $1.00/$3.20 per M via fetchPricing() at compile time | amazon.titan-embed-text-v2:0 added 2026-07-16 (spec-35 Task 2): $0.00002/1K input = $0.02/M; wIn=20, no output/cache (embedding model)",
   "models": {
     "us.amazon.nova-pro-v1:0": {
       "wIn": 800,
@@ -26,6 +26,11 @@
     "zai.glm-5": {
       "wIn": 1000,
       "wOut": 3200,
+      "wCache": null
+    },
+    "amazon.titan-embed-text-v2:0": {
+      "wIn": 20,
+      "wOut": 0,
       "wCache": null
     }
   }

@@ -23,7 +23,7 @@
 
 ## Phase 1: Embedding Door (EMB-1..6)
 
-- [ ] **Task 2 — Add Titan Embed v2 to model-weights-seed.json** [KIRO] D2
+- [x] **Task 2 — Add Titan Embed v2 to model-weights-seed.json** [KIRO] D2
   - Add `amazon.titan-embed-text-v2:0` to `services/ai-invoker/data/model-weights-seed.json`
   - wIn: from Bedrock pricing; wOut: 0; wCache: null
   - **Evidence:** JSON valid, computeCredits unit test passes

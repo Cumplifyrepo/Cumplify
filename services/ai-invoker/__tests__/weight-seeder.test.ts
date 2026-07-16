@@ -39,6 +39,7 @@ const IN_SCOPE_MODELS = [
   'qwen.qwen3-next-80b-a3b',
   'moonshotai.kimi-k2.5',
   'zai.glm-5', // legal-ledger ASSIGNED at Task 14 (live-API $1.00/$3.20)
+  'amazon.titan-embed-text-v2:0', // spec-35 Task 2: embedding model (wOut=0, input-only)
 ];
 
 describe('weight-seeder', () => {
@@ -48,13 +49,13 @@ describe('weight-seeder', () => {
   });
 
   it('loads seed data at module level (bundled inline, no runtime fs)', async () => {
-    // Real seed has 5 models (glm-5 added at Task-14 assignment) — handler seeds all.
+    // Real seed has 6 models (titan-embed added at spec-35 Task 2) — handler seeds all.
     // This proves the import resolved at bundle time without ENOENT.
     const result = await handler({ action: 'seed' });
     expect(result.status).toBe('success');
-    expect(result.seeded).toBe(5);
+    expect(result.seeded).toBe(6);
     expect(result.skipped).toBe(0);
-    expect(mockSend).toHaveBeenCalledTimes(5);
+    expect(mockSend).toHaveBeenCalledTimes(6);
   });
 
   it('skips non-seed actions', async () => {
@@ -68,10 +69,10 @@ describe('weight-seeder', () => {
     condError.name = 'ConditionalCheckFailedException';
     mockSend.mockRejectedValueOnce(condError);
 
-    // First model already seeded → skipped; remaining 4 seed normally.
+    // First model already seeded → skipped; remaining 5 seed normally.
     const result = await handler({ action: 'seed' });
     expect(result.status).toBe('success');
-    expect(result.seeded).toBe(4);
+    expect(result.seeded).toBe(5);
     expect(result.skipped).toBe(1);
   });
 
@@ -89,19 +90,26 @@ describe('weight-seeder', () => {
 
   // ── Task 2 acceptance criteria, encoded against the committed seed file ──
 
-  it('ACCEPTANCE: all in-scope models present with numeric wIn/wOut > 0', () => {
+  it('ACCEPTANCE: all in-scope models present with numeric wIn > 0; generation models wOut > 0', () => {
     expect(Object.keys(seed.models).sort()).toEqual([...IN_SCOPE_MODELS].sort());
     for (const id of IN_SCOPE_MODELS) {
       expect(seed.models[id].wIn).toBeGreaterThan(0);
+    }
+    // Generation models must have wOut > 0; embedding models have wOut = 0
+    const GENERATION_MODELS = IN_SCOPE_MODELS.filter(m => m !== 'amazon.titan-embed-text-v2:0');
+    for (const id of GENERATION_MODELS) {
       expect(seed.models[id].wOut).toBeGreaterThan(0);
     }
+    // Embedding model: wOut = 0 (no output tokens)
+    expect(seed.models['amazon.titan-embed-text-v2:0'].wOut).toBe(0);
   });
 
-  it('ACCEPTANCE: Nova Pro/Lite have wCache defined; qwen/kimi have wCache null', () => {
+  it('ACCEPTANCE: Nova Pro/Lite have wCache defined; qwen/kimi/titan-embed have wCache null', () => {
     expect(seed.models['us.amazon.nova-pro-v1:0'].wCache).toBeGreaterThan(0);
     expect(seed.models['us.amazon.nova-lite-v1:0'].wCache).toBeGreaterThan(0);
     expect(seed.models['qwen.qwen3-next-80b-a3b'].wCache).toBeNull();
     expect(seed.models['moonshotai.kimi-k2.5'].wCache).toBeNull();
+    expect(seed.models['amazon.titan-embed-text-v2:0'].wCache).toBeNull();
   });
 
   it('ACCEPTANCE: provenance present (capturedAt ISO, sourceCommit sha)', () => {

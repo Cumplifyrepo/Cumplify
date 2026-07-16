@@ -116,6 +116,27 @@ describe('computeCredits', () => {
     };
     expect(computeCredits(usage, novaProWeights)).toBe(0);
   });
+
+  it('computes credits for Titan Embed v2 (input-only, wOut=0, wCache=null)', () => {
+    const titanEmbedWeights: ModelWeight = {
+      modelId: 'amazon.titan-embed-text-v2:0',
+      wIn: 20, // $0.02/1M input → 20 credits/1M
+      wOut: 0, // embedding model: no output tokens
+      wCache: null,
+      effectiveFrom: '2026-07-16',
+      sourceCommit: '349ce00',
+    };
+    const usage: TokenUsage = {
+      inputTokens: 500,
+      outputTokens: 0, // embeddings produce no output tokens
+      cacheReadInputTokens: 0,
+      cacheWriteInputTokens: 0,
+    };
+
+    // (500 × 20 + 0 + 0) / 1,000,000 = 10,000 / 1,000,000 = 0.01
+    const credits = computeCredits(usage, titanEmbedWeights);
+    expect(credits).toBeCloseTo(0.01, 6);
+  });
 });
 
 describe('emitCreditsTelemetry (telemetry.credits.consumed contract)', () => {
