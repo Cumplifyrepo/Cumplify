@@ -1,0 +1,24 @@
+# Task 1 — Register Ai.* telemetry events
+# Executed: 2026-07-16T14:51Z
+# Base commit: a39a717
+
+## Changes
+- contracts/events.md: appended "AI Guardrail Telemetry Events (spec 35)" section
+  with 4 events: Ai.GuardrailChecked, Ai.GroundingBlocked, Ai.HopBlocked, Ai.ArRejected
+  (all auditTrail: false)
+- services/eventing/src/audit-trail-registry.ts: appended 4 entries (all false)
+  with entityId: '' per design §9.1
+
+## Evidence: parity test
+Command: npx vitest run services/eventing
+Exit code: 0
+Result: 4/4 parity assertions pass:
+  ✓ every registry key appears in contracts/events.md trail designation tables
+  ✓ every trail designation row in contracts/events.md has a registry entry
+  ✓ auditTrail values match between registry and contracts/events.md
+  ✓ rejects unregistered detailType at publish time
+
+## Evidence: full test suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 76 files passed, 803 tests passed, 0 failed

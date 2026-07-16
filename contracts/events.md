@@ -217,3 +217,12 @@ raised, evaluated) belong in the immutable audit trail.
 | `Generation.SectionFailed` | true | spec-40: deterministic checker rejected the section after retry — violations ledgered, content NOT shipped |
 | `Generation.RunCompleted` | true | spec-40: generation run terminal state (complete/partial) + section-status summary |
 | `Generation.SectionRegenerated` | true | spec-40 GEN-6: single section recomposed — new manual/clause-doc versions + refreshed master list; review state cleared (APR-1) |
+
+### AI Guardrail Telemetry Events (spec 35 — guardrails-antihallucination)
+
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `Ai.GuardrailChecked` | false | Telemetry: per-invocation guardrail check result (grounding, relevance, AR, hop) — feeds genai-observability |
+| `Ai.GroundingBlocked` | false | Telemetry: grounding check failed after retry — response replaced with honest-miss or deferred to HITL |
+| `Ai.HopBlocked` | false | Telemetry: inter-agent hop payload blocked by content/prompt-attack policy |
+| `Ai.ArRejected` | false | Telemetry: Automated Reasoning policy rejected a claim — steered-regen failed, deferred to HITL |

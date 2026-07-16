@@ -9,7 +9,7 @@
 
 ## Phase 0: Event Registration & Contracts
 
-- [ ] **Task 1 — Register Ai.* telemetry events** [KIRO] D2
+- [x] **Task 1 — Register Ai.* telemetry events** [KIRO] D2
   - Add to `contracts/events.md` (new Ai domain section):
     - `Ai.GuardrailChecked` (auditTrail: false), `Ai.GroundingBlocked` (auditTrail: false),
       `Ai.HopBlocked` (auditTrail: false), `Ai.ArRejected` (auditTrail: false)

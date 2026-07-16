@@ -113,4 +113,12 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   // spec-40 GEN-6 (regenerateSection wave) — single-section regeneration with
   // new document versions; registered same-commit as the publisher.
   'Generation.SectionRegenerated': true,
+
+  // --- Spec 35 (guardrails-antihallucination): AI guardrail telemetry events.
+  // All auditTrail:false — advisory/operational, never sealed to immutable ledger.
+  // entityId: '' consistently (invoker has no domain row ID at check time).
+  'Ai.GuardrailChecked': false,
+  'Ai.GroundingBlocked': false,
+  'Ai.HopBlocked': false,
+  'Ai.ArRejected': false,
 };
