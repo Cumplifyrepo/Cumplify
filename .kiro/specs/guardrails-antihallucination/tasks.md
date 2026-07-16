@@ -143,7 +143,7 @@
   - **Evidence:** `tsc --noEmit` clean
   - **ACC mapping:** L5-4
 
-- [ ] **Task 13 — Integrate grounding into invoke() orchestration** [KIRO] D2
+- [x] **Task 13 — Integrate grounding into invoke() orchestration** [KIRO] D2
   - After converse(): if groundingContext present → validate caps → split → checkGrounding
   - Emit Ai.GuardrailChecked per check
   - On block: retry flow; attach guardrailEvidence to response

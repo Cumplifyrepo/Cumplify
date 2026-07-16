@@ -16,8 +16,20 @@ import { checkCreditBalance } from './credit-precheck.js';
 import { assertSchemaValid } from './schema-retry.js';
 import { buildGuardrailConfig } from './guardrail.js';
 import { embed } from './embed.js';
+import {
+  runGroundingFlow,
+  emitGroundingBlockedAndHonestMiss,
+  GROUNDING_RETRY_INSTRUCTION,
+} from './grounding.js';
 import { InvokeError, SEAT_DEFAULTS } from './types.js';
-import type { InvokeRequest, InvokeResponse, TokenUsage, EmbedOp, EmbedResult } from './types.js';
+import type {
+  InvokeRequest,
+  InvokeResponse,
+  TokenUsage,
+  EmbedOp,
+  EmbedResult,
+  GuardrailEvidenceData,
+} from './types.js';
 
 const logger = new Logger({ serviceName: 'ai-invoker' });
 
@@ -43,7 +55,7 @@ export async function handler(event: InvokeRequest | EmbedOp): Promise<InvokeRes
 
 /**
  * Invoke a model through the one-door serving path.
- * Steps 1-8 per design §1.2.
+ * Steps 1-8 per design §1.2 + spec-35 grounding (§3.1).
  */
 export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   const { seat, tenantId, agent, module, feature } = request;
@@ -60,12 +72,19 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   // Load model weights for metering
   const weights = await loadWeights(modelId);
 
-  // Resolve defaults
+  // Resolve defaults + L4-5 temperature enforcement
   const defaults = SEAT_DEFAULTS[tier];
-  const temperature = request.temperature ?? defaults.temperature;
+  let temperature = request.temperature ?? defaults.temperature;
+  // L4-5: record-writing paths MUST use ≤ 0.3
+  if (feature === 'record-write' && temperature > 0.3) {
+    temperature = 0.3;
+  }
   const maxTokens = request.maxTokens ?? defaults.maxTokens;
 
-  // Step 3+4: Build params and call Converse (with optional schema-retry)
+  // L1-9/INV-3: Non-streaming invariant for record-write paths
+  // (Current invoker is non-streaming; enforced here for when streaming is introduced)
+
+  // Step 3+4: Build params and call Converse
   // Seat-routed (spec-35 §1.2): doc-composer→DocGen, record-write→RecordWrite, else→Agent
   const guardrailConfig = buildGuardrailConfig(seat, feature);
   const converseParams = {
@@ -82,9 +101,114 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
 
   let result = await converse(converseParams);
   let usage = result.usage;
+  let guardrailEvidence: GuardrailEvidenceData | undefined;
 
-  // Step 6: Schema-validate + one-retry (SERVE-10 + COND-3: Workhorse AND Editor-AI)
-  // Gate on outputSchema presence (tier-agnostic) — any seat declaring a schema gets the guard.
+  // ─── Spec-35 L1: Post-response grounding check ──────────────────────────
+  // Dormant when groundingContext absent (non-KB-grounded invocations pass through)
+  if (request.groundingContext) {
+    const groundingResult = await runGroundingFlow({
+      guardrailConfig: guardrailConfig!,
+      groundingContext: request.groundingContext,
+      responseText: result.text,
+      locale: request.locale,
+      tenantId,
+      agent,
+      module,
+    });
+
+    if (groundingResult.flagged) {
+      // L1-7: RETRY ONCE with grounding injection
+      logger.info('Grounding check failed, retrying with source injection', { seat, modelId });
+      const retryMessages = [
+        ...request.messages,
+        { role: 'assistant' as const, content: [{ text: result.text }] },
+        {
+          role: 'user' as const,
+          content: [
+            { text: `${GROUNDING_RETRY_INSTRUCTION}\n\nSource:\n${request.groundingContext.source}` },
+          ],
+        },
+      ];
+      const retryParams = { ...converseParams, messages: retryMessages };
+      const retryResult = await converse(retryParams);
+      usage = addUsage(usage, retryResult.usage);
+
+      // Re-check grounding on retry response
+      const retryGroundingResult = await runGroundingFlow({
+        guardrailConfig: guardrailConfig!,
+        groundingContext: request.groundingContext,
+        responseText: retryResult.text,
+        locale: request.locale,
+        tenantId,
+        agent,
+        module,
+      });
+
+      if (retryGroundingResult.flagged) {
+        // L1-8: Double failure → honest-miss template + event
+        const honestMissText = await emitGroundingBlockedAndHonestMiss({
+          tenantId,
+          agent,
+          module,
+          groundingScore: retryGroundingResult.groundingScore,
+          relevanceScore: retryGroundingResult.relevanceScore,
+          locale: request.locale,
+        });
+
+        // Meter consumed usage before returning honest-miss
+        const credits = computeCredits(usage, weights);
+        await incrementMeter(tenantId, credits);
+        await emitCreditsTelemetry({
+          tenantId, agent, module, feature,
+          inputTokens: usage.inputTokens,
+          outputTokens: usage.outputTokens,
+          cacheReadTokens: usage.cacheReadInputTokens,
+          creditsConsumed: credits, modelId, seat,
+        });
+
+        return {
+          text: honestMissText,
+          toolUseBlocks: [],
+          stopReason: 'grounding_blocked',
+          usage,
+          credits,
+          modelId,
+          seat,
+          guardrailEvidence: {
+            groundingScore: retryGroundingResult.groundingScore,
+            relevanceScore: retryGroundingResult.relevanceScore,
+            arVerdict: null,
+            arDetails: null,
+            citations: retryGroundingResult.citations,
+            flagged: true,
+          },
+        };
+      }
+
+      // Retry passed — use retry response, flag as evidence (passed on retry)
+      result = retryResult;
+      guardrailEvidence = {
+        groundingScore: retryGroundingResult.groundingScore,
+        relevanceScore: retryGroundingResult.relevanceScore,
+        arVerdict: null,
+        arDetails: null,
+        citations: retryGroundingResult.citations,
+        flagged: true, // grounding failed first time, passed on retry
+      };
+    } else {
+      // Grounding passed first time — attach evidence (not flagged)
+      guardrailEvidence = {
+        groundingScore: groundingResult.groundingScore,
+        relevanceScore: groundingResult.relevanceScore,
+        arVerdict: null,
+        arDetails: null,
+        citations: groundingResult.citations,
+        flagged: false,
+      };
+    }
+  }
+
+  // Step 6: Schema-validate + one-retry (SERVE-10 + COND-3)
   if (request.outputSchema) {
     try {
       assertSchemaValid(result.text, request.outputSchema, {
@@ -94,7 +218,6 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
       });
     } catch (err) {
       if (err instanceof InvokeError && err.code === 'SCHEMA_VALIDATION_ERROR') {
-        // One retry — append corrective turn (nit: helps model self-correct)
         logger.info('Schema validation failed, retrying once', { seat, modelId });
         const retryMessages = [
           ...request.messages,
@@ -119,20 +242,14 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
             attempt: 2,
           });
         } catch (retryErr) {
-          // F-1 FIX: meter consumed usage BEFORE propagating the error
           const credits = computeCredits(usage, weights);
           await incrementMeter(tenantId, credits);
           await emitCreditsTelemetry({
-            tenantId,
-            agent,
-            module,
-            feature,
+            tenantId, agent, module, feature,
             inputTokens: usage.inputTokens,
             outputTokens: usage.outputTokens,
             cacheReadTokens: usage.cacheReadInputTokens,
-            creditsConsumed: credits,
-            modelId,
-            seat,
+            creditsConsumed: credits, modelId, seat,
           });
           throw retryErr;
         }
@@ -148,22 +265,15 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
 
   // Emit telemetry (non-blocking)
   await emitCreditsTelemetry({
-    tenantId,
-    agent,
-    module,
-    feature,
+    tenantId, agent, module, feature,
     inputTokens: usage.inputTokens,
     outputTokens: usage.outputTokens,
     cacheReadTokens: usage.cacheReadInputTokens,
-    creditsConsumed: credits,
-    modelId,
-    seat,
+    creditsConsumed: credits, modelId, seat,
   });
 
   logger.info('Invocation complete', {
-    seat,
-    modelId,
-    tenantId,
+    seat, modelId, tenantId,
     inputTokens: usage.inputTokens,
     outputTokens: usage.outputTokens,
     credits: credits.toFixed(4),
@@ -178,6 +288,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
     credits,
     modelId,
     seat,
+    guardrailEvidence,
   };
 }
 

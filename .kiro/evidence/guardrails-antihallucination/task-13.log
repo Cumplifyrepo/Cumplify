@@ -1,0 +1,35 @@
+# Task 13 — Integrate grounding into invoke() orchestration
+# Executed: 2026-07-16T15:30Z
+# Base commit: 427304f
+
+## Changes
+- services/ai-invoker/src/index.ts: invoke() now integrates the full grounding flow:
+  - Imports runGroundingFlow, emitGroundingBlockedAndHonestMiss, GROUNDING_RETRY_INSTRUCTION
+  - After converse(): if groundingContext present → runGroundingFlow()
+  - On block (flagged=true): retry once with GROUNDING_RETRY_INSTRUCTION + source injection
+  - On double-fail: emitGroundingBlockedAndHonestMiss → honest-miss template returned
+  - On pass-after-retry: flagged=true in evidence (passed on second attempt)
+  - On first-pass: flagged=false with scores + citations
+  - guardrailEvidence attached to InvokeResponse
+  - L4-5: temperature capped at 0.3 for feature='record-write'
+  - Dormant when groundingContext absent (no-op path)
+- services/ai-invoker/__tests__/invoke-grounding.test.ts: NEW — 5 integration tests
+  - Dormant path (no groundingContext → no grounding check)
+  - ACC-1 path (grounding passes → evidence present, flagged=false)
+  - Retry path (block→retry→pass: flagged=true, uses retry text)
+  - ACC-2 path (double-fail → honest-miss template + Ai.GroundingBlocked event)
+  - L4-5 temperature enforcement for record-write
+
+## Evidence: integration tests
+Command: npx vitest run services/ai-invoker/__tests__/invoke-grounding.test.ts
+Exit code: 0
+Result: 5 tests passed
+
+## Evidence: TypeScript compilation
+Command: npx tsc --noEmit
+Exit code: 0
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 83 files passed, 0 failed (840 tests total)
