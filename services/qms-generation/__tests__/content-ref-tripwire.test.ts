@@ -8,20 +8,34 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { resolve, relative } from 'node:path';
-import { execSync } from 'node:child_process';
+import { readFileSync, readdirSync } from 'node:fs';
+import { resolve, relative, join } from 'node:path';
 
 const REPO_ROOT = resolve(__dirname, '../../..');
 
+// Filesystem walk instead of `git grep`: the CodeBuild source artifact carries
+// no .git directory (CodePipeline zip export), so git-based discovery aborts
+// with status 128 there. Walking the tree keeps BC-8 enforced in EVERY lane.
+const SKIP_DIRS = new Set([
+  'node_modules', '.git', 'cdk.out', 'dist', 'build', 'coverage', '.next',
+]);
+
+function walkTsFiles(dir: string): string[] {
+  const out: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!SKIP_DIRS.has(entry.name)) out.push(...walkTsFiles(join(dir, entry.name)));
+    } else if (entry.name.endsWith('.ts')) {
+      out.push(join(dir, entry.name));
+    }
+  }
+  return out;
+}
+
 function trackedFiles(pattern: string): string[] {
-  return execSync(`git grep -l ${JSON.stringify(pattern)} -- '*.ts'`, {
-    cwd: REPO_ROOT,
-    encoding: 'utf8',
-  })
-    .trim()
-    .split('\n')
-    .filter(Boolean)
+  return walkTsFiles(REPO_ROOT)
+    .filter((f) => readFileSync(f, 'utf8').includes(pattern))
+    .map((f) => relative(REPO_ROOT, f).split('\\').join('/'))
     .filter((f) => !f.includes('.test.'));
 }
 
