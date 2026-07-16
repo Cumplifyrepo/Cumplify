@@ -213,3 +213,52 @@ describe('ComposeSection', () => {
     expect(mockExecute.mock.calls.map(c => c[0] as string).some(s => s.includes('UPDATE'))).toBe(false);
   });
 });
+
+// ─── Task 12 golden-eval round-2 regression pin ──────────────────────────────
+describe('ComposeSection — terminal invoker error resilience (eval-09 8.3 class)', () => {
+  it('AI-invoker hard error → section FAILED + committed, handler does NOT throw (run survives to PARTIAL)', async () => {
+    mockExecute
+      .mockResolvedValueOnce({
+        records: [[{ stringValue: 'pending' }, { arrayValue: { stringValues: ['44444444-4444-4444-8444-444444444444'] } }]],
+        columnMetadata: [{ name: 'status' }, { name: 'clause_registry_ids' }],
+      })
+      .mockResolvedValueOnce({
+        records: [[{ longValue: 1 }, { stringValue: JSON.stringify({ legalName: 'Acme', designResponsibility: false, standardsInScope: ['ISO9001'] }) }]],
+        columnMetadata: [{ name: 'profile_version' }, { name: 'payload' }],
+      })
+      .mockResolvedValueOnce({
+        records: [[
+          { stringValue: '44444444-4444-4444-8444-444444444444' }, { stringValue: 'ISO9001' },
+          { stringValue: '8.3' }, { stringValue: 'Design and development' }, { stringValue: 'Design process.' },
+          { stringValue: '["org_profile.designResponsibility"]' },
+        ]],
+        columnMetadata: [
+          { name: 'id' }, { name: 'standard' }, { name: 'clause_no' },
+          { name: 'clause_title' }, { name: 'intent_paraphrase' }, { name: 'required_sources' },
+        ],
+      })
+      .mockResolvedValue(EMPTY);
+    // exact eval-09 failure shape: invoker returns FunctionError after its own schema retries
+    mockLambdaSend.mockResolvedValue({
+      FunctionError: 'Unhandled',
+      Payload: Buffer.from(JSON.stringify({
+        errorMessage: "Schema validation failed (attempt 2): Property 'sentences[1].factRefs' expected at least 1 items, got 0",
+      })),
+    });
+
+    const out = await composeHandler({
+      runId: 'run-2', tenantId: 'tenant-test', sectionId: 'sec-2', sectionKey: '8.3#ISO9001',
+    });
+
+    expect(out.status).toBe('failed');
+    const failCall = mockExecute.mock.calls.find(c => (c[0] as string).includes("status = 'failed'"))!;
+    expect(failCall).toBeDefined();
+    const errParam = (failCall[1] as Array<{ name: string; value: { stringValue: string } }>)
+      .find(p => p.name === 'err')!.value.stringValue;
+    expect(errParam).toContain('composer error: AI Invoker error');
+    expect(mockCommit).toHaveBeenCalled();
+    expect(mockPublishAuditEvent).toHaveBeenCalledWith(expect.objectContaining({
+      detailType: 'Generation.SectionFailed',
+    }));
+  });
+});

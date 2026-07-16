@@ -1,0 +1,752 @@
+{
+ "schemaVersion": 1,
+ "documentId": "429a0a2e-809f-4e4e-9caf-7a584733dee6",
+ "versionNo": 1,
+ "locale": "en",
+ "frontMatter": {
+  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+  "scope": {
+   "organization": "NimbusSoft Ltd.",
+   "standards": [
+    "ISO9001"
+   ],
+   "sites": [
+    "Austin Office, Austin, TX, US"
+   ],
+   "managementRepresentative": "Mei-Ling Chow"
+  },
+  "normativeRefs": [
+   {
+    "standard": "ISO9001",
+    "source": "https://www.iso.org/store.html"
+   }
+  ],
+  "terms": []
+ },
+ "sections": [
+  {
+   "harmonizationKey": "4.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "applicability.exclusions"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. establishes, implements, maintains, and continually improves its Quality Management System (QMS) and its interacting processes.",
+     "factRefs": [
+      "F1",
+      "F12"
+     ]
+    },
+    {
+     "text": "These processes include requirements discovery, software design and development, release management, and customer support.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization defines inputs, outputs, sequence, criteria, and process owners for each process.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Mei-Ling Chow, the management representative, oversees the QMS implementation and improvement.",
+     "factRefs": [
+      "F5"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. demonstrates top management leadership and commitment to the Quality Management System (QMS) by ensuring customer focus is maintained throughout the organization.",
+     "factRefs": [
+      "F1",
+      "F12"
+     ]
+    },
+    {
+     "text": "Under the leadership of Mei-Ling Chow, the management representative, NimbusSoft Ltd. emphasizes the importance of meeting customer needs and expectations in the Software Development industry.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F5"
+     ]
+    },
+    {
+     "text": "The organization's commitment to quality is reflected in its core processes of requirements discovery, software design and development, release management, and customer support.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "By integrating customer focus into all levels of the organization, NimbusSoft Ltd. aims to consistently deliver custom logistics-planning software and hosted route-optimization APIs that meet and exceed customer expectations.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. assigns and communicates the responsibilities and authorities for roles relevant to the quality management system.",
+     "factRefs": [
+      "F1",
+      "F12"
+     ]
+    },
+    {
+     "text": "The organization ensures that all employees understand their roles within the quality management system.",
+     "factRefs": [
+      "F4"
+     ]
+    },
+    {
+     "text": "Mei-Ling Chow, the management representative, oversees the implementation and maintenance of the quality management system.",
+     "factRefs": [
+      "F5"
+     ]
+    },
+    {
+     "text": "Responsibilities and authorities are clearly defined for processes such as requirements discovery, software design and development, release management, and customer support.",
+     "factRefs": [
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "6.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. determines and provides the necessary resources for its Quality Management System (QMS), encompassing people, infrastructure, and the process environment.",
+     "factRefs": [
+      "F1",
+      "F4",
+      "F7",
+      "F13"
+     ]
+    },
+    {
+     "text": "These resources include monitoring and measuring tools with calibration and traceability, ensuring the quality of custom logistics-planning software and hosted route-optimization APIs.",
+     "factRefs": [
+      "F2",
+      "F3"
+     ]
+    },
+    {
+     "text": "Organizational knowledge is maintained and leveraged to support core processes such as requirements discovery, software design and development, release management, and customer support.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization ensures that all resources are aligned with ISO9001 standards to facilitate effective quality management.",
+     "factRefs": [
+      "F12"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. identifies and manages internal and external communications pertinent to its Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F12"
+     ]
+    },
+    {
+     "text": "The organization determines the content, timing, recipients, methods, and responsible parties for these communications.",
+     "factRefs": [
+      "F1",
+      "F12"
+     ]
+    },
+    {
+     "text": "Communications encompass interactions with employees, customers, suppliers, and other relevant external parties.",
+     "factRefs": [
+      "F4",
+      "F7",
+      "F10"
+     ]
+    },
+    {
+     "text": "Mei-Ling Chow, the management representative, oversees the communication strategy within the QMS framework.",
+     "factRefs": [
+      "F5"
+     ]
+    },
+    {
+     "text": "The organization ensures that communication processes are aligned with its core activities in software development and customer support.",
+     "factRefs": [
+      "F2",
+      "F3",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.5",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. maintains all necessary documentation as per ISO9001 standards, ensuring each document is appropriately identified, formatted, and approved upon creation and update.",
+     "factRefs": [
+      "F1",
+      "F12"
+     ]
+    },
+    {
+     "text": "The organization controls the availability, protection, distribution, retention, and disposition of its documented information to ensure integrity and accessibility.",
+     "factRefs": [
+      "F1",
+      "F12"
+     ]
+    },
+    {
+     "text": "All documents, including the Quality Management System Manual and Internal Audit records, are managed through a documents register that currently holds 62 entries.",
+     "factRefs": [
+      "F1",
+      "F14",
+      "F15"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. plans, implements, and controls the processes required to meet the requirements for the provision of its custom logistics-planning software and hosted route-optimization APIs.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "These processes include criteria, resources, and documented information necessary for effective operational planning and control.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization ensures control of planned changes and manages outsourced processes, such as penetration testing, to maintain quality and compliance.",
+     "factRefs": [
+      "F11"
+     ]
+    },
+    {
+     "text": "By integrating these elements, NimbusSoft Ltd. aims to deliver high-quality software products and services that meet customer and regulatory requirements.",
+     "factRefs": [
+      "F2",
+      "F3",
+      "F12"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-9001#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. engages in proactive communication with its customers to ascertain the requirements for its custom logistics-planning software and hosted route-optimization APIs, ensuring all statutory and regulatory requirements are identified and met.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Before committing to any project, NimbusSoft Ltd. thoroughly reviews its capability to fulfill the specified requirements, leveraging its in-house design and development expertise and external QA partnerships.",
+     "factRefs": [
+      "F1",
+      "F8",
+      "F7"
+     ]
+    },
+    {
+     "text": "The organization maintains stringent controls over any changes to product and service requirements, ensuring that all modifications are communicated effectively to all stakeholders and integrated seamlessly into the development process.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. has established a structured design and development process for its custom logistics-planning software and hosted route-optimization APIs.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F8"
+     ]
+    },
+    {
+     "text": "This process includes clearly defined stages and controls to ensure systematic progression and quality assurance throughout the development lifecycle.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Inputs for the design and development process are meticulously defined to align with customer requirements and industry standards.",
+     "factRefs": [
+      "F10",
+      "F12"
+     ]
+    },
+    {
+     "text": "Regular reviews are conducted at critical stages to evaluate the design's adherence to specified requirements and to identify any potential issues early in the process.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Verification and validation activities are integrated into the process to confirm that the developed software meets both internal specifications and external customer expectations.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "All design and development outputs are meticulously traced back to their corresponding inputs to maintain clarity and accountability throughout the project.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Design changes are controlled through a formal change management process to ensure that modifications are documented, reviewed, and approved before implementation.",
+     "factRefs": [
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.4#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.5#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. implements production and service provision under controlled conditions to ensure consistent quality and customer satisfaction.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Identification and traceability are maintained throughout the development and delivery of custom logistics-planning software and hosted route-optimization APIs.",
+     "factRefs": [
+      "F3",
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization takes care of customer and external-provider property, ensuring that all assets and data are handled with the utmost security and confidentiality.",
+     "factRefs": [
+      "F3",
+      "F7",
+      "F10"
+     ]
+    },
+    {
+     "text": "Preservation measures are in place to protect the integrity of software products during development, testing, and deployment phases.",
+     "factRefs": [
+      "F3",
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Post-delivery activities, including customer support and maintenance, are systematically managed to address any issues and enhance customer satisfaction.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Changes to products and services are controlled through a defined process to ensure that modifications do not adversely affect quality or performance.",
+     "factRefs": [
+      "F3",
+      "F8",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.6#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.6"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "NimbusSoft Ltd. ensures that all custom logistics-planning software and hosted route-optimization APIs meet specified requirements prior to release.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "Verification processes are in place to confirm that product and service requirements have been fulfilled.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Evidence of conformity is retained, with clear traceability to the individual authorizing the release.",
+     "factRefs": [
+      "F5"
+     ]
+    },
+    {
+     "text": "This approach guarantees that only compliant products and services are delivered to customers.",
+     "factRefs": [
+      "F2",
+      "F3"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.7#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.7"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.audits"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.management_reviews"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities",
+     "register.objectives"
+    ]
+   }
+  }
+ ]
+}

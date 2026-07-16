@@ -163,3 +163,26 @@ describe('fact assembly', () => {
     expect(facts.find(f => f.source === 'register.risks[sample]')).toBeTruthy();
   });
 });
+
+// ─── Task 12 golden-eval round-1 regression pins ─────────────────────────────
+
+describe('manualExists boolean fact (golden-eval finding)', () => {
+  it('manualExists:false yields the NEGATIVE fact, never "existing quality manual"', () => {
+    const facts = buildProfileFacts({ manualExists: false });
+    const f = facts.find(x => x.source === 'org_profile.manualExists');
+    expect(f).toBeDefined();
+    expect(f!.text).toContain('does not yet have a quality manual');
+    expect(f!.text).not.toContain('existing quality manual');
+  });
+
+  it('manualExists:true yields the existing-manual fact', () => {
+    const facts = buildProfileFacts({ manualExists: true });
+    const f = facts.find(x => x.source === 'org_profile.manualExists');
+    expect(f!.text).toContain('maintains an existing quality manual');
+  });
+
+  it('manualExists absent yields no manual fact at all', () => {
+    const facts = buildProfileFacts({});
+    expect(facts.find(x => x.source === 'org_profile.manualExists')).toBeUndefined();
+  });
+});

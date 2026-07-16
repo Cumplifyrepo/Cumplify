@@ -1,0 +1,1268 @@
+{
+ "schemaVersion": 1,
+ "documentId": "fa947ad9-0632-4714-a131-25b828995239",
+ "versionNo": 1,
+ "locale": "en",
+ "frontMatter": {
+  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+  "scope": {
+   "organization": "Volt & Vane Energy Services plc",
+   "standards": [
+    "ISO9001",
+    "ISO14001",
+    "ISO45001"
+   ],
+   "sites": [
+    "Glasgow HQ, Glasgow, GB",
+    "Aberdeen Operations, Aberdeen, GB",
+    "Teesside Fabrication, Middlesbrough, GB",
+    "Warehouse & Logistics, Grangemouth, GB",
+    "Training Centre, Glasgow, GB"
+   ],
+   "managementRepresentative": "Gordon McAllister"
+  },
+  "normativeRefs": [
+   {
+    "standard": "ISO9001",
+    "source": "https://www.iso.org/store.html"
+   },
+   {
+    "standard": "ISO14001",
+    "source": "https://www.iso.org/store.html"
+   },
+   {
+    "standard": "ISO45001",
+    "source": "https://www.iso.org/store.html"
+   }
+  ],
+  "terms": []
+ },
+ "sections": [
+  {
+   "harmonizationKey": "4.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.1"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "applicability.exclusions"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.4"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.4"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc commits to establishing, implementing, maintaining, and continually improving its Environmental Management System (EMS), Occupational Health & Safety Management System (OH&S MS), and Quality Management System (QMS) to achieve the intended environmental, safety, and quality outcomes.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization will ensure that all interacting processes within these systems, including inputs, outputs, sequence, criteria, and designated process owners, are effectively managed to enhance overall performance and compliance.",
+     "factRefs": [
+      "F10",
+      "F13"
+     ]
+    },
+    {
+     "text": "This commitment extends across all operational sites and core processes, such as tendering, engineering delivery, construction operations, commissioning, operations and maintenance, and HSE management.",
+     "factRefs": [
+      "F10",
+      "F14",
+      "F15",
+      "F16",
+      "F17",
+      "F18"
+     ]
+    },
+    {
+     "text": "Gordon McAllister, the named management representative, will oversee the implementation and continual improvement of these management systems.",
+     "factRefs": [
+      "F5"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.1"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc demonstrates top management leadership and commitment to its Environmental Management System (EMS), Occupational Health and Safety Management System (OHSMS), and Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization's top management, led by Gordon McAllister, takes accountability for the effectiveness of these systems and ensures that necessary resources are available.",
+     "factRefs": [
+      "F5",
+      "F13"
+     ]
+    },
+    {
+     "text": "Volt & Vane Energy Services plc is dedicated to preventing work-related injury and ill health, protecting its 1200 employees, and maintaining a strong customer focus across all operations.",
+     "factRefs": [
+      "F4",
+      "F10",
+      "F13"
+     ]
+    },
+    {
+     "text": "This commitment is integral to the organization's core processes, which include tendering, engineering delivery, construction operations, commissioning, operations and maintenance, and HSE management.",
+     "factRefs": [
+      "F10",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.2#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc assigns and communicates the responsibilities and authorities for roles relevant to the Environmental Management System (EMS) as per ISO14001, the Occupational Health and Safety (OH&S) management system as per ISO45001, and the Quality Management System (QMS) as per ISO9001.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "These responsibilities and authorities are clearly defined and communicated across all levels of the organization to ensure effective implementation and maintenance of the respective management systems.",
+     "factRefs": [
+      "F4",
+      "F13"
+     ]
+    },
+    {
+     "text": "The management representative, Gordon McAllister, plays a pivotal role in overseeing these assignments and ensuring that all employees understand their specific responsibilities and authorities within the EMS, OH&S, and QMS frameworks.",
+     "factRefs": [
+      "F5",
+      "F13"
+     ]
+    },
+    {
+     "text": "This structured approach helps Volt & Vane Energy Services plc to consistently meet its compliance obligations and enhance its operational performance in the Energy Services industry.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.4#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.worker_consultation"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.2-aspects#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.aspects"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.2-hazards#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.hazards"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.legal_obligations"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.1"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its Environmental Management System (EMS), Occupational Health & Safety management system (OH&S), and Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "These resources encompass people, infrastructure, process environment, monitoring and measuring resources with calibration traceability, and organizational knowledge.",
+     "factRefs": [
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization, with its 1200 employees spread across multiple sites, ensures that adequate resources are allocated to support its core and outsourced processes.",
+     "factRefs": [
+      "F4",
+      "F10",
+      "F11",
+      "F14",
+      "F15",
+      "F16",
+      "F17",
+      "F18"
+     ]
+    },
+    {
+     "text": "This commitment to resource provision is essential for maintaining its existing certifications and achieving continual improvement in its management systems.",
+     "factRefs": [
+      "F12",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.4"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.4"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc establishes processes for internal and external communications relevant to its Environmental Management System (EMS), Occupational Health & Safety (OH&S) management system, and Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "These communication processes ensure that relevant information is effectively shared with all workers at all levels, as well as external stakeholders as required by compliance obligations.",
+     "factRefs": [
+      "F4",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization determines what information to communicate, the timing, the recipients, the method of communication, and the responsible communicators within the framework of its core and outsourced processes.",
+     "factRefs": [
+      "F10",
+      "F11",
+      "F13"
+     ]
+    },
+    {
+     "text": "Communication processes are designed to facilitate the exchange of information pertinent to the organization\u2019s operations in the Energy Services industry, including its tendering, engineering delivery, construction operations, commissioning, and maintenance activities.",
+     "factRefs": [
+      "F2",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.5",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.5"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.5"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc maintains the necessary documentation for its Energy Services industry operations, ensuring it is appropriately identified, formatted, and approved upon creation and update.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F4",
+      "F9",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization controls the creation and update of its documentation, ensuring its availability, protection, distribution, retention, and disposition in accordance with ISO9001, ISO14001, and ISO45001 standards.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Documented information is managed to support core processes such as tendering, engineering delivery, construction operations, commissioning, operations and maintenance, and HSE management.",
+     "factRefs": [
+      "F1",
+      "F10",
+      "F13"
+     ]
+    },
+    {
+     "text": "The documents register, which currently holds 98 entries, includes critical documents such as the Integrated Management System Manual and procedures for nonconformity and corrective action.",
+     "factRefs": [
+      "F1",
+      "F19",
+      "F20"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc plans, implements, and controls the processes required to meet the requirements for the provision of its products and services.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization determines the criteria for the processes, allocates necessary resources, and maintains documented information to ensure effective operational planning and control.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F4",
+      "F10"
+     ]
+    },
+    {
+     "text": "Planned changes and outsourced processes, such as geotechnical surveys and heavy haulage, are carefully managed to maintain quality and compliance with ISO9001 standards.",
+     "factRefs": [
+      "F1",
+      "F11",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization's approach to operational planning and control is integrated within its existing quality manual and is overseen by the management representative, Gordon McAllister.",
+     "factRefs": [
+      "F1",
+      "F5",
+      "F9"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc establishes, implements, and controls processes to meet environmental management system requirements, applying a lifecycle perspective and operational controls for significant environmental aspects.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization ensures that planned changes are controlled and that outsourced processes, such as geotechnical surveys and heavy haulage, are either controlled or influenced to align with environmental objectives.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "This approach is integrated into core processes including tendering, engineering delivery, construction operations, commissioning, operations and maintenance, and HSE management.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-9001#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc communicates with customers to determine the requirements for products and services, including statutory and regulatory ones.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization reviews its ability to meet these requirements before making any commitments.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Changes to requirements are controlled to ensure continued alignment with customer needs and regulatory compliance.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "This approach ensures that Volt & Vane Energy Services plc consistently delivers high-quality products and services in the Energy Services industry.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F8",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc plans, implements, and controls the processes required to meet the OH&S management system requirements and to implement planned actions.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10",
+      "F11",
+      "F13"
+     ]
+    },
+    {
+     "text": "Operating criteria are established and documented information is maintained to ensure the effective management of occupational health and safety.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10",
+      "F11",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization's core processes, including tendering, engineering delivery, construction operations, commissioning, operations and maintenance, and HSE management, are integrated with the OH&S management system.",
+     "factRefs": [
+      "F1",
+      "F10",
+      "F13"
+     ]
+    },
+    {
+     "text": "Outsourced processes such as geotechnical surveys and heavy haulage are also considered within the scope of operational planning and control.",
+     "factRefs": [
+      "F1",
+      "F11",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-emergency",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "8.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.emergency_preparedness"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc has established a design and development process to ensure the quality and effectiveness of its products and services.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F8"
+     ]
+    },
+    {
+     "text": "This process includes planned stages and controls to manage the design and development activities efficiently.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Defined inputs are utilized at each stage to ensure clarity and consistency in the design process.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Regular reviews are conducted to assess the progress and quality of the design and development work.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Verification and validation activities are performed to confirm that the design meets the specified requirements and functions as intended.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Outputs are meticulously traced back to their corresponding inputs to maintain transparency and accountability throughout the process.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    },
+    {
+     "text": "Any changes to the design are controlled and documented to ensure that they do not adversely affect the quality or performance of the final product or service.",
+     "factRefs": [
+      "F8",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.hazards"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.4#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.1.3#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.5#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc ensures that all production and service provision activities are conducted under controlled conditions.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization maintains robust identification and traceability systems throughout its construction, commissioning, and O&M processes.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Care for customer and external-provider property is meticulously observed during all phases of project execution.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Preservation of products and services is ensured through stringent quality control measures and regular audits.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Post-delivery activities, including maintenance and support services, are systematically managed to ensure ongoing customer satisfaction.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Any changes to production and service provision processes are carefully controlled and documented to maintain quality standards.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "9.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.2"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.audits"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.1.4#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.6#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.6"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Volt & Vane Energy Services plc ensures that all product and service requirements are met prior to their release.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization maintains rigorous verification processes to confirm conformity with specified requirements.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Evidence of conformity is systematically retained, with clear traceability to the individual authorizing the release.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F5"
+     ]
+    },
+    {
+     "text": "This practice is integral to the quality management system, ensuring consistent delivery of high-quality products and services.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F9",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "9.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.management_reviews"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.1"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.7#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.7"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities",
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  }
+ ]
+}

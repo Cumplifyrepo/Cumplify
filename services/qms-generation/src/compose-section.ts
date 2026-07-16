@@ -76,7 +76,9 @@ function composerMessages(
     `Rules: the organization is the subject; never use "shall"; no bullet points; no placeholders; ` +
     `state only what the numbered facts support. ` +
     `Respond with ONLY a JSON object of the form {"sentences":[{"text":"...","factRefs":["F1"]}]} — ` +
-    `every sentence must cite the facts it uses by their F-numbers. The facts follow:`;
+    `every sentence must list the F-numbers of the facts it uses in its factRefs array, and ` +
+    `factRefs must never be empty. The sentence text itself must never contain F-numbers or ` +
+    `citations like "(F1, F3)" — citations go in factRefs, prose stays clean. The facts follow:`;
 
   const factsText = facts.map(f => `${f.key}: ${f.text}`).join('\n');
 
@@ -219,16 +221,34 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
       });
 
       const factKeys = new Set(facts.map(f => f.key));
-      let response = await invokeOnce();
-      let sentences = (JSON.parse(response.text) as { sentences: ComposedSentence[] }).sentences;
-      let check = checkSection({ sentences, factKeys, orgName });
-
-      if (!check.pass) {
-        // 4. ONE retry with the checker's violations appended
-        logger.info('Checker failed — one retry', { violations: check.violations });
-        response = await invokeOnce(check.violations);
+      // Golden-eval round-2 finding (Task 12): a terminal AI-invoker error
+      // (schema retries exhausted, guardrail hard block) on ONE section must
+      // never kill the whole run — eval-09's 8.3 crashed the execution and
+      // left the run stuck 'running'. Route it into the SAME honest path as
+      // checker exhaustion: section failed, run finishes PARTIAL.
+      let response: Awaited<ReturnType<typeof invokeOnce>> | null = null;
+      let sentences: ComposedSentence[] = [];
+      let check: ReturnType<typeof checkSection>;
+      try {
+        response = await invokeOnce();
         sentences = (JSON.parse(response.text) as { sentences: ComposedSentence[] }).sentences;
         check = checkSection({ sentences, factKeys, orgName });
+
+        if (!check.pass) {
+          // 4. ONE retry with the checker's violations appended
+          logger.info('Checker failed — one retry', { violations: check.violations });
+          response = await invokeOnce(check.violations);
+          sentences = (JSON.parse(response.text) as { sentences: ComposedSentence[] }).sentences;
+          check = checkSection({ sentences, factKeys, orgName });
+        }
+      } catch (invokeErr) {
+        logger.error('Composer terminal error — marking section failed', {
+          error: (invokeErr as Error).message,
+        });
+        check = {
+          pass: false,
+          violations: [`composer error: ${(invokeErr as Error).message}`.slice(0, 500)],
+        };
       }
 
       if (!check.pass) {
@@ -293,7 +313,8 @@ export async function handler(event: ComposeInput): Promise<{ sectionId: string;
         auditPayload = {
           kind: 'prose',
           sentenceCount: sentences.length,
-          credits: response.credits,
+          // check.pass === true is only reachable after a successful invoke
+          credits: response!.credits,
           contentSha256: contentSha,
         };
       }

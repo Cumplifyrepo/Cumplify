@@ -45,6 +45,10 @@ const BANNED_FRAGMENTS = [
 const PLACEHOLDER_PATTERN = /\{\{|\bTBD\b|\bTO\s?DO\b|\[company\]|\[organization\]|\[insert\b|lorem ipsum|<[A-Z_]{2,}>/i;
 const BULLET_PATTERN = /^\s*[-*•·]\s|\n\s*[-*•·]\s/;
 const SECOND_PERSON = /\byou\b|\byour\b/i;
+// Golden-eval round-1 finding (Task 12): models sometimes echo fact citations
+// into the prose ("... as per guidelines (F1, F3)."). Citations belong in the
+// factRefs array only — inline markers would print in the controlled PDF.
+const INLINE_FACT_MARKER = /\(\s*F\d+(?:\s*,\s*F\d+)*\s*\)|\bF\d+\b(?=[,.)\s]*$)/;
 
 export function checkSection(input: CheckInput): CheckResult {
   const violations: string[] = [];
@@ -78,6 +82,9 @@ export function checkSection(input: CheckInput): CheckResult {
     }
     if (SECOND_PERSON.test(s.text)) {
       violations.push(`sentence ${i + 1}: second person — the organization is the subject, not "you"`);
+    }
+    if (INLINE_FACT_MARKER.test(s.text)) {
+      violations.push(`sentence ${i + 1}: inline fact-reference marker — citations belong in factRefs, never in the prose`);
     }
 
     // 3. Standard-text screen

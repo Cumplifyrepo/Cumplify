@@ -118,8 +118,8 @@
 
 ## Task 12 — Quality harness: golden-set eval + style validator (NFR-3, ACC-10) [ARCHITECT]
 
-- [ ] Golden set (≥10 org profiles across industries/sizes/standard mixes); eval rubric; mean ≥ 4.0/5, zero low scores.
-- [ ] House-style validator as standalone CI check over generated fixtures (no "shall"/bullets/placeholders, org-as-subject).
+- [x] Golden set (≥10 org profiles across industries/sizes/standard mixes); eval rubric; mean ≥ 4.0/5, zero low scores. → OFFICIAL (round 3, post-fix system): mean 4.530/5, 300 dim-scores, zero 1s. Three-round eval caught + fixed: facts.ts present(false) manualExists bug, inline fact-marker leak (new checker rule), invoker-error run-fatality (resilience fix). F5 named follow-up: 8.3 prose for no-design orgs without a recorded ORG-4 exclusion (owner decision).
+- [x] House-style validator as standalone CI check over generated fixtures (no "shall"/bullets/placeholders, org-as-subject). → house-style-ci.test.ts over 10 committed LIVE manuals (115 prose sections, 0 violations) + negative pins per rule + golden-eval.test.ts aggregate pin via the real model-evals rubric grader.
 
 **Depends on:** Task 5. **D-rung:** D2 (harness) → D3 (live eval run). **Evidence:** `task-12-quality.log`
 

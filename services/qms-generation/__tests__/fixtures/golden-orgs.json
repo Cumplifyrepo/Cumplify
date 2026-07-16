@@ -1,0 +1,230 @@
+{
+  "_comment": "spec-40 Task 12 golden set (NFR-3/ACC-10): 10 org profiles across industries, sizes (22-1200), and standard mixes (9001 x4, 9001+14001 x2, 9001+45001 x2, all-three x2). Profile eval-07 carries a justified 8.3 exclusion (MRO org, no design) to exercise NA-justified prose. Payloads satisfy the shared OrgProfileSchema (qms.ts).",
+  "profiles": [
+    {
+      "tenant": "tenant-eval-01",
+      "payload": {
+        "legalName": "PrecisionFab Machining LLC",
+        "sites": [
+          { "name": "Plant 1", "city": "Wichita", "state": "KS", "country": "US", "headcount": 62 },
+          { "name": "Finishing Shop", "city": "Wichita", "state": "KS", "country": "US", "headcount": 23 }
+        ],
+        "employeeCount": 85,
+        "industry": "Precision Machining",
+        "productsServices": "CNC-machined components and assemblies for agricultural and industrial equipment OEMs",
+        "coreProcesses": ["quoting and contract review", "CNC machining", "finishing and coating", "final inspection", "shipping"],
+        "designResponsibility": true,
+        "standardsInScope": ["ISO9001"],
+        "managementRep": "Dana Whitfield",
+        "yearFounded": 1998,
+        "supplyChainShape": "regional metal stock distributors plus two heat-treatment subcontractors",
+        "outsourcedProcesses": ["heat treatment", "anodizing"],
+        "existingCertifications": [],
+        "manualExists": false
+      }
+    },
+    {
+      "tenant": "tenant-eval-02",
+      "payload": {
+        "legalName": "ClearWater Environmental Services Inc.",
+        "sites": [
+          { "name": "Head Office & Lab", "city": "Tampa", "state": "FL", "country": "US", "headcount": 40 }
+        ],
+        "employeeCount": 40,
+        "industry": "Environmental Services",
+        "productsServices": "Industrial wastewater sampling, laboratory analysis, and discharge-permit compliance reporting",
+        "coreProcesses": ["client intake", "field sampling", "laboratory analysis", "compliance reporting"],
+        "designResponsibility": false,
+        "standardsInScope": ["ISO9001", "ISO14001"],
+        "managementRep": "Luis Herrera",
+        "yearFounded": 2011,
+        "supplyChainShape": "reagent and consumables suppliers; one courier network for sample logistics",
+        "existingCertifications": ["State NELAP lab accreditation"],
+        "manualExists": true
+      }
+    },
+    {
+      "tenant": "tenant-eval-03",
+      "payload": {
+        "legalName": "SteelSpan Construction Group",
+        "sites": [
+          { "name": "Head Office", "city": "Denver", "state": "CO", "country": "US", "headcount": 90 },
+          { "name": "Fabrication Yard North", "city": "Greeley", "state": "CO", "country": "US", "headcount": 130 },
+          { "name": "Equipment Depot", "city": "Pueblo", "state": "CO", "country": "US", "headcount": 100 }
+        ],
+        "employeeCount": 320,
+        "industry": "Commercial Construction",
+        "productsServices": "Structural steel erection and commercial building envelopes for mid-rise projects",
+        "coreProcesses": ["bid and estimation", "project planning", "steel fabrication", "site erection", "handover and warranty"],
+        "designResponsibility": false,
+        "standardsInScope": ["ISO9001", "ISO45001"],
+        "managementRep": "Priya Raman",
+        "yearFounded": 1987,
+        "outsourcedProcesses": ["specialty welding", "crane operations"],
+        "supplyChainShape": "national steel mills, regional fastener distributors, subcontracted trades per project",
+        "existingCertifications": ["OSHA VPP participant"],
+        "manualExists": false
+      }
+    },
+    {
+      "tenant": "tenant-eval-04",
+      "payload": {
+        "legalName": "NimbusSoft Ltd.",
+        "sites": [
+          { "name": "Austin Office", "city": "Austin", "state": "TX", "country": "US", "headcount": 22 }
+        ],
+        "employeeCount": 22,
+        "industry": "Software Development",
+        "productsServices": "Custom logistics-planning software and hosted route-optimization APIs",
+        "coreProcesses": ["requirements discovery", "software design and development", "release management", "customer support"],
+        "designResponsibility": true,
+        "standardsInScope": ["ISO9001"],
+        "managementRep": "Mei-Ling Chow",
+        "yearFounded": 2019,
+        "supplyChainShape": "cloud infrastructure providers and one offshore QA partner",
+        "outsourcedProcesses": ["penetration testing"],
+        "manualExists": false
+      }
+    },
+    {
+      "tenant": "tenant-eval-05",
+      "payload": {
+        "legalName": "Andina Logistics S.A.",
+        "sites": [
+          { "name": "Lima Hub", "city": "Lima", "country": "PE", "headcount": 210 },
+          { "name": "Callao Port Terminal", "city": "Callao", "country": "PE", "headcount": 150 },
+          { "name": "Arequipa Depot", "city": "Arequipa", "country": "PE", "headcount": 95 },
+          { "name": "Trujillo Cross-dock", "city": "Trujillo", "country": "PE", "headcount": 85 }
+        ],
+        "employeeCount": 540,
+        "industry": "Freight & Logistics",
+        "productsServices": "Contract freight, bonded warehousing, and last-mile distribution across the Andean corridor",
+        "coreProcesses": ["transport planning", "fleet operations", "warehouse operations", "customs brokerage", "customer service"],
+        "designResponsibility": false,
+        "standardsInScope": ["ISO9001", "ISO14001", "ISO45001"],
+        "managementRep": "Rodrigo Paz",
+        "yearFounded": 2003,
+        "supplyChainShape": "owned fleet plus vetted subcontracted carriers; fuel and tire national suppliers",
+        "outsourcedProcesses": ["long-haul carrier capacity", "vehicle maintenance overflow"],
+        "existingCertifications": ["BASC supply-chain security"],
+        "manualExists": true
+      }
+    },
+    {
+      "tenant": "tenant-eval-06",
+      "payload": {
+        "legalName": "FreshCrate Foods Co.",
+        "sites": [
+          { "name": "Processing Plant", "city": "Salinas", "state": "CA", "country": "US", "headcount": 110 },
+          { "name": "Cold Storage & Dispatch", "city": "Salinas", "state": "CA", "country": "US", "headcount": 40 }
+        ],
+        "employeeCount": 150,
+        "industry": "Food Processing",
+        "productsServices": "Washed, cut, and packaged fresh produce for grocery retail private labels",
+        "coreProcesses": ["receiving and grading", "washing and cutting", "packaging", "cold-chain dispatch", "sanitation"],
+        "designResponsibility": false,
+        "standardsInScope": ["ISO9001"],
+        "managementRep": "Karen Osei",
+        "yearFounded": 2008,
+        "supplyChainShape": "contracted regional growers with seasonal spot purchases",
+        "existingCertifications": ["HACCP", "PrimusGFS"],
+        "manualExists": true
+      }
+    },
+    {
+      "tenant": "tenant-eval-07",
+      "payload": {
+        "legalName": "AeroFix MRO Services",
+        "sites": [
+          { "name": "Hangar 4, Meacham Field", "city": "Fort Worth", "state": "TX", "country": "US", "headcount": 65 }
+        ],
+        "employeeCount": 65,
+        "industry": "Aviation Maintenance",
+        "productsServices": "Airframe inspection, component repair, and line maintenance for regional turboprop operators",
+        "coreProcesses": ["work-order intake", "inspection", "repair and overhaul", "airworthiness release", "tooling calibration"],
+        "designResponsibility": false,
+        "standardsInScope": ["ISO9001"],
+        "managementRep": "Sam Okafor",
+        "yearFounded": 1995,
+        "supplyChainShape": "OEM-approved parts distributors; FAA-certificated repair-station subcontractors",
+        "outsourcedProcesses": ["NDT level-III services"],
+        "existingCertifications": ["FAA Part 145 repair station"],
+        "manualExists": true
+      },
+      "exclusion": {
+        "clauseNo": "8.3",
+        "standard": "ISO9001",
+        "justification": "AeroFix performs maintenance to OEM instructions and approved data only; it does not design or develop products or services. Clause 8.3 is excluded per ISO 9001 A.5 applicability rules."
+      }
+    },
+    {
+      "tenant": "tenant-eval-08",
+      "payload": {
+        "legalName": "GreenLoop Recycling BV",
+        "sites": [
+          { "name": "Sorting Facility", "city": "Rotterdam", "country": "NL", "headcount": 70 },
+          { "name": "Collection Fleet Base", "city": "Rotterdam", "country": "NL", "headcount": 25 }
+        ],
+        "employeeCount": 95,
+        "industry": "Waste Management & Recycling",
+        "productsServices": "Commercial waste collection, mechanical sorting, and baled recyclate sales to reprocessors",
+        "coreProcesses": ["route collection", "material sorting", "baling and grading", "recyclate sales", "residue disposal"],
+        "designResponsibility": false,
+        "standardsInScope": ["ISO9001", "ISO14001"],
+        "managementRep": "Femke de Wit",
+        "yearFounded": 2015,
+        "supplyChainShape": "municipal and commercial waste contracts inbound; commodity reprocessors outbound",
+        "existingCertifications": [],
+        "manualExists": false
+      }
+    },
+    {
+      "tenant": "tenant-eval-09",
+      "payload": {
+        "legalName": "Meridian Care Clinics",
+        "sites": [
+          { "name": "Downtown Clinic", "city": "Portland", "state": "OR", "country": "US", "headcount": 80 },
+          { "name": "Eastside Clinic", "city": "Gresham", "state": "OR", "country": "US", "headcount": 70 },
+          { "name": "Mobile Health Unit", "city": "Portland", "state": "OR", "country": "US", "headcount": 60 }
+        ],
+        "employeeCount": 210,
+        "industry": "Healthcare Services",
+        "productsServices": "Outpatient primary care, occupational health screenings, and workplace vaccination programs",
+        "coreProcesses": ["patient scheduling", "clinical care delivery", "occupational health services", "records management", "infection control"],
+        "designResponsibility": false,
+        "standardsInScope": ["ISO9001", "ISO45001"],
+        "managementRep": "Dr. Alicia Fontaine",
+        "yearFounded": 2010,
+        "supplyChainShape": "medical supply distributors and reference laboratory partners",
+        "outsourcedProcesses": ["reference laboratory testing", "medical waste disposal"],
+        "existingCertifications": ["State ambulatory clinic license"],
+        "manualExists": true
+      }
+    },
+    {
+      "tenant": "tenant-eval-10",
+      "payload": {
+        "legalName": "Volt & Vane Energy Services plc",
+        "sites": [
+          { "name": "Glasgow HQ", "city": "Glasgow", "country": "GB", "headcount": 300 },
+          { "name": "Aberdeen Operations", "city": "Aberdeen", "country": "GB", "headcount": 350 },
+          { "name": "Teesside Fabrication", "city": "Middlesbrough", "country": "GB", "headcount": 250 },
+          { "name": "Warehouse & Logistics", "city": "Grangemouth", "country": "GB", "headcount": 180 },
+          { "name": "Training Centre", "city": "Glasgow", "country": "GB", "headcount": 120 }
+        ],
+        "employeeCount": 1200,
+        "industry": "Energy Services",
+        "productsServices": "Onshore wind farm balance-of-plant construction, substation commissioning, and O&M contracts",
+        "coreProcesses": ["tendering", "engineering delivery", "construction operations", "commissioning", "operations and maintenance", "HSE management"],
+        "designResponsibility": true,
+        "standardsInScope": ["ISO9001", "ISO14001", "ISO45001"],
+        "managementRep": "Gordon McAllister",
+        "yearFounded": 1979,
+        "supplyChainShape": "framework agreements with cable, turbine, and switchgear OEMs; regional civil subcontractors",
+        "outsourcedProcesses": ["geotechnical surveys", "heavy haulage"],
+        "existingCertifications": ["Achilles UVDB verified"],
+        "manualExists": true
+      }
+    }
+  ]
+}

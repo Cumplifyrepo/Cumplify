@@ -1,0 +1,949 @@
+{
+ "schemaVersion": 1,
+ "documentId": "55713244-041e-4f1a-a5e0-5d929cfea124",
+ "versionNo": 1,
+ "locale": "en",
+ "frontMatter": {
+  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+  "scope": {
+   "organization": "GreenLoop Recycling BV",
+   "standards": [
+    "ISO9001",
+    "ISO14001"
+   ],
+   "sites": [
+    "Sorting Facility, Rotterdam, NL",
+    "Collection Fleet Base, Rotterdam, NL"
+   ],
+   "managementRepresentative": "Femke de Wit"
+  },
+  "normativeRefs": [
+   {
+    "standard": "ISO9001",
+    "source": "https://www.iso.org/store.html"
+   },
+   {
+    "standard": "ISO14001",
+    "source": "https://www.iso.org/store.html"
+   }
+  ],
+  "terms": []
+ },
+ "sections": [
+  {
+   "harmonizationKey": "4.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.1"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "applicability.exclusions"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.4"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV establishes, implements, maintains, and continually improves its environmental management system (EMS) and quality management system (QMS) to achieve intended environmental and quality outcomes.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization's EMS and QMS cover core processes such as route collection, material sorting, baling and grading, recyclate sales, and residue disposal.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "These systems ensure that all interacting processes, including their inputs, outputs, sequence, criteria, and designated process owners, are effectively managed.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Continual improvement of these systems is essential to enhance both environmental performance and product quality within the Waste Management & Recycling industry.",
+     "factRefs": [
+      "F2",
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.1"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV demonstrates top management leadership and commitment to its Environmental Management System (EMS) and Quality Management System (QMS), ensuring the effectiveness of both systems.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "Top management, led by Femke de Wit, takes accountability for the effectiveness of the EMS and QMS, ensuring that necessary resources are available.",
+     "factRefs": [
+      "F5",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization maintains a strong customer focus throughout its operations, aligning with the principles of ISO9001.",
+     "factRefs": [
+      "F11"
+     ]
+    },
+    {
+     "text": "GreenLoop Recycling BV's commitment to its EMS and QMS is integral to its operations in the Waste Management & Recycling industry, ensuring high standards in commercial waste collection, mechanical sorting, and baled recyclate sales.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.2#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV assigns and communicates the responsibilities and authorities for roles relevant to both the Environmental Management System (EMS) and the Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization ensures that all employees understand their responsibilities and authorities within the QMS and EMS frameworks.",
+     "factRefs": [
+      "F4",
+      "F11"
+     ]
+    },
+    {
+     "text": "Femke de Wit, the management representative, oversees the implementation and maintenance of these systems, ensuring alignment with ISO9001 and ISO14001 standards.",
+     "factRefs": [
+      "F5",
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "6.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.2-aspects#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.aspects"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.legal_obligations"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.1"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its Environmental Management System (EMS) and Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "These resources encompass people, infrastructure, process environment, monitoring and measuring resources with calibration traceability, and organizational knowledge.",
+     "factRefs": [
+      "F4",
+      "F10",
+      "F12",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization ensures that its management systems are supported by adequate human resources, including its 95 employees, and the leadership of its management representative, Femke de Wit.",
+     "factRefs": [
+      "F4",
+      "F5"
+     ]
+    },
+    {
+     "text": "Infrastructure and process environments at the Sorting Facility and Collection Fleet Base are maintained to support core operations such as route collection, material sorting, baling, grading, recyclate sales, and residue disposal.",
+     "factRefs": [
+      "F10",
+      "F12",
+      "F13"
+     ]
+    },
+    {
+     "text": "Monitoring and measuring resources are calibrated and traceable to ensure accurate and reliable data for both management systems.",
+     "factRefs": [
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.4"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV establishes processes for internal and external communications relevant to its Environmental Management System (EMS) and Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "These processes include external communication as required by compliance obligations within the Waste Management & Recycling industry.",
+     "factRefs": [
+      "F2",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization determines the internal and external communications relevant to the QMS, specifying what to communicate, when, with whom, how, and who communicates.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "Communications are tailored to address the organization's operations, including commercial waste collection, mechanical sorting, and baled recyclate sales to reprocessors.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Femke de Wit, the named management representative, oversees the implementation and maintenance of these communication processes.",
+     "factRefs": [
+      "F5"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.5",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.5"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV maintains the necessary documentation for its Environmental Management System (EMS) and Quality Management System (QMS) in accordance with ISO14001 and ISO9001 standards.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization controls the creation and updates of all relevant documentation, ensuring appropriate identification, format, and approval.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "GreenLoop Recycling BV ensures the availability, protection, distribution, retention, and disposition of all documented information.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization's documented information, including the Integrated Management System Manual, is systematically managed and maintained in a documents register.",
+     "factRefs": [
+      "F1",
+      "F14",
+      "F15"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV plans, implements, and controls the processes necessary to meet the requirements for the provision of its products and services.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "These processes include establishing criteria, allocating resources, maintaining documented information, and managing planned changes and outsourced processes.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization ensures that its core processes, such as route collection, material sorting, baling and grading, recyclate sales, and residue disposal, are effectively managed to meet customer and regulatory requirements.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "GreenLoop Recycling BV, under the guidance of management representative Femke de Wit, oversees these operational activities to maintain compliance with ISO9001 standards.",
+     "factRefs": [
+      "F1",
+      "F5",
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV establishes, implements, and controls processes to meet environmental management system requirements, applying a lifecycle perspective and operational controls for significant environmental aspects.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization controls planned changes and ensures outsourced processes are controlled or influenced, aligning with its core operations in waste collection, sorting, and recyclate sales.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "This approach is integral to GreenLoop Recycling BV's commitment to environmental stewardship in the Waste Management & Recycling industry.",
+     "factRefs": [
+      "F2"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-9001#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV communicates with customers to determine requirements for its products and services, including statutory and regulatory ones, specific to the Waste Management & Recycling industry.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3"
+     ]
+    },
+    {
+     "text": "Before committing to any contracts for commercial waste collection, mechanical sorting, or baled recyclate sales, GreenLoop Recycling BV reviews its ability to meet the determined requirements.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization controls changes to these requirements to ensure continued compliance and customer satisfaction.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-emergency",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.emergency_preparedness"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV establishes a quality management system that includes a design and development process, despite not carrying direct design and development responsibility.",
+     "factRefs": [
+      "F1",
+      "F8",
+      "F9"
+     ]
+    },
+    {
+     "text": "The organization defines planned stages and controls within its quality management system to ensure alignment with ISO9001 requirements.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "Inputs, reviews, verification, and validation are integral components of GreenLoop Recycling BV's approach to managing its core processes.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    },
+    {
+     "text": "Outputs are meticulously traced back to their corresponding inputs to maintain clarity and accountability throughout the organization's operations.",
+     "factRefs": [
+      "F1"
+     ]
+    },
+    {
+     "text": "Design changes are controlled and documented to ensure consistency and compliance with established quality standards.",
+     "factRefs": [
+      "F1"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.4#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.5#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV implements production and service provision under controlled conditions, ensuring identification and traceability throughout its operations.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F10",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization carefully manages customer and external-provider property, preserving materials and equipment integrity during commercial waste collection, mechanical sorting, and baled recyclate sales.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F7",
+      "F10"
+     ]
+    },
+    {
+     "text": "Post-delivery activities are meticulously controlled to ensure customer satisfaction and continuous improvement in service provision.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Changes in production and service processes are systematically reviewed and controlled to maintain quality standards and operational efficiency.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F10",
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "9.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.2"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.audits"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.6#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.6"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "GreenLoop Recycling BV ensures that all product and service requirements are met prior to release.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "Verification processes are in place to confirm compliance with specified requirements for commercial waste collection, mechanical sorting, and baled recyclate sales.",
+     "factRefs": [
+      "F2",
+      "F3"
+     ]
+    },
+    {
+     "text": "Evidence of conformity is systematically retained, with traceability to the person authorizing the release.",
+     "factRefs": [
+      "F5"
+     ]
+    },
+    {
+     "text": "This approach guarantees that only compliant products and services are delivered to clients, maintaining the organization's commitment to quality.",
+     "factRefs": [
+      "F1",
+      "F7"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "9.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.management_reviews"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.1"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.7#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.7"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities",
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  }
+ ]
+}

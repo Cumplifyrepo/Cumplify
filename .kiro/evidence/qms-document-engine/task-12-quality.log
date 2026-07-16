@@ -1,0 +1,112 @@
+# Task 12 — Quality harness: golden-set eval + style validator (NFR-3, ACC-10) [ARCHITECT]
+# Evidence log — executed 2026-07-16 (UTC). D2 harness + D3 live eval runs (three rounds).
+
+## Verdict
+
+| Gate | Result |
+|------|--------|
+| NFR-3 golden-set eval (OFFICIAL, round 3, post-fix system) | **PASS — mean 4.530/5 over 300 dim-scores (60 sections × 5 dims), zero 1s** (3 twos, see F5) |
+| House-style validator (standalone CI over generated fixtures) | **PASS — 0 violations across 115 prose sections of 10 committed live manuals** + 7 negative pins |
+| Aggregation code | REUSED verbatim: model-evals `aggregateRubricScores` (mean>=4.0, zero-catastrophic) — pinned in CI by golden-eval.test.ts |
+
+## Harness
+
+- Golden set: fixtures/golden-orgs.json — 10 org profiles, 10 industries, 22–1200
+  employees, 1–5 sites, standard mixes 9001×4 / 9001+14001×2 / 9001+45001×2 /
+  all-three×2; eval-07 carries a justified ISO9001 8.3 exclusion (ORG-4 flow).
+- Pipeline: the REAL deployed path per profile — saveOrgProfile → (exclusion) →
+  generateImsManual → DocGenStateMachine → manual content JSON collected via
+  getDocumentContent. Ten synthetic tenants tenant-eval-01..10.
+- Grading protocol (model-evals blind protocol, adapted): 6 prose sections per
+  manual, deterministic seeded selection + global shuffle (seed = sha256(HEAD)
+  = 9ce994d...), sealed key committed-before-grading (round-3 key sha
+  19721945162ee0256a07f096ca67af239f3f2669b20783a1267a5b054bbe5119).
+  HONESTY NOTES: (a) grader = the architect AI (Claude), recorded in every
+  score row; owner may re-grade from the committed sheet at the ACC pass.
+  (b) single-candidate eval — there is no model identity to blind; the shuffle
+  removes order/anchoring bias only; tenant identity is inherently visible in
+  org-as-subject prose. Rubric dims (1–5): grounding, voice, clauseIntent,
+  coherence, specificity. 1 = catastrophic (fabricated obligation/gibberish).
+- Style validator: house-style-ci.test.ts — checker.ts rules run over EVERY
+  prose section of the committed live manuals (no shall / bullets /
+  placeholders / second person / banned fragments / inline fact markers /
+  org-as-subject / citation presence) + negative pins for every rule so a
+  checker regression also fails CI + gap-sections-carry-no-prose pin.
+  Scope note: factRef RESOLUTION stays a runtime/ledger check (BC-4).
+
+## Three rounds — what the harness caught (the point of the exercise)
+
+### Round 1 (system as of 9ce994d): mean 4.420, zero 1s — PASS, with findings
+- 10 runs COMPLETE, 107 prose sections, 24s median.
+- F1 REAL FACT-PIPELINE BUG: facts.ts `present(false) === true` → orgs with
+  manualExists:false were fed the fact "maintains an existing quality manual";
+  the model faithfully CITED the lie (BC-4 passed — the fact was provided).
+  4 fabrications across the corpus. Root: missing boolean ternary (the
+  designResponsibility field right above had it).
+- F2 SYSTEMIC STYLE LEAK: inline fact markers "(F1, F3)" echoed into prose —
+  10/107 sections, 35 instances — would print in customer PDFs. checker.ts had
+  no rule for it.
+- F3 minor: future-tense section (V&V 4.4), tri-standard repetition in shared
+  sections, puffery adverbs. Backlog, not blocking.
+
+### Fixes (deployed to AiStack between rounds)
+1. facts.ts: manualExists ternary (false → "does not yet have a quality
+   manual; this document establishes it"). Pinned by 3 unit tests.
+2. checker.ts: INLINE_FACT_MARKER rule — deterministic, feeds the compose
+   retry loop (runtime self-correction) AND the CI validator. Negative pin.
+3. compose prompt: citations in factRefs only, never in text.
+
+### Round 2 (interim): fabrications 4→0, markers 10→0 — and a NEW class caught
+- F4 RUN-FATALITY BUG: eval-09's 8.3 section — the model over-corrected on the
+  new prompt and returned EMPTY factRefs; ai-invoker schema validation failed
+  terminally; the error escaped ComposeSection's failure handling, KILLED the
+  whole execution (ExecutionFailed) and left the run stuck 'running'.
+  Meanwhile eval-08's 7.5 checker-exhaustion failure was handled correctly
+  (section failed, run PARTIAL) — a resilience ASYMMETRY.
+- Fixes: compose-section wraps the invoker call — terminal invoker error now
+  routes into the SAME honest path as checker exhaustion (section 'failed',
+  run finishes PARTIAL, never silently gapped, never run-fatal). Regression
+  test reproduces the exact eval-09 payload. Prompt v3 makes BOTH factRefs
+  requirements explicit. Stuck run 5d6f1cea marked 'failed' by architect
+  (rds-data, 1 row).
+
+### Round 3 (OFFICIAL — final deployed code, all 10 regenerated)
+- 9 COMPLETE + 1 PARTIAL (eval-05: 2 sections failed HONESTLY under retry
+  exhaustion — the new resilience path exercised live). No aborts, no stuck
+  runs. 115 prose sections. inline markers 0. manual-exists fabrications 0.
+- Grading: mean 4.530/5, zero 1s, three 2s → NFR-3 PASS.
+- F5 (the three 2s, named follow-up — owner-visible): orgs with
+  designResponsibility:false and NO recorded 8.3 exclusion sometimes get
+  fabricated design-process prose for 8.3 (FreshCrate/Meridian/SteelSpan this
+  round; model variance — the same orgs produced honest "does not design"
+  prose in round 1). eval-07 (recorded ORG-4 exclusion) gets clean
+  NA-JUSTIFIED by construction — the DESIGNED path works. Recommended fix is
+  product-level: wizard nudge to record the 8.3 exclusion when
+  designResponsibility=false (auto-NA would bypass ORG-4's
+  exclude-with-justification governance — owner decision, not an in-lane
+  patch). Optional prompt hardening as a cheaper mitigation.
+
+## Gate re-execution (architect, final)
+| Gate | Result |
+|------|--------|
+| tsc --noEmit | 0 errors |
+| vitest run (full hermetic suite) | 76 files (+1 skipped), 855 passed / 3 skipped — includes 26 new Task-12 tests |
+| AiStack deploys | 2 (fix waves), both exit 0 (239s, ~4min) |
+| Golden runs | 29 executions across 3 rounds (10+9+10), 18–42s each |
+| Eval cost (DDB meter, executed) | 478.44 credits across the 10 eval tenants ≈ $0.48 total |
+
+## Committed artifacts
+- fixtures/golden-orgs.json (the golden set)
+- fixtures/golden-manuals/tenant-eval-01..10.json (round-3 LIVE manuals, verbatim)
+- fixtures/golden-eval-scores.json (round-3 scores + sealed-key sha + grader identity)
+- house-style-ci.test.ts, golden-eval.test.ts (CI gates), regression pins in
+  gap-checker.test.ts + handlers.test.ts
+- Round-1 scores + grading sheets retained in session evidence (scratchpad),
+  aggregates recorded above.
+
+## Purge list additions (all synthetic, created_by=architect-golden-eval)
+- Tenants tenant-eval-01..10: qms.* rows (profiles/versions/applicability),
+  29 generation runs + sections + assertion-ledger rows, m1 documents/versions
+  (~29 manuals + clause docs + matrices + master lists ≈ 1100 doc rows),
+  S3 tenants/tenant-eval-*/ prefixes, DDB METER rows ×10, AUDITLOG partitions
+  ×10 (whole-partition purge only). Stuck-run row 5d6f1cea marked failed.

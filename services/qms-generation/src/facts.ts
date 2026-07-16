@@ -56,8 +56,14 @@ export function buildProfileFacts(profile: Record<string, unknown>): Omit<Fact, 
       ? 'The organization carries design and development responsibility.'
       : 'The organization does not carry design and development responsibility.');
   }
-  if (profile.manualExists !== undefined && present(profile.manualExists)) {
-    add('manualExists', 'The organization maintains an existing quality manual.');
+  // Boolean false is PRESENT — encode both branches (golden-eval round-1
+  // finding, Task 12: present(false)===true fed "maintains an existing quality
+  // manual" to orgs whose profile said manualExists:false; the model then
+  // faithfully cited the wrong fact). Mirrors the designResponsibility ternary.
+  if (profile.manualExists !== undefined) {
+    add('manualExists', profile.manualExists
+      ? 'The organization maintains an existing quality manual.'
+      : 'The organization does not yet have a quality manual; this document establishes it.');
   }
   if (present(profile.coreProcesses)) {
     add('coreProcesses', `Core processes: ${(profile.coreProcesses as string[]).join(', ')}.`);

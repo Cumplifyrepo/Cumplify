@@ -1,0 +1,1170 @@
+{
+ "schemaVersion": 1,
+ "documentId": "8b2769bd-a82f-42d2-9c80-efd90d644a62",
+ "versionNo": 1,
+ "locale": "en",
+ "frontMatter": {
+  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+  "scope": {
+   "organization": "Andina Logistics S.A.",
+   "standards": [
+    "ISO9001",
+    "ISO14001",
+    "ISO45001"
+   ],
+   "sites": [
+    "Lima Hub, Lima, PE",
+    "Callao Port Terminal, Callao, PE",
+    "Arequipa Depot, Arequipa, PE",
+    "Trujillo Cross-dock, Trujillo, PE"
+   ],
+   "managementRepresentative": "Rodrigo Paz"
+  },
+  "normativeRefs": [
+   {
+    "standard": "ISO9001",
+    "source": "https://www.iso.org/store.html"
+   },
+   {
+    "standard": "ISO14001",
+    "source": "https://www.iso.org/store.html"
+   },
+   {
+    "standard": "ISO45001",
+    "source": "https://www.iso.org/store.html"
+   }
+  ],
+  "terms": []
+ },
+ "sections": [
+  {
+   "harmonizationKey": "4.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.1"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "applicability.exclusions"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.4"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.4"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "4.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. establishes, implements, maintains, and continually improves its environmental, occupational health & safety, and quality management systems to achieve the intended outcomes.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization's management systems cover its core processes such as transport planning, fleet operations, warehouse operations, customs brokerage, and customer service.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Andina Logistics S.A. ensures that all interacting processes within its management systems, including inputs, outputs, sequence, criteria, and designated process owners, are effectively managed.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The continual improvement of these management systems is overseen by Rodrigo Paz, the named management representative.",
+     "factRefs": [
+      "F5"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.1"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. demonstrates top management leadership and commitment to the Environmental Management System (EMS), Quality Management System (QMS), and Occupational Health and Safety Management System (OHSMS), ensuring the effectiveness of each system and maintaining customer focus throughout the organization.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Top management, led by Rodrigo Paz, takes accountability for the effectiveness of the EMS, ensuring resources are available to achieve environmental objectives and prevent pollution.",
+     "factRefs": [
+      "F5",
+      "F13"
+     ]
+    },
+    {
+     "text": "Rodrigo Paz and the top management team take overall responsibility and accountability for the prevention of work-related injury and ill health, ensuring the protection of all 540 employees across all sites.",
+     "factRefs": [
+      "F4",
+      "F5",
+      "F13",
+      "F14",
+      "F15",
+      "F16",
+      "F17"
+     ]
+    },
+    {
+     "text": "The organization, under the leadership of Rodrigo Paz, commits to maintaining a customer-focused approach within the QMS, ensuring that customer requirements and satisfaction are paramount in all operations.",
+     "factRefs": [
+      "F5",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.2#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "5.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. assigns and communicates the responsibilities and authorities for roles relevant to the Environmental Management System (EMS), Occupational Health & Safety management system (OH&S MS), and Quality Management System (QMS) at all levels of the organization.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Rodrigo Paz, the named management representative, ensures that the responsibilities and authorities for roles relevant to the QMS are assigned, communicated, and understood across the organization.",
+     "factRefs": [
+      "F5",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization, operating in the Freight & Logistics industry, maintains clear delineation of roles and responsibilities to ensure effective management of its EMS, OH&S MS, and QMS.",
+     "factRefs": [
+      "F2",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.4#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.worker_consultation"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.2-aspects#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.aspects"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.2-hazards#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.hazards"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "6.1.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.legal_obligations"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.1"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its Environmental Management System, Occupational Health & Safety management system, and Quality Management System.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Resources include people, infrastructure, process environment, monitoring and measuring resources with calibration traceability, and organizational knowledge.",
+     "factRefs": [
+      "F4",
+      "F9",
+      "F10",
+      "F11",
+      "F14",
+      "F15",
+      "F16",
+      "F17"
+     ]
+    },
+    {
+     "text": "The organization ensures that these resources are adequate for the Freight & Logistics industry, specifically for contract freight, bonded warehousing, and last-mile distribution across the Andean corridor.",
+     "factRefs": [
+      "F2",
+      "F3"
+     ]
+    },
+    {
+     "text": "The management representative, Rodrigo Paz, oversees the allocation and utilization of these resources to support the core and outsourced processes.",
+     "factRefs": [
+      "F5",
+      "F10",
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.2"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.3"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.4"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.4"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. establishes processes for internal and external communications relevant to its Environmental Management System (EMS), Occupational Health & Safety (OH&S) management system, and Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "These communication processes include external communication as required by compliance obligations, ensuring adherence to legal and regulatory requirements.",
+     "factRefs": [
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization ensures communication with workers at all levels, fostering a culture of safety and quality throughout its operations.",
+     "factRefs": [
+      "F4",
+      "F13"
+     ]
+    },
+    {
+     "text": "Andina Logistics S.A. determines the internal and external communications relevant to its QMS, specifying what to communicate, when, with whom, how, and who communicates.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "These communication processes are integral to the organization's commitment to maintaining high standards in its freight and logistics services.",
+     "factRefs": [
+      "F2",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.5",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.5"
+    },
+    {
+     "standard": "ISO14001",
+     "clauseNo": "7.5"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. maintains the necessary documentation for its Environmental Management System (EMS), Occupational Health & Safety Management System (OH&S), and Quality Management System (QMS).",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization controls the creation and updates of this documentation, ensuring its appropriate identification, format, and approval.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Andina Logistics S.A. ensures the availability, protection, distribution, retention, and disposition of all relevant documentation.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The documents register, which currently holds 98 entries, includes critical documents such as the Integrated Management System Manual and procedures for nonconformity and corrective action.",
+     "factRefs": [
+      "F1",
+      "F18",
+      "F19"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. plans, implements, and controls the processes necessary to meet the requirements for the provision of its products and services.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "These processes include transport planning, fleet operations, warehouse operations, customs brokerage, and customer service.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization ensures that criteria, resources, and documented information are adequately managed to support these processes.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Andina Logistics S.A. maintains control over planned changes and outsourced processes, such as long-haul carrier capacity and vehicle maintenance overflow, to ensure consistent quality and compliance.",
+     "factRefs": [
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization's approach is documented within its existing quality manual, which aligns with ISO9001 standards.",
+     "factRefs": [
+      "F9",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. establishes, implements, and controls the processes needed to meet the Environmental Management System (EMS) requirements, applying a lifecycle perspective and operational controls for significant environmental aspects.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F7",
+      "F10",
+      "F11",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization ensures that planned changes are controlled and that outsourced processes, such as long-haul carrier capacity and vehicle maintenance overflow, are either controlled or influenced to align with EMS requirements.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "This approach is consistently applied across all core processes including transport planning, fleet operations, warehouse operations, customs brokerage, and customer service.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization's operational sites, including Lima Hub, Callao Port Terminal, Arequipa Depot, and Trujillo Cross-dock, are integrated into this controlled framework to ensure environmental compliance and performance.",
+     "factRefs": [
+      "F1",
+      "F14",
+      "F15",
+      "F16",
+      "F17"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-9001#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. engages in open communication with its customers to ascertain the requirements for its products and services, which include contract freight, bonded warehousing, and last-mile distribution.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization meticulously reviews its capability to meet these requirements, including any statutory and regulatory obligations, prior to making any commitments.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "Changes to customer requirements are systematically controlled to ensure ongoing compliance and service quality.",
+     "factRefs": [
+      "F1"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. plans, implements, and controls the processes required to meet the OH&S management system requirements across its operations.",
+     "factRefs": [
+      "F1",
+      "F2",
+      "F3",
+      "F4",
+      "F10",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization establishes operating criteria for its core processes, including transport planning, fleet operations, warehouse operations, customs brokerage, and customer service.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "Documented information is maintained to ensure the effective implementation of planned actions and adherence to OH&S requirements.",
+     "factRefs": [
+      "F9",
+      "F13"
+     ]
+    },
+    {
+     "text": "Operational planning and control extend to all sites, including Lima Hub, Callao Port Terminal, Arequipa Depot, and Trujillo Cross-dock, to ensure consistent OH&S performance.",
+     "factRefs": [
+      "F14",
+      "F15",
+      "F16",
+      "F17"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-emergency",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "8.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.emergency_preparedness"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.3"
+    }
+   ],
+   "kind": "failed",
+   "failed": true
+  },
+  {
+   "harmonizationKey": "8.1.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.hazards"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.4#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.1.3#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.5#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "Andina Logistics S.A. ensures that all production and service provision activities are conducted under controlled conditions.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "The organization maintains rigorous identification and traceability systems for all products and services offered.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Care for customer and external-provider property is a priority, ensuring that all entrusted goods are handled with the utmost attention and security.",
+     "factRefs": [
+      "F3",
+      "F7",
+      "F10"
+     ]
+    },
+    {
+     "text": "Preservation of products and services is meticulously managed throughout the supply chain to maintain quality and integrity.",
+     "factRefs": [
+      "F3",
+      "F7",
+      "F10"
+     ]
+    },
+    {
+     "text": "Post-delivery activities are systematically conducted to ensure customer satisfaction and address any concerns promptly.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Any changes to production and service provision processes are carefully controlled to maintain consistency and quality.",
+     "factRefs": [
+      "F3",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "9.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.2"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.audits"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.1.4#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.6#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.6"
+    }
+   ],
+   "kind": "failed",
+   "failed": true
+  },
+  {
+   "harmonizationKey": "9.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "9.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.management_reviews"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.1"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.7#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.7"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO14001",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO14001",
+     "clauseNo": "10.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities",
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  }
+ ]
+}

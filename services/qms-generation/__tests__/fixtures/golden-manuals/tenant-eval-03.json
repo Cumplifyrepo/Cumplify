@@ -1,0 +1,1021 @@
+{
+ "schemaVersion": 1,
+ "documentId": "c94a2fcd-314a-49cc-9365-3d0ae4493998",
+ "versionNo": 1,
+ "locale": "en",
+ "frontMatter": {
+  "purpose": "This manual was generated from the organization\u2019s own recorded data. Where required information was absent, the affected section is shown as an explicit gap \u2014 nothing has been invented to fill it. This document is not a substitute for the official ISO standards; purchase the official texts at https://www.iso.org/store.html.",
+  "scope": {
+   "organization": "SteelSpan Construction Group",
+   "standards": [
+    "ISO9001",
+    "ISO45001"
+   ],
+   "sites": [
+    "Head Office, Denver, CO, US",
+    "Fabrication Yard North, Greeley, CO, US",
+    "Equipment Depot, Pueblo, CO, US"
+   ],
+   "managementRepresentative": "Priya Raman"
+  },
+  "normativeRefs": [
+   {
+    "standard": "ISO9001",
+    "source": "https://www.iso.org/store.html"
+   },
+   {
+    "standard": "ISO45001",
+    "source": "https://www.iso.org/store.html"
+   }
+  ],
+  "terms": []
+ },
+ "sections": [
+  {
+   "harmonizationKey": "4.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.interested_parties"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "applicability.exclusions"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "4.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "4.4"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "4.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group commits to establishing, implementing, maintaining, and continually improving its Occupational Health & Safety and Quality Management Systems in alignment with ISO45001 and ISO9001 standards.",
+     "factRefs": [
+      "F1",
+      "F12",
+      "F13"
+     ]
+    },
+    {
+     "text": "These systems will encompass all core processes such as bid and estimation, project planning, steel fabrication, site erection, handover, and warranty, ensuring comprehensive coverage of the organization's operations.",
+     "factRefs": [
+      "F10"
+     ]
+    },
+    {
+     "text": "The management representative, Priya Raman, will oversee the integration and improvement of these systems, ensuring that all processes, including those that are outsourced like specialty welding and crane operations, adhere to the established standards.",
+     "factRefs": [
+      "F5",
+      "F11"
+     ]
+    },
+    {
+     "text": "This commitment extends across all operational sites including the Head Office in Denver, Fabrication Yard North in Greeley, and Equipment Depot in Pueblo, ensuring a uniform approach to quality and safety management.",
+     "factRefs": [
+      "F14",
+      "F15",
+      "F16"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group demonstrates top management leadership and commitment to the prevention of work-related injury and ill health, ensuring the protection of its 320 workers across all sites.",
+     "factRefs": [
+      "F1",
+      "F4"
+     ]
+    },
+    {
+     "text": "Priya Raman, as the named management representative, takes overall responsibility and accountability for maintaining a strong focus on occupational health and safety within the organization.",
+     "factRefs": [
+      "F5"
+     ]
+    },
+    {
+     "text": "SteelSpan Construction Group, under the leadership of Priya Raman, commits to the Quality Management System (QMS) and ensures that customer focus is maintained throughout the organization, aligning with ISO9001 standards.",
+     "factRefs": [
+      "F1",
+      "F5",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization's commitment to both ISO45001 and ISO9001 standards underscores its dedication to excellence in occupational health and safety, as well as quality management, fostering a culture of continuous improvement and customer satisfaction.",
+     "factRefs": [
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.policies"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "5.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "5.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group assigns and communicates the responsibilities and authorities for roles relevant to the OH&S management system and QMS at all levels of the organization.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization ensures that all employees understand their roles and responsibilities within the QMS and OH&S management system.",
+     "factRefs": [
+      "F4",
+      "F9",
+      "F13"
+     ]
+    },
+    {
+     "text": "Priya Raman, the named management representative, oversees the implementation and maintenance of these systems across all sites.",
+     "factRefs": [
+      "F5",
+      "F13",
+      "F14",
+      "F15",
+      "F16"
+     ]
+    },
+    {
+     "text": "The organization's commitment to clear role definition supports its operational excellence in the Commercial Construction industry.",
+     "factRefs": [
+      "F2",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "5.4#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "5.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.worker_consultation"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.risks"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.2-hazards#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.hazards"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "6.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "6.1.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "6.1.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.legal_obligations"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.1"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group determines and provides the necessary resources for the establishment, implementation, maintenance, and continual improvement of its OH&S and QMS.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Resources include people, infrastructure, process environment, monitoring and measuring resources with calibration traceability, and organizational knowledge.",
+     "factRefs": [
+      "F4",
+      "F14",
+      "F15",
+      "F16"
+     ]
+    },
+    {
+     "text": "The organization ensures that these resources are adequate for its structural steel erection and commercial building envelope services in the Commercial Construction industry.",
+     "factRefs": [
+      "F2",
+      "F3"
+     ]
+    },
+    {
+     "text": "Priya Raman, the management representative, oversees the allocation and management of these resources across all sites and core processes.",
+     "factRefs": [
+      "F5",
+      "F10",
+      "F14",
+      "F15",
+      "F16"
+     ]
+    },
+    {
+     "text": "The organization, founded in 1987, leverages its national supply chain and regional distributors to support its resource needs.",
+     "factRefs": [
+      "F6",
+      "F7"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.2"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.competence"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "7.4",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.4"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.4"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group establishes processes for internal and external communications relevant to its OH&S and QMS, ensuring alignment with ISO45001 and ISO9001 standards.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Communication processes are designed to facilitate the exchange of information pertinent to quality and occupational health and safety across all levels of the organization.",
+     "factRefs": [
+      "F4"
+     ]
+    },
+    {
+     "text": "These processes specify what information is to be communicated, the timing, the intended recipients, the method of communication, and the responsible parties.",
+     "factRefs": [
+      "F5"
+     ]
+    },
+    {
+     "text": "Internal communications ensure that workers at all levels, from site personnel to management, are informed about safety protocols, quality standards, and operational changes.",
+     "factRefs": [
+      "F14",
+      "F15",
+      "F16"
+     ]
+    },
+    {
+     "text": "External communications are tailored to engage with clients, suppliers, and regulatory bodies, ensuring that all stakeholders are kept informed about the organization\u2019s commitments to quality and safety.",
+     "factRefs": [
+      "F7",
+      "F12"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "7.5",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "7.5"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "7.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group maintains the necessary documentation for its OH&S and QMS systems, ensuring proper creation, updates, and control over availability, protection, distribution, retention, and disposition.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization identifies, formats, and approves all documentation upon creation and update, in line with ISO9001 requirements.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "Documented information is systematically managed to ensure it remains accessible, safeguarded, and appropriately distributed across the organization.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "SteelSpan Construction Group controls the retention and disposition of all documented information to maintain compliance with ISO45001 and ISO9001 standards.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group plans, implements, and controls its processes to meet the requirements for providing structural steel erection and commercial building envelopes for mid-rise projects.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization ensures that criteria, resources, and documented information are in place to support these processes.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "SteelSpan Construction Group manages planned changes and controls outsourced processes such as specialty welding and crane operations to maintain quality and compliance.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    },
+    {
+     "text": "The organization's approach to operational planning and control is integral to its core processes including bid and estimation, project planning, steel fabrication, site erection, handover, and warranty.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-9001#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group communicates with customers to determine the requirements for its structural steel erection and commercial building envelope services, including statutory and regulatory requirements.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization reviews its ability to meet these requirements before committing to any project.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Changes to requirements are controlled to ensure continued alignment with customer needs and regulatory compliance.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group plans, implements, and controls the processes required to meet the OH&S management system requirements.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "The organization establishes operating criteria and maintains documented information to ensure compliance with these requirements.",
+     "factRefs": [
+      "F1",
+      "F13"
+     ]
+    },
+    {
+     "text": "These processes are integral to the core operations of bid and estimation, project planning, steel fabrication, site erection, handover, and warranty.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    },
+    {
+     "text": "Additionally, the organization ensures that outsourced processes like specialty welding and crane operations are also aligned with the OH&S management system requirements.",
+     "factRefs": [
+      "F1",
+      "F11"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.3#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.3"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group has established a design and development process with planned stages and controls to ensure quality in its structural steel erection and commercial building envelope services.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F8",
+      "F9"
+     ]
+    },
+    {
+     "text": "Defined inputs, reviews, verification, and validation are integral parts of the process to maintain consistency and reliability in project outcomes.",
+     "factRefs": [
+      "F3",
+      "F8",
+      "F9"
+     ]
+    },
+    {
+     "text": "Outputs are meticulously traced back to their inputs to ensure transparency and accountability throughout the development stages.",
+     "factRefs": [
+      "F3",
+      "F8",
+      "F9"
+     ]
+    },
+    {
+     "text": "Design changes are controlled to prevent deviations from the original project specifications and to maintain the integrity of the construction process.",
+     "factRefs": [
+      "F3",
+      "F8",
+      "F9"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.hazards"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.4#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.1.3#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.change_plans"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.5#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.5"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group implements production and service provision under controlled conditions, ensuring identification and traceability throughout the processes of structural steel erection and commercial building envelopes.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "The organization meticulously cares for customer and external-provider property during all stages of project execution, from fabrication to site erection.",
+     "factRefs": [
+      "F1",
+      "F3",
+      "F10"
+     ]
+    },
+    {
+     "text": "Preservation of materials and components is rigorously maintained to ensure quality and safety standards are upheld throughout the construction process.",
+     "factRefs": [
+      "F1",
+      "F5",
+      "F10"
+     ]
+    },
+    {
+     "text": "Post-delivery activities, including handover and warranty services, are conducted with precision to ensure customer satisfaction and compliance with contractual agreements.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    },
+    {
+     "text": "Any changes to production and service provision are controlled and documented to prevent adverse effects on the quality of the final product.",
+     "factRefs": [
+      "F1",
+      "F10"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.1.4#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.1.4"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.suppliers"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.6#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.6"
+    }
+   ],
+   "kind": "prose",
+   "sentences": [
+    {
+     "text": "SteelSpan Construction Group ensures that all structural steel erection and commercial building envelope services meet specified requirements prior to release.",
+     "factRefs": [
+      "F1",
+      "F3"
+     ]
+    },
+    {
+     "text": "Verification processes are in place to confirm that product and service requirements have been fulfilled, with documented evidence maintained for traceability.",
+     "factRefs": [
+      "F3"
+     ]
+    },
+    {
+     "text": "The person authorizing the release of products and services is identified and recorded, ensuring accountability and conformity with quality standards.",
+     "factRefs": [
+      "F5"
+     ]
+    }
+   ]
+  },
+  {
+   "harmonizationKey": "8.2-emergency",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "8.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.emergency_preparedness"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "8.7#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "8.7"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.1#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.objectives"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.2",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.2"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.audits"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "9.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "9.3"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "9.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.management_reviews"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.1",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.1"
+    },
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.1"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO45001",
+   "clauseRefs": [
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.2#ISO9001",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.2"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities"
+    ]
+   }
+  },
+  {
+   "harmonizationKey": "10.3",
+   "clauseRefs": [
+    {
+     "standard": "ISO9001",
+     "clauseNo": "10.3"
+    },
+    {
+     "standard": "ISO45001",
+     "clauseNo": "10.3"
+    }
+   ],
+   "kind": "gap",
+   "gap": {
+    "missingSources": [
+     "register.nonconformities",
+     "register.objectives"
+    ]
+   }
+  }
+ ]
+}
