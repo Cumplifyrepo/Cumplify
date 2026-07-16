@@ -34,6 +34,15 @@ export interface StoreTokenInput {
     agentName: string;
     proposedAction: { tool: string; args: unknown };
     createdAt: string;
+    /** L5-1: guardrail evidence from the invoker response (grounding/AR scores + citations) */
+    guardrailEvidence?: {
+      groundingScore: number | null;
+      relevanceScore: number | null;
+      arVerdict: 'pass' | 'fail' | null;
+      arDetails: string | null;
+      citations: Array<{ clauseRef: string; sourceChunk: string; score: number }>;
+      flagged: boolean;
+    };
   };
 }
 
@@ -47,7 +56,7 @@ export interface StoreTokenInput {
  */
 export async function handler(event: StoreTokenInput): Promise<{ stored: true }> {
   const { taskToken, sfnExecutionArn } = event;
-  const { tenantId, hitlItemId, agentName, proposedAction, createdAt } = event.input;
+  const { tenantId, hitlItemId, agentName, proposedAction, createdAt, guardrailEvidence } = event.input;
 
   logger.info('Creating/updating HITL item with task token', {
     tenantId,
@@ -58,6 +67,41 @@ export async function handler(event: StoreTokenInput): Promise<{ stored: true }>
 
   const now = new Date().toISOString();
 
+  // Build UpdateExpression parts — guardrailEvidence is conditional
+  const updateParts = [
+    'SET itemType = :itemType',
+    'agentName = :agentName',
+    'proposedAction = :proposedAction',
+    'createdAt = :createdAt',
+    '#status = :status',
+    'taskToken = :taskToken',
+    'tokenStoredAt = :tokenStoredAt',
+    // GSI9: sparse projection for frontend pending-approvals query (D-2)
+    'GSI9PK = :gsi9pk',
+    'GSI9SK = :gsi9sk',
+    // HITL-10: store SFN execution ARN for tracing/audit (if_not_exists preserves on retry)
+    'sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)',
+  ];
+
+  const attrValues: Record<string, unknown> = {
+    ':itemType': 'HITL_PENDING',
+    ':agentName': agentName,
+    ':proposedAction': proposedAction,
+    ':createdAt': createdAt,
+    ':status': 'PENDING',
+    ':taskToken': taskToken,
+    ':tokenStoredAt': now,
+    ':gsi9pk': `TENANT#${tenantId}#HITL_PENDING`,
+    ':gsi9sk': createdAt,
+    ':sfnArn': sfnExecutionArn ?? 'unknown',
+  };
+
+  // L5-1: attach guardrailEvidence when present
+  if (guardrailEvidence) {
+    updateParts.push('guardrailEvidence = :evidence');
+    attrValues[':evidence'] = guardrailEvidence;
+  }
+
   await ddb.send(
     new UpdateItemCommand({
       TableName: TABLE_NAME,
@@ -65,37 +109,11 @@ export async function handler(event: StoreTokenInput): Promise<{ stored: true }>
         PK: `TENANT#${tenantId}#HITL`,
         SK: `PENDING#${hitlItemId}`,
       }),
-      // Native upsert: SET creates the item if it doesn't exist, updates if it does.
-      // No ConditionExpression — idempotent on re-delivery (SFN retry).
-      UpdateExpression: [
-        'SET itemType = :itemType',
-        'agentName = :agentName',
-        'proposedAction = :proposedAction',
-        'createdAt = :createdAt',
-        '#status = :status',
-        'taskToken = :taskToken',
-        'tokenStoredAt = :tokenStoredAt',
-        // GSI9: sparse projection for frontend pending-approvals query (D-2)
-        'GSI9PK = :gsi9pk',
-        'GSI9SK = :gsi9sk',
-        // HITL-10: store SFN execution ARN for tracing/audit (if_not_exists preserves on retry)
-        'sfnExecutionArn = if_not_exists(sfnExecutionArn, :sfnArn)',
-      ].join(', '),
+      UpdateExpression: updateParts.join(', '),
       ExpressionAttributeNames: {
         '#status': 'status',
       },
-      ExpressionAttributeValues: marshall({
-        ':itemType': 'HITL_PENDING',
-        ':agentName': agentName,
-        ':proposedAction': proposedAction,
-        ':createdAt': createdAt,
-        ':status': 'PENDING',
-        ':taskToken': taskToken,
-        ':tokenStoredAt': now,
-        ':gsi9pk': `TENANT#${tenantId}#HITL_PENDING`,
-        ':gsi9sk': createdAt,
-        ':sfnArn': sfnExecutionArn ?? 'unknown',
-      }),
+      ExpressionAttributeValues: marshall(attrValues),
     }),
   );
 

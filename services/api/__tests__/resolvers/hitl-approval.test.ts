@@ -410,3 +410,85 @@ describe('hitl-approval resolver — justification passthrough', () => {
     expect(sfnCmd.input.cause).toBe('No reason provided');
   });
 });
+
+describe('hitl-approval resolver — L5-2 flagged justification enforcement (Task 32)', () => {
+  it('throws 400 when approving flagged item without justification', async () => {
+    // Item has guardrailEvidence.flagged = true
+    mockDdbSend.mockResolvedValueOnce({
+      Item: makeDdbItem({ guardrailEvidence: { flagged: true, groundingScore: 0.4 } }),
+    });
+    mockDdbSend.mockResolvedValueOnce({}); // conditional update
+
+    await expect(
+      handler(
+        makeEvent({
+          input: {
+            hitlItemId: 'hitl-item-123',
+            decision: 'APPROVE',
+            // justification intentionally omitted
+          },
+        }),
+      ),
+    ).rejects.toThrow(/Justification required/);
+  });
+
+  it('approves flagged item when justification is provided + stamps flaggedApproval on audit event', async () => {
+    mockDdbSend.mockResolvedValueOnce({
+      Item: makeDdbItem({ guardrailEvidence: { flagged: true, groundingScore: 0.42, relevanceScore: 0.6 } }),
+    });
+    mockDdbSend.mockResolvedValueOnce({}); // conditional update
+
+    const result = await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'APPROVE',
+          justification: 'Reviewed with domain expert — content is accurate despite low grounding score',
+        },
+      }),
+    );
+
+    expect(result.decision).toBe('APPROVE');
+    // SFN called successfully
+    expect(mockSfnSend).toHaveBeenCalledTimes(1);
+  });
+
+  it('does NOT require justification when item is NOT flagged', async () => {
+    // Item has guardrailEvidence.flagged = false
+    mockDdbSend.mockResolvedValueOnce({
+      Item: makeDdbItem({ guardrailEvidence: { flagged: false, groundingScore: 0.92 } }),
+    });
+    mockDdbSend.mockResolvedValueOnce({}); // conditional update
+
+    const result = await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'APPROVE',
+          // no justification — should be fine because not flagged
+        },
+      }),
+    );
+
+    expect(result.decision).toBe('APPROVE');
+  });
+
+  it('does NOT require justification for SEND_BACK on flagged items', async () => {
+    mockDdbSend.mockResolvedValueOnce({
+      Item: makeDdbItem({ guardrailEvidence: { flagged: true, groundingScore: 0.3 } }),
+    });
+    mockDdbSend.mockResolvedValueOnce({}); // conditional update
+
+    const result = await handler(
+      makeEvent({
+        input: {
+          hitlItemId: 'hitl-item-123',
+          decision: 'SEND_BACK',
+          // no justification needed for send-back
+        },
+      }),
+    );
+
+    expect(result.decision).toBe('SEND_BACK');
+  });
+});

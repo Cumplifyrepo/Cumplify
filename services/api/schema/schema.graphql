@@ -680,9 +680,18 @@ enum HitlDecision {
 
 type GuardrailEvidence @aws_lambda {
   groundingScore: Float
+  relevanceScore: Float
   arVerdict: String
   arDetails: String
   citations: [Citation!]
+  flagged: Boolean
+  flaggedApproval: FlaggedApproval
+}
+
+type FlaggedApproval @aws_lambda {
+  justification: String!
+  approverSub: String!
+  timestamp: AWSDateTime!
 }
 
 type Citation @aws_lambda {

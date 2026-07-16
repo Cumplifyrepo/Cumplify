@@ -1,0 +1,35 @@
+# Tasks 30-32 — Phase 8 L5 producer chain
+# Executed: 2026-07-16T23:38Z | exit 0
+
+## Task 30: Extend GuardrailEvidence GraphQL type
+- Added relevanceScore: Float, flagged: Boolean, flaggedApproval: FlaggedApproval
+- Added type FlaggedApproval @aws_lambda { justification, approverSub, timestamp }
+- Schema-guard test passes (6/6)
+
+## Task 31: L5 producer chain — guardrailEvidence → HITL item
+- store-token.ts: StoreTokenInput.input extended with guardrailEvidence? field;
+  handler conditionally writes to DDB UpdateExpression
+- hitl.ts: HitlGateInput extended with guardrailEvidence?; threaded to sfnInput
+- tool-loop.ts: passes response.guardrailEvidence to enterHitlGate on both
+  hitlTools path and dynamic requiresHitl path
+
+## Task 32: L5-2 flagged-approval justification enforcement
+- hitl-approval.ts: when guardrailEvidence.flagged=true AND decision=APPROVE,
+  justification is REQUIRED (throws 400 if missing)
+- Stamps flaggedApproval { justification, approverSub, timestamp } on the
+  Hitl.Approved audit event payload for sealed evidence
+
+## Evidence
+- tsc --noEmit: exit 0
+- npx vitest run: 987 passed / 0 failed (92 files + 1 skipped)
+
+### New tests
+store-token:
+- 'L5-1: writes guardrailEvidence to DDB when present (Task 31)' — PASS
+- 'L5-1: omits guardrailEvidence from UpdateExpression when absent' — PASS
+
+hitl-approval:
+- 'throws 400 when approving flagged item without justification' — PASS
+- 'approves flagged item when justification is provided' — PASS
+- 'does NOT require justification when item is NOT flagged' — PASS
+- 'does NOT require justification for SEND_BACK on flagged items' — PASS

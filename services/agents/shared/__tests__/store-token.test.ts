@@ -161,4 +161,49 @@ describe('store-token handler', () => {
     const vals = call.input.ExpressionAttributeValues;
     expect(vals[':sfnArn']).toBe('unknown');
   });
+
+  it('L5-1: writes guardrailEvidence to DDB when present (Task 31)', async () => {
+    const evidence = {
+      groundingScore: 0.88,
+      relevanceScore: 0.92,
+      arVerdict: null,
+      arDetails: null,
+      citations: [{ clauseRef: 'ISO 9001 4.1', sourceChunk: 'Context chunk...', score: 0.88 }],
+      flagged: true,
+    };
+
+    await handler({
+      taskToken: 'token-evidence',
+      input: {
+        tenantId: 'tenant-ev',
+        hitlItemId: '06MNO',
+        agentName: 'LeadAuditor',
+        proposedAction: { tool: 'audit-finding-write', args: { ncId: 'nc-2' } },
+        createdAt: '2026-07-16T20:00:00.000Z',
+        guardrailEvidence: evidence,
+      },
+    });
+
+    const call = mockDdbSend.mock.calls[0][0];
+    const params = call.input;
+    expect(params.UpdateExpression).toContain('guardrailEvidence = :evidence');
+    expect(params.ExpressionAttributeValues[':evidence']).toEqual(evidence);
+  });
+
+  it('L5-1: omits guardrailEvidence from UpdateExpression when absent', async () => {
+    await handler({
+      taskToken: 'token-no-evidence',
+      input: {
+        tenantId: 'tenant-noev',
+        hitlItemId: '07PQR',
+        agentName: 'CAPAGuru',
+        proposedAction: { tool: 'capa-open', args: {} },
+        createdAt: '2026-07-16T21:00:00.000Z',
+      },
+    });
+
+    const call = mockDdbSend.mock.calls[0][0];
+    expect(call.input.UpdateExpression).not.toContain('guardrailEvidence');
+    expect(call.input.ExpressionAttributeValues[':evidence']).toBeUndefined();
+  });
 });

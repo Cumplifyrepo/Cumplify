@@ -94,6 +94,21 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
     throw new ApprovalError(403, `Role '${role}' cannot approve items in module '${module}'`);
   }
 
+  // L5-2 (Task 32): If guardrailEvidence.flagged=true, approval REQUIRES justification.
+  // Flagged items had grounding issues — approver must explicitly justify the override.
+  const guardrailEvidence = item.guardrailEvidence as
+    | { flagged?: boolean; groundingScore?: number; relevanceScore?: number }
+    | undefined;
+  const isFlagged = guardrailEvidence?.flagged === true;
+
+  if (isFlagged && decision === 'APPROVE' && !justification) {
+    throw new ApprovalError(
+      400,
+      'Justification required: this item was flagged by the guardrail grounding check. ' +
+        'Provide a justification to approve.',
+    );
+  }
+
   // Step 4: Conditional UpdateItem — status to RESOLVING (AM-1 guard)
   const now = new Date().toISOString();
   try {
@@ -168,6 +183,12 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
   const standard = (item.standard as 'ISO9001' | 'ISO14001' | 'ISO45001') ?? 'ISO9001';
   const clauseRef = (item.proposedAction as Record<string, unknown>)?.tool?.toString() ?? 'unknown';
 
+  // L5-3 (Task 32): Stamp flaggedApproval on sealed event when flagged + approved
+  const flaggedApproval =
+    isFlagged && decision === 'APPROVE'
+      ? { justification: justification!, approverSub, timestamp: now }
+      : undefined;
+
   const auditEventTimestamp = new Date().toISOString();
   const auditEventId = await publishAuditEvent({
     tenantId,
@@ -185,6 +206,7 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
       justification: justification ?? null,
       editedPayload: editedPayload ?? null,
       sfnExecutionArn: sfnExecutionArn ?? null,
+      ...(flaggedApproval && { flaggedApproval }),
     },
   });
 

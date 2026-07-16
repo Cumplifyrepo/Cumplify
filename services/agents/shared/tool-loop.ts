@@ -132,6 +132,8 @@ export async function toolLoop(
             agentName: opts.agent,
             proposedAction: { tool: toolUse.name, args: toolUse.input },
             conversationState: messages,
+            // L5-1: pass guardrail evidence from invoker response to HITL card
+            guardrailEvidence: response.guardrailEvidence,
           });
 
           return {
@@ -158,6 +160,8 @@ export async function toolLoop(
             agentName: opts.agent,
             proposedAction: { tool: toolUse.name, args: toolUse.input },
             conversationState: messages,
+            // L5-1: pass guardrail evidence from invoker response to HITL card
+            guardrailEvidence: response.guardrailEvidence,
           });
 
           return {

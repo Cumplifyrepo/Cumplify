@@ -33,6 +33,15 @@ export interface HitlGateInput {
   agentName: string;
   proposedAction: { tool: string; args: unknown };
   conversationState: ConversationMessage[];
+  /** L5-1: guardrail evidence to persist on the HITL item for HITL card display */
+  guardrailEvidence?: {
+    groundingScore: number | null;
+    relevanceScore: number | null;
+    arVerdict: 'pass' | 'fail' | null;
+    arDetails: string | null;
+    citations: Array<{ clauseRef: string; sourceChunk: string; score: number }>;
+    flagged: boolean;
+  };
 }
 
 export interface HitlResult {
@@ -61,6 +70,8 @@ export async function enterHitlGate(input: HitlGateInput): Promise<HitlResult> {
     proposedAction: input.proposedAction,
     hitlItemId,
     createdAt: now,
+    // L5-1: guardrail evidence flows to store-token → DDB item → HITL card
+    ...(input.guardrailEvidence && { guardrailEvidence: input.guardrailEvidence }),
     // Conversation context truncated to stay within SFN input size (256KB).
     conversationContext: truncateConversation(input.conversationState, 200_000),
   };
