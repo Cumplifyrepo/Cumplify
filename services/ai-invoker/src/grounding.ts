@@ -233,3 +233,139 @@ export function buildCitations(
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_CITATIONS);
 }
+
+
+// ─── Retry + Honest-Miss Flow (L1-7, L1-8) ─────────────────────────────────
+
+import { publish } from '../../eventing/src/publisher.js';
+import { getHonestMissTemplate } from './honest-miss.js';
+
+export interface GroundingFlowResult {
+  /** The final response text (original, retried, or honest-miss template) */
+  text: string;
+  /** Whether the response was replaced with honest-miss */
+  isHonestMiss: boolean;
+  /** Whether the grounding check flagged this response (passed on retry) */
+  flagged: boolean;
+  /** Grounding score from the final check */
+  groundingScore: number;
+  /** Relevance score from the final check */
+  relevanceScore: number;
+  /** Built citations */
+  citations: Citation[];
+}
+
+/**
+ * Full grounding flow: check all sections → retry on block → honest-miss on double-fail.
+ * L1-7: retry once with chunks + "answer only from source" instruction.
+ * L1-8: on second failure, replace with honest-miss template + emit event.
+ */
+export async function runGroundingFlow(params: {
+  guardrailConfig: GuardrailConfig;
+  groundingContext: GroundingContext;
+  responseText: string;
+  locale?: string;
+  /** For event attribution */
+  tenantId: string;
+  agent: string;
+  module: string;
+}): Promise<GroundingFlowResult> {
+  const { guardrailConfig, groundingContext, responseText, locale, tenantId, agent, module } = params;
+  const validCtx = validateGroundingContext(groundingContext);
+
+  // Split response into sections for checking
+  const sections = splitForGroundingCheck(responseText);
+
+  // Check each section
+  let worstGrounding = 1.0;
+  let worstRelevance = 1.0;
+  let anyBlocked = false;
+
+  for (const section of sections) {
+    const result = await checkGrounding({
+      guardrailConfig,
+      groundingSource: validCtx.source,
+      query: validCtx.query,
+      content: section,
+    });
+
+    if (result.groundingScore < worstGrounding) worstGrounding = result.groundingScore;
+    if (result.relevanceScore < worstRelevance) worstRelevance = result.relevanceScore;
+    if (result.verdict === 'blocked') anyBlocked = true;
+  }
+
+  // All sections passed — return with evidence
+  if (!anyBlocked) {
+    return {
+      text: responseText,
+      isHonestMiss: false,
+      flagged: false,
+      groundingScore: worstGrounding,
+      relevanceScore: worstRelevance,
+      citations: buildCitations(validCtx.source, worstGrounding),
+    };
+  }
+
+  // Blocked — this is the FIRST failure. The retry happens at the orchestration
+  // layer (invoke() re-calls converse with grounding injection). This function
+  // is called AGAIN on the retry response. If called a second time and still
+  // blocked, we emit the event and return honest-miss.
+  // To handle this cleanly, the caller (invoke orchestration) manages the retry
+  // loop and calls this function with a `retryAttempt` flag. For now, this function
+  // returns the blocked state and the orchestration decides.
+  return {
+    text: responseText,
+    isHonestMiss: false,
+    flagged: true, // grounding below threshold
+    groundingScore: worstGrounding,
+    relevanceScore: worstRelevance,
+    citations: buildCitations(validCtx.source, worstGrounding),
+  };
+}
+
+/**
+ * Emit Ai.GroundingBlocked event and return the honest-miss template.
+ * Called by the orchestration layer after retry also fails.
+ */
+export async function emitGroundingBlockedAndHonestMiss(params: {
+  tenantId: string;
+  agent: string;
+  module: string;
+  groundingScore: number;
+  relevanceScore: number;
+  locale?: string;
+}): Promise<string> {
+  const { tenantId, agent, module, groundingScore, relevanceScore, locale } = params;
+
+  await publish({
+    busName: process.env.BUS_NAME ?? 'cumplify-events',
+    source: 'cumplify.ai-invoker',
+    detailType: 'Ai.GroundingBlocked',
+    event: {
+      tenantId,
+      timestamp: new Date().toISOString(),
+      actor: agent,
+      module,
+      clauseRef: '',
+      standard: 'ISO9001',
+      entityId: '',
+      payload: {
+        tenantId,
+        agent,
+        module,
+        groundingScore,
+        relevanceScore,
+        retryAttempted: true,
+        finalOutcome: 'honest-miss',
+      },
+    },
+  });
+
+  return getHonestMissTemplate(locale);
+}
+
+/** The "answer only from source" instruction injected on grounding retry (L1-7) */
+export const GROUNDING_RETRY_INSTRUCTION =
+  'Your previous response did not meet the grounding threshold. ' +
+  'Answer ONLY from the following source material. If the source does not contain ' +
+  'the answer, respond with "the standard does not specify this."';

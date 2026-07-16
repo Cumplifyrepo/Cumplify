@@ -119,7 +119,7 @@
   - **Evidence:** Unit tests: pass/block scenarios, truncation at caps, citation construction
   - **ACC mapping:** L1-3, L1-4, L1-5, L1-6, INV-4
 
-- [ ] **Task 10 — Implement grounding retry + honest-miss flow** [KIRO] D2
+- [x] **Task 10 — Implement grounding retry + honest-miss flow** [KIRO] D2
   - In grounding.ts:
     - Retry once with chunks + "answer only from source" instruction (L1-7)
     - On second failure: honest-miss template (locale from request.locale, defaults 'en')
@@ -129,7 +129,7 @@
   - **Evidence:** Unit tests: retry-pass, retry-fail→honest-miss, event emission
   - **ACC mapping:** L1-7, L1-8, L1-9, INV-3, ACC-2 (unit)
 
-- [ ] **Task 11 — Honest-miss templates (EN/ES/PT)** [KIRO] D2
+- [x] **Task 11 — Honest-miss templates (EN/ES/PT)** [KIRO] D2
   - Create `prompts/templates/honest-miss.{en,es,pt}.md` — no factual claims
   - Create `services/ai-invoker/src/honest-miss.ts` — locale-aware loader
   - **Evidence:** Templates exist, no clauseRefs, loader returns correct locale

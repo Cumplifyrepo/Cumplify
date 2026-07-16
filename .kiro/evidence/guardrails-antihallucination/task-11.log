@@ -1,0 +1,23 @@
+# Task 11 — Honest-miss templates (EN/ES/PT) + loader
+# Executed: 2026-07-16T15:23Z
+# Base commit: aa016c2
+
+## Changes
+- prompts/templates/honest-miss.en.md: English template (no factual claims)
+- prompts/templates/honest-miss.es.md: Spanish template (no factual claims)
+- prompts/templates/honest-miss.pt.md: Portuguese template (no factual claims)
+- services/ai-invoker/src/honest-miss.ts: getHonestMissTemplate(locale) — locale-aware
+  loader with English fallback. Locale from tenant documentLocale via InvokeRequest.locale.
+
+## Evidence: unit tests
+Command: npx vitest run services/ai-invoker/__tests__/honest-miss.test.ts
+Exit code: 0
+Result: 6 tests passed
+  ✓ returns English/Spanish/Portuguese for respective locales
+  ✓ falls back to English for undefined/unsupported locale
+  ✓ templates make NO factual claims (no clauseRef patterns)
+
+## Evidence: full services suite
+Command: npx vitest run services/
+Exit code: 0
+Result: 82 files passed, 0 failed
