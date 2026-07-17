@@ -59,6 +59,10 @@ vi.stubEnv('BUS_NAME', 'cumplify-events');
 vi.stubEnv('AWS_REGION', 'us-east-1');
 vi.stubEnv('GUARDRAIL_ID', 'agent-guardrail-id');
 vi.stubEnv('GUARDRAIL_VERSION', '1');
+vi.stubEnv('ARCLAUSE_GUARDRAIL_ID', 'ar-clause-guardrail-id');
+vi.stubEnv('ARCLAUSE_GUARDRAIL_VERSION', '1');
+vi.stubEnv('ARADVISORY_GUARDRAIL_ID', 'ar-advisory-guardrail-id');
+vi.stubEnv('ARADVISORY_GUARDRAIL_VERSION', '1');
 
 const { invoke } = await import('../src/index.js');
 
@@ -144,6 +148,11 @@ describe('ACC-1: Grounded advisory response passes (Task 33)', () => {
     ));
     // Grounding check passes (score > 0.85)
     mockConverseSend.mockResolvedValueOnce(mockGroundingPass(0.91, 0.88));
+    // AR check passes (VALID — clause 4.1 exists in clause-canon)
+    mockConverseSend.mockResolvedValueOnce({
+      action: 'NONE',
+      assessments: [{ automatedReasoningPolicy: { findings: [] } }],
+    });
 
     const response = await invoke({
       seat: 'guru-9001',
@@ -232,10 +241,148 @@ describe('ACC-2: Fabricated clause triggers honest-miss (Task 34)', () => {
 // ─── ACC-3: Invalid clause → AR reject → HITL ──────────────────────────────
 
 describe('ACC-3: Invalid clause rejected by AR (Task 35)', () => {
-  it.skip('BLOCKED: ar-check.ts not yet implemented (Tasks 27/28)', () => {
-    // This test will be implemented once Tasks 27/28 land ar-check.ts.
-    // Expected behavior: record-write with invalid clauseRef →
-    //   AR rejects → regen fails → flagged for HITL + Ai.ArRejected event.
+  it('primary path: INVALID → steered retry → retry INVALID → flagged for HITL + Ai.ArRejected', async () => {
+    // 1. Converse returns response with invalid clause citation
+    mockConverseSend.mockResolvedValueOnce(mockConverseResponse(
+      'Per ISO 9001 clause 99.9, organizations must implement blockchain audits quarterly.',
+    ));
+    // 2. Grounding check PASSES (source matches enough to pass grounding)
+    mockConverseSend.mockResolvedValueOnce(mockGroundingPass(0.88, 0.80));
+    // 3. AR check: INVALID (clause 99.9 does not exist in clause-canon)
+    mockConverseSend.mockResolvedValueOnce({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{
+        automatedReasoningPolicy: {
+          findings: [{
+            result: 'INVALID',
+            invalidClaim: 'ISO 9001 clause 99.9 exists',
+            reason: 'Clause 99.9 is not in the ISO 9001:2015 clause canon',
+            suggestedCorrection: 'Remove reference to non-existent clause',
+          }],
+        },
+      }],
+    });
+    // 4. Steered-retry converse (with AR feedback injected)
+    mockConverseSend.mockResolvedValueOnce(mockConverseResponse(
+      'Per ISO 9001 clause 99.9.1, organizations should validate all processes.',
+    ));
+    // 5. AR re-check on retry: STILL INVALID (retry also fabricates)
+    mockConverseSend.mockResolvedValueOnce({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{
+        automatedReasoningPolicy: {
+          findings: [{
+            result: 'INVALID',
+            invalidClaim: 'ISO 9001 clause 99.9.1 exists',
+            reason: 'Clause 99.9.1 is not in the ISO 9001:2015 clause canon',
+            suggestedCorrection: 'Remove reference to non-existent clause',
+          }],
+        },
+      }],
+    });
+
+    const response = await invoke({
+      seat: 'guru-9001',
+      messages: [{ role: 'user', content: [{ text: 'Tell me about clause 99.9' }] }],
+      tenantId: 'tenant-acc3',
+      agent: 'ISO9001Guru',
+      module: 'advisory',
+      feature: 'clause-qa',
+      groundingContext: {
+        source: '[ISO 9001 4.1] Context of the organization. [ISO 9001 4.2] Interested parties.',
+        query: 'Tell me about clause 99.9',
+      },
+      locale: 'en',
+      standard: 'ISO9001',
+    });
+
+    // Response returned (flagged, not replaced — AR flags for HITL, doesn't block delivery)
+    expect(response.guardrailEvidence).toBeDefined();
+    expect(response.guardrailEvidence!.flagged).toBe(true);
+    expect(response.guardrailEvidence!.arVerdict).toBe('fail');
+    expect(response.guardrailEvidence!.arDetails).toContain('clause-canon');
+
+    // Ai.ArRejected event emitted with correct payload
+    const arRejectedEvent = findEbEvent('Ai.ArRejected');
+    expect(arRejectedEvent).toBeDefined();
+    const arDetail = JSON.parse((arRejectedEvent as any)[0].input.Entries[0].Detail);
+    expect(arDetail.payload.arPolicy).toBe('clause-canon');
+    expect(arDetail.payload.retriedOnce).toBe(true);
+    expect(arDetail.payload.finalOutcome).toBe('hitl-deferred');
+
+    // Ai.GuardrailChecked emitted for AR checks (at least 2: initial + retry)
+    const checkedCalls = mockEbSend.mock.calls.filter(
+      (c: any) => (c[0] as any).input?.Entries?.[0]?.DetailType === 'Ai.GuardrailChecked',
+    );
+    expect(checkedCalls.length).toBeGreaterThanOrEqual(2);
+
+    // Usage was metered (FIX-W-1)
+    const telemetryEvent = findEbEvent('telemetry.credits.consumed');
+    expect(telemetryEvent).toBeDefined();
+  });
+
+  it('variant: TRANSLATION_AMBIGUOUS → HITL immediately (no retry)', async () => {
+    // Task-22.log finding 3: translation is nondeterministic — the live system
+    // WILL produce TRANSLATION_AMBIGUOUS for inputs that sometimes return INVALID.
+    // This variant asserts the AMBIGUOUS→HITL path fires without a retry attempt.
+
+    // 1. Converse returns response
+    mockConverseSend.mockResolvedValueOnce(mockConverseResponse(
+      'Per ISO 9001 clause 4.1, organizations must understand their context.',
+    ));
+    // 2. Grounding check PASSES
+    mockConverseSend.mockResolvedValueOnce(mockGroundingPass(0.92, 0.85));
+    // 3. AR check: TRANSLATION_AMBIGUOUS (nondeterministic translator behavior)
+    mockConverseSend.mockResolvedValueOnce({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{
+        automatedReasoningPolicy: {
+          findings: [{
+            result: 'TRANSLATION_AMBIGUOUS',
+            invalidClaim: 'ISO 9001 clause 4.1 context claim',
+            reason: 'Translation of claim into formal logic was ambiguous',
+          }],
+        },
+      }],
+    });
+    // NO retry converse call expected (AMBIGUOUS goes straight to HITL)
+
+    const response = await invoke({
+      seat: 'guru-9001',
+      messages: [{ role: 'user', content: [{ text: 'What does clause 4.1 say?' }] }],
+      tenantId: 'tenant-acc3-amb',
+      agent: 'ISO9001Guru',
+      module: 'advisory',
+      feature: 'clause-qa',
+      groundingContext: {
+        source: '[ISO 9001 4.1] Understanding the organization and its context.',
+        query: 'What does clause 4.1 say?',
+      },
+      locale: 'en',
+      standard: 'ISO9001',
+    });
+
+    // Response returned with flagged evidence
+    expect(response.guardrailEvidence).toBeDefined();
+    expect(response.guardrailEvidence!.flagged).toBe(true);
+    expect(response.guardrailEvidence!.arVerdict).toBe('fail');
+    expect(response.guardrailEvidence!.arDetails).toContain('TRANSLATION_AMBIGUOUS');
+
+    // Ai.ArRejected event emitted — finalOutcome is hitl-deferred, retriedOnce=false
+    const arRejectedEvent = findEbEvent('Ai.ArRejected');
+    expect(arRejectedEvent).toBeDefined();
+    const arDetail = JSON.parse((arRejectedEvent as any)[0].input.Entries[0].Detail);
+    expect(arDetail.payload.arPolicy).toBe('clause-canon');
+    expect(arDetail.payload.retriedOnce).toBe(false);
+    expect(arDetail.payload.finalOutcome).toBe('hitl-deferred');
+
+    // Only 1 AR ApplyGuardrail call (no retry — AMBIGUOUS goes straight to HITL)
+    // Calls: 1=converse, 2=grounding ApplyGuardrail, 3=AR ApplyGuardrail = 3 total
+    expect(mockConverseSend).toHaveBeenCalledTimes(3);
+
+    // Usage was metered (FIX-W-1)
+    const telemetryEvent = findEbEvent('telemetry.credits.consumed');
+    expect(telemetryEvent).toBeDefined();
   });
 });
 

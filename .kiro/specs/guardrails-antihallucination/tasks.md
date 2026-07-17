@@ -353,7 +353,7 @@
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-2 (D2 mocked)
 
-- [ ] **Task 35 — ACC-3: Invalid clause → AR reject → HITL (mocked)** [KIRO] D2
+- [x] **Task 35 — ACC-3: Invalid clause → AR reject → HITL (mocked)** [KIRO] D2
   - Record-write, AR rejects, regen fails → flagged for HITL + Ai.ArRejected event
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-3

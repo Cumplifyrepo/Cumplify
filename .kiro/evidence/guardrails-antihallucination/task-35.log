@@ -1,0 +1,56 @@
+# Task 35 — ACC-3: Invalid clause → AR reject → HITL (mocked)
+# Executed: 2026-07-17T08:14–08:16Z | build agent
+
+## Test file: services/ai-invoker/__tests__/acc-integration.test.ts
+
+### Tests implemented (un-skipped from BLOCKED state)
+
+1. **Primary path: INVALID → steered retry → retry INVALID → flagged for HITL + Ai.ArRejected**
+   - Converse returns response with fabricated clause 99.9
+   - Grounding passes (source matches enough)
+   - AR check: INVALID (clause 99.9 not in clause-canon)
+   - Steered retry with AR feedback injected
+   - AR re-check on retry: STILL INVALID (retry also fabricates 99.9.1)
+   - Result: response returned with guardrailEvidence.flagged=true, arVerdict='fail'
+   - Ai.ArRejected emitted: retriedOnce=true, finalOutcome='hitl-deferred'
+   - Usage metered (FIX-W-1) ✓
+
+2. **Variant: TRANSLATION_AMBIGUOUS → HITL immediately (no retry)**
+   - Task-22.log finding 3: translation is nondeterministic — the live system
+     WILL produce TRANSLATION_AMBIGUOUS for inputs that sometimes return INVALID
+   - Converse returns response with valid clause 4.1
+   - Grounding passes
+   - AR check: TRANSLATION_AMBIGUOUS (translator wobble)
+   - NO retry attempt (AMBIGUOUS goes straight to HITL — never silently pass)
+   - Result: response returned with guardrailEvidence.flagged=true
+   - Ai.ArRejected emitted: retriedOnce=false, finalOutcome='hitl-deferred'
+   - Only 3 mockConverseSend calls (converse + grounding + AR — no retry)
+   - Usage metered (FIX-W-1) ✓
+
+### AR env vars added to test setup
+- ARCLAUSE_GUARDRAIL_ID, ARCLAUSE_GUARDRAIL_VERSION
+- ARADVISORY_GUARDRAIL_ID, ARADVISORY_GUARDRAIL_VERSION
+
+### ACC-1 fix (pre-existing test)
+Added AR-pass mock response (action:'NONE', findings:[]) after grounding-pass
+mock to prevent undefined error now that AR is active on clause-qa path.
+
+## Evidence
+
+### ACC integration tests
+```
+Test Files  1 passed (1)
+     Tests  6 passed (6) — ACC-1 through ACC-5 all GREEN
+```
+
+### Full root suite
+```
+Test Files  95 passed | 1 skipped (96)
+     Tests  1030 passed | 3 skipped (1033)
+  Duration  23.55s
+```
+
+### tsc --noEmit
+```
+Exit code: 0 (clean — verified earlier in this session)
+```
