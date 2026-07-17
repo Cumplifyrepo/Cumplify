@@ -1,0 +1,260 @@
+{
+  "_meta": {
+    "spec": "guardrails-antihallucination Task 22 (L2-1, L2-4)",
+    "source": "contracts/clause-corpus-map.md (152 tuples: 68x ISO9001:2015, 38x ISO14001:2015, 46x ISO45001:2018)",
+    "generator": "deterministic (hierarchical INT clause encoding; membership+edition rules; title books as variable descriptions)",
+    "workbenchPolicyArn": "arn:aws:bedrock:us-east-1:697114252993:automated-reasoning-policy/v37kx8jyq2e0:1",
+    "definitionHash": "d6704316ec34efb42f6dce23eb0dc9dec3a9304d9cb2e25c5a28ff59869a78a3642005dbaab4abef3a94983e08308d67f9af1c4ac1a0b669d7e59369ddd89c0c",
+    "versionCreatedAt": "2026-07-17T00:28:03Z",
+    "arCheckGateMapping": {
+      "pass": [
+        "VALID",
+        "SATISFIABLE"
+      ],
+      "reject_steered_retry": [
+        "INVALID",
+        "IMPOSSIBLE"
+      ],
+      "flag_hitl": [
+        "TRANSLATION_AMBIGUOUS",
+        "NO_TRANSLATION",
+        "TOO_COMPLEX"
+      ]
+    },
+    "confidenceThreshold": 0.9
+  },
+  "policyDefinition": {
+    "version": "1",
+    "types": [
+      {
+        "name": "ISOStandard",
+        "description": "The ISO management-system standard named in a clause reference emitted by an agent.",
+        "values": [
+          {
+            "value": "ISO9001",
+            "description": "ISO 9001:2015 Quality management systems \u2014 Requirements"
+          },
+          {
+            "value": "ISO14001",
+            "description": "ISO 14001:2015 Environmental management systems \u2014 Requirements"
+          },
+          {
+            "value": "ISO45001",
+            "description": "ISO 45001:2018 Occupational health and safety management systems \u2014 Requirements"
+          }
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "id": "CANONRULE001",
+        "expression": "(= mem_iso9001_p1 (or (and (= clause_l1 4) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 2) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 2) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 4) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 5) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 5) (= clause_l4 1)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 5) (= clause_l4 2)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 6) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0))))"
+      },
+      {
+        "id": "CANONRULE002",
+        "expression": "(= mem_iso9001_p2 (or (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 2) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 2) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 2) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 2) (= clause_l3 4) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 3) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 3) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 3) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 3) (= clause_l3 4) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 3) (= clause_l3 5) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 3) (= clause_l3 6) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 4) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 4) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 4) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 5) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 5) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 5) (= clause_l3 2) (= clause_l4 0))))"
+      },
+      {
+        "id": "CANONRULE003",
+        "expression": "(= mem_iso9001_p3 (or (and (= clause_l1 8) (= clause_l2 5) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 5) (= clause_l3 4) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 5) (= clause_l3 5) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 5) (= clause_l3 6) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 6) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 7) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 3) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 3) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 3) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0))))"
+      },
+      {
+        "id": "CANONRULE004",
+        "expression": "(=> (= standard ISO9001) (or mem_iso9001_p1 mem_iso9001_p2 mem_iso9001_p3))"
+      },
+      {
+        "id": "CANONRULE005",
+        "expression": "(=> (= standard ISO9001) (= edition 2015))"
+      },
+      {
+        "id": "CANONRULE006",
+        "expression": "(= mem_iso14001_p1 (or (and (= clause_l1 4) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 4) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 2) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 2) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 2) (= clause_l4 0))))"
+      },
+      {
+        "id": "CANONRULE007",
+        "expression": "(= mem_iso14001_p2 (or (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 2) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 2) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0))))"
+      },
+      {
+        "id": "CANONRULE008",
+        "expression": "(=> (= standard ISO14001) (or mem_iso14001_p1 mem_iso14001_p2))"
+      },
+      {
+        "id": "CANONRULE009",
+        "expression": "(=> (= standard ISO14001) (= edition 2015))"
+      },
+      {
+        "id": "CANONRULE010",
+        "expression": "(= mem_iso45001_p1 (or (and (= clause_l1 4) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 4) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 5) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 2) (= clause_l4 1)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 2) (= clause_l4 2)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 2) (= clause_l4 3)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 1) (= clause_l3 4) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 2) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 6) (= clause_l2 2) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 2) (= clause_l4 0))))"
+      },
+      {
+        "id": "CANONRULE011",
+        "expression": "(= mem_iso45001_p2 (or (and (= clause_l1 7) (= clause_l2 4) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 7) (= clause_l2 5) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 3) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 4) (= clause_l4 0)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 4) (= clause_l4 1)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 4) (= clause_l4 2)) (and (= clause_l1 8) (= clause_l2 1) (= clause_l3 4) (= clause_l4 3)) (and (= clause_l1 8) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 1) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 2) (= clause_l3 1) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 2) (= clause_l3 2) (= clause_l4 0)) (and (= clause_l1 9) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 1) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 2) (= clause_l3 0) (= clause_l4 0)) (and (= clause_l1 10) (= clause_l2 3) (= clause_l3 0) (= clause_l4 0))))"
+      },
+      {
+        "id": "CANONRULE012",
+        "expression": "(=> (= standard ISO45001) (or mem_iso45001_p1 mem_iso45001_p2))"
+      },
+      {
+        "id": "CANONRULE013",
+        "expression": "(=> (= standard ISO45001) (= edition 2018))"
+      },
+      {
+        "id": "CANONRULE014",
+        "expression": "(= stated_title_matches_canonical true)"
+      },
+      {
+        "id": "CANONRULE015",
+        "expression": "(= canon_titles_iso9001_part1 true)"
+      },
+      {
+        "id": "CANONRULE016",
+        "expression": "(= canon_titles_iso9001_part2 true)"
+      },
+      {
+        "id": "CANONRULE017",
+        "expression": "(= canon_titles_iso9001_part3 true)"
+      },
+      {
+        "id": "CANONRULE018",
+        "expression": "(= canon_titles_iso9001_part4 true)"
+      },
+      {
+        "id": "CANONRULE019",
+        "expression": "(= canon_titles_iso14001_part1 true)"
+      },
+      {
+        "id": "CANONRULE020",
+        "expression": "(= canon_titles_iso14001_part2 true)"
+      },
+      {
+        "id": "CANONRULE021",
+        "expression": "(= canon_titles_iso45001_part1 true)"
+      },
+      {
+        "id": "CANONRULE022",
+        "expression": "(= canon_titles_iso45001_part2 true)"
+      },
+      {
+        "id": "CANONRULE023",
+        "expression": "(= canon_titles_iso45001_part3 true)"
+      }
+    ],
+    "variables": [
+      {
+        "name": "standard",
+        "type": "ISOStandard",
+        "description": "The ISO standard cited in the agent's clause reference: 'ISO 9001' -> ISO9001, 'ISO 14001' -> ISO14001, 'ISO 45001' -> ISO45001."
+      },
+      {
+        "name": "edition",
+        "type": "INT",
+        "description": "The edition year the agent cites for the standard (e.g. 'ISO 9001:2015' -> 2015). Do not assign if the agent states no edition."
+      },
+      {
+        "name": "clause_l1",
+        "type": "INT",
+        "description": "First component of the cited clause number: clause 6.1.2 -> 6; clause 4.1 -> 4."
+      },
+      {
+        "name": "clause_l2",
+        "type": "INT",
+        "description": "Second component of the cited clause number: clause 6.1.2 -> 1; clause 4.1 -> 1. Use 0 if absent."
+      },
+      {
+        "name": "clause_l3",
+        "type": "INT",
+        "description": "Third component of the cited clause number: clause 6.1.2 -> 2; clause 4.1 -> 0. Use 0 if absent."
+      },
+      {
+        "name": "clause_l4",
+        "type": "INT",
+        "description": "Fourth component of the cited clause number: clause 8.1.4.2 -> 2. Use 0 if absent."
+      },
+      {
+        "name": "stated_title_matches_canonical",
+        "type": "BOOL",
+        "description": "True only if the clause title stated by the agent exactly matches the canonical title for the cited standard and clause number, per the canon_titles_* variable descriptions in this policy. If the agent states no title, treat as true."
+      },
+      {
+        "name": "canon_titles_iso9001_part1",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 9001:2015), book 1: 4.1=Understanding the organization and its context; 4.2=Understanding the needs and expectations of interested parties; 4.3=Determining the scope of the QMS; 4.4=Quality management system and its processes; 5.1=Leadership and commitment; 5.1.1=Leadership and commitment \u2014 General; 5.1.2=Leadership and commitment \u2014 Customer focus; 5.2=Policy; 5.2.1=Establishing the quality policy; 5.2.2=Communicating the quality policy; 5.3=Organizational roles, responsibilities and authorities; 6.1=Actions to address risks and opportunities; 6.2=Quality objectives and planning to achieve them; 6.3=Planning of changes; 7.1=Resources; 7.1.1=Resources \u2014 General; 7.1.2=Resources \u2014 People; 7.1.3=Resources \u2014 Infrastructure; 7.1.4=Resources \u2014 Environment for the operation of processes"
+      },
+      {
+        "name": "canon_titles_iso9001_part2",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 9001:2015), book 2: 7.1.5=Monitoring and measuring resources; 7.1.5.1=Monitoring and measuring resources \u2014 General; 7.1.5.2=Measurement traceability; 7.1.6=Organizational knowledge; 7.2=Competence; 7.3=Awareness; 7.4=Communication; 7.5=Documented information; 7.5.1=Documented information \u2014 General; 7.5.2=Creating and updating; 7.5.3=Control of documented information; 8.1=Operational planning and control; 8.2=Requirements for products and services; 8.2.1=Customer communication; 8.2.2=Determining the requirements for products and services; 8.2.3=Review of the requirements for products and services; 8.2.4=Changes to requirements for products and services; 8.3=Design and development of products and services; 8.3.1=Design and development \u2014 General; 8.3.2=Design and development planning"
+      },
+      {
+        "name": "canon_titles_iso9001_part3",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 9001:2015), book 3: 8.3.3=Design and development inputs; 8.3.4=Design and development controls; 8.3.5=Design and development outputs; 8.3.6=Design and development changes; 8.4=Control of externally provided processes, products and services; 8.4.1=Control of externally provided \u2014 General; 8.4.2=Type and extent of control; 8.4.3=Information for external providers; 8.5=Production and service provision; 8.5.1=Control of production and service provision; 8.5.2=Identification and traceability; 8.5.3=Property belonging to customers or external providers; 8.5.4=Preservation; 8.5.5=Post-delivery activities; 8.5.6=Control of changes; 8.6=Release of products and services; 8.7=Control of nonconforming outputs; 9.1=Monitoring, measurement, analysis and evaluation"
+      },
+      {
+        "name": "canon_titles_iso9001_part4",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 9001:2015), book 4: 9.1.1=Monitoring, measurement, analysis and evaluation \u2014 General; 9.1.2=Customer satisfaction; 9.1.3=Analysis and evaluation; 9.2=Internal audit; 9.3=Management review; 9.3.1=Management review \u2014 General; 9.3.2=Management review inputs; 9.3.3=Management review outputs; 10.1=General; 10.2=Nonconformity and corrective action; 10.3=Continual improvement"
+      },
+      {
+        "name": "canon_titles_iso14001_part1",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 14001:2015), book 1: 4.1=Understanding the organization and its context; 4.2=Understanding the needs and expectations of interested parties; 4.3=Determining the scope of the EMS; 4.4=Environmental management system; 5.1=Leadership and commitment; 5.2=Environmental policy; 5.3=Organizational roles, responsibilities and authorities; 6.1=Actions to address risks and opportunities; 6.1.1=Actions to address risks and opportunities \u2014 General; 6.1.2=Environmental aspects; 6.1.3=Compliance obligations; 6.1.4=Planning action; 6.2=Environmental objectives and planning to achieve them; 6.2.1=Environmental objectives; 6.2.2=Planning actions to achieve environmental objectives; 7.1=Resources; 7.2=Competence; 7.3=Awareness; 7.4=Communication; 7.4.1=Communication \u2014 General; 7.4.2=Internal communication"
+      },
+      {
+        "name": "canon_titles_iso14001_part2",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 14001:2015), book 2: 7.4.3=External communication; 7.5=Documented information; 7.5.1=Documented information \u2014 General; 7.5.2=Creating and updating; 7.5.3=Control of documented information; 8.1=Operational planning and control; 8.2=Emergency preparedness and response; 9.1=Monitoring, measurement, analysis and evaluation; 9.1.1=Monitoring, measurement, analysis and evaluation \u2014 General; 9.1.2=Evaluation of compliance; 9.2=Internal audit; 9.2.1=Internal audit \u2014 General; 9.2.2=Internal audit programme; 9.3=Management review; 10.1=General; 10.2=Nonconformity and corrective action; 10.3=Continual improvement"
+      },
+      {
+        "name": "canon_titles_iso45001_part1",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 45001:2018), book 1: 4.1=Understanding the organization and its context; 4.2=Understanding the needs and expectations of workers and other interested parties; 4.3=Determining the scope of the OH&S management system; 4.4=OH&S management system; 5.1=Leadership and commitment; 5.2=OH&S policy; 5.3=Organizational roles, responsibilities and authorities; 5.4=Consultation and participation of workers; 6.1=Actions to address risks and opportunities; 6.1.1=Actions to address risks and opportunities \u2014 General; 6.1.2=Hazard identification and assessment of risks and opportunities; 6.1.2.1=Hazard identification; 6.1.2.2=Assessment of OH&S risks and other risks; 6.1.2.3=Assessment of OH&S opportunities and other opportunities; 6.1.3=Determination of legal requirements and other requirements"
+      },
+      {
+        "name": "canon_titles_iso45001_part2",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 45001:2018), book 2: 6.1.4=Planning action; 6.2=OH&S objectives and planning to achieve them; 6.2.1=OH&S objectives; 6.2.2=Planning to achieve OH&S objectives; 7.1=Resources; 7.2=Competence; 7.3=Awareness; 7.4=Communication; 7.4.1=Communication \u2014 General; 7.4.2=Internal communication; 7.4.3=External communication; 7.5=Documented information; 8.1=Operational planning and control; 8.1.1=Operational planning and control \u2014 General; 8.1.2=Eliminating hazards and reducing OH&S risks; 8.1.3=Management of change; 8.1.4=Procurement; 8.1.4.1=Procurement \u2014 General; 8.1.4.2=Contractors; 8.1.4.3=Outsourcing; 8.2=Emergency preparedness and response; 9.1=Monitoring, measurement, analysis and performance evaluation; 9.1.1=Monitoring, measurement, analysis and performance evaluation \u2014 General"
+      },
+      {
+        "name": "canon_titles_iso45001_part3",
+        "type": "BOOL",
+        "description": "Canonical clause titles (ISO 45001:2018), book 3: 9.1.2=Evaluation of compliance; 9.2=Internal audit; 9.2.1=Internal audit \u2014 General; 9.2.2=Internal audit programme; 9.3=Management review; 10.1=General; 10.2=Incident, nonconformity and corrective action; 10.3=Continual improvement"
+      },
+      {
+        "name": "mem_iso9001_p1",
+        "type": "BOOL",
+        "description": "Helper: true iff the cited clause number is in block 1 of the valid ISO 9001 clause set (see membership rules)."
+      },
+      {
+        "name": "mem_iso9001_p2",
+        "type": "BOOL",
+        "description": "Helper: true iff the cited clause number is in block 2 of the valid ISO 9001 clause set (see membership rules)."
+      },
+      {
+        "name": "mem_iso9001_p3",
+        "type": "BOOL",
+        "description": "Helper: true iff the cited clause number is in block 3 of the valid ISO 9001 clause set (see membership rules)."
+      },
+      {
+        "name": "mem_iso14001_p1",
+        "type": "BOOL",
+        "description": "Helper: true iff the cited clause number is in block 1 of the valid ISO 14001 clause set (see membership rules)."
+      },
+      {
+        "name": "mem_iso14001_p2",
+        "type": "BOOL",
+        "description": "Helper: true iff the cited clause number is in block 2 of the valid ISO 14001 clause set (see membership rules)."
+      },
+      {
+        "name": "mem_iso45001_p1",
+        "type": "BOOL",
+        "description": "Helper: true iff the cited clause number is in block 1 of the valid ISO 45001 clause set (see membership rules)."
+      },
+      {
+        "name": "mem_iso45001_p2",
+        "type": "BOOL",
+        "description": "Helper: true iff the cited clause number is in block 2 of the valid ISO 45001 clause set (see membership rules)."
+      }
+    ]
+  }
+}

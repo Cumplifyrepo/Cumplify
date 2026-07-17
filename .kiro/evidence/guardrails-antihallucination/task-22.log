@@ -1,0 +1,79 @@
+# Task 22 — Create clause-canon AR policy [ARCHITECT]
+# Executed: 2026-07-16T19:59–20:30 ET (00:00–00:30Z) | dev acct 697114252993, us-east-1
+
+## Headless, not interactive
+Full AR lifecycle driven via `aws bedrock *automated-reasoning-policy*` CLI —
+no console needed. Kiro's "interactive Bedrock Console workflow" BLOCKED
+assumption is retired for Tasks 22-24.
+
+## DQ-3 ANSWERED (with evidence)
+- Ingestion accepts documentContentType pdf|txt only; the corpus map (.md,
+  10,189 bytes) ingested as txt. Build wf 4a25c167 COMPLETED in ~4 min BUT
+  produced a LOW-FIDELITY policy: 66 vars / 58 rules / 28 disjoint rule sets
+  (quality report), circular meta-booleans (clauseRefTupleExistsInCorpus as
+  an INPUT), ~20 arbitrary per-clause flags instead of 152, tautologies.
+  Ingestion CANNOT carry a 152-row lookup table. → Task 22's named fallback
+  activated: deterministic authoring.
+- DQ-3 verdict: **AR policy source format = generated PolicyDefinition JSON
+  (script over corpus map), NOT markdown ingestion.** Same approach ordered
+  for Tasks 23/24.
+
+## Deterministic authoring (policy v37kx8jyq2e0, dev)
+Generator (script over contracts/clause-corpus-map.md, 152 tuples parsed,
+count asserted): type ISOStandard{ISO9001,ISO14001,ISO45001}; clause number
+as hierarchical INTs clause_l1..l4 (0=absent; corpus depth ≤4); per-standard
+membership rules — 152 (and (= clause_l1 …)…) conjuncts chunked into helper
+BOOLs (mem_*_pN); per-standard edition rules (9001→2015, 14001→2015,
+45001→2018); stated_title_matches_canonical BOOL pinned true + canonical
+titles embedded as chunked canon_titles_* variable descriptions (≤~830
+chars each). Final: 23 variables, 23 rules, all 152 conjuncts present.
+API LIMITS DISCOVERED (bind Tasks 23/24): enum type ≤50 values; rule
+expression ≤2048 chars; ≤2 build workflows per policy; rules require ids;
+test-case updates need --last-updated-at.
+
+## Test evidence (6 cases, confidenceThreshold 0.9, 4 rounds)
+TC1 valid 9001 4.1+title | TC2 fabricated 99.9 | TC3 edition 2008 |
+TC4 title mismatch (4.1 w/ 8.3's title) | TC5 valid 45001 8.1.4.2 depth-4 |
+TC6 45001-only clause cited under 14001.
+| TC | R1 | R2 | R3 | R4(=R1 defs, hash-identical) |
+|----|----|----|----|----|
+| TC1 valid | SATISFIABLE | SATISFIABLE | SATISFIABLE | SATISFIABLE |
+| TC2 fabricated | INVALID | INVALID | AMBIGUOUS | AMBIGUOUS |
+| TC3 edition | INVALID | INVALID | AMBIGUOUS | INVALID |
+| TC4 title | INVALID | AMBIGUOUS | INVALID | INVALID |
+| TC5 valid deep | SATISFIABLE | SATISFIABLE | SATISFIABLE | SATISFIABLE |
+| TC6 wrong-std | AMBIGUOUS | AMBIGUOUS | AMBIGUOUS | AMBIGUOUS |
+FINDINGS:
+1. True claims return SATISFIABLE (consistent), NOT VALID (entailed) — AR
+   semantics; ar-check must treat SATISFIABLE as pass.
+2. Translation is NON-DETERMINISTIC: R4 ran the byte-identical definition
+   as R1 (hash d6704316ec34efb4…) and TC2 still flipped INVALID→AMBIGUOUS.
+   Description prompt-shaping shifts which cases wobble; it does not
+   eliminate variance.
+3. SAFETY ENVELOPE (the property that holds in all 24 cells): valid tuples
+   NEVER rejected (4/4 stable); invalid tuples NEVER pass — they land on
+   INVALID or TRANSLATION_AMBIGUOUS only.
+→ BINDING CONTRACT for Tasks 27/28 (ar-check.ts), embedded in the
+   deliverable's _meta.arCheckGateMapping:
+   pass = VALID|SATISFIABLE; reject+steered-retry = INVALID|IMPOSSIBLE;
+   flag→HITL = TRANSLATION_AMBIGUOUS|NO_TRANSLATION|TOO_COMPLEX.
+   Under this mapping every bad tuple ends in reject-or-HITL. ACC-3's
+   mocked test (Task 35) should accept {INVALID → steered retry → HITL} as
+   the primary path and treat AMBIGUOUS→HITL as an allowed live variant.
+
+## Version + deliverable
+- Version 1 created 00:28:03Z:
+  arn:aws:bedrock:us-east-1:697114252993:automated-reasoning-policy/v37kx8jyq2e0:1
+  definitionHash d6704316ec34efb42f6dce23eb0dc9dec3a9304d9cb2e25c5a28ff59869a
+  78a3642005dbaab4abef3a94983e08308d67f9af1c4ac1a0b669d7e59369ddd89c0c
+- Exported version 1 → **infra/data/ar-policies/clause-canon.json** (L2-1
+  deliverable for Task 25 CFN). Export re-diffed against the authored
+  definition: types/variables/rules IDENTICAL (152 conjuncts re-counted).
+- BC-2 honored: tuples only, no ISO body text in the policy.
+- L2-4: {standard, edition} carried in types/rules; regeneration lifecycle
+  remains the standards-update spec's named carry (§5.3).
+
+## Verdict
+Task 22 CLOSED. Tasks 23/24 unblocked (same headless method; sources: Part
+13 permission matrix, tier truth table). Task 25 (Kiro) unblocked for the
+clause-canon half once 23/24 land.

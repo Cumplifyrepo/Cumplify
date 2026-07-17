@@ -235,7 +235,7 @@
   - **Evidence:** File exists, all three standards, no prose
   - **ACC mapping:** L2-1
 
-- [ ] **Task 22 — Create clause-canon AR policy (interactive)** [ARCHITECT] D3
+- [x] **Task 22 — Create clause-canon AR policy (headless CLI — DQ-3: deterministic JSON, not ingestion)** [ARCHITECT] D3
   - Upload corpus-map → build workflow → review fidelity → save version → export JSON
   - If build workflow cannot ingest markdown (DQ-3): manually author Variables+Rules
   - **Evidence:** PolicyDefinition JSON at `infra/data/ar-policies/clause-canon.json`
