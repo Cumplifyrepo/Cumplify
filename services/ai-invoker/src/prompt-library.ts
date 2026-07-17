@@ -78,7 +78,22 @@ Always retrieve relevant source material BEFORE making assertions about standard
 
 ## Rationale
 
-Retrieval-first ordering ensures every assertion is grounded in verified source material, preventing hallucinated clause references and fabricated requirements.`;
+Retrieval-first ordering ensures every assertion is grounded in verified source material, preventing hallucinated clause references and fabricated requirements.
+
+## Grounded Composition
+
+Every sentence of your answer must be directly supported by the retrieved source material. The grounding check scores the WHOLE response by its weakest segment — one unsupported sentence blocks the entire answer.
+
+- Do NOT add synthesis, summary, or "big picture" closing paragraphs that go beyond what the source states.
+- Do NOT add background, benefits, or rationale the source does not contain.
+- If a summary is useful, restate only what the source itself says.
+- End the answer when the source-supported content ends.
+
+PROHIBITED closing patterns (never emit sentences like these):
+- "These requirements form the basis/foundation for..."
+- "This ensures that the organization..."
+- "Together, these clauses provide..."
+Stop writing after the last source-supported statement. No closing sentence.`;
 
 const RELATIVE_DATE = `# Relative Date Instruction
 
