@@ -293,7 +293,7 @@
 
 ---
 
-- [ ] **Task 29 — Deploy AR expansion to dev** [ARCHITECT] D3
+- [x] **Task 29 — Deploy AR expansion to dev** [ARCHITECT] D3
   - Deploy AiStack with AR policies + both AR guardrails + IAM
   - Readback:
     - ArClauseGuardrail: 1 AR policy (clause-canon), CrossRegionConfig, confidenceThreshold 0.9

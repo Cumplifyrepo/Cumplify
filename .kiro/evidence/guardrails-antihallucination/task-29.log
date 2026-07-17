@@ -1,0 +1,74 @@
+# Task 29 — Deploy AR expansion to dev + readback [ARCHITECT]
+# Executed: 2026-07-17T13:10–14:15Z | dev 697114252993 | pipeline deploys witnessed
+# (72de397 a0d8a121 13:13Z → b91e408/71f1edd → eb0e23a ~14:05Z)
+
+## Resource readback (exit 0, exact)
+- 5 guardrails READY: agent yq8xe6y2iqbs, docgen g8sg61low9xn, recordwrite
+  x1kkn4njyfpb, ArClause vi4gi5lwcldy, ArAdvisory oduit09r4syo.
+- ArClause → policy t0jqpkc0gmwk (clause-canon); ArAdvisory → qbarm1v4zeod
+  (role-permissions) + xxziiwk78r4j (plan-entitlements); BOTH threshold 0.9
+  + CrossRegion us.guardrail.v1:0.
+- **definitionHash equality CFN vs workbench: ALL THREE MATCH**
+  (d6704316…, 0ecb8bea…, 43744b6a…) — synth-time JSON read preserved the
+  tested content byte-exactly. Workbench trio kept for authoring (AR names
+  not unique-constrained; 6 policies in account — cleanup note).
+- Invoker env: ARCLAUSE/ARADVISORY id+version present. Live IAM:
+  AutomatedReasoningChecks on invoker role only, scoped.
+
+## Live findings → three architect fixes (each: commit + suite + deploy)
+1. **FIX-T29-1 (7ce156e+b91e408)**: live AR findings are a TAGGED UNION
+   ({invalid:{translation,contradictingRules}}, {translationAmbiguous:{}},
+   …) — the parser read an invented f.result and DEFAULTED TO VALID: L2 was
+   a silent NO-OP while all mocked tests passed. Parser rewritten
+   worst-first over the real union; ALL mocks realigned to live shape.
+   (Also on record: 7ce156e pushed with tsc RED — self-caught, fixed in
+   b91e408, breach logged.)
+2. **FIX-T29-2 (71f1edd)**: noTranslations is a ROUTINE COMPANION finding
+   (probes: [satisfiable,noTranslations] and
+   [translationAmbiguous,noTranslations]) — naive worst-first would HITL-
+   flag every healthy answer. Companions ignored when substantive findings
+   exist; standalone noTranslations keeps flag_hitl.
+3. **FIX-T29-3 (eb0e23a)**: contextual grounding score is WORST-SEGMENT-MIN,
+   not proportional — A/B isolated: near-verbatim answer 0.98; SAME answer
+   + one benign synthesis closer 0.06. Threshold tuning CANNOT separate
+   benign synthesis from fabrication. Every grounded answer in dev honest-
+   missed. Fix: Grounded-Composition rule in retrieval-first L4 block
+   (prohibited closing patterns by example; prompts/shared + constants,
+   parity tests green). Repro: 0.22 → 0.97/0.99 stable. Per-segment
+   check + trailing-synthesis stripping carried as a DESIGN item. Hedge-
+   loop hazard noted: licensed-uncertainty phrasing is itself ungrounded —
+   retries can score WORSE (a2 logs 0.23→0.01).
+
+## Final end-to-end probes (deployed invoker, TENANT-ARCH-T29)
+- **A2 healthy grounded clause-qa (14:11:28Z): FULL FIVE-LAYER CHAIN PASS**
+  — L4-composed answer → grounding 0.99/1.0 pass (14:11:31.334Z) → AR
+  clause-canon SATISFIABLE → pass (14:11:37.254Z) → delivered end_turn,
+  arVerdict=pass, flagged=false, 2 citations, credits 0.20396 metered.
+- **B role-advisory (13:43:02Z)**: AR ADVISORY LIVE under invoker role
+  (Task 26 IAM exercised, no AccessDenied): role-permissions:NO_TRANSLATION
+  → flag_hitl → delivered flagged=true, arVerdict=fail with details.
+- **C2 source-poisoned fabricated clause (14:11:37Z)**: model under
+  never-invent + grounded-composition would NOT parrot the fake clause
+  cleanly → grounding blocked (0.33/0.77 then 0.01/0.01) → honest-miss.
+  Attack stopped at L4+L1. L2's catch of a *cleanly grounded* fabricated
+  claim is evidenced at ApplyGuardrail level (13:14:56Z probe:
+  translationAmbiguous→flag; workbench TC2: INVALID) and mocked ACC-3.
+- Layer order proven live: grounding precedes AR; AR runs only after L1
+  pass (c2 has NO arDetails).
+
+## Runtime questions pinned
+- ApplyGuardrail + AR policies WORKS under the invoker role with the
+  Task-26 grant (B + A2). Whether the action is strictly REQUIRED is moot
+  (granted; FIX-AR-GUARD covers any future permission drift loudly).
+- AR evaluation against DRAFT policy ARNs works live (all probes).
+- **AR check latency ≈ 5.8s** (A2: 14:11:31.4→14:11:37.25) on top of ~4s
+  converse+grounding — clause-citing answers now ~10-13s total. OWNER/
+  DESIGN consideration: acceptable for advisory? async-AR-after-delivery
+  is the alternative (design change; not taken unilaterally).
+
+## Verdict
+Task 29 CLOSED. AR expansion deployed, wired, hash-verified, and PROVEN
+LIVE end-to-end at the one-door. Remaining spec-35: Task 38 full readback
+(capstone), named carries (copilot wiring, KB seeding spec, capa-guru VPC,
+PROMPT_ATTACK calibration, §9.3 payload reconciliation, per-segment
+grounding design item, AR latency decision).
