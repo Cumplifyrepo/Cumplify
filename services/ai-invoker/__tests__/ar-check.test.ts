@@ -153,8 +153,8 @@ describe('resolveArGuardrail', () => {
 // ─── extractArFinding ───────────────────────────────────────────────────────
 
 describe('extractArFinding', () => {
-  it('extracts INVALID finding with claim/reason/correction', () => {
-    const response = mockArResponse('INVALID', 'Clause 99.9', 'No such clause', 'Remove reference');
+  it('extracts INVALID finding with claim and contradicting rule', () => {
+    const response = mockArResponse('INVALID', 'Clause 99.9', 'No such clause');
     const finding = extractArFinding(response as any);
     expect(finding.result).toBe('INVALID');
     expect(finding.invalidClaim).toBe('Clause 99.9');
