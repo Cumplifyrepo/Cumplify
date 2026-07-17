@@ -98,3 +98,34 @@ Evidence at this commit:
 - npx cdk synth --all → exit 0
 Deploy + live full-chain re-probe follow via pipeline (next commit push).
 F-B stays OPEN until the grounded round-trip is evidenced live.
+
+## CLOSURE — live re-probe after Dev deploy of b226137 (2026-07-17 00:30–00:36Z)
+Pipeline 68969c43 (rev b226137) Dev stage Succeeded ~00:30Z.
+Infra readback (exit 0): Guru9001Fn VpcConfig = vpc-067b2b0b8e1693b6d,
+subnets [subnet-055a3986564c71b2b, subnet-07b642d7669e69159], State Active;
+Lambda interface endpoint vpce-06dc233343e8744be available.
+
+**401 ELIMINATED — F-B CLOSED.** Guru9001Fn live probe 00:30:54Z (7s, 200):
+answer delivered; retrieval log now shows an APPLICATION-level response
+from the AOSS data plane: `404 index_not_found_exception: no such index
+[cumplify-iso-kb]` (00:30:57Z, xray 1-6a5977be-...). The request traverses
+the VPC endpoint, passes SigV4 + data-access policy, and is answered by
+OpenSearch itself — the access defect is gone; what remains is CONTENT.
+
+Retrieval leg proven live at component level through the REAL wrappers
+(prover fn refuses production index names by design, so a task14- proof
+index was used; embeddings via the one-door {op:'embed'}):
+- embed ×2 via invoker: 1024 dims, credits 0.00102/0.00096 metered.
+- prover seed → task14-archprobe-vpcfix: templateCheck {dimension:1024,
+  tenantIdType:keyword}, indexed:2 (00:34:02Z).
+- prover query via PRODUCTION retrieve(): 2 chunks, scores 1.000/0.600 ✓
+- REQ-RET-1 live: identical query with tenantId TENANT-OTHER → 0 chunks ✓
+- cleanup: delete-index → {deleted, status:200} ✓
+
+## NEW ROUTED FINDING (owner/roadmap)
+The `cumplify-iso-kb` INDEX has never been created/seeded — grep across all
+12 specs: only platform-foundation references it, and it only creates the
+COLLECTION. No spec owns ISO KB content ingestion. Until that lands, guru
+retrieval always takes the dormant path (no grounding context from KB).
+Design §15 F-B row updated accordingly. The full-chain grounded proof over
+the real index is BLOCKED ON CONTENT, not on any spec-35 defect.

@@ -687,7 +687,7 @@ export interface Citation {
 
 | Finding | Resolution |
 |---------|-----------|
-| F-B (guru handlers skip retrieval) | §4 handler wiring via embed transport (H-2 D3) |
+| F-B (guru handlers skip retrieval) | §4 handler wiring (H-2 D3) was NOT sufficient — access failed 401 until FIX-T20-3 (VPC placement + Lambda endpoint, b226137). CLOSED 2026-07-17: retrieval leg proven live via real retrieve() wrapper (2 chunks + REQ-RET-1 isolation). Grounded end-to-end via the REAL index awaits KB content — no spec currently owns seeding cumplify-iso-kb (routed to owner/roadmap). |
 | F-C (imperative-prompt dependence) | §7 shared prompt library |
 | spec-4 carry #5 (relative-date) | §7.1 relative-date instruction |
 
