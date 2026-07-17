@@ -37,7 +37,7 @@ export interface HitlGateInput {
   guardrailEvidence?: {
     groundingScore: number | null;
     relevanceScore: number | null;
-    arVerdict: 'pass' | 'fail' | null;
+    arVerdict: 'pass' | 'fail' | 'error' | null;
     arDetails: string | null;
     citations: Array<{ clauseRef: string; sourceChunk: string; score: number }>;
     flagged: boolean;

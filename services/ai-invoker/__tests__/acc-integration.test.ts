@@ -472,3 +472,70 @@ describe('ACC-5: Flagged approval requires justification (Task 37)', () => {
     expect(true).toBe(true);
   });
 });
+
+// ─── FIX-AR-GUARD: AR infra failure fails OPEN, loudly (architect) ──────────
+
+describe('FIX-AR-GUARD: AR infra failure does not take down the answer path', () => {
+  it('delivers the response with arVerdict=error when the AR ApplyGuardrail call throws (e.g. AccessDenied before the Task-26 IAM grant)', async () => {
+    // Converse returns an advisory answer (role-advisory path: no grounding
+    // context, so the ONLY ApplyGuardrail call is the AR check)
+    mockConverseSend.mockResolvedValueOnce(mockConverseResponse(
+      'A Quality Manager can manage CAPA records in M2.',
+    ));
+    // AR ApplyGuardrail throws — the pre-Task-26 failure mode
+    mockConverseSend.mockRejectedValueOnce(
+      Object.assign(new Error('User is not authorized to perform: bedrock:InvokeAutomatedReasoningPolicy'), {
+        name: 'AccessDeniedException',
+      }),
+    );
+
+    const response = await invoke({
+      seat: 'guru-9001',
+      messages: [{ role: 'user', content: [{ text: 'Who can manage CAPA records?' }] }],
+      tenantId: 'tenant-ar-guard',
+      agent: 'ISO9001Guru',
+      module: 'advisory',
+      feature: 'role-advisory',
+      locale: 'en',
+      standard: 'ISO9001',
+    });
+
+    // Answer DELIVERED — infra failure of the validation layer never blocks
+    expect(response.text).toContain('Quality Manager');
+    expect(response.stopReason).toBe('end_turn');
+    // ...but LOUDLY: evidence carries the error verdict, unflagged
+    expect(response.guardrailEvidence?.arVerdict).toBe('error');
+    expect(response.guardrailEvidence?.arDetails).toContain('ar-check infra failure');
+    expect(response.guardrailEvidence?.flagged).toBe(false);
+    // Usage still metered (normal end-of-invoke path)
+    expect(response.credits).toBeGreaterThan(0);
+  });
+
+  it('verdict-based rejection still works (guard does not swallow InvokeError)', async () => {
+    // Converse answer, then AR INVALID finding, then retry converse, then AR INVALID again
+    mockConverseSend.mockResolvedValueOnce(mockConverseResponse('You can edit anything as auditor.'));
+    mockConverseSend.mockResolvedValueOnce({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{ automatedReasoningPolicy: { findings: [{ result: 'INVALID', invalidClaim: 'auditors edit registers', reason: 'IA is read-only outside M3' }] } }],
+    });
+    mockConverseSend.mockResolvedValueOnce(mockConverseResponse('Retry: auditors edit registers.'));
+    mockConverseSend.mockResolvedValueOnce({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{ automatedReasoningPolicy: { findings: [{ result: 'INVALID', invalidClaim: 'auditors edit registers', reason: 'IA is read-only outside M3' }] } }],
+    });
+
+    const response = await invoke({
+      seat: 'guru-9001',
+      messages: [{ role: 'user', content: [{ text: 'What can an auditor edit?' }] }],
+      tenantId: 'tenant-ar-guard2',
+      agent: 'ISO9001Guru',
+      module: 'advisory',
+      feature: 'role-advisory',
+      locale: 'en',
+      standard: 'ISO9001',
+    });
+
+    expect(response.guardrailEvidence?.arVerdict).toBe('fail');
+    expect(response.guardrailEvidence?.flagged).toBe(true);
+  });
+});

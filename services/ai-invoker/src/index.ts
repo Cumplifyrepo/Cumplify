@@ -323,80 +323,15 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
   // Dormant when AR guardrails not deployed (env vars absent).
   const arPath = resolveArInvocationPath(seat, feature);
   if (arPath) {
-    const arResult = await checkArPolicy({
-      responseText: result.text,
-      invocationPath: arPath,
-      tenantId,
-      agent,
-      module,
-      feature,
-      standard: request.standard,
-    });
-
-    if (arResult.decision === 'flag_hitl') {
-      // TRANSLATION_AMBIGUOUS / NO_TRANSLATION / TOO_COMPLEX → flag for HITL immediately
-      // Never silently pass an ambiguous result.
-      await emitArRejected({
-        tenantId,
-        agent,
-        module,
-        standard: request.standard,
-        arPolicy: arResult.arPolicy,
-        finding: arResult.finding,
-        retriedOnce: false,
-        finalOutcome: 'hitl-deferred',
-      });
-
-      // Meter consumed usage (FIX-W-1 pattern)
-      const credits = computeCredits(usage, weights);
-      await incrementMeter(tenantId, credits);
-      await emitCreditsTelemetry({
-        tenantId, agent, module, feature,
-        inputTokens: usage.inputTokens,
-        outputTokens: usage.outputTokens,
-        cacheReadTokens: usage.cacheReadInputTokens,
-        creditsConsumed: credits, modelId, seat,
-      });
-
-      return {
-        text: result.text,
-        toolUseBlocks: [],
-        stopReason: 'end_turn',
-        usage,
-        credits,
-        modelId,
-        seat,
-        guardrailEvidence: {
-          groundingScore: guardrailEvidence?.groundingScore ?? null,
-          relevanceScore: guardrailEvidence?.relevanceScore ?? null,
-          arVerdict: 'fail',
-          arDetails: `${arResult.arPolicy}:${arResult.finding.result} — ${arResult.finding.reason ?? 'flagged for human review'}`,
-          citations: guardrailEvidence?.citations ?? [],
-          flagged: true,
-        },
-      };
-    }
-
-    if (arResult.decision === 'reject') {
-      // INVALID / IMPOSSIBLE → steered-retry once with AR feedback
-      logger.info('AR check rejected, attempting steered retry', {
-        arPolicy: arResult.arPolicy,
-        result: arResult.finding.result,
-      });
-
-      const arRetryInstruction = buildArRetryInstruction(arResult.finding);
-      const arRetryMessages = [
-        ...request.messages,
-        { role: 'assistant' as const, content: [{ text: result.text }] },
-        { role: 'user' as const, content: [{ text: arRetryInstruction }] },
-      ];
-      const arRetryParams = { ...converseParams, messages: arRetryMessages };
-      const arRetryResult = await converse(arRetryParams);
-      usage = addUsage(usage, arRetryResult.usage);
-
-      // Re-check AR on retry response
-      const arRetryCheck = await checkArPolicy({
-        responseText: arRetryResult.text,
+    // FIX-AR-GUARD (architect): L2 is a VALIDATION layer — an AR INFRA failure
+    // (AccessDenied before the Task-26 IAM grant, throttling, transient API
+    // errors) must not take down the answer path (invoker-down incident class).
+    // Fail open LOUDLY: deliver with arVerdict=error so evidence, logs, and
+    // metric filters surface the outage. Verdict-based blocking never throws
+    // and is unaffected.
+    try {
+      const arResult = await checkArPolicy({
+        responseText: result.text,
         invocationPath: arPath,
         tenantId,
         agent,
@@ -405,18 +340,9 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
         standard: request.standard,
       });
 
-      if (arRetryCheck.decision === 'pass') {
-        // Retry corrected the issue — use retry response
-        result = arRetryResult;
-        guardrailEvidence = {
-          groundingScore: guardrailEvidence?.groundingScore ?? null,
-          relevanceScore: guardrailEvidence?.relevanceScore ?? null,
-          arVerdict: 'pass',
-          arDetails: `${arResult.arPolicy}:corrected on retry`,
-          citations: guardrailEvidence?.citations ?? [],
-          flagged: true, // AR failed first time, passed on retry
-        };
-
+      if (arResult.decision === 'flag_hitl') {
+        // TRANSLATION_AMBIGUOUS / NO_TRANSLATION / TOO_COMPLEX → flag for HITL immediately
+        // Never silently pass an ambiguous result.
         await emitArRejected({
           tenantId,
           agent,
@@ -424,19 +350,7 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
           standard: request.standard,
           arPolicy: arResult.arPolicy,
           finding: arResult.finding,
-          retriedOnce: true,
-          finalOutcome: 'corrected',
-        });
-      } else {
-        // Double-fail (or HITL on retry) → flag for HITL
-        await emitArRejected({
-          tenantId,
-          agent,
-          module,
-          standard: request.standard,
-          arPolicy: arResult.arPolicy,
-          finding: arRetryCheck.finding,
-          retriedOnce: true,
+          retriedOnce: false,
           finalOutcome: 'hitl-deferred',
         });
 
@@ -463,29 +377,137 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
             groundingScore: guardrailEvidence?.groundingScore ?? null,
             relevanceScore: guardrailEvidence?.relevanceScore ?? null,
             arVerdict: 'fail',
-            arDetails: `${arResult.arPolicy}:${arRetryCheck.finding.result} — retry also failed`,
+            arDetails: `${arResult.arPolicy}:${arResult.finding.result} — ${arResult.finding.reason ?? 'flagged for human review'}`,
             citations: guardrailEvidence?.citations ?? [],
             flagged: true,
           },
         };
       }
-    }
 
-    // AR passed — attach evidence if not already set
-    if (arResult.decision === 'pass' && !guardrailEvidence) {
+      if (arResult.decision === 'reject') {
+        // INVALID / IMPOSSIBLE → steered-retry once with AR feedback
+        logger.info('AR check rejected, attempting steered retry', {
+          arPolicy: arResult.arPolicy,
+          result: arResult.finding.result,
+        });
+
+        const arRetryInstruction = buildArRetryInstruction(arResult.finding);
+        const arRetryMessages = [
+          ...request.messages,
+          { role: 'assistant' as const, content: [{ text: result.text }] },
+          { role: 'user' as const, content: [{ text: arRetryInstruction }] },
+        ];
+        const arRetryParams = { ...converseParams, messages: arRetryMessages };
+        const arRetryResult = await converse(arRetryParams);
+        usage = addUsage(usage, arRetryResult.usage);
+
+        // Re-check AR on retry response
+        const arRetryCheck = await checkArPolicy({
+          responseText: arRetryResult.text,
+          invocationPath: arPath,
+          tenantId,
+          agent,
+          module,
+          feature,
+          standard: request.standard,
+        });
+
+        if (arRetryCheck.decision === 'pass') {
+          // Retry corrected the issue — use retry response
+          result = arRetryResult;
+          guardrailEvidence = {
+            groundingScore: guardrailEvidence?.groundingScore ?? null,
+            relevanceScore: guardrailEvidence?.relevanceScore ?? null,
+            arVerdict: 'pass',
+            arDetails: `${arResult.arPolicy}:corrected on retry`,
+            citations: guardrailEvidence?.citations ?? [],
+            flagged: true, // AR failed first time, passed on retry
+          };
+
+          await emitArRejected({
+            tenantId,
+            agent,
+            module,
+            standard: request.standard,
+            arPolicy: arResult.arPolicy,
+            finding: arResult.finding,
+            retriedOnce: true,
+            finalOutcome: 'corrected',
+          });
+        } else {
+          // Double-fail (or HITL on retry) → flag for HITL
+          await emitArRejected({
+            tenantId,
+            agent,
+            module,
+            standard: request.standard,
+            arPolicy: arResult.arPolicy,
+            finding: arRetryCheck.finding,
+            retriedOnce: true,
+            finalOutcome: 'hitl-deferred',
+          });
+
+          // Meter consumed usage (FIX-W-1 pattern)
+          const credits = computeCredits(usage, weights);
+          await incrementMeter(tenantId, credits);
+          await emitCreditsTelemetry({
+            tenantId, agent, module, feature,
+            inputTokens: usage.inputTokens,
+            outputTokens: usage.outputTokens,
+            cacheReadTokens: usage.cacheReadInputTokens,
+            creditsConsumed: credits, modelId, seat,
+          });
+
+          return {
+            text: result.text,
+            toolUseBlocks: [],
+            stopReason: 'end_turn',
+            usage,
+            credits,
+            modelId,
+            seat,
+            guardrailEvidence: {
+              groundingScore: guardrailEvidence?.groundingScore ?? null,
+              relevanceScore: guardrailEvidence?.relevanceScore ?? null,
+              arVerdict: 'fail',
+              arDetails: `${arResult.arPolicy}:${arRetryCheck.finding.result} — retry also failed`,
+              citations: guardrailEvidence?.citations ?? [],
+              flagged: true,
+            },
+          };
+        }
+      }
+
+      // AR passed — attach evidence if not already set
+      if (arResult.decision === 'pass' && !guardrailEvidence) {
+        guardrailEvidence = {
+          groundingScore: null,
+          relevanceScore: null,
+          arVerdict: 'pass',
+          arDetails: `${arResult.arPolicy}:${arResult.finding.result}`,
+          citations: [],
+          flagged: false,
+        };
+      } else if (arResult.decision === 'pass' && guardrailEvidence) {
+        guardrailEvidence = {
+          ...guardrailEvidence,
+          arVerdict: 'pass',
+          arDetails: `${arResult.arPolicy}:${arResult.finding.result}`,
+        };
+      }
+    } catch (err) {
+      if (err instanceof InvokeError) throw err;
+      logger.error('AR check infra failure — failing open with arVerdict=error', {
+        error: err instanceof Error ? err.message : String(err),
+        arPath, seat, feature, tenantId,
+      });
       guardrailEvidence = {
-        groundingScore: null,
-        relevanceScore: null,
-        arVerdict: 'pass',
-        arDetails: `${arResult.arPolicy}:${arResult.finding.result}`,
-        citations: [],
+        groundingScore: guardrailEvidence?.groundingScore ?? null,
+        relevanceScore: guardrailEvidence?.relevanceScore ?? null,
+        arVerdict: 'error',
+        arDetails: `ar-check infra failure: ${err instanceof Error ? err.message : 'unknown'}`,
+        citations: guardrailEvidence?.citations ?? [],
         flagged: false,
-      };
-    } else if (arResult.decision === 'pass' && guardrailEvidence) {
-      guardrailEvidence = {
-        ...guardrailEvidence,
-        arVerdict: 'pass',
-        arDetails: `${arResult.arPolicy}:${arResult.finding.result}`,
       };
     }
   }

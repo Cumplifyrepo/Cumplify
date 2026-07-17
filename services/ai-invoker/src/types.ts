@@ -134,7 +134,7 @@ export interface InvokeResponse {
 export interface GuardrailEvidenceData {
   groundingScore: number | null;
   relevanceScore: number | null;
-  arVerdict: 'pass' | 'fail' | null;
+  arVerdict: 'pass' | 'fail' | 'error' | null;
   arDetails: string | null;
   citations: GuardrailCitation[];
   flagged: boolean;
