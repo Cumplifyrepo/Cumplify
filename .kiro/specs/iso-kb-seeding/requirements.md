@@ -1,11 +1,12 @@
-# Requirements — ISO KB Seeding
+# Requirements — ISO KB Seeding (rev 2)
 
 > **Spec:** iso-kb-seeding
-> **Status:** DRAFT — awaiting architect review
+> **Status:** APPROVED (rev 2 — OQ resolutions folded, architect-reviewed)
 > **Carry from:** spec-35 (guardrails-antihallucination), task-29/task-38 named carry:
 > "KB-seeding spec decision (owner)"
 > **Prerequisite specs:** platform-foundation (DataStack owns cumplify-iso-kb collection),
 > agents-existing-8 (ai-stack: apply-template, retrieval, guru handlers, one-door embed)
+> **Review:** `.kiro/evidence/iso-kb-seeding/requirements-review.md`
 
 ---
 
@@ -20,8 +21,8 @@ check never fires. The full anti-hallucination stack (spec-35) is proven live bu
 inert without grounded source material.
 
 This spec seeds the ISO knowledge base with deterministic, in-house-authored content
-from `docs/architecture/iso-requirements-map.md` and turns on real grounded RAG for
-the three guru agents.
+from `docs/architecture/iso-requirements-map.md` (422 lines) and turns on real
+grounded RAG for the three guru agents.
 
 ---
 
@@ -47,13 +48,13 @@ retrieval units using a deterministic, rule-based algorithm (no ML, no LLM).
 
 | Sub-req | Description |
 |---------|-------------|
-| CHUNK-1a | Each chunk corresponds to ONE sub-clause (e.g., 4.1, 5.2.1, 8.3.4). |
+| CHUNK-1a | Each chunk corresponds to ONE sub-clause (e.g., 4.1, 5.2.1, 8.3.4). Parent headers without their own (b)/(c) content get no standalone chunk. |
 | CHUNK-1b | Each chunk is prefixed with `[ISO <NNNN> <clause>]` where NNNN is the standard number (9001, 14001, or 45001) and `<clause>` is the sub-clause number. Example: `[ISO 9001 4.1] Understanding the organization and its context — ...` |
 | CHUNK-1c | A chunk includes the clause title, the (b) requirement summary, and the (c) SaaS-must-provide text as a single contiguous string. |
 | CHUNK-1d | Chunks are joined with `\n---\n` at retrieval time (guru handler pattern, already implemented). |
 | CHUNK-1e | The chunker is a pure function: `(sourceMarkdown: string) => Chunk[]` with no side effects. |
 | CHUNK-1f | The chunker output is fully reproducible — same input always yields identical chunks with identical content hashes. |
-| CHUNK-1g | The Annex SL / HLS closing section is chunked as a single cross-reference chunk prefixed `[ISO HLS Annex-SL]`. |
+| CHUNK-1g | The Annex SL / HLS closing section is chunked as a single cross-reference chunk prefixed `[Annex SL HLS]` — deliberately OUTSIDE the `[ISO …]` citation pattern so the model cannot cite it as a clause reference and the clause-canon AR policy does not attempt to validate it. |
 
 ### REQ-CHUNK-2: Chunk Metadata
 
@@ -65,6 +66,7 @@ Each chunk SHALL carry metadata aligned with the AOSS index template
 | `metadata.tenantId` | `__ISO_CANON__` (constant) | Canon-tenant isolation — retrieval filter matches this constant for guru agents. |
 | `metadata.standard` | `ISO9001` or `ISO14001` or `ISO45001` or `HLS` | Standard-scoped retrieval filtering. |
 | `metadata.clauseRef` | e.g., `ISO 9001 4.1` | Enables clause-level retrieval and AR cross-check. |
+| `metadata.lang` | `en` | Language tag (keyword). Seeds EN-only; ES/PT content is the Part 31 i18n carry. |
 
 ### REQ-SEED-1: Seeder Lambda
 
@@ -74,9 +76,9 @@ AOSS collection.
 | Sub-req | Description |
 |---------|-------------|
 | SEED-1a | The Lambda is VPC-attached (same private subnets as applyTemplateFn / guru handlers) because the AOSS network policy is VPCE-only. |
-| SEED-1b | Embedding uses the one-door `{op:'embed'}` transport (invoke-transport.ts `createEmbedFn()`). Never calls Bedrock directly. Model: amazon.titan-embed-text-v2:0, 1024 dimensions. |
+| SEED-1b | Embedding uses the one-door `{op:'embed'}` transport (invoke-transport.ts `createEmbedFn()`). Never calls Bedrock directly. Model: amazon.titan-embed-text-v2:0, 1024 dimensions. The embed request sets `systemOp: true` to bypass credit pre-check via the existing SERVE-9 exempt flag. |
 | SEED-1c | Before indexing, the Lambda calls `verifyTemplate()` (from `aoss-apply-template.ts`) and aborts if the template is absent or invalid (fail-closed — never index against auto-mapping). |
-| SEED-1d | Each document written to AOSS has fields: `embedding` (1024-dim vector), `text` (chunk text), `metadata` (tenantId, standard, clauseRef). |
+| SEED-1d | Each document written to AOSS has fields: `embedding` (1024-dim vector), `text` (chunk text), `metadata` (tenantId, standard, clauseRef, lang). |
 | SEED-1e | Indexing uses SigV4-signed requests to the AOSS data-plane (same `signedAossFetch` client as existing apply-template and prover). |
 | SEED-1f | The Lambda timeout SHALL be >= 300s (embedding ~79 chunks × one-door invoke latency + AOSS cold-start budget). |
 | SEED-1g | The Lambda is NOT the aoss-prover (which refuses production index names by design). It is a separate, purpose-built seeder. |
@@ -87,8 +89,18 @@ AOSS collection.
 |---------|-------------|
 | SEED-2a | The seeder computes a SHA-256 content hash over the full chunked output (deterministic per CHUNK-1f). |
 | SEED-2b | Before seeding, the Lambda reads a `_meta` document from the index (or DynamoDB marker) to compare the stored hash with the computed hash. If they match, seeding is skipped (no-op). |
-| SEED-2c | On content change (hash mismatch), the seeder deletes the existing index (`cumplify-iso-kb`) and recreates it, then bulk-indexes all chunks. This is a full replace — no incremental patching. |
+| SEED-2c | On content change (hash mismatch), the seeder deletes the existing index (`cumplify-iso-kb`) and recreates it, then bulk-indexes all chunks. This is a full replace — no incremental patching. During the re-seed window, guru retrieval degrades to the dormant path (no grounding context) — this is an accepted-degraded state; zero-downtime swap is a Part 32.2 carry. |
 | SEED-2d | The CDK custom resource uses `FileSystem.fingerprint('docs/architecture/iso-requirements-map.md')` as the physicalResourceId component so CloudFormation triggers re-seeding when the source file changes (same pattern as weight-seeder). |
+
+### REQ-SEED-3: Metering for System Seeding (OQ-1 RESOLVED)
+
+| Sub-req | Description |
+|---------|-------------|
+| SEED-3a | The embed request threads `systemOp: true` through the `EmbedRequest` type. The one-door embed path calls `checkCreditBalance(tenantId, true)` — using the EXISTING SERVE-9 exempt flag — so seeding never blocks on credits. |
+| SEED-3b | Usage is STILL metered: `incrementMeter` writes to `TENANT#__ISO_CANON__#METER` as a platform-COGS counter (not a real tenant). |
+| SEED-3c | The `emitCreditsTelemetry` payload carries `systemOp: true` so the downstream billing consumer excludes it from tenant invoicing. `telemetry.credits.consumed` is THE billing signal — the marker preserves billing-signal integrity. |
+| SEED-3d | No `__ISO_CANON__` tenant row with unlimited credits is created (option 3 rejected). |
+| SEED-3e | FLAGGED for owner ratification (billing-adjacent per steering 14-simplicity human-gated domain). |
 
 ### REQ-CANON-1: Canon-Tenant Convention
 
@@ -112,8 +124,16 @@ AOSS collection.
 | Sub-req | Description |
 |---------|-------------|
 | DEPLOY-1a | The seeder Lambda is triggered as a CDK custom resource on every deployment where the source-file fingerprint changes. |
-| DEPLOY-1b | The custom resource uses `cr.AwsCustomResource` invoking the seeder Lambda synchronously (RequestResponse). |
+| DEPLOY-1b | The custom resource uses `cr.AwsCustomResource` invoking the seeder Lambda synchronously (RequestResponse). The custom-resource provider timeout MUST be >= the seeder Lambda timeout (>= 300s) to prevent CloudFormation from timing out the provider while the seeder is still running. |
 | DEPLOY-1c | A failed seed (any error) fails the CloudFormation stack update — no silent partial state. |
+
+### REQ-TEMPLATE-1: Index Template Update (OQ-3 RESOLVED)
+
+| Sub-req | Description |
+|---------|-------------|
+| TEMPLATE-1a | The shared `aoss-index-template.json` SHALL add a `metadata.lang` field of type `keyword`. |
+| TEMPLATE-1b | The `verifyTemplate()` expectations SHALL be updated to include `metadata.lang` type=keyword in the fail-closed check. |
+| TEMPLATE-1c | This is an additive, non-breaking change. SEED-2c recreates the index on re-seed so existing (empty) indexes are replaced. |
 
 ---
 
@@ -131,7 +151,7 @@ for multiple cold-start events during bulk indexing.
 | Sub-req | Description |
 |---------|-------------|
 | NFR-2a | The seeder emits structured Powertools logs with: `chunksTotal`, `chunksIndexed`, `contentHash`, `skipped` (boolean), `durationMs`. |
-| NFR-2b | Embedding credit consumption is automatically metered by the one-door (existing behavior — no additional work). |
+| NFR-2b | Embedding credit consumption is metered by the one-door under `TENANT#__ISO_CANON__#METER` with `systemOp: true` telemetry marker. |
 
 ### REQ-NFR-3: No Runtime Cost When Unchanged
 
@@ -174,54 +194,44 @@ trigger the custom resource, delete the old index, and re-seed with updated chun
 If the index template is absent or has wrong dimensions/types, the seeder
 SHALL abort with a clear error and fail the CloudFormation deployment.
 
+### ACC-6: Metering Evidence
+
+The seeding run meters embeddings under `TENANT#__ISO_CANON__#METER` with the
+`systemOp: true` flag on all `telemetry.credits.consumed` events. NO real-tenant
+meter row is touched. Evidence: DynamoDB scan of `TENANT#__ISO_CANON__#METER`
+shows accumulated credits; no other `TENANT#*#METER` row changes during the
+seeding window.
+
 ---
 
-## Open Questions (for architect review)
+## Resolved Decisions (formerly Open Questions)
 
-### OQ-1: Metering Attribution for System Seeding
+### OQ-1 RESOLVED: Metering Attribution — systemOp via SERVE-9 exempt flag
 
-The one-door embed path requires a `tenantId` for credit metering. Options:
-1. **Use `__ISO_CANON__` as the tenantId** — embeddings are metered under a
-   synthetic "system" tenant. Credits consumed are platform COGS, not billed
-   to any real tenant. Requires the credit-precheck to NOT block on a
-   non-existent tenant's balance (or a bypass flag for system operations).
-2. **Exempt system seeding from credit metering entirely** — add an
-   `isSystemOp: true` flag to the embed request that skips `checkCreditBalance`
-   and meters to a platform-COGS counter instead of a tenant counter.
-3. **Pre-provision a `__ISO_CANON__` tenant row with unlimited credits** — the
-   simplest code path but pollutes the tenant data model.
+Thread `systemOp: true` through `EmbedRequest` → embed path calls
+`checkCreditBalance(tenantId, true)` (existing SERVE-9 mechanism). Usage still
+meters under `TENANT#__ISO_CANON__#METER` as platform-COGS counter. Stamp
+`systemOp: true` on `telemetry.credits.consumed` payload so billing consumer
+excludes it. Option 3 (unlimited-credits tenant row) rejected.
+**FLAGGED for owner ratification** (billing-adjacent).
 
-**Architect decision needed:** Which option? Option 2 aligns with the exception
-paths pattern (incident reporting, HITL approvals already bypass credit checks
-per 12-token-metering.md), but requires a new code path in the invoker.
+### OQ-2 RESOLVED: Index Name — keep `cumplify-iso-kb`
 
-### OQ-2: Index Name
+Unversioned. Pinned by deployed retrieval callers, guru env vars, and data-access
+policy resource patterns (`index/cumplify-iso-kb/*`). Zero-downtime versioned swap
+is the Part 32.2 standards-update carry.
 
-The retrieval wrapper currently uses `indexName: 'cumplify-iso-kb'` (same as the
-collection name). AOSS allows multiple indexes per collection, but the prover and
-apply-template both operate on `cumplify-iso-kb` as both collection AND index name.
-Confirm: is the index name `cumplify-iso-kb` correct, or should a versioned name
-(e.g., `cumplify-iso-kb-v1`) be used for zero-downtime re-seeding?
+### OQ-3 RESOLVED: i18n — add `metadata.lang` keyword NOW
 
-### OQ-3: i18n Seed Variants (Part 31 carry)
+Additive, non-breaking template change. Seed all chunks as `lang: 'en'`. ES/PT
+content generation stays the Part 31 carry. Template-verify expectations updated
+in the same commit.
 
-Steering 17-i18n states: "ISO-KB retrieval filters `lang` first, falls back to EN
-with 'translated from English source' marker." The current index template has no
-`lang` metadata field. This spec seeds EN-only content. Should:
-1. A `metadata.lang` field be added to the index template NOW (forward-compatible)?
-2. Or defer the `lang` field to a future i18n-kb spec (named carry)?
+### OQ-4 RESOLVED: Chunking — one chunk per sub-clause
 
-**Recommendation:** Add the field to the template now (non-breaking, keyword type),
-seed all chunks as `lang: 'en'`, and defer ES/PT content generation. But this
-touches the shared `aoss-index-template.json` — architect confirmation needed.
-
-### OQ-4: Chunk Size Limits
-
-Titan Embed v2 accepts up to 8,192 tokens per input. Most sub-clause chunks from
-the iso-requirements-map should be well under this limit, but a few (e.g., 8.3
-Design and Development with sub-clauses 8.3.1–8.3.6) may be long if grouped.
-Confirm: should 8.3 sub-clauses remain as individual chunks (one per 8.3.x) or
-be grouped under a single 8.3 chunk?
+8.3.1–8.3.6 individually (matches map's (b)/(c) granularity AND clause-canon
+tuples). Parent headers without own (b)/(c) content get no standalone chunk.
+Titan 8k-token limit is nowhere near threatened.
 
 ---
 
@@ -232,9 +242,10 @@ be grouped under a single 8.3 chunk?
 | Canon-release regeneration lifecycle | Part 32.2 standards-update spec | Named carry |
 | Tenant-docs-kb ingestion | Separate spec (tenant document embedding) | Future spec |
 | NC-history ingestion | Separate spec (nonconformity history embedding) | Future spec |
-| ES/PT translated ISO-KB content | i18n KB localization (Part 31) | Named carry (OQ-3) |
+| ES/PT translated ISO-KB content | i18n KB localization (Part 31) | Named carry |
 | Guru prompt tuning for grounded answers | Follow-on after content exists | Follow-on task |
 | Copilot wiring to ISO-KB | Spec-35 named carry (ComplianceCopilot) | Separate spec |
+| Zero-downtime index swap during re-seed | Part 32.2 carry (R-5 accepted-degraded) | Named carry |
 
 ---
 
@@ -248,8 +259,9 @@ be grouped under a single 8.3 chunk?
 | Guru handlers VPC-placed | DEPLOYED | fix-t20-3, live-proven |
 | `retrieve()` with tenantId filter | DEPLOYED | REQ-RET-1, live-proven |
 | AOSS VPC endpoint (data-plane) | DEPLOYED | NetworkStack, live-proven |
-| `docs/architecture/iso-requirements-map.md` | COMMITTED | Source content (~530 lines, 79 sub-clauses across 3 standards + HLS note) |
+| `docs/architecture/iso-requirements-map.md` | COMMITTED | Source content (422 lines, sub-clauses across 3 standards + HLS note) |
 | `contracts/clause-corpus-map.md` | COMMITTED | 152 tuples for AR validation alignment |
+| SERVE-9 credit-exempt flag | DEPLOYED | `checkCreditBalance(tenantId, true)` path exists |
 
 ---
 
@@ -259,10 +271,9 @@ be grouped under a single 8.3 chunk?
 - `#[[file:services/agents/shared/aoss-index-template.json]]` — index mapping
 - `#[[file:services/agents/shared/retrieval.ts]]` — retrieval with REQ-RET-1
 - `#[[file:services/ai-invoker/src/embed.ts]]` — one-door embed implementation
+- `#[[file:services/ai-invoker/src/credit-precheck.ts]]` — SERVE-9 exempt flag
 - `#[[file:services/agents/shared/aoss-apply-template.ts]]` — verifyTemplate()
 - `#[[file:services/agents/guru-9001/handler.ts]]` — guru retrieval consumer
 - `#[[file:contracts/clause-corpus-map.md]]` — clause-canon tuples
 - `#[[file:infra/lib/ai-stack.ts]]` — AOSS infra, custom resources, data-access
-- `.kiro/evidence/guardrails-antihallucination/fix-t20-3.log` — 401 root cause + VPC fix
-- `.kiro/evidence/guardrails-antihallucination/task-29.log` — KB-seeding named carry
-- `.kiro/evidence/guardrails-antihallucination/task-38.log` — spec-35 closure + carries
+- `.kiro/evidence/iso-kb-seeding/requirements-review.md` — architect review
