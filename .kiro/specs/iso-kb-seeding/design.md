@@ -2,7 +2,8 @@
 
 > **Spec:** iso-kb-seeding
 > **Requirements:** `#[[file:.kiro/specs/iso-kb-seeding/requirements.md]]` (rev 2, approved)
-> **Status:** DRAFT — awaiting architect review
+> **Status:** APPROVED (rev 2 — D-1..D-5 corrections folded)
+> **Review:** `.kiro/evidence/iso-kb-seeding/design-review.md`
 
 ---
 
@@ -113,49 +114,89 @@ export interface ChunkMetadata {
 }
 
 export const ISO_CANON_TENANT_ID = '__ISO_CANON__';
+
+/**
+ * D-5: Golden chunk count — pinned so source drift is caught in the unit
+ * lane, not discovered at deploy. Updated only when iso-requirements-map.md
+ * legitimately gains/loses sub-clauses.
+ */
+export const EXPECTED_CHUNK_COUNT = 79; // pinned by unit test
 ```
 
-### 2.2 Seeder Lambda (`services/iso-kb-seeder/src/handler.ts`)
+### 2.2 Source Inlining (D-1 — MANDATORY, incident-class prevention)
+
+The source markdown (`docs/architecture/iso-requirements-map.md`) is loaded at
+**BUILD TIME** via esbuild's text loader — NOT via runtime `fs.readFileSync`.
+
+**Why:** A `readFileSync(resolve(__dirname, '…'))` path works in unit tests
+(repo cwd) but the repo-relative path does NOT exist in `/var/task` at deploy.
+This is the exact shape of the prompt-library incident. Build-time inlining
+guarantees the content is embedded in the Lambda bundle and zero runtime fs
+access is needed.
+
+**CDK bundling config:**
+
+```typescript
+bundling: {
+  externalModules: [],
+  target: 'node22',
+  loader: { '.md': 'text' }, // D-1: esbuild text loader for .md files
+},
+```
+
+**Handler import:**
+
+```typescript
+// Build-time inline — esbuild text loader resolves at bundle, NOT runtime fs
+import source from '../../../docs/architecture/iso-requirements-map.md';
+```
+
+The `source` variable is a plain string containing the full markdown content.
+The chunker receives it as an argument — remains a pure function.
+
+### 2.3 Seeder Lambda (`services/iso-kb-seeder/src/handler.ts`)
 
 **Entry point:** CDK custom resource invocation (event: `{ action: 'seed', sourceHash: string }`).
 
 **Flow (pseudocode):**
 
 ```typescript
-export async function handler(event: { action: string; sourceHash: string }) {
-  // 1. Read source at bundle-time (inlined by esbuild) or from local filesystem
-  const source = readFileSync(resolve(__dirname, '../../../docs/architecture/iso-requirements-map.md'), 'utf-8');
+// D-1: source inlined at build time — no runtime fs read
+import source from '../../../docs/architecture/iso-requirements-map.md';
 
-  // 2. Chunk
+export async function handler(event: { action: string; sourceHash: string }) {
+  const start = Date.now();
+
+  // 1. Chunk (pure function, build-time-inlined source)
   const chunks = chunkIsoRequirementsMap(source);
   logger.info('Chunked', { chunksTotal: chunks.length });
 
-  // 3. Compute content hash
+  // 2. Compute content hash
   const contentHash = computeContentHash(chunks);
 
-  // 4. Check existing hash (read _meta doc from AOSS)
+  // 3. Check existing hash (read _meta doc from AOSS — D-2: tenantId='__META__')
   const existingHash = await readMetaHash();
   if (existingHash === contentHash) {
     logger.info('Content unchanged — skipping', { contentHash, skipped: true });
     return { status: 'skipped', contentHash, chunksTotal: chunks.length };
   }
 
-  // 5. Verify template (fail-closed)
+  // 4. Verify template (fail-closed)
   await verifyTemplate('cumplify-iso-kb', AOSS_ENDPOINT);
 
-  // 6. Delete existing index (accepted-degraded window starts — R-5)
+  // 5. Delete existing index (accepted-degraded window starts — R-5)
   await deleteIndexIfExists();
 
-  // 7. Create index
+  // 6. Create index
   await createIndex();
 
-  // 8. Embed all chunks via one-door
-  const embeddings = await embedAllChunks(chunks); // systemOp: true
+  // 7. Embed all chunks via one-door (systemOp: true)
+  const embeddings = await embedAllChunks(chunks);
 
-  // 9. Bulk-index to AOSS
+  // 8. Bulk-index to AOSS
   await bulkIndex(chunks, embeddings);
 
-  // 10. Write _meta doc (stores contentHash for next idempotent check)
+  // 9. Write _meta doc (contentHash, D-2: tenantId='__META__', no embedding)
   await writeMetaDoc(contentHash, chunks.length);
   // Accepted-degraded window ends
 
@@ -171,7 +212,37 @@ export async function handler(event: { action: string; sourceHash: string }) {
 }
 ```
 
-### 2.3 One-Door Embed Integration
+### 2.3.1 `_meta` Document Isolation (D-2)
+
+The `_meta` document stores the content hash for idempotent re-seed detection.
+It MUST NOT be retrievable as a grounding chunk:
+
+- `metadata.tenantId = '__META__'` (NOT `__ISO_CANON__`) — kNN queries with
+  `filter: { term: { 'metadata.tenantId': '__ISO_CANON__' } }` will never match it.
+- **No `embedding` field** — even if the tenant filter were absent, kNN search
+  cannot match a document without a vector.
+
+**Document shape:**
+
+```json
+{
+  "text": "",
+  "metadata": {
+    "tenantId": "__META__",
+    "standard": "SYSTEM",
+    "clauseRef": "_meta",
+    "lang": "en"
+  },
+  "contentHash": "<sha256>",
+  "chunksTotal": 79,
+  "seededAt": "2026-07-17T…Z"
+}
+```
+
+**Unit test assertion:** _meta doc tenantId is always `'__META__'` and doc has
+no `embedding` field.
+
+### 2.4 One-Door Embed Integration
 
 **Type change to `EmbedRequest`** (additive, non-breaking):
 
@@ -225,7 +296,7 @@ export async function emitCreditsTelemetry(opts: {
 }
 ```
 
-### 2.4 Index Template Update (`services/agents/shared/aoss-index-template.json`)
+### 2.5 Index Template Update (`services/agents/shared/aoss-index-template.json`)
 
 Add `lang` field to `metadata.properties`:
 
@@ -251,7 +322,7 @@ if (langType !== 'keyword') {
 }
 ```
 
-### 2.5 Guru Handler Change (`services/agents/guru-*/handler.ts`)
+### 2.6 Guru Handler Change (`services/agents/guru-*/handler.ts`)
 
 Replace the tenantId used for iso-kb retrieval with the canon constant:
 
@@ -274,7 +345,7 @@ The user's `tenantId` continues to flow to:
 - Any future tenant-docs-kb retrieval leg
 - The grounding/AR guardrail events
 
-### 2.6 Shared Constants (`services/agents/shared/constants.ts`)
+### 2.7 Shared Constants (`services/agents/shared/constants.ts`)
 
 ```typescript
 /**
@@ -299,14 +370,17 @@ const isoKbSeederFn = new NodejsFunction(this, 'IsoKbSeederFn', {
   architecture: lambda.Architecture.ARM_64,
   memorySize: 512,
   timeout: cdk.Duration.seconds(300), // SEED-1f: >= 300s
-  bundling: { externalModules: [], target: 'node22' },
+  bundling: {
+    externalModules: [],
+    target: 'node22',
+    loader: { '.md': 'text' }, // D-1: esbuild text loader — build-time inline
+  },
   vpc: props.vpc,
   vpcSubnets: { subnets: props.privateSubnets }, // SEED-1a: VPC-placed
   environment: {
     AOSS_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
     AOSS_INDEX_NAME: 'cumplify-iso-kb',
     AI_INVOKER_ARN: aiInvoker.functionArn,
-    TABLE_NAME: props.tableName, // for _meta hash (optional DDB path)
     POWERTOOLS_SERVICE_NAME: 'iso-kb-seeder',
   },
 });
@@ -332,9 +406,10 @@ isoKbSeederFn.addToRolePolicy(
 
 The existing data-access policy for `cumplify-iso-kb` (in DataStack) must be
 amended to include the seeder Lambda's role ARN as a principal with write
-permissions. Implementation: the AiStack adds a NEW `CfnAccessPolicy` with
-higher priority that grants the seeder role full index CRUD on
-`index/cumplify-iso-kb/*`.
+permissions. Implementation: the AiStack adds a separate `CfnAccessPolicy`
+that grants the seeder role full index CRUD on `index/cumplify-iso-kb/*`.
+AOSS data-access policies are additive unions — the new policy's permissions
+combine with the existing placeholder policy; no priority ordering exists.
 
 ```typescript
 new opensearchserverless.CfnAccessPolicy(this, 'IsoKbSeederAccessPolicy', {
@@ -419,13 +494,22 @@ During a re-seed (SEED-2c: delete → create → bulk-index), the `cumplify-iso-
 index is transiently absent. In this window:
 
 1. Guru handler calls `retrieve()` → AOSS returns `index_not_found_exception` (404).
-2. `retrieve()` treats this as a retryable error and eventually times out.
-3. The guru handler's `catch` block catches the timeout → `groundingSource = ''`.
+2. `retrieve()` treats 404 as **non-retryable** (see `isAossRetryable` in
+   retrieval.ts: only 5xx/503/429/timeout/connection errors retry). The call
+   fails fast on the first attempt — no 45s retry burn.
+3. The guru handler's `catch` block catches the error → `groundingSource = ''`.
 4. The invokeFn call proceeds WITHOUT `groundingContext` → **dormant path**.
 5. The user gets an answer without grounding (same behavior as today, pre-seeding).
 
 **This is the proven live behavior** (fix-t20-3 evidence: "retrieval log now shows
-an APPLICATION-level response from the AOSS data plane: 404 index_not_found_exception").
+an APPLICATION-level response from the AOSS data plane: 404 index_not_found_exception"
+— attempts: 1, fast-fail).
+
+**Note on the seeder's own AOSS operations:** The seeder's `withRetry` wrapper
+(§5) DOES retry 404 — this covers index activation delays where a newly-created
+index is not yet addressable. This distinction is correct: the guru retrieval
+path fails fast on 404 (user-facing latency), while the seeder retries 404
+(deploy-time, no user waiting).
 
 ### 4.2 Window Duration Estimate
 
@@ -448,7 +532,10 @@ The window is bounded by the Lambda timeout (300s max).
 
 ## 5. AOSS Retry Strategy (02-aoss-rule compliance)
 
-All AOSS operations in the seeder use the same retry pattern:
+All AOSS operations **in the seeder** use the same retry pattern. Note: this
+differs from the guru retrieval path (`retrieve()`) which treats 404 as
+non-retryable (D-3). The seeder retries 404 because newly-created indexes
+may not be immediately addressable (activation delay).
 
 | Parameter | Value |
 |-----------|-------|
@@ -457,7 +544,7 @@ All AOSS operations in the seeder use the same retry pattern:
 | Jitter | 20% of computed delay |
 | Ceiling | 45,000ms |
 | Max attempts | 12 |
-| Retryable codes | 403 (policy propagation), 404 (activation), 429, 5xx |
+| Retryable codes | 403 (policy propagation), 404 (index activation), 429, 5xx |
 
 Implementation reuses `signedAossFetch` from `services/agents/shared/aoss-signed-client.ts`
 with a `withRetry` wrapper following the same pattern as `aoss-apply-template.ts`.
@@ -517,10 +604,11 @@ and apply-template). Observability is via:
 
 | Layer | Scope | Runner |
 |-------|-------|--------|
-| Unit | Chunker: correct count, correct prefixes, metadata alignment, HLS prefix outside citation pattern, determinism, no chunk for parent-only headers | Vitest |
+| Unit | Chunker: golden count (EXPECTED_CHUNK_COUNT = 79, D-5), correct prefixes, metadata alignment, HLS prefix outside citation pattern, determinism, no chunk for parent-only headers | Vitest |
 | Unit | Content hash: deterministic, changes on input change | Vitest |
 | Unit | Handler: mock embed + AOSS → verify skip-on-match, full-seed-on-mismatch, abort-on-template-fail | Vitest |
-| Property | Chunker: `fc.assert(fc.property(fc.constant(SOURCE), (s) => chunkIsoRequirementsMap(s).length > 0))` + every chunk has valid metadata + no chunk text starts with `[ISO HLS` | fast-check |
+| Unit | _meta doc: tenantId='__META__' (never '__ISO_CANON__'), no embedding field (D-2) | Vitest |
+| Property | Chunker: `fc.assert(fc.property(fc.constant(SOURCE), (s) => chunkIsoRequirementsMap(s).length === EXPECTED_CHUNK_COUNT))` + every chunk has valid metadata + no chunk text starts with `[ISO HLS` | fast-check |
 | Integration | Deploy to dev → ACC-1 through ACC-6 verified via Lambda invoke + DDB scan + retrieval probe | Dev account |
 
 ---
