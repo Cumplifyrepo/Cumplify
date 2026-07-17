@@ -246,7 +246,7 @@
   - **Evidence:** `infra/data/ar-policies/role-permissions.json`
   - **ACC mapping:** L2-2
 
-- [ ] **Task 24 — Author plan-entitlements AR policy** [ARCHITECT] D3
+- [x] **Task 24 — Author plan-entitlements AR policy (headless; Part 17.2 price card)** [ARCHITECT] D3
   - Tier truth table → export JSON
   - **Evidence:** `infra/data/ar-policies/plan-entitlements.json`
   - **ACC mapping:** L2-3

@@ -1,0 +1,52 @@
+# Task 24 — Author plan-entitlements AR policy [ARCHITECT]
+# Executed: 2026-07-17T09:17–09:21Z | dev acct 697114252993 | headless CLI
+
+## Source (transcribed — finance control: regenerate on price-card change)
+Part 17.2 price card v2: Launch $449/mo (1 standard, 5 Full seats),
+IMS Pro $949/mo (3 standards, 15 Full seats), Enterprise from $2,250/mo
+(annual only; multi-site; custom bands). Cumulative feature sets
+(Launch ⊂ Pro ⊂ Enterprise): Launch = core agents, Forms Studio, e-sig,
+audit trail, unlimited Worker/guest-auditor/contractor seats; Pro adds
+all-3-standards, 22-agent roster, bulk migration + AI clause mapping,
+CAPA toolkit, Trust Center, partner collaboration; Enterprise adds
+multi-site, SSO/SAML+SCIM, IP allowlist, legal hold, SLA 99.9, DR SLA,
+custom retention, attestation report, validation pack, priority inference.
+HARD INVARIANT: Worker seats unlimited on EVERY tier (5.4 protection).
+
+## Modeling
+Necessity-direction encoding (Task 23 lesson: minimal variable set).
+Types PlanTier(3)/FeatureGate(23); 8 variables; 11 rules: per-tier feature
+necessity (Enterprise unrestricted), seat equalities (5/15), standards
+counts (Launch=1 unless $199 add-on; Pro/Ent=3), price equalities
+(449/949) + Enterprise floor (>=2250), worker_seats_unlimited pinned true.
+
+## Test evidence (6 cases, threshold 0.9)
+PE1 "Pro includes Trust Center + all 3 standards" → SATISFIABLE ✓
+PE2 "Launch includes SSO/SAML" → INVALID ✓
+PE3 "Launch includes 15 Full seats" → INVALID ✓
+PE4 "Enterprise supports multi-site" → SATISFIABLE ✓
+PE5 "Worker seats capped at 10 on Launch" → INVALID ✓
+PE6 "IMS Pro costs $349/mo" → INVALID ✓
+**6/6 PASSED — twice** (import-build definition and again against the
+updated draft). The crisp numeric/enum domain translates far more
+reliably than role language (0 ambiguous across 12 cells).
+
+## API lesson (recorded for the method)
+IMPORT_POLICY populates BUILD ASSETS only — it does NOT update the policy
+draft. Versioning without an explicit update-automated-reasoning-policy
+produced an EMPTY version 1 (0 types/vars/rules) — caught by the mandatory
+export-vs-authored diff, version deleted, draft updated, re-versioned.
+The export≡authored diff is a NON-SKIPPABLE step of this workflow.
+
+## Version + deliverable
+- Version 2 (v1 deleted as empty):
+  arn:aws:bedrock:us-east-1:697114252993:automated-reasoning-policy/cn3l74b3rel5:2
+  (created 2026-07-17T09:20:52Z)
+- Exported → infra/data/ar-policies/plan-entitlements.json; export
+  re-diffed IDENTICAL to authored; _meta carries gate mapping + scope notes
+  (annual prices & add-on prices description-level only).
+
+## Verdict
+Task 24 CLOSED. All three AR policy deliverables now in
+infra/data/ar-policies/ — Task 25 (Kiro CFN) fully unblocked; Task 26
+owner IAM gate is the remaining human dependency before Task 29 deploy.

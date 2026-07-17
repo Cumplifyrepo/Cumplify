@@ -1,0 +1,238 @@
+{
+  "_meta": {
+    "spec": "guardrails-antihallucination Task 24 (L2-3)",
+    "source": "Part 17.2 price card v2 (Launch $449 / IMS Pro $949 / Enterprise from $2,250; cumulative feature sets; 5/15/custom Full seats; unlimited-Worker-seats invariant per Part 13.2 5.4 protection)",
+    "generator": "deterministic (necessity-direction encoding; ENTERPRISE unrestricted; Launch standards rule conditioned on the $199 additional-standard add-on)",
+    "workbenchPolicyArn": "arn:aws:bedrock:us-east-1:697114252993:automated-reasoning-policy/cn3l74b3rel5:2",
+    "arCheckGateMapping": {
+      "pass": [
+        "VALID",
+        "SATISFIABLE"
+      ],
+      "reject_steered_retry": [
+        "INVALID",
+        "IMPOSSIBLE"
+      ],
+      "flag_hitl": [
+        "TRANSLATION_AMBIGUOUS",
+        "NO_TRANSLATION",
+        "TOO_COMPLEX"
+      ]
+    },
+    "confidenceThreshold": 0.9,
+    "scopeNotes": [
+      "Annual (-15%) prices not formally encoded (monthly + Enterprise floor only); annual figures live in tier value descriptions.",
+      "Add-on PRICES ($29 seat / $149 site / $199 standard) are description-level, not rules.",
+      "Price card is Part 17.2 v2 \u2014 regenerate this policy if the card changes (finance control)."
+    ]
+  },
+  "policyDefinition": {
+    "version": "1",
+    "types": [
+      {
+        "name": "PlanTier",
+        "description": "Cumplify pricing tier (Part 17.2 price card v2).",
+        "values": [
+          {
+            "value": "LAUNCH",
+            "description": "Launch: $449/mo ($382/mo annual), any 1 standard, 5 Full seats + unlimited Worker"
+          },
+          {
+            "value": "IMS_PRO",
+            "description": "IMS Pro: $949/mo ($807/mo annual), all 3 standards, 15 Full seats + unlimited Worker"
+          },
+          {
+            "value": "ENTERPRISE",
+            "description": "Enterprise: from $2,250/mo (annual only), all 3 standards + multi-site, custom seat bands"
+          }
+        ]
+      },
+      {
+        "name": "FeatureGate",
+        "description": "Plan-gated capability. Feature sets are cumulative: IMS Pro includes all Launch features; Enterprise includes all IMS Pro features.",
+        "values": [
+          {
+            "value": "CORE_AGENTS",
+            "description": "Core agents for the licensed scope"
+          },
+          {
+            "value": "FORMS_STUDIO",
+            "description": "Forms Studio (M14)"
+          },
+          {
+            "value": "ESIGNATURE",
+            "description": "Electronic signatures"
+          },
+          {
+            "value": "AUDIT_TRAIL",
+            "description": "Immutable audit trail"
+          },
+          {
+            "value": "UNLIMITED_WORKER_SEATS",
+            "description": "Unlimited free Worker seats (5.4 protection \u2014 never seat-gated on any tier)"
+          },
+          {
+            "value": "GUEST_AUDITOR_SEATS",
+            "description": "Free unlimited External/Guest Auditor seats"
+          },
+          {
+            "value": "CONTRACTOR_SEATS",
+            "description": "Free auto-expiring Contractor seats"
+          },
+          {
+            "value": "ALL_THREE_STANDARDS",
+            "description": "ISO 9001 + 14001 + 45001 (IMS)"
+          },
+          {
+            "value": "FULL_AGENT_ROSTER",
+            "description": "Full 22-agent roster"
+          },
+          {
+            "value": "BULK_MIGRATION_AI_MAPPING",
+            "description": "Bulk migration + AI clause mapping"
+          },
+          {
+            "value": "CAPA_TOOLKIT",
+            "description": "CAPA engineering toolkit"
+          },
+          {
+            "value": "TRUST_CENTER",
+            "description": "Public Trust Center"
+          },
+          {
+            "value": "PARTNER_COLLABORATION",
+            "description": "Partner collaboration"
+          },
+          {
+            "value": "MULTI_SITE",
+            "description": "Multi-site / multi-entity"
+          },
+          {
+            "value": "SSO_SAML_SCIM",
+            "description": "SSO/SAML + SCIM provisioning"
+          },
+          {
+            "value": "IP_ALLOWLIST",
+            "description": "IP allowlist"
+          },
+          {
+            "value": "LEGAL_HOLD",
+            "description": "Legal hold"
+          },
+          {
+            "value": "SLA_999",
+            "description": "99.9% SLA"
+          },
+          {
+            "value": "DR_SLA",
+            "description": "Disaster-recovery SLA"
+          },
+          {
+            "value": "CUSTOM_RETENTION",
+            "description": "Custom retention policies"
+          },
+          {
+            "value": "ATTESTATION_REPORT",
+            "description": "Audit-trail attestation report"
+          },
+          {
+            "value": "VALIDATION_PACK",
+            "description": "Validation pack (18.3)"
+          },
+          {
+            "value": "PRIORITY_INFERENCE",
+            "description": "Priority inference"
+          }
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "id": "PLANENT00001",
+        "expression": "(=> (and (= plan LAUNCH) feature_available) (or (= feature CORE_AGENTS) (= feature FORMS_STUDIO) (= feature ESIGNATURE) (= feature AUDIT_TRAIL) (= feature UNLIMITED_WORKER_SEATS) (= feature GUEST_AUDITOR_SEATS) (= feature CONTRACTOR_SEATS)))"
+      },
+      {
+        "id": "PLANENT00002",
+        "expression": "(=> (and (= plan IMS_PRO) feature_available) (or (= feature CORE_AGENTS) (= feature FORMS_STUDIO) (= feature ESIGNATURE) (= feature AUDIT_TRAIL) (= feature UNLIMITED_WORKER_SEATS) (= feature GUEST_AUDITOR_SEATS) (= feature CONTRACTOR_SEATS) (= feature ALL_THREE_STANDARDS) (= feature FULL_AGENT_ROSTER) (= feature BULK_MIGRATION_AI_MAPPING) (= feature CAPA_TOOLKIT) (= feature TRUST_CENTER) (= feature PARTNER_COLLABORATION)))"
+      },
+      {
+        "id": "PLANENT00003",
+        "expression": "(=> (= plan LAUNCH) (= included_full_seats 5))"
+      },
+      {
+        "id": "PLANENT00004",
+        "expression": "(=> (= plan IMS_PRO) (= included_full_seats 15))"
+      },
+      {
+        "id": "PLANENT00005",
+        "expression": "(=> (and (= plan LAUNCH) (not has_addon_extra_standard)) (= standards_included 1))"
+      },
+      {
+        "id": "PLANENT00006",
+        "expression": "(=> (= plan IMS_PRO) (= standards_included 3))"
+      },
+      {
+        "id": "PLANENT00007",
+        "expression": "(=> (= plan ENTERPRISE) (= standards_included 3))"
+      },
+      {
+        "id": "PLANENT00008",
+        "expression": "(=> (= plan LAUNCH) (= monthly_price_usd 449))"
+      },
+      {
+        "id": "PLANENT00009",
+        "expression": "(=> (= plan IMS_PRO) (= monthly_price_usd 949))"
+      },
+      {
+        "id": "PLANENT00010",
+        "expression": "(=> (= plan ENTERPRISE) (>= monthly_price_usd 2250))"
+      },
+      {
+        "id": "PLANENT00011",
+        "expression": "(= worker_seats_unlimited true)"
+      }
+    ],
+    "variables": [
+      {
+        "name": "plan",
+        "type": "PlanTier",
+        "description": "The pricing tier the agent's statement is about."
+      },
+      {
+        "name": "feature",
+        "type": "FeatureGate",
+        "description": "The capability the statement claims is included or excluded."
+      },
+      {
+        "name": "feature_available",
+        "type": "BOOL",
+        "description": "True if the statement claims the feature IS included in the plan; false if it claims the feature is NOT included."
+      },
+      {
+        "name": "included_full_seats",
+        "type": "INT",
+        "description": "The number of INCLUDED Full seats the statement attributes to the plan (extra seats purchasable at $29/mo are not included seats)."
+      },
+      {
+        "name": "standards_included",
+        "type": "INT",
+        "description": "How many ISO standards the statement says the plan covers (9001/14001/45001)."
+      },
+      {
+        "name": "has_addon_extra_standard",
+        "type": "BOOL",
+        "description": "True if the scenario includes the $199/mo additional-standard add-on available on Launch."
+      },
+      {
+        "name": "monthly_price_usd",
+        "type": "INT",
+        "description": "The monthly (non-annual) price in USD the statement attributes to the plan."
+      },
+      {
+        "name": "worker_seats_unlimited",
+        "type": "BOOL",
+        "description": "True if the statement says Worker seats are unlimited/free; false if it claims Worker seats are limited or paid."
+      }
+    ]
+  }
+}
