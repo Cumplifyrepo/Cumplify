@@ -248,11 +248,12 @@ export function extractArFinding(response: ApplyGuardrailCommandOutput): ArFindi
   // Worst-first: a response with [satisfiable, invalid] must REJECT.
   const SEVERITY: ArFindingResult[] = [
     'INVALID', 'IMPOSSIBLE',
-    'TRANSLATION_AMBIGUOUS', 'NO_TRANSLATION', 'TOO_COMPLEX',
-    'SATISFIABLE', 'VALID',
+    'TRANSLATION_AMBIGUOUS', 'TOO_COMPLEX',
+    'SATISFIABLE', 'VALID', 'NO_TRANSLATION',
   ];
 
   let worst: ArFinding | undefined;
+  let substantive: ArFinding | undefined;
   let sawAssessment = false;
 
   for (const assessment of response.assessments ?? []) {
@@ -283,10 +284,19 @@ export function extractArFinding(response: ApplyGuardrailCommandOutput): ArFindi
       if (!worst || SEVERITY.indexOf(result) < SEVERITY.indexOf(worst.result)) {
         worst = finding;
       }
+      // FIX-T29-2 (live pin, probes 13:14:56Z + 13:19:12Z): noTranslations is
+      // a ROUTINE COMPANION finding covering non-logical text segments — it
+      // appears alongside satisfiable AND alongside translationAmbiguous.
+      // It only carries the aggregate verdict when it stands ALONE.
+      if (result !== 'NO_TRANSLATION' &&
+          (!substantive || SEVERITY.indexOf(result) < SEVERITY.indexOf(substantive.result))) {
+        substantive = finding;
+      }
     }
   }
 
-  if (worst) return worst;
+  if (substantive) return substantive;
+  if (worst) return worst; // only noTranslations findings → NO_TRANSLATION (flag_hitl)
   if (sawAssessment) {
     // AR assessment present but no parseable finding: empty findings with
     // action NONE = clean pass; anything else fails SAFE to HITL.

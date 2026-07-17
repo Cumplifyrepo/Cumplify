@@ -385,3 +385,44 @@ describe('emitArRejected', () => {
     expect(call.event.payload.retriedOnce).toBe(true);
   });
 });
+
+describe('FIX-T29-2: companion noTranslations findings (live shapes, probes 2026-07-17)', () => {
+  it('[satisfiable, noTranslations] → SATISFIABLE (pass) — live valid-clause probe shape', () => {
+    const finding = extractArFinding({
+      action: 'NONE',
+      assessments: [{ automatedReasoningPolicy: { findings: [{ satisfiable: {} }, { noTranslations: {} }] } }],
+    } as any);
+    expect(finding.result).toBe('SATISFIABLE');
+    expect(mapFindingToDecision(finding.result)).toBe('pass');
+  });
+
+  it('[translationAmbiguous, noTranslations] → TRANSLATION_AMBIGUOUS (hitl) — live fabricated-clause probe shape', () => {
+    const finding = extractArFinding({
+      action: 'NONE',
+      assessments: [{ automatedReasoningPolicy: { findings: [{ translationAmbiguous: { options: [] } }, { noTranslations: {} }] } }],
+    } as any);
+    expect(finding.result).toBe('TRANSLATION_AMBIGUOUS');
+    expect(mapFindingToDecision(finding.result)).toBe('flag_hitl');
+  });
+
+  it('[invalid, noTranslations] → INVALID (reject)', () => {
+    const finding = extractArFinding({
+      action: 'GUARDRAIL_INTERVENED',
+      assessments: [{ automatedReasoningPolicy: { findings: [
+        { invalid: { translation: { claims: [{ naturalLanguage: 'clause 99.9 exists' }] }, contradictingRules: [{ identifier: 'CANONRULE001' }] } },
+        { noTranslations: {} },
+      ] } }],
+    } as any);
+    expect(finding.result).toBe('INVALID');
+    expect(finding.invalidClaim).toBe('clause 99.9 exists');
+  });
+
+  it('standalone [noTranslations] → NO_TRANSLATION (flag_hitl per gate mapping)', () => {
+    const finding = extractArFinding({
+      action: 'NONE',
+      assessments: [{ automatedReasoningPolicy: { findings: [{ noTranslations: {} }] } }],
+    } as any);
+    expect(finding.result).toBe('NO_TRANSLATION');
+    expect(mapFindingToDecision(finding.result)).toBe('flag_hitl');
+  });
+});
