@@ -1,0 +1,66 @@
+# Task 23 — Author role-permissions AR policy [ARCHITECT]
+# Executed: 2026-07-17T08:45–09:17Z | dev acct 697114252993 | headless CLI (Task 22 method)
+
+## Sources (transcribed matrix — owner ratification with Task 26 gate)
+- Part 13 §13.1 v2 role catalog (12 personas) — SUPERSEDES spine D.3 per the
+  doc's own precedence rule (v2 > v1 > spine).
+- .kiro/steering/09-sod-rules.md (SoD: author≠approver incl. delegation;
+  auditor independence; investigator ≠ area supervisor. Hard-block, no
+  override).
+- Module registry: module-spec.md M1–M13 + M14 Forms Studio (Part 15).
+WRITE sets: MgmtRep M1-13 · QM M1-5,7,11-13 · EHS M5,7-11 · DocCtrl M1,14 ·
+IntAuditor M3 · Supervisor M10 · Employee/Contractor M10,14 ·
+TopMgmt/ExtAuditor none. APPROVE sets: as WRITE, plus TopMgmt {M1,M11};
+Employee/Contractor none. ADMIN: MgmtRep ONLY.
+
+## Modeling (binding decisions)
+- NECESSITY-DIRECTION encoding: (permitted ∧ role ∧ action) => module ∈
+  allowed set. Wrong-positive advice ("you CAN do X") is formally INVALID;
+  over-restrictive advice ("you cannot do X" when you can) deliberately
+  passes — the safe direction. READ claims not validated.
+- SoD scenarios modeled as PermAction ENUM VALUES (APPROVE_OWN_WORK,
+  AUDIT_OWN_WRITE_SCOPE, INVESTIGATE_OWN_AREA) => (not permitted) — NOT as
+  free BOOLs. Round-1 evidence: 5 free scenario booleans → 0/6 test cases
+  conclusive (all TRANSLATION_AMBIGUOUS); collapsing to enum values
+  restored INVALID/VALID verdicts. New API lesson recorded: rule ids min
+  12 chars; single-argument (or …) rejected.
+- ProcessOwner row-level assignment + PartnerConsultant delegation BOOLs
+  DROPPED after ambiguity testing — claims about those roles ride the
+  AMBIGUOUS→HITL fail-safe; role-value descriptions still inform the
+  translator. SCOPING DECISION for owner.
+Final: types Role(12)/PermAction(7)/Module(14); 4 variables; 24 rules.
+
+## Test evidence (6 cases, threshold 0.9; RP2 re-run at 0.7)
+| Case | R1 (5 bools) | R2 (SoD→enum) | R3 (minimal) |
+|------|----|----|----|
+| RP1 QM writes CAPA (valid) | AMB | AMB | AMB |
+| RP2 IntAuditor edits M5 (bad) | AMB | AMB | AMB @0.7 too |
+| RP3 approve own draft (bad) | AMB | **INVALID** | AMB |
+| RP4 "cannot approve own work" (good) | VALID* | **VALID** | AMB |
+| RP5 QM does admin (bad) | AMB | AMB | **INVALID** |
+| RP6 TopMgmt edits register (bad) | AMB | AMB | **INVALID** |
+(*R1 expectation error — negative advice matching a negative rule is
+ENTAILED ⇒ VALID, not SATISFIABLE.)
+FINDINGS:
+1. R2→R3 changed NO SoD rules, yet RP3/RP4 flipped verdicts while RP5/RP6
+   flipped the other way — translator nondeterminism dominates (same class
+   as Task 22, higher rate in this fuzzier advisory domain).
+2. RP2 ambiguous at threshold 0.7 as well — not a confidence-threshold
+   artifact.
+3. SAFETY ENVELOPE HOLDS over all 18 cells: no bad claim ever passed
+   (INVALID or AMBIGUOUS only); no good claim ever rejected (VALID/
+   SATISFIABLE or AMBIGUOUS only). With the ar-check gate mapping
+   (pass=VALID|SATISFIABLE; reject=INVALID|IMPOSSIBLE; HITL-flag=
+   AMBIGUOUS|NO_TRANSLATION|TOO_COMPLEX) behavior is fail-safe; expect a
+   higher HITL-flag rate on role-advice than clause citations.
+
+## Version + deliverable
+- Version 1: arn:aws:bedrock:us-east-1:697114252993:automated-reasoning-policy/n5pd2c7ago5d:1
+  (created 2026-07-17T09:16:51Z)
+- Exported → infra/data/ar-policies/role-permissions.json; export re-diffed
+  IDENTICAL to the authored definition; _meta carries gate mapping + scope
+  notes.
+
+## Verdict
+Task 23 CLOSED. Deliverable ready for Task 25 CFN. Owner items: ratify the
+transcribed WRITE/APPROVE matrix; ProcessOwner/Partner scoping note.

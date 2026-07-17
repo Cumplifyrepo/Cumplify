@@ -1,0 +1,304 @@
+{
+  "_meta": {
+    "spec": "guardrails-antihallucination Task 23 (L2-2)",
+    "source": "Part 13 v2 role catalog (12 personas, supersedes spine D.3 per doc precedence) + .kiro/steering/09-sod-rules.md",
+    "generator": "deterministic (necessity-direction encoding: permitted => module-in-allowed-set; SoD scenarios as PermAction enum values; wrong-positive advice INVALID, over-restrictive advice passes)",
+    "workbenchPolicyArn": "arn:aws:bedrock:us-east-1:697114252993:automated-reasoning-policy/n5pd2c7ago5d:1",
+    "arCheckGateMapping": {
+      "pass": [
+        "VALID",
+        "SATISFIABLE"
+      ],
+      "reject_steered_retry": [
+        "INVALID",
+        "IMPOSSIBLE"
+      ],
+      "flag_hitl": [
+        "TRANSLATION_AMBIGUOUS",
+        "NO_TRANSLATION",
+        "TOO_COMPLEX"
+      ]
+    },
+    "confidenceThreshold": 0.9,
+    "scopeNotes": [
+      "READ-level claims are not formally validated (safe direction).",
+      "ProcessOwner row-level assignment and PartnerConsultant delegation are NOT formally encoded (dropped after ambiguity testing); claims about those roles ride the AMBIGUOUS->HITL fail-safe. Owner ratification with Task 26.",
+      "Advisory-domain translation shows higher TRANSLATION_AMBIGUOUS rates than clause-canon; expected handling is HITL flag, not block."
+    ]
+  },
+  "policyDefinition": {
+    "version": "1",
+    "types": [
+      {
+        "name": "Role",
+        "description": "Part 13 role catalog (12 personas).",
+        "values": [
+          {
+            "value": "TopManagement",
+            "description": "Top Management / Executive (ISO 5.1, 9.3): read-all dashboards; approves management-review outputs (M11) and policies (M1); NO register mutations."
+          },
+          {
+            "value": "ManagementRep",
+            "description": "Management Rep / IMS Lead (5.3): full write M1-M13; the ONLY role with user/role/settings administration."
+          },
+          {
+            "value": "QualityManager",
+            "description": "Quality Manager (9001 ownership): full write M1-M5, M7, M11-M13."
+          },
+          {
+            "value": "EHSManager",
+            "description": "EHS Manager (14001+45001 ownership): full write M5, M7-M11."
+          },
+          {
+            "value": "DocumentController",
+            "description": "Document Controller (7.5.3): M1/M14 full lifecycle incl. publish/obsolete; SoD: never approves own drafts."
+          },
+          {
+            "value": "InternalAuditor",
+            "description": "Internal Auditor (9.2): M3 full; read-only everywhere else; independence: cannot audit processes where they hold write roles."
+          },
+          {
+            "value": "ExternalAuditor",
+            "description": "External Auditor (guest): time-boxed read-only; no write or approve anywhere."
+          },
+          {
+            "value": "ProcessOwner",
+            "description": "Process Owner (4.4): write ONLY within processes/registers assigned via owner_id (row-level, not module-level)."
+          },
+          {
+            "value": "Supervisor",
+            "description": "Supervisor (45001 operational): M10 hazard/incident triage; M13 team training VIEWS only; approves worker submissions (M10)."
+          },
+          {
+            "value": "Employee",
+            "description": "Employee / Worker (5.4): submits hazards/incidents (M10) and forms (M14); own training records; consultation participation."
+          },
+          {
+            "value": "Contractor",
+            "description": "Contractor (45001 8.1.4.2): induction forms, document acknowledgment, incident reporting only; auto-expiring access."
+          },
+          {
+            "value": "PartnerConsultant",
+            "description": "Partner Consultant (cross-tenant, Part 16.3): acts ONLY under a per-tenant, per-role, client-approved delegated grant."
+          }
+        ]
+      },
+      {
+        "name": "PermAction",
+        "description": "Capability class claimed in the statement.",
+        "values": [
+          {
+            "value": "READ",
+            "description": "View/consult only"
+          },
+          {
+            "value": "WRITE",
+            "description": "Create, edit, or mutate registers/records/documents"
+          },
+          {
+            "value": "APPROVE",
+            "description": "Approve, publish, or sign off"
+          },
+          {
+            "value": "ADMIN",
+            "description": "User, role, permission, or settings administration"
+          },
+          {
+            "value": "APPROVE_OWN_WORK",
+            "description": "Approving or publishing work the same person authored or submitted themselves \u2014 including when acting under delegation (SoD scenario)"
+          },
+          {
+            "value": "AUDIT_OWN_WRITE_SCOPE",
+            "description": "An Internal Auditor auditing a process where they themselves hold write roles (independence scenario)"
+          },
+          {
+            "value": "INVESTIGATE_OWN_AREA",
+            "description": "Investigating an incident that occurred in an area the investigator supervises (SoD scenario)"
+          }
+        ]
+      },
+      {
+        "name": "Module",
+        "description": "Cumplify IMS modules.",
+        "values": [
+          {
+            "value": "M1",
+            "description": "Document Studio"
+          },
+          {
+            "value": "M2",
+            "description": "CAPA"
+          },
+          {
+            "value": "M3",
+            "description": "Audit Studio"
+          },
+          {
+            "value": "M4",
+            "description": "Records Management"
+          },
+          {
+            "value": "M5",
+            "description": "Risk Management"
+          },
+          {
+            "value": "M6",
+            "description": "Context & Stakeholder Studio"
+          },
+          {
+            "value": "M7",
+            "description": "Objectives & Targets"
+          },
+          {
+            "value": "M8",
+            "description": "Compliance Obligations Register"
+          },
+          {
+            "value": "M9",
+            "description": "Environmental Management (EnviroStudio)"
+          },
+          {
+            "value": "M10",
+            "description": "Safety Operations (OH&S)"
+          },
+          {
+            "value": "M11",
+            "description": "Management Review"
+          },
+          {
+            "value": "M12",
+            "description": "Supplier & External Provider Management"
+          },
+          {
+            "value": "M13",
+            "description": "Competence & Training"
+          },
+          {
+            "value": "M14",
+            "description": "Forms Studio"
+          }
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "id": "ROLEPERM0001",
+        "expression": "(=> (and (= role TopManagement) (= action WRITE)) (not permitted))"
+      },
+      {
+        "id": "ROLEPERM0002",
+        "expression": "(=> (and (= role ManagementRep) (= action WRITE) permitted) (or (= module M1) (= module M2) (= module M3) (= module M4) (= module M5) (= module M6) (= module M7) (= module M8) (= module M9) (= module M10) (= module M11) (= module M12) (= module M13)))"
+      },
+      {
+        "id": "ROLEPERM0003",
+        "expression": "(=> (and (= role QualityManager) (= action WRITE) permitted) (or (= module M1) (= module M2) (= module M3) (= module M4) (= module M5) (= module M7) (= module M11) (= module M12) (= module M13)))"
+      },
+      {
+        "id": "ROLEPERM0004",
+        "expression": "(=> (and (= role EHSManager) (= action WRITE) permitted) (or (= module M5) (= module M7) (= module M8) (= module M9) (= module M10) (= module M11)))"
+      },
+      {
+        "id": "ROLEPERM0005",
+        "expression": "(=> (and (= role DocumentController) (= action WRITE) permitted) (or (= module M1) (= module M14)))"
+      },
+      {
+        "id": "ROLEPERM0006",
+        "expression": "(=> (and (= role InternalAuditor) (= action WRITE) permitted) (= module M3))"
+      },
+      {
+        "id": "ROLEPERM0007",
+        "expression": "(=> (and (= role ExternalAuditor) (= action WRITE)) (not permitted))"
+      },
+      {
+        "id": "ROLEPERM0008",
+        "expression": "(=> (and (= role Supervisor) (= action WRITE) permitted) (= module M10))"
+      },
+      {
+        "id": "ROLEPERM0009",
+        "expression": "(=> (and (= role Employee) (= action WRITE) permitted) (or (= module M10) (= module M14)))"
+      },
+      {
+        "id": "ROLEPERM0010",
+        "expression": "(=> (and (= role Contractor) (= action WRITE) permitted) (or (= module M10) (= module M14)))"
+      },
+      {
+        "id": "ROLEPERM0011",
+        "expression": "(=> (and (= role TopManagement) (= action APPROVE) permitted) (or (= module M1) (= module M11)))"
+      },
+      {
+        "id": "ROLEPERM0012",
+        "expression": "(=> (and (= role ManagementRep) (= action APPROVE) permitted) (or (= module M1) (= module M2) (= module M3) (= module M4) (= module M5) (= module M6) (= module M7) (= module M8) (= module M9) (= module M10) (= module M11) (= module M12) (= module M13)))"
+      },
+      {
+        "id": "ROLEPERM0013",
+        "expression": "(=> (and (= role QualityManager) (= action APPROVE) permitted) (or (= module M1) (= module M2) (= module M3) (= module M4) (= module M5) (= module M7) (= module M11) (= module M12) (= module M13)))"
+      },
+      {
+        "id": "ROLEPERM0014",
+        "expression": "(=> (and (= role EHSManager) (= action APPROVE) permitted) (or (= module M5) (= module M7) (= module M8) (= module M9) (= module M10) (= module M11)))"
+      },
+      {
+        "id": "ROLEPERM0015",
+        "expression": "(=> (and (= role DocumentController) (= action APPROVE) permitted) (or (= module M1) (= module M14)))"
+      },
+      {
+        "id": "ROLEPERM0016",
+        "expression": "(=> (and (= role InternalAuditor) (= action APPROVE) permitted) (= module M3))"
+      },
+      {
+        "id": "ROLEPERM0017",
+        "expression": "(=> (and (= role ExternalAuditor) (= action APPROVE)) (not permitted))"
+      },
+      {
+        "id": "ROLEPERM0018",
+        "expression": "(=> (and (= role Supervisor) (= action APPROVE) permitted) (= module M10))"
+      },
+      {
+        "id": "ROLEPERM0019",
+        "expression": "(=> (and (= role Employee) (= action APPROVE)) (not permitted))"
+      },
+      {
+        "id": "ROLEPERM0020",
+        "expression": "(=> (and (= role Contractor) (= action APPROVE)) (not permitted))"
+      },
+      {
+        "id": "ROLEPERM0023",
+        "expression": "(=> (and (= action ADMIN) permitted) (= role ManagementRep))"
+      },
+      {
+        "id": "ROLEPERM0024",
+        "expression": "(=> (= action APPROVE_OWN_WORK) (not permitted))"
+      },
+      {
+        "id": "ROLEPERM0025",
+        "expression": "(=> (= action AUDIT_OWN_WRITE_SCOPE) (not permitted))"
+      },
+      {
+        "id": "ROLEPERM0026",
+        "expression": "(=> (= action INVESTIGATE_OWN_AREA) (not permitted))"
+      }
+    ],
+    "variables": [
+      {
+        "name": "role",
+        "type": "Role",
+        "description": "The role the agent's advisory statement is about (map job titles to the closest catalog role)."
+      },
+      {
+        "name": "action",
+        "type": "PermAction",
+        "description": "The kind of capability the statement claims: WRITE (create/edit/mutate registers or records), APPROVE (approval/publish decisions), ADMIN (user, role, or settings administration), READ (viewing only)."
+      },
+      {
+        "name": "module",
+        "type": "Module",
+        "description": "The IMS module the claimed capability applies to."
+      },
+      {
+        "name": "permitted",
+        "type": "BOOL",
+        "description": "True if the statement claims the role IS allowed to perform the action; false if it claims the role is NOT allowed."
+      }
+    ]
+  }
+}

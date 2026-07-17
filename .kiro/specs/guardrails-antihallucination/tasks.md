@@ -241,7 +241,7 @@
   - **Evidence:** PolicyDefinition JSON at `infra/data/ar-policies/clause-canon.json`
   - **ACC mapping:** L2-1, L2-4
 
-- [ ] **Task 23 — Author role-permissions AR policy** [ARCHITECT] D3
+- [x] **Task 23 — Author role-permissions AR policy (headless; Part 13 v2 + SoD steering)** [ARCHITECT] D3
   - Part 13 permission matrix + SoD rules → export JSON
   - **Evidence:** `infra/data/ar-policies/role-permissions.json`
   - **ACC mapping:** L2-2
