@@ -11,6 +11,9 @@
  * EventingStack, AuditTrailStack.
  */
 
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -169,6 +172,75 @@ export class AiStack extends cdk.Stack {
       },
     });
 
+    // ─── AR Policies (spec-35 Task 25: L2 Automated Reasoning) ─────────────
+    // Read pre-authored PolicyDefinition from exported JSON files at synth time.
+    // These JSONs were built via headless CLI in Tasks 22-24 and exported verbatim.
+    const arPoliciesDir = resolve(
+      dirname(fileURLToPath(import.meta.url)),
+      '../data/ar-policies',
+    );
+    const clauseCanonDef = JSON.parse(
+      readFileSync(resolve(arPoliciesDir, 'clause-canon.json'), 'utf-8'),
+    ).policyDefinition;
+    const rolePermissionsDef = JSON.parse(
+      readFileSync(resolve(arPoliciesDir, 'role-permissions.json'), 'utf-8'),
+    ).policyDefinition;
+    const planEntitlementsDef = JSON.parse(
+      readFileSync(resolve(arPoliciesDir, 'plan-entitlements.json'), 'utf-8'),
+    ).policyDefinition;
+
+    const clauseCanonPolicy = new bedrock.CfnAutomatedReasoningPolicy(this, 'ClauseCanonPolicy', {
+      name: `cumplify-clause-canon-${envConfig.envName}`,
+      description: 'Clause-canon AR policy: validates ISO clause references (152 tuples: 9001/14001/45001)',
+      policyDefinition: clauseCanonDef,
+    });
+
+    const rolePermissionsPolicy = new bedrock.CfnAutomatedReasoningPolicy(this, 'RolePermissionsPolicy', {
+      name: `cumplify-role-permissions-${envConfig.envName}`,
+      description: 'Role-permissions AR policy: validates Part 13 v2 12-role RBAC + SoD assertions',
+      policyDefinition: rolePermissionsDef,
+    });
+
+    const planEntitlementsPolicy = new bedrock.CfnAutomatedReasoningPolicy(this, 'PlanEntitlementsPolicy', {
+      name: `cumplify-plan-entitlements-${envConfig.envName}`,
+      description: 'Plan-entitlements AR policy: validates Part 17.2 pricing tier feature gates',
+      policyDefinition: planEntitlementsDef,
+    });
+
+    // ─── AR-clause CfnGuardrail (spec-35 §1.1: clause-canon only) ──────────
+    // One AR policy (clause-canon). CrossRegionConfig required for AR.
+    // NO content/PII/grounding policies — AR-only evaluation (design H-1 D3).
+    const arClauseGuardrail = new bedrock.CfnGuardrail(this, 'ArClauseGuardrail', {
+      name: `cumplify-arclause-guardrail-${envConfig.envName}`,
+      blockedInputMessaging: 'Response contains invalid clause citation.',
+      blockedOutputsMessaging: 'Response contains invalid clause citation.',
+      crossRegionConfig: {
+        guardrailProfileArn:
+          `arn:aws:bedrock:us-east-1:${this.account}:guardrail-profile/us.guardrail.v1:0`,
+      },
+      automatedReasoningPolicyConfig: {
+        policies: [clauseCanonPolicy.attrPolicyArn],
+        confidenceThreshold: 0.9,
+      },
+    });
+
+    // ─── AR-advisory CfnGuardrail (spec-35 §1.1: role-perms + plan-ent) ────
+    // Two AR policies (maxItems:2 satisfied). CrossRegionConfig required.
+    // NO content/PII/grounding policies — AR-only evaluation (design H-1 D3).
+    const arAdvisoryGuardrail = new bedrock.CfnGuardrail(this, 'ArAdvisoryGuardrail', {
+      name: `cumplify-aradvisory-guardrail-${envConfig.envName}`,
+      blockedInputMessaging: 'Response contains invalid advisory claim.',
+      blockedOutputsMessaging: 'Response contains invalid advisory claim.',
+      crossRegionConfig: {
+        guardrailProfileArn:
+          `arn:aws:bedrock:us-east-1:${this.account}:guardrail-profile/us.guardrail.v1:0`,
+      },
+      automatedReasoningPolicyConfig: {
+        policies: [rolePermissionsPolicy.attrPolicyArn, planEntitlementsPolicy.attrPolicyArn],
+        confidenceThreshold: 0.9,
+      },
+    });
+
     // ─── AI Invoker Lambda (the ONE DOOR) ──────────────────────────────────
     const aiInvoker = new NodejsFunction(this, 'AiInvokerFn', {
       entry: 'services/ai-invoker/src/index.ts',
@@ -187,6 +259,10 @@ export class AiStack extends cdk.Stack {
         DOCGEN_GUARDRAIL_VERSION: docGenGuardrail.attrVersion,
         RECORDWRITE_GUARDRAIL_ID: recordWriteGuardrail.attrGuardrailId,
         RECORDWRITE_GUARDRAIL_VERSION: recordWriteGuardrail.attrVersion,
+        ARCLAUSE_GUARDRAIL_ID: arClauseGuardrail.attrGuardrailId,
+        ARCLAUSE_GUARDRAIL_VERSION: arClauseGuardrail.attrVersion,
+        ARADVISORY_GUARDRAIL_ID: arAdvisoryGuardrail.attrGuardrailId,
+        ARADVISORY_GUARDRAIL_VERSION: arAdvisoryGuardrail.attrVersion,
         POWERTOOLS_SERVICE_NAME: 'ai-invoker',
       },
     });
@@ -1404,6 +1480,10 @@ export class AiStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'GuardrailVersion', { value: guardrail.attrVersion });
     new cdk.CfnOutput(this, 'DocGenGuardrailId', { value: docGenGuardrail.attrGuardrailId });
     new cdk.CfnOutput(this, 'DocGenGuardrailVersion', { value: docGenGuardrail.attrVersion });
+    new cdk.CfnOutput(this, 'ArClauseGuardrailId', { value: arClauseGuardrail.attrGuardrailId });
+    new cdk.CfnOutput(this, 'ArClauseGuardrailVersion', { value: arClauseGuardrail.attrVersion });
+    new cdk.CfnOutput(this, 'ArAdvisoryGuardrailId', { value: arAdvisoryGuardrail.attrGuardrailId });
+    new cdk.CfnOutput(this, 'ArAdvisoryGuardrailVersion', { value: arAdvisoryGuardrail.attrVersion });
     new cdk.CfnOutput(this, 'HitlStateMachineArn', { value: hitlStateMachine.stateMachineArn });
 
     new cdk.CfnOutput(this, 'DocStudioQueueUrl', { value: docStudioQueue.queueUrl });

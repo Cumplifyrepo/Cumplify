@@ -1,0 +1,62 @@
+# Task 25 — CDK AR resources (spec-35 L2-7, CDK-1)
+# Executed: 2026-07-17T08:05–08:10Z | synth-only (no deploy — Task 29 is architect's lane)
+# Git blob SHA of ar-policies used: from develop HEAD c2b4f15 (Tasks 22-24 deliverables)
+
+## Resources added to ai-stack.ts
+
+| Resource | Construct ID | CFN Type | Config |
+|----------|-------------|----------|--------|
+| clause-canon policy | ClauseCanonPolicy | AWS::Bedrock::AutomatedReasoningPolicy | policyDefinition read from infra/data/ar-policies/clause-canon.json at synth time |
+| role-permissions policy | RolePermissionsPolicy | AWS::Bedrock::AutomatedReasoningPolicy | policyDefinition read from infra/data/ar-policies/role-permissions.json at synth time |
+| plan-entitlements policy | PlanEntitlementsPolicy | AWS::Bedrock::AutomatedReasoningPolicy | policyDefinition read from infra/data/ar-policies/plan-entitlements.json at synth time |
+| AR-clause guardrail | ArClauseGuardrail | AWS::Bedrock::Guardrail | policies:[clauseCanonPolicy.attrPolicyArn], confidenceThreshold:0.9, CrossRegionConfig guardrailProfileArn=arn:aws:bedrock:us-east-1:${account}:guardrail-profile/us.guardrail.v1:0 |
+| AR-advisory guardrail | ArAdvisoryGuardrail | AWS::Bedrock::Guardrail | policies:[rolePermissionsPolicy.attrPolicyArn, planEntitlementsPolicy.attrPolicyArn], confidenceThreshold:0.9, CrossRegionConfig same |
+
+## AI Invoker Lambda env vars added
+- ARCLAUSE_GUARDRAIL_ID → arClauseGuardrail.attrGuardrailId
+- ARCLAUSE_GUARDRAIL_VERSION → arClauseGuardrail.attrVersion
+- ARADVISORY_GUARDRAIL_ID → arAdvisoryGuardrail.attrGuardrailId
+- ARADVISORY_GUARDRAIL_VERSION → arAdvisoryGuardrail.attrVersion
+
+## CfnOutputs added
+- ArClauseGuardrailId, ArClauseGuardrailVersion
+- ArAdvisoryGuardrailId, ArAdvisoryGuardrailVersion
+
+## Test update
+- ai-stack.unit.test.ts guardrail inventory test updated: expects 5 names (sorted):
+  cumplify-agent-guardrail-dev, cumplify-aradvisory-guardrail-dev, cumplify-arclause-guardrail-dev,
+  cumplify-docgen-guardrail-dev, cumplify-recordwrite-guardrail-dev
+
+## Evidence
+
+### tsc --noEmit
+```
+Exit code: 0 (clean)
+```
+
+### cdk synth -c env=dev
+```
+Exit code: 0
+Successfully synthesized to /home/julio-medrano/cumplify/cdk.out
+```
+
+### vitest run (root suite)
+```
+Test Files  94 passed | 1 skipped (95)
+     Tests  999 passed | 4 skipped (1003)
+  Duration  23.56s
+```
+
+### ai-stack.unit.test.ts
+```
+Test Files  1 passed (1)
+     Tests  63 passed (63)
+```
+
+## Design conformance
+- AgentGuardrail/RecordWriteGuardrail: NO AR, NO CrossRegionConfig (unchanged) ✓
+- ArClauseGuardrail: 1 policy (clause-canon), CrossRegionConfig, confidenceThreshold 0.9 ✓
+- ArAdvisoryGuardrail: 2 policies (role-perms + plan-ent), CrossRegionConfig, confidenceThreshold 0.9 ✓
+- maxItems:2 respected (advisory has exactly 2) ✓
+- DocGenGuardrail: unchanged ✓
+- NOT deployed (Task 29 = architect lane, blocked on Task 26 IAM gate) ✓

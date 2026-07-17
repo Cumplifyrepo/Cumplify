@@ -251,7 +251,7 @@
   - **Evidence:** `infra/data/ar-policies/plan-entitlements.json`
   - **ACC mapping:** L2-3
 
-- [ ] **Task 25 — Deploy AR policies + both AR guardrails via CDK** [KIRO] D2
+- [x] **Task 25 — Deploy AR policies + both AR guardrails via CDK** [KIRO] D2
   - Add `AWS::Bedrock::AutomatedReasoningPolicy` resources (3) to ai-stack.ts
   - Create `ArClauseGuardrail`:
     - `automatedReasoningPolicyConfig: { policies: [clauseCanonArn], confidenceThreshold: 0.9 }`
