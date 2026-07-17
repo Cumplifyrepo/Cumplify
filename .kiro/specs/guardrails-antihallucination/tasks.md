@@ -273,7 +273,7 @@
   - **Evidence:** Owner sign-off + IAM readback
   - **ACC mapping:** ACC-7 (partial)
 
-- [ ] **Task 27 — Implement AR check module** [KIRO] D2
+- [x] **Task 27 — Implement AR check module** [KIRO] D2
   - Create `services/ai-invoker/src/ar-check.ts`:
     - Select guardrail by path: clause-citing → ArClause; role/plan → ArAdvisory
     - ApplyGuardrail → parse `automatedReasoningPolicy` findings → ArCheckResult
@@ -284,7 +284,7 @@
   - **Evidence:** Unit tests: pass, reject→corrected, reject→HITL-deferred
   - **ACC mapping:** L2-5, L2-6, L4-8, ACC-3 (unit)
 
-- [ ] **Task 28 — Integrate AR into invoke() orchestration** [KIRO] D2
+- [x] **Task 28 — Integrate AR into invoke() orchestration** [KIRO] D2
   - After grounding passes: if clause-citing/role/plan path → checkArPolicy()
   - Attach AR verdict to guardrailEvidence
   - Dormant until AR guardrails deployed

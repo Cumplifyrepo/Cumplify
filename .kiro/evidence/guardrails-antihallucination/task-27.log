@@ -1,0 +1,62 @@
+# Task 27 — Implement AR check module (ar-check.ts)
+# Executed: 2026-07-17T08:10–08:13Z | build agent
+
+## Deliverable: services/ai-invoker/src/ar-check.ts
+
+### Gate mapping (EXACTLY as _meta.arCheckGateMapping in deliverable JSONs)
+| Finding Result | Gate Decision | Action |
+|----------------|---------------|--------|
+| VALID | pass | Continue normal flow |
+| SATISFIABLE | pass | Continue normal flow |
+| INVALID | reject | Steered-retry once then reject |
+| IMPOSSIBLE | reject | Steered-retry once then reject |
+| TRANSLATION_AMBIGUOUS | flag_hitl | Flag for HITL immediately (never silently pass) |
+| NO_TRANSLATION | flag_hitl | Flag for HITL immediately |
+| TOO_COMPLEX | flag_hitl | Flag for HITL immediately |
+
+### Guardrail selection by invocation path (§5.2)
+| Path | Guardrail | AR Policy |
+|------|-----------|-----------|
+| clause-citing | ArClauseGuardrail (env: ARCLAUSE_GUARDRAIL_*) | clause-canon |
+| role-advisory | ArAdvisoryGuardrail (env: ARADVISORY_GUARDRAIL_*) | role-permissions |
+| plan-advisory | ArAdvisoryGuardrail (env: ARADVISORY_GUARDRAIL_*) | plan-entitlements |
+
+### Key behaviors
+- ApplyGuardrail source:'OUTPUT' on response text
+- Emit Ai.GuardrailChecked per check (TEL-1)
+- On reject: buildArRetryInstruction() injects finding feedback
+- On double-fail: emitArRejected() with finalOutcome:'hitl-deferred'
+- On HITL flag: emitArRejected() immediately (never retry ambiguous)
+- Dormant when guardrail env vars absent (pre-deploy)
+- Meters usage on every path (FIX-W-1 pattern in index.ts integration)
+
+## Evidence
+
+### Unit tests (ar-check.test.ts): 29 tests
+```
+Test Files  1 passed (1)
+     Tests  29 passed (29)
+```
+
+All 7 finding results covered:
+- VALID → pass ✓
+- SATISFIABLE → pass ✓
+- INVALID → reject ✓
+- IMPOSSIBLE → reject ✓
+- TRANSLATION_AMBIGUOUS → flag_hitl ✓
+- NO_TRANSLATION → flag_hitl ✓
+- TOO_COMPLEX → flag_hitl ✓
+
+Plus: guardrail selection, extractArFinding, buildArRetryInstruction,
+emitArRejected, unconfigured passthrough, all 3 path variants.
+
+### tsc --noEmit
+```
+Exit code: 0 (clean)
+```
+
+### Full root suite
+```
+Test Files  95 passed | 1 skipped (96)
+     Tests  1028 passed | 4 skipped (1032)
+```

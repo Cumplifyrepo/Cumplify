@@ -23,6 +23,8 @@ import {
 } from './grounding.js';
 import { checkHopPayload, isAgentRoutingTool } from './hop-check.js';
 import { buildSystemPrompt } from './prompt-library.js';
+import { checkArPolicy, buildArRetryInstruction, emitArRejected } from './ar-check.js';
+import type { ArInvocationPath } from './ar-check.js';
 import { publish } from '../../eventing/src/publisher.js';
 import { InvokeError, SEAT_DEFAULTS } from './types.js';
 import type {
@@ -316,6 +318,178 @@ export async function invoke(request: InvokeRequest): Promise<InvokeResponse> {
     }
   }
 
+  // ─── Spec-35 L2: Post-response AR check (Tasks 27/28) ─────────────────────
+  // After grounding passes: if clause-citing/role/plan path → checkArPolicy()
+  // Dormant when AR guardrails not deployed (env vars absent).
+  const arPath = resolveArInvocationPath(seat, feature);
+  if (arPath) {
+    const arResult = await checkArPolicy({
+      responseText: result.text,
+      invocationPath: arPath,
+      tenantId,
+      agent,
+      module,
+      feature,
+      standard: request.standard,
+    });
+
+    if (arResult.decision === 'flag_hitl') {
+      // TRANSLATION_AMBIGUOUS / NO_TRANSLATION / TOO_COMPLEX → flag for HITL immediately
+      // Never silently pass an ambiguous result.
+      await emitArRejected({
+        tenantId,
+        agent,
+        module,
+        standard: request.standard,
+        arPolicy: arResult.arPolicy,
+        finding: arResult.finding,
+        retriedOnce: false,
+        finalOutcome: 'hitl-deferred',
+      });
+
+      // Meter consumed usage (FIX-W-1 pattern)
+      const credits = computeCredits(usage, weights);
+      await incrementMeter(tenantId, credits);
+      await emitCreditsTelemetry({
+        tenantId, agent, module, feature,
+        inputTokens: usage.inputTokens,
+        outputTokens: usage.outputTokens,
+        cacheReadTokens: usage.cacheReadInputTokens,
+        creditsConsumed: credits, modelId, seat,
+      });
+
+      return {
+        text: result.text,
+        toolUseBlocks: [],
+        stopReason: 'end_turn',
+        usage,
+        credits,
+        modelId,
+        seat,
+        guardrailEvidence: {
+          groundingScore: guardrailEvidence?.groundingScore ?? null,
+          relevanceScore: guardrailEvidence?.relevanceScore ?? null,
+          arVerdict: 'fail',
+          arDetails: `${arResult.arPolicy}:${arResult.finding.result} — ${arResult.finding.reason ?? 'flagged for human review'}`,
+          citations: guardrailEvidence?.citations ?? [],
+          flagged: true,
+        },
+      };
+    }
+
+    if (arResult.decision === 'reject') {
+      // INVALID / IMPOSSIBLE → steered-retry once with AR feedback
+      logger.info('AR check rejected, attempting steered retry', {
+        arPolicy: arResult.arPolicy,
+        result: arResult.finding.result,
+      });
+
+      const arRetryInstruction = buildArRetryInstruction(arResult.finding);
+      const arRetryMessages = [
+        ...request.messages,
+        { role: 'assistant' as const, content: [{ text: result.text }] },
+        { role: 'user' as const, content: [{ text: arRetryInstruction }] },
+      ];
+      const arRetryParams = { ...converseParams, messages: arRetryMessages };
+      const arRetryResult = await converse(arRetryParams);
+      usage = addUsage(usage, arRetryResult.usage);
+
+      // Re-check AR on retry response
+      const arRetryCheck = await checkArPolicy({
+        responseText: arRetryResult.text,
+        invocationPath: arPath,
+        tenantId,
+        agent,
+        module,
+        feature,
+        standard: request.standard,
+      });
+
+      if (arRetryCheck.decision === 'pass') {
+        // Retry corrected the issue — use retry response
+        result = arRetryResult;
+        guardrailEvidence = {
+          groundingScore: guardrailEvidence?.groundingScore ?? null,
+          relevanceScore: guardrailEvidence?.relevanceScore ?? null,
+          arVerdict: 'pass',
+          arDetails: `${arResult.arPolicy}:corrected on retry`,
+          citations: guardrailEvidence?.citations ?? [],
+          flagged: true, // AR failed first time, passed on retry
+        };
+
+        await emitArRejected({
+          tenantId,
+          agent,
+          module,
+          standard: request.standard,
+          arPolicy: arResult.arPolicy,
+          finding: arResult.finding,
+          retriedOnce: true,
+          finalOutcome: 'corrected',
+        });
+      } else {
+        // Double-fail (or HITL on retry) → flag for HITL
+        await emitArRejected({
+          tenantId,
+          agent,
+          module,
+          standard: request.standard,
+          arPolicy: arResult.arPolicy,
+          finding: arRetryCheck.finding,
+          retriedOnce: true,
+          finalOutcome: 'hitl-deferred',
+        });
+
+        // Meter consumed usage (FIX-W-1 pattern)
+        const credits = computeCredits(usage, weights);
+        await incrementMeter(tenantId, credits);
+        await emitCreditsTelemetry({
+          tenantId, agent, module, feature,
+          inputTokens: usage.inputTokens,
+          outputTokens: usage.outputTokens,
+          cacheReadTokens: usage.cacheReadInputTokens,
+          creditsConsumed: credits, modelId, seat,
+        });
+
+        return {
+          text: result.text,
+          toolUseBlocks: [],
+          stopReason: 'end_turn',
+          usage,
+          credits,
+          modelId,
+          seat,
+          guardrailEvidence: {
+            groundingScore: guardrailEvidence?.groundingScore ?? null,
+            relevanceScore: guardrailEvidence?.relevanceScore ?? null,
+            arVerdict: 'fail',
+            arDetails: `${arResult.arPolicy}:${arRetryCheck.finding.result} — retry also failed`,
+            citations: guardrailEvidence?.citations ?? [],
+            flagged: true,
+          },
+        };
+      }
+    }
+
+    // AR passed — attach evidence if not already set
+    if (arResult.decision === 'pass' && !guardrailEvidence) {
+      guardrailEvidence = {
+        groundingScore: null,
+        relevanceScore: null,
+        arVerdict: 'pass',
+        arDetails: `${arResult.arPolicy}:${arResult.finding.result}`,
+        citations: [],
+        flagged: false,
+      };
+    } else if (arResult.decision === 'pass' && guardrailEvidence) {
+      guardrailEvidence = {
+        ...guardrailEvidence,
+        arVerdict: 'pass',
+        arDetails: `${arResult.arPolicy}:${arResult.finding.result}`,
+      };
+    }
+  }
+
   // Step 6: Schema-validate + one-retry (SERVE-10 + COND-3)
   if (request.outputSchema) {
     try {
@@ -408,4 +582,54 @@ function addUsage(a: TokenUsage, b: TokenUsage): TokenUsage {
     cacheReadInputTokens: a.cacheReadInputTokens + b.cacheReadInputTokens,
     cacheWriteInputTokens: a.cacheWriteInputTokens + b.cacheWriteInputTokens,
   };
+}
+
+// ─── AR Invocation Path Resolution (§5.2) ───────────────────────────────────
+
+/** Seats that produce clause-citing content eligible for AR validation */
+const CLAUSE_CITING_SEATS: ReadonlySet<string> = new Set([
+  'guru-9001',
+  'guru-14001',
+  'guru-45001',
+  'workhorse',
+]);
+
+/** Features that indicate clause-citing content */
+const CLAUSE_CITING_FEATURES: ReadonlySet<string> = new Set([
+  'clause-qa',
+  'record-write',
+]);
+
+/** Features that indicate role-advisory content */
+const ROLE_ADVISORY_FEATURES: ReadonlySet<string> = new Set([
+  'role-advisory',
+  'permission-check',
+]);
+
+/** Features that indicate plan-advisory content */
+const PLAN_ADVISORY_FEATURES: ReadonlySet<string> = new Set([
+  'plan-advisory',
+  'entitlement-check',
+]);
+
+/**
+ * Resolve the AR invocation path from seat + feature.
+ * Returns undefined if the invocation is not subject to AR validation.
+ */
+function resolveArInvocationPath(
+  seat: string,
+  feature: string,
+): ArInvocationPath | undefined {
+  // Role/plan advisory features take precedence (advisory guardrail)
+  if (ROLE_ADVISORY_FEATURES.has(feature)) return 'role-advisory';
+  if (PLAN_ADVISORY_FEATURES.has(feature)) return 'plan-advisory';
+
+  // Clause-citing: guru seats with clause-qa or record-write feature
+  if (CLAUSE_CITING_FEATURES.has(feature) && CLAUSE_CITING_SEATS.has(seat)) {
+    return 'clause-citing';
+  }
+  // Also: record-write on workhorse seat (record-writing drafts cite clauses)
+  if (feature === 'record-write') return 'clause-citing';
+
+  return undefined;
 }

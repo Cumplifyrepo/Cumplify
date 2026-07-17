@@ -1,0 +1,47 @@
+# Task 28 — Integrate AR into invoke() orchestration
+# Executed: 2026-07-17T08:10–08:13Z | build agent
+
+## Deliverable: services/ai-invoker/src/index.ts (AR integration)
+
+### Insertion point
+After L1 grounding check passes, before Step 6 (schema-validate).
+Design §5.4 sequence: grounding → AR → schema-retry → metering → return.
+
+### AR invocation path resolution
+resolveArInvocationPath(seat, feature) determines whether AR applies:
+- CLAUSE_CITING_SEATS × CLAUSE_CITING_FEATURES → 'clause-citing'
+- ROLE_ADVISORY_FEATURES → 'role-advisory'
+- PLAN_ADVISORY_FEATURES → 'plan-advisory'
+- Otherwise → undefined (no AR check, dormant)
+
+### Orchestration flow (index.ts)
+1. If arPath resolved:
+   a. checkArPolicy(responseText, arPath, ...) → ArCheckResult
+   b. If flag_hitl: emitArRejected + meter + return with flagged evidence
+   c. If reject: steered-retry once (buildArRetryInstruction injected)
+      - Re-check AR on retry response
+      - If pass: use retry, emit 'corrected', flag evidence
+      - If fail again: emitArRejected + meter + return with flagged evidence
+   d. If pass: attach arVerdict to guardrailEvidence
+2. All paths meter consumed usage (FIX-W-1)
+
+### Dormant until deployed
+AR guardrails env vars (ARCLAUSE_GUARDRAIL_ID, ARADVISORY_GUARDRAIL_ID)
+absent in undeployed envs → resolveArGuardrail returns undefined → passthrough.
+
+## Evidence
+
+### tsc --noEmit
+```
+Exit code: 0 (clean)
+```
+
+### Full root suite (including ACC-1, ACC-2, ACC-4 unchanged behavior)
+```
+Test Files  95 passed | 1 skipped (96)
+     Tests  1028 passed | 4 skipped (1032)
+```
+
+ACC-1 (grounded pass) still passes — AR dormant (no AR env vars in that test) ✓
+ACC-2 (honest-miss) still passes — AR dormant ✓
+ACC-4 (hop blocked) still passes — AR doesn't fire on routing feature ✓
