@@ -230,35 +230,72 @@ export function buildArRetryInstruction(finding: ArFinding): string {
  * The `automatedReasoningPolicy` assessment contains the finding results.
  */
 export function extractArFinding(response: ApplyGuardrailCommandOutput): ArFinding {
-  const assessments = response.assessments ?? [];
+  // LIVE SHAPE (FIX-T29-1, pinned by Task-29 readback probe 13:14:56Z):
+  // findings are a TAGGED UNION keyed by type — {valid:{}}, {satisfiable:{}},
+  // {invalid:{translation, contradictingRules, logicWarning}}, {impossible:{}},
+  // {translationAmbiguous:{options}}, {noTranslations:{}}, {tooComplex:{}} —
+  // NOT a {result: string} object. The previous parser read f.result and
+  // DEFAULTED TO VALID, silently passing every live finding (L2 no-op).
+  const KEY_TO_RESULT: Record<string, ArFindingResult> = {
+    valid: 'VALID',
+    satisfiable: 'SATISFIABLE',
+    invalid: 'INVALID',
+    impossible: 'IMPOSSIBLE',
+    translationAmbiguous: 'TRANSLATION_AMBIGUOUS',
+    noTranslations: 'NO_TRANSLATION',
+    tooComplex: 'TOO_COMPLEX',
+  };
+  // Worst-first: a response with [satisfiable, invalid] must REJECT.
+  const SEVERITY: ArFindingResult[] = [
+    'INVALID', 'IMPOSSIBLE',
+    'TRANSLATION_AMBIGUOUS', 'NO_TRANSLATION', 'TOO_COMPLEX',
+    'SATISFIABLE', 'VALID',
+  ];
 
-  for (const assessment of assessments) {
+  let worst: ArFinding | undefined;
+  let sawAssessment = false;
+
+  for (const assessment of response.assessments ?? []) {
     const arPolicy = (assessment as any).automatedReasoningPolicy;
     if (!arPolicy) continue;
+    sawAssessment = true;
 
-    // The findings array contains individual policy evaluation results
-    const findings = arPolicy.findings ?? [];
-    if (findings.length === 0) {
-      // No findings = the response passed (VALID/SATISFIABLE)
-      // When action is NONE, no violations found
-      if (response.action === 'NONE') {
-        return { result: 'VALID' };
+    for (const f of arPolicy.findings ?? []) {
+      const key = Object.keys(f as Record<string, unknown>).find((k) => k in KEY_TO_RESULT);
+      if (!key) continue; // $unknown member — skip; absence of a parsed finding fails safe below
+      const result = KEY_TO_RESULT[key];
+      const member = (f as Record<string, any>)[key];
+
+      const finding: ArFinding = { result };
+      if (result === 'INVALID' || result === 'IMPOSSIBLE') {
+        const claims = member?.translation?.claims ?? [];
+        const nl = claims
+          .map((c: { naturalLanguage?: string }) => c.naturalLanguage)
+          .filter(Boolean);
+        if (nl.length) finding.invalidClaim = nl.join('; ');
+        const rules = (member?.contradictingRules ?? [])
+          .map((r: { identifier?: string }) => r.identifier)
+          .filter(Boolean);
+        if (rules.length) finding.reason = `contradicts policy rule(s): ${rules.join(', ')}`;
+        else if (member?.logicWarning?.type) finding.reason = `logic warning: ${member.logicWarning.type}`;
       }
-    }
 
-    for (const f of findings) {
-      const result = (f.result ?? f.findingResult ?? 'VALID') as ArFindingResult;
-      return {
-        result,
-        invalidClaim: f.invalidClaim ?? f.claim ?? undefined,
-        reason: f.reason ?? f.explanation ?? undefined,
-        suggestedCorrection: f.suggestedCorrection ?? f.correction ?? undefined,
-      };
+      if (!worst || SEVERITY.indexOf(result) < SEVERITY.indexOf(worst.result)) {
+        worst = finding;
+      }
     }
   }
 
-  // No AR assessment found — if guardrail intervened, treat as reject;
-  // otherwise pass (backwards compatible with non-AR guardrails)
+  if (worst) return worst;
+  if (sawAssessment) {
+    // AR assessment present but no parseable finding: empty findings with
+    // action NONE = clean pass; anything else fails SAFE to HITL.
+    return response.action === 'NONE'
+      ? { result: 'VALID' }
+      : { result: 'NO_TRANSLATION', reason: 'AR assessment present but no parseable finding' };
+  }
+  // No AR assessment at all — if the guardrail intervened, reject; else pass
+  // (backwards compatible with non-AR guardrails).
   if (response.action === 'GUARDRAIL_INTERVENED') {
     return { result: 'INVALID', reason: 'Guardrail intervened without detailed finding' };
   }

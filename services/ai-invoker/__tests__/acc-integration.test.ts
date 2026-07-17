@@ -254,11 +254,11 @@ describe('ACC-3: Invalid clause rejected by AR (Task 35)', () => {
       assessments: [{
         automatedReasoningPolicy: {
           findings: [{
-            result: 'INVALID',
-            invalidClaim: 'ISO 9001 clause 99.9 exists',
-            reason: 'Clause 99.9 is not in the ISO 9001:2015 clause canon',
-            suggestedCorrection: 'Remove reference to non-existent clause',
-          }],
+            invalid: {
+              translation: { claims: [{ naturalLanguage: 'ISO 9001 clause 99.9 exists' }] },
+              contradictingRules: [{ identifier: 'CANONRULE001' }],
+            },
+            }],
         },
       }],
     });
@@ -272,11 +272,11 @@ describe('ACC-3: Invalid clause rejected by AR (Task 35)', () => {
       assessments: [{
         automatedReasoningPolicy: {
           findings: [{
-            result: 'INVALID',
-            invalidClaim: 'ISO 9001 clause 99.9.1 exists',
-            reason: 'Clause 99.9.1 is not in the ISO 9001:2015 clause canon',
-            suggestedCorrection: 'Remove reference to non-existent clause',
-          }],
+            invalid: {
+              translation: { claims: [{ naturalLanguage: 'ISO 9001 clause 99.9.1 exists' }] },
+              contradictingRules: [{ identifier: 'CANONRULE001' }],
+            },
+            }],
         },
       }],
     });
@@ -337,11 +337,7 @@ describe('ACC-3: Invalid clause rejected by AR (Task 35)', () => {
       action: 'GUARDRAIL_INTERVENED',
       assessments: [{
         automatedReasoningPolicy: {
-          findings: [{
-            result: 'TRANSLATION_AMBIGUOUS',
-            invalidClaim: 'ISO 9001 clause 4.1 context claim',
-            reason: 'Translation of claim into formal logic was ambiguous',
-          }],
+          findings: [{ translationAmbiguous: { options: [] } }],
         },
       }],
     });
@@ -516,12 +512,12 @@ describe('FIX-AR-GUARD: AR infra failure does not take down the answer path', ()
     mockConverseSend.mockResolvedValueOnce(mockConverseResponse('You can edit anything as auditor.'));
     mockConverseSend.mockResolvedValueOnce({
       action: 'GUARDRAIL_INTERVENED',
-      assessments: [{ automatedReasoningPolicy: { findings: [{ result: 'INVALID', invalidClaim: 'auditors edit registers', reason: 'IA is read-only outside M3' }] } }],
+      assessments: [{ automatedReasoningPolicy: { findings: [{ invalid: { translation: { claims: [{ naturalLanguage: 'auditors edit registers' }] }, contradictingRules: [{ identifier: 'ROLEPERM0006' }] } }] } }],
     });
     mockConverseSend.mockResolvedValueOnce(mockConverseResponse('Retry: auditors edit registers.'));
     mockConverseSend.mockResolvedValueOnce({
       action: 'GUARDRAIL_INTERVENED',
-      assessments: [{ automatedReasoningPolicy: { findings: [{ result: 'INVALID', invalidClaim: 'auditors edit registers', reason: 'IA is read-only outside M3' }] } }],
+      assessments: [{ automatedReasoningPolicy: { findings: [{ invalid: { translation: { claims: [{ naturalLanguage: 'auditors edit registers' }] }, contradictingRules: [{ identifier: 'ROLEPERM0006' }] } }] } }],
     });
 
     const response = await invoke({

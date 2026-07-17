@@ -42,17 +42,31 @@ const {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-function mockArResponse(result: string, claim?: string, reason?: string, correction?: string) {
+// Builds the LIVE tagged-union finding shape (FIX-T29-1) — mocks MUST mirror
+// the real ApplyGuardrail payload, not an invented {result} object.
+function mkFinding(result: string, claim?: string, ruleId?: string) {
+  const key = {
+    VALID: 'valid', SATISFIABLE: 'satisfiable', INVALID: 'invalid',
+    IMPOSSIBLE: 'impossible', TRANSLATION_AMBIGUOUS: 'translationAmbiguous',
+    NO_TRANSLATION: 'noTranslations', TOO_COMPLEX: 'tooComplex',
+  }[result]!;
+  if (result === 'INVALID' || result === 'IMPOSSIBLE') {
+    return {
+      [key]: {
+        translation: { claims: [{ naturalLanguage: claim ?? 'test claim' }] },
+        contradictingRules: [{ identifier: ruleId ?? 'TESTRULE0001' }],
+      },
+    };
+  }
+  return { [key]: {} };
+}
+
+function mockArResponse(result: string, claim?: string, ruleId?: string) {
   return {
     action: result === 'VALID' || result === 'SATISFIABLE' ? 'NONE' : 'GUARDRAIL_INTERVENED',
     assessments: [{
       automatedReasoningPolicy: {
-        findings: result === 'VALID' ? [] : [{
-          result,
-          invalidClaim: claim ?? 'test claim',
-          reason: reason ?? 'test reason',
-          suggestedCorrection: correction ?? 'test correction',
-        }],
+        findings: result === 'VALID' ? [] : [mkFinding(result, claim, ruleId)],
       },
     }],
   };
@@ -144,8 +158,8 @@ describe('extractArFinding', () => {
     const finding = extractArFinding(response as any);
     expect(finding.result).toBe('INVALID');
     expect(finding.invalidClaim).toBe('Clause 99.9');
-    expect(finding.reason).toBe('No such clause');
-    expect(finding.suggestedCorrection).toBe('Remove reference');
+    expect(finding.reason).toBe('contradicts policy rule(s): No such clause');
+    expect(finding.suggestedCorrection).toBeUndefined();
   });
 
   it('returns VALID when action=NONE and no findings', () => {
@@ -204,7 +218,7 @@ describe('checkArPolicy', () => {
   it('SATISFIABLE response → decision pass', async () => {
     mockSend.mockResolvedValueOnce({
       action: 'NONE',
-      assessments: [{ automatedReasoningPolicy: { findings: [{ result: 'SATISFIABLE' }] } }],
+      assessments: [{ automatedReasoningPolicy: { findings: [{ satisfiable: {} }] } }],
     });
     const result = await checkArPolicy(baseParams());
     expect(result.decision).toBe('pass');
