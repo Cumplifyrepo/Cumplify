@@ -1,0 +1,20 @@
+# Task 26 — AR IAM statement [REQUIRES-HUMAN → APPROVED]
+# Owner approval: Julio, 2026-07-17 ("task 26 approved") — design §5.5 statement
+# Implemented: 2026-07-17T08:55 ET
+
+## Statement (ai-stack.ts, invoker role ONLY — one-door discipline)
+Sid AutomatedReasoningChecks, Allow bedrock:InvokeAutomatedReasoningPolicy,
+Resource arn:aws:bedrock:us-east-1:<account>:automated-reasoning-policy/*
+— scoped to the account's AR policies (NOT '*'; unlike InvokeModel, AR
+policy ARNs are scopeable).
+
+## Evidence at this commit
+- +2 unit pins: statement present on the invoker role with the scoped
+  resource; NO other role carries the AR action (one-door discipline).
+- infra suite 65/65; npx tsc --noEmit exit 0; ROOT suite at commit (below).
+
+## Activation note
+FIX-AR-GUARD (ce52814) made pre-grant AR failures fail open loudly
+(arVerdict='error'); this statement ACTIVATES full AR evaluation. Whether
+ApplyGuardrail on AR guardrails strictly requires this action is pinned
+empirically in the Task 29 readback that follows the deploy.

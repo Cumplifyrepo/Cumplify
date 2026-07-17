@@ -267,7 +267,7 @@
   - **ACC mapping:** L2-7, CDK-1
   - **Blocked by:** Tasks 22, 23, 24
 
-- [ ] **Task 26 — AR IAM statement** [REQUIRES-HUMAN] D3
+- [x] **Task 26 — AR IAM statement** [REQUIRES-HUMAN] D3 — OWNER APPROVED 2026-07-17
   - Add `bedrock:InvokeAutomatedReasoningPolicy` to invoker role
   - Resource: `arn:aws:bedrock:us-east-1:697114252993:automated-reasoning-policy/*`
   - **Evidence:** Owner sign-off + IAM readback

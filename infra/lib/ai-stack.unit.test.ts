@@ -906,3 +906,35 @@ describe('spec-35 FIX-T20-3: guru handlers VPC-placed for AOSS data-plane access
     }
   });
 });
+
+describe('spec-35 Task 26: AR policy evaluation permission (owner-approved 2026-07-17)', () => {
+  const template = createTestStack();
+
+  it('invoker role carries bedrock:InvokeAutomatedReasoningPolicy scoped to account AR policies', () => {
+    const policies = template.findResources('AWS::IAM::Policy');
+    const invokerPolicies = Object.entries(policies).filter(([name]) =>
+      name.startsWith('AiInvokerFn'),
+    );
+    const statements = invokerPolicies.flatMap(
+      ([, pol]) => (pol as any).Properties.PolicyDocument.Statement as Array<Record<string, any>>,
+    );
+    const arStmt = statements.find((st) => st.Sid === 'AutomatedReasoningChecks');
+    expect(arStmt, 'AutomatedReasoningChecks statement missing from invoker role').toBeDefined();
+    expect(arStmt!.Action).toBe('bedrock:InvokeAutomatedReasoningPolicy');
+    const res = JSON.stringify(arStmt!.Resource);
+    expect(res).toContain('automated-reasoning-policy/*');
+    expect(res).not.toBe('"*"');
+  });
+
+  it('NO other role gains the AR action (one-door discipline)', () => {
+    const policies = template.findResources('AWS::IAM::Policy');
+    for (const [name, pol] of Object.entries(policies)) {
+      if (name.startsWith('AiInvokerFn')) continue;
+      const actions = JSON.stringify((pol as any).Properties.PolicyDocument);
+      expect(
+        actions.includes('InvokeAutomatedReasoningPolicy'),
+        `role policy ${name} unexpectedly carries the AR action`,
+      ).toBe(false);
+    }
+  });
+});

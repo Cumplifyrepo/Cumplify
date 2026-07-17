@@ -276,6 +276,20 @@ export class AiStack extends cdk.Stack {
       }),
     );
 
+    // Task 26 (spec-35, OWNER-APPROVED 2026-07-17): AR policy evaluation for
+    // the two AR guardrails (design §5.5). Scoped to this account's AR
+    // policies — unlike InvokeModel, AR policy ARNs are scopeable.
+    aiInvoker.addToRolePolicy(
+      new iam.PolicyStatement({
+        sid: 'AutomatedReasoningChecks',
+        effect: iam.Effect.ALLOW,
+        actions: ['bedrock:InvokeAutomatedReasoningPolicy'],
+        resources: [
+          `arn:aws:bedrock:us-east-1:${this.account}:automated-reasoning-policy/*`,
+        ],
+      }),
+    );
+
     // DynamoDB: TENANT#*#METER read/write + MODELWEIGHT# read
     aiInvoker.addToRolePolicy(
       new iam.PolicyStatement({
