@@ -1,0 +1,56 @@
+# Task 38 — ACC-6/7: Full deployed readback [ARCHITECT]
+# Executed: 2026-07-17T21:21:38–21:22:10Z | dev 697114252993 | all get-guardrail exits 0
+
+## Five-guardrail readback table — 20/20 EXACT
+| # | Assertion | Live value | Verdict |
+|---|-----------|-----------|---------|
+| 1 | Agent yq8xe6y2iqbs: PROMPT_ATTACK input HIGH | HIGH | PASS |
+| 2 | Agent: 5 PII entities | 5 | PASS |
+| 3 | Agent: grounding 0.85 / relevance 0.75 | 0.85/0.75 | PASS |
+| 4 | Agent: NO AR | none | PASS |
+| 5 | Agent: NO CrossRegion | none | PASS |
+| 6 | RecordWrite x1kkn4njyfpb: PROMPT_ATTACK input HIGH | HIGH | PASS |
+| 7 | RecordWrite: 5 PII entities | 5 | PASS |
+| 8 | RecordWrite: grounding 0.90 / relevance 0.75 | 0.90/0.75 | PASS |
+| 9 | RecordWrite: NO AR | none | PASS |
+| 10 | RecordWrite: NO CrossRegion | none | PASS |
+| 11 | ArClause vi4gi5lwcldy: exactly 1 policy = clause-canon | t0jqpkc0gmwk | PASS |
+| 12 | ArClause: confidenceThreshold 0.9 | 0.9 | PASS |
+| 13 | ArClause: CrossRegion us.guardrail.v1:0 | present | PASS |
+| 14 | ArClause: AR-ONLY (no content/PII/grounding) | clean | PASS |
+| 15 | ArAdvisory oduit09r4syo: exactly 2 policies = role+plan | qbarm1v4zeod + xxziiwk78r4j | PASS |
+| 16 | ArAdvisory: confidenceThreshold 0.9 | 0.9 | PASS |
+| 17 | ArAdvisory: CrossRegion us.guardrail.v1:0 | present | PASS |
+| 18 | ArAdvisory: AR-ONLY | clean | PASS |
+| 19 | DocGen g8sg61low9xn: UNCHANGED (no AR/CrossRegion; updatedAt 2026-07-14T17:16:09Z pre-AR-wave) | unchanged | PASS |
+| 20 | DocGen: BC-5 — ZERO ANONYMIZE, SSN+card BLOCK retained | exact | PASS |
+(Note: readback draft #1 flagged row 20 under a too-strict "no PII entities"
+assertion; the pinned BC-5 contract is zero-ANONYMIZE with SSN/card BLOCK —
+live config matches the ai-stack.unit.test.ts pin exactly.)
+
+## IAM triple (invoker role, live, 21:22:10Z)
+- bedrock:InvokeModel → Resource * (Bedrock constraint) ✓
+- bedrock:ApplyGuardrail → Resource * ✓
+- bedrock:InvokeAutomatedReasoningPolicy → account-scoped
+  arn:…:automated-reasoning-policy/* ✓ (invoker role ONLY — unit-pinned)
+
+## Contract items
+- cdk-outputs.json git blob SHA: deee7a30dd76c781298e623972ee561ce49ed613
+  (last committed at Task 9 era — the snapshot predates the AR wave; live
+  IDs are recorded in task-29.log/this log; snapshot refresh = hygiene
+  carry, needs a deploy --outputs-file run).
+- ACC-6 (five-guardrail topology deployed exactly as designed): SATISFIED —
+  rows 1–20.
+- ACC-7 (IAM one-door incl. AR action): SATISFIED — triple above + Task 26
+  unit pins (no other role carries the AR action).
+- Behavioral evidence backing this table: task-29.log (five-layer live
+  chain pass 14:11Z; advisory AR live; layer ordering) + task-20.log
+  (ACC-1/2 live) + task-7.log (M-4 probes).
+
+## Verdict
+Task 38 CLOSED. ACC-6/7 satisfied with exact live readback. Spec-35 tasks
+1–38 ALL CLOSED. Named carries (tracked in memory + task-29.log): copilot
+wiring, KB-seeding spec decision (owner), capa-guru VPC/states endpoint,
+PROMPT_ATTACK calibration, §9.3 payload reconciliation, per-segment
+grounding design item, AR latency decision (owner), cdk-outputs refresh,
+workbench AR-policy cleanup.

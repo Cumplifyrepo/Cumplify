@@ -368,7 +368,7 @@
   - **Evidence:** Test passes
   - **ACC mapping:** ACC-5
 
-- [ ] **Task 38 — ACC-6/7: Full deployed readback** [ARCHITECT] D3
+- [x] **Task 38 — ACC-6/7: Full deployed readback** [ARCHITECT] D3
   - Post-deploy readback (all guardrails live):
     - AgentGuardrail: PROMPT_ATTACK + 5 PII + grounding 0.85 + relevance 0.75, NO AR, NO CrossRegion
     - RecordWriteGuardrail: PROMPT_ATTACK + 5 PII + grounding 0.90 + relevance 0.75, NO AR, NO CrossRegion
