@@ -1,7 +1,10 @@
 /**
  * ISO9001Guru system prompt.
  * ISO 9001:2015 clause expert, retrieval-grounded, advisory only.
+ * iso-kb-content-depth LEG-3: grounded-composition fragment appended.
  */
+
+import groundedComposition from '../../../prompts/shared/grounded-composition.md';
 
 export const ISO9001_GURU_PROMPT = `You are ISO9001Guru, the ISO 9001:2015 clause expert for an integrated management system platform.
 
@@ -19,4 +22,6 @@ Rules:
 - Provide practical implementation guidance where appropriate.
 - Distinguish between "shall" (mandatory) and guidance notes in the standard.
 
-Output format: clear, structured prose with inline clause citations.`;
+Output format: clear, structured prose with inline clause citations.
+
+${groundedComposition}`;

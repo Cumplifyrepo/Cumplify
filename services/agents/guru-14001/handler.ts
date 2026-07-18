@@ -15,9 +15,13 @@
 import { retrieve } from '../shared/retrieval.js';
 import { createInvokeFn, createEmbedFn } from '../shared/invoke-transport.js';
 import { ISO_CANON_TENANT_ID } from '../shared/constants.js';
+import { parseClauseRef } from '../shared/clause-ref-parser.js';
 import { ISO14001_GURU_PROMPT } from './prompt.js';
 
 const AOSS_ISO_KB_ENDPOINT = process.env.AOSS_ISO_KB_ENDPOINT!;
+
+const GURU_STANDARD = 'ISO14001';
+const GURU_STD_NUM = '14001';
 
 const invokeFn = createInvokeFn();
 const embedFn = createEmbedFn();
@@ -29,6 +33,13 @@ export async function handleQuery(
 ): Promise<string> {
   // Task 19 step 4: truncate query to 1,000 chars for grounding context
   const truncatedQuery = question.slice(0, 1000);
+
+  // LEG-2: parse clause reference from question (iso-kb-content-depth)
+  const parsed = parseClauseRef(truncatedQuery);
+  // D-3': parsed standard WINS when question names one explicitly (priority 1)
+  const clauseRef = parsed.clauseRef
+    ?? (parsed.clauseNum ? `ISO ${GURU_STD_NUM} ${parsed.clauseNum}` : null);
+  const standard = parsed.standard ?? (clauseRef ? GURU_STANDARD : undefined);
 
   // Task 19 step 2: embed the question via the one-door embed path
   const { embedding } = await embedFn({
@@ -43,12 +54,16 @@ export async function handleQuery(
   let groundingSource = '';
   try {
     const results = await retrieve({
-      tenantId: ISO_CANON_TENANT_ID, // iso-kb-seeding: canon constant for ISO KB retrieval
+      tenantId: ISO_CANON_TENANT_ID,
       collectionEndpoint: AOSS_ISO_KB_ENDPOINT,
       indexName: 'cumplify-iso-kb',
       queryText: truncatedQuery,
       queryVector: embedding,
       topK: 5,
+      // LEG-2: hybrid clause-ref filtering (null/undefined values omitted)
+      ...(clauseRef && {
+        hybrid: { clauseRef, standard },
+      }),
     });
     // Task 19 step 4: chunks joined with '\n---\n'
     groundingSource = results.chunks.map((c) => c.text).join('\n---\n');

@@ -35,6 +35,20 @@ export interface RetrievalRequest {
   topK?: number;
   /** Minimum score threshold (optional relevance floor) */
   scoreThreshold?: number;
+  /** Hybrid clause-ref filtering (iso-kb-content-depth LEG-2) */
+  hybrid?: HybridRetrievalOptions;
+}
+
+/**
+ * Hybrid retrieval options for clause-ref-based filtering.
+ * When present, adds term filters on metadata.clauseRef and/or metadata.standard
+ * to the kNN query (RETRIEVAL-3a: kNN within filter).
+ */
+export interface HybridRetrievalOptions {
+  /** Clause reference to filter on (metadata.clauseRef exact match) */
+  clauseRef?: string;
+  /** Standard to filter on (metadata.standard exact match) */
+  standard?: string;
 }
 
 export interface RetrievalChunk {
@@ -127,6 +141,7 @@ export async function retrieve(
         request.tenantId,
         topK,
         request.scoreThreshold,
+        request.hybrid,
       );
       // R5-n3: derive socket timeout from remaining budget (not a fixed 50s)
       const elapsed = Date.now() - startTime;
@@ -149,6 +164,16 @@ export async function retrieve(
         attempts,
         coldStart,
       });
+
+      // RETRIEVAL-2f: if hybrid filters returned zero results, fall back to kNN-only
+      if (chunks.length === 0 && request.hybrid?.clauseRef) {
+        logger.info('Hybrid clause-ref returned 0 results — falling back to kNN-only', {
+          clauseRef: request.hybrid.clauseRef,
+          standard: request.hybrid.standard,
+        });
+        const fallbackRequest = { ...request, hybrid: undefined };
+        return retrieve(fallbackRequest, httpClient);
+      }
 
       return { chunks, latencyMs, coldStart, attempts };
     } catch (err: unknown) {
@@ -181,13 +206,36 @@ export async function retrieve(
 
 /**
  * Build the kNN query body with mandatory tenantId metadata filter.
+ * Hybrid options add clauseRef and/or standard term filters (RETRIEVAL-3a).
  */
 function buildKnnQuery(
   vector: number[],
   tenantId: string,
   topK: number,
   scoreThreshold?: number,
+  hybrid?: HybridRetrievalOptions,
 ): Record<string, unknown> {
+  // Build filter clauses — always includes tenantId (REQ-RET-1)
+  const filterClauses: Record<string, unknown>[] = [
+    { term: { 'metadata.tenantId': tenantId } },
+  ];
+
+  // Add clauseRef term filter when hybrid parsing detected a clause reference
+  if (hybrid?.clauseRef) {
+    filterClauses.push({ term: { 'metadata.clauseRef': hybrid.clauseRef } });
+  }
+
+  // Add standard term filter (RETRIEVAL-2b: per-guru standard)
+  if (hybrid?.standard) {
+    filterClauses.push({ term: { 'metadata.standard': hybrid.standard } });
+  }
+
+  // Compose filter: single term or bool.must array
+  const filter =
+    filterClauses.length === 1
+      ? filterClauses[0]
+      : { bool: { must: filterClauses } };
+
   const query: Record<string, unknown> = {
     size: topK,
     query: {
@@ -195,9 +243,7 @@ function buildKnnQuery(
         embedding: {
           vector,
           k: topK,
-          filter: {
-            term: { 'metadata.tenantId': tenantId }, // REQ-RET-1: mandatory
-          },
+          filter, // REQ-RET-1: mandatory tenantId + optional hybrid filters
         },
       },
     },

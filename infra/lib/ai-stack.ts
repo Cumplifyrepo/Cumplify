@@ -793,7 +793,7 @@ export class AiStack extends cdk.Stack {
         architecture: lambda.Architecture.ARM_64,
         memorySize: 512,
         timeout: cdk.Duration.seconds(60),
-        bundling: { externalModules: [], target: 'node22' },
+        bundling: { externalModules: [], target: 'node22', loader: { '.md': 'text' } },
         environment: { ...agentHandlerBaseEnv, ...env },
         // FIX-T20-3 (spec-35): the AOSS network policy is VPCE-only
         // (AllowFromPublic:false), so a handler that queries a KB collection
@@ -1421,9 +1421,8 @@ export class AiStack extends cdk.Stack {
     // No provider Lambda, no invoke policy, no IAM propagation race.
     // SourceHash in properties → CFN detects change → Update fires → re-seed.
     // Failed seed → FAILED response → deploy rolls back (ACC-5 restored).
-    const isoKbSourceHash = cdk.FileSystem.fingerprint(
-      'docs/architecture/iso-requirements-map.md',
-    );
+    // iso-kb-content-depth: fingerprint the docs/kb/ directory (covers all content files)
+    const isoKbSourceHash = cdk.FileSystem.fingerprint('docs/kb');
 
     // CFN needs permission to invoke the seeder Lambda as a service token
     isoKbSeederFn.addPermission('CfnInvoke', {

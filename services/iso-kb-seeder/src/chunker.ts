@@ -1,17 +1,22 @@
 /**
- * Deterministic ISO requirements map chunker.
+ * Deterministic ISO KB content chunker.
  * Pure function — no I/O, no side effects.
- * Spec: iso-kb-seeding, design §2.1.
+ * Spec: iso-kb-content-depth, design §2.3.
  *
- * Parses docs/architecture/iso-requirements-map.md into discrete retrieval chunks,
- * one per sub-clause, with metadata aligned to the AOSS index template.
+ * Parses per-standard content files (docs/kb/*.md) into discrete retrieval chunks,
+ * one per sub-clause entry (1:1 clauseRef mapping, OQ-2 resolved).
+ *
+ * D-4': chunkIsoRequirementsMap is DELETED. The old iso-requirements-map.md is no
+ * longer KB authority (OQ-1b). This file replaces the original chunker entirely.
  */
 
 import { ISO_CANON_TENANT_ID } from '../../agents/shared/constants.js';
 
+export type Standard = 'ISO9001' | 'ISO14001' | 'ISO45001' | 'HLS';
+
 export interface ChunkMetadata {
   tenantId: string;
-  standard: 'ISO9001' | 'ISO14001' | 'ISO45001' | 'HLS';
+  standard: Standard;
   clauseRef: string;
   lang: string;
 }
@@ -21,208 +26,115 @@ export interface Chunk {
   metadata: ChunkMetadata;
 }
 
-type Standard = 'ISO9001' | 'ISO14001' | 'ISO45001' | 'HLS';
-
-interface SectionBoundary {
+export interface ContentSource {
+  /** Raw markdown content (esbuild text-loader inline) */
+  source: string;
+  /** Standard identifier */
   standard: Standard;
-  stdNum: string; // '9001', '14001', '45001', or ''
-  startLine: number;
+  /** Standard number for prefix composition ('9001', '14001', '45001', or '' for HLS) */
+  stdNum: string;
 }
 
 /**
- * Chunk the ISO requirements map markdown into retrieval units.
- * CHUNK-1a: one chunk per sub-clause (entries with (b)/(c) content).
- * CHUNK-1b: prefixed [ISO <NNNN> <clause>] for standard clauses.
- * CHUNK-1g: HLS section prefixed [Annex SL HLS] (R-4: outside citation pattern).
+ * Chunk multiple content source files into retrieval units.
+ * One chunk per entry (1:1 clauseRef mapping, OQ-2 resolved).
+ * Deterministic: same inputs → same output (CONTENT-2d).
+ *
+ * @param sources - Array of content source descriptors (one per file)
+ * @returns Array of chunks ready for embedding and indexing
  */
-export function chunkIsoRequirementsMap(source: string): Chunk[] {
-  const lines = source.split('\n');
-  const sections = identifySections(lines);
+export function chunkContentSources(sources: ContentSource[]): Chunk[] {
   const chunks: Chunk[] = [];
-
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
-    const endLine = i + 1 < sections.length ? sections[i + 1].startLine : lines.length;
-    const sectionLines = lines.slice(section.startLine, endLine);
-
-    if (section.standard === 'HLS') {
-      // CHUNK-1g: single HLS chunk
-      const hlsText = sectionLines.join('\n').trim();
-      if (hlsText.length > 0) {
-        chunks.push({
-          text: `[Annex SL HLS] ${hlsText}`,
-          metadata: {
-            tenantId: ISO_CANON_TENANT_ID,
-            standard: 'HLS',
-            clauseRef: 'Annex SL HLS',
-            lang: 'en',
-          },
-        });
-      }
+  for (const src of sources) {
+    if (src.standard === 'HLS') {
+      chunks.push(...parseHlsSource(src.source));
     } else {
-      // Parse sub-clauses from standard section
-      const sectionChunks = parseStandardSection(sectionLines, section.standard, section.stdNum);
-      chunks.push(...sectionChunks);
+      chunks.push(...parseStandardSource(src.source, src.standard, src.stdNum));
     }
   }
-
   return chunks;
 }
 
 /**
- * Identify section boundaries by detecting section headers.
+ * Parse a per-standard content file into chunks.
+ * Format: entries separated by blank lines; first line matches [ISO NNNN X.Y] title.
  */
-function identifySections(lines: string[]): SectionBoundary[] {
-  const sections: SectionBoundary[] = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.startsWith('# Section A')) {
-      sections.push({ standard: 'ISO9001', stdNum: '9001', startLine: i });
-    } else if (line.startsWith('# Section B')) {
-      sections.push({ standard: 'ISO14001', stdNum: '14001', startLine: i });
-    } else if (line.startsWith('# Section C')) {
-      sections.push({ standard: 'ISO45001', stdNum: '45001', startLine: i });
-    } else if (line.startsWith('# Shared vs Standard-Specific Clauses')) {
-      sections.push({ standard: 'HLS', stdNum: '', startLine: i });
-    }
-  }
-
-  return sections;
-}
-
-/**
- * Parse a standard section into chunks. Each sub-clause with (b)/(c) content
- * becomes one chunk. Parent headers without (b)/(c) are skipped.
- */
-function parseStandardSection(lines: string[], standard: Standard, stdNum: string): Chunk[] {
+function parseStandardSource(source: string, standard: Standard, stdNum: string): Chunk[] {
   const chunks: Chunk[] = [];
-  let i = 0;
+  const entries = splitEntries(source);
 
-  while (i < lines.length) {
-    const line = lines[i];
+  for (const entry of entries) {
+    const lines = entry.split('\n');
+    const firstLine = lines[0];
 
-    // Pattern 1: Inline bullet sub-clause — "- **X.Y.Z Title** — (b) … (c) …"
-    // FIX-P12-1: allow leading whitespace for indented bullets (e.g., 45001 6.1.2.x)
-    const inlineMatch = line.match(
-      /^\s*- \*\*(\d+(?:\.\d+)+)\s+(.+?)\*\*\s*—\s*\(b\)\s*(.+)/,
-    );
-    if (inlineMatch) {
-      const [, clauseNum, title, rest] = inlineMatch;
-      // rest contains "(b) content" and possibly "(c) content" on the same line
-      const bcText = extractInlineBc(rest, title);
-      chunks.push(buildChunk(stdNum, clauseNum, title.trim(), bcText, standard));
-      i++;
-      continue;
-    }
+    // Match prefix: [ISO NNNN X.Y.Z] Title
+    const match = firstLine.match(/^\[ISO\s+\d{4,5}\s+(\d+(?:\.\d+)+)\]\s+(.+)$/);
+    if (!match) continue; // Skip non-entry blocks (comments, etc.)
 
-    // Pattern 2: Top-level bold heading — "**X.Y Title**" or "**X.Y Title (sub-refs)**"
-    const headingMatch = line.match(/^\*\*(\d+(?:\.\d+)+)\s+(.+?)\*\*\s*$/);
-    if (headingMatch) {
-      const [, clauseNum, title] = headingMatch;
-      // Collect following (b)/(c) lines
-      const { text: bcText, linesConsumed } = collectBcLines(lines, i + 1);
-      if (bcText) {
-        chunks.push(buildChunk(stdNum, clauseNum, title.trim(), bcText, standard));
-      }
-      // Skip header line plus consumed (b)/(c) lines
-      i += 1 + linesConsumed;
-      continue;
-    }
+    const clauseNum = match[1];
+    const guidanceBody = lines.slice(1).join('\n').trim();
 
-    i++;
+    // Compose chunk text: prefix line + newline + guidance body
+    const text = guidanceBody
+      ? `${firstLine}\n${guidanceBody}`
+      : firstLine;
+
+    chunks.push({
+      text,
+      metadata: {
+        tenantId: ISO_CANON_TENANT_ID,
+        standard,
+        clauseRef: `ISO ${stdNum} ${clauseNum}`,
+        lang: 'en',
+      },
+    });
   }
 
   return chunks;
 }
 
 /**
- * Extract (b) and (c) content from an inline bullet that has both on one line.
- * The line starts after the "— (b) " marker.
+ * Parse the HLS content file (single entry).
+ * Format: [Annex SL HLS] Title followed by guidance body.
  */
-function extractInlineBc(rest: string, _title: string): string {
-  // rest is like: "Determine… (c) Resource register…"
-  // or just: "Determine…" with (c) on a continuation
-  const bcParts: string[] = [];
-  const cMatch = rest.match(/^(.+?)\.\s*\(c\)\s*(.+)$/);
-  if (cMatch) {
-    bcParts.push(`(b) ${cMatch[1].trim()}.`);
-    bcParts.push(`(c) ${cMatch[2].trim()}`);
-  } else {
-    bcParts.push(`(b) ${rest.trim()}`);
+function parseHlsSource(source: string): Chunk[] {
+  const entries = splitEntries(source);
+  const chunks: Chunk[] = [];
+
+  for (const entry of entries) {
+    const lines = entry.split('\n');
+    const firstLine = lines[0];
+
+    // Match prefix: [Annex SL HLS] Title
+    const match = firstLine.match(/^\[Annex SL HLS\]\s+(.+)$/);
+    if (!match) continue;
+
+    const guidanceBody = lines.slice(1).join('\n').trim();
+    const text = guidanceBody
+      ? `${firstLine}\n${guidanceBody}`
+      : firstLine;
+
+    chunks.push({
+      text,
+      metadata: {
+        tenantId: ISO_CANON_TENANT_ID,
+        standard: 'HLS',
+        clauseRef: 'Annex SL HLS',
+        lang: 'en',
+      },
+    });
   }
-  return bcParts.join(' ');
+
+  return chunks;
 }
 
 /**
- * Collect consecutive (b)/(c) lines after a heading.
- * Returns the merged text and how many lines were consumed.
+ * Split source text into entry blocks separated by blank lines.
+ * Handles both \n\n and \r\n\r\n separators.
  */
-function collectBcLines(lines: string[], startIdx: number): { text: string; linesConsumed: number } {
-  const parts: string[] = [];
-  let idx = startIdx;
-
-  while (idx < lines.length) {
-    const line = lines[idx];
-
-    // (b) line
-    const bMatch = line.match(/^- \(b\)\s*(.+)/);
-    if (bMatch) {
-      parts.push(`(b) ${bMatch[1].trim()}`);
-      idx++;
-      continue;
-    }
-
-    // (c) line
-    const cMatch = line.match(/^- \(c\)\s*(.+)/);
-    if (cMatch) {
-      parts.push(`(c) ${cMatch[1].trim()}`);
-      idx++;
-      continue;
-    }
-
-    // Continuation line (starts with spaces or text, not a new heading/bullet-clause)
-    if (line.startsWith('  ') && parts.length > 0) {
-      // Append to last part
-      parts[parts.length - 1] += ' ' + line.trim();
-      idx++;
-      continue;
-    }
-
-    // Blank line — skip but continue looking
-    if (line.trim() === '' && parts.length > 0) {
-      idx++;
-      continue;
-    }
-
-    // Anything else breaks the collection
-    break;
-  }
-
-  return {
-    text: parts.join(' '),
-    linesConsumed: idx - startIdx,
-  };
-}
-
-/**
- * Build a Chunk from parsed sub-clause data.
- */
-function buildChunk(
-  stdNum: string,
-  clauseNum: string,
-  title: string,
-  bcText: string,
-  standard: Standard,
-): Chunk {
-  const prefix = `[ISO ${stdNum} ${clauseNum}]`;
-  return {
-    text: `${prefix} ${title} — ${bcText}`,
-    metadata: {
-      tenantId: ISO_CANON_TENANT_ID,
-      standard,
-      clauseRef: `ISO ${stdNum} ${clauseNum}`,
-      lang: 'en',
-    },
-  };
+function splitEntries(source: string): string[] {
+  return source
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter((block) => block.length > 0);
 }

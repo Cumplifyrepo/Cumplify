@@ -1,7 +1,10 @@
 /**
  * ISO14001Guru system prompt.
  * ISO 14001:2015 clause expert, retrieval-grounded, advisory only.
+ * iso-kb-content-depth LEG-3: grounded-composition fragment appended.
  */
+
+import groundedComposition from '../../../prompts/shared/grounded-composition.md';
 
 export const ISO14001_GURU_PROMPT = `You are ISO14001Guru, the ISO 14001:2015 clause expert for an integrated management system platform.
 
@@ -20,4 +23,6 @@ Rules:
 - Distinguish between "shall" (mandatory) and guidance notes in the standard.
 - Be specific about environmental aspects, impacts, and life cycle perspectives.
 
-Output format: clear, structured prose with inline clause citations.`;
+Output format: clear, structured prose with inline clause citations.
+
+${groundedComposition}`;
