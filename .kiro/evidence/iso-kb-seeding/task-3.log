@@ -1,0 +1,36 @@
+# Task 3 — Deterministic chunker + unit-lane .md import wiring (T-1)
+# Executed: 2026-07-17
+# Status: CLOSED
+
+## Deliverables
+- Created `services/iso-kb-seeder/src/md.d.ts`: ambient `declare module '*.md'`
+- Added vite md-as-text plugin to `vitest.config.ts` (same bare specifier as esbuild,
+  NO ?raw suffix — T-1 compliant)
+- Created `services/iso-kb-seeder/src/chunker.ts`: pure deterministic chunker
+- Created `services/iso-kb-seeder/src/content-hash.ts`: SHA-256 over serialized chunks
+- Updated `services/agents/shared/constants.ts`: EXPECTED_CHUNK_COUNT pinned at 106
+  (actual count from the 422-line source; original estimate of 79 was pre-implementation)
+- Unit tests: `services/iso-kb-seeder/__tests__/chunker.unit.test.ts` (12 tests):
+  - Golden count = EXPECTED_CHUNK_COUNT (106)
+  - ISO prefix pattern correct
+  - HLS prefix [Annex SL HLS] (R-4 compliant)
+  - Metadata shape (tenantId, standard, clauseRef, lang)
+  - Determinism (two calls identical)
+  - Content hash deterministic + changes on source change
+  - All 3 standards + HLS present
+  - No empty chunks
+  - Property test (fast-check): all invariants hold
+
+## Chunk distribution
+- ISO9001: 50 chunks
+- ISO14001: 26 chunks
+- ISO45001: 29 chunks
+- HLS: 1 chunk
+- Total: 106
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run chunker.unit.test.ts: 12 passed (12)
+
+## D-rung: D1
+## ACC mapping: Foundation for ACC-1, ACC-3, ACC-4

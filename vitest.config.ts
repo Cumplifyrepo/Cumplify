@@ -1,6 +1,28 @@
 import { defineConfig } from 'vitest/config';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import type { Plugin } from 'vite';
+
+/**
+ * T-1 (iso-kb-seeding): Vite plugin that resolves bare .md imports as text strings.
+ * Same specifier as esbuild's `loader: { '.md': 'text' }` — NO ?raw suffix.
+ * At test time this reads the .md file from the repo (hermetic: no live AWS).
+ */
+function mdAsTextPlugin(): Plugin {
+  return {
+    name: 'md-as-text',
+    transform(code: string, id: string) {
+      if (id.endsWith('.md')) {
+        const content = readFileSync(resolve(id), 'utf-8');
+        return { code: `export default ${JSON.stringify(content)};`, map: null };
+      }
+      return undefined;
+    },
+  };
+}
 
 export default defineConfig({
+  plugins: [mdAsTextPlugin()],
   test: {
     globals: true,
     include: ['services/**/*.test.ts', 'services/**/*.property.test.ts', 'infra/**/*.unit.test.ts'],

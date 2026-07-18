@@ -44,7 +44,7 @@
   - **D-rung:** D1.
   - **ACC mapping:** ACC-6 (metering evidence path).
 
-- [ ] **Task 3** [KIRO] — Deterministic chunker + unit-lane .md import wiring (T-1)
+- [x] **Task 3** [KIRO] — Deterministic chunker + unit-lane .md import wiring (T-1)
   - Create ambient declaration `services/iso-kb-seeder/src/md.d.ts`:
     `declare module '*.md' { const content: string; export default content; }`
   - Add minimal vite plugin to `vitest.config.ts` (or workspace vitest config) that
