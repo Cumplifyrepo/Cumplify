@@ -16,3 +16,11 @@
 
 ## Disposition
 Chain integrity: PROVEN. ACC-1 letter ("grounded content, L1 ≥ 0.85"): NOT MET against the seeded corpus — unachievable without F-5+F-6 work. Box left UNTICKED; owner decision requested: route F-5 (guru hybrid retrieval task) + F-6 (KB content-depth spec) and either re-scope ACC-1 to chain-integrity (met) or hold Task 8 open against the follow-up spec.
+
+## Disposition update (owner decision 2026-07-18)
+Owner selected option 2: F-6 becomes a dedicated KB content-depth spec
+(iso-kb-content-depth). Architect routing: F-5 (hybrid clause-ref retrieval) folded
+into the same spec as its retrieval leg; quote-first guru answer style as its
+answer-style leg. Task 8 remains OPEN here and CLOSES when iso-kb-content-depth's
+ACC (live guru grounded answers ≥ 0.85 for clause-number AND topic questions)
+is witnessed — that probe IS this task's probe.
