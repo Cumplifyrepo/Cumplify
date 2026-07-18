@@ -1,0 +1,48 @@
+# Task 13 — Owner ratification: systemOp billing-signal marker
+
+Lane: [REQUIRES-HUMAN]  |  D-rung: D5 (human verified)  |  ACC mapping: ACC-6 (billing-signal integrity)
+
+## Decision record
+
+| Field | Value |
+|-------|-------|
+| Timestamp (UTC) | 2026-07-18T00:52:46Z |
+| Owner | Julio (session with architect) |
+| Owner word (verbatim) | "Ratified" |
+| Exit code | n/a — human decision; evidence is this record |
+
+## What was ratified
+
+Per OQ-1 resolution (requirements rev 2, 2e60b75) and design §2.4 (rev 2, 35818db):
+
+- System seeding embeds are metered under `TENANT#__ISO_CANON__#METER` as **platform
+  COGS** — never attributed to any real tenant.
+- `systemOp: true` is threaded through the one-door embed path (`EmbedRequest` →
+  `checkCreditBalance(tenantId, creditExempt)` SERVE-9 flag → `emitCreditsTelemetry`).
+- `systemOp: true` on `telemetry.credits.consumed` is THE exclusion mechanism keeping
+  platform-COGS seeding out of tenant invoicing — the billing signal stays clean per
+  the owner's standing overage decision (2026-07-08: telemetry.credits.consumed is the
+  billing signal; downstream overage consumer must be able to filter systemOp events).
+
+## Context of ratification
+
+The mechanism was flagged billing-adjacent at OQ-1 resolution and again in the
+design-review and tasks-review reports; owner ratified 2026-07-17 (local) in direct
+response to the architect's flag. Ratification arrived ahead of Phase 3 — the
+dependency arrow Task 12 → Task 13 was scheduling (owner availability), not logic:
+the task's content is confirmation of the MECHANISM, which is decision-complete.
+
+Caveat on record: Task 12's live ACC-6 evidence (ISO_CANON meter row accumulates,
+no real-tenant meter touched, telemetry events carry `systemOp: true`) remains an
+open architect-lane closure. If the live evidence ever contradicts the ratified
+mechanism, this ratification re-opens.
+
+## Rule 7/8 pairing note — commit race (incident class: in-flight self-mutation, cf. 4877f6d)
+
+The architect ticked the Task 13 checkbox on disk at ~2026-07-18T00:52:5xZ; Kiro's
+in-flight tasks.md rev 2 commit (5c1e401, 20:53:03 local) — running in the SAME
+worktree — swept the tick into itself before the architect's closure commit could
+land. 5c1e401's message documents only the T-1 fold; the Task 13 tick inside it is
+the architect's, not part of the fold. The rule 7/8 pair is therefore:
+**tick = 5c1e401 (swept), evidence log = the immediately following commit carrying
+this file.** Recorded here so the audit trail explains the split pairing.
