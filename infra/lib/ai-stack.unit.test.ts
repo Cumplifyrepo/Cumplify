@@ -508,6 +508,8 @@ describe('AiStack', () => {
       expect(content.template.mappings.properties.metadata.properties.clauseRef.type).toBe(
         'keyword',
       );
+      // iso-kb-seeding Task 1: metadata.lang MUST be keyword (i18n support)
+      expect(content.template.mappings.properties.metadata.properties.lang.type).toBe('keyword');
     });
   });
 });

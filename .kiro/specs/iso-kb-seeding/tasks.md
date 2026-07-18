@@ -22,7 +22,7 @@
 
 ### Phase 1 — Shared Foundations (hermetic unit lane)
 
-- [ ] **Task 1** [KIRO] — Shared constants + index template `lang` field
+- [x] **Task 1** [KIRO] — Shared constants + index template `lang` field
   - Create `services/agents/shared/constants.ts` with `ISO_CANON_TENANT_ID = '__ISO_CANON__'`
     and `EXPECTED_CHUNK_COUNT = 79`.
   - Add `metadata.lang` (type: keyword) to `services/agents/shared/aoss-index-template.json`.

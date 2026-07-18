@@ -85,6 +85,7 @@ export async function verifyTemplate(name: string, endpoint: string): Promise<Ve
   const props = tpl?.template?.mappings?.properties;
   const dimension = props?.embedding?.dimension;
   const tenantIdType = props?.metadata?.properties?.tenantId?.type;
+  const langType = props?.metadata?.properties?.lang?.type;
   if (dimension !== 1024) {
     throw new Error(`FAIL-CLOSED ${name}: embedding.dimension=${dimension}, expected 1024`);
   }
@@ -92,6 +93,9 @@ export async function verifyTemplate(name: string, endpoint: string): Promise<Ve
     throw new Error(
       `FAIL-CLOSED ${name}: metadata.tenantId.type=${tenantIdType}, expected keyword`,
     );
+  }
+  if (langType !== 'keyword') {
+    throw new Error(`FAIL-CLOSED ${name}: metadata.lang.type=${langType}, expected keyword`);
   }
   return { collection: name, dimension, tenantIdType };
 }

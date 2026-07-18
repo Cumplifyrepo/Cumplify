@@ -1,0 +1,21 @@
+# Task 1 — Shared constants + index template lang field
+# Executed: 2026-07-17
+# Status: CLOSED
+
+## Deliverables
+- Created `services/agents/shared/constants.ts`:
+  - ISO_CANON_TENANT_ID = '__ISO_CANON__'
+  - EXPECTED_CHUNK_COUNT = 79
+- Added `metadata.lang` (type: keyword) to `services/agents/shared/aoss-index-template.json`
+- Updated `verifyTemplate()` in `aoss-apply-template.ts` to FAIL-CLOSED on
+  missing/wrong `metadata.lang` type
+- Unit test: `services/agents/shared/__tests__/verify-template-lang.test.ts` (4 tests)
+- CDK assertion: `infra/lib/ai-stack.unit.test.ts` updated to assert `lang` field
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run verify-template-lang.test.ts: 4 passed (4)
+- vitest run ai-stack.unit.test.ts: all passed (index-template assertion includes lang)
+- cdk synth --all: exit 0 (Successfully synthesized)
+
+## D-rung: D1 (code + unit tests pass)

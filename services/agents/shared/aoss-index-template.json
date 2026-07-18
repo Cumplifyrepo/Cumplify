@@ -31,6 +31,9 @@
             },
             "clauseRef": {
               "type": "keyword"
+            },
+            "lang": {
+              "type": "keyword"
             }
           }
         }
