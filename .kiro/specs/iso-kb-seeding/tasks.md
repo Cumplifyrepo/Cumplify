@@ -102,7 +102,7 @@
   - **D-rung:** D2 (synth-verified).
   - **ACC mapping:** ACC-4 (hash change triggers re-seed), ACC-5 (fail-closed propagates).
 
-- [ ] **Task 6** [KIRO] — Guru handler canon-tenant wiring
+- [x] **Task 6** [KIRO] — Guru handler canon-tenant wiring
   - Import `ISO_CANON_TENANT_ID` from `../shared/constants.js` in all three guru handlers
     (guru-9001, guru-14001, guru-45001).
   - Change `retrieve()` call: `tenantId: ISO_CANON_TENANT_ID` for iso-kb path.

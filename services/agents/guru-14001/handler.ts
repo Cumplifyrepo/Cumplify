@@ -14,6 +14,7 @@
 
 import { retrieve } from '../shared/retrieval.js';
 import { createInvokeFn, createEmbedFn } from '../shared/invoke-transport.js';
+import { ISO_CANON_TENANT_ID } from '../shared/constants.js';
 import { ISO14001_GURU_PROMPT } from './prompt.js';
 
 const AOSS_ISO_KB_ENDPOINT = process.env.AOSS_ISO_KB_ENDPOINT!;
@@ -42,7 +43,7 @@ export async function handleQuery(
   let groundingSource = '';
   try {
     const results = await retrieve({
-      tenantId,
+      tenantId: ISO_CANON_TENANT_ID, // iso-kb-seeding: canon constant for ISO KB retrieval
       collectionEndpoint: AOSS_ISO_KB_ENDPOINT,
       indexName: 'cumplify-iso-kb',
       queryText: truncatedQuery,

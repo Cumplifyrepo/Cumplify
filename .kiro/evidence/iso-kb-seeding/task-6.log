@@ -1,0 +1,22 @@
+# Task 6 — Guru handler canon-tenant wiring
+# Executed: 2026-07-17
+# Status: CLOSED
+
+## Deliverables
+- Updated `services/agents/guru-9001/handler.ts`:
+  - Import ISO_CANON_TENANT_ID from '../shared/constants.js'
+  - Changed retrieve() call: tenantId: ISO_CANON_TENANT_ID (was: user tenantId)
+- Updated `services/agents/guru-14001/handler.ts`: same change
+- Updated `services/agents/guru-45001/handler.ts`: same change
+- User's tenantId STILL flows to: embedFn (metering), invokeFn (metering + grounding events)
+- Unit tests (`services/agents/guru-9001/__tests__/canon-tenant.test.ts`, 3 tests):
+  - retrieve() receives ISO_CANON_TENANT_ID, NOT user tenantId
+  - User tenantId flows to invokeFn (metering attribution preserved)
+  - Retrieval uses cumplify-iso-kb index + correct endpoint
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run canon-tenant.test.ts: 3 passed (3)
+
+## D-rung: D1
+## ACC mapping: ACC-1 (guru retrieves from canon), ACC-2 (isolation proof setup)
