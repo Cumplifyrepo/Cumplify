@@ -62,7 +62,7 @@ describe('aossWriteOp — write-path retry (FIX-P12-2)', () => {
 
     await expect(
       aossWriteOp('test:write', 'PUT', 'https://ep', '/idx/_doc/1', '{}'),
-    ).rejects.toThrow(/FAILED after/);
+    ).rejects.toThrow(/FAILED after 1 attempts/);
     expect(signedFetchMock).toHaveBeenCalledTimes(1);
   });
 

@@ -59,8 +59,10 @@ export async function withRetry(
   isRetryable: (status: number) => boolean,
 ): Promise<RetryResult> {
   let last: RetryResult | undefined;
+  let attempts = 0;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    attempts = attempt;
     try {
       last = await signedAossFetch(method, endpoint, path, body);
       if (okStatuses.includes(last.status)) return last;
@@ -84,7 +86,7 @@ export async function withRetry(
   }
 
   throw new Error(
-    `${label} FAILED after ${MAX_ATTEMPTS} attempts: HTTP ${last?.status} — ${last?.body?.slice(0, 500)}`,
+    `${label} FAILED after ${attempts} attempts: HTTP ${last?.status} — ${last?.body?.slice(0, 500)}`,
   );
 }
 
@@ -105,7 +107,7 @@ export async function aossWriteOp(
 }
 
 /**
- * AOSS read operation (readMetaHash GET).
+ * AOSS read operation (readMetaHash _search).
  * 404 = absent (returns immediately as result, not retried).
  * Retries 403/429/5xx only.
  */
@@ -114,8 +116,9 @@ export async function aossReadOp(
   method: AossHttpMethod,
   endpoint: string,
   path: string,
+  body?: string,
 ): Promise<RetryResult> {
-  return withRetry(label, method, endpoint, path, undefined, [200, 404], isReadRetryable);
+  return withRetry(label, method, endpoint, path, body, [200, 404], isReadRetryable);
 }
 
 /**

@@ -1,0 +1,36 @@
+# FIX-P12-4 — POST auto-ID + search-based _meta read + withRetry throw fix
+# Executed: 2026-07-18
+# Status: CLOSED
+
+## Root Cause (F-4)
+AOSS VECTORSEARCH collections reject client-supplied document IDs.
+bulk-index.ts used PUT /_doc/chunk-N; meta-doc.ts used PUT/GET /_doc/_cumplify_iso_kb_meta.
+All returned HTTP 400: "Document ID is not supported in create/index operation request".
+Constraint documented in-repo (aoss-prover.ts) — shared blind spot.
+
+## Fix
+1. bulk-index.ts: `PUT /{index}/_doc/chunk-{i}` → `POST /{index}/_doc` (auto-ID)
+   - Mirrors aoss-prover.ts proven pattern
+
+2. meta-doc.ts:
+   - Write: `PUT /{index}/_doc/{id}` → `POST /{index}/_doc` (auto-ID)
+   - Read: `GET /{index}/_doc/{id}` → `POST /{index}/_search` with query:
+     `{bool:{filter:[{term:{'metadata.tenantId':'__META__'}},{term:{'metadata.clauseRef':'_meta'}}]}},size:1`
+     → `hits.hits[0]._source.contentHash ?? null`
+   - Old _meta doc dies with index deletion on re-seed (no duplicate concern)
+
+3. aoss-retry.ts:
+   - withRetry throw message reports actual `attempts` count (was hardcoded MAX_ATTEMPTS)
+   - aossReadOp signature accepts optional body (needed for POST _search)
+
+4. handler.unit.test.ts: mocks updated for POST _search pattern + method-aware
+   responses (DELETE→200, PUT→200, POST→201)
+
+5. aoss-retry.test.ts: non-retryable assertion checks "FAILED after 1 attempts"
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run handler.unit.test.ts: 4 passed (4)
+- vitest run aoss-retry.test.ts: 12 passed (12)
+- Full suite: 1085 passed | 3 skipped (102 files), exit 0
+- cdk synth --all: exit 0

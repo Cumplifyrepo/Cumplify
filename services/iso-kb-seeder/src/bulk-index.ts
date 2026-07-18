@@ -50,6 +50,7 @@ export async function embedAllChunks(
 
 /**
  * Bulk-index all chunks with their embeddings to AOSS.
+ * FIX-P12-4: POST /_doc (auto-ID) — AOSS vector collections reject client-supplied IDs.
  * Uses write-path retry per chunk (403/404/429/5xx retryable).
  */
 export async function bulkIndex(
@@ -70,9 +71,9 @@ export async function bulkIndex(
 
     const resp = await aossWriteOp(
       `indexChunk:${i}:${chunk.metadata.clauseRef}`,
-      'PUT',
+      'POST',
       endpoint,
-      `/${indexName}/_doc/chunk-${i}`,
+      `/${indexName}/_doc`,
       JSON.stringify(doc),
     );
 

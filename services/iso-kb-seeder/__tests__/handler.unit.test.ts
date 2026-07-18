@@ -61,24 +61,30 @@ describe('handler — idempotent skip (ACC-3)', () => {
   it('skips when content hash matches existing _meta doc', async () => {
     // Simulate: _meta doc exists with matching hash
     // The handler computes the hash internally; we need to return the same hash.
-    // We intercept the GET _meta request and return a hash that matches.
+    // We intercept the _search request for _meta and return a hash that matches.
     // Since we can't predict the exact hash, we'll capture it on first call.
     let capturedHash: string | null = null;
 
     signedFetchMock.mockImplementation(
       (method: string, _endpoint: string, path: string) => {
-        if (method === 'GET' && path.includes('_doc/_cumplify_iso_kb_meta')) {
+        if (method === 'POST' && path.includes('_search')) {
           if (capturedHash) {
             return Promise.resolve({
               status: 200,
-              body: JSON.stringify({ _source: { contentHash: capturedHash } }),
+              body: JSON.stringify({ hits: { hits: [{ _source: { contentHash: capturedHash } }] } }),
             });
           }
-          // First call: return no match to force seeding
-          return Promise.resolve({ status: 404, body: '{}' });
+          // First call: return empty search (no _meta doc exists)
+          return Promise.resolve({ status: 200, body: JSON.stringify({ hits: { hits: [] } }) });
         }
-        // Other AOSS calls succeed
-        return Promise.resolve({ status: 200, body: '{}' });
+        if (method === 'DELETE') {
+          return Promise.resolve({ status: 200, body: '{"acknowledged":true}' });
+        }
+        if (method === 'PUT') {
+          return Promise.resolve({ status: 200, body: '{}' }); // createIndex
+        }
+        // POST /_doc (chunk indexing + _meta write)
+        return Promise.resolve({ status: 201, body: '{"_id":"auto-1"}' });
       },
     );
 
@@ -95,13 +101,13 @@ describe('handler — idempotent skip (ACC-3)', () => {
     lambdaSendMock.mockReset();
     signedFetchMock.mockImplementation(
       (method: string, _endpoint: string, path: string) => {
-        if (method === 'GET' && path.includes('_doc/_cumplify_iso_kb_meta')) {
+        if (method === 'POST' && path.includes('_search')) {
           return Promise.resolve({
             status: 200,
-            body: JSON.stringify({ _source: { contentHash: capturedHash } }),
+            body: JSON.stringify({ hits: { hits: [{ _source: { contentHash: capturedHash } }] } }),
           });
         }
-        return Promise.resolve({ status: 200, body: '{}' });
+        return Promise.resolve({ status: 201, body: '{}' });
       },
     );
 
@@ -118,10 +124,17 @@ describe('handler — full seed on mismatch', () => {
   it('seeds all chunks when hash mismatches', async () => {
     signedFetchMock.mockImplementation(
       (method: string, _endpoint: string, path: string) => {
-        if (method === 'GET' && path.includes('_doc/_cumplify_iso_kb_meta')) {
-          return Promise.resolve({ status: 404, body: '{}' }); // No existing meta
+        if (method === 'POST' && path.includes('_search')) {
+          return Promise.resolve({ status: 200, body: JSON.stringify({ hits: { hits: [] } }) });
         }
-        return Promise.resolve({ status: 200, body: '{}' });
+        if (method === 'DELETE') {
+          return Promise.resolve({ status: 200, body: '{"acknowledged":true}' });
+        }
+        if (method === 'PUT') {
+          return Promise.resolve({ status: 200, body: '{}' }); // createIndex
+        }
+        // POST /_doc (chunk indexing + _meta write)
+        return Promise.resolve({ status: 201, body: '{"_id":"auto-1"}' });
       },
     );
     verifyTemplateMock.mockResolvedValue({ collection: 'cumplify-iso-kb', dimension: 1024, tenantIdType: 'keyword' });
@@ -141,8 +154,11 @@ describe('handler — template fail-closed (ACC-5)', () => {
   it('aborts when verifyTemplate throws', async () => {
     signedFetchMock.mockImplementation(
       (method: string, _endpoint: string, path: string) => {
-        if (method === 'GET' && path.includes('_doc/_cumplify_iso_kb_meta')) {
-          return Promise.resolve({ status: 404, body: '{}' }); // Force seed path
+        if (method === 'POST' && path.includes('_search')) {
+          return Promise.resolve({ status: 200, body: JSON.stringify({ hits: { hits: [] } }) });
+        }
+        if (method === 'DELETE') {
+          return Promise.resolve({ status: 200, body: '{"acknowledged":true}' });
         }
         return Promise.resolve({ status: 200, body: '{}' });
       },
@@ -165,13 +181,20 @@ describe('handler — _meta doc shape (D-2)', () => {
 
     signedFetchMock.mockImplementation(
       (method: string, _endpoint: string, path: string, body?: string) => {
-        if (method === 'GET' && path.includes('_doc/_cumplify_iso_kb_meta')) {
-          return Promise.resolve({ status: 404, body: '{}' });
+        if (method === 'POST' && path.includes('_search')) {
+          return Promise.resolve({ status: 200, body: JSON.stringify({ hits: { hits: [] } }) });
         }
-        if (method === 'PUT' && path.includes('_doc/_cumplify_iso_kb_meta') && body) {
+        // Capture _meta doc writes (POST /_doc with __META__ in body)
+        if (method === 'POST' && path.endsWith('/_doc') && body?.includes('__META__')) {
           metaDocBodies.push(body);
         }
-        return Promise.resolve({ status: 200, body: '{}' });
+        if (method === 'DELETE') {
+          return Promise.resolve({ status: 200, body: '{"acknowledged":true}' });
+        }
+        if (method === 'PUT') {
+          return Promise.resolve({ status: 200, body: '{}' }); // createIndex
+        }
+        return Promise.resolve({ status: 201, body: '{"_id":"auto-1"}' });
       },
     );
     verifyTemplateMock.mockResolvedValue({ collection: 'cumplify-iso-kb', dimension: 1024, tenantIdType: 'keyword' });
