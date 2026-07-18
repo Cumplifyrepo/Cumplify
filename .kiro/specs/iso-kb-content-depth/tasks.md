@@ -1,9 +1,10 @@
-# Tasks — ISO KB Content Depth
+# Tasks — ISO KB Content Depth (rev 2)
 
 > **Spec:** iso-kb-content-depth
 > **Design:** `#[[file:.kiro/specs/iso-kb-content-depth/design.md]]` (rev 2, approved)
 > **Evidence rule:** Every task closure = checkbox tick + `.kiro/evidence/iso-kb-content-depth/task-N.log`
 > + code in the SAME commit (rule 7/8). No tick without evidence; no evidence without a tick.
+> **Review:** `.kiro/evidence/iso-kb-content-depth/tasks-review.md`
 
 ---
 
@@ -106,17 +107,30 @@
     - Replace `chunkIsoRequirementsMap(source)` with `chunkContentSources(CONTENT_SOURCES)`.
   - Rewrite chunker unit tests (`services/iso-kb-seeder/__tests__/chunker.unit.test.ts`):
     - Golden count = 109
-    - **Golden-SET equality: `Set(clauseRefs)` === pinned 108-ref fixture + 'Annex SL HLS' (D-2')**
+    - **Golden-SET equality: `Set(clauseRefs)` === AUTHORITATIVE 108-ref fixture + 'Annex SL HLS' (T-1')**
     - Per-standard count pins: ISO9001=50, ISO14001=26, ISO45001=32, HLS=1
     - Every ISO chunk text >= 200 chars (N-5: full text incl. prefix)
     - Correct prefix format `[ISO NNNN C.C]` / `[Annex SL HLS]`
     - Determinism: two calls yield identical output
     - No empty guidance bodies
   - Retire old chunker tests that reference `chunkIsoRequirementsMap`.
-  - **NOTE:** This task requires content files (Tasks 7-9) to exist for the tests to
-    pass against real content. The golden-SET fixture is derived from the content files.
-    Task ordering: Tasks 7-9 content authoring can run in parallel with Tasks 1-5,
-    but Task 6 tests are validated AFTER content is committed.
+  - **T-1' (BINDING):** The golden-SET fixture is NOT derived from the content files —
+    it is the AUTHORITATIVE 108-ref list from the architect review (cross-checked vs
+    live index agg + clause-canon). Any future change to the set requires an
+    architect-reviewed fixture amendment with justification. The fixture is:
+    ```
+    ISO 9001 (50): 4.1, 4.2, 4.3, 4.4, 5.1, 5.2, 5.3, 6.1, 6.2, 6.3, 7.1.1, 7.1.2,
+      7.1.3, 7.1.4, 7.1.5, 7.1.6, 7.2, 7.3, 7.4, 7.5, 8.1, 8.2.1, 8.2.2, 8.2.3,
+      8.2.4, 8.3.1, 8.3.2, 8.3.3, 8.3.4, 8.3.5, 8.3.6, 8.4.1, 8.4.2, 8.4.3, 8.5.1,
+      8.5.2, 8.5.3, 8.5.4, 8.5.5, 8.5.6, 8.6, 8.7, 9.1.1, 9.1.2, 9.1.3, 9.2, 9.3,
+      10.1, 10.2, 10.3
+    ISO 14001 (26): 4.1, 4.2, 4.3, 4.4, 5.1, 5.2, 5.3, 6.1.1, 6.1.2, 6.1.3, 6.1.4,
+      6.2, 7.1, 7.2, 7.3, 7.4, 7.5, 8.1, 8.2, 9.1.1, 9.1.2, 9.2, 9.3, 10.1, 10.2, 10.3
+    ISO 45001 (32): 4.1, 4.2, 4.3, 4.4, 5.1, 5.2, 5.3, 5.4, 6.1.1, 6.1.2.1, 6.1.2.2,
+      6.1.2.3, 6.1.3, 6.1.4, 6.2, 7.1, 7.2, 7.3, 7.4, 7.5, 8.1.1, 8.1.2, 8.1.3,
+      8.1.4, 8.2, 9.1.1, 9.1.2, 9.2, 9.3, 10.1, 10.2, 10.3
+    + 'Annex SL HLS' (total set size 109)
+    ```
   - **Evidence:** `tsc --noEmit` exit 0, `vitest run` passes (all chunker tests green).
   - **D-rung:** D1.
   - **ACC mapping:** ACC-5 (content depth minimum), ACC-6 (chunk count + format stability).
@@ -163,7 +177,7 @@
   - **D-rung:** D1 (content quality gate).
   - **ACC mapping:** Foundation for ACC-1, ACC-2 (content quality → grounding quality).
 
-### Phase 4 — Content-Canon Validation (depends on Phase 2 + 3)
+### Phase 4 — Content-Canon Validation (depends on Phase 2 + 3; may run before Task 10)
 
 - [ ] **Task 11** [KIRO] — Content-canon gate unit test + property-based tests
   - Create `services/iso-kb-seeder/__tests__/content-canon.unit.test.ts`:
@@ -172,6 +186,8 @@
   - Property-based test (fast-check): all chunks satisfy metadata invariants
     (tenantId='__ISO_CANON__', lang='en', text starts with correct prefix, length >= 200
     for non-HLS).
+  - **Note:** This task may run before Task 10 (canon gate is mechanical; the spot-check
+    is editorial). The graph's 10→11 edge is relaxed per tasks-review.
   - **Evidence:** `tsc --noEmit` exit 0, `vitest run` passes.
   - **D-rung:** D1.
   - **ACC mapping:** ACC-6 (format stability + canon alignment).
@@ -183,9 +199,11 @@
   - Push to pipeline, Dev stage deploys.
   - Verify: seeder Lambda invoked by custom resource (fingerprint change on `docs/kb/`),
     logs show `status: 'seeded'`, `chunksIndexed: 109`, new contentHash.
-  - Readback: AOSS index `cumplify-iso-kb` exists, document count = 109.
+  - Readback: AOSS index `cumplify-iso-kb` total document count = **110** (109 chunks +
+    1 `_meta` doc); per-tenant agg: `__ISO_CANON__`=109, `__META__`=1 (T-2').
   - **Evidence:** Pipeline run ID, CloudWatch log excerpt (seeded, chunk count, hash),
-    AOSS document count query result, timestamp, git blob SHA of cdk-outputs.json.
+    AOSS document count query result (110 total, 109 canon, 1 meta), timestamp,
+    git blob SHA of cdk-outputs.json.
   - **D-rung:** D3 (deployed + read back).
   - **ACC mapping:** ACC-6 (live chunk count), ACC-7 (re-seed triggered by content change).
 
@@ -290,10 +308,12 @@ Phase 1 (parallel):
                                                   ├──► Task 6 (chunker) ──► Task 11 (canon)
 Phase 3 (parallel with Phase 1):                  │            ▲
   Task 7 (9001 content) ──┐                       │            │
-  Task 8 (14001 content)  ├──► Task 10 (spot-check)────────────┘
+  Task 8 (14001 content)  ├───────────────────────┘────────────┘
   Task 9 (45001+HLS)   ───┘
+                             ↓
+                      Task 10 (architect spot-check) ← GATE for Phase 5
 
-Phase 5 (sequential after Phase 4):
+Phase 5 (sequential after Task 10):
   Task 12 (deploy) → Task 13 → Task 14 → Task 15 → Task 16 → Task 17
 
 Phase 6:
@@ -304,8 +324,9 @@ Phase 6:
 - Tasks 1-5 (code) and Tasks 7-9 (content) can run in parallel — no cross-dependency.
 - Task 6 (chunker rewrite) depends on Tasks 1-5 (code foundations) AND Tasks 7-9
   (content files must exist for tests to pass against real content).
-- Task 10 (spot-check) depends on Tasks 7-9 (content authored).
-- Task 11 (canon gate) depends on Task 6 (chunker) + Task 10 (content accepted).
+- Task 11 (canon gate) depends on Task 6 (chunker). May run before Task 10 (relaxed
+  per tasks-review: canon gate is mechanical, spot-check is editorial).
+- Task 10 (spot-check) depends on Tasks 7-9 (content authored). Gates Phase 5.
 - Phase 5 (Tasks 12-17) is sequential after deploy.
 - Task 18 depends on Tasks 13+14 (grounding scores measured).
 - Task 19 is gated on Task 18 passing.
