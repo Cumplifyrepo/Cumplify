@@ -24,7 +24,7 @@
 
 - [x] **Task 1** [KIRO] — Shared constants + index template `lang` field
   - Create `services/agents/shared/constants.ts` with `ISO_CANON_TENANT_ID = '__ISO_CANON__'`
-    and `EXPECTED_CHUNK_COUNT = 79`.
+    and `EXPECTED_CHUNK_COUNT = 109`.
   - Add `metadata.lang` (type: keyword) to `services/agents/shared/aoss-index-template.json`.
   - Update `verifyTemplate()` in `aoss-apply-template.ts` to fail-closed on missing/wrong
     `metadata.lang` type.

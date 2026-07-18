@@ -1,0 +1,25 @@
+# FIX-P12-1 — Chunker Pattern 1 indent fix + golden count re-pin
+# Executed: 2026-07-18
+# Status: CLOSED
+
+## Root Cause
+chunker.ts Pattern 1 regex anchored `^- \*\*` at column 0; source lines 317–319
+(ISO 45001 6.1.2.1/6.1.2.2/6.1.2.3 — indented children of 6.1.2 parent) were
+silently dropped. These are hazard identification + OH&S risk/opportunity
+assessment — core ISO 45001 content.
+
+## Fix
+- Pattern 1 regex: `^- \*\*` → `/^\s*- \*\*/` (allow leading whitespace)
+- EXPECTED_CHUNK_COUNT: 106 → 109 (distribution: ISO9001=50, ISO14001=26, ISO45001=32, HLS=1)
+- handler.unit.test.ts: hardcoded 106 → 109 (two locations)
+- Regression test: clauseRefs INCLUDE 'ISO 45001 6.1.2.1/2/3'
+- Distribution assertion: ISO45001 = 32 chunks
+- design.md: 4 spots updated (constant, _meta chunksTotal, embed estimate, test table)
+- tasks.md: Task 1 text 79 → 109
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run chunker.unit.test.ts: 14 passed (14) — 2 new regression tests
+- vitest run handler.unit.test.ts: 4 passed (4)
+- Full suite: 1068 passed | 3 skipped (100 files), exit 0
+- cdk synth --all: exit 0

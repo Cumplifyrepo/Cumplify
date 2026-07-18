@@ -103,8 +103,9 @@ function parseStandardSection(lines: string[], standard: Standard, stdNum: strin
     const line = lines[i];
 
     // Pattern 1: Inline bullet sub-clause — "- **X.Y.Z Title** — (b) … (c) …"
+    // FIX-P12-1: allow leading whitespace for indented bullets (e.g., 45001 6.1.2.x)
     const inlineMatch = line.match(
-      /^- \*\*(\d+(?:\.\d+)+)\s+(.+?)\*\*\s*—\s*\(b\)\s*(.+)/,
+      /^\s*- \*\*(\d+(?:\.\d+)+)\s+(.+?)\*\*\s*—\s*\(b\)\s*(.+)/,
     );
     if (inlineMatch) {
       const [, clauseNum, title, rest] = inlineMatch;

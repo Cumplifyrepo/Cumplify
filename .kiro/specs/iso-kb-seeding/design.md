@@ -120,7 +120,7 @@ export const ISO_CANON_TENANT_ID = '__ISO_CANON__';
  * lane, not discovered at deploy. Updated only when iso-requirements-map.md
  * legitimately gains/loses sub-clauses.
  */
-export const EXPECTED_CHUNK_COUNT = 79; // pinned by unit test
+export const EXPECTED_CHUNK_COUNT = 109; // pinned by unit test (FIX-P12-1: was 79→106→109)
 ```
 
 ### 2.2 Source Inlining (D-1 — MANDATORY, incident-class prevention)
@@ -234,7 +234,7 @@ It MUST NOT be retrievable as a grounding chunk:
     "lang": "en"
   },
   "contentHash": "<sha256>",
-  "chunksTotal": 79,
+  "chunksTotal": 109,
   "seededAt": "2026-07-17T…Z"
 }
 ```
@@ -515,8 +515,8 @@ path fails fast on 404 (user-facing latency), while the seeder retries 404
 
 - Delete index: ~1s
 - Create index: ~2–5s
-- Embed 79 chunks: ~79 × 1.5s (Lambda invoke round-trip) ≈ 120s
-- Bulk-index 79 docs: ~10s (batched)
+- Embed 109 chunks: ~109 × 0.25s (Lambda invoke round-trip) ≈ 30s
+- Bulk-index 109 docs: ~10s (batched)
 - Total: ~130–140s typical, plus AOSS cold-start overhead
 
 The window is bounded by the Lambda timeout (300s max).
@@ -604,7 +604,7 @@ and apply-template). Observability is via:
 
 | Layer | Scope | Runner |
 |-------|-------|--------|
-| Unit | Chunker: golden count (EXPECTED_CHUNK_COUNT = 79, D-5), correct prefixes, metadata alignment, HLS prefix outside citation pattern, determinism, no chunk for parent-only headers | Vitest |
+| Unit | Chunker: golden count (EXPECTED_CHUNK_COUNT = 109, D-5), correct prefixes, metadata alignment, HLS prefix outside citation pattern, determinism, no chunk for parent-only headers | Vitest |
 | Unit | Content hash: deterministic, changes on input change | Vitest |
 | Unit | Handler: mock embed + AOSS → verify skip-on-match, full-seed-on-mismatch, abort-on-template-fail | Vitest |
 | Unit | _meta doc: tenantId='__META__' (never '__ISO_CANON__'), no embedding field (D-2) | Vitest |

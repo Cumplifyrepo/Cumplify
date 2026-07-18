@@ -130,10 +130,10 @@ describe('handler — full seed on mismatch', () => {
     const result = await handler({ action: 'seed', sourceHash: 'abc123' });
 
     expect(result.status).toBe('seeded');
-    expect(result.chunksTotal).toBe(106); // EXPECTED_CHUNK_COUNT
-    expect(result.chunksIndexed).toBe(106);
+    expect(result.chunksTotal).toBe(109); // EXPECTED_CHUNK_COUNT
+    expect(result.chunksIndexed).toBe(109);
     // Embeddings: one Lambda invoke per chunk
-    expect(lambdaSendMock).toHaveBeenCalledTimes(106);
+    expect(lambdaSendMock).toHaveBeenCalledTimes(109);
   });
 });
 
@@ -187,6 +187,6 @@ describe('handler — _meta doc shape (D-2)', () => {
     expect(metaDoc.metadata.clauseRef).toBe('_meta');
     expect(metaDoc).not.toHaveProperty('embedding'); // D-2: no embedding field
     expect(metaDoc.contentHash).toBeTruthy();
-    expect(metaDoc.chunksTotal).toBe(106);
+    expect(metaDoc.chunksTotal).toBe(109);
   });
 });

@@ -15,4 +15,4 @@ export const ISO_CANON_TENANT_ID = '__ISO_CANON__';
  * lane, not discovered at deploy. Updated only when iso-requirements-map.md
  * legitimately gains/loses sub-clauses.
  */
-export const EXPECTED_CHUNK_COUNT = 106;
+export const EXPECTED_CHUNK_COUNT = 109;

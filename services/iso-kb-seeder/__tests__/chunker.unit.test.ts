@@ -88,6 +88,18 @@ describe('chunker — deterministic output (iso-kb-seeding Task 3)', () => {
       expect(chunk.text.length).toBeGreaterThan(10);
     }
   });
+
+  it('FIX-P12-1 regression: includes indented ISO 45001 6.1.2.1/2/3 sub-clauses', () => {
+    const clauseRefs = chunks.map((c) => c.metadata.clauseRef);
+    expect(clauseRefs).toContain('ISO 45001 6.1.2.1');
+    expect(clauseRefs).toContain('ISO 45001 6.1.2.2');
+    expect(clauseRefs).toContain('ISO 45001 6.1.2.3');
+  });
+
+  it('ISO45001 has 32 chunks (FIX-P12-1: was 29, missing 3 indented)', () => {
+    const iso45001Chunks = chunks.filter((c) => c.metadata.standard === 'ISO45001');
+    expect(iso45001Chunks.length).toBe(32);
+  });
 });
 
 describe('chunker — property-based tests (fast-check)', () => {
