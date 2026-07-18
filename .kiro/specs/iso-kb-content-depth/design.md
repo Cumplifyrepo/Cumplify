@@ -2,7 +2,7 @@
 
 > **Spec:** iso-kb-content-depth
 > **Requirements:** `#[[file:.kiro/specs/iso-kb-content-depth/requirements.md]]` (rev 2, approved)
-> **Status:** DRAFT (awaiting architect review)
+> **Status:** APPROVED (rev 2 — D-1'..D-4' corrections folded)
 > **Base commit:** 167f16a (develop)
 > **Review:** `.kiro/evidence/iso-kb-content-depth/design-review.md`
 
@@ -45,13 +45,15 @@ LEG-1 (CONTENT)                    LEG-2 (RETRIEVAL)              LEG-3 (ANSWER 
 
 ```
 docs/kb/
-├── iso-9001.md      # 44 clause entries (clauses 4–10, ISO 9001:2015)
-├── iso-14001.md     # 34 clause entries (clauses 4–10, ISO 14001:2015)
-├── iso-45001.md     # 30 clause entries (clauses 4–10, ISO 45001:2018)
+├── iso-9001.md      # 50 clause entries (clauses 4–10, ISO 9001:2015)
+├── iso-14001.md     # 26 clause entries (clauses 4–10, ISO 14001:2015)
+├── iso-45001.md     # 32 clause entries (clauses 4–10, ISO 45001:2018)
 └── hls.md           # 1 HLS cross-reference entry
 ```
 
 Total: 108 ISO + 1 HLS = 109 chunks (matches EXPECTED_CHUNK_COUNT).
+Per-standard counts (50/26/32) are live-witnessed (architect prover terms agg
+2026-07-18) and pinned in unit tests (D-2').
 
 ### 2.2 Content File Format
 
@@ -143,8 +145,8 @@ export function chunkContentSources(sources: ContentSource[]): Chunk[] {
   return chunks;
 }
 
-// Backward-compat: keep old function as a thin wrapper during migration
-export function chunkIsoRequirementsMap(source: string): Chunk[] { ... }
+// D-4': chunkIsoRequirementsMap is DELETED (not wrapped). The old map is no longer
+// KB authority (OQ-1b). Its tests are retired with the migration.
 ```
 
 **Parsing algorithm (per-standard file):**
@@ -416,7 +418,10 @@ export async function retrieve(
 
 ### 3.3 Guru Handler Integration
 
-Each guru handler calls the parser and passes the result to `retrieve()`:
+Each guru handler calls the parser and passes the result to `retrieve()`.
+**D-3': When the parser returns an explicit `standard` (priority-1 match), it WINS
+over the guru's own standard.** The guru's standard is used only when composing a
+ref from bare/labeled clauseNum (priority 2/3).
 
 ```typescript
 // services/agents/guru-9001/handler.ts (representative — 14001/45001 identical pattern)
@@ -430,8 +435,11 @@ export async function handleQuery(tenantId: string, question: string, locale?: s
 
   // LEG-2: parse clause reference from question
   const parsed = parseClauseRef(truncatedQuery);
+
+  // D-3': parsed standard WINS when question names one explicitly (priority 1)
   const clauseRef = parsed.clauseRef
     ?? (parsed.clauseNum ? `ISO ${GURU_STD_NUM} ${parsed.clauseNum}` : null);
+  const standard = parsed.standard ?? (clauseRef ? GURU_STANDARD : undefined);
 
   const { embedding } = await embedFn({ ... });
 
@@ -444,9 +452,9 @@ export async function handleQuery(tenantId: string, question: string, locale?: s
       queryText: truncatedQuery,
       queryVector: embedding,
       topK: 5,
-      // NEW: hybrid options (null values omitted)
+      // NEW: hybrid options (null/undefined values omitted)
       ...(clauseRef && {
-        hybrid: { clauseRef, standard: GURU_STANDARD },
+        hybrid: { clauseRef, standard },
       }),
     });
     groundingSource = results.chunks.map((c) => c.text).join('\n---\n');
@@ -456,10 +464,11 @@ export async function handleQuery(tenantId: string, question: string, locale?: s
 }
 ```
 
-**Standard inference:** When the question says "clause 4.1" without specifying a
-standard, the guru handler knows it serves ISO 9001, so it composes
-`clauseRef = 'ISO 9001 4.1'` and `standard = 'ISO9001'`. This eliminates
-cross-standard noise (ACC-3).
+**D-3' semantics:** If a user asks ISO9001Guru "What does ISO 14001 4.1 require?",
+priority-1 parsing yields `clauseRef='ISO 14001 4.1'` and `standard='ISO14001'`.
+The handler uses BOTH from the parser (not overriding with its own 'ISO9001').
+This avoids contradictory filters (clauseRef=14001 + standard=9001) that would
+guarantee zero results and force a wasteful fallback cycle.
 
 ---
 
@@ -517,6 +526,29 @@ ${groundedComposition}`;
 ```
 
 Same pattern for guru-14001/prompt.ts and guru-45001/prompt.ts.
+
+### 4.2.1 CDK Bundling: `.md` Text Loader for Agent Handlers (D-1')
+
+The guru prompt.ts files now import `.md` files. The guru Lambdas are bundled via
+`createAgentHandler` (or equivalent shared factory in ai-stack.ts). That factory's
+bundling config currently has NO `.md` loader — esbuild will fail the bundle at synth.
+
+**Fix:** Add `loader: { '.md': 'text' }` to the shared `createAgentHandler` bundling
+config. This applies to all agent handler Lambdas (harmless where no `.md` import
+exists — esbuild only invokes the loader when it encounters the extension).
+
+```typescript
+// infra/lib/ai-stack.ts — createAgentHandler or equivalent shared bundling
+bundling: {
+  externalModules: [],
+  target: 'node22',
+  loader: { '.md': 'text' }, // D-1': guru prompts import .md fragment
+},
+```
+
+**CDK assertion test:** The ai-stack unit test asserts guru Lambda bundling metadata
+includes the `.md` text loader (or validates via synth that guru functions resolve
+their `.md` imports without error).
 
 ### 4.3 Parity Test Pattern
 
@@ -581,22 +613,23 @@ proven live behavior from iso-kb-seeding (R-5).
 
 | File | Change Type | Purpose |
 |------|-------------|---------|
-| `docs/kb/iso-9001.md` | NEW | 44 expanded clause entries |
-| `docs/kb/iso-14001.md` | NEW | 34 expanded clause entries |
-| `docs/kb/iso-45001.md` | NEW | 30 expanded clause entries |
+| `docs/kb/iso-9001.md` | NEW | 50 expanded clause entries |
+| `docs/kb/iso-14001.md` | NEW | 26 expanded clause entries |
+| `docs/kb/iso-45001.md` | NEW | 32 expanded clause entries |
 | `docs/kb/hls.md` | NEW | 1 HLS cross-reference entry |
-| `services/iso-kb-seeder/src/chunker.ts` | MODIFY | New `chunkContentSources()` API, simpler parsing |
+| `services/iso-kb-seeder/src/chunker.ts` | REWRITE | New `chunkContentSources()` API; `chunkIsoRequirementsMap` DELETED (D-4') |
 | `services/iso-kb-seeder/src/handler.ts` | MODIFY | Four static imports, `CONTENT_SOURCES` array |
+| `services/iso-kb-seeder/__tests__/chunker.unit.test.ts` | REWRITE | Tests target new API; old-chunker tests retired (D-4') |
 | `services/agents/shared/clause-ref-parser.ts` | NEW | Pure clause-ref parser |
 | `services/agents/shared/retrieval.ts` | MODIFY | `HybridRetrievalOptions`, compound filter, zero-result fallback |
-| `services/agents/guru-9001/handler.ts` | MODIFY | `parseClauseRef` integration, hybrid param |
+| `services/agents/guru-9001/handler.ts` | MODIFY | `parseClauseRef` integration, hybrid param, D-3' standard logic |
 | `services/agents/guru-14001/handler.ts` | MODIFY | Same pattern as guru-9001 |
 | `services/agents/guru-45001/handler.ts` | MODIFY | Same pattern as guru-9001 |
 | `services/agents/guru-9001/prompt.ts` | MODIFY | Import + append grounded-composition fragment |
 | `services/agents/guru-14001/prompt.ts` | MODIFY | Same |
 | `services/agents/guru-45001/prompt.ts` | MODIFY | Same |
 | `prompts/shared/grounded-composition.md` | NEW | Quote-first prompt fragment |
-| `infra/lib/ai-stack.ts` | MODIFY | Fingerprint path: `docs/kb` (was single file) |
+| `infra/lib/ai-stack.ts` | MODIFY | Fingerprint path: `docs/kb`; `.md` text-loader in agent handler bundling (D-1') |
 | `services/agents/shared/constants.ts` | MODIFY | `EXPECTED_CHUNK_COUNT` re-pin if needed (expected: stays 109) |
 
 ---
@@ -607,11 +640,12 @@ proven live behavior from iso-kb-seeding (R-5).
 
 | Test File | Scope | Key Assertions |
 |-----------|-------|----------------|
-| `services/iso-kb-seeder/__tests__/chunker.unit.test.ts` | Chunker (updated) | Golden count = 109; every ISO chunk >= 200 chars (N-5: full text incl. prefix); every clauseRef in canon set; correct prefix format; HLS prefix `[Annex SL HLS]`; determinism (two calls identical); no empty guidance bodies |
-| `services/agents/shared/__tests__/clause-ref-parser.unit.test.ts` | Parser | Full ISO ref extracts correctly; "clause 4.1" extracts clauseNum; "section 7.1.5.2" works; bare "4.1" extracts; **false-positive test: "improve by 4.1 percent" → clauseNum='4.1' (known behavior, safe via fallback)** (N-1); multiple refs → first wins; no match → all null |
-| `services/agents/shared/__tests__/retrieval-hybrid.unit.test.ts` | Hybrid retrieval | With clauseRef → bool filter includes clauseRef term; with standard → includes standard term; without hybrid → unchanged kNN query; zero-result fallback fires; tenantId always present |
+| `services/iso-kb-seeder/__tests__/chunker.unit.test.ts` | Chunker (rewritten, D-4') | Golden count = 109; **golden-SET equality: `Set(clauseRefs)` === pinned 108-ref fixture + 'Annex SL HLS' (D-2': kills silent drops/additions)**; per-standard count pins: ISO9001=50, ISO14001=26, ISO45001=32, HLS=1; every ISO chunk >= 200 chars (N-5: full text incl. prefix); correct prefix format; HLS prefix `[Annex SL HLS]`; determinism (two calls identical); no empty guidance bodies |
+| `services/agents/shared/__tests__/clause-ref-parser.unit.test.ts` | Parser | Full ISO ref extracts correctly; "clause 4.1" extracts clauseNum; "section 7.1.5.2" works; bare "4.1" extracts; **false-positive test: "improve by 4.1 percent" → clauseNum='4.1' (known behavior, safe via fallback)** (N-1); **cross-standard test: ISO9001Guru asked "ISO 14001 4.1" → parser returns standard='ISO14001' (D-3')**; multiple refs → first wins; no match → all null |
+| `services/agents/shared/__tests__/retrieval-hybrid.unit.test.ts` | Hybrid retrieval | With clauseRef → bool filter includes clauseRef term; with standard → includes standard term; without hybrid → unchanged kNN query; zero-result fallback fires; tenantId always present; **verified-clear pin: query contains NO `min_score` key when scoreThreshold is undefined** |
 | `services/agents/__tests__/guru-prompt-parity.test.ts` | Prompt parity | All 3 guru prompts contain grounded-composition marker |
 | `services/iso-kb-seeder/__tests__/content-canon.unit.test.ts` | Content-canon gate (CONTENT-3a/3b) | Every chunk's clauseRef exists in parsed `contracts/clause-corpus-map.md`; 108/108 coverage (PRE-VERIFIED by architect) |
+| `infra/__tests__/ai-stack.unit.test.ts` (addition) | CDK assertions (D-1') | Guru Lambda bundling metadata includes `loader: { '.md': 'text' }` |
 
 ### 7.2 Property-Based Tests
 
