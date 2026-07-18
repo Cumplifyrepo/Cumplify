@@ -1,0 +1,13 @@
+# Task 11 — ACC-5: Template verify fail-closed (live) — CLOSED (compositional)
+Every link of the fail-closed chain witnessed live or unit-proven; a live template-corruption probe was rejected as invasive (would corrupt shared dev AOSS template state).
+
+| Link | Proof |
+|------|-------|
+| verifyTemplate throws on bad/missing template (incl. lang, T1) | Unit (Task 1 + Task 4 tests, suite 1085) |
+| Seeder aborts on verifyTemplate throw before any write | Unit (Task 4: abort-on-template-fail) + live ordering witnessed: "Template verified" precedes index ops in both live seeds |
+| A mid-seed throw becomes a Lambda Invoke Error | LIVE — incident 1, 03:35:31Z (F-4 400 → Invoke Error witnessed in CW) |
+| Invoke Error → CFN FAILED response | Unit (FIX-P12-3 cfn-handler tests: error → Status FAILED + Reason) |
+| CFN FAILED → deploy rollback | LIVE — attempt-1 CR CREATE_FAILED → UPDATE_ROLLBACK witnessed 01:54:51Z |
+| SUCCESS leg of cfn-response protocol | LIVE — 12:44:29.851Z status 200 SUCCESS |
+
+The original F-3 breach (CR swallowing FunctionError) is closed by FIX-P12-3; with it, the chain above is airtight: template failure → throw → Invoke Error → FAILED → rollback.

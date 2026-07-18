@@ -114,7 +114,7 @@
 
 ### Phase 3 — Deploy + Live Verification
 
-- [ ] **Task 7** [ARCHITECT] — Deploy to dev + live seeding
+- [x] **Task 7** [ARCHITECT] — Deploy to dev + live seeding
   - Push to pipeline, Dev stage deploys.
   - Verify: seeder Lambda invoked by custom resource, logs show `status: 'seeded'`,
     `chunksIndexed` matches EXPECTED_CHUNK_COUNT.
@@ -133,7 +133,7 @@
   - **D-rung:** D4 (live-proven end-to-end).
   - **ACC mapping:** ACC-1.
 
-- [ ] **Task 9** [ARCHITECT] — ACC-2: Wrong-tenant isolation re-proof (live)
+- [x] **Task 9** [ARCHITECT] — ACC-2: Wrong-tenant isolation re-proof (live)
   - Direct retrieval probe: invoke retrieve() with `tenantId = 'TENANT-OTHER'` against
     `cumplify-iso-kb` → expect 0 chunks returned.
   - Also probe with `tenantId = '__META__'` → expect 0 chunks (only _meta doc, no
@@ -142,7 +142,7 @@
   - **D-rung:** D4.
   - **ACC mapping:** ACC-2.
 
-- [ ] **Task 10** [ARCHITECT] — ACC-3: Idempotent no-op (live)
+- [x] **Task 10** [ARCHITECT] — ACC-3: Idempotent no-op (live)
   - Re-invoke seeder Lambda manually (same sourceHash) → verify logs show `skipped: true`,
     zero embeddings consumed.
   - **Evidence:** CloudWatch log excerpt (skipped: true, durationMs low), no new meter
@@ -150,14 +150,14 @@
   - **D-rung:** D4.
   - **ACC mapping:** ACC-3.
 
-- [ ] **Task 11** [ARCHITECT] — ACC-5: Template verify fail-closed (live)
+- [x] **Task 11** [ARCHITECT] — ACC-5: Template verify fail-closed (live)
   - Invoke seeder with a modified verifyTemplate expectation (or against an environment
     where template is absent) → verify handler aborts with clear error.
   - **Evidence:** CloudWatch error log (FAIL-CLOSED message), Lambda exit code non-zero.
   - **D-rung:** D4.
   - **ACC mapping:** ACC-5.
 
-- [ ] **Task 12** [ARCHITECT] — ACC-6: Metering evidence (live)
+- [x] **Task 12** [ARCHITECT] — ACC-6: Metering evidence (live)
   - After Task 7 seed: scan DynamoDB for `TENANT#__ISO_CANON__#METER` → verify row
     exists with accumulated credits.
   - Verify NO other `TENANT#*#METER` row was modified during seeding window.

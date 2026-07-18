@@ -1,0 +1,18 @@
+# Task 8 — ACC-1: Guru full-chain grounded answer (live) — OPEN (chain proven; ACC-1-as-written not met)
+2026-07-18 13:49–13:52Z, direct Guru9001Fn invokes (AppSync-resolver event shape, tenantId ARCH-PROBE-ISOKB).
+
+## What PASSED (chain integrity, every layer live)
+- embed door → AOSS retrieval under __ISO_CANON__ (guru log "AOSS retrieval succeeded, topK 5") → groundingContext → L1 grounding check → honest-miss template delivered. Metering to user tenant (ARCH-PROBE-ISOKB) while retrieval used canon — attribution split correct.
+
+## What FAILED and why (two probes + retrieval replays)
+| Probe | Retrieval | Grounding |
+|-------|-----------|-----------|
+| "What does clause 4.1 require?" (task's specified question) | top-5 contains NO 9001 4.1 chunk (flat ~0.39 scores; HLS + 45001/14001 noise; ISO9001-filtered replay: still absent from top-3) | 0.15 → retry 0.01 → honest-miss |
+| Topic-phrased ("How should our organization determine external and internal issues…") | [ISO 9001 4.1] ranks FIRST (0.522; 14001/45001 siblings next) — retrieval healthy | 0.54 (relevance 1.0) → retry 0.02 → honest-miss |
+
+- **F-5 (retrieval):** clause-NUMBER questions are semantically opaque to Titan v2 — "4.1" cannot rank the right chunk. Needs hybrid retrieval: parse explicit clause refs from questions → term filter on metadata.clauseRef (+ metadata.standard per guru), kNN otherwise.
+- **F-6 (content depth):** corpus chunks are one-line paraphrases; any useful guru answer necessarily exceeds them → worst-segment-min grounding < 0.85 even with perfect retrieval. The guardrail chain is CORRECTLY refusing (honest-miss is designed behavior). Grounded expansive answers need per-clause guidance depth (content authoring — CertifyAero-gap territory), and/or a quote-first guru answer style. Threshold-lowering REJECTED (guts the anti-hallucination guarantee).
+- Also logged: L1 source-injection retry consistently scores WORSE than pass 1 (0.15→0.01, 0.54→0.02) — retry mechanism worth revisiting in spec-35 carries.
+
+## Disposition
+Chain integrity: PROVEN. ACC-1 letter ("grounded content, L1 ≥ 0.85"): NOT MET against the seeded corpus — unachievable without F-5+F-6 work. Box left UNTICKED; owner decision requested: route F-5 (guru hybrid retrieval task) + F-6 (KB content-depth spec) and either re-scope ACC-1 to chain-integrity (met) or hold Task 8 open against the follow-up spec.

@@ -1,0 +1,8 @@
+# Task 9 — ACC-2: Wrong-tenant isolation re-proof (live) — CLOSED
+2026-07-18T13:52:52Z, prover `query` action = PRODUCTION retrieve() wrapper (REQ-RET-1 filter), query vector minted via one-door embed door (ARCH-PROBE-ISOKB).
+
+| Probe | Result |
+|-------|--------|
+| tenantId TENANT-OTHER, topK 5 vs cumplify-iso-kb | **0 chunks** (exit 0, no error) |
+| tenantId __META__, topK 5 | **0 chunks** — meta doc has no embedding field; kNN cannot match + tenant filter isolates (D-2 live leg) |
+| Control (same vector, tenantId __ISO_CANON__) | 5 chunks returned (task-8.log) — proves the probes' emptiness is isolation, not index emptiness |

@@ -1,0 +1,15 @@
+# Task 7 — Deploy to dev + live seeding — CLOSED
+Architect execution 2026-07-18. Incident 1 (first attempt) documented in task-7-incident-1.md.
+
+| Evidence | Value |
+|----------|-------|
+| Pipeline execution | aeeee03e-5572-47f4-acd8-06cd03c24f6d (source f8e0906), Dev stage Succeeded |
+| Stack | Dev-AiStack UPDATE_COMPLETE 2026-07-18T12:43:35Z |
+| CR resource | IsoKbSeederTrigger (Custom::IsoKbSeed) CREATE_COMPLETE 12:44:35Z, PhysicalResourceId iso-kb-seed-19131d3c13a7 (= contentHash[0:12] as designed) |
+| Seeder log 12:44:29.786Z | Seeding complete: chunksTotal 109, chunksIndexed 109, contentHash 19131d3c13a72ceddc71bbdfd5aff6ff5729b0e05adf672e2253030d0bf96b7e, durationMs 38949 |
+| CFN response | "CFN response sent {status:200, cfnStatus:SUCCESS}" 12:44:29.851Z — cfn-direct path live-proven |
+| Prover doc count (search-control, track_total_hits) | **110 = 109 chunks + 1 _meta** (exit 0, FunctionError none) |
+| Distribution (terms agg metadata.standard) | ISO9001=50, ISO45001=32 (recovered 6.1.2.1/2/3 included), ISO14001=26, HLS=1, SYSTEM=1 — exact match to FIX-P12-1 pins |
+| Tenant agg (metadata.tenantId) | __ISO_CANON__=109, __META__=1 (D-2 live) |
+
+ACC-4 leg: first seed from empty + fingerprint-keyed CR (SourceHash property) witnessed; same-hash skip proven in task-10.log.

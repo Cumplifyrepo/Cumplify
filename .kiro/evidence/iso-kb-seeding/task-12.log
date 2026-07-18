@@ -1,0 +1,12 @@
+# Task 12 — ACC-6: Metering evidence (live) — CLOSED
+2026-07-18, architect-witnessed.
+
+| Evidence | Value |
+|----------|-------|
+| Canon meter row | TENANT#__ISO_CANON__#METER / MONTH#202607 creditsUsed 0.37876, lastUpdated 12:44:15.159Z (= embed batch of the successful seed; 2×0.18938 = both seed batches) |
+| Full meter sweep (scan contains #METER, 22 rows) | ONLY __ISO_CANON__ touched in the seed window; no real/eval tenant row modified after 2026-07-17; architect probes correctly metered to ARCH-PROBE-ISOKB (1.0467) — canon-retrieval/user-metering attribution split live |
+| systemOp on the wire | Temporary EventBridge tap (rule cumplify-events → CW Logs, created+deleted same session): event 13:55:12.313Z {tenantId __ISO_CANON__, seat embed, creditsConsumed 0.00014, **systemOp true**}; contrast 13:55:13.189Z {ARCH-PROBE-ISOKB, **systemOp false**} |
+| Consumer note | telemetry.credits.consumed has NO billing consumer yet (only LegalLedgerCapRule, seat-filtered) — matches standing owner carry "overage consumer before GA"; the systemOp filter contract is what Task 13 ratified |
+| Canon meter delta from witness probe | +0.00014 (probe embed under systemOp; noted for COGS ledger cleanliness) |
+
+Task 13 (owner ratification) closed earlier: task-13.log, commit 9c44836.

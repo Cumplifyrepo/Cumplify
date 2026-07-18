@@ -1,0 +1,12 @@
+# Task 10 — ACC-3: Idempotent no-op (live) — CLOSED
+2026-07-18T13:53:31Z. Method: synthetic CFN Update event (RequestType Update, real SourceHash c62c04976932f125, architect-minted presigned ResponseURL) invoked directly against the deployed seeder.
+
+| Evidence | Value |
+|----------|-------|
+| Seeder log 13:53:33.287Z | "Content unchanged — skipping" contentHash 19131d3c…, skipped true, durationMs 412 |
+| Seed result | status 'skipped' — zero index mutations |
+| Meter BEFORE (13:53Z) | TENANT#__ISO_CANON__#METER / MONTH#202607 = 0.37876, lastUpdated 12:44:15.159Z |
+| Meter AFTER | **identical** 0.37876 / 12:44:15.159Z — ZERO embeds consumed on skip |
+| Note | "CFN response sent {status:400}" = architect's presigned URL rejected the handler's empty content-type PUT (probe artifact); the REAL CFN URL returned 200 live (task-7.log). Carry: sendCfnResponse resolves on non-2xx — hardening note, not a defect on the real path. |
+
+Meter 0.37876 = exactly 2 × 0.18938 (both 109-embed seed batches: failed attempt 1 + successful seed) — arithmetic cross-check of embed idempotency.
