@@ -122,3 +122,26 @@ invoke the seeder before its permissions exist at all.
 Tasks 1–6 ticks STAND (unit-lane evidence is genuine). FIX-P12-1 + FIX-P12-2 are
 pre-deploy blockers gating Task 7. Architect holds the push until both land; the
 combined push then triggers the pipeline as the Task 7 deploy.
+
+---
+
+## FIX validation (2026-07-18 UTC) — BOTH ACCEPTED, gate LIFTED
+
+**FIX-P12-1 (c1045a5):** regex now `/^\s*- \*\*…/` (verified no new false matches —
+orphan scan had already established lines 317–319 are the only content-bearing
+indented entries); EXPECTED_CHUNK_COUNT=109; regression tests assert
+ISO 45001 6.1.2.1/2/3 present + per-standard distribution 50/26/32/1; design.md
+aligned in all four spots (constant, _meta example, §4.2 window estimate, testing
+table) + tasks.md Task 1 text; handler.unit.test.ts 106→109.
+
+**FIX-P12-2 (e247f15):** new aoss-retry.ts (base 500 ms ×2, ceiling 45 s, 12 attempts,
+20% jitter — base differs from design §5's 250 ms; immaterial, noted); per-op
+predicates exact (write: 403/404/429/5xx; read/delete: 200/404=success,
+403/429/5xx retry); transport errors always retried; ALL call sites converted
+(bulkIndex per-chunk PUT, createIndex, deleteIndexIfExists, readMetaHash,
+writeMetaDoc); ai-stack.ts trigger now depends on BOTH IsoKbSeederAccessPolicy and
+AiAossDataAccessPolicy; 14 retry tests reviewed (403→200, 404 activation, 429, 5xx,
+non-retryable 400 break, transport errors, read/delete 404-as-success).
+
+**Architect re-execution:** vitest 1080 passed / 3 skipped exit 0; tsc --noEmit
+exit 0; cdk synth --all exit 0 (fixsuite.log). Push proceeds as the Task 7 deploy.
