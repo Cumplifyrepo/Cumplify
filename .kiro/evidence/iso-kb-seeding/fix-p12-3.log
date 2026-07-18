@@ -1,0 +1,44 @@
+# FIX-P12-3 — CFN-direct CustomResource (kills F-3 fail-closed breach + IAM race)
+# Executed: 2026-07-18
+# Status: CLOSED
+
+## Root Cause (F-3)
+AwsCustomResource uses Lambda.invoke SDK call → HTTP 200 even when invoked function
+errors (FunctionError header). CR reports SUCCESS to CFN → deploy goes green on failed
+seed. ACC-5 (fail-closed propagates to deploy) falsified by direct observation.
+
+## Fix
+1. Created `services/iso-kb-seeder/src/cfn-handler.ts`:
+   - CloudFormation cfn-response protocol (HTTPS PUT to pre-signed ResponseURL)
+   - Create/Update → seed() → SUCCESS (Data: ContentHash, ChunksIndexed) or FAILED (Reason)
+   - Delete → no-op SUCCESS (index outlives stack)
+   - Internal deadline ~280s (Promise.race) — never hits CFN 1-hour timeout
+   - Response ALWAYS sent (try/catch around everything)
+
+2. Refactored `services/iso-kb-seeder/src/handler.ts`:
+   - Exported `seed()` function (no event dependency)
+   - cfn-handler.ts calls seed() on Create/Update
+
+3. CDK `infra/lib/ai-stack.ts`:
+   - Entry point changed: cfn-handler.ts
+   - AwsCustomResource replaced with cdk.CustomResource:
+     serviceToken: isoKbSeederFn.functionArn, resourceType: 'Custom::IsoKbSeed',
+     properties: { SourceHash: fingerprint }
+   - Lambda permission for cloudformation.amazonaws.com to invoke
+   - Dependencies on access policies + applyTemplateTrigger preserved
+
+4. Unit tests (`cfn-handler.test.ts`, 5 tests):
+   - Create SUCCESS with Data (seeded)
+   - Update SUCCESS (skipped)
+   - Create FAILED with reason (template absent)
+   - Delete no-op (seed not called)
+   - Response always sent on unexpected error
+
+5. handler.unit.test.ts: updated to call seed() instead of handler(event)
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run cfn-handler.test.ts: 5 passed (5)
+- vitest run handler.unit.test.ts: 4 passed (4)
+- Full suite: 1085 passed | 3 skipped (102 files), exit 0
+- cdk synth --all: exit 0

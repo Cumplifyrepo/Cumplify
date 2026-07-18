@@ -1347,9 +1347,9 @@ export class AiStack extends cdk.Stack {
     // ─── ISO KB Seeder Lambda (iso-kb-seeding Task 5) ─────────────────────
     // VPC-attached (AOSS network policy = VPC endpoint only), esbuild .md text loader.
     // Seeds docs/architecture/iso-requirements-map.md into cumplify-iso-kb index.
-    // Custom resource trigger: re-seeds on source file content change.
+    // FIX-P12-3: CFN-direct custom resource (serviceToken) — failed seed FAILS deploy.
     const isoKbSeederFn = new NodejsFunction(this, 'IsoKbSeederFn', {
-      entry: 'services/iso-kb-seeder/src/handler.ts',
+      entry: 'services/iso-kb-seeder/src/cfn-handler.ts',
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_22_X,
       architecture: lambda.Architecture.ARM_64,
@@ -1417,40 +1417,26 @@ export class AiStack extends cdk.Stack {
       ]),
     });
 
-    // Custom resource trigger (DEPLOY-1a/b/c, R-3)
+    // FIX-P12-3: CFN-direct CustomResource — serviceToken invokes Lambda directly.
+    // No provider Lambda, no invoke policy, no IAM propagation race.
+    // SourceHash in properties → CFN detects change → Update fires → re-seed.
+    // Failed seed → FAILED response → deploy rolls back (ACC-5 restored).
     const isoKbSourceHash = cdk.FileSystem.fingerprint(
       'docs/architecture/iso-requirements-map.md',
     );
-    const isoKbSeederTrigger = new cr.AwsCustomResource(this, 'IsoKbSeederTrigger', {
-      onCreate: {
-        service: 'Lambda',
-        action: 'invoke',
-        parameters: {
-          FunctionName: isoKbSeederFn.functionName,
-          InvocationType: 'RequestResponse',
-          Payload: JSON.stringify({ action: 'seed', sourceHash: isoKbSourceHash }),
-        },
-        physicalResourceId: cr.PhysicalResourceId.of(`iso-kb-seeder-${isoKbSourceHash}`),
+
+    // CFN needs permission to invoke the seeder Lambda as a service token
+    isoKbSeederFn.addPermission('CfnInvoke', {
+      principal: new iam.ServicePrincipal('cloudformation.amazonaws.com'),
+      action: 'lambda:InvokeFunction',
+    });
+
+    const isoKbSeederTrigger = new cdk.CustomResource(this, 'IsoKbSeederTrigger', {
+      serviceToken: isoKbSeederFn.functionArn,
+      resourceType: 'Custom::IsoKbSeed',
+      properties: {
+        SourceHash: isoKbSourceHash,
       },
-      onUpdate: {
-        service: 'Lambda',
-        action: 'invoke',
-        parameters: {
-          FunctionName: isoKbSeederFn.functionName,
-          InvocationType: 'RequestResponse',
-          Payload: JSON.stringify({ action: 'seed', sourceHash: isoKbSourceHash }),
-        },
-        physicalResourceId: cr.PhysicalResourceId.of(`iso-kb-seeder-${isoKbSourceHash}`),
-      },
-      // R-3 (CRITICAL): provider timeout MUST be >= seeder Lambda timeout.
-      // 600s > 300s seeder timeout — provider never aborts while seeder runs.
-      timeout: cdk.Duration.minutes(10),
-      policy: cr.AwsCustomResourcePolicy.fromStatements([
-        new iam.PolicyStatement({
-          actions: ['lambda:InvokeFunction'],
-          resources: [isoKbSeederFn.functionArn],
-        }),
-      ]),
     });
     // Seeder must run AFTER template is applied — dependency added post-declaration below
 

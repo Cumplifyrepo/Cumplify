@@ -36,7 +36,7 @@ vi.stubEnv('AOSS_ENDPOINT', 'https://iso-kb.us-east-1.aoss.amazonaws.com');
 vi.stubEnv('AOSS_INDEX_NAME', 'cumplify-iso-kb');
 vi.stubEnv('AI_INVOKER_ARN', 'arn:aws:lambda:us-east-1:697114252993:function:ai-invoker');
 
-const { handler } = await import('../src/handler.js');
+const { seed } = await import('../src/handler.js');
 
 // Helper: mock embed response from the one-door Lambda transport
 function mockEmbedResponse() {
@@ -86,7 +86,7 @@ describe('handler — idempotent skip (ACC-3)', () => {
     verifyTemplateMock.mockResolvedValue({ collection: 'cumplify-iso-kb', dimension: 1024, tenantIdType: 'keyword' });
     lambdaSendMock.mockResolvedValue(mockEmbedResponse());
 
-    const firstResult = await handler({ action: 'seed', sourceHash: 'abc123' });
+    const firstResult = await seed();
     expect(firstResult.status).toBe('seeded');
     capturedHash = firstResult.contentHash;
 
@@ -106,7 +106,7 @@ describe('handler — idempotent skip (ACC-3)', () => {
     );
 
     // Second call: should skip
-    const secondResult = await handler({ action: 'seed', sourceHash: 'abc123' });
+    const secondResult = await seed();
     expect(secondResult.status).toBe('skipped');
     expect(secondResult.contentHash).toBe(capturedHash);
     // No embed calls on skip
@@ -127,7 +127,7 @@ describe('handler — full seed on mismatch', () => {
     verifyTemplateMock.mockResolvedValue({ collection: 'cumplify-iso-kb', dimension: 1024, tenantIdType: 'keyword' });
     lambdaSendMock.mockResolvedValue(mockEmbedResponse());
 
-    const result = await handler({ action: 'seed', sourceHash: 'abc123' });
+    const result = await seed();
 
     expect(result.status).toBe('seeded');
     expect(result.chunksTotal).toBe(109); // EXPECTED_CHUNK_COUNT
@@ -151,7 +151,7 @@ describe('handler — template fail-closed (ACC-5)', () => {
       new Error('FAIL-CLOSED cumplify-iso-kb: metadata.lang.type=undefined, expected keyword'),
     );
 
-    await expect(handler({ action: 'seed', sourceHash: 'abc123' })).rejects.toThrow(
+    await expect(seed()).rejects.toThrow(
       /FAIL-CLOSED/,
     );
     // No embeds or indexing attempted after template failure
@@ -177,7 +177,7 @@ describe('handler — _meta doc shape (D-2)', () => {
     verifyTemplateMock.mockResolvedValue({ collection: 'cumplify-iso-kb', dimension: 1024, tenantIdType: 'keyword' });
     lambdaSendMock.mockResolvedValue(mockEmbedResponse());
 
-    await handler({ action: 'seed', sourceHash: 'test' });
+    await seed();
 
     // Verify _meta doc shape
     expect(metaDocBodies).toHaveLength(1);

@@ -1,6 +1,6 @@
 /**
- * ISO KB Seeder Lambda handler.
- * CDK custom resource entrypoint — seeds the cumplify-iso-kb AOSS index.
+ * ISO KB Seeder — core seed logic.
+ * Called by cfn-handler.ts (CFN custom resource protocol wrapper).
  * Design §2.2/§2.3 — iso-kb-seeding spec.
  *
  * D-1: source markdown inlined at BUILD TIME via esbuild text loader.
@@ -24,11 +24,6 @@ const logger = new Logger({ serviceName: 'iso-kb-seeder' });
 const AOSS_ENDPOINT = process.env.AOSS_ENDPOINT!;
 const AOSS_INDEX_NAME = process.env.AOSS_INDEX_NAME ?? 'cumplify-iso-kb';
 
-export interface SeederEvent {
-  action: string;
-  sourceHash: string;
-}
-
 export interface SeederResult {
   status: 'skipped' | 'seeded';
   contentHash: string;
@@ -37,9 +32,13 @@ export interface SeederResult {
   durationMs?: number;
 }
 
-export async function handler(event: SeederEvent): Promise<SeederResult> {
+/**
+ * Core seed function — run by cfn-handler.ts on Create/Update.
+ * Idempotent: skips if content hash unchanged.
+ */
+export async function seed(): Promise<SeederResult> {
   const start = Date.now();
-  logger.info('Seeder invoked', { action: event.action, sourceHash: event.sourceHash });
+  logger.info('Seed started');
 
   // 1. Chunk (pure function, build-time-inlined source)
   const chunks = chunkIsoRequirementsMap(source);
