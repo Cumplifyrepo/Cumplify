@@ -1,0 +1,25 @@
+# Task 4 — Seeder handler + _meta doc + bulk-index
+# Executed: 2026-07-17
+# Status: CLOSED
+
+## Deliverables
+- Created `services/iso-kb-seeder/src/handler.ts`: CDK custom resource Lambda entrypoint
+  - D-1: `import source from '…/iso-requirements-map.md'` (build-time inline)
+  - Flow: chunk → hash → check meta → verify template → delete → create → embed → index → meta
+- Created `services/iso-kb-seeder/src/meta-doc.ts`: read/write _meta doc in AOSS
+  - D-2: tenantId='__META__', no embedding field (unretrievable)
+- Created `services/iso-kb-seeder/src/bulk-index.ts`: embed + bulk-index orchestration
+  - Uses createEmbedFn() with systemOp:true for all embeddings
+  - Individual PUT requests per doc (AOSS kNN _bulk limitations)
+- Unit tests (`services/iso-kb-seeder/__tests__/handler.unit.test.ts`, 4 tests):
+  - Idempotent skip: hash match → skipped:true, zero embeds (ACC-3)
+  - Full seed on mismatch: 106 chunks embedded + indexed
+  - Template fail-closed: verifyTemplate error → handler aborts, no embeds (ACC-5)
+  - _meta doc shape: tenantId='__META__', no embedding field (D-2)
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run handler.unit.test.ts: 4 passed (4)
+
+## D-rung: D1
+## ACC mapping: ACC-3 (idempotent no-op), ACC-5 (template fail-closed)

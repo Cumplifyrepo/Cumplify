@@ -68,7 +68,7 @@
   - **D-rung:** D1.
   - **ACC mapping:** Foundation for ACC-1, ACC-3, ACC-4.
 
-- [ ] **Task 4** [KIRO] — Seeder handler + _meta doc logic
+- [x] **Task 4** [KIRO] — Seeder handler + _meta doc logic
   - Create `services/iso-kb-seeder/src/handler.ts` per design §2.3.
   - Create `services/iso-kb-seeder/src/meta-doc.ts` — read/write `_meta` doc in AOSS.
     - _meta doc uses `metadata.tenantId = '__META__'` and has NO `embedding` field (D-2).
