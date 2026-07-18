@@ -1,9 +1,10 @@
-# Tasks — ISO KB Seeding
+# Tasks — ISO KB Seeding (rev 2)
 
 > **Spec:** iso-kb-seeding
 > **Design:** `#[[file:.kiro/specs/iso-kb-seeding/design.md]]` (rev 2, approved)
 > **Evidence rule:** Every task closure = checkbox tick + `.kiro/evidence/iso-kb-seeding/task-N.log`
 > + code in the SAME commit (rule 7/8). No tick without evidence; no evidence without a tick.
+> **Review:** `.kiro/evidence/iso-kb-seeding/tasks-review.md` (T-1 folded)
 
 ---
 
@@ -43,7 +44,13 @@
   - **D-rung:** D1.
   - **ACC mapping:** ACC-6 (metering evidence path).
 
-- [ ] **Task 3** [KIRO] — Deterministic chunker
+- [ ] **Task 3** [KIRO] — Deterministic chunker + unit-lane .md import wiring (T-1)
+  - Create ambient declaration `services/iso-kb-seeder/src/md.d.ts`:
+    `declare module '*.md' { const content: string; export default content; }`
+  - Add minimal vite plugin to `vitest.config.ts` (or workspace vitest config) that
+    resolves bare `.md` imports as `export default <file-content-string>` — the SAME
+    specifier as esbuild uses at bundle time. NO `?raw` suffix (esbuild cannot resolve
+    suffixed specifiers; the specifier must stay identical in both toolchains).
   - Create `services/iso-kb-seeder/src/chunker.ts` — pure function per design §2.1.
   - Source content accessed via esbuild text loader import (D-1: NO runtime fs).
   - Create `services/iso-kb-seeder/src/content-hash.ts` — SHA-256 over serialized chunks.
@@ -162,7 +169,7 @@
 
 ### Phase 4 — Owner Ratification
 
-- [ ] **Task 13** [REQUIRES-HUMAN] — Owner ratification: systemOp billing-signal marker
+- [x] **Task 13** [REQUIRES-HUMAN] — Owner ratification: systemOp billing-signal marker
   - Per OQ-1 resolution (flagged billing-adjacent, steering 14-simplicity): owner
     confirms that `systemOp: true` on `telemetry.credits.consumed` is the correct
     exclusion mechanism for platform-COGS seeding from tenant invoicing.
