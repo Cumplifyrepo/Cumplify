@@ -1,12 +1,15 @@
-# Requirements — ISO KB Content Depth
+# Requirements — ISO KB Content Depth (rev 2)
 
 > **Spec:** iso-kb-content-depth
-> **Status:** DRAFT (awaiting architect review)
+> **Status:** APPROVED (rev 2 — OQ resolutions folded, architect-reviewed)
 > **Base commit:** 661e8e6 (develop)
 > **Closes:** iso-kb-seeding Task 8 (ACC-1 letter: grounded guru answers >= 0.85)
 > **Driving findings:** F-5 (clause-number questions semantically opaque to Titan v2),
 > F-6 (one-line paraphrases insufficient for grounding >= 0.85)
 > **Evidence:** `.kiro/evidence/iso-kb-seeding/task-8.log` — two probes + retrieval replays
+> **Review:** `.kiro/evidence/iso-kb-content-depth/requirements-review.md`
+> **Canon coverage:** PRE-VERIFIED by architect — 108/108 corpus clauseRefs exist in
+> the 152-tuple canon (incl. ISO 45001 6.1.2.1/2/3); CONTENT-3a is satisfiable.
 > **Prerequisite specs:** iso-kb-seeding (seeder infrastructure live, 109 chunks indexed),
 > guardrails-antihallucination (L1 grounding + L4 prompt library live)
 
@@ -89,8 +92,10 @@ These conventions are owner-ratified from iso-kb-seeding and UNCHANGED by this s
 
 #### REQ-CONTENT-1: Expanded Clause Guidance Files
 
-The system SHALL maintain per-standard content source files containing multi-sentence
-in-house guidance for every clause currently seeded.
+The system SHALL maintain dedicated per-standard content source files under `docs/kb/`
+containing multi-sentence in-house guidance for every clause currently seeded.
+`docs/architecture/iso-requirements-map.md` remains an architecture reference document
+and is NO LONGER load-bearing for the KB.
 
 | Sub-req | Description |
 |---------|-------------|
@@ -100,15 +105,18 @@ in-house guidance for every clause currently seeded.
 | CONTENT-1d | Zero reproduction of ISO standard text (BC-2). All content is original Cumplify-authored guidance. Language that closely mirrors ISO normative prose must be independently reworded. |
 | CONTENT-1e | The Annex SL / HLS cross-reference chunk is expanded with a multi-sentence explanation of what HLS means for integrated management systems and how Cumplify leverages shared clause structure. Prefix `[Annex SL HLS]` unchanged. |
 | CONTENT-1f | Content is EN-only. ES/PT translations are the Part 31 i18n carry (out of scope). |
+| CONTENT-1g | Source files are: `docs/kb/iso-9001.md`, `docs/kb/iso-14001.md`, `docs/kb/iso-45001.md` (per-standard, one clause entry per sub-clause). HLS placement is a design decision. |
 
 #### REQ-CONTENT-2: Chunker Compatibility
 
 | Sub-req | Description |
 |---------|-------------|
-| CONTENT-2a | The expanded content files SHALL be consumable by the EXISTING chunker (`services/iso-kb-seeder/src/chunker.ts`) without modifications to its algorithm — OR — the chunker is updated to parse the new format with backward-compatible output (same `Chunk[]` type, same metadata fields). |
-| CONTENT-2b | `EXPECTED_CHUNK_COUNT` SHALL be re-pinned to the new total chunk count (expected: same ~109 entries, expanded in content but not in number; if the file split changes the count, the constant is updated and unit tests re-pinned). |
-| CONTENT-2c | The deterministic hash guarantee (SEED-2a) is preserved — same expanded content always produces identical chunks with identical content hashes. |
-| CONTENT-2d | On deploy, the new content triggers re-seed automatically via the CDK `FileSystem.fingerprint` mechanism (DEPLOY-1a from iso-kb-seeding). The seeder deletes the old index and re-seeds with expanded chunks — accepted-degraded window per iso-kb-seeding R-5. |
+| CONTENT-2a | The chunker SHALL be updated to consume explicit per-standard source inputs (one string per file) rather than a single markdown file. Output remains the same `Chunk[]` type with the same metadata fields. |
+| CONTENT-2b | Source loading uses STATIC esbuild text-loader imports — one import per content file. The "dynamic directory read at build time" option is STRUCK (D-1 incident class: no runtime fs, no dynamic glob). |
+| CONTENT-2c | `EXPECTED_CHUNK_COUNT` SHALL remain 109 (108 ISO + 1 HLS) per OQ-2 resolution (one chunk per sub-clause, 1:1 clauseRef mapping load-bearing for LEG-2). Re-pin only if the split legitimately adds/removes sub-clauses (with justification). |
+| CONTENT-2d | The deterministic hash guarantee (SEED-2a) is preserved — same expanded content always produces identical chunks with identical content hashes. |
+| CONTENT-2e | On deploy, new content triggers re-seed automatically. The CDK fingerprint SHALL cover ALL content files (`FileSystem.fingerprint` on the `docs/kb/` directory, or a stable hash-of-fingerprints across the three files + HLS). |
+| CONTENT-2f | The >=200 character floor (CONTENT-3c) applies to the full chunk TEXT (prefix + title + guidance body), asserted in the unit lane. |
 
 #### REQ-CONTENT-3: Content Quality Gate
 
@@ -123,7 +131,8 @@ in-house guidance for every clause currently seeded.
 #### REQ-RETRIEVAL-1: Clause-Ref Parsing
 
 The system SHALL parse explicit clause references from user questions before
-executing retrieval.
+executing retrieval. The parser is a pure function module in `services/agents/shared/`
+(OQ-3 resolved: middle path).
 
 | Sub-req | Description |
 |---------|-------------|
@@ -131,6 +140,7 @@ executing retrieval.
 | RETRIEVAL-1b | The parser SHALL return a structured result: `{ clauseRef: string | null, standard: string | null }` where `clauseRef` matches the `metadata.clauseRef` keyword format (e.g., `ISO 9001 4.1`) and `standard` matches the `metadata.standard` keyword (e.g., `ISO9001`). |
 | RETRIEVAL-1c | When the question contains multiple clause references, the parser SHALL return the first (primary) one. Multi-clause retrieval is out of scope. |
 | RETRIEVAL-1d | The parser is a pure function with no I/O — unit-testable in isolation. |
+| RETRIEVAL-1e | Bare-number parsing (e.g., "4.1") will false-positive on non-clause numerics (e.g., "improve efficiency by 4.1 percent"). RETRIEVAL-2f's zero-result fallback to kNN makes this safe, but a unit test SHALL cover at least one false-positive input to document the known behavior (N-1). |
 
 #### REQ-RETRIEVAL-2: Hybrid Retrieval Strategy
 
@@ -143,7 +153,7 @@ retrieval when a clause-ref is detected, kNN otherwise.
 | RETRIEVAL-2b | When the guru handler's `standard` is known (e.g., ISO9001Guru always queries ISO 9001), the term filter SHALL additionally include `metadata.standard` to avoid cross-standard noise (e.g., "clause 4.1" exists in all three standards). |
 | RETRIEVAL-2c | When NO clause-ref is parsed (topic-phrased question), retrieval SHALL fall back to the current kNN-only path with `metadata.tenantId` filter — unchanged from today. |
 | RETRIEVAL-2d | The mandatory `tenantId` filter (REQ-RET-1, steering 01) is ALWAYS present regardless of retrieval strategy. |
-| RETRIEVAL-2e | The hybrid retrieval strategy SHALL be implemented in a way that is usable by all three guru handlers (guru-9001, guru-14001, guru-45001) without code duplication — either as an extension to the shared `retrieve()` function or as a wrapper consumed by guru handlers. |
+| RETRIEVAL-2e | The hybrid retrieval strategy SHALL be implemented in the shared retrieval layer (`services/agents/shared/`). Each guru handler passes its known `standard` as a parameter. The parser module is shared; the hybrid logic lives in the retrieval module. No code duplication across handlers (OQ-3 resolved: middle path). |
 | RETRIEVAL-2f | If the term-filter path returns zero results (clauseRef not found in index), the system SHALL fall back to kNN retrieval for the same question — never return empty when content may exist under a different phrasing. |
 
 #### REQ-RETRIEVAL-3: AOSS Query Shape
@@ -163,7 +173,7 @@ that constrains answers to stay within the retrieved source material.
 
 | Sub-req | Description |
 |---------|-------------|
-| ANSWER-1a | A shared prompt fragment SHALL instruct guru agents: "Begin your answer by quoting or closely paraphrasing the most relevant sentence(s) from the retrieved source material. Then add brief practical commentary that does not introduce claims beyond what the source supports. If the source does not contain enough information, say so." |
+| ANSWER-1a | A shared prompt fragment SHALL instruct guru agents to compose answers that stay within the retrieved source material. The wording MUST use the prohibited-patterns-by-example technique (per FIX-T29-3 lesson: showing the model what NOT to do outperforms abstract instruction). Design SHALL budget a live A/B iteration for the quote-first wording — the exact phrasing is finalized through empirical grounding-score measurement, not pre-ordained (N-2). |
 | ANSWER-1b | The quote-first instruction is added to the guru-specific prompts (guru-9001, guru-14001, guru-45001). It does NOT apply to non-guru agents (ControlTower, DocStudio, etc.). |
 | ANSWER-1c | The instruction is designed to maximize the grounding score by ensuring the response's core factual content is a subset of the `groundingContext.source` text — the grounding check measures overlap between response and source, so answers that stay closer to source text score higher. |
 | ANSWER-1d | The instruction explicitly includes the licensed-uncertainty fallback: "If the retrieved clauses do not address the question, respond with 'The standard does not specify this' — never fabricate guidance." (L4-3 alignment) |
@@ -216,7 +226,9 @@ After deployment, an `askISO9001` query with the exact Task-8 probe question
 - The contextual-grounding L1 check PASSES (grounding score >= 0.85).
 - The response is NOT the honest-miss template.
 
-**Live probe:** Invoke `askISO9001` via AppSync, verify in CloudWatch logs.
+**Live probe:** Invoke `askISO9001` via AppSync (fixture-token path, proven live
+2026-07-16) or equivalent direct-invoke in resolver event shape (N-4: transport is
+unchanged by this spec and separately proven). Verify in CloudWatch logs.
 
 ### ACC-2: Topic Question Grounded >= 0.85
 
@@ -227,7 +239,8 @@ SHALL return a grounded response where:
 - The response is NOT the honest-miss template.
 - Retrieved chunks are relevant to ISO 9001 clause 4.1.
 
-**Live probe:** Invoke `askISO9001` via AppSync, verify in CloudWatch logs.
+**Live probe:** Invoke `askISO9001` via AppSync (fixture-token path) or equivalent
+direct-invoke in resolver event shape (N-4). Verify in CloudWatch logs.
 
 ### ACC-3: Cross-Standard Clause-Ref Isolation
 
@@ -235,7 +248,8 @@ A clause-number query to `askISO9001` referencing "clause 4.1" SHALL retrieve
 ISO 9001 4.1 content, NOT ISO 14001 4.1 or ISO 45001 4.1 — the `metadata.standard`
 filter prevents cross-standard noise.
 
-**Live probe:** Verify top-5 results all have `metadata.standard === 'ISO9001'`.
+**Live probe:** Verify all returned chunks have `metadata.standard === 'ISO9001'`
+(under 1:1 term retrieval the filtered set is typically a single chunk — N-3).
 
 ### ACC-4: Fallback to kNN on Unrecognized Clause-Ref
 
@@ -279,48 +293,54 @@ When both ACC-1 and ACC-2 pass, iso-kb-seeding Task 8 is closed.
 
 ---
 
-## Open Questions (for architect review — not decided here)
+## Resolved Decisions (formerly Open Questions)
 
-### OQ-1: Source-File Layout
+### OQ-1 RESOLVED: Source-File Layout — dedicated `docs/kb/` per-standard files
 
-Should the expanded content live in:
-- **(a)** Extended `docs/architecture/iso-requirements-map.md` (expand the existing
-  (b)/(c) entries in place), OR
-- **(b)** Dedicated content files under `docs/kb/` (e.g., `docs/kb/iso-9001.md`,
-  `docs/kb/iso-14001.md`, `docs/kb/iso-45001.md`) with the requirements-map
-  remaining an architecture document.
+Expanded content lives in dedicated files: `docs/kb/iso-9001.md`, `docs/kb/iso-14001.md`,
+`docs/kb/iso-45001.md`. The `docs/architecture/iso-requirements-map.md` remains an
+architecture reference document and is NO LONGER load-bearing for the KB.
 
-**Architect lean:** Option (b) — the requirements-map is an architecture reference
-document (module ownership, feature mapping); KB content files are an operational
-data asset with different change cadence. Separation of concerns.
+**Design constraints (BINDING):**
+- Source loading = STATIC esbuild text-loader imports, one per file. The "dynamic
+  directory read at build time" option is STRUCK — the text loader has no glob/dynamic
+  capability; anything dynamic reintroduces the D-1/prompt-library incident class.
+- CDK re-seed trigger must fingerprint ALL content files (`FileSystem.fingerprint` on
+  the `docs/kb/` directory, or a stable hash-of-fingerprints).
+- Chunker consumes explicit `(source: string, standard: Standard)` inputs;
+  deterministic output preserved.
 
-**Impact on seeder:** If (b), the chunker's source input changes from a single file
-to multiple files. The CDK fingerprint trigger must hash all source files (or a
-directory). The esbuild text-loader import changes to multiple imports or a dynamic
-directory read at build time.
+### OQ-2 RESOLVED: Chunk Granularity — one chunk per sub-clause (option a)
 
-### OQ-2: Chunk Granularity for Expanded Content
+The 1:1 clauseRef-to-chunk mapping is load-bearing for LEG-2 hybrid term retrieval.
+Expected count stays 109 (108 ISO + 1 HLS). Re-pin only if the split legitimately
+adds/removes sub-clauses (with justification in the commit).
 
-With multi-sentence entries (~200-400 chars each), should the chunker:
-- **(a)** Keep one chunk per sub-clause (same as today, just with more text per chunk), OR
-- **(b)** Split into sub-chunks (e.g., one chunk for "requirement essence" and one for
-  "implementation guidance") for finer-grained retrieval.
+### OQ-3 RESOLVED: Clause-Ref Parsing Location — middle path
 
-**Lean:** Option (a) — keeps chunk count stable, avoids fragmenting the grounding
-source (the guru needs the full clause context to compose a coherent answer), and
-preserves the 1:1 clauseRef-to-chunk mapping that hybrid retrieval depends on.
+Parser is a pure function module in `services/agents/shared/` (own file). Hybrid
+retrieval strategy is implemented in the shared retrieval layer. Each guru handler
+passes its known `standard` as a parameter to the hybrid retrieval call.
 
-### OQ-3: Clause-Ref Parsing Location
+---
 
-Should the clause-ref parser live in:
-- **(a)** The shared retrieval module (`services/agents/shared/`) as an extension to
-  `retrieve()` or a pre-processing step, OR
-- **(b)** The individual guru handlers (each handler parses before calling retrieve).
+## Design-Binding Notes (from architect review)
 
-**Trade-offs:** (a) centralizes the logic, avoids duplication across 3 handlers, and
-is testable in isolation. (b) gives per-guru control over standard inference (the
-guru already knows its standard). A middle path: parser in shared, guru passes its
-known `standard` as a parameter.
+- **N-1 (false-positive safety):** Bare-number parsing ("4.1") will false-positive on
+  non-clause numerics. RETRIEVAL-2f's zero-result→kNN fallback makes this safe. A unit
+  test SHALL cover at least one false-positive input (e.g., "improve efficiency by 4.1
+  percent").
+- **N-2 (quote-first wording):** ANSWER-1a wording must apply the FIX-T29-3 lesson:
+  prohibited-patterns-by-example outperforms abstract instruction. Design budgets a
+  live A/B iteration for the wording — exact phrasing finalized empirically.
+- **N-3 (ACC-3 phrasing):** Under 1:1 term retrieval, the filtered set is typically a
+  single chunk. ACC-3 states "all returned chunks" (not "top-5").
+- **N-4 (probe transport):** AppSync fixture-token path is primary; direct-invoke in
+  resolver event shape is an acceptable equivalent if fixture auth is unavailable at
+  probe time — transport is unchanged by this spec and separately proven.
+- **N-5 (content floor):** CONTENT-3c >=200-char floor applies to the full chunk TEXT
+  (prefix + title + guidance body), asserted in the unit lane.
+- **N-6 (cost):** NFR-3 cost arithmetic is order-of-magnitude correct and non-binding.
 
 ---
 
@@ -349,9 +369,9 @@ known `standard` as a parameter.
 | Shared retrieval (`services/agents/shared/retrieval.ts`) | DEPLOYED | kNN + tenantId filter |
 | Grounding L1 check in AI invoker | DEPLOYED | Fires when `groundingContext` present |
 | Shared prompt library (spec-35 L4) | DEPLOYED | Structural-honesty + licensed-uncertainty |
-| `contracts/clause-corpus-map.md` | COMMITTED | 152 tuples for clause validation |
-| `docs/architecture/iso-requirements-map.md` | COMMITTED | Existing source (to be expanded or replaced) |
-| `EXPECTED_CHUNK_COUNT` constant | DEPLOYED | Currently 109, will be re-pinned |
+| `contracts/clause-corpus-map.md` | COMMITTED | 152 tuples for clause validation; 108/108 coverage PRE-VERIFIED |
+| `docs/kb/` content files | TO BE AUTHORED | Per-standard expanded guidance (this spec creates them) |
+| `EXPECTED_CHUNK_COUNT` constant | DEPLOYED | Currently 109, expected to remain 109 |
 
 ---
 
@@ -368,9 +388,10 @@ known `standard` as a parameter.
 ## References
 
 - `#[[file:.kiro/evidence/iso-kb-seeding/task-8.log]]` — driving findings (F-5, F-6)
+- `#[[file:.kiro/evidence/iso-kb-content-depth/requirements-review.md]]` — architect review
 - `#[[file:.kiro/specs/iso-kb-seeding/requirements.md]]` — seeder spec (conventions)
 - `#[[file:.kiro/specs/iso-kb-seeding/design.md]]` — seeder design (chunker, metadata)
-- `#[[file:docs/architecture/iso-requirements-map.md]]` — current content source
+- `#[[file:docs/architecture/iso-requirements-map.md]]` — architecture reference (no longer KB source)
 - `#[[file:services/agents/shared/retrieval.ts]]` — existing retrieval implementation
 - `#[[file:services/agents/guru-9001/handler.ts]]` — guru handler pattern
 - `#[[file:services/agents/guru-9001/prompt.ts]]` — current guru system prompt
