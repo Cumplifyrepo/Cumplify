@@ -1,0 +1,45 @@
+# Task 10 — Content spot-check (BC-2 + guidance quality) — CLOSED (corrections ordered)
+Architect, 2026-07-18. Method: FULL READ of all four content files (not sampling) +
+verification sweeps. Wave validation folded in (see wave-validation note below).
+
+## Verdict: PASS WITH ONE CORRECTION (C-1) — gate to Phase 5 is the C-1 fold
+
+| Check | Result |
+|-------|--------|
+| Entry counts | iso-9001=50, iso-14001=26, iso-45001=32, hls=1 — exact (grep -c verified) |
+| BC-2 (zero ISO text reproduction) | PASS — paraphrase throughout; requirement-content enumerations (e.g., 45001 5.2 policy commitments) are factual descriptions, not normative prose |
+| ≥200-char floor | PASS (unit-asserted + spot-verified) |
+| Prefix format | PASS (chunker + canon gates green) |
+| Feature/agent mappings | FAITHFUL to iso-requirements-map roster (ContextCartographer, RiskSentinel, ObjectiveTracker, CompetenceKeeper, SupplierScout, ReviewOrchestrator, WorkerVoice, HazardScout, CAPAGuru — each verified present in map + repo registries) |
+| Guidance quality | HIGH — requirement essence + implementation guidance + feature mapping in every sampled entry; recovered 45001 6.1.2.1/2/3 entries are substantive |
+| HLS entry | Excellent — correct clause cross-references, integrated-system framing |
+
+## C-1 (content correction, PRE-DEPLOY) — internal infrastructure leaked into tenant-facing prose
+
+The KB is retrieval GROUNDING for guru answers — whatever it says, gurus will tell
+tenants. Six entries cite internal implementation instead of capabilities:
+1. iso-9001.md L47 (7.1.6) — WORST: "Bedrock Knowledge Bases on OpenSearch Serverless",
+   "45-second cold-start timeout budget with exponential-backoff retry", "scale-to-zero"
+2. iso-9001.md L20 (5.3) — "Cognito groups"
+3. iso-9001.md L59 (7.5) — "Cognito and ABAC"
+4. iso-9001.md L134 (9.1.3) — "ElastiCache-backed dashboards"
+5. iso-14001.md L20 (5.3) — "Cognito identity groups"
+6. iso-45001.md L20 (5.3) — "Cognito groups"
+Fix: rewrite ONLY the offending sentences in capability language ("role-based access
+controls", "searchable organizational knowledge repository", "responsive dashboards").
+No AWS service names, no timeout/retry engineering, anywhere in docs/kb/.
+
+## Observation (owner-visible, not a blocker)
+Entries describe roadmap modules/agents (M6/M7/M8/M12/M13, several agents without
+built handlers) in PRESENT tense — inherited faithfully from the requirements map's
+(c) mappings. Acceptable now; revisit product-truth calibration before GA.
+
+## Wave validation (architect re-execution + review)
+- Suite: 1119 passed / 3 skipped (106 files) exit 0; tsc exit 0; synth exit 0 — matches claim.
+- Golden-SET fixture: byte-diffed vs authoritative list — 108/108 EXACT, none missing/extra (T-1' honored, circularity dead).
+- D-3' logic in all guru handlers verbatim; RETRIEVAL-2f recursive fallback safe (hybrid stripped on retry); min_score-absence pin present; createAgentHandler loader (ai-stack:796); fingerprint('docs/kb') (ai-stack:1425).
+- RULE 7/8 BREACH (recurring Kiro pattern): wave commit 7a666cc carried evidence
+  (combined tasks-1-9-6-11.log) but ZERO checkbox ticks; single combined log instead
+  of per-task logs. Remediated: architect ticks Tasks 1-5/6/7-9/11 in this commit;
+  combined log accepted this once — per-task logs REQUIRED next wave.
+- Cosmetic: ai-stack.ts:1349 stale comment still references old map — fold with C-1.

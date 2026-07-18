@@ -22,7 +22,7 @@
 
 ### Phase 1 — Code Foundations (hermetic unit lane)
 
-- [ ] **Task 1** [KIRO] — Clause-ref parser module + unit tests
+- [x] **Task 1** [KIRO] — Clause-ref parser module + unit tests
   - Create `services/agents/shared/clause-ref-parser.ts` per design §3.1.
   - Unit tests (`services/agents/shared/__tests__/clause-ref-parser.unit.test.ts`):
     - Priority 1: "ISO 9001 4.1" → clauseRef='ISO 9001 4.1', standard='ISO9001'
@@ -40,7 +40,7 @@
   - **D-rung:** D1 (code + unit tests pass).
   - **ACC mapping:** Foundation for ACC-1, ACC-3, ACC-4.
 
-- [ ] **Task 2** [KIRO] — Hybrid retrieval extension + unit tests
+- [x] **Task 2** [KIRO] — Hybrid retrieval extension + unit tests
   - Add `HybridRetrievalOptions` interface to `services/agents/shared/retrieval.ts`.
   - Update `buildKnnQuery` to compose compound `bool.must` filter when hybrid options present.
   - Implement RETRIEVAL-2f zero-result fallback (retry without clauseRef/standard).
@@ -56,7 +56,7 @@
   - **D-rung:** D1.
   - **ACC mapping:** ACC-1, ACC-3, ACC-4.
 
-- [ ] **Task 3** [KIRO] — Grounded-composition prompt fragment + guru prompt integration + parity test
+- [x] **Task 3** [KIRO] — Grounded-composition prompt fragment + guru prompt integration + parity test
   - Create `prompts/shared/grounded-composition.md` per design §4.1.
   - Update `services/agents/guru-9001/prompt.ts`: import fragment, append to system prompt.
   - Update `services/agents/guru-14001/prompt.ts`: same.
@@ -67,7 +67,7 @@
   - **D-rung:** D1.
   - **ACC mapping:** ACC-1, ACC-2 (answer style contributes to grounding score).
 
-- [ ] **Task 4** [KIRO] — Guru handler hybrid-retrieval wiring + D-3' standard logic
+- [x] **Task 4** [KIRO] — Guru handler hybrid-retrieval wiring + D-3' standard logic
   - Update `services/agents/guru-9001/handler.ts`:
     - Import `parseClauseRef` from shared.
     - Compose clauseRef and standard per design §3.3 (D-3': parsed standard wins).
@@ -82,7 +82,7 @@
   - **D-rung:** D1.
   - **ACC mapping:** ACC-1, ACC-3 (cross-standard isolation).
 
-- [ ] **Task 5** [KIRO] — CDK: `.md` text-loader for agent handlers + fingerprint update + assertions
+- [x] **Task 5** [KIRO] — CDK: `.md` text-loader for agent handlers + fingerprint update + assertions
   - Update `infra/lib/ai-stack.ts`:
     - Add `loader: { '.md': 'text' }` to createAgentHandler / shared bundling config (D-1').
     - Change fingerprint from `'docs/architecture/iso-requirements-map.md'` to `'docs/kb'`.
@@ -97,7 +97,7 @@
 
 ### Phase 2 — Chunker Migration (depends on Phase 1)
 
-- [ ] **Task 6** [KIRO] — Rewrite chunker + seeder handler + unit tests (D-4')
+- [x] **Task 6** [KIRO] — Rewrite chunker + seeder handler + unit tests (D-4')
   - Rewrite `services/iso-kb-seeder/src/chunker.ts`:
     - New `chunkContentSources(sources: ContentSource[]): Chunk[]` API per design §2.3.
     - DELETE `chunkIsoRequirementsMap` — no backward-compat wrapper (D-4').
@@ -137,7 +137,7 @@
 
 ### Phase 3 — Content Authoring (parallel with Phase 1; reviewable prose)
 
-- [ ] **Task 7** [KIRO] — Author `docs/kb/iso-9001.md` (50 entries)
+- [x] **Task 7** [KIRO] — Author `docs/kb/iso-9001.md` (50 entries)
   - Create `docs/kb/iso-9001.md` with 50 expanded clause entries per design §2.2 format.
   - Each entry: `[ISO 9001 <clauseNum>] <title>` prefix line + 3-6 sentences covering
     requirement essence, implementation guidance, and Cumplify feature mapping.
@@ -150,7 +150,7 @@
   - **D-rung:** D1 (content authored; quality validated at Task 10 spot-check).
   - **ACC mapping:** ACC-5, ACC-6.
 
-- [ ] **Task 8** [KIRO] — Author `docs/kb/iso-14001.md` (26 entries)
+- [x] **Task 8** [KIRO] — Author `docs/kb/iso-14001.md` (26 entries)
   - Create `docs/kb/iso-14001.md` with 26 expanded clause entries.
   - Same format, BC-2, and quality rules as Task 7.
   - Clause coverage must match the 26 ISO 14001 clauseRefs in the pinned fixture.
@@ -158,7 +158,7 @@
   - **D-rung:** D1.
   - **ACC mapping:** ACC-5, ACC-6.
 
-- [ ] **Task 9** [KIRO] — Author `docs/kb/iso-45001.md` (32 entries) + `docs/kb/hls.md` (1 entry)
+- [x] **Task 9** [KIRO] — Author `docs/kb/iso-45001.md` (32 entries) + `docs/kb/hls.md` (1 entry)
   - Create `docs/kb/iso-45001.md` with 32 expanded clause entries.
   - Create `docs/kb/hls.md` with 1 HLS cross-reference entry per design §2.2.
   - Same format, BC-2, and quality rules as Task 7.
@@ -167,7 +167,7 @@
   - **D-rung:** D1.
   - **ACC mapping:** ACC-5, ACC-6.
 
-- [ ] **Task 10** [ARCHITECT] — Content spot-check (BC-2 + guidance quality)
+- [x] **Task 10** [ARCHITECT] — Content spot-check (BC-2 + guidance quality)
   - Architect spot-checks 5+ entries per standard (15+ total) for:
     - BC-2 compliance: no verbatim ISO normative prose reproduction
     - Guidance quality: substantive, accurate, Cumplify-feature-mapped
@@ -179,7 +179,7 @@
 
 ### Phase 4 — Content-Canon Validation (depends on Phase 2 + 3; may run before Task 10)
 
-- [ ] **Task 11** [KIRO] — Content-canon gate unit test + property-based tests
+- [x] **Task 11** [KIRO] — Content-canon gate unit test + property-based tests
   - Create `services/iso-kb-seeder/__tests__/content-canon.unit.test.ts`:
     - Every chunk's `metadata.clauseRef` exists in parsed `contracts/clause-corpus-map.md`
     - 108/108 ISO refs covered (PRE-VERIFIED by architect; test validates at build time)
