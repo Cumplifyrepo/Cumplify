@@ -2,11 +2,16 @@
  * Embed + bulk-index orchestration for the ISO KB seeder.
  * Embeds all chunks via the one-door {op:'embed'} transport (systemOp: true),
  * then indexes them to AOSS with SigV4-signed requests.
+ *
+ * FIX-P12-2: All AOSS ops wrapped with per-operation retry (design §5).
+ * - deleteIndexIfExists: 404 = absent (success), retries 403/429/5xx
+ * - createIndex: retries 403/404/429/5xx (write path)
+ * - chunk PUT: retries 403/404/429/5xx (write path — 404 = activation delay)
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { signedAossFetch } from '../../agents/shared/aoss-signed-client.js';
 import { ISO_CANON_TENANT_ID } from '../../agents/shared/constants.js';
+import { aossWriteOp, aossDeleteOp } from './aoss-retry.js';
 import type { Chunk } from './chunker.js';
 import type { EmbedFn } from '../../agents/shared/invoke-transport.js';
 
@@ -45,7 +50,7 @@ export async function embedAllChunks(
 
 /**
  * Bulk-index all chunks with their embeddings to AOSS.
- * Uses individual PUT requests (AOSS _bulk API has limitations with kNN).
+ * Uses write-path retry per chunk (403/404/429/5xx retryable).
  */
 export async function bulkIndex(
   chunks: Chunk[],
@@ -63,7 +68,8 @@ export async function bulkIndex(
       metadata: chunk.metadata,
     };
 
-    const resp = await signedAossFetch(
+    const resp = await aossWriteOp(
+      `indexChunk:${i}:${chunk.metadata.clauseRef}`,
       'PUT',
       endpoint,
       `/${indexName}/_doc/chunk-${i}`,
@@ -85,10 +91,11 @@ export async function bulkIndex(
 
 /**
  * Delete the existing index if it exists (SEED-2c: full-replace).
- * 404 is not an error (index already absent).
+ * 404 = index already absent (success, not retried per read/delete semantics).
+ * Retries 403/429/5xx.
  */
 export async function deleteIndexIfExists(endpoint: string, indexName: string): Promise<boolean> {
-  const resp = await signedAossFetch('DELETE', endpoint, `/${indexName}`);
+  const resp = await aossDeleteOp('deleteIndex', endpoint, `/${indexName}`);
   if (resp.status === 200) {
     logger.info('Existing index deleted', { indexName });
     return true;
@@ -102,9 +109,10 @@ export async function deleteIndexIfExists(endpoint: string, indexName: string): 
 
 /**
  * Create a fresh index (uses the applied template for mappings).
+ * Write-path retry: 403/404/429/5xx retryable.
  */
 export async function createIndex(endpoint: string, indexName: string): Promise<void> {
-  const resp = await signedAossFetch('PUT', endpoint, `/${indexName}`, JSON.stringify({}));
+  const resp = await aossWriteOp('createIndex', 'PUT', endpoint, `/${indexName}`, JSON.stringify({}));
   if (resp.status !== 200) {
     throw new Error(`Failed to create index: HTTP ${resp.status} — ${resp.body}`);
   }

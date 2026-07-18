@@ -2,10 +2,12 @@
  * _meta document read/write for idempotent re-seed detection (SEED-2b).
  * D-2: _meta doc uses metadata.tenantId='__META__' (never __ISO_CANON__)
  * and has NO embedding field — unretrievable by kNN search.
+ *
+ * FIX-P12-2: All AOSS ops wrapped with per-operation retry (design §5).
  */
 
-import { signedAossFetch } from '../../agents/shared/aoss-signed-client.js';
 import { Logger } from '@aws-lambda-powertools/logger';
+import { aossReadOp, aossWriteOp } from './aoss-retry.js';
 
 const logger = new Logger({ serviceName: 'iso-kb-seeder-meta' });
 
@@ -19,11 +21,12 @@ export interface MetaDoc {
 
 /**
  * Read the _meta document's content hash from AOSS.
- * Returns null if the document or index doesn't exist.
+ * Returns null if the document or index doesn't exist (404 = absent, not retried).
  */
 export async function readMetaHash(endpoint: string, indexName: string): Promise<string | null> {
   try {
-    const resp = await signedAossFetch(
+    const resp = await aossReadOp(
+      'readMetaHash',
       'GET',
       endpoint,
       `/${indexName}/_doc/${META_DOC_ID}`,
@@ -34,10 +37,11 @@ export async function readMetaHash(endpoint: string, indexName: string): Promise
       return parsed._source?.contentHash ?? null;
     }
 
+    // 404 = index or doc absent → null (no retry)
     return null;
   } catch {
-    // Index doesn't exist or doc not found — treat as absent
-    logger.info('Meta doc not found (index absent or doc missing)');
+    // Exhausted retries on transient errors → treat as absent (O-1: benign full re-seed)
+    logger.info('Meta doc not readable after retries — treating as absent');
     return null;
   }
 }
@@ -45,6 +49,7 @@ export async function readMetaHash(endpoint: string, indexName: string): Promise
 /**
  * Write the _meta document after successful seeding.
  * D-2: metadata.tenantId='__META__', NO embedding field.
+ * Uses write-path retry (403/404/429/5xx retryable).
  */
 export async function writeMetaDoc(
   endpoint: string,
@@ -66,7 +71,8 @@ export async function writeMetaDoc(
     // D-2: deliberately NO embedding field — kNN cannot match this doc
   };
 
-  const resp = await signedAossFetch(
+  const resp = await aossWriteOp(
+    'writeMetaDoc',
     'PUT',
     endpoint,
     `/${indexName}/_doc/${META_DOC_ID}`,

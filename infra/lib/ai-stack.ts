@@ -1384,7 +1384,7 @@ export class AiStack extends cdk.Stack {
 
     // AOSS data-access policy for seeder (ACCESS-1b) — additive union with
     // the main policy below (D-4: no priority, AOSS policies are additive).
-    new opensearchserverless.CfnAccessPolicy(this, 'IsoKbSeederAccessPolicy', {
+    const isoKbSeederAccessPolicy = new opensearchserverless.CfnAccessPolicy(this, 'IsoKbSeederAccessPolicy', {
       name: `iso-kb-seeder-access`,
       type: 'data',
       policy: JSON.stringify([
@@ -1583,6 +1583,9 @@ export class AiStack extends cdk.Stack {
     }
     // iso-kb-seeding Task 5: seeder runs AFTER template is applied
     isoKbSeederTrigger.node.addDependency(applyTemplateTrigger);
+    // FIX-P12-2: seeder must wait for BOTH access policies to exist (propagation)
+    isoKbSeederTrigger.node.addDependency(isoKbSeederAccessPolicy);
+    isoKbSeederTrigger.node.addDependency(aossDataAccessPolicy);
 
     // T4-F3 FIX: aoss:APIAccessAll in IAM (data-plane access to AOSS collections)
     aiInvoker.addToRolePolicy(

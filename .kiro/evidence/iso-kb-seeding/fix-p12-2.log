@@ -1,0 +1,44 @@
+# FIX-P12-2 — withRetry implementation + access policy dependencies
+# Executed: 2026-07-18
+# Status: CLOSED
+
+## Root Cause
+Design §5 mandated withRetry on all seeder AOSS ops but implementation was bare
+signedAossFetch calls. First live deploy would: (1) AOSS data-access policy propagates
+~30-60s → seeder's first call 403 → CR fail → rollback; (2) createIndex returns 200
+but index not immediately addressable → first chunk PUT 404 → same rollback.
+Additionally, seeder trigger lacked dependency on access policies.
+
+## Fix
+1. Created `services/iso-kb-seeder/src/aoss-retry.ts`:
+   - withRetry: base 500ms × 2 exp backoff, 20% jitter, 45s ceiling, max 12 attempts
+   - Per-operation retryable sets:
+     * aossWriteOp: retries 403/404/429/5xx (index activation path)
+     * aossReadOp: 404 = success (absent), retries 403/429/5xx only
+     * aossDeleteOp: 404 = success (absent), retries 403/429/5xx only
+
+2. Updated `services/iso-kb-seeder/src/meta-doc.ts`:
+   - readMetaHash: uses aossReadOp (404 = null, not retried)
+   - writeMetaDoc: uses aossWriteOp (retries 403/404/429/5xx)
+
+3. Updated `services/iso-kb-seeder/src/bulk-index.ts`:
+   - deleteIndexIfExists: uses aossDeleteOp (404 = absent success)
+   - createIndex: uses aossWriteOp
+   - chunk PUT: uses aossWriteOp per doc
+
+4. CDK `infra/lib/ai-stack.ts`:
+   - isoKbSeederTrigger.node.addDependency(isoKbSeederAccessPolicy)
+   - isoKbSeederTrigger.node.addDependency(aossDataAccessPolicy)
+   - IsoKbSeederAccessPolicy captured in variable for dependency ref
+
+5. Unit tests (`services/iso-kb-seeder/__tests__/aoss-retry.test.ts`, 12 tests):
+   - Write path: 403→200, 404→201, 429→200, 500→200, non-retryable 400 fails fast,
+     transport error recovery
+   - Read path: 404 returned immediately (not retried), 200 immediate, 403 retried
+   - Delete path: 404 immediate success, 200 immediate, 403 retried
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run aoss-retry.test.ts: 12 passed (12)
+- Full suite: 1080 passed | 3 skipped (101 files), exit 0
+- cdk synth --all: exit 0
