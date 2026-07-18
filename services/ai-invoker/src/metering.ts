@@ -107,6 +107,8 @@ export async function emitCreditsTelemetry(opts: {
   modelId: string;
   /** Register seat that served the call — per-seat cost attribution (COND-4) */
   seat: string;
+  /** System op marker — billing consumer excludes from tenant invoicing (iso-kb-seeding) */
+  systemOp?: boolean;
 }): Promise<void> {
   try {
     await eb.send(
@@ -127,6 +129,7 @@ export async function emitCreditsTelemetry(opts: {
               creditsConsumed: opts.creditsConsumed,
               modelId: opts.modelId,
               seat: opts.seat,
+              systemOp: opts.systemOp ?? false,
               timestamp: new Date().toISOString(),
             }),
           },

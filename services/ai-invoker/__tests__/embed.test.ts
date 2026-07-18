@@ -205,3 +205,141 @@ describe('embed', () => {
     expect(mockBedrockSend).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('embed — systemOp threading (iso-kb-seeding Task 2)', () => {
+  beforeEach(() => {
+    mockBedrockSend.mockReset();
+    mockDdbSend.mockReset();
+    mockEbSend.mockReset();
+    resetEmbedClient();
+
+    // loadWeights returns valid weights
+    mockDdbSend.mockImplementation((cmd: { input?: { Key?: unknown; KeyConditionExpression?: string } }) => {
+      if (cmd.input && 'KeyConditionExpression' in cmd.input) {
+        return Promise.resolve({
+          Items: [{
+            PK: { S: 'MODELWEIGHT#amazon.titan-embed-text-v2:0' },
+            SK: { S: 'VERSION#20260716' },
+            modelId: { S: 'amazon.titan-embed-text-v2:0' },
+            wIn: { N: '20' },
+            wOut: { N: '0' },
+            effectiveFrom: { S: '2026-07-16' },
+            sourceCommit: { S: 'b6f2c39' },
+          }],
+        });
+      }
+      return Promise.resolve({});
+    });
+
+    mockEbSend.mockResolvedValue({});
+    mockBedrockSend.mockResolvedValue({
+      body: Buffer.from(JSON.stringify({
+        embedding: Array(1024).fill(0.1),
+        inputTextTokenCount: 15,
+      })),
+    });
+  });
+
+  it('systemOp: true skips credit pre-check (SERVE-9 exempt flag)', async () => {
+    // Track calls to understand what DDB calls happen
+    const callLog: string[] = [];
+    mockDdbSend.mockImplementation((cmd: { input?: Record<string, unknown> }) => {
+      if (cmd.input && 'KeyConditionExpression' in cmd.input) {
+        callLog.push('query:loadWeights');
+        return Promise.resolve({
+          Items: [{
+            PK: { S: 'MODELWEIGHT#amazon.titan-embed-text-v2:0' },
+            SK: { S: 'VERSION#20260716' },
+            modelId: { S: 'amazon.titan-embed-text-v2:0' },
+            wIn: { N: '20' },
+            wOut: { N: '0' },
+            effectiveFrom: { S: '2026-07-16' },
+            sourceCommit: { S: 'b6f2c39' },
+          }],
+        });
+      }
+      if (cmd.input && 'UpdateExpression' in cmd.input) {
+        callLog.push('update:incrementMeter');
+        return Promise.resolve({});
+      }
+      if (cmd.input && 'Key' in cmd.input) {
+        const pk = (cmd.input.Key as Record<string, { S?: string }>)?.PK?.S ?? '';
+        callLog.push(`getItem:${pk}`);
+        return Promise.resolve({ Item: null });
+      }
+      return Promise.resolve({});
+    });
+
+    await embed({
+      tenantId: '__ISO_CANON__',
+      agent: 'iso-kb-seeder',
+      module: 'system',
+      feature: 'seed',
+      text: 'ISO 9001 4.1 context clause',
+      systemOp: true,
+    });
+
+    // With systemOp: true, checkCreditBalance skips immediately (no DDB GetItem calls
+    // for METER or ENTITLEMENT). Only loadWeights and incrementMeter should fire.
+    const creditCheckCalls = callLog.filter(
+      (c) => c.includes('METER') || c.includes('ENTITLEMENT'),
+    );
+    // incrementMeter writes to METER but does NOT read it — it's an UpdateItem (ADD)
+    const meterReadCalls = creditCheckCalls.filter((c) => c.startsWith('getItem:'));
+    expect(meterReadCalls).toHaveLength(0);
+  });
+
+  it('systemOp: true still meters credits (incrementMeter fires)', async () => {
+    await embed({
+      tenantId: '__ISO_CANON__',
+      agent: 'iso-kb-seeder',
+      module: 'system',
+      feature: 'seed',
+      text: 'test',
+      systemOp: true,
+    });
+
+    // incrementMeter is an UpdateItem call
+    const updateCalls = mockDdbSend.mock.calls.filter(
+      (call) => call[0]?.input?.UpdateExpression,
+    );
+    expect(updateCalls.length).toBeGreaterThan(0);
+  });
+
+  it('telemetry event includes systemOp: true when set', async () => {
+    await embed({
+      tenantId: '__ISO_CANON__',
+      agent: 'iso-kb-seeder',
+      module: 'system',
+      feature: 'seed',
+      text: 'test',
+      systemOp: true,
+    });
+
+    expect(mockEbSend).toHaveBeenCalledTimes(1);
+    const entry = (mockEbSend.mock.calls[0][0] as {
+      input: { Entries: Array<{ Detail: string }> };
+    }).input.Entries[0];
+    const detail = JSON.parse(entry.Detail);
+    expect(detail.systemOp).toBe(true);
+    expect(detail.tenantId).toBe('__ISO_CANON__');
+  });
+
+  it('telemetry event includes systemOp: false when omitted', async () => {
+    await embed({
+      tenantId: 'tenant-regular',
+      agent: 'guru-9001',
+      module: 'advisory',
+      feature: 'clause-qa',
+      text: 'test',
+      // systemOp not set — defaults to false
+    });
+
+    expect(mockEbSend).toHaveBeenCalledTimes(1);
+    const entry = (mockEbSend.mock.calls[0][0] as {
+      input: { Entries: Array<{ Detail: string }> };
+    }).input.Entries[0];
+    const detail = JSON.parse(entry.Detail);
+    expect(detail.systemOp).toBe(false);
+  });
+});

@@ -1,0 +1,22 @@
+# Task 2 — One-door systemOp threading
+# Executed: 2026-07-17
+# Status: CLOSED
+
+## Deliverables
+- Added `systemOp?: boolean` to `EmbedRequest` in `services/ai-invoker/src/types.ts`
+- Updated `embed.ts`: `checkCreditBalance(tenantId, request.systemOp ?? false)` (SERVE-9)
+- Updated `emitCreditsTelemetry` in `metering.ts`: added `systemOp?: boolean` to opts,
+  included `systemOp: opts.systemOp ?? false` in Detail JSON payload
+- Updated `embed.ts` telemetry call to pass `systemOp: request.systemOp ?? false`
+- 4 new unit tests in `services/ai-invoker/__tests__/embed.test.ts`:
+  - systemOp:true skips credit pre-check (no METER/ENTITLEMENT GetItem)
+  - systemOp:true still meters credits (incrementMeter fires)
+  - telemetry event includes systemOp:true when set
+  - telemetry event includes systemOp:false when omitted
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run embed.test.ts: 8 passed (8) — 4 existing + 4 new
+
+## D-rung: D1
+## ACC mapping: ACC-6 (metering evidence path)

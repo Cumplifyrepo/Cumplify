@@ -41,8 +41,8 @@ export function resetEmbedClient(): void {
 export async function embed(request: EmbedRequest): Promise<EmbedResult> {
   const { tenantId, agent, module, feature, text } = request;
 
-  // Credit pre-check (same one-door metering path)
-  await checkCreditBalance(tenantId, false);
+  // Credit pre-check — systemOp bypasses via SERVE-9 exempt flag (iso-kb-seeding Task 2)
+  await checkCreditBalance(tenantId, request.systemOp ?? false);
 
   logger.info('Embedding text', { tenantId, agent, textLength: text.length });
 
@@ -89,6 +89,7 @@ export async function embed(request: EmbedRequest): Promise<EmbedResult> {
     creditsConsumed: credits,
     modelId: MODEL_ID,
     seat: 'embed',
+    systemOp: request.systemOp ?? false,
   });
 
   logger.info('Embedding complete', {

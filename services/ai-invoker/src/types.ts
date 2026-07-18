@@ -210,6 +210,8 @@ export interface EmbedRequest {
   module: string;
   feature: string;
   text: string;
+  /** System operation — bypasses credit pre-check (SERVE-9 exempt), meters as COGS */
+  systemOp?: boolean;
 }
 
 /** Result from the embed operation */

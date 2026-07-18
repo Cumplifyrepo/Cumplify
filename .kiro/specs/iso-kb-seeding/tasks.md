@@ -32,7 +32,7 @@
   - **Evidence:** `tsc --noEmit` exit 0, `vitest run` passes (existing + new tests), `cdk synth` exit 0.
   - **D-rung:** D1 (code + unit tests pass).
 
-- [ ] **Task 2** [KIRO] — One-door `systemOp` threading
+- [x] **Task 2** [KIRO] — One-door `systemOp` threading
   - Add `systemOp?: boolean` to `EmbedRequest` in `services/ai-invoker/src/types.ts`.
   - Update `embed.ts`: pass `request.systemOp ?? false` to `checkCreditBalance()`.
   - Update `emitCreditsTelemetry` in `metering.ts`: add `systemOp?: boolean` to opts,
