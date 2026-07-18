@@ -1344,8 +1344,121 @@ export class AiStack extends cdk.Stack {
       }),
     );
 
+    // ─── ISO KB Seeder Lambda (iso-kb-seeding Task 5) ─────────────────────
+    // VPC-attached (AOSS network policy = VPC endpoint only), esbuild .md text loader.
+    // Seeds docs/architecture/iso-requirements-map.md into cumplify-iso-kb index.
+    // Custom resource trigger: re-seeds on source file content change.
+    const isoKbSeederFn = new NodejsFunction(this, 'IsoKbSeederFn', {
+      entry: 'services/iso-kb-seeder/src/handler.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(300), // SEED-1f: >= 300s (embed 106 chunks + AOSS cold-start)
+      bundling: {
+        externalModules: [],
+        target: 'node22',
+        loader: { '.md': 'text' }, // D-1: esbuild text loader — build-time inline
+      },
+      vpc: props.vpc,
+      vpcSubnets: { subnets: props.privateSubnets }, // SEED-1a: VPC-placed
+      environment: {
+        AOSS_ENDPOINT: collectionEndpoints['cumplify-iso-kb'],
+        AOSS_INDEX_NAME: 'cumplify-iso-kb',
+        AI_INVOKER_ARN: aiInvoker.functionArn,
+        POWERTOOLS_SERVICE_NAME: 'iso-kb-seeder',
+      },
+    });
+
+    // One-door: invoke AI Invoker for embeddings
+    aiInvoker.grantInvoke(isoKbSeederFn);
+
+    // AOSS: write access on iso-kb collection (ACCESS-1a)
+    isoKbSeederFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['aoss:APIAccessAll'],
+        resources: [props.isoKbCollectionArn],
+      }),
+    );
+
+    // AOSS data-access policy for seeder (ACCESS-1b) — additive union with
+    // the main policy below (D-4: no priority, AOSS policies are additive).
+    new opensearchserverless.CfnAccessPolicy(this, 'IsoKbSeederAccessPolicy', {
+      name: `iso-kb-seeder-access`,
+      type: 'data',
+      policy: JSON.stringify([
+        {
+          Rules: [
+            {
+              ResourceType: 'collection',
+              Resource: ['collection/cumplify-iso-kb'],
+              Permission: [
+                'aoss:CreateCollectionItems',
+                'aoss:UpdateCollectionItems',
+                'aoss:DescribeCollectionItems',
+              ],
+            },
+            {
+              ResourceType: 'index',
+              Resource: ['index/cumplify-iso-kb/*'],
+              Permission: [
+                'aoss:CreateIndex',
+                'aoss:DeleteIndex',
+                'aoss:UpdateIndex',
+                'aoss:DescribeIndex',
+                'aoss:ReadDocument',
+                'aoss:WriteDocument',
+              ],
+            },
+          ],
+          Principal: [isoKbSeederFn.role!.roleArn],
+        },
+      ]),
+    });
+
+    // Custom resource trigger (DEPLOY-1a/b/c, R-3)
+    const isoKbSourceHash = cdk.FileSystem.fingerprint(
+      'docs/architecture/iso-requirements-map.md',
+    );
+    const isoKbSeederTrigger = new cr.AwsCustomResource(this, 'IsoKbSeederTrigger', {
+      onCreate: {
+        service: 'Lambda',
+        action: 'invoke',
+        parameters: {
+          FunctionName: isoKbSeederFn.functionName,
+          InvocationType: 'RequestResponse',
+          Payload: JSON.stringify({ action: 'seed', sourceHash: isoKbSourceHash }),
+        },
+        physicalResourceId: cr.PhysicalResourceId.of(`iso-kb-seeder-${isoKbSourceHash}`),
+      },
+      onUpdate: {
+        service: 'Lambda',
+        action: 'invoke',
+        parameters: {
+          FunctionName: isoKbSeederFn.functionName,
+          InvocationType: 'RequestResponse',
+          Payload: JSON.stringify({ action: 'seed', sourceHash: isoKbSourceHash }),
+        },
+        physicalResourceId: cr.PhysicalResourceId.of(`iso-kb-seeder-${isoKbSourceHash}`),
+      },
+      // R-3 (CRITICAL): provider timeout MUST be >= seeder Lambda timeout.
+      // 600s > 300s seeder timeout — provider never aborts while seeder runs.
+      timeout: cdk.Duration.minutes(10),
+      policy: cr.AwsCustomResourcePolicy.fromStatements([
+        new iam.PolicyStatement({
+          actions: ['lambda:InvokeFunction'],
+          resources: [isoKbSeederFn.functionArn],
+        }),
+      ]),
+    });
+    // Seeder must run AFTER template is applied — dependency added post-declaration below
+
+    new cdk.CfnOutput(this, 'IsoKbSeederFnArn', { value: isoKbSeederFn.functionArn });
+
     // ─── AOSS Data-Access Policy (assembled post-seeder to avoid forward ref) ──
     // H-2 (Task 8R): READ block amended with exact agent-handler role ARNs.
+    // iso-kb-seeding Task 5: seeder role added to WRITE block for cumplify-iso-kb.
     const aossDataAccessPolicy = new opensearchserverless.CfnAccessPolicy(
       this,
       'AiAossDataAccessPolicy',
@@ -1468,6 +1581,8 @@ export class AiStack extends cdk.Stack {
     for (const name of newCollectionNames) {
       applyTemplateTrigger.node.addDependency(aossCollections[name]);
     }
+    // iso-kb-seeding Task 5: seeder runs AFTER template is applied
+    isoKbSeederTrigger.node.addDependency(applyTemplateTrigger);
 
     // T4-F3 FIX: aoss:APIAccessAll in IAM (data-plane access to AOSS collections)
     aiInvoker.addToRolePolicy(

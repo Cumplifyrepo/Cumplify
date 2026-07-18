@@ -1,0 +1,26 @@
+# Task 5 — CDK: seeder Lambda + custom resource + data-access policy
+# Executed: 2026-07-17
+# Status: CLOSED
+
+## Deliverables
+- Added `IsoKbSeederFn` NodejsFunction to `infra/lib/ai-stack.ts`:
+  - VPC-placed (props.vpc + privateSubnets), 512MB, 300s timeout
+  - bundling: loader { '.md': 'text' } (D-1)
+  - Env: AOSS_ENDPOINT, AOSS_INDEX_NAME, AI_INVOKER_ARN, POWERTOOLS_SERVICE_NAME
+- IAM: aiInvoker.grantInvoke, aoss:APIAccessAll on isoKbCollectionArn
+- AOSS `IsoKbSeederAccessPolicy` (CfnAccessPolicy): seeder role as principal,
+  full index CRUD including DeleteIndex on index/cumplify-iso-kb/* (D-4: additive union)
+- Custom resource `IsoKbSeederTrigger`:
+  - FileSystem.fingerprint('docs/architecture/iso-requirements-map.md') as physicalResourceId
+  - timeout: Duration.minutes(10) — R-3: provider timeout (600s) >= seeder (300s)
+  - addDependency on applyTemplateTrigger (seeder runs after template applied)
+- Updated CDK tests: T-9a finds main policy by logical ID; new seeder policy assertion
+- Updated AI_INVOKER_ARN count from 10 to 11
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run ai-stack.unit.test.ts: 66 passed (66)
+- cdk synth --all: exit 0 (Successfully synthesized)
+
+## D-rung: D2 (synth-verified)
+## ACC mapping: ACC-4 (hash change triggers re-seed), ACC-5 (fail-closed propagates)

@@ -85,7 +85,7 @@
 
 ### Phase 2 — CDK Integration
 
-- [ ] **Task 5** [KIRO] — CDK: seeder Lambda + custom resource + data-access policy
+- [x] **Task 5** [KIRO] — CDK: seeder Lambda + custom resource + data-access policy
   - Add `IsoKbSeederFn` to `infra/lib/ai-stack.ts`:
     - VPC-placed, 512MB, 300s timeout, esbuild `loader: { '.md': 'text' }` (D-1).
     - Env: AOSS_ENDPOINT, AOSS_INDEX_NAME, AI_INVOKER_ARN, POWERTOOLS_SERVICE_NAME.

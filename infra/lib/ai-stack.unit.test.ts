@@ -639,9 +639,9 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
       return env.AI_INVOKER_ARN !== undefined;
     });
     // 8 agent handler Lambdas + ComposeSectionFn (spec-40 Task 5) +
-    // RegenerateSectionFn (GEN-6 — compose runs in-process) — the whole
-    // generation plane reaches Bedrock through the same one door
-    expect(handlerLambdas.length).toBe(10);
+    // RegenerateSectionFn (GEN-6 — compose runs in-process) +
+    // IsoKbSeederFn (iso-kb-seeding Task 5) — all reach Bedrock via one door
+    expect(handlerLambdas.length).toBe(11);
   });
 
   it('SQS Event Source Mappings exist for consumer handlers', () => {
@@ -674,20 +674,37 @@ describe('AOSS Apply-Template CR (Task 9)', () => {
 
   it('T-9a: AOSS data-access policy — seeder/apply-template WRITE + prover-only DeleteIndex', () => {
     const policies = template.findResources('AWS::OpenSearchServerless::AccessPolicy');
-    const dataPolicy = Object.values(policies)[0] as any;
+    // Find the main AI access policy (not the iso-kb-seeder-specific one)
+    const mainPolicy = Object.entries(policies).find(
+      ([id]) => id.includes('AiAossDataAccessPolicy'),
+    );
+    expect(mainPolicy).toBeDefined();
+    const dataPolicy = mainPolicy![1] as any;
     // Policy is a JSON string with CFN tokens — parse structure via the Fn::Join parts
     const policyStr = JSON.stringify(dataPolicy.Properties.Policy);
     expect(policyStr).toContain('aoss:CreateIndex');
     expect(policyStr).toContain('WeightSeederFn');
     expect(policyStr).toContain('ApplyTemplateFn');
     expect(policyStr).toContain('AossProverFn');
-    // DeleteIndex appears EXACTLY once (prover block only) — the shared WRITE
-    // block must never gain it (live-found 403: cleanup needs it; least privilege).
+    // DeleteIndex appears EXACTLY once in the MAIN policy (prover block only)
     expect(policyStr.match(/aoss:DeleteIndex/g)).toHaveLength(1);
     const deleteBlock = policyStr.slice(policyStr.indexOf('aoss:DeleteIndex'));
     expect(deleteBlock).toContain('AossProverFn');
     expect(deleteBlock).not.toContain('WeightSeederFn');
     expect(deleteBlock).not.toContain('ApplyTemplateFn');
+  });
+
+  it('iso-kb-seeding Task 5: seeder access policy grants DeleteIndex on iso-kb', () => {
+    const policies = template.findResources('AWS::OpenSearchServerless::AccessPolicy');
+    const seederPolicy = Object.entries(policies).find(
+      ([id]) => id.includes('IsoKbSeederAccessPolicy'),
+    );
+    expect(seederPolicy).toBeDefined();
+    const policyStr = JSON.stringify((seederPolicy![1] as any).Properties.Policy);
+    expect(policyStr).toContain('aoss:DeleteIndex');
+    expect(policyStr).toContain('aoss:WriteDocument');
+    expect(policyStr).toContain('IsoKbSeederFn');
+    expect(policyStr).toContain('index/cumplify-iso-kb/*');
   });
 
   it('ApplyTemplateTrigger CR exists and can invoke ONLY ApplyTemplateFn', () => {
