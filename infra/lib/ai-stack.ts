@@ -1346,7 +1346,7 @@ export class AiStack extends cdk.Stack {
 
     // ─── ISO KB Seeder Lambda (iso-kb-seeding Task 5) ─────────────────────
     // VPC-attached (AOSS network policy = VPC endpoint only), esbuild .md text loader.
-    // Seeds docs/architecture/iso-requirements-map.md into cumplify-iso-kb index.
+    // Seeds docs/kb/ content files into cumplify-iso-kb index (iso-kb-content-depth).
     // FIX-P12-3: CFN-direct custom resource (serviceToken) — failed seed FAILS deploy.
     const isoKbSeederFn = new NodejsFunction(this, 'IsoKbSeederFn', {
       entry: 'services/iso-kb-seeder/src/cfn-handler.ts',

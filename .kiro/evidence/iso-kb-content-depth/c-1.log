@@ -1,0 +1,33 @@
+# C-1 — Content correction (pre-deploy blocker) — CLOSED
+# Executed: 2026-07-18T16:05Z
+# Base commit: 84e297e (develop)
+
+## What was fixed
+Six entries leaked internal AWS infrastructure into tenant-facing grounding prose.
+Rewritten to capability language per architect instruction:
+
+| File | Clause | Before | After |
+|------|--------|--------|-------|
+| iso-9001.md | 7.1.6 | "Bedrock Knowledge Bases on OpenSearch Serverless", "45-second cold-start timeout budget with exponential-backoff retry", "scale-to-zero" | "searchable organizational knowledge repository", no engineering details |
+| iso-9001.md | 5.3 | "Cognito groups" | "role-based access controls" |
+| iso-9001.md | 7.5 | "Cognito and ABAC" | "role-based access controls" |
+| iso-9001.md | 9.1.3 | "ElastiCache-backed dashboards" | "Responsive dashboards" |
+| iso-14001.md | 5.3 | "Cognito identity groups" | "role-based access controls" |
+| iso-45001.md | 5.3 | "Cognito groups" | "platform identity groups" |
+
+Also fixed: infra/lib/ai-stack.ts:1349 stale comment (referenced old map instead of docs/kb/).
+
+## Verification sweep
+grep -inE 'Cognito|ABAC|ElastiCache|Bedrock|OpenSearch|DynamoDB|Lambda|S3 Object|
+CloudFront|SQS|SNS|EventBridge|cold-start|scale-to-zero' docs/kb/*.md
+→ CLEAN (no matches)
+
+## Evidence: full suite
+- tsc --noEmit: exit 0 (clean)
+- vitest run: 1119 passed | 3 skipped (exit 0)
+- cdk synth --all: "Successfully synthesized" (exit 0)
+
+## Note
+Content edits change the chunk hash — by design. EXPECTED_CHUNK_COUNT (109) and
+the golden-SET fixture (108 refs + HLS) are UNCHANGED (entry set identical, only
+guidance text revised).
