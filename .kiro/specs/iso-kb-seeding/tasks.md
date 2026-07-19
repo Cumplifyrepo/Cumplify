@@ -124,7 +124,7 @@
   - **D-rung:** D3 (deployed + read back).
   - **ACC mapping:** ACC-4 (first seed = content change from empty).
 
-- [ ] **Task 8** [ARCHITECT] — ACC-1: Guru full-chain grounded answer (live)
+- [x] **Task 8** [ARCHITECT] — ACC-1: Guru full-chain grounded answer (live)
   - Invoke `askISO9001` via AppSync with question "What does clause 4.1 require?"
   - Verify: response contains grounded content, `groundingSource` non-empty in logs,
     clauseRef valid against clause-corpus-map, L1 grounding check fires (>= 0.85).

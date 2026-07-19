@@ -24,3 +24,23 @@ into the same spec as its retrieval leg; quote-first guru answer style as its
 answer-style leg. Task 8 remains OPEN here and CLOSES when iso-kb-content-depth's
 ACC (live guru grounded answers ≥ 0.85 for clause-number AND topic questions)
 is witnessed — that probe IS this task's probe.
+
+## CLOSURE (2026-07-19) — iso-kb-content-depth ACC-1 + ACC-2 BOTH PASS
+
+Task 8 is now CLOSED. The iso-kb-content-depth spec delivered:
+- LEG-1 (content depth): 109 expanded multi-sentence chunks (50/26/32/1), >=200 chars each
+- LEG-2 (hybrid retrieval): clause-ref parser + compound bool filter + kNN fallback
+- LEG-3 (answer style): grounded-composition prompt fragment + FIX-CD-1 (bracket citation)
+
+Live probe results (2026-07-19, pipeline exec d51efe79):
+- ACC-1 ("What does clause 4.1 require?"): grounding **0.99**, relevance 0.96, NOT honest-miss
+- ACC-2 ("How should our organization determine external and internal issues…"):
+  grounding **0.99**, relevance **1.0**, NOT honest-miss
+
+Both exceed the 0.85 threshold. The exact Task-8 probes now pass.
+
+Cross-references:
+- .kiro/evidence/iso-kb-content-depth/task-13.log (ACC-1 full evidence)
+- .kiro/evidence/iso-kb-content-depth/task-14.log (ACC-2 full evidence)
+- .kiro/evidence/iso-kb-content-depth/fix-cd-1.log (citation-format fix)
+- .kiro/evidence/iso-kb-content-depth/task-13-investigation.md (root-cause analysis)

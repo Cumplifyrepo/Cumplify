@@ -271,7 +271,7 @@
   - **D-rung:** D4 (measured + decided).
   - **ACC mapping:** ACC-1, ACC-2 (final grounding gate).
 
-- [ ] **Task 19** [KIRO] — ACC-8: Close iso-kb-seeding Task 8
+- [x] **Task 19** [KIRO] — ACC-8: Close iso-kb-seeding Task 8
   - After Tasks 13+14 pass (ACC-1 + ACC-2 met):
     - Tick iso-kb-seeding Task 8 checkbox in `.kiro/specs/iso-kb-seeding/tasks.md`.
     - Record cross-reference evidence in `.kiro/evidence/iso-kb-seeding/task-8.log`

@@ -1,0 +1,26 @@
+# Task 19 — ACC-8: Close iso-kb-seeding Task 8 — CLOSED
+# Executed: 2026-07-19
+# Base commit: 3650d3f (develop)
+
+## Actions taken (this commit)
+1. Ticked iso-kb-seeding Task 8 checkbox in .kiro/specs/iso-kb-seeding/tasks.md
+2. Appended closure note to .kiro/evidence/iso-kb-seeding/task-8.log with:
+   - Live probe results (grounding 0.99/0.99 for clause-number and topic questions)
+   - Cross-references to task-13.log, task-14.log, fix-cd-1.log, task-13-investigation.md
+3. Ticked Task 19 checkbox in .kiro/specs/iso-kb-content-depth/tasks.md
+4. This evidence log (task-19.log)
+
+## ACC-8 satisfaction
+ACC-1 (clause-number grounded >= 0.85): PASSED — 0.99
+ACC-2 (topic grounded >= 0.85): PASSED — 0.99
+Both together satisfy iso-kb-seeding Task 8's letter:
+"guru full-chain grounded answer (live)" with "L1 grounding check fires (>= 0.85)."
+
+## Rule 7/8 compliance
+- Checkbox ticks: Task 8 (iso-kb-seeding) + Task 19 (iso-kb-content-depth)
+- Evidence: task-8.log (appended closure) + task-19.log (this file)
+- All in the SAME commit.
+
+## Spec status
+iso-kb-content-depth: ALL 19 TASKS CLOSED. Spec is fully complete.
+iso-kb-seeding Task 8: CLOSED (was the last open task in that spec).
