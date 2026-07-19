@@ -1,0 +1,37 @@
+# FIX-CD-1 — Citation-format collision fix (Task 18 iteration v2)
+# Executed: 2026-07-19T14:30Z
+# Base commit: 96a2f3b (develop)
+# Root cause: task-13-investigation.md (ApplyGuardrail A/B: ":2015 clause" phrasing
+#   scores 0.18 grounding; bracket [ISO 9001 4.1] format scores 0.99)
+
+## Changes
+1. services/agents/guru-9001/prompt.ts:
+   BEFORE: Cite clause numbers verbatim (e.g., "ISO 9001:2015 clause 8.5.1").
+   AFTER:  Cite clauses with the exact bracket notation from the source: [ISO 9001 8.5.1].
+
+2. services/agents/guru-14001/prompt.ts:
+   BEFORE: Cite clause numbers verbatim (e.g., "ISO 14001:2015 clause 6.1.2").
+   AFTER:  Cite clauses with the exact bracket notation from the source: [ISO 14001 6.1.2].
+
+3. services/agents/guru-45001/prompt.ts:
+   BEFORE: Cite clause numbers verbatim (e.g., "ISO 45001:2018 clause 6.1.2.1").
+   AFTER:  Cite clauses with the exact bracket notation from the source: [ISO 45001 6.1.2.1].
+
+4. prompts/shared/grounded-composition.md:
+   ADDED rule 6: "Cite clauses using the exact [ISO NNNN C.C] bracket notation as it
+   appears in the source material, inline at the end of the sentence it supports. Lead
+   with substance, not the citation."
+   Marker 'Grounded Composition Rules' UNCHANGED (parity tests pass).
+
+## What was NOT changed
+- docs/kb/* — no content changes, no re-seed, fingerprint stable
+- EXPECTED_CHUNK_COUNT — unchanged (109)
+- Golden-SET fixture — unchanged
+- No task checkboxes ticked (this is a fix, not a task closure)
+
+## Evidence
+- tsc --noEmit: exit 0
+- vitest run: 1119 passed | 3 skipped (exit 0)
+- cdk synth --all: Successfully synthesized (exit 0)
+- Parity test (guru-prompt-parity.test.ts): all 9 assertions pass
+  (marker 'Grounded Composition Rules' present in all 3 guru prompts)

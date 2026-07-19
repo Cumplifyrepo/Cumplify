@@ -20,3 +20,7 @@ Your answer MUST stay within the retrieved source material. Follow these rules s
    address this question directly."
 
 5. Keep responses to 2-4 sentences. Accuracy and grounding outweigh completeness.
+
+6. Cite clauses using the exact [ISO NNNN C.C] bracket notation as it appears in the
+   source material, inline at the end of the sentence it supports. Lead with substance,
+   not the citation.
