@@ -1,0 +1,11 @@
+# Task 18 — A/B iteration gate (§7.4 decision) — CLOSED: ACCEPT v2
+| Iteration | ACC-1 grounding | ACC-2 grounding | Outcome |
+|-----------|-----------------|-----------------|---------|
+| v1 (initial wording + ':2015 clause' citation format) | 0.18 | n/a (not reached) | BLOCKED |
+| v2 (FIX-CD-1 bracket-format citations) | **0.99** (rel 0.96) | **0.99** (rel 1.0) | **ACCEPTED** |
+
+Decision: ACCEPT v2. Root cause was NOT content depth and NOT the quote-first wording
+— it was the citation-format collision (task-13-investigation.md). §7.4's "<0.70 ⇒
+content depth" heuristic is amended by this evidence: check citation/format-segment
+collisions FIRST when grounding craters despite relevance 1.0. Margin note: scores are
+0.14 above threshold with headroom; v2 wording locked as production baseline.

@@ -207,7 +207,7 @@
   - **D-rung:** D3 (deployed + read back).
   - **ACC mapping:** ACC-6 (live chunk count), ACC-7 (re-seed triggered by content change).
 
-- [ ] **Task 13** [ARCHITECT] — ACC-1: Clause-number question grounded >= 0.85 (live)
+- [x] **Task 13** [ARCHITECT] — ACC-1: Clause-number question grounded >= 0.85 (live)
   - Invoke `askISO9001` with probe: **"What does clause 4.1 require?"**
   - Verify:
     - `groundingSource` non-empty in guru handler logs (retrieval returned chunks)
@@ -220,7 +220,7 @@
   - **D-rung:** D4 (live-proven end-to-end).
   - **ACC mapping:** ACC-1.
 
-- [ ] **Task 14** [ARCHITECT] — ACC-2: Topic question grounded >= 0.85 (live)
+- [x] **Task 14** [ARCHITECT] — ACC-2: Topic question grounded >= 0.85 (live)
   - Invoke `askISO9001` with probe: **"How should our organization determine external
     and internal issues relevant to its purpose?"**
   - Verify:
@@ -231,7 +231,7 @@
   - **D-rung:** D4.
   - **ACC mapping:** ACC-2.
 
-- [ ] **Task 15** [ARCHITECT] — ACC-3: Cross-standard clause-ref isolation (live)
+- [x] **Task 15** [ARCHITECT] — ACC-3: Cross-standard clause-ref isolation (live)
   - Invoke `askISO9001` with probe referencing "clause 4.1".
   - Verify: all returned chunks have `metadata.standard === 'ISO9001'` (retrieval log).
   - Also test D-3' live: ask ISO9001Guru "What does ISO 14001 4.1 require?" → verify
@@ -240,7 +240,7 @@
   - **D-rung:** D4.
   - **ACC mapping:** ACC-3.
 
-- [ ] **Task 16** [ARCHITECT] — ACC-4: Fallback to kNN on unrecognized clause-ref (live)
+- [x] **Task 16** [ARCHITECT] — ACC-4: Fallback to kNN on unrecognized clause-ref (live)
   - Invoke `askISO9001` with probe: **"What does clause 99.9 require?"**
   - Verify: hybrid retrieval returns 0 results → fallback to kNN → closest semantic
     match returned (or honest-miss if grounding fails — both acceptable for non-existent
@@ -249,7 +249,7 @@
   - **D-rung:** D4.
   - **ACC mapping:** ACC-4.
 
-- [ ] **Task 17** [ARCHITECT] — ACC-7: Idempotent re-seed preserved (live)
+- [x] **Task 17** [ARCHITECT] — ACC-7: Idempotent re-seed preserved (live)
   - Re-invoke seeder Lambda (same content hash) → verify logs show `skipped: true`,
     zero embeddings consumed.
   - **Evidence:** CloudWatch log excerpt (skipped: true, durationMs low).
@@ -258,7 +258,7 @@
 
 ### Phase 6 — A/B Iteration + Closure
 
-- [ ] **Task 18** [ARCHITECT] — A/B iteration gate (§7.4 decision)
+- [x] **Task 18** [ARCHITECT] — A/B iteration gate (§7.4 decision)
   - Review grounding scores from Tasks 13-14:
     - **If both >= 0.85:** ACCEPT v1 wording. Task complete, proceed to Task 19.
     - **If 0.70-0.85:** Refine grounded-composition.md wording (one iteration).

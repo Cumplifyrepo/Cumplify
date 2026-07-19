@@ -1,0 +1,6 @@
+# Task 16 — ACC-4: Fallback to kNN on unrecognized clause-ref (live) — CLOSED
+2026-07-19T15:49:23Z. "What does clause 99.9 require?" → guru log 15:49:23.486:
+"Hybrid clause-ref returned 0 results — falling back to kNN-only {clauseRef: 'ISO 9001
+99.9', standard: 'ISO9001'}" → kNN retrieval succeeded → grounding failed for the
+nonexistent clause → honest-miss delivered (task spec: "or honest-miss if grounding
+fails — both acceptable"). Fallback mechanism LIVE-WITNESSED. PASS.

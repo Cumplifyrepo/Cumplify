@@ -1,0 +1,6 @@
+# Task 15 — ACC-3: Cross-standard clause-ref isolation (live) — CLOSED
+2026-07-19T15:49:14Z. (a) Task 13's "clause 4.1" answer content matches the ISO 9001
+chunk exclusively (composed ref ISO 9001 4.1 + standard filter — no 14001/45001 bleed).
+(b) D-3' LIVE: ISO9001Guru asked "What does ISO 14001 4.1 require?" → answered with
+ENVIRONMENTAL content (climate, air quality, biodiversity — the 14001 chunk), citation
+"[ISO 14001 4.1]" — parsed standard WON over the guru's own standard, as designed.

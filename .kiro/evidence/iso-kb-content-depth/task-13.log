@@ -1,0 +1,10 @@
+# Task 13 — ACC-1: Clause-number question grounded >= 0.85 (live) — CLOSED
+2026-07-19. v1 probe FAILED 0.18 → root-caused (task-13-investigation.md, citation-format
+collision) → FIX-CD-1 deployed (exec d51efe79, guru refreshed 15:46:41Z) → v2 PASS.
+
+| Evidence | Value |
+|----------|-------|
+| Probe (15:48:11Z) | "What does clause 4.1 require?" direct-invoke resolver shape (N-4) |
+| Answer | 141 chars, substantive, citation "[ISO 9001 4.1]" bracket format — NOT honest-miss |
+| Grounding (invoker log 15:48:15.611Z) | **0.99** (>= 0.85 PASS), relevance 0.96 |
+| Hybrid retrieval | answer content == 9001 4.1 chunk verbatim (not 14001/45001 4.1) — term-filtered top-1 |

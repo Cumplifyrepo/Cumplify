@@ -1,0 +1,5 @@
+# Task 17 — ACC-7: Idempotent re-seed preserved (live) — CLOSED
+2026-07-19T15:49:58Z. Synthetic CFN Update (physical id iso-kb-seed-b2f85106a6b2,
+architect presigned ResponseURL): "Content unchanged — skipping" contentHash
+b2f85106…, skipped true, durationMs 438; Seed completed status 'skipped'. Zero
+embeds. PASS.

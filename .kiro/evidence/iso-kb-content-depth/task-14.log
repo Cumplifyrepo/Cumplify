@@ -1,0 +1,5 @@
+# Task 14 — ACC-2: Topic question grounded >= 0.85 (live) — CLOSED
+2026-07-19T15:48:40Z. "How should our organization determine the external and internal
+issues relevant to its purpose?" → 608-char grounded answer, THREE [ISO 9001 4.1]
+bracket citations, feature mapping (M6/ContextCartographer) woven in and grounded.
+Grounding (15:48:35.601Z): **0.99**, relevance **1.0**. NOT honest-miss. PASS.
