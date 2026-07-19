@@ -1,0 +1,12 @@
+# Task 12 — Deploy to dev + live re-seed — CLOSED
+Architect, 2026-07-19 (deploy landed 2026-07-18T16:24Z; full detail in task-13-investigation.md).
+
+| Evidence | Value |
+|----------|-------|
+| Pipeline execution | 087fef8f (revision 9791f90), Dev stage Succeeded |
+| Re-seed log 16:24:14.789Z | Seeding complete: chunksTotal 109, chunksIndexed 109, contentHash b2f85106a6b2a3cf08fca627383021351fd16df98697c0e302d41935a3f4ed2e, durationMs 35006 |
+| CFN response | SUCCESS 200 (16:24:14.872Z); CR physical id iso-kb-seed-b2f85106a6b2; old-id Delete no-op 16:24:30 (designed lifecycle) |
+| ACC-7 trigger mechanism | fingerprint('docs/kb') change → CR Update fired (content-change→re-seed LIVE-WITNESSED) |
+| Prover doc count (14:17Z 2026-07-19) | **110** = 109 chunks + _meta (T-2' exact) |
+| Distribution agg | ISO9001=50, ISO45001=32, ISO14001=26, HLS=1, SYSTEM=1; tenants __ISO_CANON__=109 / __META__=1 |
+| Expanded content live | 4.1 chunk 807 chars (was ~230 pre-expansion) |

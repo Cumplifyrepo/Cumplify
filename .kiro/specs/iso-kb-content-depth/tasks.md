@@ -195,7 +195,7 @@
 
 ### Phase 5 — Deploy + Live Verification
 
-- [ ] **Task 12** [ARCHITECT] — Deploy to dev + live re-seed
+- [x] **Task 12** [ARCHITECT] — Deploy to dev + live re-seed
   - Push to pipeline, Dev stage deploys.
   - Verify: seeder Lambda invoked by custom resource (fingerprint change on `docs/kb/`),
     logs show `status: 'seeded'`, `chunksIndexed: 109`, new contentHash.
