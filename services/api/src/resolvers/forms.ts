@@ -24,6 +24,8 @@ import {
   beginTenantTransaction,
   publishAuditEvent,
   getTenantDdbClient,
+  snakeToCamel,
+  unwrapField,
   TABLE_NAME,
   type TenantTransaction,
   type DataApiResult,
@@ -1585,24 +1587,7 @@ function nullOtherColumns(activeColumn: string): string {
     .join(', ');
 }
 
-// ─── Data API Marshalling (forms-specific) ───────────────────────────────────
-
-function snakeToCamel(s: string): string {
-  return s.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
-}
-
-function unwrapField(field: Record<string, unknown>): unknown {
-  if (field.stringValue !== undefined) return field.stringValue;
-  if (field.longValue !== undefined) return field.longValue;
-  if (field.doubleValue !== undefined) return field.doubleValue;
-  if (field.booleanValue !== undefined) return field.booleanValue;
-  if (field.isNull) return null;
-  if (field.arrayValue !== undefined) {
-    const arr = field.arrayValue as { stringValues?: string[] };
-    return arr.stringValues ?? [];
-  }
-  return Object.values(field)[0] ?? null;
-}
+// ─── Data API Marshalling (forms-specific shapes over shared primitives) ─────
 
 function marshalTemplates(result: DataApiResult): Record<string, unknown>[] {
   if (!result.records || !result.columnMetadata) return [];

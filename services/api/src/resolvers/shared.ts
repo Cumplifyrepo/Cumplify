@@ -327,8 +327,24 @@ const REVERSE_ENUMS: Record<string, Record<string, string>> = {
 };
 
 /** snake_case → camelCase */
-function snakeToCamel(s: string): string {
+export function snakeToCamel(s: string): string {
   return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+}
+
+/**
+ * RDS Data API returns TIMESTAMP/TIMESTAMPTZ as `YYYY-MM-DD HH:MM:SS[.ffffff]`
+ * (UTC, no zone designator) — AppSync AWSDateTime rejects that shape AFTER
+ * the resolver succeeds (AUD-1/BUG-18: 33 fields, every populated register).
+ * Strict full-string match converts to ISO-8601 UTC; anything else passes
+ * through untouched (AWSDate `YYYY-MM-DD` is already valid and unaffected).
+ */
+const SQL_TIMESTAMP_RE = /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?$/;
+
+export function sqlTimestampToIso(value: string): string {
+  const m = SQL_TIMESTAMP_RE.exec(value);
+  if (!m) return value;
+  const ms = (m[3] ?? '').padEnd(3, '0').slice(0, 3);
+  return `${m[1]}T${m[2]}.${ms}Z`;
 }
 
 /**
@@ -348,8 +364,11 @@ function unwrapArray(av: Record<string, unknown>): unknown[] {
 }
 
 /** Unwrap a Data API field value */
-function unwrapField(field: Record<string, unknown>): unknown {
-  if (field.stringValue !== undefined) return field.stringValue;
+export function unwrapField(field: Record<string, unknown>): unknown {
+  if (field.stringValue !== undefined)
+    return typeof field.stringValue === 'string'
+      ? sqlTimestampToIso(field.stringValue)
+      : field.stringValue;
   if (field.longValue !== undefined) return field.longValue;
   if (field.doubleValue !== undefined) return field.doubleValue;
   if (field.booleanValue !== undefined) return field.booleanValue;
