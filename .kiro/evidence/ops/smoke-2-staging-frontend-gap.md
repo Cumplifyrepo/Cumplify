@@ -53,3 +53,19 @@ B lands.
 
 ## Status
 OPEN — routed to owner (path decision) / Kiro (Path B build).
+
+## CLOSED — witnessed 2026-07-21 (exec f1fa592c, revision 727263d)
+| Leg | Evidence | Time (Z) |
+|---|---|---|
+| Dev content deploy (FIRST live cross-account) | 66 objects synced, S3 LastModified 17:29:42Z; A-2 guard fired in CI log ("NEXT_PUBLIC_* already in environment"); no credential values in logs | 17:29 |
+| Staging gate | Single clean token (earlier execs Cancelled/Superseded by the stage-structure change); approved citing owner plan | 17:31:00 |
+| Staging stacks | 9 stacks green (incl. FrontendStack creating cumplify-staging-frontend-content-deploy role) | 17:31–17:38 |
+| Staging DeployFrontendContent | Succeeded — first content ever in the staging bucket | 17:40 |
+| **SmokeTest (with teeth)** | CI log: `curl -fsS https://$FRONTEND_DOMAIN/ \| grep -q "<title>Cumplify</title>"` → BUILD SUCCEEDED 17:40:17Z | 17:40 |
+| Architect readback | `curl d3aaerttp3jmgo.cloudfront.net` → `<title>Cumplify</title>` (was HTTP 403 this morning) | 17:41:43 |
+
+SMOKE-2 CLOSED. Same run = SMOKE-1 BEHAVIORAL WITNESS (FIND-4): the smoke
+executed against real content wired from the stack output, with the power to
+fail the stage. Hand-deploy debt eliminated in dev AND staging; "frontend
+content = pipeline artifact" is now an invariant enforced by a smoke test
+that cannot lie.
