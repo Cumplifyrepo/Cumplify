@@ -70,3 +70,17 @@ action item for owner/Kiro, pre-GA.
 - Proof run = the push of this commit: expect Synth PASS (gate waives
   GHSA-3jxr-9vmj-r5cp), UpdatePipeline no-op, Dev deploy green, execution
   parks at ApproveToStaging.
+
+## Addendum 2 — proof run WITNESSED (exec b4ea46d0, revision 73e5dab)
+| Stage | Status | Time (Z) |
+|---|---|---|
+| Source | Succeeded | 13:04 |
+| Build/Synth | **Succeeded** | 13:12 |
+| UpdatePipeline | Succeeded (no-op — deployed def == committed def, no drift) | 13:13 |
+| Assets | Succeeded | 13:15 |
+| Dev | Succeeded | 13:22 |
+| Staging | InProgress — parked at ApproveToStaging (fresh token for 73e5dab) | — |
+
+CI log line (CodeBuild 13:11:04Z, witnessed): `WAIVED GHSA-3jxr-9vmj-r5cp
+(brace-expansion) — allowlisted` → `audit-gate: PASS — 1 finding(s)
+inspected, 1 waived, 0 blocked`. INC-10 CLOSED; pipeline fully unblocked.
