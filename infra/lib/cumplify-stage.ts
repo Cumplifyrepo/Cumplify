@@ -26,6 +26,12 @@ export interface CumplifyStageProps extends cdk.StageProps {
 
 export class CumplifyStage extends cdk.Stage {
   public readonly frontendDistributionDomainOutput: cdk.CfnOutput;
+  public readonly graphqlApiUrlOutput: cdk.CfnOutput;
+  public readonly poolBIdOutput: cdk.CfnOutput;
+  public readonly poolBClientIdOutput: cdk.CfnOutput;
+  public readonly frontendBucketNameOutput: cdk.CfnOutput;
+  public readonly frontendDistributionIdOutput: cdk.CfnOutput;
+  public readonly contentDeployRoleArnOutput: cdk.CfnOutput;
 
   constructor(scope: Construct, id: string, props: CumplifyStageProps) {
     super(scope, id, props);
@@ -177,6 +183,14 @@ export class CumplifyStage extends cdk.Stage {
 
     // Expose for pipeline SmokeTest (envFromCfnOutputs)
     this.frontendDistributionDomainOutput = frontendStack.distributionDomainOutput;
+
+    // Expose for pipeline DeployFrontendContent step (envFromCfnOutputs, SMOKE-2 §2.3)
+    this.graphqlApiUrlOutput = apiStack.graphqlApiUrlOutput;
+    this.poolBIdOutput = identityStack.poolBIdOutput;
+    this.poolBClientIdOutput = identityStack.poolBClientIdOutput;
+    this.frontendBucketNameOutput = frontendStack.bucketNameOutput;
+    this.frontendDistributionIdOutput = frontendStack.distributionIdOutput;
+    this.contentDeployRoleArnOutput = frontendStack.contentDeployRoleArnOutput;
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

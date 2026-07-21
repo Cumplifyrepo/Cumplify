@@ -50,6 +50,8 @@ export class IdentityStack extends cdk.Stack {
   public readonly poolCArn: string;
   public readonly poolBClientId: string;
   public readonly poolCClientId: string;
+  public readonly poolBIdOutput: cdk.CfnOutput;
+  public readonly poolBClientIdOutput: cdk.CfnOutput;
 
   constructor(scope: Construct, id: string, props: IdentityStackProps) {
     super(scope, id, props);
@@ -307,11 +309,11 @@ export class IdentityStack extends cdk.Stack {
     // CfnOutputs — per design §2 / F-9 (consumed by readback via cdk-outputs.json)
     // -----------------------------------------------------------------------
     new cdk.CfnOutput(this, 'PoolAId', { value: this.poolAId });
-    new cdk.CfnOutput(this, 'PoolBId', { value: this.poolBId });
+    this.poolBIdOutput = new cdk.CfnOutput(this, 'PoolBId', { value: this.poolBId });
     new cdk.CfnOutput(this, 'PoolCId', { value: this.poolCId });
     new cdk.CfnOutput(this, 'PoolBArn', { value: this.poolBArn });
     new cdk.CfnOutput(this, 'PoolCArn', { value: this.poolCArn });
-    new cdk.CfnOutput(this, 'PoolBClientId', { value: this.poolBClientId });
+    this.poolBClientIdOutput = new cdk.CfnOutput(this, 'PoolBClientId', { value: this.poolBClientId });
     new cdk.CfnOutput(this, 'PoolCClientId', { value: this.poolCClientId });
     new cdk.CfnOutput(this, 'PoolAClientId', {
       value: poolAClient!.userPoolClientId,

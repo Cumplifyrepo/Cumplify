@@ -12,9 +12,16 @@ describe('load-env.mjs', () => {
   const frontendDir = resolve(__dirname, '../..');
   const envLocalPath = resolve(frontendDir, '.env.local');
 
+  // Strip NEXT_PUBLIC_* from the child env so the early-exit guard does NOT fire.
+  // vitest's test.env injects these into process.env (hermetic lane), which would
+  // otherwise be inherited by execSync and trigger the guard. (SMOKE-2 A-2)
+  function envWithoutNextPublic() {
+    const { NEXT_PUBLIC_GRAPHQL_URL, NEXT_PUBLIC_USER_POOL_ID, NEXT_PUBLIC_USER_POOL_CLIENT_ID, ...rest } = process.env;
+    return rest;
+  }
+
   it('generates .env.local from cdk-outputs.json with correct keys', () => {
-    // Run the script
-    execSync('node scripts/load-env.mjs', { cwd: frontendDir });
+    execSync('node scripts/load-env.mjs', { cwd: frontendDir, env: envWithoutNextPublic() });
 
     const content = readFileSync(envLocalPath, 'utf-8');
 
@@ -31,9 +38,39 @@ describe('load-env.mjs', () => {
   });
 
   it('uses PoolBId key (not ExportsOutputRef fallback)', () => {
-    execSync('node scripts/load-env.mjs', { cwd: frontendDir });
+    execSync('node scripts/load-env.mjs', { cwd: frontendDir, env: envWithoutNextPublic() });
     const content = readFileSync(envLocalPath, 'utf-8');
     // The value should come from PoolBId, which is us-east-1_cmiNNOAst
     expect(content).toContain('NEXT_PUBLIC_USER_POOL_ID=us-east-1_cmiNNOAst');
+  });
+});
+
+describe('load-env.mjs — early-exit guard (SMOKE-2 §4.3, A-2 REQUIRED)', () => {
+  const frontendDir = resolve(__dirname, '../..');
+  const envLocalPath = resolve(frontendDir, '.env.local');
+
+  it('exits 0 and does NOT write .env.local when all NEXT_PUBLIC_* vars are set in env', () => {
+    const fs = require('node:fs');
+
+    // Delete .env.local if it exists (left over from the test above)
+    try {
+      fs.unlinkSync(envLocalPath);
+    } catch {
+      // doesn't exist — fine
+    }
+
+    // Run with all three vars preset — should early-exit without writing .env.local
+    execSync('node scripts/load-env.mjs', {
+      cwd: frontendDir,
+      env: {
+        ...process.env,
+        NEXT_PUBLIC_GRAPHQL_URL: 'https://staging.appsync-api.us-east-1.amazonaws.com/graphql',
+        NEXT_PUBLIC_USER_POOL_ID: 'us-east-1_STAGING',
+        NEXT_PUBLIC_USER_POOL_CLIENT_ID: 'staging-client-id',
+      },
+    });
+
+    // Assert .env.local was NOT written
+    expect(fs.existsSync(envLocalPath)).toBe(false);
   });
 });

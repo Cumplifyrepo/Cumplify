@@ -47,6 +47,10 @@ describe('FrontendStack', () => {
     template.hasOutput('FrontendDistributionDomain', {});
   });
 
+  it('exports ContentDeployRoleArn', () => {
+    template.hasOutput('ContentDeployRoleArn', {});
+  });
+
   it('associates the URL-rewrite function on viewer-request', () => {
     template.resourceCountIs('AWS::CloudFront::Function', 1);
     template.hasResourceProperties('AWS::CloudFront::Distribution', {
@@ -92,5 +96,75 @@ describe('URL_REWRITE_FN_CODE handler behavior', () => {
 
   it('only inspects the last path segment for an extension', () => {
     expect(rewrite('/docs.v2/intro')).toBe('/docs.v2/intro.html');
+  });
+});
+
+describe('ContentDeployRole (SMOKE-2 §4.2)', () => {
+  const app = new cdk.App();
+  const stack = new FrontendStack(app, 'RoleTestFrontendStack', {
+    envConfig: { envName: 'staging', account: '889007427685', region: 'us-east-1' } as any,
+    apiUrl: 'https://test.appsync-api.us-east-1.amazonaws.com/graphql',
+  });
+  const template = Template.fromStack(stack);
+
+  it('creates ContentDeployRole with deterministic physical name', () => {
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: 'cumplify-staging-frontend-content-deploy',
+    });
+  });
+
+  it('trust policy uses condition-gated Principal * with aws:PrincipalArn StringLike on mgmt pipeline roles', () => {
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: 'cumplify-staging-frontend-content-deploy',
+      AssumeRolePolicyDocument: Match.objectLike({
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: Match.objectLike({ AWS: '*' }),
+            Condition: Match.objectLike({
+              StringLike: Match.objectLike({
+                'aws:PrincipalArn': 'arn:aws:iam::157082218687:role/CumplifyPipeline*',
+              }),
+            }),
+          }),
+        ]),
+      }),
+    });
+  });
+
+  it('inline policy grants s3:PutObject, s3:DeleteObject, s3:ListBucket on the frontend bucket', () => {
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: 'cumplify-staging-frontend-content-deploy',
+      Policies: Match.arrayWith([
+        Match.objectLike({
+          PolicyDocument: Match.objectLike({
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Effect: 'Allow',
+                Action: Match.arrayWith(['s3:PutObject', 's3:DeleteObject', 's3:ListBucket']),
+              }),
+            ]),
+          }),
+        }),
+      ]),
+    });
+  });
+
+  it('inline policy grants cloudfront:CreateInvalidation on exactly one distribution', () => {
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: 'cumplify-staging-frontend-content-deploy',
+      Policies: Match.arrayWith([
+        Match.objectLike({
+          PolicyDocument: Match.objectLike({
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Effect: 'Allow',
+                Action: 'cloudfront:CreateInvalidation',
+              }),
+            ]),
+          }),
+        }),
+      ]),
+    });
   });
 });

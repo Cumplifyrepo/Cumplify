@@ -6,10 +6,67 @@
 import * as cdk from 'aws-cdk-lib';
 import * as pipelines from 'aws-cdk-lib/pipelines';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { CumplifyStage } from './cumplify-stage.js';
 import { ENV_CONFIGS } from './env-config.js';
 import { MgmtCostMonitor } from './mgmt-cost-monitor.js';
+
+/**
+ * Factory: creates the DeployFrontendContent CodeBuildStep for a given stage.
+ * Builds the Next.js static export with env-specific config from envFromCfnOutputs,
+ * assumes the per-env ContentDeployRole, syncs to S3, and invalidates CloudFront.
+ * (SMOKE-2 design §2.4)
+ */
+function makeDeployFrontendStep(
+  stage: CumplifyStage,
+  envAccount: string,
+  envName: string,
+): pipelines.CodeBuildStep {
+  // Synth-time ARN — deterministic role name enables IAM grant without runtime env vars (A-1)
+  const contentDeployRoleArn =
+    `arn:aws:iam::${envAccount}:role/cumplify-${envName}-frontend-content-deploy`;
+
+  return new pipelines.CodeBuildStep('DeployFrontendContent', {
+    envFromCfnOutputs: {
+      NEXT_PUBLIC_GRAPHQL_URL: stage.graphqlApiUrlOutput,
+      NEXT_PUBLIC_USER_POOL_ID: stage.poolBIdOutput,
+      NEXT_PUBLIC_USER_POOL_CLIENT_ID: stage.poolBClientIdOutput,
+      FRONTEND_BUCKET: stage.frontendBucketNameOutput,
+      DISTRIBUTION_ID: stage.frontendDistributionIdOutput,
+      CONTENT_DEPLOY_ROLE_ARN: stage.contentDeployRoleArnOutput,
+    },
+    // Explicit AssumeRole grant on the CodeBuild project role (not pipeline role).
+    // CDK Pipelines does NOT auto-grant sts:AssumeRole for in-command assumes. (A-1)
+    rolePolicyStatements: [
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['sts:AssumeRole'],
+        resources: [contentDeployRoleArn],
+      }),
+    ],
+    commands: [
+      // cwd = repo root (CDK Pipelines default: source artifact at root)
+      // NEXT_PUBLIC_* are already in OS env — load-env.mjs early-exits (§2.6)
+      'cd frontend && npm ci && npm run build',
+      // cwd is now frontend/ — out/ is relative here
+      // Assume the env-account ContentDeployRole.
+      // NEVER echo $CREDS or use set -x — credentials would appear in CloudWatch logs. (A-3)
+      'CREDS=$(aws sts assume-role --role-arn "$CONTENT_DEPLOY_ROLE_ARN" --role-session-name pipeline-content-deploy --output json --no-cli-pager)',
+      'export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | jq -r .Credentials.AccessKeyId)',
+      'export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | jq -r .Credentials.SecretAccessKey)',
+      'export AWS_SESSION_TOKEN=$(echo "$CREDS" | jq -r .Credentials.SessionToken)',
+      // Sync static export to bucket; --delete removes stale objects (ghost-route prevention)
+      'aws s3 sync out/ "s3://$FRONTEND_BUCKET/" --delete',
+      // Invalidate CloudFront — fire-and-forget; propagation ~60s
+      'aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*"',
+    ],
+    buildEnvironment: {
+      buildImage: codebuild.LinuxBuildImage.fromCodeBuildImageId('aws/codebuild/standard:8.0'),
+      computeType: codebuild.ComputeType.SMALL,
+    },
+  });
+}
 
 export class PipelineStack extends cdk.Stack {
   public readonly pipelineStages: cdk.Stage[] = [];
@@ -62,37 +119,44 @@ export class PipelineStack extends cdk.Stack {
       },
     });
 
-    // Dev — no gate (AC-1.3)
+    // Dev — no gate (AC-1.3); content deploy step kills hand-deploy debt (SMOKE-2)
     const devStage = new CumplifyStage(this, 'Dev', {
       env: { account: ENV_CONFIGS.dev.account, region: ENV_CONFIGS.dev.region },
       envConfig: ENV_CONFIGS.dev,
     });
-    pipeline.addStage(devStage);
+    pipeline.addStage(devStage, {
+      post: [makeDeployFrontendStep(devStage, ENV_CONFIGS.dev.account, 'dev')],
+    });
     this.pipelineStages.push(devStage);
 
-    // Staging — ManualApprovalStep (pre) + SmokeTest (post-deploy) (AC-1.3)
+    // Staging — ManualApprovalStep (pre) + DeployFrontendContent → SmokeTest (post) (AC-1.3, SMOKE-2)
     const stagingStage = new CumplifyStage(this, 'Staging', {
       env: { account: ENV_CONFIGS.staging.account, region: ENV_CONFIGS.staging.region },
       envConfig: ENV_CONFIGS.staging,
     });
+    const stagingDeployContent = makeDeployFrontendStep(
+      stagingStage, ENV_CONFIGS.staging.account, 'staging',
+    );
+    const smokeTest = new pipelines.ShellStep('SmokeTest', {
+      envFromCfnOutputs: {
+        FRONTEND_DOMAIN: stagingStage.frontendDistributionDomainOutput,
+      },
+      commands: [
+        // Content assertion, not status: the distribution rewrites 403/404 ->
+        // /index.html 200, so an -f status check passes on any path.
+        'curl -fsS "https://$FRONTEND_DOMAIN/" | grep -q "<title>Cumplify</title>"',
+      ],
+    });
+    // Post steps are unordered by default — SmokeTest must run AFTER content ships.
+    smokeTest.addStepDependency(stagingDeployContent);
     pipeline.addStage(stagingStage, {
       pre: [new pipelines.ManualApprovalStep('ApproveToStaging')],
-      post: [
-        new pipelines.ShellStep('SmokeTest', {
-          envFromCfnOutputs: {
-            FRONTEND_DOMAIN: stagingStage.frontendDistributionDomainOutput,
-          },
-          commands: [
-            // Content assertion, not status: the distribution rewrites 403/404 ->
-            // /index.html 200, so an -f status check passes on any path.
-            'curl -fsS "https://$FRONTEND_DOMAIN/" | grep -q "<title>Cumplify</title>"',
-          ],
-        }),
-      ],
+      post: [stagingDeployContent, smokeTest],
     });
     this.pipelineStages.push(stagingStage);
 
-    // Prod — ManualApprovalStep + LegalSignoffGuard (pre) + RollbackInitiator (post) (AC-1.3)
+    // Prod — ManualApprovalStep + LegalSignoffGuard (pre) + DeployFrontendContent (post) (AC-1.3, SMOKE-2)
+    // No Prod SmokeTest — OQ-3: Prod post-deploy verification is a separate GA-hardening decision.
     const prodStage = new CumplifyStage(this, 'Prod', {
       env: { account: ENV_CONFIGS.prod.account, region: ENV_CONFIGS.prod.region },
       envConfig: ENV_CONFIGS.prod,
@@ -104,6 +168,7 @@ export class PipelineStack extends cdk.Stack {
           commands: ['npx tsx scripts/assert-legal-signoff.ts'],
         }),
       ],
+      post: [makeDeployFrontendStep(prodStage, ENV_CONFIGS.prod.account, 'prod')],
     });
     this.pipelineStages.push(prodStage);
 

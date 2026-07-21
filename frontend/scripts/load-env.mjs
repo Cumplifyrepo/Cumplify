@@ -15,6 +15,18 @@ import { resolve } from 'node:path';
 const ROOT = resolve(import.meta.dirname, '../../');
 const OUTPUT_PATH = resolve(import.meta.dirname, '../.env.local');
 
+// Early-exit guard: when NEXT_PUBLIC_* are already in the environment (pipeline CI
+// via envFromCfnOutputs), skip cdk-outputs.json entirely — do NOT write .env.local
+// with dev values into a staging/prod build. (SMOKE-2 design §2.6, A-2 REQUIRED)
+const alreadySet =
+  process.env.NEXT_PUBLIC_GRAPHQL_URL &&
+  process.env.NEXT_PUBLIC_USER_POOL_ID &&
+  process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID;
+if (alreadySet) {
+  console.log('✓ NEXT_PUBLIC_* already in environment; skipping cdk-outputs.json.');
+  process.exit(0);
+}
+
 let outputs;
 try {
   const raw = readFileSync(resolve(ROOT, 'cdk-outputs.json'), 'utf-8');

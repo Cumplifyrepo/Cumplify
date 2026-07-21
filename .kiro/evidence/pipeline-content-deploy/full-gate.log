@@ -1,0 +1,61 @@
+=== SMOKE-2 FULL GATE EVIDENCE ===
+Spec: pipeline-content-deploy (SMOKE-2)
+Timestamp: 2026-07-21T16:57:59Z
+Git HEAD (pre-commit): a26c2b1c615d9c0911248de51a292ea8e5fc1a88
+
+--- FILES CHANGED ---
+infra/lib/frontend-stack.ts          — ContentDeployRole + 3 CfnOutput fields
+infra/lib/api-stack.ts               — graphqlApiUrlOutput field capture
+infra/lib/identity-stack.ts          — poolBIdOutput + poolBClientIdOutput field capture
+infra/lib/cumplify-stage.ts          — 6 new public output fields exposed
+infra/lib/pipeline-stack.ts          — makeDeployFrontendStep factory + Dev/Staging/Prod wiring + addStepDependency
+infra/lib/frontend-stack.unit.test.ts — 5 new ContentDeployRole assertions
+infra/lib/pipeline-stack.unit.test.ts — 6 new DeployFrontendContent assertions (step per stage, RunOrder, IAM, env wiring)
+frontend/scripts/load-env.mjs        — early-exit guard (A-2 REQUIRED)
+frontend/src/test/load-env.test.ts   — .env.local-not-written assertion + env isolation fix
+
+--- VERIFICATION: tsc --noEmit ---
+Exit code: 0
+No type errors.
+
+--- VERIFICATION: npm run test (infra vitest) ---
+Tests:  1140 passed | 3 skipped (1143)
+Duration: 29.97s
+Exit code: 0
+
+Key new test results:
+  ✓ PipelineStack — SmokeTest step (SMOKE-1 regression) > (a) no || true
+  ✓ PipelineStack — SmokeTest step (SMOKE-1 regression) > (b) content assertion grep
+  ✓ PipelineStack — SmokeTest step (SMOKE-1 regression) > (c) FRONTEND_DOMAIN wired
+  ✓ PipelineStack — DeployFrontendContent (SMOKE-2) > action exists in Dev
+  ✓ PipelineStack — DeployFrontendContent (SMOKE-2) > action exists in Staging
+  ✓ PipelineStack — DeployFrontendContent (SMOKE-2) > action exists in Prod
+  ✓ PipelineStack — DeployFrontendContent (SMOKE-2) > Staging SmokeTest RunOrder > DeployFrontendContent
+  ✓ PipelineStack — DeployFrontendContent (SMOKE-2) > sts:AssumeRole on 3 exact ARNs (OQ-1)
+  ✓ PipelineStack — DeployFrontendContent (SMOKE-2) > env vars wired from envFromCfnOutputs
+  ✓ FrontendStack — ContentDeployRole > deterministic physical name
+  ✓ FrontendStack — ContentDeployRole > trust policy condition-gated
+  ✓ FrontendStack — ContentDeployRole > s3 actions scoped to bucket
+  ✓ FrontendStack — ContentDeployRole > cloudfront:CreateInvalidation on one distribution
+  ✓ FrontendStack — ContentDeployRole > ContentDeployRoleArn CfnOutput exists
+
+--- VERIFICATION: npm run test (frontend vitest) ---
+Tests:  122 passed (122)
+Duration: 1.51s
+Exit code: 0
+
+Key new test result:
+  ✓ load-env.mjs — early-exit guard (SMOKE-2 §4.3) > .env.local NOT written when NEXT_PUBLIC_* present
+
+--- VERIFICATION: npx cdk synth --all ---
+Successfully synthesized to /home/julio-medrano/cumplify/cdk.out
+Exit code: 0
+CDK Nag: no new errors (AwsSolutionsChecks applied at App + Stage levels).
+
+--- NOTES ---
+- Fix takes effect via pipeline self-mutation on next `develop` push.
+- DeployFrontendContent runs post-deploy in all 3 stages.
+- Staging SmokeTest depends on DeployFrontendContent (addStepDependency).
+- ContentDeployRole trust: PrincipalWithConditions(AnyPrincipal, StringLike aws:PrincipalArn → mgmt CumplifyPipeline*).
+- rolePolicyStatements on each step grants sts:AssumeRole on the deterministic ARN (confirmed in CDK 2.261).
+- Architect gates: post-push template inspection + live witness at next Staging promotion.

@@ -66,6 +66,7 @@ export class ApiStack extends cdk.Stack {
   public readonly authorizerArn: string;
   public readonly tenantDataRoleArn: string;
   public readonly appRoleSecretArn: string;
+  public readonly graphqlApiUrlOutput: cdk.CfnOutput;
 
   constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, props);
@@ -1262,7 +1263,7 @@ export class ApiStack extends cdk.Stack {
     }
 
     // ─── CfnOutputs ─────────────────────────────────────────────────────────
-    new cdk.CfnOutput(this, 'GraphqlApiUrl', { value: this.graphqlApiUrl });
+    this.graphqlApiUrlOutput = new cdk.CfnOutput(this, 'GraphqlApiUrl', { value: this.graphqlApiUrl });
     new cdk.CfnOutput(this, 'GraphqlApiId', { value: this.graphqlApiId });
     new cdk.CfnOutput(this, 'AuthorizerArn', { value: this.authorizerArn });
     new cdk.CfnOutput(this, 'TenantDataRoleArn', { value: this.tenantDataRoleArn });

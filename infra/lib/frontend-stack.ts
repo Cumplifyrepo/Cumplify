@@ -13,9 +13,11 @@ import * as cdk from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 import { type EnvConfig } from './env-config.js';
+import { MGMT_ACCOUNT } from './env-config.js';
 
 export interface FrontendStackProps extends cdk.StackProps {
   readonly envConfig: EnvConfig;
@@ -46,6 +48,10 @@ export class FrontendStack extends cdk.Stack {
   public readonly bucketName: string;
   public readonly distributionDomainName: string;
   public readonly distributionDomainOutput: cdk.CfnOutput;
+  public readonly bucketNameOutput: cdk.CfnOutput;
+  public readonly distributionIdOutput: cdk.CfnOutput;
+  public readonly contentDeployRoleArn: string;
+  public readonly contentDeployRoleArnOutput: cdk.CfnOutput;
 
   constructor(scope: Construct, id: string, props: FrontendStackProps) {
     super(scope, id, props);
@@ -103,10 +109,44 @@ export class FrontendStack extends cdk.Stack {
     this.distributionDomainName = distribution.distributionDomainName;
 
     // CfnOutputs for readback + pipeline deploy step
-    new cdk.CfnOutput(this, 'FrontendBucketName', { value: bucket.bucketName });
-    new cdk.CfnOutput(this, 'FrontendDistributionId', { value: distribution.distributionId });
+    this.bucketNameOutput = new cdk.CfnOutput(this, 'FrontendBucketName', { value: bucket.bucketName });
+    this.distributionIdOutput = new cdk.CfnOutput(this, 'FrontendDistributionId', { value: distribution.distributionId });
     this.distributionDomainOutput = new cdk.CfnOutput(this, 'FrontendDistributionDomain', {
       value: distribution.distributionDomainName,
+    });
+
+    // ContentDeployRole — per-env role for the pipeline CodeBuild step to
+    // sync SPA assets to this bucket + invalidate CloudFront. Trust is
+    // condition-gated to mgmt pipeline roles only. (SMOKE-2 design §2.1)
+    const contentDeployRole = new iam.Role(this, 'ContentDeployRole', {
+      roleName: `cumplify-${envConfig.envName}-frontend-content-deploy`,
+      assumedBy: new iam.PrincipalWithConditions(new iam.AnyPrincipal(), {
+        StringLike: {
+          'aws:PrincipalArn': `arn:aws:iam::${MGMT_ACCOUNT}:role/CumplifyPipeline*`,
+        },
+      }),
+      inlinePolicies: {
+        FrontendDeployPolicy: new iam.PolicyDocument({
+          statements: [
+            new iam.PolicyStatement({
+              effect: iam.Effect.ALLOW,
+              actions: ['s3:PutObject', 's3:DeleteObject', 's3:ListBucket'],
+              resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
+            }),
+            new iam.PolicyStatement({
+              effect: iam.Effect.ALLOW,
+              actions: ['cloudfront:CreateInvalidation'],
+              resources: [
+                `arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`,
+              ],
+            }),
+          ],
+        }),
+      },
+    });
+    this.contentDeployRoleArn = contentDeployRole.roleArn;
+    this.contentDeployRoleArnOutput = new cdk.CfnOutput(this, 'ContentDeployRoleArn', {
+      value: contentDeployRole.roleArn,
     });
 
     // CDK Nag suppressions
@@ -144,6 +184,18 @@ export class FrontendStack extends cdk.Stack {
           id: 'AwsSolutions-S1',
           reason:
             'Access logging deferred — CloudFront standard logging provides visibility at the edge layer.',
+        },
+      ],
+      true,
+    );
+
+    NagSuppressions.addResourceSuppressions(
+      contentDeployRole,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'S3 object-level actions (PutObject, DeleteObject) require /*-suffixed resource for s3 sync; scoped to this stack\'s bucket only.',
         },
       ],
       true,
