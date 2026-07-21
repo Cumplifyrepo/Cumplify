@@ -4,10 +4,17 @@
 **Token source:** `frontend/src/tokens/design-tokens.ts` (Layer 1 + Layer 2 semantic).
 **Extends:** `.kiro/specs/frontend-app/view-designs.md` (P0 shell + module views).
 **Binding rule:** new shared components and nav changes are built ONLY from the specs below. Deviations go to the architect, not into the code.
+**Standing rule (owner order, post F-P1-1):** every section must cite its
+architecture §4 matrix row — exact query/mutation names + status (BUILT /
+read-surface-completion / ROADMAP) — before the build task opens. A view may
+not render a control whose backend contract is absent; honest stubs/zero-states only.
 
 ---
 
 ## 1. Shell / Navigation — §10 IA Restructure
+
+**§4 matrix citation:** Shell/nav is infrastructure — no data queries. Consumed
+by all views. No backend contract dependency.
 
 The existing sidebar (view-designs.md §1) is preserved structurally but the
 nav sections and routes are replaced with the §10 information architecture.
@@ -67,6 +74,10 @@ The old route directories remain in `(authenticated)/` with a single
 
 ## 2. StandardSwitch — Global Scope Context
 
+**§4 matrix citation:** UI affordance only in P1 — no query dependency. Filters
+wire into view queries in P2+ (e.g. `getCrossRegisterRiskView(standard)` for
+§6.1 risk register). No backend contract required for the toggle itself.
+
 Implements pain #7 (2nd/3rd standard triples work).
 
 ### 2.1 Provider
@@ -101,6 +112,9 @@ Implements pain #7 (2nd/3rd standard triples work).
 ---
 
 ## 3. Shared Components — StatTile, GuidanceBanner, ReadyPill
+
+**§4 matrix citation:** Presentation-only components — no data queries. Consumed
+by views that have their own backend contracts. No backend contract dependency.
 
 All styled exclusively from `design-tokens.ts`. No CertifyAero pixels.
 
@@ -179,6 +193,10 @@ Styling:
 
 ## 4. Ask Trigger Placement
 
+**§4 matrix citation:** Ask overlay is an existing BUILT component (per
+frontend-app/view-designs.md §4). Queries: `askISO9001|askISO14001|askISO45001`
+— status: BUILT. P1 change is nav-removal only, no new backend contract needed.
+
 The AskOverlay (existing, wired in authenticated layout) provides the
 floating trigger. Per §10 IA, Ask is removed from the sidebar nav — the
 overlay is the sole access point. No changes to the AskOverlay component
@@ -187,6 +205,10 @@ itself; just the nav removal.
 ---
 
 ## 5. Stub Pages (P2–P5 placeholders)
+
+**§4 matrix citation:** Stub pages render zero data — no backend queries.
+They display PageHeader + EmptyState only. Each stub's real view will cite
+its own §4 row when its build phase opens (per standing rule).
 
 Every new route in the IA that doesn't have a real view yet gets a stub page:
 
@@ -237,3 +259,53 @@ Namespace `shared` — new keys:
 - `comingSoon`
 
 All keys authored EN, translated ES/PT same commit.
+
+
+---
+
+## 7. Risk Register (`/risk`) — P1 Migration (one migrated register)
+
+**§4 matrix citation:**
+- Row: `6.1 (Δaspects/Δhazards)` — Risk & opportunity register
+- Agent: RiskSentinel + HazardScout + AspectWarden (A-CAT; M5 register works)
+- Surface: `/risk` P1; agents P7
+- **Queries consumed:**
+  - `getCrossRegisterRiskView(standard, category)` — **BUILT** (returns risk
+    register filtered by standard and/or category; the same query serves as
+    the filterable cross-register view)
+  - `onRiskEscalated(tenantId)` subscription — **BUILT** (real-time escalation)
+- **Mutations consumed:**
+  - `createRisk(input)` — **BUILT**
+  - `addRiskTreatment(input)` — **BUILT**
+  - `createChangePlan(input)` — **BUILT**
+- **DEFERRED (owner ruling, §11):**
+  - `listRiskTreatments` — ROADMAP (treatments panel shows honest "blocked" state)
+
+### 7.1 Migration procedure (per §11 migration law)
+
+The M5 risk register implementation migrates to `/risk`. Direction:
+- `/risk/page.tsx` receives the full M5 implementation + StandardSwitch awareness.
+- `/m5/page.tsx` becomes a client-redirect stub → `/risk`.
+- CSS module copies to the new route.
+- Tests migrate with the implementation (test count grows, never shrinks).
+
+### 7.2 StandardSwitch integration
+
+The existing M5 standard filter pills are replaced with StandardSwitch
+awareness:
+- When `standard !== 'IMS'`, the query passes `standard` param and the
+  standard pills hide (the global toggle is the filter).
+- When `standard === 'IMS'`, the local standard pills show (existing behavior)
+  for per-standard drill-down within the integrated view.
+- The category filter remains independent of StandardSwitch.
+
+### 7.3 Layout (unchanged from frontend-app/view-designs.md §9)
+
+- PageHeader("Risk Management", action: PrimaryButton t('m5.newRisk'))
+- Filter bar: standard pills (visible only in IMS mode) + category select
+- DataTable: description, category, standard ClauseChip, riskRating w/
+  ProvenanceLink + StatusBadge, owner, status
+- Row expand: treatments (honest "blocked" state until listRiskTreatments
+  ships) + addTreatment + createChangePlan drawers
+- Real-time: `onRiskEscalated` → refetch + flash escalated row (3s danger rail)
+- Ask chip target: `?create=1&title=<>&standard=<>` consumed by createRisk drawer

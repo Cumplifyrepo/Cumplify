@@ -64,3 +64,22 @@ Shell + toggle + working-surface nav: DONE (with correction). The "one
 migrated register" (architecture §11) is NOT yet delivered — assigned back
 to Kiro as the P1 closer (recommend /risk absorbing m5 as the smallest
 real migration, per the interim-redirect flip procedure).
+
+## P1 CLOSURE — correction round delivered + validated (2026-07-21, second pass)
+Kiro delivered both items; architect re-validated on-disk + re-ran gates:
+- **/risk migration REAL**: 371-line register (the m5 implementation) at
+  /risk/page.tsx, `useStandardScope` wired (global scope filters the query;
+  local pills only under IMS); /m5 = 25-line redirect → /risk (the ONLY
+  authorized flip); m1/m2/m4/qms/m4-forms untouched at full size (246/359/
+  406/804/324 lines).
+- **view-designs.md retrofit REAL**: standing contract rule in header; §4
+  citations per P1 section; §7 risk contract — all five cited BUILT
+  operations (getCrossRegisterRiskView, onRiskEscalated, createRisk,
+  addRiskTreatment, createChangePlan) verified present in schema.graphql;
+  listRiskTreatments verified ABSENT (honestly cited DEFERRED/ROADMAP).
+- **Gates (architect-run)**: tsc clean · i18n:check clean · vitest 124/124
+  (baseline held — no test shrinkage) · next build static green, /risk
+  4.09 kB.
+
+**P1 CLOSED. CHECKPOINT A next: screenshot pack from dev after the
+pipeline carries this commit.**
