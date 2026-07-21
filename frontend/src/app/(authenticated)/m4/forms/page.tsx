@@ -117,6 +117,7 @@ export default function FormsPage() {
     async (templateId: string) => {
       try {
         setRecordsLoading(true);
+        setError(false);
         const data = await query<{ listFormRecords: FormRecord[] }>(LIST_RECORDS, { templateId });
         setRecords(data.listFormRecords);
       } catch {
@@ -233,7 +234,9 @@ export default function FormsPage() {
             </div>
           }
         />
-        {recordsLoading ? (
+        {error && !recordsLoading ? (
+          <ErrorState onRetry={() => fetchRecords(selectedTemplate.id)} />
+        ) : recordsLoading ? (
           <p className={styles.loading}>{tRegister('loading')}</p>
         ) : (
           <DataTable

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import FormsPage from './page';
 
 // ----- Mocks -----
@@ -74,22 +74,27 @@ vi.mock('@/components/shared', () => ({
   DataTable: ({
     data,
     columns,
+    emptyMessage,
   }: {
     data: unknown[];
     columns: { key: string; render: (item: unknown) => React.ReactNode }[];
-  }) => (
-    <table data-testid="data-table">
-      <tbody>
-        {data.map((item, i) => (
-          <tr key={i}>
-            {columns.map((c) => (
-              <td key={c.key}>{c.render(item)}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ),
+    emptyMessage?: string;
+  }) =>
+    data.length === 0 && emptyMessage ? (
+      <p data-testid="data-table-empty">{emptyMessage}</p>
+    ) : (
+      <table data-testid="data-table">
+        <tbody>
+          {data.map((item, i) => (
+            <tr key={i}>
+              {columns.map((c) => (
+                <td key={c.key}>{c.render(item)}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ),
   StatusBadge: ({ status }: { status: string }) => <span data-testid="badge">{status}</span>,
   PrimaryButton: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button {...props}>{children}</button>
@@ -181,5 +186,53 @@ describe('FormsPage — Template Catalog', () => {
     await waitFor(() => {
       expect(screen.getByText('retry-action')).toBeInTheDocument();
     });
+  });
+});
+
+describe('FormsPage — Record Register (AUD-9 regression)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('register query error renders ErrorState — NEVER the empty table (AUD-9)', async () => {
+    // Catalog loads fine; the register query fails (the AUD-1 class of
+    // failure the owner saw rendered as "No records").
+    mockQuery.mockImplementation((q: string) =>
+      q.includes('listFormRecords')
+        ? Promise.reject(new Error('serialization error'))
+        : Promise.resolve({ listFormTemplates: mockTemplates }),
+    );
+
+    render(<FormsPage />);
+    fireEvent.click(await screen.findByText('NCR'));
+
+    await waitFor(() => {
+      expect(screen.getByText('retry-action')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('No records')).not.toBeInTheDocument();
+  });
+
+  it('retry after error refetches and a clean empty register renders the empty message', async () => {
+    let failRecords = true;
+    mockQuery.mockImplementation((q: string) => {
+      if (q.includes('listFormRecords')) {
+        return failRecords
+          ? Promise.reject(new Error('serialization error'))
+          : Promise.resolve({ listFormRecords: [] });
+      }
+      return Promise.resolve({ listFormTemplates: mockTemplates });
+    });
+
+    render(<FormsPage />);
+    fireEvent.click(await screen.findByText('NCR'));
+    await waitFor(() => expect(screen.getByText('retry-action')).toBeInTheDocument());
+
+    failRecords = false;
+    fireEvent.click(screen.getByText('retry-action'));
+
+    await waitFor(() => {
+      expect(screen.getByText('No records')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('retry-action')).not.toBeInTheDocument();
   });
 });
