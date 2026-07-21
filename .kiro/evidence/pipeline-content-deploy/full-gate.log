@@ -59,3 +59,29 @@ CDK Nag: no new errors (AwsSolutionsChecks applied at App + Stage levels).
 - ContentDeployRole trust: PrincipalWithConditions(AnyPrincipal, StringLike aws:PrincipalArn → mgmt CumplifyPipeline*).
 - rolePolicyStatements on each step grants sts:AssumeRole on the deterministic ARN (confirmed in CDK 2.261).
 - Architect gates: post-push template inspection + live witness at next Staging promotion.
+
+=== ARCHITECT INDEPENDENT VALIDATION (2026-07-21T17:2xZ) ===
+Delivered COMMITTED this time (2f9652a) — first committed Kiro delivery of
+the arc. PROCESS DEVIATION (recurring, 2nd wave): tasks.md required per-task
+evidence logs; only this consolidated log shipped. Non-blocking (per-task
+evidence was tsc-clean per file; substance covered here) — per-task logs
+REQUIRED again next wave.
+Re-executed, not trusted: tsc 0 · suite 1140 passed|3 skipped (infra) + 122
+(frontend) exit 0 — counts match claims exactly · cdk synth --all 0.
+RAW TEMPLATE PROOF (cdk.out):
+- CumplifyPipeline.template.json contains ALL THREE exact AssumeRole ARNs
+  (dev 697114252993 / staging 889007427685 / prod 077405654066 — accounts
+  cross-checked against ENV_CONFIGS, match the deterministic role names).
+- Staging actions: DeployFrontendContent RunOrder 12 < SmokeTest 13 —
+  addStepDependency rendered. Dev RunOrder 11, Prod 14, step present in all
+  three stages.
+- Staging DeployFrontendContent action env vars: CONTENT_DEPLOY_ROLE_ARN,
+  DISTRIBUTION_ID, FRONTEND_BUCKET, NEXT_PUBLIC_GRAPHQL_URL,
+  NEXT_PUBLIC_USER_POOL_ID, NEXT_PUBLIC_USER_POOL_CLIENT_ID — all six.
+- Staging FrontendStack assembly: ContentDeployRole roleName
+  cumplify-staging-frontend-content-deploy; trust = Principal:* gated by
+  StringLike aws:PrincipalArn arn:aws:iam::157082218687:role/CumplifyPipeline*
+  (PrincipalWithConditions — S-fold applied).
+- load-env.mjs guard verbatim §2.6; .env.local-not-written test present.
+NEXT: push → self-mutation (execution restarts under new definition) → Dev
+leg = FIRST live cross-account content deploy → gate dance → Staging witness.
