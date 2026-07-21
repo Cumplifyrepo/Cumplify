@@ -39,7 +39,11 @@ export class PipelineStack extends cdk.Stack {
           // form — npm's --prefix flag has install-target quirks.
           'cd frontend && npm ci && cd ..',
           'npm run test',
-          'npm audit --audit-level=high',
+          // Hard audit gate with an explicit EXPIRING allowlist — raw
+          // `npm audit --audit-level=high` cannot express exceptions for deps
+          // bundled inside another package's tarball (aws-cdk-lib
+          // bundleDependencies), which broke Synth on GHSA-3jxr-9vmj-r5cp.
+          'npx tsx scripts/audit-gate.ts',
           'npx cdk synth --all',
           // CDK Nag runs as an Aspect during synth; a Nag error fails synth here.
         ],
