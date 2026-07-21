@@ -75,7 +75,14 @@ export class PipelineStack extends cdk.Stack {
       pre: [new pipelines.ManualApprovalStep('ApproveToStaging')],
       post: [
         new pipelines.ShellStep('SmokeTest', {
-          commands: ['curl -f https://staging.cumplify.ai/health || true'],
+          envFromCfnOutputs: {
+            FRONTEND_DOMAIN: stagingStage.frontendDistributionDomainOutput,
+          },
+          commands: [
+            // Content assertion, not status: the distribution rewrites 403/404 ->
+            // /index.html 200, so an -f status check passes on any path.
+            'curl -fsS "https://$FRONTEND_DOMAIN/" | grep -q "<title>Cumplify</title>"',
+          ],
         }),
       ],
     });

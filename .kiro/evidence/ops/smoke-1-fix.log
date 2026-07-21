@@ -1,0 +1,66 @@
+=== SMOKE-1 FIX EVIDENCE LOG ===
+Finding: SMOKE-1 — pipeline SmokeTest was vacuous (|| true + non-existent DNS)
+Fix: output-driven content-asserting SmokeTest via envFromCfnOutputs
+Timestamp: 2026-07-21T12:14:33Z
+Git HEAD (pre-commit): c191d8cd96577e4830c049bc309231b8628dab0c
+
+--- FILES CHANGED ---
+infra/lib/frontend-stack.ts       — exposed distributionDomainOutput as public CfnOutput field
+infra/lib/cumplify-stage.ts       — exposed frontendDistributionDomainOutput on CumplifyStage
+infra/lib/pipeline-stack.ts       — replaced vacuous SmokeTest with envFromCfnOutputs + content grep
+infra/lib/pipeline-stack.unit.test.ts — NEW: regression pin (no || true, grep present, env wired)
+
+--- VERIFICATION: tsc --noEmit ---
+Exit code: 0
+No type errors.
+
+--- VERIFICATION: npm run test (infra vitest) ---
+Tests:  1122 passed | 3 skipped (1125)
+Duration: 30.04s
+Exit code: 0
+
+Pipeline-specific test results:
+  ✓ PipelineStack — SmokeTest step > (a) SmokeTest buildspec does NOT contain "|| true"
+  ✓ PipelineStack — SmokeTest step > (b) SmokeTest buildspec contains the content assertion grep
+  ✓ PipelineStack — SmokeTest step > (c) SmokeTest buildspec wires FRONTEND_DOMAIN from Staging FrontendStack output
+
+--- VERIFICATION: npm run test (frontend vitest) ---
+Tests:  121 passed (121)
+Duration: 1.64s
+Exit code: 0
+
+--- VERIFICATION: npx cdk synth --all ---
+Successfully synthesized to /home/julio-medrano/cumplify/cdk.out
+Exit code: 0
+CDK Nag: no new findings (AwsSolutionsChecks applied at App + Stage levels).
+
+--- NOTES ---
+- The fix takes effect via pipeline self-mutation on the next `develop` push.
+- Live witnessed at the NEXT Staging promotion (architect verifies rendered
+  buildspec in mgmt account after UpdatePipeline runs).
+- Custom domains (staging.cumplify.ai) routed to pre-GA backlog as separate item.
+
+--- ARCHITECT INDEPENDENT VALIDATION (2026-07-21T12:22Z) ---
+Delivered UNCOMMITTED (working tree) — architect-committed, recurring pattern.
+Diffs re-read against smoke-1-fix-package.md §3: all three production changes
+VERBATIM-faithful; scope exactly the 4 files + this log, no creep.
+Re-executed (not trusted): tsc --noEmit exit 0 · full hermetic suite
+1122 passed | 3 skipped (infra) + 121 passed (frontend), chain exit 0 @
+12:22:02Z · cdk synth --all exit 0 · residue grep for '|| true' and
+staging.cumplify.ai in infra/ (excl. the pin test): CLEAN.
+RAW-DATA WIRING PROOF (cdk.out/CumplifyPipeline.template.json): Staging
+SmokeTest action EnvironmentVariables =
+[{name:FRONTEND_DOMAIN,type:PLAINTEXT,
+  value:#{CumplifyPipelineStagingFrontendStack3708BC31.FrontendDistributionDomain}}]
+and FrontendStack.Deploy declares that exact namespace.
+FINDING (fixed in-commit): Kiro's test (c) asserted only that the string
+FRONTEND_DOMAIN appears in a buildspec — vacuously true (the curl command
+contains $FRONTEND_DOMAIN even with envFromCfnOutputs removed; failure mode
+was fail-loud at promotion, so severity LOW). Architect hardened (c) to parse
+the CodePipeline SmokeTest action's EnvironmentVariables and match
+/^#\{.*StagingFrontendStack.*\.FrontendDistributionDomain\}$/ — the pin now
+guards the wiring itself. 3/3 tests pass post-hardening.
+LIVE WITNESS PENDING: self-mutation applies on this push (UpdatePipeline);
+architect will read back the live pipeline definition mgmt-side. Full
+behavioral witness = next Staging promotion (smoke curls the real
+distribution; a failure now FAILS the stage).

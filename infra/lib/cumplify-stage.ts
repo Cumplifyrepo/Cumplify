@@ -25,6 +25,8 @@ export interface CumplifyStageProps extends cdk.StageProps {
 }
 
 export class CumplifyStage extends cdk.Stage {
+  public readonly frontendDistributionDomainOutput: cdk.CfnOutput;
+
   constructor(scope: Construct, id: string, props: CumplifyStageProps) {
     super(scope, id, props);
 
@@ -172,6 +174,9 @@ export class CumplifyStage extends cdk.Stage {
       apiUrl: apiStack.graphqlApiUrl,
     });
     frontendStack.addDependency(apiStack);
+
+    // Expose for pipeline SmokeTest (envFromCfnOutputs)
+    this.frontendDistributionDomainOutput = frontendStack.distributionDomainOutput;
 
     // AC-1.6: CDK Nag also applied at stage level.
     // Required because CDK Pipelines stages are separate cloud assemblies —

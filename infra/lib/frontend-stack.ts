@@ -45,6 +45,7 @@ export class FrontendStack extends cdk.Stack {
   public readonly distributionId: string;
   public readonly bucketName: string;
   public readonly distributionDomainName: string;
+  public readonly distributionDomainOutput: cdk.CfnOutput;
 
   constructor(scope: Construct, id: string, props: FrontendStackProps) {
     super(scope, id, props);
@@ -104,7 +105,7 @@ export class FrontendStack extends cdk.Stack {
     // CfnOutputs for readback + pipeline deploy step
     new cdk.CfnOutput(this, 'FrontendBucketName', { value: bucket.bucketName });
     new cdk.CfnOutput(this, 'FrontendDistributionId', { value: distribution.distributionId });
-    new cdk.CfnOutput(this, 'FrontendDistributionDomain', {
+    this.distributionDomainOutput = new cdk.CfnOutput(this, 'FrontendDistributionDomain', {
       value: distribution.distributionDomainName,
     });
 
