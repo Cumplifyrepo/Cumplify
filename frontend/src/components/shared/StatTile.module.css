@@ -1,0 +1,54 @@
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-card-pad);
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.value {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  color: var(--color-text-heading);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.warning {
+  color: var(--color-warning);
+}
+
+.danger {
+  color: var(--color-danger);
+}
+
+.default {
+  color: var(--color-text-heading);
+}
+
+.trend {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.trendPos {
+  color: var(--color-success);
+}
+
+.trendNeg {
+  color: var(--color-danger);
+}

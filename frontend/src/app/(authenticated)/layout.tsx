@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { AppShell } from '@/components/shell';
 import { AskOverlay } from '@/components/ask';
+import { StandardScopeProvider } from '@/lib/standard-scope';
 
 /**
  * Authenticated layout — wraps all views in the AppShell.
@@ -34,9 +35,9 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   if (!isAuthenticated) return null;
 
   return (
-    <>
+    <StandardScopeProvider>
       <AppShell>{children}</AppShell>
       <AskOverlay />
-    </>
+    </StandardScopeProvider>
   );
 }

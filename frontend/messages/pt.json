@@ -4,16 +4,30 @@
     "operate": "OPERAR",
     "modules": "MÓDULOS",
     "admin": "ADMIN",
+    "documents": "DOCUMENTOS",
+    "auditReadiness": "AUDITORIA E PRONTIDÃO",
+    "operations": "OPERAÇÕES",
     "commandCenter": "Centro de Comando",
     "askCumplify": "Perguntar ao Cumplify",
     "documentStudio": "Estúdio de Documentos",
-    "capa": "CAPA",
-    "auditStudio": "Estúdio de Auditoria",
-    "records": "Registros",
+    "manual": "Manual SGI",
+    "docBrowser": "Documentos",
     "forms": "Formulários",
+    "crossReference": "Referência Cruzada",
+    "guide": "Guia de Cláusulas",
+    "auditReadinessItem": "Prontidão",
+    "audits": "Auditorias",
+    "aiReview": "Revisão IA",
+    "activityLog": "Atividade",
+    "analyticsLabel": "Análises",
+    "capa": "CAPA",
     "risk": "Risco",
+    "records": "Registros",
+    "managementReview": "Revisão pela Direção",
+    "settings": "Configurações",
+    "setup": "Configuração Inicial",
     "qmsEngine": "Motor QMS",
-    "settings": "Configurações"
+    "redirecting": "Redirecionando..."
   },
   "shell": {
     "signOut": "Sair",
@@ -21,7 +35,12 @@
     "signingIn": "Entrando...",
     "signInError": "E-mail ou senha inválidos",
     "email": "E-mail",
-    "password": "Senha"
+    "password": "Senha",
+    "standardScopeLabel": "Escopo da norma",
+    "standardIso9001": "9001",
+    "standardIso14001": "14001",
+    "standardIso45001": "45001",
+    "standardIms": "SGI"
   },
   "commandCenter": {
     "title": "Centro de Comando",
@@ -772,5 +791,72 @@
       "versionLabel": "Versão {version}",
       "selectVersionForDiff": "Selecionar versão {version} para comparação"
     }
+  },
+  "shared": {
+    "readyReady": "Pronto",
+    "readyPartial": "Parcial",
+    "readyNotReady": "Não pronto",
+    "readyUnknown": "Desconhecido",
+    "comingSoon": "Em breve"
+  },
+  "manual": {
+    "title": "Manual SGI",
+    "comingSoon": "Geração e visualizador do manual disponível na Fase 2."
+  },
+  "documents": {
+    "title": "Documentos",
+    "comingSoon": "Explorador de documentos disponível na Fase 2."
+  },
+  "formsStub": {
+    "title": "Formulários",
+    "comingSoon": "Catálogo de formulários disponível na Fase 3."
+  },
+  "crossReference": {
+    "title": "Referência Cruzada",
+    "comingSoon": "Matriz de referência cruzada de cláusulas disponível na Fase 2."
+  },
+  "guide": {
+    "title": "Guia de Cláusulas",
+    "comingSoon": "Guia do registro de cláusulas disponível na Fase 2."
+  },
+  "auditReadinessPage": {
+    "title": "Prontidão para Auditoria",
+    "comingSoon": "Lista de verificação de prontidão Etapa 1/2 disponível na Fase 3."
+  },
+  "audits": {
+    "title": "Estúdio de Auditoria",
+    "comingSoon": "Estúdio de Auditoria disponível na Fase 3."
+  },
+  "aiReview": {
+    "title": "Revisão IA",
+    "comingSoon": "Fila de revisão IA estruturada disponível na Fase 3."
+  },
+  "activity": {
+    "title": "Atividade",
+    "comingSoon": "Registro de atividade disponível na Fase 3."
+  },
+  "analytics": {
+    "title": "Análises",
+    "comingSoon": "Painéis analíticos e KPIs disponíveis na Fase 4."
+  },
+  "capaStub": {
+    "title": "CAPA",
+    "comingSoon": "Estúdio CAPA disponível na Fase 4."
+  },
+  "riskStub": {
+    "title": "Gestão de Riscos",
+    "comingSoon": "Gestão de riscos disponível na Fase 4."
+  },
+  "records": {
+    "title": "Registros",
+    "comingSoon": "Gestão de registros disponível na Fase 4."
+  },
+  "managementReview": {
+    "title": "Revisão pela Direção",
+    "comingSoon": "Revisão pela direção disponível na Fase 4."
+  },
+  "setup": {
+    "title": "Configuração Inicial",
+    "comingSoon": "Assistente de configuração disponível na Fase 2."
   }
 }

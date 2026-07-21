@@ -424,7 +424,11 @@ fixtures; error≠empty sweep (AUD-9); live list-with-rows probes.
 
 **P1 — Foundation + IA (2 sessions, Kiro ∥ architect)**
 nav-config extraction + §10 IA + redirect stubs; StandardSwitch scope
-context (pain 7); shared components from tokens. ∥ Architect read-surface
+context (pain 7); shared components from tokens. **Migration law (added
+after P1 finding F-P1-1): a route in the live nav must ALWAYS land on a
+WORKING surface. Renamed routes redirect NEW→OLD (interim) and the
+direction flips only when the absorbing view passes its design gate; old
+implementations are never deleted before absorption.** ∥ Architect read-surface
 spec: `Document.clauseRefs`, `listAuditEvents`, **m3 audit quartet REQUIRED**
 (programmes/audits/checklist/findings), records-register read (M4 rewire +
 `listFormRecords`), `listRetentionPolicies`, approval-matrix SDL, **agent

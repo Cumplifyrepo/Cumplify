@@ -4,16 +4,30 @@
     "operate": "OPERATE",
     "modules": "MODULES",
     "admin": "ADMIN",
+    "documents": "DOCUMENTS",
+    "auditReadiness": "AUDIT & READINESS",
+    "operations": "OPERATIONS",
     "commandCenter": "Command Center",
     "askCumplify": "Ask Cumplify",
     "documentStudio": "Document Studio",
-    "capa": "CAPA",
-    "auditStudio": "Audit Studio",
-    "records": "Records",
+    "manual": "IMS Manual",
+    "docBrowser": "Documents",
     "forms": "Forms",
+    "crossReference": "Cross-Reference",
+    "guide": "Clause Guide",
+    "auditReadinessItem": "Readiness",
+    "audits": "Audits",
+    "aiReview": "AI Review",
+    "activityLog": "Activity",
+    "analyticsLabel": "Analytics",
+    "capa": "CAPA",
     "risk": "Risk",
+    "records": "Records",
+    "managementReview": "Management Review",
+    "settings": "Settings",
+    "setup": "Setup",
     "qmsEngine": "QMS Engine",
-    "settings": "Settings"
+    "redirecting": "Redirecting..."
   },
   "shell": {
     "signOut": "Sign out",
@@ -21,7 +35,12 @@
     "signingIn": "Signing in...",
     "signInError": "Invalid email or password",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "standardScopeLabel": "Standard scope",
+    "standardIso9001": "9001",
+    "standardIso14001": "14001",
+    "standardIso45001": "45001",
+    "standardIms": "IMS"
   },
   "commandCenter": {
     "title": "Command Center",
@@ -769,5 +788,72 @@
       "versionLabel": "Version {version}",
       "selectVersionForDiff": "Select version {version} for diff comparison"
     }
+  },
+  "shared": {
+    "readyReady": "Ready",
+    "readyPartial": "Partial",
+    "readyNotReady": "Not ready",
+    "readyUnknown": "Unknown",
+    "comingSoon": "Coming soon"
+  },
+  "manual": {
+    "title": "IMS Manual",
+    "comingSoon": "Manual generation and viewer coming in Phase 2."
+  },
+  "documents": {
+    "title": "Documents",
+    "comingSoon": "Document browser coming in Phase 2."
+  },
+  "formsStub": {
+    "title": "Forms",
+    "comingSoon": "Forms catalog coming in Phase 3."
+  },
+  "crossReference": {
+    "title": "Cross-Reference",
+    "comingSoon": "Clause cross-reference matrix coming in Phase 2."
+  },
+  "guide": {
+    "title": "Clause Guide",
+    "comingSoon": "Clause registry guide coming in Phase 2."
+  },
+  "auditReadinessPage": {
+    "title": "Audit Readiness",
+    "comingSoon": "Stage 1/2 readiness checklist coming in Phase 3."
+  },
+  "audits": {
+    "title": "Audit Studio",
+    "comingSoon": "Audit Studio coming in Phase 3."
+  },
+  "aiReview": {
+    "title": "AI Review",
+    "comingSoon": "Structured AI review queue coming in Phase 3."
+  },
+  "activity": {
+    "title": "Activity",
+    "comingSoon": "Activity log coming in Phase 3."
+  },
+  "analytics": {
+    "title": "Analytics",
+    "comingSoon": "Analytics and KPI dashboards coming in Phase 4."
+  },
+  "capaStub": {
+    "title": "CAPA",
+    "comingSoon": "CAPA Studio coming in Phase 4."
+  },
+  "riskStub": {
+    "title": "Risk Management",
+    "comingSoon": "Risk management coming in Phase 4."
+  },
+  "records": {
+    "title": "Records",
+    "comingSoon": "Records management coming in Phase 4."
+  },
+  "managementReview": {
+    "title": "Management Review",
+    "comingSoon": "Management review coming in Phase 4."
+  },
+  "setup": {
+    "title": "Setup",
+    "comingSoon": "Setup wizard coming in Phase 2."
   }
 }

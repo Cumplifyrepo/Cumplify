@@ -5,16 +5,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { NavSection } from './NavSection';
 import { NavItem } from './NavItem';
+import { StandardSwitch } from './StandardSwitch';
 import { UserFooter } from './UserFooter';
 import { useAuth } from '@/lib/auth-context';
-import { canSeeAdmin } from '@/lib/role-matrix';
+import { topItem, navSections } from './nav-config';
 import styles from './Sidebar.module.css';
 
 /**
- * Sidebar — view-designs.md §1.
+ * Sidebar — view-designs.md §1 + ims-experience/view-designs.md §1.
  * Fixed left sidebar with section-labelled nav.
+ * §10 IA: Command Center (top) / DOCUMENTS / AUDIT & READINESS / OPERATIONS / ADMIN.
  * Role-gating is presentation-only (CON-6).
- * m6 fix: use next/link for logo, not raw <a>.
+ * Ask Cumplify removed from nav — accessible via overlay only (ASK-1).
  */
 export function Sidebar() {
   const t = useTranslations('nav');
@@ -29,27 +31,25 @@ export function Sidebar() {
         </Link>
       </div>
 
+      <StandardSwitch />
+
       <nav className={styles.nav} aria-label={t('mainNav')}>
-        <NavSection label={t('operate')}>
-          <NavItem href="/dashboard" label={t('commandCenter')} />
-          <NavItem href="/ask" label={t('askCumplify')} />
-        </NavSection>
+        {/* Top item — Command Center, no section header */}
+        <ul className={styles.topList}>
+          <NavItem href={topItem.href} label={t(topItem.labelKey)} />
+        </ul>
 
-        <NavSection label={t('modules')}>
-          <NavItem href="/m1" label={t('documentStudio')} />
-          <NavItem href="/m2" label={t('capa')} />
-          <NavItem href="/m3" label={t('auditStudio')} />
-          <NavItem href="/m4" label={t('records')} />
-          <NavItem href="/m4/forms" label={t('forms')} />
-          <NavItem href="/m5" label={t('risk')} />
-          <NavItem href="/qms" label={t('qmsEngine')} />
-        </NavSection>
-
-        {canSeeAdmin(role) && (
-          <NavSection label={t('admin')}>
-            <NavItem href="/settings" label={t('settings')} />
-          </NavSection>
-        )}
+        {/* §10 IA sections */}
+        {navSections.map((section) => {
+          if (section.roleGate && !section.roleGate(role)) return null;
+          return (
+            <NavSection key={section.labelKey} label={t(section.labelKey)}>
+              {section.items.map((item) => (
+                <NavItem key={item.href} href={item.href} label={t(item.labelKey)} />
+              ))}
+            </NavSection>
+          );
+        })}
       </nav>
 
       <UserFooter />

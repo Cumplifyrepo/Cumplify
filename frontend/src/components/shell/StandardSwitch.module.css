@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  gap: 0;
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs);
+  margin: 0 var(--space-md) var(--space-lg);
+}
+
+.option {
+  flex: 1;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  background: transparent;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.option:hover {
+  color: var(--color-text-heading);
+}
+
+.active {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
+
+.active:hover {
+  color: var(--color-text-on-accent);
+}

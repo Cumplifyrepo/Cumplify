@@ -1,0 +1,53 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* State: ready */
+.ready {
+  color: var(--color-success);
+}
+
+.ready .dot {
+  background: var(--color-success);
+}
+
+/* State: partial */
+.partial {
+  color: var(--color-warning);
+}
+
+.partial .dot {
+  background: var(--color-warning);
+}
+
+/* State: not-ready */
+.notReady {
+  color: var(--color-danger);
+}
+
+.notReady .dot {
+  background: var(--color-danger);
+}
+
+/* State: unknown */
+.unknown {
+  color: var(--color-text-muted);
+}
+
+.unknown .dot {
+  background: var(--color-text-muted);
+}
