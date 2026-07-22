@@ -195,6 +195,22 @@ card → human EDITS one node + one agent ITERATION revises the artifact →
 approve converged version → row updated + sealed event with dual
 attribution; SoD floor holds (§6d).
 
+### 7c. REQ-RS-9 — saveDocumentSectionEdit (Collaboration Law persistence)
+
+The system SHALL add `saveDocumentSectionEdit(input:
+SaveDocumentSectionEditInput!): DocumentVersion! @aws_lambda` (input:
+versionId, sectionIndex, body, trackedChanges: AWSJSON — the per-change
+attribution payload `{author: sub|agent:<name>, ts, op}` per the
+Collaboration Law / ES-4). Behavior: writes a NEW document version (never
+mutates a sealed/approved one — 7.5.2 versioning law) carrying the edited
+section + the attribution payload; status DRAFT; audit event
+`Document.SectionEdited` with dual-attribution summary in payload.
+Resolver: m1.ts (version-write path exists for generation); SCHEMA-5;
+marshal via shared. Acceptance: hermetic tests (attribution payload
+round-trip, sealed-version write rejection) + int probe edit→new version
+listed in listDocumentVersions. Consumer: Document Studio editor (P2 S3
+ships against a flagged local draft until this lands).
+
 ### 8. Non-functional / gates
 - Hermetic lane stays hermetic (fake AWS creds; unmocked clients fail loudly).
 - All new list resolvers use shared marshal (AUD-1 rule); fixtures use REAL
