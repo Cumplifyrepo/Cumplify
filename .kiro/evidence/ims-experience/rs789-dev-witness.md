@@ -71,7 +71,7 @@ The RiskSentinel item was left PENDING untouched.
 | RS-8 full propose→approve→writeback→commit chain | PASS (incidental, via the SoD gap) |
 | SOD-1 self-approval blocked | **FAIL → fixed this commit; re-witness after deploy** |
 | RS-9 resolver wired | PASS (typed error; e2e blocked on demo-data gap) |
-| RS-7 agent* mutations | Not directly witnessed (IAM-only fields need a SigV4 caller; hermetic tests + the deployed schema carry them for now — flagged, not hidden) |
+| RS-7 agent* mutations | ~~Not directly witnessed~~ → **PASS via SigV4 probe, see re-witness section** |
 
 ## SOD-1 RE-WITNESS (post-1dc3df7 deploy) — PASS
 
@@ -101,8 +101,24 @@ PENDING item `01KY4X8410DP4AY5NP7Q43R723` is left for a second-approver /
 Checkpoint B demo; the RiskSentinel item from the first witness also
 remains PENDING.
 
+## RS-7 SigV4 LIVE PROBE — PASS
+
+`scratchpad/probe_rs7_sigv4.py` at 12:39:52Z–12:39:54Z, exit 0, 2/2 OK.
+Caller: SigV4 as `OrganizationAccountAccessRole` in the dev account — the
+SAME auth mode the agent Lambdas use; resolverContext never exists on
+this path, so this is the live proof of `extractAgentContext`'s
+tenantId-from-input wiring (the owner-ruled SCHEMA-5 exception).
+
+| Probe | Result |
+|---|---|
+| agentTriageNC, synthetic ncId, tenant-AAA | typed `NC_NOT_FOUND` — IAM auth accepted, resolver reached, agent context resolved, tenant-scoped fetch ran, ZERO mutation |
+| agentScoreReadiness(ISO9001, tenant-AAA) | 28 real clause-score rows committed via the IAM door; all 0.0 = the honest-gaps scoring (BC-3) being truthful about a tenant with no generation sections |
+| (incidental) upsert idempotency | probe ran twice — same 28 rows, `assessedAt` refreshed 12:39:32Z→12:39:53Z, no duplicate-key error: migration 018's unique constraint + ON CONFLICT witnessed live |
+| (incidental) input validation | first attempt used `classification: "minor"` → rejected with allowed set `NONCONFORMING_OUTPUT, NC, INCIDENT` BEFORE any fetch — validation precedes DB work |
+
 ## Open follow-ups
 1. ~~Re-witness SOD-1 after this commit deploys (self-approve → expect 403).~~
    DONE — PASS, see above.
 2. Owner demo-data decision still gates /manual, /documents e2e, RS-9 e2e.
-3. RS-7 SigV4 live probe — fold into the next witness pass.
+3. ~~RS-7 SigV4 live probe.~~ DONE — PASS, see above. All seven verdict
+   rows are now green; the RS-7/8/9 wave is fully live-witnessed.
