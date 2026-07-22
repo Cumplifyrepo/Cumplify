@@ -1,4 +1,13 @@
-# CHECKPOINT B — owner demo runbook (staged by architect, 2026-07-22)
+# CHECKPOINT B — VOID (owner REJECTED 2026-07-22: NOT APPROVED, MEDIOCRE)
+
+> **This runbook is superseded by `../../specs/ims-experience/studio-wave-plan.md`.**
+> Beat 1 described a UI action that only exists at API level — /capa
+> redirects to the old /m2 register and no surface exposes
+> runCapaAnalysis. The owner's rejection identified the systemic gap:
+> the studios (integrated agentic AI surfaces) were never built; only
+> the engine behind them. Kept for the record, not for use.
+
+# ~~CHECKPOINT B — owner demo runbook (staged by architect, 2026-07-22)~~
 
 Per the Agent-First law: LEAD WITH THE AGENT LOOP, never a register.
 All beats below are live on Dev today (witnessed; evidence linked).
