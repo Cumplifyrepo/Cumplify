@@ -229,7 +229,7 @@ async function getGenerationRun(event: AppSyncEvent, tenantId: string) {
     const run = marshalOne(runResult);
     if (!run) return null;
     // clauseRefs is jsonb — parse for the AWSJSON slot (double-encode otherwise)
-    const sections = marshalMany(sectionsResult).map((s) => ({
+    const sections: Record<string, unknown>[] = marshalMany(sectionsResult).map((s) => ({
       ...s,
       clauseRefs: jsonOut(s.clauseRefs),
     }));
