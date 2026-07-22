@@ -9,9 +9,10 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockToolLoop, mockSqsHandler } = vi.hoisted(() => ({
+const { mockToolLoop, mockSqsHandler, mockRetrieve } = vi.hoisted(() => ({
   mockToolLoop: vi.fn(),
   mockSqsHandler: vi.fn(),
+  mockRetrieve: vi.fn(),
 }));
 
 vi.mock('../../shared/tool-loop.js', () => ({
@@ -25,7 +26,7 @@ vi.mock('../../shared/invoke-transport.js', () => ({
 }));
 
 vi.mock('../../shared/retrieval.js', () => ({
-  retrieve: vi.fn().mockResolvedValue({ chunks: [] }),
+  retrieve: (...args: unknown[]) => mockRetrieve(...args),
 }));
 
 vi.mock('../../../eventing/src/consumer.js', () => ({
@@ -35,6 +36,8 @@ vi.mock('../../../eventing/src/consumer.js', () => ({
 beforeEach(() => {
   mockToolLoop.mockReset();
   mockSqsHandler.mockReset();
+  mockRetrieve.mockReset();
+  mockRetrieve.mockResolvedValue({ chunks: [] });
   process.env.DOC_STUDIO_DLQ_URL = 'https://sqs.us-east-1.amazonaws.com/123/doc-dlq';
   process.env.AOSS_ISO_KB_ENDPOINT = 'https://mock.aoss.amazonaws.com';
   process.env.AOSS_TENANT_DOCS_ENDPOINT = 'https://mock2.aoss.amazonaws.com';
@@ -117,5 +120,31 @@ describe('runDocDraft (S2)', () => {
 
     const result = await runDocDraft(draftInput);
     expect(result).toEqual({ runId: 'run-88', status: 'PENDING_APPROVAL' });
+  });
+
+  it('grounding (S2.2): iso-kb queried as ISO canon, tenant-docs as the tenant; a failed leg never discards the other', async () => {
+    // Live 2026-07-22: tenant-docs 404s (no indexer yet) and Promise.all
+    // threw away a SUCCEEDED iso-kb result; iso-kb filtered by the caller's
+    // tenantId returned 0 rows (canon chunks live under __ISO_CANON__).
+    mockRetrieve.mockImplementation(async (req: { indexName: string }) => {
+      if (req.indexName === 'cumplify-tenant-docs') {
+        throw new Error('AOSS search failed: 404 index_not_found_exception');
+      }
+      return { chunks: [{ text: 'iso canon chunk 8.1', score: 0.9, metadata: {} }] };
+    });
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'ok',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+    });
+
+    await runDocDraft(draftInput);
+
+    const calls = mockRetrieve.mock.calls.map((c) => c[0] as { indexName: string; tenantId: string });
+    expect(calls.find((c) => c.indexName === 'cumplify-iso-kb')!.tenantId).toBe('__ISO_CANON__');
+    expect(calls.find((c) => c.indexName === 'cumplify-tenant-docs')!.tenantId).toBe('tenant-1');
+    // The surviving iso leg still reaches the prompt
+    const [messages] = mockToolLoop.mock.calls[0];
+    expect(JSON.stringify(messages[0].content)).toContain('iso canon chunk 8.1');
   });
 });

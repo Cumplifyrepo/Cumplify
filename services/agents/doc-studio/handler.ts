@@ -18,6 +18,7 @@ import { retrieve } from '../shared/retrieval.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
 import type { ContentBlock } from '../../ai-invoker/src/types.js';
 import type { SQSEvent, SQSBatchResponse } from 'aws-lambda';
+import { ISO_CANON_TENANT_ID } from '../shared/constants.js';
 import { DOC_STUDIO_PROMPT } from './prompt.js';
 import { DOC_STUDIO_TOOLS } from './tools.js';
 
@@ -41,15 +42,23 @@ async function retrieveGrounding(tenantId: string, text: string): Promise<string
       feature: 'doc-draft',
       text,
     });
-    const [isoResults, tenantResults] = await Promise.all([
+    // S2.2 (found live at the S2.1 witness readback): the two legs are
+    // independent — allSettled, so a failing leg never discards the other's
+    // chunks (Promise.all threw away a SUCCEEDED iso-kb result live).
+    const [isoResults, tenantResults] = await Promise.allSettled([
+      // ISO canon chunks are stored under the canon tenant (guru precedent) —
+      // filtering iso-kb by the caller's tenantId guarantees 0 results.
       retrieve({
-        tenantId,
+        tenantId: ISO_CANON_TENANT_ID,
         collectionEndpoint: AOSS_ISO_KB_ENDPOINT,
         indexName: 'cumplify-iso-kb',
         queryText: text,
         queryVector: embedding,
         topK: 3,
       }),
+      // Tenant docs ARE tenant-scoped. No indexer writes this index yet —
+      // it 404s until the first tenant document is indexed (roadmap), which
+      // allSettled degrades to an empty leg.
       retrieve({
         tenantId,
         collectionEndpoint: AOSS_TENANT_DOCS_ENDPOINT,
@@ -59,8 +68,14 @@ async function retrieveGrounding(tenantId: string, text: string): Promise<string
         topK: 3,
       }),
     ]);
-    const isoContext = isoResults.chunks.map((c) => c.text).join('\n---\n');
-    const tenantContext = tenantResults.chunks.map((c) => c.text).join('\n---\n');
+    const isoContext =
+      isoResults.status === 'fulfilled'
+        ? isoResults.value.chunks.map((c) => c.text).join('\n---\n')
+        : '';
+    const tenantContext =
+      tenantResults.status === 'fulfilled'
+        ? tenantResults.value.chunks.map((c) => c.text).join('\n---\n')
+        : '';
     return [isoContext, tenantContext].filter(Boolean).join('\n===\n');
   } catch {
     // Retrieval failure is non-blocking
