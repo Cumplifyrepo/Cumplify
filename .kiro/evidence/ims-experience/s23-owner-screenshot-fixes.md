@@ -50,3 +50,18 @@ thing — new VERSIONS on the SAME documents. Options for owner ruling:
 backend 1252 pass / 3 skip (+2), frontend 191 (+4), tsc + i18n clean.
 Live witness of both fixes follows the deploy (same doc-draft click:
 proposal-view rendering + real legal name in the draft).
+
+## Live witness (81d28b7 deployed, exit 0)
+
+Real click on /documents ("A procedure for handling customer complaints from
+intake to closure."):
+- `PROPOSAL-VIEW RENDERED: true` — card shows the bold title ("Customer
+  Complaint Handling Procedure"), STANDARD/TYPE chips, clause-headed
+  sections (ISO 9001 8.2.1 — Complaint Intake / Investigation / Resolution).
+- `NAMES REAL ORG: true`, `PLACEHOLDER PRESENT: false` — the draft prose
+  reads "the Client Care team at Meridian Design-Build LLC shall log the
+  complaint in the Cumplify customer communication log."
+- Screenshot: `screenshots/s23-pretty-card-real-org.png`. Card left PENDING.
+- Nit for the approver-edit path (not blocking): one section body cites
+  ISO 45001 10.2 inside an ISO 9001 procedure — cross-standard reference in
+  prose; the Edit & approve flow exists for exactly this.
