@@ -59,3 +59,20 @@ PENDING DOC-DRAFT card in one frame.
   read it too) — roadmap: index tenant docs on publish.
 - Fleet follow-up: lead-auditor/control-tower/records-vault still outside the
   VPC; their retrievals 401 the same way S2's did if/when exercised.
+
+## S2.2 post-deploy readback (44d0a9d live, 2026-07-22 17:36Z)
+
+Second real-click run, different intent ("procedure for controlling
+subcontractor work on residential remodel sites…"):
+
+- Card arrived, PENDING: `docType: "procedure"` (vs work_instruction on run 1
+  — same button, inference tracks the intent), title + clause-tagged sections
+  + rationale.
+- Log, same trace: `"AOSS retrieval succeeded" tenantId=__ISO_CANON__
+  indexName=cumplify-iso-kb resultsReturned=3 latencyMs=457` — **canon-tenant
+  grounding LIVE** (was 0 rows under the tenant filter).
+- tenant-docs leg 404s as expected (no indexer yet); allSettled kept the iso
+  leg's 3 chunks in the prompt (run 1's Promise.all had discarded them).
+
+Now 2 doc-draft cards PENDING on dev (fall-protection WI + subcontractor
+procedure) awaiting the second approver.
