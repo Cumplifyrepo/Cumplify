@@ -3,8 +3,11 @@
  *
  * Routing priority:
  * 1. doc-composer seat → DocGen guardrail (no grounding, no AR)
- * 2. feature === 'record-write' → RecordWrite guardrail (grounding 0.90)
- * 3. All other seats → Agent guardrail (grounding 0.85)
+ * 2. feature === 'doc-draft' → DocGen guardrail (S2.1: whole-document
+ *    drafting has the spec-40 BC-5 problem — Agent-guardrail PII
+ *    anonymization would redact the tenant's own names out of their draft)
+ * 3. feature === 'record-write' → RecordWrite guardrail (grounding 0.90)
+ * 4. All other seats → Agent guardrail (grounding 0.85)
  *
  * AR guardrails (ArClause + ArAdvisory) are invoked post-response by ar-check.ts
  * via buildArClauseGuardrailConfig() / buildArAdvisoryGuardrailConfig() — NOT
@@ -49,11 +52,18 @@ export function buildGuardrailConfig(
   if (seat === 'doc-composer') {
     return envGuardrail('DOCGEN_GUARDRAIL');
   }
-  // Priority 2: record-write feature → RecordWrite guardrail (grounding 0.90)
+  // Priority 2: doc-draft feature → DocGen guardrail (S2.1). DocStudio's
+  // whole-document drafting is document generation on the workhorse seat:
+  // the Agent guardrail would anonymize NAME/EMAIL/PHONE out of the tenant's
+  // own draft (spec-40 BC-5 rationale). PROMPT_ATTACK + SSN/card BLOCK stay.
+  if (feature === 'doc-draft') {
+    return envGuardrail('DOCGEN_GUARDRAIL');
+  }
+  // Priority 3: record-write feature → RecordWrite guardrail (grounding 0.90)
   if (feature === 'record-write') {
     return envGuardrail('RECORDWRITE_GUARDRAIL');
   }
-  // Priority 3: all other seats → Agent guardrail (grounding 0.85)
+  // Priority 4: all other seats → Agent guardrail (grounding 0.85)
   return envGuardrail('GUARDRAIL');
 }
 

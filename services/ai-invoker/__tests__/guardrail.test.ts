@@ -48,6 +48,15 @@ describe('buildGuardrailConfig (5-guardrail routing)', () => {
     });
   });
 
+  it('routes doc-draft feature to DOCGEN guardrail (S2.1: no PII anonymization of the tenant draft)', async () => {
+    const { buildGuardrailConfig } = await import('../src/guardrail.js');
+    const config = buildGuardrailConfig('workhorse', 'doc-draft');
+    expect(config).toEqual({
+      guardrailIdentifier: 'docgen-guardrail-id',
+      guardrailVersion: '2',
+    });
+  });
+
   it('routes advisory seats to GUARDRAIL (agent guardrail)', async () => {
     const { buildGuardrailConfig } = await import('../src/guardrail.js');
     const config = buildGuardrailConfig('guru-9001', 'advisory');

@@ -167,6 +167,21 @@ export class NetworkStack extends cdk.Stack {
         id: 'LambdaEndpoint',
         service: ec2.InterfaceVpcEndpointAwsService.LAMBDA,
       },
+      {
+        // S2.1 (ims-experience studio wave): CAPAGuru/DocStudio move into the
+        // VPC for AOSS data-plane access; their tool-loop enters the HITL
+        // gate via SFN StartExecution — unreachable from a zero-NAT VPC
+        // without this endpoint.
+        id: 'StepFunctionsEndpoint',
+        service: ec2.InterfaceVpcEndpointAwsService.STEP_FUNCTIONS,
+      },
+      {
+        // S2.1: the eventing consumer's DLQ sends (SendMessage on handler
+        // failure) need the SQS API from inside the VPC. Queue CONSUMPTION is
+        // unaffected either way (event source mappings poll outside the ENI).
+        id: 'SqsEndpoint',
+        service: ec2.InterfaceVpcEndpointAwsService.SQS,
+      },
     ];
 
     for (const ep of interfaceEndpoints) {

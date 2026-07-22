@@ -20,6 +20,8 @@ vi.mock('../../shared/tool-loop.js', () => ({
 
 vi.mock('../../shared/invoke-transport.js', () => ({
   createInvokeFn: () => vi.fn(),
+  // S2.1: real embeddings replaced the placeholder vector
+  createEmbedFn: () => vi.fn().mockResolvedValue({ embedding: Array(1024).fill(0.2) }),
 }));
 
 vi.mock('../../shared/retrieval.js', () => ({
@@ -89,10 +91,15 @@ describe('runDocDraft (S2)', () => {
     await runDocDraft(draftInput);
 
     const [messages, opts] = mockToolLoop.mock.calls[0];
-    const text = messages[0].content[0].text as string;
-    expect(text).toContain('DRAFT MODE');
-    expect(text).toContain('subcontractor site work');
-    expect(text).toContain('doc-draft');
+    const content = messages[0].content as Array<Record<string, string>>;
+    const preamble = content[0].text;
+    expect(preamble).toContain('DRAFT MODE');
+    expect(preamble).toContain('doc-draft');
+    // S2.1: the tenant-typed intent rides in guardedText (selective
+    // PROMPT_ATTACK evaluation) — the trusted framing must NOT contain it.
+    const guarded = content.filter((b) => 'guardedText' in b).map((b) => b.guardedText);
+    expect(guarded).toContain('A procedure for controlling subcontractor site work');
+    expect(preamble).not.toContain('subcontractor site work');
     expect(opts.requestedBy).toBe('user-9');
     expect(opts.feature).toBe('doc-draft');
     expect(opts.agent).toBe('DocStudio');

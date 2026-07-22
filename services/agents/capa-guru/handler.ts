@@ -22,9 +22,10 @@
 import type { SQSEvent, SQSBatchResponse } from 'aws-lambda';
 import { createFifoHandler } from '../../eventing/src/consumer.js';
 import { toolLoop } from '../shared/tool-loop.js';
-import { createInvokeFn } from '../shared/invoke-transport.js';
+import { createInvokeFn, createEmbedFn } from '../shared/invoke-transport.js';
 import { retrieve } from '../shared/retrieval.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
+import type { ContentBlock } from '../../ai-invoker/src/types.js';
 import { CAPA_GURU_PROMPT } from './prompt.js';
 import { CAPA_GURU_TOOLS } from './tools.js';
 
@@ -38,6 +39,7 @@ const HITL_TOOLS = new Set([
   'capa-verify-effectiveness',
 ]);
 const invokeFn = createInvokeFn();
+const embedFn = createEmbedFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
   const { tenantId } = event;
@@ -47,15 +49,22 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
   let groundingContext = '';
   if (ncDescription) {
     try {
-      // Note: in production, queryVector is computed by calling Titan Embed v2.
-      // For now, placeholder — the embedding step is integrated at Task 9 deploy.
-      const placeholderVector = Array(1024).fill(0.01);
+      // S2.1: real Titan embedding via the one-door embed path (guru-9001
+      // precedent) — replaces the constant placeholder vector. Inside the
+      // try: embed failure degrades to no-grounding, never blocks analysis.
+      const { embedding } = await embedFn({
+        tenantId,
+        agent: 'CAPAGuru',
+        module: 'M2',
+        feature: 'capa-intake',
+        text: ncDescription,
+      });
       const results = await retrieve({
         tenantId,
         collectionEndpoint: AOSS_ENDPOINT,
         indexName: 'cumplify-nc-history',
         queryText: ncDescription,
-        queryVector: placeholderVector,
+        queryVector: embedding,
         topK: 3,
       });
       groundingContext = results.chunks.map((c) => c.text).join('\n---\n');
@@ -190,15 +199,24 @@ export interface RunIntakeInput {
 export async function runNcIntake(input: RunIntakeInput): Promise<RunAnalysisResult> {
   const { tenantId, requestedBy, intake } = input;
 
-  const userMessage = [
+  // S2.1: selective guardrail evaluation — only the reporter-typed text rides
+  // in guardedText; the trusted INTAKE-MODE framing stays out of PROMPT_ATTACK
+  // evaluation (same fix as DocStudio's runDocDraft, found live 2026-07-22).
+  const preamble = [
     `INTAKE MODE. A raw problem report follows — no nonconformity exists yet.`,
     `Draft the NC via nc-draft-write (classify, identify the governing clause,`,
     `set severity and source, rewrite the description audit-ready).`,
-    `\nProblem report: ${intake.description}`,
-    ...(intake.evidenceNote ? [`\nReporter's evidence note: ${intake.evidenceNote}`] : []),
+    `\nProblem report (user-entered):`,
   ].join('\n');
+  const content: ContentBlock[] = [
+    { text: preamble },
+    { guardedText: intake.description },
+    ...(intake.evidenceNote
+      ? [{ text: `Reporter's evidence note (user-entered):` }, { guardedText: intake.evidenceNote }]
+      : []),
+  ];
 
-  const result = await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+  const result = await toolLoop([{ role: 'user', content }], {
     seat: 'workhorse',
     systemPrompt: CAPA_GURU_PROMPT,
     tools: CAPA_GURU_TOOLS,

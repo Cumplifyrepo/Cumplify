@@ -13,9 +13,10 @@
 
 import { createHandler } from '../../eventing/src/consumer.js';
 import { toolLoop } from '../shared/tool-loop.js';
-import { createInvokeFn } from '../shared/invoke-transport.js';
+import { createInvokeFn, createEmbedFn } from '../shared/invoke-transport.js';
 import { retrieve } from '../shared/retrieval.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
+import type { ContentBlock } from '../../ai-invoker/src/types.js';
 import type { SQSEvent, SQSBatchResponse } from 'aws-lambda';
 import { DOC_STUDIO_PROMPT } from './prompt.js';
 import { DOC_STUDIO_TOOLS } from './tools.js';
@@ -26,17 +27,27 @@ const AOSS_TENANT_DOCS_ENDPOINT = process.env.AOSS_TENANT_DOCS_ENDPOINT!;
 
 const HITL_TOOLS = new Set(['doc-draft', 'doc-publish', 'doc-version-control']);
 const invokeFn = createInvokeFn();
+const embedFn = createEmbedFn();
 
 async function retrieveGrounding(tenantId: string, text: string): Promise<string> {
   try {
-    const placeholderVector = Array(1024).fill(0.01);
+    // S2.1: real Titan embedding via the one-door embed path (guru-9001
+    // precedent). Inside the try — an embed failure degrades to no-grounding,
+    // it never blocks the draft.
+    const { embedding } = await embedFn({
+      tenantId,
+      agent: 'DocStudio',
+      module: 'M1',
+      feature: 'doc-draft',
+      text,
+    });
     const [isoResults, tenantResults] = await Promise.all([
       retrieve({
         tenantId,
         collectionEndpoint: AOSS_ISO_KB_ENDPOINT,
         indexName: 'cumplify-iso-kb',
         queryText: text,
-        queryVector: placeholderVector,
+        queryVector: embedding,
         topK: 3,
       }),
       retrieve({
@@ -44,7 +55,7 @@ async function retrieveGrounding(tenantId: string, text: string): Promise<string
         collectionEndpoint: AOSS_TENANT_DOCS_ENDPOINT,
         indexName: 'cumplify-tenant-docs',
         queryText: text,
-        queryVector: placeholderVector,
+        queryVector: embedding,
         topK: 3,
       }),
     ]);
@@ -109,16 +120,25 @@ export async function runDocDraft(input: RunDocDraftInput): Promise<RunDocDraftR
 
   const groundingContext = await retrieveGrounding(tenantId, draftIntent.intent);
 
-  const userMessage = [
+  // S2.1: selective guardrail evaluation — ONLY the tenant-entered intent
+  // rides in guardedText (PROMPT_ATTACK evaluates just that block). With no
+  // guardContent block, Bedrock evaluates the WHOLE message as untrusted
+  // input, and this trusted DRAFT-MODE framing itself trips PROMPT_ATTACK
+  // (live 2026-07-22: "Guardrail intervened on input" at the S2 UI witness).
+  const preamble = [
     `DRAFT MODE. The user needs a NEW controlled document — draft it WHOLE`,
     `via doc-draft (title, governing clauses, complete section prose).`,
-    `\nRequested document: ${draftIntent.intent}`,
     ...(draftIntent.docType ? [`Requested docType: ${draftIntent.docType}`] : []),
     ...(draftIntent.standard ? [`Requested standard: ${draftIntent.standard}`] : []),
-    groundingContext ? `\nRelevant context:\n${groundingContext}` : '',
+    `\nRequested document (user-entered):`,
   ].join('\n');
+  const content: ContentBlock[] = [
+    { text: preamble },
+    { guardedText: draftIntent.intent },
+    ...(groundingContext ? [{ text: `Relevant context:\n${groundingContext}` }] : []),
+  ];
 
-  const result = await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+  const result = await toolLoop([{ role: 'user', content }], {
     seat: 'workhorse',
     systemPrompt: DOC_STUDIO_PROMPT,
     tools: DOC_STUDIO_TOOLS,

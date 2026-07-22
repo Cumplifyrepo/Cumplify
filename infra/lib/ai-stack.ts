@@ -813,8 +813,9 @@ export class AiStack extends cdk.Stack {
         // gets 401 from the data plane unless it runs inside the VPC —
         // IAM and data-access policy grants cannot compensate. The zero-NAT
         // VPC reaches the Lambda API via the LambdaEndpoint interface
-        // endpoint (network-stack). SQS consumers stay out of the VPC until
-        // their endpoint set (states, rds-data) exists.
+        // endpoint (network-stack). S2.1: states + sqs endpoints now exist,
+        // so HITL-gating SQS consumers (CAPAGuru, DocStudio) are VPC-placed
+        // too; remaining consumers move in as their endpoint needs are mapped.
         ...(opts?.vpcPlaced && {
           vpc: props.vpc,
           vpcSubnets: { subnets: props.privateSubnets },
@@ -840,7 +841,9 @@ export class AiStack extends cdk.Stack {
         DLQ_URL: props.capaIntakeDlqUrl,
         POWERTOOLS_SERVICE_NAME: 'agent-capa-guru',
       },
-      { functionName: capaGuruFnName },
+      // S2.1: VPC-placed — its nc-history retrieval 401'd from outside the
+      // VPCE-only AOSS network policy (silently degrading grounding to '').
+      { functionName: capaGuruFnName, vpcPlaced: true },
     );
     capaGuruHandler.addEventSource(
       new SqsEventSource(capaIntakeQueue, {
@@ -876,7 +879,9 @@ export class AiStack extends cdk.Stack {
         DLQ_URL: docStudioDlq.queueUrl,
         POWERTOOLS_SERVICE_NAME: 'agent-doc-studio',
       },
-      { functionName: `cumplify-doc-studio-${envConfig.envName}` },
+      // S2.1: VPC-placed — found at the S2 UI witness: both KB retrievals
+      // 401'd from outside the VPCE-only AOSS network policy.
+      { functionName: `cumplify-doc-studio-${envConfig.envName}`, vpcPlaced: true },
     );
     docStudioHandler.addEventSource(
       new SqsEventSource(docStudioQueue, {

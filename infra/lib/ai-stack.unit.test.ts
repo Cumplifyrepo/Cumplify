@@ -910,18 +910,25 @@ describe('spec-35 FIX-T20-3: guru handlers VPC-placed for AOSS data-plane access
     return hit!;
   }
 
-  it.each(['agent-guru-9001', 'agent-guru-14001', 'agent-guru-45001'])(
-    '%s runs inside the VPC on both private subnets',
-    (service) => {
-      const vpcConfig = (fnByService(service).Properties as { VpcConfig?: { SubnetIds: string[] } })
-        .VpcConfig;
-      expect(vpcConfig).toBeDefined();
-      expect(vpcConfig!.SubnetIds).toEqual(['subnet-aaa', 'subnet-bbb']);
-    },
-  );
+  it.each([
+    'agent-guru-9001',
+    'agent-guru-14001',
+    'agent-guru-45001',
+    // S2.1: the two studio agents retrieve from KB collections (doc-studio:
+    // iso-kb + tenant-docs; capa-guru: nc-history) — 401 from outside the
+    // VPCE-only network policy, proven live at the S2 UI witness 2026-07-22.
+    // Their HITL/DLQ needs ride the states + sqs endpoints (network-stack).
+    'agent-capa-guru',
+    'agent-doc-studio',
+  ])('%s runs inside the VPC on both private subnets', (service) => {
+    const vpcConfig = (fnByService(service).Properties as { VpcConfig?: { SubnetIds: string[] } })
+      .VpcConfig;
+    expect(vpcConfig).toBeDefined();
+    expect(vpcConfig!.SubnetIds).toEqual(['subnet-aaa', 'subnet-bbb']);
+  });
 
-  it('SQS consumer handlers stay OUT of the VPC (their endpoint set — states, rds-data — does not exist yet)', () => {
-    for (const service of ['agent-capa-guru', 'agent-records-vault']) {
+  it('non-retrieving consumers stay OUT of the VPC until their endpoint needs are mapped', () => {
+    for (const service of ['agent-records-vault']) {
       expect((fnByService(service).Properties as { VpcConfig?: unknown }).VpcConfig).toBeUndefined();
     }
   });

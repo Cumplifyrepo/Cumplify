@@ -25,6 +25,8 @@ vi.mock('../../shared/tool-loop.js', () => ({
 
 vi.mock('../../shared/invoke-transport.js', () => ({
   createInvokeFn: () => vi.fn(),
+  // S2.1: real embeddings replaced the placeholder vector
+  createEmbedFn: () => vi.fn().mockResolvedValue({ embedding: Array(1024).fill(0.2) }),
 }));
 
 vi.mock('../../shared/retrieval.js', () => ({
@@ -186,11 +188,16 @@ describe('runNcIntake (S1 studio wave)', () => {
     await runNcIntake(intakeInput);
 
     const [messages, opts] = mockToolLoop.mock.calls[0];
-    const text = messages[0].content[0].text as string;
-    expect(text).toContain('INTAKE MODE');
-    expect(text).toContain('Cabinet doors delivered with wrong finish on lot 42');
-    expect(text).toContain('Photos in job folder');
-    expect(text).toContain('nc-draft-write');
+    const content = messages[0].content as Array<Record<string, string>>;
+    const preamble = content[0].text;
+    expect(preamble).toContain('INTAKE MODE');
+    expect(preamble).toContain('nc-draft-write');
+    // S2.1: reporter-typed text rides in guardedText (selective PROMPT_ATTACK
+    // evaluation) — the trusted framing must NOT contain it.
+    const guarded = content.filter((b) => 'guardedText' in b).map((b) => b.guardedText);
+    expect(guarded).toContain('Cabinet doors delivered with wrong finish on lot 42');
+    expect(guarded).toContain('Photos in job folder');
+    expect(preamble).not.toContain('Cabinet doors');
     expect(opts.requestedBy).toBe('user-9');
     expect(opts.feature).toBe('capa-intake');
     // The intake tool must be HITL-gated — the reporter never bypasses review

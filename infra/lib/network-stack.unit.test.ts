@@ -38,7 +38,9 @@ describe('NetworkStack — zero-NAT endpoint topology (AC-2)', () => {
     const rendered = Object.values(eps).map((e) =>
       JSON.stringify((e.Properties as { ServiceName: unknown }).ServiceName),
     );
-    for (const suffix of ['.aoss"', '.secretsmanager"', '.kms"', '.bedrock-runtime"', '.execute-api"', '.lambda"']) {
+    // S2.1: .states (HITL gate SFN StartExecution) + .sqs (consumer DLQ sends)
+    // admit the VPC-placed SQS-consumer agents (CAPAGuru, DocStudio).
+    for (const suffix of ['.aoss"', '.secretsmanager"', '.kms"', '.bedrock-runtime"', '.execute-api"', '.lambda"', '.states"', '.sqs"']) {
       expect(
         rendered.some((s) => s.includes(suffix)),
         `missing interface endpoint for ${suffix.replace(/"/g, '')}`,
