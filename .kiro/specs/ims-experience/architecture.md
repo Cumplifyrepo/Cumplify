@@ -512,7 +512,27 @@ Fishbone/Ishikawa, FMEA worksheets (S×O×D scoring), A3 — for each,
 data, draft 8D steps) and the human validates/edits; effectiveness
 verification must cite the methodology artifact; every artifact exports as
 a controlled record with the §7 identification block; timeline + aging/
-escalation view. `/records` per §7 (register, approval state, retention
+escalation view.
+**VISUAL-METHOD LAW (owner ruling 2026-07-21): every methodology renders
+as its REAL visual artifact, agent-populated and human-editable — never a
+grid of empty cells:**
+- `FishboneDiagram` — interactive SVG Ishikawa: 6M bones drawn, CAPAGuru
+  places candidate causes ON the bones; user drags/edits/adds; selected
+  root cause highlights into the CA plan.
+- `FiveWhysChain` — linked cause boxes, each "why" flowing visually into
+  the next; agent pre-fills the chain; user edits any node and the chain
+  re-flows; terminal node = the root cause fed to stage 4.
+- `EightDReport` — D1–D8 stepper with per-discipline sections, agent-drafted
+  content, gate status chips per the §8 state machine.
+- `FmeaWorksheet` — structured worksheet with S×O×D selectors and computed
+  RPN, agent-proposed ratings with rationale on hover.
+- `A3Canvas` — single-page A3 layout (background→analysis→countermeasures→
+  follow-up), agent-drafted, print-true.
+All render inside HITL approval cards as the artifact itself (AUD-3 law:
+never a JSON blob), embed into controlled docs via the Document Studio
+diagram lane, and export to PDF WITH the visual + §7 identification block.
+Component lane: pure client components fed by the artifact JSON the agent
+writes — same JSON drives the card, the Studio, and the export. `/records` per §7 (register, approval state, retention
 class + disposition date, WORM indicator, calibration, disposition queue);
 `/management-review` (9.3 pack from live queries v1, ReviewOrchestrator
 takes over in P7 — export as controlled doc); dashboard rework (diagrams
