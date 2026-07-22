@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { buildDocumentHtml, type ContentJson, type DocMeta } from '@/lib/controlled-doc';
 import { SecondaryButton } from '@/components/shared';
 import styles from './ControlledDocViewer.module.css';
+import { parseAwsJson } from '@/lib/aws-json';
 
 /**
  * ControlledDocViewer — sandboxed iframe rendering white controlled docs.
@@ -36,7 +37,7 @@ export function ControlledDocViewer({ contentRaw, documentId, className }: Contr
   // Parse content and build HTML via template.ts
   const html = useMemo(() => {
     try {
-      const content: ContentJson = JSON.parse(contentRaw);
+      const content: ContentJson = parseAwsJson<ContentJson>(contentRaw);
 
       // Build meta from content + context
       const meta: DocMeta = {

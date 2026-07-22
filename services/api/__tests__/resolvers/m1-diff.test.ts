@@ -284,7 +284,7 @@ describe('getDocumentContent (Task 11 viewer read surface)', () => {
     expect(params[0]).toEqual({ name: 'versionId', value: { stringValue: 'ver-1' } });
   });
 
-  it('returns the content JSON as a string (AWSJSON) loaded from the row content_ref', async () => {
+  it('returns the content JSON as a parsed OBJECT (AWSJSON serializes once) loaded from the row content_ref', async () => {
     const content = {
       schemaVersion: 1,
       sections: [
@@ -303,8 +303,10 @@ describe('getDocumentContent (Task 11 viewer read surface)', () => {
 
     const result = await handler(makeEvent('getDocumentContent', { versionId: 'ver-1' }));
 
-    expect(typeof result).toBe('string');
-    expect(JSON.parse(result as string)).toEqual(content);
+    // Object, NOT a pre-stringified string: AppSync serializes the AWSJSON
+    // slot exactly once — a string return double-encodes the wire (2026-07-22)
+    expect(typeof result).toBe('object');
+    expect(result).toEqual(content);
     const s3Key = (mockS3Send.mock.calls[0][0] as { input: { Key: string } }).input.Key;
     expect(s3Key).toBe('tenants/t/documents/d/v1.json');
   });

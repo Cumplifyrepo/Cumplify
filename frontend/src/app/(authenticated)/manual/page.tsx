@@ -154,7 +154,16 @@ export default function ManualPage() {
         return;
       }
 
-      const latest = runs[0];
+      // listGenerationRuns is deliberately lightweight (sections: [],
+      // gapCount: 0) — hydrate the full run before rendering State 3/4.
+      // Rendering off the list row zeroed every StatTile and emptied the
+      // section list (found live 2026-07-22 at the design gate; masked
+      // until then because the dev tenant had no runs).
+      const detailData = await query<{ getGenerationRun: GenerationRun | null }>(
+        GET_GENERATION_RUN,
+        { id: runs[0].id },
+      );
+      const latest = detailData.getGenerationRun ?? runs[0];
       setActiveRun(latest);
       setDocumentId(latest.manualDocumentId);
 

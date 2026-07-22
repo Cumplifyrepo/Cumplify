@@ -7,6 +7,7 @@ import { useGraphQL } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import { canApprove } from '@/lib/role-matrix';
 import styles from './page.module.css';
+import { parseAwsJson } from '@/lib/aws-json';
 
 // ─── GraphQL statements ──────────────────────────────────────────────────────
 
@@ -179,7 +180,7 @@ export function DocumentViewer({ documentId, onBack, onDiff }: DocumentViewerPro
           versionId: selectedVersion.id,
         });
         if (!cancelled) {
-          const parsed = JSON.parse(data.getDocumentContent) as DocumentContent;
+          const parsed = parseAwsJson<DocumentContent>(data.getDocumentContent);
           setContent(parsed);
         }
       } catch (e: unknown) {

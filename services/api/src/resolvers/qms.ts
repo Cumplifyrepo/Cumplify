@@ -25,6 +25,7 @@ import {
   publishAuditEvent,
   marshalOne,
   marshalMany,
+  jsonOut,
 } from './shared.js';
 import type { SqlParameter } from '@aws-sdk/client-rds-data';
 import { canApprove } from '../permissions/role-matrix.js';
@@ -141,8 +142,9 @@ async function getOrgProfile(tenantId: string) {
     await txn.commit();
     const row = marshalOne(result);
     if (!row) return null;
-    // payload is JSONB — returned as stringified JSON from Data API
-    return row;
+    // payload is JSONB — Data API returns it stringified; AWSJSON output
+    // must be the parsed object or the wire is double-encoded (2026-07-22).
+    return { ...row, payload: jsonOut(row.payload) };
   } catch (err) {
     try {
       await txn.rollback();
@@ -226,7 +228,11 @@ async function getGenerationRun(event: AppSyncEvent, tenantId: string) {
 
     const run = marshalOne(runResult);
     if (!run) return null;
-    const sections = marshalMany(sectionsResult);
+    // clauseRefs is jsonb — parse for the AWSJSON slot (double-encode otherwise)
+    const sections = marshalMany(sectionsResult).map((s) => ({
+      ...s,
+      clauseRefs: jsonOut(s.clauseRefs),
+    }));
 
     // Compute gapCount from sections
     const gapCount = sections.filter((s) => s.kind === 'gap' || s.kind === 'GAP').length;
@@ -355,7 +361,8 @@ async function saveOrgProfile(event: AppSyncEvent, tenantId: string, actor: stri
     return {
       id: profileId,
       currentVersion: newVersion,
-      payload: JSON.stringify(payload),
+      // AWSJSON output: the parsed object, never a pre-stringified string
+      payload,
       updatedAt: new Date().toISOString(),
     };
   } catch (err) {

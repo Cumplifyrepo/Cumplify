@@ -8,6 +8,7 @@ import { GenerationView } from './generation-view';
 import { DocumentViewer } from './document-viewer';
 import { DiffView } from './diff-view';
 import styles from './page.module.css';
+import { parseAwsJson } from '@/lib/aws-json';
 
 /**
  * QMS Document Engine — Org Profile Wizard + Clause Registry/Applicability (spec 40, Task 10).
@@ -127,7 +128,7 @@ export default function QmsPage() {
     try {
       setError(false);
       const data = await query<{ getOrgProfile: { payload: string } | null }>(GET_PROFILE);
-      if (data.getOrgProfile?.payload) setProfile(JSON.parse(data.getOrgProfile.payload));
+      if (data.getOrgProfile?.payload) setProfile(parseAwsJson(data.getOrgProfile.payload));
     } catch {
       setError(true);
     } finally {

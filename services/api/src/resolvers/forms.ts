@@ -26,6 +26,7 @@ import {
   getTenantDdbClient,
   snakeToCamel,
   unwrapField,
+  jsonOut,
   TABLE_NAME,
   type TenantTransaction,
   type DataApiResult,
@@ -315,7 +316,7 @@ async function listFormRecords(event: AppSyncEvent, tenantId: string): Promise<u
     return marshalRecordRows(result).map((rec) => {
       const filledKeys = new Set((rec.filledKeys as string[] | null) ?? []);
       rec.completion = completionFrom(fieldsMeta, filledKeys);
-      rec.values = '{}'; // Values returned on getFormRecord only (list is lightweight)
+      rec.values = {}; // Values returned on getFormRecord only (list is lightweight; object — AWSJSON slot)
       delete rec.filledCount;
       delete rec.filledKeys;
       return rec;
@@ -363,7 +364,7 @@ async function getFormRecord(event: AppSyncEvent, tenantId: string): Promise<unk
     );
 
     const values = marshalValues(valResult);
-    rec.values = JSON.stringify(values);
+    rec.values = values; // object — AWSJSON slot serializes once
     // Task 10: completion from the values already fetched + one fields query
     // (was computeCompletion = 2 extra round trips per read).
     const fieldsMeta = await fetchTemplateFieldMeta(txn, rec.templateId as string);
@@ -411,7 +412,7 @@ async function createFormRecord(
     // Task 10: fresh record has zero filled fields — one fields query suffices.
     const fieldsMeta = await fetchTemplateFieldMeta(txn, templateId);
     rec.completion = completionFrom(fieldsMeta, new Set());
-    rec.values = '{}';
+    rec.values = {};
     await txn.commit();
     return rec;
   } catch (err) {
@@ -1544,7 +1545,7 @@ async function getFormRecordById(recordId: string, tenantId: string): Promise<un
       [{ name: 'id', value: { stringValue: recordId } }],
     );
     const values = marshalValues(valResult);
-    rec.values = JSON.stringify(values);
+    rec.values = values; // object — AWSJSON slot serializes once
     const fieldsMeta = await fetchTemplateFieldMeta(txn, rec.templateId as string);
     rec.completion = completionFrom(fieldsMeta, new Set(Object.keys(values)));
 
@@ -1644,6 +1645,10 @@ function marshalTemplateDetail(
         const col = fieldsResult.columnMetadata[i].name ?? `col${i}`;
         field[snakeToCamel(col)] = unwrapField(row[i]);
       }
+      // options/validation are jsonb — parse for the AWSJSON slot
+      // (double-encoded on the wire otherwise, found 2026-07-22)
+      if (field.options != null) field.options = jsonOut(field.options);
+      if (field.validation != null) field.validation = jsonOut(field.validation);
       const sec = sectionMap.get(field.sectionId as string);
       if (sec) (sec.fields as Record<string, unknown>[]).push(field);
     }

@@ -11,6 +11,7 @@ import { GuidanceBanner } from '@/components/shared/GuidanceBanner';
 import { useGraphQL } from '@/lib/api';
 import { useStandardScope } from '@/lib/standard-scope';
 import styles from './page.module.css';
+import { parseAwsJson } from '@/lib/aws-json';
 
 /**
  * /cross-reference — Correlation Matrix Grid.
@@ -99,7 +100,7 @@ export default function CrossReferencePage() {
         versionId: latestVersion.id,
       });
 
-      const parsed = JSON.parse(contentData.getDocumentContent) as MatrixContent;
+      const parsed = parseAwsJson<MatrixContent>(contentData.getDocumentContent);
       if (parsed.kind !== 'correlation_matrix') {
         setNoMatrix(true);
         return;

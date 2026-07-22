@@ -661,7 +661,11 @@ async function getDocumentContent(event: AppSyncEvent, tenantId: string) {
     if (!ref) throw new Error('CONTENT_UNAVAILABLE');
 
     const content = await loadContentJson(ref);
-    return JSON.stringify(content);
+    // AWSJSON output: return the OBJECT — AppSync serializes it exactly once.
+    // JSON.stringify here double-encoded the wire for every consumer
+    // (/manual viewer, /documents detail, /cross-reference) — found live
+    // 2026-07-22 at the design gate.
+    return content;
   } catch (err) {
     try {
       await txn.rollback();

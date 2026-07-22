@@ -70,6 +70,29 @@ describe('getOrgProfile', () => {
     expect(sql).toContain('p.updated_at');
     expect(sql).toContain('pv.version_no');
   });
+
+  it('returns payload as a parsed OBJECT for the AWSJSON slot (double-encode fix, 2026-07-22)', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [
+          { stringValue: 'p-1' },
+          { longValue: 2 },
+          { stringValue: '{"legalName":"Meridian Design-Build LLC"}' }, // jsonb → string from Data API
+          { stringValue: '2026-07-22 12:59:52' },
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'current_version' },
+        { name: 'payload' },
+        { name: 'updated_at' },
+      ],
+    });
+
+    const result = (await handler(makeEvent('getOrgProfile'))) as { payload: unknown };
+    expect(typeof result.payload).toBe('object');
+    expect(result.payload).toEqual({ legalName: 'Meridian Design-Build LLC' });
+  });
 });
 
 // ─── listClauseRegistry ──────────────────────────────────────────────────────
@@ -350,6 +373,35 @@ describe('getGenerationRun', () => {
     expect(secSql).toContain('content_sha256');
     expect(secSql).toContain('reviewed_by');
     expect(secSql).toContain('reviewed_at');
+  });
+
+  it('returns section clauseRefs as a parsed ARRAY for the AWSJSON slot (double-encode fix, 2026-07-22)', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'run-1' }, { stringValue: 'complete' }]],
+      columnMetadata: [{ name: 'id' }, { name: 'status' }],
+    });
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [
+          { stringValue: 'sec-1' },
+          { stringValue: '4.1' },
+          { stringValue: 'prose' },
+          { stringValue: '["c-1","c-2"]' }, // jsonb → string from Data API
+        ],
+      ],
+      columnMetadata: [
+        { name: 'id' },
+        { name: 'harmonization_key' },
+        { name: 'kind' },
+        { name: 'clause_refs' },
+      ],
+    });
+
+    const result = (await handler(makeEvent('getGenerationRun', { id: 'run-1' }))) as {
+      sections: Array<{ clauseRefs: unknown }>;
+    };
+    expect(Array.isArray(result.sections[0].clauseRefs)).toBe(true);
+    expect(result.sections[0].clauseRefs).toEqual(['c-1', 'c-2']);
   });
 });
 

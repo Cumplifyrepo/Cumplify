@@ -456,3 +456,17 @@ export function marshalOne(result: DataApiResult): Record<string, unknown> | nul
 export function marshalMany(result: DataApiResult): Record<string, unknown>[] {
   return marshalResult(result);
 }
+
+/**
+ * Prepare a jsonb-derived value for an AWSJSON response field.
+ *
+ * AppSync serializes the resolver's return value into the AWSJSON slot
+ * exactly once: return the parsed object/array and the client receives
+ * parsed JSON; return the Data-API jsonb STRING and the client receives a
+ * double-encoded string (found live 2026-07-22 — getDocumentContent,
+ * OrgProfile.payload, GenerationSection.clauseRefs all arrived
+ * double-encoded while array-returning clauseRefs arrived correctly).
+ */
+export function jsonOut(value: unknown): unknown {
+  return typeof value === 'string' ? JSON.parse(value) : value;
+}
