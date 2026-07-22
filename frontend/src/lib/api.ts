@@ -27,6 +27,23 @@ async function getFreshToken(): Promise<string> {
 }
 
 /**
+ * Amplify's client.graphql REJECTS on GraphQL errors (mutations
+ * especially), throwing the GraphQLResult object itself — not an Error —
+ * so `.message` is undefined and every enforcement rejection (SoD,
+ * approval matrix, sealed writes) surfaced as a generic "Action failed".
+ * Found at the S1 UI witness 2026-07-22: the SoD 403 never reached the
+ * HitlCard. Re-throw the FIRST GraphQL error's message as a real Error;
+ * anything else passes through unchanged.
+ */
+function rethrowGraphQLError(err: unknown): never {
+  const gqlErrors = (err as { errors?: Array<{ message?: string }> })?.errors;
+  if (gqlErrors?.length && gqlErrors[0]?.message) {
+    throw new Error(gqlErrors[0].message);
+  }
+  throw err;
+}
+
+/**
  * Hook providing query/mutate helpers that auto-refresh the ID token per call.
  */
 export function useGraphQL() {
@@ -42,11 +59,16 @@ export function useGraphQL() {
         throw new Error('SESSION_EXPIRED');
       }
 
-      const result = (await client.graphql({
-        query: statement,
-        variables: variables as never,
-        authToken: token,
-      })) as { data?: T; errors?: Array<{ message: string }> };
+      let result: { data?: T; errors?: Array<{ message: string }> };
+      try {
+        result = (await client.graphql({
+          query: statement,
+          variables: variables as never,
+          authToken: token,
+        })) as { data?: T; errors?: Array<{ message: string }> };
+      } catch (err) {
+        rethrowGraphQLError(err);
+      }
       if (result.errors?.length) {
         throw new Error(result.errors[0].message);
       }
@@ -65,11 +87,16 @@ export function useGraphQL() {
         throw new Error('SESSION_EXPIRED');
       }
 
-      const result = (await client.graphql({
-        query: statement,
-        variables: variables as never,
-        authToken: token,
-      })) as { data?: T; errors?: Array<{ message: string }> };
+      let result: { data?: T; errors?: Array<{ message: string }> };
+      try {
+        result = (await client.graphql({
+          query: statement,
+          variables: variables as never,
+          authToken: token,
+        })) as { data?: T; errors?: Array<{ message: string }> };
+      } catch (err) {
+        rethrowGraphQLError(err);
+      }
       if (result.errors?.length) {
         throw new Error(result.errors[0].message);
       }
