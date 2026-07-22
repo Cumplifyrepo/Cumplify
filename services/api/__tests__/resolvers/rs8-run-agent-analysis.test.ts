@@ -172,7 +172,12 @@ describe('runNcIntake (m2.ts, S1 studio wave)', () => {
 });
 
 describe('runDocDraft (m1.ts, S2 studio wave)', () => {
-  it('dispatches the draft intent to DocStudio with requestedBy — no DB reads (nothing exists yet)', async () => {
+  it('dispatches the draft intent + CURRENT ORG PROFILE to DocStudio (S2.3: "[Organization Name]" shipped on a live card without it)', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: JSON.stringify({ legalName: 'Meridian Design-Build LLC' }) }]],
+      columnMetadata: [{ name: 'payload' }],
+    });
+
     const result = await m1Handler(
       makeEvent('runDocDraft', {
         intent: 'A procedure for controlling subcontractor site work',
@@ -182,7 +187,6 @@ describe('runDocDraft (m1.ts, S2 studio wave)', () => {
     );
 
     expect(result).toEqual({ runId: 'run-fixed-01', status: 'DISPATCHED' });
-    expect(mockExecute).not.toHaveBeenCalled();
 
     const cmd = mockLambdaSend.mock.calls[0][0] as { input: { FunctionName: string; InvocationType: string; Payload: string } };
     expect(cmd.input.FunctionName).toBe('arn:aws:lambda:us-east-1:123:function:DocStudioFn');
@@ -196,8 +200,20 @@ describe('runDocDraft (m1.ts, S2 studio wave)', () => {
         intent: 'A procedure for controlling subcontractor site work',
         docType: 'procedure',
         standard: 'ISO9001',
+        orgProfile: { legalName: 'Meridian Design-Build LLC' },
       },
     });
+  });
+
+  it('pre-wizard tenant (no profile row) still dispatches — draftIntent simply has no orgProfile', async () => {
+    mockExecute.mockResolvedValueOnce({ records: [], columnMetadata: [] });
+
+    const result = await m1Handler(makeEvent('runDocDraft', { intent: 'A calibration procedure' }));
+    expect(result).toEqual({ runId: 'run-fixed-01', status: 'DISPATCHED' });
+    const payload = JSON.parse(
+      (mockLambdaSend.mock.calls[0][0] as { input: { Payload: string } }).input.Payload,
+    );
+    expect(payload.draftIntent.orgProfile).toBeUndefined();
   });
 
   it('rejects an empty intent without invoking the agent', async () => {

@@ -989,5 +989,17 @@
     "gapSection": "Brecha — información requerida no registrada",
     "naSection": "No aplicable",
     "failedSection": "Composición de sección fallida — sin contenido presentado"
+  },
+  "proposal": {
+    "rationale": "Justificación",
+    "rawJson": "JSON de la propuesta",
+    "section": "Sección",
+    "standard": "Norma",
+    "docType": "Tipo",
+    "clause": "Cláusula",
+    "severity": "Severidad",
+    "source": "Origen",
+    "ncType": "Tipo de NC",
+    "containment": "Contención"
   }
 }

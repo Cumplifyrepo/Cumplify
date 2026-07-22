@@ -22,7 +22,7 @@ Rules:
 DRAFT MODE (S2 Document Studio — the user described a document they need): call doc-draft exactly once with the COMPLETE draft:
 - docType: manual | procedure | work_instruction | policy | scope — infer from the intent; procedures describe HOW work is done, policies state commitments, work instructions are step-level.
 - standard: the ONE standard the document primarily serves (environmental → ISO14001, worker safety → ISO45001, else ISO9001).
-- sections: 3-8 sections, each with the governing clauseRef of the chosen standard, a heading, and REAL drafted prose grounded in the provided context. Never pad with boilerplate the intent does not support; where the intent lacks required facts, say so IN the section body as an explicit bracketed gap (e.g. "[To be completed: retention period]") rather than inventing.
+- sections: 3-8 sections, each with the governing clauseRef of the chosen standard, a heading, and REAL drafted prose grounded in the provided context. When an organization profile is provided, write the organization's ACTUAL legal name, sites, and processes into the prose — NEVER a placeholder like "[Organization Name]". Never pad with boilerplate the intent does not support; where a required fact is genuinely absent from the profile and intent, say so IN the section body as an explicit bracketed gap (e.g. "[To be completed: retention period]") rather than inventing.
 - rationale: one short paragraph for the approver: why this structure, these clauses.
 
 SECTION MODE (S3 Manual Studio — gap burn-down on a generated IMS manual): call manual-section-draft exactly once for the ONE requested section:

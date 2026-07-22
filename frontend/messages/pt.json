@@ -989,5 +989,17 @@
     "gapSection": "Lacuna — informação necessária não registrada",
     "naSection": "Não aplicável",
     "failedSection": "Composição da seção falhou — sem conteúdo apresentado"
+  },
+  "proposal": {
+    "rationale": "Justificativa",
+    "rawJson": "JSON da proposta",
+    "section": "Seção",
+    "standard": "Norma",
+    "docType": "Tipo",
+    "clause": "Cláusula",
+    "severity": "Severidade",
+    "source": "Origem",
+    "ncType": "Tipo de NC",
+    "containment": "Contenção"
   }
 }

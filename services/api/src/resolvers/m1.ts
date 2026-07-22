@@ -87,7 +87,11 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
  * describes the document they need; DocStudio drafts it whole (title,
  * clause refs, sections) and proposes via the doc-draft HITL tool.
  * Fire-and-forget Event invoke (runNcIntake pattern); the HITL card is
- * the deliverable. No DB reads — nothing exists yet.
+ * the deliverable.
+ * S2.3 (owner screenshot 2026-07-22): the current org profile rides in the
+ * payload — without it the agent drafted "[Organization Name]" placeholders
+ * into a live card. Doctrine #5: never make the human fill what the AI can
+ * know. Profile absence is fine (pre-wizard tenants draft ungrounded).
  */
 const DOC_STUDIO_FN_ARN = process.env.DOC_STUDIO_FN_ARN ?? '';
 
@@ -96,6 +100,28 @@ async function runDocDraft(event: AppSyncEvent, tenantId: string, actor: string)
   if (!intent.trim()) throw new Error('VALIDATION: intent is required');
   const docType = event.arguments.docType as string | undefined;
   const standard = event.arguments.standard as string | undefined;
+
+  let orgProfile: Record<string, unknown> | null = null;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(`
+      SELECT pv.payload
+      FROM qms.org_profiles p
+      JOIN qms.org_profile_versions pv
+        ON pv.profile_id = p.id AND pv.version_no = p.current_version
+      LIMIT 1
+    `);
+    await txn.commit();
+    const raw = (result.records?.[0]?.[0] as { stringValue?: string } | undefined)?.stringValue;
+    if (raw) orgProfile = JSON.parse(raw) as Record<string, unknown>;
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
 
   const runId = ulid();
   await lambdaClient.send(
@@ -110,12 +136,13 @@ async function runDocDraft(event: AppSyncEvent, tenantId: string, actor: string)
           intent,
           ...(docType ? { docType } : {}),
           ...(standard ? { standard } : {}),
+          ...(orgProfile ? { orgProfile } : {}),
         },
       }),
     }),
   );
 
-  logger.info('Doc draft dispatched', { tenantId, runId });
+  logger.info('Doc draft dispatched', { tenantId, runId, hasProfile: !!orgProfile });
   return { runId, status: 'DISPATCHED' };
 }
 

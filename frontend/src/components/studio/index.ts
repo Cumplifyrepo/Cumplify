@@ -1,6 +1,7 @@
 export { HitlCard, type HitlCardProps } from './HitlCard';
 export { AgentRunButton, type AgentRunButtonProps } from './AgentRunButton';
 export { StudioShell, type StudioShellProps } from './StudioShell';
+export { ProposalView } from './ProposalView';
 export {
   type HitlItem,
   type GuardrailEvidence,

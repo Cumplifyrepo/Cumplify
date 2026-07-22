@@ -211,3 +211,28 @@ describe('runSectionDraft (S3 Manual Studio)', () => {
     expect(result).toEqual({ runId: 'run-99', status: 'NO_PROPOSAL' });
   });
 });
+
+describe('runDocDraft org profile (S2.3 — owner screenshot: "[Organization Name]" placeholder)', () => {
+  it('profile rides in guardedText when present; DRAFT MODE otherwise unchanged', async () => {
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'ok',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+    });
+
+    await runDocDraft({
+      ...draftInput,
+      draftIntent: {
+        ...draftInput.draftIntent,
+        orgProfile: { legalName: 'Meridian Design-Build LLC' },
+      },
+    });
+
+    const [messages] = mockToolLoop.mock.calls[0];
+    const content = messages[0].content as Array<Record<string, string>>;
+    const guarded = content.filter((b) => 'guardedText' in b).map((b) => b.guardedText);
+    expect(guarded.some((g) => g.includes('Meridian Design-Build LLC'))).toBe(true);
+    // The framing never carries tenant-typed values
+    expect(content[0].text).not.toContain('Meridian');
+  });
+});

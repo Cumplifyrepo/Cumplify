@@ -127,6 +127,8 @@ export interface RunDocDraftInput {
     intent: string;
     docType?: string;
     standard?: string;
+    /** S2.3: current org profile — the draft names the tenant, never "[Organization Name]" */
+    orgProfile?: Record<string, unknown>;
   };
 }
 
@@ -155,6 +157,15 @@ export async function runDocDraft(input: RunDocDraftInput): Promise<RunDocDraftR
   const content: ContentBlock[] = [
     { text: preamble },
     { guardedText: draftIntent.intent },
+    // S2.3: the tenant's profile grounds the draft — write the real legal
+    // name, sites, and processes; "[Organization Name]" shipped on a live
+    // card before this. Tenant-typed → guardedText (S2.1 lesson).
+    ...(draftIntent.orgProfile
+      ? [
+          { text: `Organization profile (ground truth — never contradict it; tenant-entered):` },
+          { guardedText: JSON.stringify(draftIntent.orgProfile) },
+        ]
+      : []),
     ...(groundingContext ? [{ text: `Relevant context:\n${groundingContext}` }] : []),
   ];
 

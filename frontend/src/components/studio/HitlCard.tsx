@@ -17,6 +17,7 @@ import {
   APPROVE_HITL_MUTATION,
   tryParseArgs,
 } from './hitl';
+import { ProposalView } from './ProposalView';
 import styles from './HitlCard.module.css';
 
 /**
@@ -134,7 +135,9 @@ export function HitlCard({ item, role, onApproved, onRemove }: HitlCardProps) {
         <StatusBadge status={item.status} />
       </div>
       {item.clauseRef && <ClauseChip standard={item.standard} clauseRef={item.clauseRef} />}
-      <p className={styles.body}>{item.draftBody}</p>
+      {/* Reviewer-grade proposal rendering (owner screenshots 2026-07-22:
+          raw JSON on live cards); unknown tools fall back to the raw body. */}
+      <ProposalView draftBody={item.draftBody} />
 
       {/* CARD-6: Full guardrail evidence display */}
       {isFlagged && item.guardrailEvidence && (

@@ -989,5 +989,17 @@
     "gapSection": "Gap — required information not recorded",
     "naSection": "Not applicable",
     "failedSection": "Section composition failed — no content presented"
+  },
+  "proposal": {
+    "rationale": "Why",
+    "rawJson": "Raw proposal JSON",
+    "section": "Section",
+    "standard": "Standard",
+    "docType": "Type",
+    "clause": "Clause",
+    "severity": "Severity",
+    "source": "Source",
+    "ncType": "NC type",
+    "containment": "Containment"
   }
 }

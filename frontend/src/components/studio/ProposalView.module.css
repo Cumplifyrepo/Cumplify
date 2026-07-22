@@ -1,0 +1,109 @@
+.proposal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 4px 0 2px;
+}
+
+.docTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-body);
+  margin: 0;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fieldChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  font-size: 11px;
+  color: var(--color-text-body);
+}
+
+.fieldChipLabel {
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
+
+.prose {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text-body);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.docSection {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sectionHeading {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-body);
+  margin: 0;
+}
+
+.rationale {
+  border-left: 2px solid var(--color-border);
+  padding-left: 10px;
+}
+
+.fieldLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.rationaleText {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  margin: 2px 0 0;
+}
+
+.rawBody {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-body);
+  margin: 0;
+  word-break: break-word;
+}
+
+.rawDetails {
+  margin-top: 8px;
+}
+
+.rawSummary {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.rawPre {
+  margin: 6px 0 0;
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  font-size: 11px;
+  line-height: 1.45;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
