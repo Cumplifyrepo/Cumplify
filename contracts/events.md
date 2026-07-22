@@ -229,6 +229,11 @@ raised, evaluated) belong in the immutable audit trail.
 | `NC.Triaged` | true | State transition: agent reclassified an existing NC's nc_type (agentTriageNC) — distinct from NC.Raised (creation) |
 | `Risk.Assessed` | true | State transition: agent updated an existing risk's likelihood/severity (agentAssessRisk) — distinct from Risk.Created |
 
+### RS-9 Collaboration Law Persistence Event (read-surface-completion RS-9, 2026-07-22)
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `Document.SectionEdited` | true | State transition: new document version written from a human/agent section edit — dual-attribution summary in payload (ES-4) |
+
 ### AI Guardrail Telemetry Events (spec 35 — guardrails-antihallucination)
 
 | detailType | auditTrail | Rationale |

@@ -675,6 +675,15 @@ type Mutation {
   regenerateSection(input: RegenerateSectionInput!): GenerationSection! @aws_lambda
   markSectionReviewed(input: MarkSectionReviewedInput!): GenerationSection! @aws_lambda
   requestImsExport(documentId: ID!): ExportResult! @aws_lambda
+
+  # read-surface-completion RS-9 (Collaboration Law persistence) — Document
+  # Studio editor sync. harmonizationKey, not sectionIndex (the requirements
+  # doc's literal name): matches both the existing content-JSON convention
+  # (ContentSection is keyed by harmonizationKey, never a numeric index) and
+  # the already-shipped Document Studio editor's SectionDraft shape
+  # (frontend/src/components/document-editor/attribution.ts) — amended at
+  # build time, same class of refinement as RS-6's storage design.
+  saveDocumentSectionEdit(input: SaveDocumentSectionEditInput!): DocumentVersion! @aws_lambda
 }
 
 # ─── Subscriptions ────────────────────────────────────────────────────────────
@@ -967,6 +976,18 @@ input RegenerateSectionInput {
 
 input MarkSectionReviewedInput {
   sectionId: ID!
+}
+
+# RS-9: trackedChanges carries the Collaboration Law / ES-4 attribution
+# payload — the Document Studio editor's ChangeEntry[] shape (dual human/
+# agent attribution, per-change accept/reject status). AWSJSON: no SDL-level
+# validation, stored verbatim (same convention as guardrailEvidence/payload
+# elsewhere in this schema).
+input SaveDocumentSectionEditInput {
+  versionId: ID!
+  harmonizationKey: String!
+  body: String!
+  trackedChanges: AWSJSON!
 }
 
 input PublishGenerationEventInput {

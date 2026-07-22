@@ -125,6 +125,9 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   'NC.Triaged': true,
   'Risk.Assessed': true,
 
+  // --- read-surface-completion RS-9 (2026-07-22): Collaboration Law persistence.
+  'Document.SectionEdited': true,
+
   // --- Spec 35 (guardrails-antihallucination): AI guardrail telemetry events.
   // All auditTrail:false — advisory/operational, never sealed to immutable ledger.
   // entityId: '' consistently (invoker has no domain row ID at check time).

@@ -15,8 +15,9 @@ import {
   marshalMany,
 } from './shared.js';
 import { mapEnum, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP } from './enum-mappings.js';
-import { S3Client, GetObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, CopyObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { createHash } from 'node:crypto';
 
 const logger = new Logger({ serviceName: 'resolver-m1' });
 const s3 = new S3Client({});
@@ -71,6 +72,8 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return getDocumentVersionDiff(event, tenantId);
     case 'getDocumentContent':
       return getDocumentContent(event, tenantId);
+    case 'saveDocumentSectionEdit':
+      return saveDocumentSectionEdit(event, tenantId, sub);
     default:
       throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
@@ -659,6 +662,137 @@ async function getDocumentContent(event: AppSyncEvent, tenantId: string) {
 
     const content = await loadContentJson(ref);
     return JSON.stringify(content);
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+}
+
+function versionContentKey(tenantId: string, documentId: string, versionNo: number): string {
+  return `tenants/${tenantId}/documents/${documentId}/v${versionNo}.json`;
+}
+
+/**
+ * saveDocumentSectionEdit (RS-9, Collaboration Law persistence) — the
+ * Document Studio editor's sync point. ALWAYS writes a NEW document version
+ * (7.5.2 versioning law: a sealed/approved document is never mutated in
+ * place); the edited section's content + trackedChanges attribution payload
+ * (ES-4, the frontend's ChangeEntry[] shape, stored verbatim) is merged into
+ * a copy of the current version's content JSON. Sets the parent Document
+ * back to DRAFT — an edit invalidates any prior review, same rationale as
+ * regenerate-section.ts clearing reviewed_by/reviewed_at (APR-1: review
+ * state is not inheritable across content changes).
+ */
+async function saveDocumentSectionEdit(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as Record<string, unknown>;
+  const versionId = input.versionId as string;
+  const harmonizationKey = input.harmonizationKey as string;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const metaResult = await txn.execute(
+      `SELECT d.id AS document_id, d.status, v.content_ref
+       FROM m1.document_versions v JOIN m1.documents d ON d.id = v.document_id
+       WHERE v.id = :versionId::uuid`,
+      [{ name: 'versionId', value: { stringValue: versionId } }],
+    );
+    const meta = marshalOne(metaResult) as {
+      documentId: string;
+      status: string;
+      contentRef: string | null;
+    } | null;
+    if (!meta) throw new Error('VERSION_NOT_FOUND');
+    // 7.5.2 versioning law: a sealed (approved) or obsolete document's
+    // record-of-truth is never mutated — every edit lands in a NEW version,
+    // but only while the document is still in an editable lifecycle state.
+    if (meta.status === 'APPROVED' || meta.status === 'OBSOLETE') {
+      throw new Error('SEALED_VERSION_REJECTED');
+    }
+    if (!meta.contentRef) throw new Error('CONTENT_UNAVAILABLE');
+
+    const content = await loadContentJson(meta.contentRef);
+    const sectionIdx = content.sections.findIndex((s) => s.harmonizationKey === harmonizationKey);
+    if (sectionIdx === -1) throw new Error('SECTION_NOT_FOUND');
+
+    const trackedChanges = JSON.parse(input.trackedChanges as string) as unknown;
+    const newContent: ContentJson = {
+      ...content,
+      sections: content.sections.map((s, i) =>
+        i === sectionIdx
+          ? { ...s, humanEditedBody: input.body as string, trackedChanges }
+          : s,
+      ),
+    };
+
+    const versionResult = await txn.execute(
+      `SELECT COALESCE(MAX(version_no), 0) + 1 AS next FROM m1.document_versions WHERE document_id = :docId::uuid`,
+      [{ name: 'docId', value: { stringValue: meta.documentId } }],
+    );
+    const versionNo = Number((marshalOne(versionResult) as { next: number }).next);
+
+    const body = JSON.stringify(newContent);
+    const contentRef = versionContentKey(tenantId, meta.documentId, versionNo);
+    const contentSha = createHash('sha256').update(body).digest('hex');
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: CONTENT_BUCKET,
+        Key: contentRef,
+        Body: body,
+        ContentType: 'application/json',
+      }),
+    );
+
+    const insertResult = await txn.execute(
+      `INSERT INTO m1.document_versions
+         (tenant_id, document_id, version_no, content_ref, content_sha256, change_summary, author_id, created_by)
+       VALUES (:tenantId, :docId::uuid, :versionNo::integer, :contentRef, :contentSha, :summary, :actor, :actor)
+       RETURNING *`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'docId', value: { stringValue: meta.documentId } },
+        { name: 'versionNo', value: { longValue: versionNo } },
+        { name: 'contentRef', value: { stringValue: contentRef } },
+        { name: 'contentSha', value: { stringValue: contentSha } },
+        { name: 'summary', value: { stringValue: `Section edit: ${harmonizationKey}` } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
+
+    // An edit invalidates any prior review — back to DRAFT (APR-1: review
+    // state is not inheritable across content changes).
+    await txn.execute(`UPDATE m1.documents SET status = 'draft', updated_at = NOW() WHERE id = :docId::uuid`, [
+      { name: 'docId', value: { stringValue: meta.documentId } },
+    ]);
+
+    await txn.commit();
+    const version = marshalOne(insertResult);
+
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5.2',
+      standard: 'ISO9001',
+      detailType: 'Document.SectionEdited',
+      source: 'cumplify.m1.document-studio',
+      entityId: String(version?.id ?? ''),
+      payload: {
+        documentId: meta.documentId,
+        versionId: version?.id,
+        harmonizationKey,
+        changeCount: Array.isArray(trackedChanges) ? trackedChanges.length : undefined,
+      },
+    });
+
+    logger.info('Document section edit saved as new version', {
+      tenantId,
+      documentId: meta.documentId,
+      versionNo,
+    });
+    return version;
   } catch (err) {
     try {
       await txn.rollback();

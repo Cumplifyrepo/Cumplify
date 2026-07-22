@@ -591,6 +591,12 @@ export class ApiStack extends cdk.Stack {
     });
     m1DS.createResolver('UpdatePolicy', { typeName: 'Mutation', fieldName: 'updatePolicy' });
     m1DS.createResolver('UpdateImsScope', { typeName: 'Mutation', fieldName: 'updateImsScope' });
+    // RS-9 (Collaboration Law persistence) — new field, needs the schema
+    // node dependency below (9d9c90a1 lesson).
+    const saveDocumentSectionEditResolver = m1DS.createResolver('SaveDocumentSectionEdit', {
+      typeName: 'Mutation',
+      fieldName: 'saveDocumentSectionEdit',
+    });
     // M2
     m2DS.createResolver('RaiseNonconformity', {
       typeName: 'Mutation',
@@ -1270,6 +1276,7 @@ export class ApiStack extends cdk.Stack {
       getDocumentContentResolver,
       listApprovalMatrixResolver,
       setApprovalMatrixEntryResolver,
+      saveDocumentSectionEditResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }
