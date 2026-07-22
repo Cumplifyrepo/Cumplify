@@ -6,6 +6,8 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { ulid } from 'ulid';
 import {
   extractContext,
   extractAgentContext,
@@ -24,6 +26,8 @@ import {
 } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m2' });
+const lambdaClient = new LambdaClient({});
+const CAPA_GURU_FN_ARN = process.env.CAPA_GURU_FN_ARN ?? '';
 
 interface AppSyncEvent {
   info: { fieldName: string };
@@ -61,6 +65,8 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return verifyEffectiveness(event, tenantId, sub);
     case 'disposeNonconformingOutput':
       return disposeNonconformingOutput(event, tenantId, sub);
+    case 'runCapaAnalysis':
+      return runCapaAnalysis(event, tenantId, sub);
     case 'getNonconformity':
       return getNonconformity(event, tenantId);
     case 'listNonconformities':
@@ -314,6 +320,76 @@ async function agentTriageNC(event: AppSyncEvent, tenantId: string, actor: strin
     await txn.rollback();
     throw err;
   }
+}
+
+/**
+ * runCapaAnalysis (RS-8) — "AI: draft this" on the M2 CAPA drawer.
+ * Fetches the NC's current state (this Lambda has RDS access; CAPAGuru does
+ * not — AgentHandlerReadOnlyPolicy, T-1), then FIRE-AND-FORGET async-
+ * invokes CAPAGuru (InvocationType 'Event') with that context. A
+ * synchronous RequestResponse invoke would risk AppSync's ~30s direct-
+ * Lambda-resolver ceiling under real Bedrock latency (the one-door
+ * invoker's internal grounding/AR checks can retry). The HITL card
+ * (listPendingHitlItems) is the real deliverable — this mutation only acks
+ * successful dispatch.
+ */
+async function runCapaAnalysis(event: AppSyncEvent, tenantId: string, actor: string) {
+  const ncId = event.arguments.ncId as string;
+  const txn = await beginTenantTransaction(tenantId);
+  let nc: Record<string, unknown> | null;
+  let cas: Record<string, unknown>[];
+  try {
+    const ncResult = await txn.execute(
+      `SELECT description, nc_type, severity, standard, status FROM m2.nonconformities WHERE id = :ncId::uuid`,
+      [{ name: 'ncId', value: { stringValue: ncId } }],
+    );
+    nc = marshalOne(ncResult);
+    if (!nc) throw new Error('NC_NOT_FOUND');
+
+    const caResult = await txn.execute(
+      `SELECT id, action_desc, status, owner_id FROM m2.corrective_actions WHERE nc_id = :ncId::uuid ORDER BY created_at ASC`,
+      [{ name: 'ncId', value: { stringValue: ncId } }],
+    );
+    cas = marshalMany(caResult);
+    await txn.commit();
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
+
+  const runId = ulid();
+  const payload = {
+    tenantId,
+    runId,
+    ncId,
+    requestedBy: actor,
+    context: {
+      nc: {
+        description: nc.description,
+        ncType: (nc.ncType as string).toLowerCase(),
+        severity: (nc.severity as string).toLowerCase(),
+        standard: nc.standard,
+        status: (nc.status as string).toLowerCase(),
+      },
+      correctiveActions: cas.map((ca) => ({
+        id: ca.id,
+        actionDesc: ca.actionDesc,
+        status: (ca.status as string).toLowerCase(),
+        ownerId: ca.ownerId,
+      })),
+    },
+  };
+
+  await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: CAPA_GURU_FN_ARN,
+      InvocationType: 'Event',
+      Payload: JSON.stringify(payload),
+    }),
+  );
+
+  logger.info('CAPA analysis dispatched', { tenantId, ncId, runId });
+  return { runId, status: 'DISPATCHED' };
 }
 
 async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {

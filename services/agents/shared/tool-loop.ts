@@ -46,6 +46,13 @@ export interface ToolLoopOpts {
   creditExempt?: boolean;
   /** Optional: output schema for schema-retry */
   outputSchema?: Record<string, unknown>;
+  /**
+   * RS-8: sub of the human who triggered a user-initiated run (runCapaAnalysis/
+   * runRiskAssessment) — threaded to enterHitlGate so hitl-approval.ts's SOD-1
+   * check (author != approver) has something to check. Absent for event-
+   * triggered agent runs (no human proposer to block self-approval against).
+   */
+  requestedBy?: string;
 }
 
 export interface ToolDispatchResult {
@@ -134,6 +141,8 @@ export async function toolLoop(
             conversationState: messages,
             // L5-1: pass guardrail evidence from invoker response to HITL card
             guardrailEvidence: response.guardrailEvidence,
+            // RS-8: SOD-1 — self-approval blocked for user-triggered runs
+            ...(opts.requestedBy && { requestedBy: opts.requestedBy }),
           });
 
           return {
@@ -162,6 +171,8 @@ export async function toolLoop(
             conversationState: messages,
             // L5-1: pass guardrail evidence from invoker response to HITL card
             guardrailEvidence: response.guardrailEvidence,
+            // RS-8: SOD-1 — self-approval blocked for user-triggered runs
+            ...(opts.requestedBy && { requestedBy: opts.requestedBy }),
           });
 
           return {

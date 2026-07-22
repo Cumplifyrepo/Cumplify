@@ -122,7 +122,7 @@ describe('ApiStack template assertions (source-level)', () => {
     expect(API_STACK_CODE).toContain("typeName: 'Subscription'");
   });
 
-  it('total resolver count is 87 (source-counted; history in comments below)', () => {
+  it('total resolver count is 89 (source-counted; history in comments below)', () => {
     const queryCount = (API_STACK_CODE.match(/typeName: 'Query'/g) ?? []).length;
     const mutationCount = (API_STACK_CODE.match(/typeName: 'Mutation'/g) ?? []).length;
     // Subscription count: 5 fields in subscriptionFields array (loop-generated)
@@ -145,7 +145,8 @@ describe('ApiStack template assertions (source-level)', () => {
     // 2026-07-16: -1 (appendAuditEvent facade removed — no handler case, zero callers; owner-approved)
     // 2026-07-21: +2 (RS-6 approval matrix: listApprovalMatrix Query + setApprovalMatrixEntry Mutation on m4DS)
     // 2026-07-22: +1 (RS-9: saveDocumentSectionEdit Mutation on m1DS)
-    expect(queryCount + mutationCount + subLoopCount + individualSubCount).toBe(87);
+    // 2026-07-22: +2 (RS-8: runCapaAnalysis Mutation on m2DS, runRiskAssessment Mutation on m5DS)
+    expect(queryCount + mutationCount + subLoopCount + individualSubCount).toBe(89);
   });
 
   it('subscription resolvers enforce C-6 tenant-claim check via $util.unauthorized()', () => {

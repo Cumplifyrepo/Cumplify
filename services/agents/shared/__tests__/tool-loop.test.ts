@@ -159,6 +159,38 @@ describe('toolLoop', () => {
     expect(result.turns).toBe(1);
   });
 
+  it('RS-8: threads requestedBy to enterHitlGate for user-triggered runs (SOD-1)', async () => {
+    mockEnterHitlGate.mockResolvedValueOnce({
+      status: 'HITL_PENDING',
+      executionArn: 'arn:aws:states:us-east-1:123:execution:hitl-req',
+      hitlItemId: 'hitl-req-1',
+    });
+    const invokeFn = vi.fn().mockResolvedValueOnce(toolUseResponse('capa-open', { ncId: 'nc-1' }));
+
+    await toolLoop(
+      [{ role: 'user', content: [{ text: 'open capa' }] }],
+      baseOpts({ invokeFn, requestedBy: 'user-42' }),
+    );
+
+    expect(mockEnterHitlGate).toHaveBeenCalledWith(
+      expect.objectContaining({ requestedBy: 'user-42' }),
+    );
+  });
+
+  it('omits requestedBy entirely for event-triggered runs (no human proposer)', async () => {
+    mockEnterHitlGate.mockResolvedValueOnce({
+      status: 'HITL_PENDING',
+      executionArn: 'arn:aws:states:us-east-1:123:execution:hitl-noreq',
+      hitlItemId: 'hitl-noreq-1',
+    });
+    const invokeFn = vi.fn().mockResolvedValueOnce(toolUseResponse('capa-open', { ncId: 'nc-1' }));
+
+    await toolLoop([{ role: 'user', content: [{ text: 'open capa' }] }], baseOpts({ invokeFn }));
+
+    const call = mockEnterHitlGate.mock.calls[0][0];
+    expect('requestedBy' in call).toBe(false);
+  });
+
   it('handles dynamic HITL (dispatchTool returns requiresHitl=true)', async () => {
     mockEnterHitlGate.mockResolvedValueOnce({
       status: 'HITL_PENDING',

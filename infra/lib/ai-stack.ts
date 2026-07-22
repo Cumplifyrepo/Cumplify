@@ -65,14 +65,9 @@ export interface AiStackProps extends cdk.StackProps {
   readonly vpc: ec2.IVpc;
   readonly privateSubnets: ec2.ISubnet[];
   readonly bedrockKeyArn: string;
-  // App-role secret for RLS-safe writes (from ApiStack, T4-F1)
-  readonly appRoleSecretArn: string;
   // Existing iso-kb AOSS collection (OWNED by DataStack, spec 1 — imported here)
   readonly isoKbCollectionArn: string;
   readonly isoKbCollectionEndpoint: string;
-  // AppSync API (from ApiStack) — guru resolver wiring
-  readonly graphqlApiId: string;
-  readonly graphqlApiUrl: string;
   // spec 40 — generation plane working storage (GeneralBucket, CMK)
   readonly generalBucketName: string;
   readonly generalBucketArn: string;
@@ -84,6 +79,14 @@ export class AiStack extends cdk.Stack {
     super(scope, id, props);
 
     const { envConfig } = props;
+
+    // RS-8 (2026-07-22): imported by well-known export name, NOT as native
+    // CDK cross-stack props — see the exportName comment in api-stack.ts's
+    // CfnOutputs block for why (breaks the aiStack->apiStack dependency edge
+    // so apiStack's m2/m5 resolvers can legitimately depend on THIS stack).
+    const appRoleSecretArn = cdk.Fn.importValue(`cumplify-${envConfig.envName}-app-role-secret-arn`);
+    const graphqlApiId = cdk.Fn.importValue(`cumplify-${envConfig.envName}-graphql-api-id`);
+    const graphqlApiUrl = cdk.Fn.importValue(`cumplify-${envConfig.envName}-graphql-api-url`);
 
     // ─── Import existing resources ─────────────────────────────────────────
     const bus = events.EventBus.fromEventBusAttributes(this, 'ImportedBus', {
@@ -340,7 +343,7 @@ export class AiStack extends cdk.Stack {
       bundling: { externalModules: [], target: 'node22' },
       environment: {
         CLUSTER_ARN: props.clusterArn,
-        APP_ROLE_SECRET_ARN: props.appRoleSecretArn,
+        APP_ROLE_SECRET_ARN: appRoleSecretArn,
         DB_NAME: 'postgres', // C-3e: must match api-core DATABASE setting
         BUS_NAME: props.busName,
         POWERTOOLS_SERVICE_NAME: 'execute-writeback',
@@ -717,7 +720,7 @@ export class AiStack extends cdk.Stack {
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['secretsmanager:GetSecretValue'],
-        resources: [props.appRoleSecretArn],
+        resources: [appRoleSecretArn],
       }),
     );
     props.dynamodbKey.grantDecrypt(executeWritebackLambda);
@@ -828,6 +831,19 @@ export class AiStack extends cdk.Stack {
         batchSize: 1,
         reportBatchItemFailures: true,
       }),
+    );
+
+    // RiskSentinel (RS-8, read-surface-completion) — Workhorse seat, Nova
+    // Pro per Part 30 (contracts/model-register.md: already registered for
+    // this agent, PROVISIONAL, expiry 2026-10-06 — no new Register row
+    // needed). No SQS trigger yet (hazard/aspect event triggers are
+    // catalogued roadmap, agent-catalog.md:198-212) — synchronous direct-
+    // invoke only, from m5.ts's runRiskAssessment via CAPA_GURU_FN_ARN's
+    // sibling wiring (api-stack.ts).
+    const riskSentinelHandler = createAgentHandler(
+      'RiskSentinelFn',
+      'services/agents/risk-sentinel/handler.ts',
+      { POWERTOOLS_SERVICE_NAME: 'agent-risk-sentinel' },
     );
 
     // 2. DocStudio (standard queue)
@@ -949,10 +965,12 @@ export class AiStack extends cdk.Stack {
     ];
 
     // ─── Guru AppSync Data Sources + Resolvers (Task 8R-2) ──────────────────
-    // Import the existing AppSync API (created by ApiStack — AiStack depends on it).
+    // Import the existing AppSync API (created by ApiStack; imported by
+    // export name — RS-8, see the appRoleSecretArn/graphqlApiId/graphqlApiUrl
+    // comment above — this stack no longer CDK-depends on ApiStack).
     // Auth mode: @aws_lambda (user-facing, consistent with all other Query fields).
     const importedApi = appsync.GraphqlApi.fromGraphqlApiAttributes(this, 'ImportedApi', {
-      graphqlApiId: props.graphqlApiId,
+      graphqlApiId,
     });
 
     const guru9001DS = importedApi.addLambdaDataSource('Guru9001DataSource', guru9001Handler);
@@ -979,11 +997,11 @@ export class AiStack extends cdk.Stack {
     // (AiStack already depends on ApiStack for the AppSync URL).
     const genEnv = {
       CLUSTER_ARN: props.clusterArn,
-      APP_ROLE_SECRET_ARN: props.appRoleSecretArn,
+      APP_ROLE_SECRET_ARN: appRoleSecretArn,
       TABLE_NAME: props.tableName,
       BUS_NAME: props.busName,
       GENERAL_BUCKET: props.generalBucketName,
-      APPSYNC_URL: props.graphqlApiUrl,
+      APPSYNC_URL: graphqlApiUrl,
     };
 
     const seedSectionsFn = new NodejsFunction(this, 'SeedSectionsFn', {
@@ -1051,7 +1069,7 @@ export class AiStack extends cdk.Stack {
     const publishGenerationEventArn = cdk.Stack.of(this).formatArn({
       service: 'appsync',
       resource: 'apis',
-      resourceName: `${props.graphqlApiId}/types/Mutation/fields/publishGenerationEvent`,
+      resourceName: `${graphqlApiId}/types/Mutation/fields/publishGenerationEvent`,
     });
 
     for (const fn of [seedSectionsFn, composeSectionFn, finalizeManualFn, regenerateSectionFn]) {
@@ -1071,7 +1089,7 @@ export class AiStack extends cdk.Stack {
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
           actions: ['secretsmanager:GetSecretValue'],
-          resources: [props.appRoleSecretArn],
+          resources: [appRoleSecretArn],
         }),
       );
       fn.addToRolePolicy(
@@ -1191,7 +1209,14 @@ export class AiStack extends cdk.Stack {
     });
     new cdk.CfnOutput(this, 'StoreTokenLambdaArn', { value: storeTokenLambda.functionArn });
     // Agent handler outputs
-    new cdk.CfnOutput(this, 'CapaGuruHandlerArn', { value: capaGuruHandler.functionArn });
+    new cdk.CfnOutput(this, 'CapaGuruHandlerArn', {
+      value: capaGuruHandler.functionArn,
+      exportName: `cumplify-${envConfig.envName}-capa-guru-fn-arn`,
+    });
+    new cdk.CfnOutput(this, 'RiskSentinelHandlerArn', {
+      value: riskSentinelHandler.functionArn,
+      exportName: `cumplify-${envConfig.envName}-risk-sentinel-fn-arn`,
+    });
     new cdk.CfnOutput(this, 'DocStudioHandlerArn', { value: docStudioHandler.functionArn });
     new cdk.CfnOutput(this, 'LeadAuditorHandlerArn', { value: leadAuditorHandler.functionArn });
     new cdk.CfnOutput(this, 'ControlTowerHandlerArn', { value: controlTowerHandler.functionArn });

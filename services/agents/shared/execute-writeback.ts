@@ -288,6 +288,10 @@ async function dispatchToolWrite(
       return executeChecklistGen(action.args, tenantId, transactionId, actor);
     case 'records-retention-schedule':
       return executeRecordsRetentionSchedule(action.args, tenantId, transactionId, actor);
+    case 'nc-triage-write':
+      return executeNcTriageWrite(action.args, tenantId, transactionId, actor);
+    case 'risk-assessment-write':
+      return executeRiskAssessmentWrite(action.args, tenantId, transactionId, actor);
     case 'ct-governance-write':
       // C-3c: BLOCKED-ON-DESIGN — m1.roles_responsibilities does not exist in any migration.
       // Pending architect design ruling on the correct corpus target table.
@@ -573,6 +577,81 @@ async function executeRecordsRetentionSchedule(
 }
 
 /**
+ * RS-8: nc-triage-write — CAPAGuru's stage-2 reclassification proposal,
+ * approved. classification arrives DB-lowercase already (the tool's
+ * inputSchema instructs the model directly — 'nonconforming_output'|'nc'|
+ * 'incident' — the CHECK constraint on m2.nonconformities.nc_type is the
+ * validation backstop, same as every other tool here).
+ */
+async function executeNcTriageWrite(
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  _actor: string,
+): Promise<Record<string, unknown>> {
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `UPDATE m2.nonconformities SET nc_type = :classification, updated_at = NOW(), version = version + 1
+          WHERE id = :ncId::uuid AND tenant_id = current_setting('app.tenant_id')
+          RETURNING id, nc_type`,
+      parameters: [
+        { name: 'classification', value: { stringValue: args.classification as string } },
+        { name: 'ncId', value: { stringValue: args.ncId as string } },
+      ],
+    }),
+  );
+  return writtenRow(result);
+}
+
+/**
+ * RS-8: risk-assessment-write — RiskSentinel's likelihood/severity
+ * proposal, approved. Refreshes risk_register_view in the SAME transaction
+ * (createRisk's/agentAssessRisk's established pattern — app_role cannot
+ * REFRESH the view directly, SECURITY DEFINER accessor only). rationale has
+ * no m5.risks column (free-text narrative, not a register field) —
+ * preserved in the Agent.WritebackCommitted audit payload only (writeResult
+ * doesn't carry it; the caller's approvalResult.editedPayload/proposedAction
+ * already ledgers the full proposal on the HITL approval event separately).
+ */
+async function executeRiskAssessmentWrite(
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  _actor: string,
+): Promise<Record<string, unknown>> {
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `UPDATE m5.risks SET likelihood = :likelihood, severity = :severity, updated_at = NOW(), version = version + 1
+          WHERE id = :riskId::uuid AND tenant_id = current_setting('app.tenant_id')
+          RETURNING id, likelihood, severity`,
+      parameters: [
+        { name: 'likelihood', value: { longValue: Number(args.likelihood) } },
+        { name: 'severity', value: { longValue: Number(args.severity) } },
+        { name: 'riskId', value: { stringValue: args.riskId as string } },
+      ],
+    }),
+  );
+  await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `SELECT m5_views.refresh_risk_register_view()`,
+    }),
+  );
+  return writtenRow(result);
+}
+
+/**
  * H-3 (Task 8R): Emit audit event via the registered publisher.
  * Uses publishAuditEvent pattern: ULID eventId, registered detailType,
  * standard from proposedAction context, full actor identity.
@@ -595,6 +674,8 @@ async function emitWritebackAuditEvent(opts: {
     'audit-checklist-gen': 'M3',
     'records-retention-schedule': 'M4',
     'ct-governance-write': 'cross-standard',
+    'nc-triage-write': 'M2',
+    'risk-assessment-write': 'M5',
   };
   const module = moduleMap[opts.proposedAction.tool] ?? opts.agentName;
 

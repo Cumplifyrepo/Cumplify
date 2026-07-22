@@ -22,6 +22,11 @@ const MIGRATION_004 = readFileSync(
   'utf-8',
 );
 
+const MIGRATION_006 = readFileSync(
+  resolve(__dirname, '../../../api/migrations/006_m5_risk_management.sql'),
+  'utf-8',
+);
+
 describe('execute-writeback dispatch: schema pinning', () => {
   describe('capa-open (m2.corrective_actions)', () => {
     it('includes due_date in INSERT (NOT NULL, no default in 003)', () => {
@@ -72,6 +77,61 @@ describe('execute-writeback dispatch: schema pinning', () => {
     });
   });
 
+  describe('nc-triage-write (RS-8, m2.nonconformities)', () => {
+    it('UPDATEs nc_type, never INSERTs a new row (this is a reclassification, not a create)', () => {
+      const fnBody = WRITEBACK_CODE.slice(
+        WRITEBACK_CODE.indexOf('async function executeNcTriageWrite'),
+        WRITEBACK_CODE.indexOf('async function executeRiskAssessmentWrite'),
+      );
+      expect(fnBody).toMatch(/UPDATE m2\.nonconformities SET nc_type/);
+      expect(fnBody).not.toContain('INSERT INTO');
+    });
+
+    it('scopes to tenant via current_setting (RLS pattern, matches every other tool here)', () => {
+      const fnBody = WRITEBACK_CODE.slice(
+        WRITEBACK_CODE.indexOf('async function executeNcTriageWrite'),
+        WRITEBACK_CODE.indexOf('async function executeRiskAssessmentWrite'),
+      );
+      expect(fnBody).toContain("tenant_id = current_setting('app.tenant_id')");
+    });
+
+    it('passes classification straight through — the DB CHECK constraint is the validation backstop', () => {
+      // migration 003: nc_type CHECK (nc_type IN ('nonconforming_output','nc','incident'))
+      expect(MIGRATION_003).toContain("nc_type TEXT NOT NULL CHECK (nc_type IN");
+      const fnBody = WRITEBACK_CODE.slice(
+        WRITEBACK_CODE.indexOf('async function executeNcTriageWrite'),
+        WRITEBACK_CODE.indexOf('async function executeRiskAssessmentWrite'),
+      );
+      expect(fnBody).toContain(':classification');
+    });
+  });
+
+  describe('risk-assessment-write (RS-8, m5.risks)', () => {
+    it('UPDATEs likelihood/severity, never INSERTs a new row (this is an assessment, not a create)', () => {
+      const fnBody = WRITEBACK_CODE.slice(
+        WRITEBACK_CODE.indexOf('async function executeRiskAssessmentWrite'),
+        WRITEBACK_CODE.indexOf('/**\n * H-3'),
+      );
+      expect(fnBody).toMatch(/UPDATE m5\.risks SET likelihood = :likelihood, severity = :severity/);
+      expect(fnBody).not.toContain('INSERT INTO');
+    });
+
+    it('likelihood/severity match migration 006\'s CHECK(1-5) columns', () => {
+      expect(MIGRATION_006).toContain('likelihood INTEGER NOT NULL CHECK (likelihood BETWEEN 1 AND 5)');
+      expect(MIGRATION_006).toContain('severity INTEGER NOT NULL CHECK (severity BETWEEN 1 AND 5)');
+    });
+
+    it('refreshes risk_register_view in the SAME transaction (createRisk/agentAssessRisk pattern)', () => {
+      const fnBody = WRITEBACK_CODE.slice(
+        WRITEBACK_CODE.indexOf('async function executeRiskAssessmentWrite'),
+        WRITEBACK_CODE.indexOf('/**\n * H-3'),
+      );
+      expect(fnBody).toContain('m5_views.refresh_risk_register_view()');
+      // Same transactionId threaded to the refresh call, not a fresh one.
+      expect(fnBody).toContain('transactionId,\n      sql: `SELECT m5_views.refresh_risk_register_view()`');
+    });
+  });
+
   describe('ct-governance-write', () => {
     it('is BLOCKED-ON-DESIGN (no m1.roles_responsibilities in any migration)', () => {
       // Writeback correctly blocks ct-governance-write
@@ -90,6 +150,8 @@ describe('execute-writeback dispatch: schema pinning', () => {
         'audit-finding-write',
         'audit-checklist-gen',
         'records-retention-schedule',
+        'nc-triage-write',
+        'risk-assessment-write',
         'ct-governance-write',
       ];
       for (const tool of hitlTools) {

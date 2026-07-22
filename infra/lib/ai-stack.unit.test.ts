@@ -66,15 +66,11 @@ function createTestStack(): Template {
       }),
     ],
     bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
-    appRoleSecretArn:
-      'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
     isoKbCollectionArn: 'arn:aws:aoss:us-east-1:123456789012:collection/mockisokb123',
     isoKbCollectionEndpoint: 'https://mockisokb123.us-east-1.aoss.amazonaws.com',
-    graphqlApiId: 'test-api-id-123',
     generalBucketName: 'mock-general-bucket',
     generalBucketArn: 'arn:aws:s3:::mock-general-bucket',
     s3GeneralKey: mockKey,
-    graphqlApiUrl: 'https://test-api.appsync-api.us-east-1.amazonaws.com/graphql',
     env: { account: envConfig.account, region: envConfig.region },
   });
 
@@ -274,14 +270,21 @@ describe('AiStack', () => {
     });
 
     it('ExecuteWriteback role uses app_role secret NOT master (T4-F1)', () => {
+      // RS-8 (2026-07-22): appRoleSecretArn is now Fn.importValue'd (breaks
+      // the aiStack->apiStack CDK dependency edge — see the comment at its
+      // declaration in ai-stack.ts) rather than a plain string prop, so the
+      // synthesized Resource is an Fn::ImportValue intrinsic, not a literal
+      // ARN string. Still pinned to the SAME well-known export name every
+      // environment's ApiStack publishes (api-stack.ts's AppRoleSecretArn
+      // CfnOutput) — same guarantee (app_role, never master), different
+      // mechanism.
       template.hasResourceProperties('AWS::IAM::Policy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
             Match.objectLike({
               Action: 'secretsmanager:GetSecretValue',
               Effect: 'Allow',
-              Resource:
-                'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
+              Resource: { 'Fn::ImportValue': 'cumplify-dev-app-role-secret-arn' },
             }),
           ]),
         },
@@ -614,7 +617,7 @@ describe('HITL State Machine (H-4 Task 8R)', () => {
 describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
   const template = createTestStack();
 
-  it('defines 8 agent handler Lambdas (5 SQS + 3 guru)', () => {
+  it('defines 9 agent handler Lambdas (5 SQS + 3 guru + RiskSentinel direct-invoke, RS-8)', () => {
     const lambdas = template.findResources('AWS::Lambda::Function');
     const agentHandlerServices = [
       'agent-capa-guru',
@@ -625,6 +628,7 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
       'agent-guru-9001',
       'agent-guru-14001',
       'agent-guru-45001',
+      'agent-risk-sentinel',
     ];
     const templateJson = JSON.stringify(lambdas);
     for (const svc of agentHandlerServices) {
@@ -638,10 +642,10 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
       const env = (resource as any).Properties?.Environment?.Variables ?? {};
       return env.AI_INVOKER_ARN !== undefined;
     });
-    // 8 agent handler Lambdas + ComposeSectionFn (spec-40 Task 5) +
-    // RegenerateSectionFn (GEN-6 — compose runs in-process) +
+    // 9 agent handler Lambdas (RS-8 adds RiskSentinelFn) + ComposeSectionFn
+    // (spec-40 Task 5) + RegenerateSectionFn (GEN-6 — compose runs in-process) +
     // IsoKbSeederFn (iso-kb-seeding Task 5) — all reach Bedrock via one door
-    expect(handlerLambdas.length).toBe(11);
+    expect(handlerLambdas.length).toBe(12);
   });
 
   it('SQS Event Source Mappings exist for consumer handlers', () => {

@@ -8,6 +8,8 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { ulid } from 'ulid';
 import {
   extractContext,
   extractAgentContext,
@@ -19,6 +21,8 @@ import {
 import { mapEnum, RISK_CATEGORY_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m5' });
+const lambdaClient = new LambdaClient({});
+const RISK_SENTINEL_FN_ARN = process.env.RISK_SENTINEL_FN_ARN ?? '';
 
 interface AppSyncEvent {
   info: { fieldName: string };
@@ -48,6 +52,8 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return addRiskTreatment(event, tenantId, sub);
     case 'createChangePlan':
       return createChangePlan(event, tenantId, sub);
+    case 'runRiskAssessment':
+      return runRiskAssessment(event, tenantId, sub);
     case 'getRisk':
       return getRisk(event, tenantId);
     case 'getCrossRegisterRiskView':
@@ -178,6 +184,58 @@ async function agentAssessRisk(event: AppSyncEvent, tenantId: string, actor: str
     await txn.rollback();
     throw err;
   }
+}
+
+/**
+ * runRiskAssessment (RS-8) — "AI: draft this" on the /risk register
+ * row/drawer. Fetches the risk's current state (this Lambda has RDS
+ * access; RiskSentinel does not — AgentHandlerReadOnlyPolicy, T-1), then
+ * FIRE-AND-FORGET async-invokes RiskSentinel (InvocationType 'Event') with
+ * that context. See runCapaAnalysis (m2.ts) for the same AppSync-30s-
+ * ceiling rationale — identical shape, mirrored deliberately.
+ */
+async function runRiskAssessment(event: AppSyncEvent, tenantId: string, actor: string) {
+  const riskId = event.arguments.riskId as string;
+  const txn = await beginTenantTransaction(tenantId);
+  let risk: Record<string, unknown> | null;
+  try {
+    const result = await txn.execute(
+      `SELECT description, category, standard, likelihood, severity FROM m5.risks WHERE id = :riskId::uuid`,
+      [{ name: 'riskId', value: { stringValue: riskId } }],
+    );
+    risk = marshalOne(result);
+    if (!risk) throw new Error('RISK_NOT_FOUND');
+    await txn.commit();
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
+
+  const runId = ulid();
+  const payload = {
+    tenantId,
+    runId,
+    riskId,
+    requestedBy: actor,
+    context: {
+      description: risk.description,
+      category: (risk.category as string).toLowerCase(),
+      standard: risk.standard,
+      currentLikelihood: risk.likelihood,
+      currentSeverity: risk.severity,
+    },
+  };
+
+  await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: RISK_SENTINEL_FN_ARN,
+      InvocationType: 'Event',
+      Payload: JSON.stringify(payload),
+    }),
+  );
+
+  logger.info('Risk assessment dispatched', { tenantId, riskId, runId });
+  return { runId, status: 'DISPATCHED' };
 }
 
 async function addRiskTreatment(event: AppSyncEvent, tenantId: string, actor: string) {

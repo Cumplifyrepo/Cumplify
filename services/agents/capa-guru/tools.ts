@@ -9,6 +9,26 @@ import type { ToolConfig } from '../../ai-invoker/src/types.js';
 export const CAPA_GURU_TOOLS: ToolConfig[] = [
   {
     toolSpec: {
+      name: 'nc-triage-write',
+      description:
+        'Reclassify an existing nonconformity (architecture §4 CAPA stage 2: triage). HITL-gated: requires human (QM/EHS Manager) approval before commit.',
+      inputSchema: {
+        json: {
+          type: 'object',
+          required: ['ncId', 'classification'],
+          properties: {
+            ncId: { type: 'string', description: 'ID of the nonconformity' },
+            classification: {
+              type: 'string',
+              description: 'One of: nonconforming_output | nc | incident',
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    toolSpec: {
       name: 'capa-open',
       description:
         'Propose a corrective action for a nonconformity. HITL-gated: requires human approval before commit.',

@@ -242,6 +242,18 @@ type ReadinessScore @aws_lambda @aws_iam {
   assessedAt: AWSDateTime!
 }
 
+# read-surface-completion RS-8 — "AI does the heavy lifting" user-triggered
+# agent runs. Async ack: the run is dispatched (fire-and-forget Lambda
+# Invoke, Event type — a synchronous RequestResponse call risks exceeding
+# AppSync's ~30s direct-Lambda-resolver ceiling under real Bedrock latency,
+# especially with the one-door invoker's internal grounding/AR retries).
+# The HITL card (listPendingHitlItems) is the real deliverable, not this
+# return value — status here only reflects successful DISPATCH.
+type AgentRunAck @aws_lambda {
+  runId: ID!
+  status: String!
+}
+
 # ─── M4: Records Management Types ────────────────────────────────────────────
 
 type Record @aws_lambda @aws_iam {
@@ -621,6 +633,9 @@ type Mutation {
   closeCapa(input: CloseCapaInput!): CorrectiveAction! @aws_lambda
   verifyEffectiveness(input: VerifyEffectivenessInput!): CapaEffectivenessCheck! @aws_lambda
   disposeNonconformingOutput(input: DisposeNonconformingOutputInput!): NonconformingOutput! @aws_lambda
+  # RS-8: "AI: draft this" on the M2 CAPA drawer — invokes CAPAGuru with the
+  # NC's current stage context, stage-aware per the CAPA shall-workflow.
+  runCapaAnalysis(ncId: ID!): AgentRunAck! @aws_lambda
 
   # M3 — Audit Studio (user-facing)
   createAuditProgramme(input: CreateAuditProgrammeInput!): AuditProgramme! @aws_lambda
@@ -640,6 +655,9 @@ type Mutation {
   createRisk(input: CreateRiskInput!): Risk! @aws_lambda
   addRiskTreatment(input: AddRiskTreatmentInput!): RiskTreatment! @aws_lambda
   createChangePlan(input: CreateChangePlanInput!): ChangePlan! @aws_lambda
+  # RS-8: "AI: draft this" on the /risk register row/drawer — invokes the
+  # RiskSentinel seat with the risk's current context.
+  runRiskAssessment(riskId: ID!): AgentRunAck! @aws_lambda
 
   # Agent-path mutations (@aws_iam)
   agentDraftDocument(input: AgentDraftDocumentInput!): Document! @aws_iam
