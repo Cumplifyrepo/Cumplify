@@ -309,3 +309,243 @@ awareness:
   ships) + addTreatment + createChangePlan drawers
 - Real-time: `onRiskEscalated` → refetch + flash escalated row (3s danger rail)
 - Ask chip target: `?create=1&title=<>&standard=<>` consumed by createRisk drawer
+
+
+---
+
+## 8. IMS Manual (`/manual`) — P2 Hero Surface
+
+**§4 matrix citation:**
+- Row: `5.2` — Policy controlled + communicated; `4.1–4.3` — Context/scope
+- Agent: DocStudio (A-BUILT + spec-40)
+- Status: ENG-BUILT (spec-40 engine: 24s run, honest gaps, 4.53/5)
+- **Queries consumed:**
+  - `getOrgProfile` — **BUILT** (returns org profile JSON payload)
+  - `listGenerationRuns(limit)` — **BUILT** (returns run history with sections)
+  - `getGenerationRun(id)` — **BUILT** (single run detail for polling)
+  - `getDocumentContent(versionId)` — **BUILT** (returns content JSON for viewer)
+  - `listDocumentVersions(documentId)` — **BUILT** (version history)
+- **Mutations consumed:**
+  - `generateImsManual(input)` — **BUILT** (triggers DocStudio engine)
+  - `markSectionReviewed(input)` — **BUILT** (per-section review tracking)
+  - `submitDocumentForApproval(id)` — **BUILT** (approval flow entry)
+  - `requestImsExport(documentId)` — **BUILT** (returns presigned URL for ZIP)
+- **Subscriptions:**
+  - `onGenerationProgress(tenantId)` — **BUILT** (WebSocket; runId/type/harmonizationKey/kind/summary)
+- **DEFERRED:** Document.clauseRefs (RS-1, architect-side this week) — render
+  without clause grouping until RS-1 lands; no blocker.
+
+### 8.1 Page States
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ STATE 1: No Profile                                                  │
+│   GuidanceBanner(warning): "Complete your org profile to generate"   │
+│   PrimaryButton → /setup                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ STATE 2: Profile exists, no generation runs                          │
+│   GuidanceBanner(info): "Generate your IMS manual — one button"      │
+│   PrimaryButton "Generate IMS Manual" (the Agent-First button)       │
+├─────────────────────────────────────────────────────────────────────┤
+│ STATE 3: Generation RUNNING                                          │
+│   GenerationProgress panel (ported from qms/generation-view)         │
+│   Live section list: kind badges + real-time subscription updates    │
+│   Polling fallback: 10s while status=RUNNING                         │
+├─────────────────────────────────────────────────────────────────────┤
+│ STATE 4: Generation COMPLETE/PARTIAL                                 │
+│   StatTile row: Total sections | Prose | Gaps | Reviewed             │
+│   ControlledDocViewer (§9) renders the manual                        │
+│   Action bar: Regenerate (SecondaryButton) | Export ZIP (Primary)    │
+│   Section-level review badges + "Mark reviewed" per prose section    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 8.2 Agent-First compliance
+
+The Generate button IS DocStudio working — it invokes `generateImsManual`
+which triggers the agent engine. The surface is NOT a CRUD register; the
+agent does the heavy lifting (generates 69 sections across standards), human
+reviews section-by-section and approves. Per the COLLABORATION LAW: future
+iteration threads (P3+) will allow directing DocStudio to revise specific
+sections — P2 ships the generate→review→approve→export loop first.
+
+### 8.3 Error states
+
+- `ORG_PROFILE_REQUIRED` → switch to State 1
+- `NO_STANDARDS_IN_SCOPE` → GuidanceBanner(warning) + CTA to /setup
+- `GENERATION_UNAVAILABLE` → ErrorState with retry
+- Network/unknown → ErrorState with retry
+
+### 8.4 Export ZIP
+
+`requestImsExport(documentId)` returns `{ url, expiresAt }`. PrimaryButton
+opens presigned URL in new tab. If the mutation returns `EXPORT_NOT_AVAILABLE`
+or `Unknown field`, render honest "Export not yet available" state (graceful
+degradation per the existing pattern).
+
+### 8.5 Absorption (migration law)
+
+`/manual` absorbs `/qms`. The flip `/qms` → redirect to `/manual` happens
+ONLY when this view passes its design gate. Until then, `/manual` redirects
+interim to `/qms` (current state).
+
+---
+
+## 9. ControlledDocViewer — Shared Component
+
+**§4 matrix citation:**
+- Row: `7.5.2` — Doc/record review & APPROVAL before use
+- Law: §7 identification block — MANDATORY on every controlled render
+- Source: `services/pdf-export/src/template.ts` (vendored to frontend)
+- **No direct queries** — receives content JSON as a prop from parent views
+
+### 9.1 Architecture
+
+```
+<ControlledDocViewer contentJson={...} meta={...} />
+  └─ sandboxed <iframe srcDoc={html} sandbox="allow-same-origin" />
+       └─ template.ts renders: brand-bar + CONTROLLED stamp + QMS info block
+                               + clause-numbered sections + footer
+```
+
+### 9.2 Props
+
+```ts
+interface ControlledDocViewerProps {
+  contentJson: ContentJson;     // from getDocumentContent parse
+  meta: DocMeta;                // title, documentId, versionNo, docType, standard, tenantName, generatedAt
+  className?: string;
+}
+```
+
+### 9.3 §7 Identification Block (mandatory)
+
+Every render carries (from `template.ts` `qmsInfoBlock`):
+- Document ID, Title, Document Type, Standard(s), Version, Generated date
+- CONTROLLED DOCUMENT stamp (top-right branded)
+- Footer: "CONTROLLED when viewed through Cumplify or as a sealed export.
+  Printed or copied instances are uncontrolled unless stamped otherwise."
+- Additional rows when available: Organization, Management Rep, Sites
+
+### 9.4 Styling
+
+- Outer container: bg `surface`, border 1px `border`, radius `card`,
+  overflow hidden.
+- iframe: width 100%, min-height 600px, border none, bg white.
+- Print button (SecondaryButton): triggers `iframe.contentWindow.print()`.
+- The document inside is WHITE (light-theme, print-ready) — the surrounding
+  app chrome is dark per the UI law. This contrast IS the controlled-doc
+  visual language.
+
+### 9.5 Parity drift test
+
+A hermetic test renders the same fixture JSON through both the frontend
+`lib/controlled-doc/template.ts` and asserts the HTML includes the §7
+identification block fields. If template.ts drifts from
+`services/pdf-export/src/template.ts`, the test flags it.
+
+### 9.6 Vendor procedure
+
+Copy `services/pdf-export/src/template.ts` → `frontend/src/lib/controlled-doc/template.ts`.
+The frontend copy is the iframe render source. The backend copy remains the
+PDF/ZIP export source. Both MUST stay in sync (parity drift test enforces).
+
+---
+
+## 10. Documents (`/documents`) — Clause-Family Browser + M1 Absorb
+
+**§4 matrix citation:**
+- Row: `5.2` — Policy controlled + communicated
+- Agent: DocStudio (A-BUILT)
+- **Queries consumed:**
+  - `listDocuments(standard, status)` — **BUILT** (M1 register query)
+  - `getDocumentContent(versionId)` — **BUILT** (renders in ControlledDocViewer)
+  - `listDocumentVersions(documentId)` — **BUILT** (version sidebar)
+  - `Document.clauseRefs` — **read-surface-completion RS-1** (landing this
+    week; used for clause-family grouping; renders without grouping until
+    it lands — no blocker)
+- **Mutations consumed:**
+  - `createDocumentDraft(input)` — **BUILT**
+  - `submitDocumentForApproval(id)` — **BUILT**
+  - `approveDocumentVersion(versionId)` — **BUILT**
+  - `publishControlledDocument(id)` — **BUILT**
+- **Subscriptions:**
+  - `onDocumentStatusChanged(tenantId)` — **BUILT**
+
+### 10.1 Layout
+
+- PageHeader("Documents", action: PrimaryButton "New draft" → createDocumentDraft drawer)
+- StandardSwitch-aware filter (effectiveStandard from scope context) + status filter
+- **Clause-family grouping (4–10):** when `Document.clauseRefs` is available
+  (RS-1), group documents by ISO clause family (4.x Context, 5.x Leadership,
+  6.x Planning, 7.x Support, 8.x Operation, 9.x Evaluation, 10.x Improvement).
+  Collapsible sections with clause-family headers. Without RS-1: flat list
+  (current M1 behavior).
+- DataTable per group: Title, StatusBadge, ClauseChip(s), version, updatedAt w/ ProvenanceLink
+- Detail (click row): ControlledDocViewer + version sidebar + approval actions
+
+### 10.2 Absorption (migration law)
+
+`/documents` absorbs `/m1`. The flip `/m1` → redirect to `/documents`
+happens ONLY when this view passes its design gate (clause-family grouping
+working + ControlledDocViewer integrated). Until then, `/documents` redirects
+interim to `/m1` (current state).
+
+---
+
+## 11. Cross-Reference (`/cross-reference`) — Correlation Matrix Grid
+
+**§4 matrix citation:**
+- Row: `5.2` + all clause rows — Correlation matrix spans all standards
+- Source: `CORRELATION_MATRIX` JSON (kind='correlation_matrix' content from
+  `getDocumentContent` of the system-generated correlation-matrix document)
+- **Queries consumed:**
+  - `listDocuments(standard)` → find the correlation-matrix document — **BUILT**
+  - `getDocumentContent(versionId)` → retrieve matrix JSON — **BUILT**
+  - `listDocumentVersions(documentId)` — **BUILT** (version history)
+- No mutations (read-only view)
+
+### 11.1 Layout
+
+- PageHeader("Cross-Reference Matrix")
+- StandardSwitch: when scope ≠ IMS, highlight the column for that standard
+- Interactive grid: rows = harmonization sections (harmonizationKey), columns = standards
+- Each cell shows: clauseNo + clauseTitle + annexSlMode badge
+- Click cell → navigate to `/documents` filtered by that clause family
+- Rendered from `ContentJson.rows[]` (MatrixRow shape with coverage[])
+- If no correlation-matrix document exists: GuidanceBanner(info) + CTA to /manual
+
+### 11.2 Styling
+
+- Grid: `DataTable`-like layout with fixed first column (section name)
+- Standard columns: equal width, header = standard name pill
+- Cell badge (annexSlMode): `success` for "Shall", `warning` for "Should", `textMuted` for "—"
+- Hover: `surfaceHover` row highlight
+- Empty state: "Generate your manual first to see the cross-reference matrix"
+
+---
+
+## 12. Clause Guide (`/guide`) — 80-Row Registry
+
+**§4 matrix citation:**
+- Row: `4.1–4.3` through `10.2` — entire clause spine
+- **Queries consumed:**
+  - `listClauseRegistry(standard)` — **BUILT** (80 rows, sorted by sortOrder)
+  - `listClauseApplicability` — **BUILT** (applicability state per clause)
+- No mutations from this view (applicability editing is in /qms registry tab)
+
+### 12.1 Layout
+
+- PageHeader("Clause Guide")
+- StandardSwitch-aware: when scope ≠ IMS, filter by standard; when IMS, show all with standard column
+- Table: clauseNo, clauseTitle, standard (ClauseChip), intentParaphrase (truncated), applicability badge
+- Applicability badge: ReadyPill (ready=applicable, not-ready=excluded/N/A, unknown=not set)
+- Harmonization indicators: clauses that map to the same harmonizationKey across standards show a link icon + tooltip ("Harmonized with ISO XXXX Y.Z")
+- Row click: expand to show full intentParaphrase + requiredSources
+- No mutation actions — this is a reference view; edits happen in /qms registry tab
+
+### 12.2 Styling
+
+- Standard DataTable with the existing column pattern
+- intentParaphrase column: max-width 400px, text-overflow ellipsis, expand on click
+- Harmonization badge: inline icon (chain-link, `accentMuted`) after clauseNo when harmonized
