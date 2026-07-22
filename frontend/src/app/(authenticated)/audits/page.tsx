@@ -103,6 +103,8 @@ export default function AuditStudioPage() {
   const [completeError, setCompleteError] = useState<string | null>(null);
   const [readinessScores, setReadinessScores] = useState<ReadinessScore[]>([]);
   const [loadingReadiness, setLoadingReadiness] = useState(false);
+  const [readinessError, setReadinessError] = useState<string | null>(null);
+  const [readinessFetched, setReadinessFetched] = useState(false);
 
   const fetchAudits = useCallback(async () => {
     try {
@@ -145,6 +147,8 @@ export default function AuditStudioPage() {
     setFindings([]);
     setChecklist([]);
     setReadinessScores([]);
+    setReadinessError(null);
+    setReadinessFetched(false);
     setCompleteError(null);
     fetchDetail(auditId);
   }
@@ -177,14 +181,17 @@ export default function AuditStudioPage() {
 
   async function handleFetchReadiness(standard: string) {
     setLoadingReadiness(true);
+    setReadinessError(null);
     try {
       const data = await query<{ getAuditReadiness: ReadinessScore[] }>(GET_AUDIT_READINESS, {
         standard,
       });
       setReadinessScores(data.getAuditReadiness);
-    } catch {
+    } catch (e) {
       setReadinessScores([]);
+      setReadinessError((e as Error).message || t('error'));
     } finally {
+      setReadinessFetched(true);
       setLoadingReadiness(false);
     }
   }
@@ -310,6 +317,12 @@ export default function AuditStudioPage() {
                             {loadingReadiness ? t('loadingReadiness') : t('viewReadiness')}
                           </SecondaryButton>
                         </div>
+                        {readinessError && (
+                          <p className={styles.errorMsg}>{readinessError}</p>
+                        )}
+                        {!readinessError && readinessFetched && readinessScores.length === 0 && (
+                          <p className={styles.emptyHint}>{t('readinessEmpty')}</p>
+                        )}
                         {readinessScores.length > 0 && (
                           <div className={styles.readinessGrid}>
                             {readinessScores.map((rs) => (

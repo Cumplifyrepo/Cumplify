@@ -1035,6 +1035,7 @@
     "readinessTitle": "Readiness",
     "viewReadiness": "View readiness scores",
     "loadingReadiness": "Loading…",
+    "readinessEmpty": "No readiness scores available — run the scoring agent first.",
     "completeTitle": "Lifecycle",
     "completeAudit": "Complete audit",
     "completing": "Completing…"

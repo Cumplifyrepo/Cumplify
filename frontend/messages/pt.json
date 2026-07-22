@@ -1035,6 +1035,7 @@
     "readinessTitle": "Prontidão",
     "viewReadiness": "Ver pontuações de prontidão",
     "loadingReadiness": "Carregando…",
+    "readinessEmpty": "Sem pontuações de prontidão — execute o agente de avaliação primeiro.",
     "completeTitle": "Ciclo de vida",
     "completeAudit": "Concluir auditoria",
     "completing": "Concluindo…"

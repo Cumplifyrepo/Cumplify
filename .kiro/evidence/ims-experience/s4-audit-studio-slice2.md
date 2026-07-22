@@ -1,6 +1,7 @@
 # S4 Audit Studio Slice 2 — Build Evidence
 
 **Date:** 2026-07-22 · **Builder:** Kiro · **Session:** B1 backlog items
+**Base commit:** `cbffddc` · **cdk-outputs.json blob SHA:** `b91620ef1c49542e`
 
 ## B1.1 — completeAudit surfaced as studio action
 
@@ -20,7 +21,7 @@ Both are granted to `resolverFns[2]` (the m3 Lambda) in api-stack.ts:
 
 ### UI mount site
 
-- Button: `frontend/src/app/(authenticated)/audits/page.tsx:331`
+- Interactive element: `frontend/src/app/(authenticated)/audits/page.tsx:346`
   - `<SecondaryButton onClick={() => handleCompleteAudit(a)}>`
   - Gated by `a.status !== 'completed'` — renders only for non-completed audits
 - Handler calls `mutate(COMPLETE_AUDIT, { id: audit.id })` then refreshes the list
@@ -39,12 +40,16 @@ Both are granted to `resolverFns[2]` (the m3 Lambda) in api-stack.ts:
 
 ### UI mount site
 
-- Button: `frontend/src/app/(authenticated)/audits/page.tsx:303`
+- Interactive element: `frontend/src/app/(authenticated)/audits/page.tsx:314`
   - `<SecondaryButton onClick={() => handleFetchReadiness(a.standard)}>`
   - "View readiness scores" — fetches and renders per-clause score badges
-- Grid: page.tsx:312 — `readinessScores.map(rs => ...)` with StatusBadge
+- Grid: page.tsx:327 — `readinessScores.map(rs => ...)` with StatusBadge
   (APPROVED ≥100, PENDING >0, DRAFT =0)
-- Test: `page.test.tsx` "expanded detail shows View readiness scores action"
+- Error state: surfaces error message on failure (amendment 1)
+- Empty state: explicit "No readiness scores available" when fetched and empty
+- Tests: `page.test.tsx` "expanded detail shows View readiness scores action",
+  "readiness button renders error message on failure",
+  "readiness button renders explicit empty state when scores are empty"
 
 ## B1.3 — runAuditFindings dispatch unit test
 
@@ -83,25 +88,32 @@ This constitutes a full spec implementation (design + implement + test +
 pin bump + changelog), not a fold of existing surface into the Audit Studio.
 **DEFERRED to the read-surface-completion spec's own implementation phase.**
 
-## Test baselines
+## Backlog note (flagged for next slice)
 
-| Lane | Before | After | Delta |
-|------|--------|-------|-------|
+`completeAudit` (m3.ts:225) hardcodes `clauseRef: 'ISO 9001 9.2'` and
+`standard: 'ISO9001'` in its `publishAuditEvent` call regardless of the
+audit's actual standard. Should read from the returned row's `standard`
+field. Flagged — not fixed in this slice (mutation behaviour change requires
+design-before-implementation per 14-simplicity rule).
+
+## Test evidence (rule 8 — timestamp, exit code, outputs SHA)
+
+| Run | Timestamp (UTC) | Exit | Result |
+|-----|-----------------|------|--------|
+| Backend vitest | 2026-07-22T23:47:27Z | 0 | 1266 passed, 3 skipped |
+| Frontend vitest | 2026-07-22T23:48:02Z | 0 | 203 passed |
+| Root tsc --noEmit | 2026-07-22T23:48:39Z | 0 | clean |
+| Frontend tsc --noEmit | 2026-07-22T23:48:48Z | 0 | clean |
+
+**Outputs digest:** `059539324d7b9ac1` (sha256 of summary line)
+**Resolved against:** `cdk-outputs.json` blob `b91620ef1c49542eba35375abbc2a21b4b58c766`
+
+## Baselines
+
+| Lane | Before (slice 1 close) | After (amendment) | Delta |
+|------|------------------------|-------------------|-------|
 | Backend | 1262 / 3 skip | 1266 / 3 skip | +4 (m3-runAuditFindings) |
-| Frontend | 198 | 201 | +3 (B1.1 × 2, B1.2 × 1) |
+| Frontend | 198 | 203 | +5 (B1.1×2, B1.2×1, amendment×2) |
 | Resolver pin | 98 | 98 | 0 (no new resolvers) |
 | Root tsc | clean | clean | — |
 | Frontend tsc | clean | clean | — |
-
-## Evidence commands
-
-```
-$ npx vitest run --exclude 'frontend/**' 2>&1 | grep "Tests"
-Tests  1266 passed | 3 skipped (1269)
-
-$ cd frontend && npx vitest run 2>&1 | grep "Tests"
-Tests  201 passed (201)
-
-$ npx tsc --noEmit  # exit 0
-$ cd frontend && npx tsc --noEmit  # exit 0
-```

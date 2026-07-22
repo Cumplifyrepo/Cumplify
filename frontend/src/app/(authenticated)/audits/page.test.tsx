@@ -120,6 +120,42 @@ describe('Audit Studio (S4)', () => {
     );
   });
 
+  it('readiness button renders error message on failure (amendment 1)', async () => {
+    mockQuery.mockImplementation(async (q: string) => {
+      if (q.includes('ListAudits')) return { listAudits: [AUDIT] };
+      if (q.includes('ListAuditFindings')) return { listAuditFindings: [] };
+      if (q.includes('ListAuditChecklists')) return { listAuditChecklists: [] };
+      if (q.includes('GetAuditReadiness')) throw new Error('Network timeout');
+      throw new Error(`unmocked: ${q.slice(0, 40)}`);
+    });
+    render(<AuditStudioPage />);
+    await waitFor(() => expect(screen.getByTestId('audit-row-audit-1')).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId('audit-row-audit-1'));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'auditStudio.viewReadiness' })).toBeInTheDocument(),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'auditStudio.viewReadiness' }));
+    await waitFor(() => expect(screen.getByText('Network timeout')).toBeInTheDocument());
+  });
+
+  it('readiness button renders explicit empty state when scores are empty (amendment 1)', async () => {
+    mockQuery.mockImplementation(async (q: string) => {
+      if (q.includes('ListAudits')) return { listAudits: [AUDIT] };
+      if (q.includes('ListAuditFindings')) return { listAuditFindings: [] };
+      if (q.includes('ListAuditChecklists')) return { listAuditChecklists: [] };
+      if (q.includes('GetAuditReadiness')) return { getAuditReadiness: [] };
+      throw new Error(`unmocked: ${q.slice(0, 40)}`);
+    });
+    render(<AuditStudioPage />);
+    await waitFor(() => expect(screen.getByTestId('audit-row-audit-1')).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId('audit-row-audit-1'));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'auditStudio.viewReadiness' })).toBeInTheDocument(),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'auditStudio.viewReadiness' }));
+    await waitFor(() => expect(screen.getByText('auditStudio.readinessEmpty')).toBeInTheDocument());
+  });
+
   it('zero audits renders the empty state with a planning action (deploy 8a2e9a17 regression)', async () => {
     mockQuery.mockImplementation(async (q: string) => {
       if (q.includes('ListAudits')) return { listAudits: [] };

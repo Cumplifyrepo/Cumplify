@@ -1035,6 +1035,7 @@
     "readinessTitle": "Preparación",
     "viewReadiness": "Ver puntuaciones de preparación",
     "loadingReadiness": "Cargando…",
+    "readinessEmpty": "Sin puntuaciones de preparación — ejecute el agente de evaluación primero.",
     "completeTitle": "Ciclo de vida",
     "completeAudit": "Completar auditoría",
     "completing": "Completando…"
