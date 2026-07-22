@@ -492,3 +492,101 @@ describe('hitl-approval resolver — L5-2 flagged justification enforcement (Tas
     expect(result.decision).toBe('SEND_BACK');
   });
 });
+
+describe('hitl-approval resolver — SOD-1 author≠approver (architecture §8)', () => {
+  it('403 when the proposer attempts to approve their own item', async () => {
+    mockDdbSend.mockResolvedValueOnce({
+      Item: makeDdbItem({ requestedBy: 'approver-user-1' }),
+    });
+
+    await expect(
+      handler(makeEvent({ input: { hitlItemId: 'hitl-item-123', decision: 'APPROVE' } }) as never),
+    ).rejects.toThrow(/SoD violation/);
+    // blocked BEFORE the RESOLVING update and BEFORE SFN
+    expect(mockSfnSend).not.toHaveBeenCalled();
+  });
+
+  it('proceeds when the approver is a different identity', async () => {
+    mockDdbSend.mockResolvedValueOnce({
+      Item: makeDdbItem({ requestedBy: 'someone-else' }),
+    });
+    mockDdbSend.mockResolvedValueOnce({}); // RESOLVING update
+
+    const result = (await handler(
+      makeEvent({ input: { hitlItemId: 'hitl-item-123', decision: 'APPROVE' } }) as never,
+    )) as { decision: string };
+    expect(result.decision).toBe('APPROVE');
+  });
+
+  it('SEND_BACK by the proposer is allowed (only self-APPROVAL is SoD)', async () => {
+    mockDdbSend.mockResolvedValueOnce({
+      Item: makeDdbItem({ requestedBy: 'approver-user-1' }),
+    });
+    mockDdbSend.mockResolvedValueOnce({}); // RESOLVING update
+
+    const result = (await handler(
+      makeEvent({ input: { hitlItemId: 'hitl-item-123', decision: 'SEND_BACK' } }) as never,
+    )) as { decision: string };
+    expect(result.decision).toBe('SEND_BACK');
+  });
+});
+
+describe('hitl-approval resolver — RS-6 approval-matrix narrowing', () => {
+  const capaItem = (overrides: Record<string, unknown> = {}) =>
+    makeDdbItem({
+      module: 'M2',
+      proposedAction: { tool: 'capa-open', args: {} },
+      ...overrides,
+    });
+  const matrixEntryItem = (approveRole: string) =>
+    marshall({
+      PK: `TENANT#${TENANT_ID}#GOVERNANCE`,
+      SK: 'APPROVALMATRIX#capa#ISO9001',
+      artifactType: 'capa',
+      standard: 'ISO9001',
+      steps: JSON.stringify([{ roleSlug: approveRole, action: 'approve' }]),
+      version: 1,
+    });
+
+  it('matrix narrows: floor-passing role denied when entry excludes it', async () => {
+    mockDdbSend.mockResolvedValueOnce({ Item: capaItem() }); // HITL item
+    mockDdbSend.mockResolvedValueOnce({ Item: matrixEntryItem('top-management') }); // matrix
+
+    await expect(
+      handler(
+        makeEvent(
+          { input: { hitlItemId: 'hitl-item-123', decision: 'APPROVE' } },
+          'quality-manager', // passes the M2 floor — narrowed out by matrix
+        ) as never,
+      ),
+    ).rejects.toThrow(/Approval matrix/);
+    expect(mockSfnSend).not.toHaveBeenCalled();
+  });
+
+  it('no matrix entry → floor alone governs (approve succeeds)', async () => {
+    mockDdbSend.mockResolvedValueOnce({ Item: capaItem() }); // HITL item
+    mockDdbSend.mockResolvedValueOnce({}); // exact-standard matrix miss
+    mockDdbSend.mockResolvedValueOnce({}); // ANY fallback miss
+    mockDdbSend.mockResolvedValueOnce({}); // RESOLVING update
+
+    const result = (await handler(
+      makeEvent(
+        { input: { hitlItemId: 'hitl-item-123', decision: 'APPROVE' } },
+        'quality-manager',
+      ) as never,
+    )) as { decision: string };
+    expect(result.decision).toBe('APPROVE');
+  });
+
+  it('THE FLOOR INVARIANT: matrix granting a floor-denied role cannot rescue it (403 at floor, matrix never consulted)', async () => {
+    mockDdbSend.mockResolvedValueOnce({ Item: capaItem() }); // HITL item only
+
+    await expect(
+      handler(
+        makeEvent({ input: { hitlItemId: 'hitl-item-123', decision: 'APPROVE' } }, 'employee') as never,
+      ),
+    ).rejects.toThrow(/cannot approve items in module/);
+    // exactly ONE ddb call (the item Get) — floor 403'd before matrix read
+    expect(mockDdbSend).toHaveBeenCalledTimes(1);
+  });
+});

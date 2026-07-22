@@ -13,7 +13,12 @@ import { GetItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { SFNClient, SendTaskSuccessCommand, SendTaskFailureCommand } from '@aws-sdk/client-sfn';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { extractContext, getTenantDdbClient, publishAuditEvent, TABLE_NAME } from './shared.js';
-import { canApprove, resolveModule } from '../permissions/role-matrix.js';
+import { canApprove, normalizeRole, resolveModule } from '../permissions/role-matrix.js';
+import {
+  approveAllowedByMatrix,
+  getMatrixEntry,
+  resolveArtifactType,
+} from '../permissions/approval-matrix.js';
 import { resolveHitlItem } from '../../../agents/shared/hitl.js';
 
 const logger = new Logger({ serviceName: 'resolver-hitl-approval' });
@@ -92,6 +97,40 @@ export async function handler(event: AppSyncEvent): Promise<HitlApprovalResult> 
   if (!canApprove(role, module)) {
     logger.warn('Role lacks approval permission', { role, module, hitlItemId });
     throw new ApprovalError(403, `Role '${role}' cannot approve items in module '${module}'`);
+  }
+
+  // Step 7a (SOD-1): author ≠ approver. Items stamped with the proposing
+  // human's sub (RS-8 runs) can never be approved by that same identity —
+  // the hard SoD floor beneath any tenant config.
+  const requestedBy = item.requestedBy as string | undefined;
+  if (requestedBy && requestedBy === approverSub && decision === 'APPROVE') {
+    logger.warn('SoD violation blocked: proposer attempted self-approval', { hitlItemId });
+    throw new ApprovalError(403, 'SoD violation: the proposer cannot approve their own item');
+  }
+
+  // Step 7b (RS-6): tenant approval-matrix narrowing. The matrix can only
+  // NARROW who approves (floor already enforced above); no entry → no
+  // narrowing.
+  const artifactType = resolveArtifactType(item);
+  if (artifactType && decision === 'APPROVE') {
+    const entry = await getMatrixEntry(
+      ddb as never,
+      TABLE_NAME,
+      tenantId,
+      artifactType,
+      (item.standard as string) ?? null,
+    );
+    if (!approveAllowedByMatrix(entry, normalizeRole(role))) {
+      logger.warn('Approval-matrix narrowing denied approval', {
+        role,
+        artifactType,
+        hitlItemId,
+      });
+      throw new ApprovalError(
+        403,
+        `Approval matrix: role '${role}' is not an approver for '${artifactType}'`,
+      );
+    }
   }
 
   // L5-2 (Task 32): If guardrailEvidence.flagged=true, approval REQUIRES justification.

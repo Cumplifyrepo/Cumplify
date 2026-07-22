@@ -6,8 +6,8 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
-import { QueryCommand } from '@aws-sdk/client-dynamodb';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
+import { GetItemCommand, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import {
   extractContext,
   beginTenantTransaction,
@@ -17,6 +17,16 @@ import {
   getTenantDdbClient,
   TABLE_NAME,
 } from './shared.js';
+import { normalizeRole, KNOWN_ROLES } from '../permissions/role-matrix.js';
+import {
+  ARTIFACT_MODULES,
+  GOVERNANCE_SK_PREFIX,
+  MATRIX_ADMIN_ROLES,
+  defaultStepsFor,
+  governancePk,
+  matrixSk,
+  type ApprovalStep,
+} from '../permissions/approval-matrix.js';
 
 const logger = new Logger({ serviceName: 'resolver-m4' });
 
@@ -46,9 +56,152 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return listCalibrationsDue(event, tenantId);
     case 'getAuditTrail':
       return getAuditTrail(event, tenantId);
+    case 'listApprovalMatrix':
+      return listApprovalMatrix(tenantId);
+    case 'setApprovalMatrixEntry':
+      return setApprovalMatrixEntry(event, tenantId, sub, ctx.role);
     default:
       throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
+}
+
+// ─── Approval matrix (RS-6, governance items in DDB) ─────────────────────────
+
+interface MatrixEntryOut {
+  id: string;
+  artifactType: string;
+  standard: string | null;
+  steps: ApprovalStep[];
+  version: number;
+  updatedBy: string | null;
+  updatedAt: string | null;
+}
+
+function entryFromItem(item: Record<string, unknown>): MatrixEntryOut {
+  const rawSteps = item.steps;
+  const steps =
+    typeof rawSteps === 'string' ? (JSON.parse(rawSteps) as ApprovalStep[]) : ([] as ApprovalStep[]);
+  const standard = (item.standard as string) === 'ANY' ? null : ((item.standard as string) ?? null);
+  return {
+    id: item.SK as string,
+    artifactType: item.artifactType as string,
+    standard,
+    steps,
+    version: (item.version as number) ?? 1,
+    updatedBy: (item.updatedBy as string) ?? null,
+    updatedAt: (item.updatedAt as string) ?? null,
+  };
+}
+
+async function listApprovalMatrix(tenantId: string): Promise<MatrixEntryOut[]> {
+  const ddb = await getTenantDdbClient(tenantId);
+  const res = await ddb.send(
+    new QueryCommand({
+      TableName: TABLE_NAME,
+      KeyConditionExpression: 'PK = :pk AND begins_with(SK, :prefix)',
+      ExpressionAttributeValues: marshall({
+        ':pk': governancePk(tenantId),
+        ':prefix': GOVERNANCE_SK_PREFIX,
+      }),
+    }),
+  );
+  const rows = (res.Items ?? []).map((i) => entryFromItem(unmarshall(i)));
+  if (rows.length > 0) return rows;
+  // No tenant config yet: return the Part-13 computed defaults (real
+  // effective routing derived from the role matrix — never fabricated).
+  return Object.keys(ARTIFACT_MODULES).map((artifactType) => ({
+    id: `default#${artifactType}`,
+    artifactType,
+    standard: null,
+    steps: defaultStepsFor(artifactType),
+    version: 0,
+    updatedBy: null,
+    updatedAt: null,
+  }));
+}
+
+async function setApprovalMatrixEntry(
+  event: AppSyncEvent,
+  tenantId: string,
+  actor: string,
+  role: string,
+): Promise<MatrixEntryOut> {
+  const roleSlug = normalizeRole(role);
+  if (!MATRIX_ADMIN_ROLES.has(roleSlug)) {
+    throw new Error(`FORBIDDEN: role '${role}' cannot edit the approval matrix`);
+  }
+  const input = event.arguments.input as {
+    artifactType: string;
+    standard?: string | null;
+    steps: unknown;
+  };
+  if (!ARTIFACT_MODULES[input.artifactType]) {
+    throw new Error(`VALIDATION: unknown artifactType '${input.artifactType}'`);
+  }
+  const steps = (
+    typeof input.steps === 'string' ? JSON.parse(input.steps) : input.steps
+  ) as ApprovalStep[];
+  if (!Array.isArray(steps) || steps.length === 0) {
+    throw new Error('VALIDATION: steps must be a non-empty array');
+  }
+  for (const s of steps) {
+    if (!KNOWN_ROLES.includes(s.roleSlug)) {
+      throw new Error(`VALIDATION: unknown roleSlug '${s.roleSlug}'`);
+    }
+    if (s.action !== 'review' && s.action !== 'approve') {
+      throw new Error(`VALIDATION: step action must be review|approve`);
+    }
+  }
+
+  const ddb = await getTenantDdbClient(tenantId);
+  const sk = matrixSk(input.artifactType, input.standard ?? null);
+  const existing = await ddb.send(
+    new GetItemCommand({
+      TableName: TABLE_NAME,
+      Key: marshall({ PK: governancePk(tenantId), SK: sk }),
+    }),
+  );
+  const version = existing.Item ? (((unmarshall(existing.Item).version as number) ?? 0) + 1) : 1;
+  const now = new Date().toISOString();
+
+  await ddb.send(
+    new PutItemCommand({
+      TableName: TABLE_NAME,
+      Item: marshall({
+        PK: governancePk(tenantId),
+        SK: sk,
+        itemType: 'APPROVALMATRIX',
+        artifactType: input.artifactType,
+        standard: input.standard ?? 'ANY',
+        steps: JSON.stringify(steps),
+        version,
+        updatedBy: actor,
+        updatedAt: now,
+      }),
+    }),
+  );
+
+  await publishAuditEvent({
+    tenantId,
+    actor,
+    module: 'M4',
+    clauseRef: 'ISO 9001 7.5.2',
+    standard: (input.standard as 'ISO9001' | 'ISO14001' | 'ISO45001') ?? 'ISO9001',
+    detailType: 'Governance.ApprovalMatrixChanged',
+    source: 'cumplify.m4.governance',
+    entityId: sk,
+    payload: { artifactType: input.artifactType, standard: input.standard ?? null, steps, version },
+  });
+
+  return {
+    id: sk,
+    artifactType: input.artifactType,
+    standard: input.standard ?? null,
+    steps,
+    version,
+    updatedBy: actor,
+    updatedAt: now,
+  };
 }
 
 async function registerRecord(event: AppSyncEvent, tenantId: string, actor: string) {

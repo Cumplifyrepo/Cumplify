@@ -32,6 +32,8 @@ export interface HitlGateInput {
   tenantId: string;
   agentName: string;
   proposedAction: { tool: string; args: unknown };
+  /** SOD-1: sub of the human who triggered the run (self-approval blocked). */
+  requestedBy?: string;
   conversationState: ConversationMessage[];
   /** L5-1: guardrail evidence to persist on the HITL item for HITL card display */
   guardrailEvidence?: {
@@ -70,6 +72,9 @@ export async function enterHitlGate(input: HitlGateInput): Promise<HitlResult> {
     proposedAction: input.proposedAction,
     hitlItemId,
     createdAt: now,
+    // SOD-1: the proposing human's sub (user-triggered runs) — the approval
+    // Lambda blocks self-approval when present.
+    ...(input.requestedBy && { requestedBy: input.requestedBy }),
     // L5-1: guardrail evidence flows to store-token → DDB item → HITL card
     ...(input.guardrailEvidence && { guardrailEvidence: input.guardrailEvidence }),
     // Conversation context truncated to stay within SFN input size (256KB).

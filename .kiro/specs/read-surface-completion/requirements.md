@@ -101,11 +101,12 @@ module writes) consumed by hitl-approval.ts (`canApprove` L92). No
 approval-matrix table/SDL exists anywhere (verified).
 
 The system SHALL:
-- **(a) Storage:** new table `governance.approval_matrix` (new migration):
-  `id, tenant_id, artifact_type TEXT` (doc-type / form-template-key /
-  'audit_report' / 'capa' …), `standard TEXT NULL`, `steps JSONB`
-  (ordered `[{roleSlug, action: review|approve}]`), `created_by, created_at,
-  updated_at, version`, UNIQUE (tenant_id, artifact_type, standard).
+- **(a) Storage (AMENDED at build time — architect):** DDB governance items
+  (`PK = TENANT#<id>#GOVERNANCE`, `SK = APPROVALMATRIX#<artifactType>#
+  <standard|ANY>`, attrs: steps JSON, version, updatedBy, updatedAt) instead
+  of an RDS table — the consumer (hitl-approval Lambda) is DDB-native via
+  the tenant-data role whose `TENANT#<id>#*` session policy already covers
+  the partition; zero IAM/migration changes. Uniqueness = the key itself.
 - **(b) SDL:** `type ApprovalMatrixEntry { id, artifactType, standard,
   steps: AWSJSON }`, `listApprovalMatrix: [ApprovalMatrixEntry!]!`,
   `setApprovalMatrixEntry(input: SetApprovalMatrixEntryInput!):

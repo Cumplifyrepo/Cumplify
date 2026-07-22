@@ -256,6 +256,18 @@ type RetentionPolicy @aws_lambda @aws_iam {
   dispositionRule: String!
 }
 
+# RS-6: tenant-configurable records-approval matrix (architecture §8).
+# Narrows approvers per artifact type; role-matrix floor + SoD unbypassable.
+type ApprovalMatrixEntry @aws_lambda @aws_iam {
+  id: ID!
+  artifactType: String!
+  standard: String
+  steps: AWSJSON!
+  version: Int!
+  updatedBy: String
+  updatedAt: AWSDateTime
+}
+
 type MeasuringResource @aws_lambda @aws_iam {
   id: ID!
   assetTag: String!
@@ -429,6 +441,12 @@ input RecordCalibrationInput {
   nextDue: AWSDateTime!
 }
 
+input SetApprovalMatrixEntryInput {
+  artifactType: String!
+  standard: String
+  steps: AWSJSON!
+}
+
 input CreateRetentionPolicyInput {
   recordType: String!
   retentionYears: Int!
@@ -527,6 +545,7 @@ type Query {
   getRecord(id: ID!): Record @aws_lambda
   listCalibrationsDue(windowDays: Int!): [CalibrationRecord!]! @aws_lambda
   getAuditTrail(entityId: ID!): [AuditEvent!]! @aws_lambda
+  listApprovalMatrix: [ApprovalMatrixEntry!]! @aws_lambda
 
   # M5 — Risk Management
   getRisk(id: ID!): Risk @aws_lambda
@@ -594,6 +613,7 @@ type Mutation {
   registerMeasuringResource(input: RegisterMeasuringResourceInput!): MeasuringResource! @aws_lambda
   recordCalibration(input: RecordCalibrationInput!): CalibrationRecord! @aws_lambda
   createRetentionPolicy(input: CreateRetentionPolicyInput!): RetentionPolicy! @aws_lambda
+  setApprovalMatrixEntry(input: SetApprovalMatrixEntryInput!): ApprovalMatrixEntry! @aws_lambda
 
   # M5 — Risk Management (user-facing)
   createRisk(input: CreateRiskInput!): Risk! @aws_lambda

@@ -638,6 +638,16 @@ export class ApiStack extends cdk.Stack {
       typeName: 'Mutation',
       fieldName: 'createRetentionPolicy',
     });
+    // RS-6 approval matrix (governance items; tenant-data role's TENANT#<id>#*
+    // session policy already covers the GOVERNANCE partition)
+    const listApprovalMatrixResolver = m4DS.createResolver('ListApprovalMatrix', {
+      typeName: 'Query',
+      fieldName: 'listApprovalMatrix',
+    });
+    const setApprovalMatrixEntryResolver = m4DS.createResolver('SetApprovalMatrixEntry', {
+      typeName: 'Mutation',
+      fieldName: 'setApprovalMatrixEntry',
+    });
     // M5
     m5DS.createResolver('CreateRisk', { typeName: 'Mutation', fieldName: 'createRisk' });
     m5DS.createResolver('AddRiskTreatment', {
@@ -1258,6 +1268,8 @@ export class ApiStack extends cdk.Stack {
       markSectionReviewedResolver,
       requestImsExportResolver,
       getDocumentContentResolver,
+      listApprovalMatrixResolver,
+      setApprovalMatrixEntryResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }
