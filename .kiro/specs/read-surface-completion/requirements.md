@@ -1,23 +1,40 @@
-# read-surface-completion — Requirements (EARS) R1
+# Requirements Document
+
+read-surface-completion — Requirements (EARS) R2
+
+## Introduction
 
 **Spec:** `read-surface-completion` · **Lane:** architect-authored (ims-experience
 architecture §11 P1 ∥ item), Kiro builds. **Authority:**
-`.kiro/specs/ims-experience/architecture.md` §4/§8/§11 + the standing contract
-rule (view-designs may only cite queries that exist here or in schema).
-**Fact base verified 2026-07-21** (architect sweep): file/line citations below
-are checked against the tree at commit `ede9bec`.
-
-## 0. Context
+`.kiro/specs/ims-experience/architecture.md` §3 (AGENT-FIRST LAW) / §4 / §8 /
+§11 + the standing contract rule (view-designs may only cite queries that
+exist here or in schema). **Fact base verified 2026-07-21** (architect
+sweep): file/line citations below are checked against the tree at commit
+`ede9bec`.
 
 P2–P5 surfaces (Audit Studio, `/records`, `/activity`, `/documents`,
 `/settings/approvals`) need read surfaces and agent writeback handlers that do
-not exist yet. Every addition below is ADDITIVE (no breaking schema change).
-All marshalling MUST go through `shared.ts` `marshalResult`/`marshalOne`
-(AUD-1-safe timestamps — never hand-rolled). SCHEMA-5: no `tenantId` in any
-input; resolvers take it from the authorizer context. AppSync rule: new
-resolvers need an explicit node dependency on the schema; never `extend type`.
+not exist yet, and the AGENT-FIRST LAW retrofits agent actions onto the CAPA
+and Risk surfaces now. Every addition below is ADDITIVE (no breaking schema
+change). All marshalling MUST go through `shared.ts`
+`marshalResult`/`marshalOne` (AUD-1-safe timestamps — never hand-rolled).
+SCHEMA-5: no `tenantId` in any input; resolvers take it from the authorizer
+context. AppSync rule: new resolvers need an explicit node dependency on the
+schema; never `extend type`.
 
-## 1. REQ-RS-1 — Document.clauseRefs exposure
+## Glossary
+
+| Term | Meaning |
+|---|---|
+| Quartet | The four m3 list queries (programmes/audits/checklist/findings) |
+| Writeback door | An `@aws_iam` `agent*` mutation agents commit through after HITL |
+| Floor | role-matrix `canApprove` + hard SoD rules — unbypassable by tenant config |
+| One-door | The single bedrock-invoker serving path (agents-existing-8 REQ-SERVE-1) |
+| Seat | A Register-resolved model assignment on the one-door path (Part 30) |
+
+## Requirements
+
+### 1. REQ-RS-1 — Document.clauseRefs exposure
 
 The system SHALL add `clauseRefs: [String!]` to type `Document`
 (schema.graphql L92-101). Column `m1.documents.clause_refs TEXT[]` exists
@@ -27,7 +44,7 @@ marshal pass-through (Data API arrayValue unwrap already handled in shared
 `unwrapArray`). Acceptance: hermetic test with real Data-API `arrayValue`
 fixture; live probe shows clauseRefs on a generated document.
 
-## 2. REQ-RS-2 — M3 audit quartet (Audit Studio contract)
+### 2. REQ-RS-2 — M3 audit quartet (Audit Studio contract)
 
 The system SHALL add four list queries to the M3 resolver (m3.ts handler
 switch L31-48) and schema Query block (L522-524), returning existing types
@@ -46,7 +63,7 @@ schema uses enums. Acceptance: hermetic tests (real Data-API fixtures incl.
 timestamps) + int-lane list-with-rows probe after `scheduleAudit` +
 `generateAuditChecklist` create rows.
 
-## 3. REQ-RS-3 — listAuditEvents (tenant-wide activity ledger)
+### 3. REQ-RS-3 — listAuditEvents (tenant-wide activity ledger)
 
 The system SHALL add `listAuditEvents(limit: Int, nextToken: String):
 AuditEventPage!` where `AuditEventPage { items: [AuditEvent!]!, nextToken:
@@ -60,7 +77,7 @@ already exist — audit-trail-stack.ts L184/L315). Reuses getAuditTrail's
 KeyConditionExpression + no FilterExpression; live probe returns the P0/P1
 commit-era events newest-first.
 
-## 4. REQ-RS-4 — listRetentionPolicies
+### 4. REQ-RS-4 — listRetentionPolicies
 
 The system SHALL add `listRetentionPolicies: [RetentionPolicy!]!` (type
 exists, schema L252-257; table `m4.retention_policies`, migrations/005
@@ -68,7 +85,7 @@ L20-30; write path createRetentionPolicy m4.ts:190-228 + api-stack L637-640).
 SQL: `SELECT * FROM m4.retention_policies ORDER BY record_type`. Acceptance:
 hermetic + create-then-list int probe.
 
-## 5. REQ-RS-5 — listRecords (M4 records register)
+### 5. REQ-RS-5 — listRecords (M4 records register)
 
 The system SHALL add `listRecords(recordType: String): [Record!]!` (type
 exists, schema L242-250) over `m4.records` (write path registerRecord
@@ -77,7 +94,7 @@ created_at DESC`. This closes the AUD-2 placeholder ("listing requires
 listRecords") honestly. The `/records` P4 surface consumes this PLUS spec-41's
 existing `listFormRecords`. Acceptance: hermetic + register-then-list probe.
 
-## 6. REQ-RS-6 — Approval matrix (tenant-configurable, drives HITL)
+### 6. REQ-RS-6 — Approval matrix (tenant-configurable, drives HITL)
 
 **Today:** approval routing is code-only — `role-matrix.ts` (12 roles ×
 module writes) consumed by hitl-approval.ts (`canApprove` L92). No
@@ -110,7 +127,7 @@ The system SHALL:
 - Acceptance: hermetic floor tests; int-lane witness — set entry → HITL item
   routes per entry → SoD violation still blocked → audit events present.
 
-## 7. REQ-RS-7 — Agent writeback handlers (AUD-7 closure per REQ-WB)
+### 7. REQ-RS-7 — Agent writeback handlers (AUD-7 closure per REQ-WB)
 
 **Corrected fact:** all six `agent*` mutations (schema L604-609, all
 `@aws_iam`) ARE wired to module datasources (api-stack.ts L652-670:
@@ -130,15 +147,42 @@ implement handler cases for the four in-catalog-built-agent mutations:
 
 Each mutating writeback flows through the HITL gate per REQ-WB-2 (pause →
 authorized-role approval per §6(d) → commit) and emits the REQ-WB-3 audit
-event through the proven spine (REQ-WB-4; no parallel path). The two
-out-of-scope mutations (`agentAssessRisk`, `agentTriageNC` — wave-2 agents
-RiskSentinel/NCTriage not yet built) SHALL gain minimal handler cases that
-return a clean, typed GraphQL error `AGENT_NOT_YET_AVAILABLE` (never
-`Unknown field`) until wave 2 implements them. Acceptance: REQ-WB-5 witnessed
-e2e (propose → pause → approve → commit → sealed trail row) for at least
-`agentProposeCorrectiveAction`; hermetic tests for all six cases.
+event through the proven spine (REQ-WB-4; no parallel path).
 
-## 8. Non-functional / gates
+**SCOPE AMENDED per the AGENT-FIRST LAW (owner ruling 2026-07-21):** ALL SIX
+handler cases SHALL be implemented now — `agentTriageNC` (m2.ts: writes the
+triage classification as a PROPOSED update, HITL-gated) and
+`agentAssessRisk` (m5.ts: writes likelihood/severity/rationale as a PROPOSED
+assessment, HITL-gated) are pulled forward from wave 2. The agent side:
+CAPAGuru (BUILT) covers CA/triage duties; a **RiskSentinel seat is stood up
+on the one-door serving path** (Register-resolved Nova Pro per Part 30 — a
+new seat config + prompt, NOT a new serving paradigm) for assessRisk.
+Acceptance: REQ-WB-5 witnessed e2e (propose → pause → approve → commit →
+sealed trail row) for at least `agentProposeCorrectiveAction`; hermetic
+tests for all six cases.
+
+### 7b. REQ-RS-8 — User-triggered agent runs (the "AI does the heavy lifting" buttons)
+
+The system SHALL provide user-triggered agent invocation for the two legacy
+surfaces retrofitted per the AGENT-FIRST LAW, reusing the existing invoke
+plane (one-door bedrock-invoker; credits metered; guardrails applied):
+- `runCapaAnalysis(ncId: ID!): AgentRunAck!` — invokes CAPAGuru with the NC
+  row + related records context; the agent's proposal (root cause, actions,
+  owner, due) lands as a HITL card (CARD-1..7 anatomy) and, on approval,
+  commits via `agentProposeCorrectiveAction`.
+- `runRiskAssessment(riskId: ID!): AgentRunAck!` — invokes the RiskSentinel
+  seat with the risk row + register context; proposal (likelihood, severity,
+  rationale) lands as a HITL card; on approval commits via
+  `agentAssessRisk`.
+`AgentRunAck { runId: ID!, status: String! }` — async ack; the HITL card is
+the deliverable (surfaces in Command Center queue + `/ai-review` + the
+originating drawer). UI: an "AI: draft this" primary action on the M2 CAPA
+drawer and the `/risk` register row/drawer. Frontend copy in en/es/pt
+same-commit. Acceptance: int-lane witness — click → run → HITL card with
+guardrail evidence → approve → row updated + sealed event; SoD floor holds
+(§6d).
+
+### 8. Non-functional / gates
 - Hermetic lane stays hermetic (fake AWS creds; unmocked clients fail loudly).
 - All new list resolvers use shared marshal (AUD-1 rule); fixtures use REAL
   Data-API wire shapes (P0 fixture-fidelity rule).
@@ -146,7 +190,7 @@ e2e (propose → pause → approve → commit → sealed trail row) for at least
   schema declared for every new field.
 - Rule 7/8: each task closure = checkbox + per-task evidence log, same commit.
 
-## 9. Task seed (Kiro refines into tasks.md)
+### 9. Task seed (Kiro refines into tasks.md)
 1. REQ-RS-1 (SDL + marshal test) — S
 2. REQ-RS-2 quartet — M
 3. REQ-RS-3 listAuditEvents — S/M

@@ -76,6 +76,18 @@ schedules + drafts; retention expiry → RecordsVault disposition task;
 unassigned role → readiness gap; every matrix change → audit event. The
 matrices are the agents' operating contracts, not settings pages.
 
+**THE AGENT-FIRST LAW (owner ruling 2026-07-21, Checkpoint A):** a surface
+is NOT DONE until its agent does the heavy lifting THROUGH it. Every
+register/studio ships its agent action(s) — draft / triage / assess /
+score / assemble — wired through HITL from its FIRST claimed version; a
+CRUD register without its agent loop is a DEFECT, not an interim. "AI does
+all the heavy lifting; the human approves" is an acceptance criterion at
+every design gate. Interim redirects to legacy pages remain acceptable for
+NAVIGATION continuity only — and the legacy surfaces themselves get their
+agent actions retrofitted ahead of full absorption (CAPA + Risk first, per
+the same ruling: CAPAGuru is BUILT; a RiskSentinel seat is stood up on the
+one-door serving path rather than waiting for wave 2).
+
 ## 4. ISO shall-requirement coverage matrix (MUST-have workflows × agent × surface)
 
 Status: A-BUILT = agent live; A-CAT = cataloged, build-next; ENG-BUILT =
@@ -535,7 +547,11 @@ tier + annual discount (§9.1); FREEMIUM replaces demo/trial — card on file,
 no downloads (§9.1/9.3); commissions = Track 1 only: 10% one-time on annual
 sales, 8% recurring on monthly sales, Stripe payouts (§9.4); marketplace at
 parity with card v4 (§9.5); Audit Studio, CAPA Studio, Document Studio
-editor, record identification blocks = must-haves (§5/§7/P2-P4).
+editor, record identification blocks = must-haves (§5/§7/P2-P4);
+**AGENT-FIRST LAW (§3, Checkpoint A ruling)** — every surface ships with
+its agent doing the heavy lifting through HITL; CAPA + Risk retrofitted
+immediately (RS-7 all-six + RS-8 run buttons; RiskSentinel seat pulled
+forward).
 
 **Still open:**
 1. AUD-7 now recommended IMPLEMENT (REQ-WB) — confirm.
