@@ -359,6 +359,27 @@ export class AiStack extends cdk.Stack {
     );
     props.s3GeneralKey.grantEncryptDecrypt(executeWritebackLambda);
 
+    // S3 (studio wave): the manual-section-draft writeback DELEGATES to the
+    // GEN-6 regeneration engine (defined later in this stack) by
+    // DETERMINISTIC name — override mode skips compose, so the engine's
+    // version derivations fit inside this Lambda's 60s timeout.
+    const regenFnNameForWriteback = `cumplify-docgen-regen-${envConfig.envName}`;
+    executeWritebackLambda.addEnvironment('REGEN_FN_NAME', regenFnNameForWriteback);
+    executeWritebackLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['lambda:InvokeFunction'],
+        resources: [
+          cdk.Stack.of(this).formatArn({
+            service: 'lambda',
+            resource: 'function',
+            resourceName: regenFnNameForWriteback,
+            arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
+          }),
+        ],
+      }),
+    );
+
     // ─── HITL State Machine (Step Functions Standard, waitForTaskToken) ─────
     // C-2 (Task 8R): No EmitAuditEvent state — execute-writeback.ts emits
     // the audit event post-commit. A second emitter would double-write the sealed trail.

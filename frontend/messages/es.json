@@ -898,7 +898,8 @@
     "markReviewed": "Marcar revisada",
     "loading": "Cargando...",
     "print": "Imprimir",
-    "viewerTitle": "Visor de Documento Controlado"
+    "viewerTitle": "Visor de Documento Controlado",
+    "draftSection": "Redactar con DocStudio"
   },
   "documents": {
     "title": "Documentos",

@@ -35,6 +35,7 @@ import {
 } from '@aws-sdk/client-rds-data';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { publish } from '../../eventing/src/publisher.js';
 import { ulid } from 'ulid';
 
@@ -242,6 +243,7 @@ function resolveStandard(proposedAction: {
   const toolModuleMap: Record<string, 'ISO9001' | 'ISO14001' | 'ISO45001'> = {
     'capa-open': 'ISO9001',
     'capa-verify-effectiveness': 'ISO9001',
+    'manual-section-draft': 'ISO9001',
     'doc-publish': 'ISO9001',
     'doc-version-control': 'ISO9001',
     'audit-finding-write': 'ISO9001',
@@ -281,6 +283,8 @@ async function dispatchToolWrite(
       return executeCapaVerifyEffectiveness(action.args, tenantId, transactionId, actor);
     case 'doc-draft':
       return executeDocDraft(action.args, tenantId, transactionId, actor);
+    case 'manual-section-draft':
+      return executeManualSectionDraft(action.args, tenantId, actor);
     case 'doc-publish':
       return executeDocPublish(action.args, tenantId, transactionId);
     case 'doc-version-control':
@@ -381,6 +385,10 @@ async function executeCapaVerifyEffectiveness(
 
 const s3 = new S3Client({});
 const CONTENT_BUCKET = process.env.CONTENT_BUCKET ?? '';
+const lambdaClient = new LambdaClient({});
+// S3 Manual Studio: the GEN-6 regeneration engine, invoked by deterministic
+// name with the HITL-approved sentences as an override.
+const REGEN_FN_NAME = process.env.REGEN_FN_NAME ?? '';
 
 /**
  * S2 (studio wave): doc-draft — DocStudio's whole-document draft,
@@ -392,6 +400,57 @@ const CONTENT_BUCKET = process.env.CONTENT_BUCKET ?? '';
  * DB-ready from the tool schema; CHECK constraints are the backstop.
  * rationale lives in the Agent.WritebackCommitted payload only.
  */
+/**
+ * manual-section-draft (S3 Manual Studio) — the ONE writeback that DELEGATES
+ * instead of writing SQL here: the GEN-6 regeneration engine already owns the
+ * single-txn version derivation (manual + clause doc + correlation matrix +
+ * master list refresh + run recompute); duplicating that here would fork the
+ * corpus shape. The engine runs with the HITL-approved sentences as an
+ * override (compose is skipped — nothing un-reviewed regenerates). The
+ * wrapper Data-API txn stays empty; the engine's own transactions carry the
+ * writes, and a FunctionError fails this writeback so the approval surfaces
+ * the engine's typed error (RUN_NOT_FOUND, SECTION_NOT_FOUND, ...) verbatim.
+ */
+async function executeManualSectionDraft(
+  args: Record<string, unknown>,
+  tenantId: string,
+  actor: string,
+): Promise<Record<string, unknown>> {
+  const generationRunId = args.generationRunId as string;
+  const harmonizationKey = args.harmonizationKey as string;
+  const sentences = (args.sentences ?? []) as Array<{ text: string }>;
+  if (!generationRunId || !harmonizationKey)
+    throw new Error('MANUAL_SECTION_DRAFT_MISSING_TARGET');
+  if (!Array.isArray(sentences) || sentences.length === 0)
+    throw new Error('MANUAL_SECTION_DRAFT_EMPTY');
+  if (!REGEN_FN_NAME) throw new Error('REGEN_FN_UNCONFIGURED');
+
+  const invoke = await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: REGEN_FN_NAME,
+      Payload: JSON.stringify({
+        tenantId,
+        runId: generationRunId,
+        harmonizationKey,
+        actor,
+        override: { sentences: sentences.map((s) => ({ text: String(s.text) })) },
+      }),
+    }),
+  );
+  if (invoke.FunctionError) {
+    const raw = new TextDecoder().decode(invoke.Payload);
+    let msg = 'REGENERATE_FAILED';
+    try {
+      msg = (JSON.parse(raw) as { errorMessage?: string }).errorMessage ?? msg;
+    } catch {
+      /* raw not json */
+    }
+    throw new Error(msg);
+  }
+  const section = JSON.parse(new TextDecoder().decode(invoke.Payload)) as Record<string, unknown>;
+  return { records: 1, id: (section.id as string) ?? null };
+}
+
 async function executeDocDraft(
   args: Record<string, unknown>,
   tenantId: string,
@@ -809,6 +868,7 @@ async function emitWritebackAuditEvent(opts: {
     'capa-open': 'M2',
     'capa-verify-effectiveness': 'M2',
     'doc-draft': 'M1',
+    'manual-section-draft': 'M1',
     'doc-publish': 'M1',
     'doc-version-control': 'M1',
     'audit-finding-write': 'M3',

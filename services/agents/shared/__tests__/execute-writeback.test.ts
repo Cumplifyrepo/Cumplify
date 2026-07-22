@@ -210,6 +210,7 @@ describe('execute-writeback dispatch: schema pinning', () => {
         'audit-checklist-gen',
         'records-retention-schedule',
         'doc-draft',
+        'manual-section-draft',
         'nc-draft-write',
         'nc-triage-write',
         'risk-assessment-write',
@@ -218,6 +219,37 @@ describe('execute-writeback dispatch: schema pinning', () => {
       for (const tool of hitlTools) {
         expect(WRITEBACK_CODE).toContain(`case '${tool}':`);
       }
+    });
+
+    describe('manual-section-draft (S3 Manual Studio — delegation semantics)', () => {
+      it('delegates to the GEN-6 engine with the approved sentences as override (no SQL forked here)', () => {
+        // The one writeback that must NOT write m1/qms SQL directly — the
+        // regeneration engine owns the version derivation.
+        expect(WRITEBACK_CODE).toMatch(
+          /executeManualSectionDraft[\s\S]*?FunctionName: REGEN_FN_NAME/,
+        );
+        expect(WRITEBACK_CODE).toMatch(
+          /executeManualSectionDraft[\s\S]*?override: \{ sentences/,
+        );
+        // Actor (agent+human) threads through to the engine's version author
+        expect(WRITEBACK_CODE).toMatch(/executeManualSectionDraft[\s\S]*?actor,/);
+        // No direct SQL inside the executor body (delegation, not duplication)
+        const body = WRITEBACK_CODE.split('async function executeManualSectionDraft')[1].split(
+          'async function ',
+        )[0];
+        expect(body).not.toContain('INSERT INTO');
+        expect(body).not.toContain('UPDATE ');
+      });
+
+      it('guards: empty sentences, missing target, unconfigured engine all throw typed errors', () => {
+        expect(WRITEBACK_CODE).toContain('MANUAL_SECTION_DRAFT_EMPTY');
+        expect(WRITEBACK_CODE).toContain('MANUAL_SECTION_DRAFT_MISSING_TARGET');
+        expect(WRITEBACK_CODE).toContain('REGEN_FN_UNCONFIGURED');
+      });
+
+      it('audits under M1', () => {
+        expect(WRITEBACK_CODE).toMatch(/'manual-section-draft': 'M1'/);
+      });
     });
 
     it('throws on unknown tools (never silently drops)', () => {

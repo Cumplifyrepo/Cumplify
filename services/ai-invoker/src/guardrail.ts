@@ -52,11 +52,13 @@ export function buildGuardrailConfig(
   if (seat === 'doc-composer') {
     return envGuardrail('DOCGEN_GUARDRAIL');
   }
-  // Priority 2: doc-draft feature → DocGen guardrail (S2.1). DocStudio's
-  // whole-document drafting is document generation on the workhorse seat:
-  // the Agent guardrail would anonymize NAME/EMAIL/PHONE out of the tenant's
-  // own draft (spec-40 BC-5 rationale). PROMPT_ATTACK + SSN/card BLOCK stay.
-  if (feature === 'doc-draft') {
+  // Priority 2: document-generation features → DocGen guardrail (S2.1/S3).
+  // DocStudio's drafting (whole documents AND manual sections) is document
+  // generation on the workhorse seat: the Agent guardrail would anonymize
+  // NAME/EMAIL/PHONE out of the tenant's own draft — the org profile's
+  // legalName included (spec-40 BC-5 rationale). PROMPT_ATTACK + SSN/card
+  // BLOCK stay.
+  if (feature === 'doc-draft' || feature === 'manual-section-draft') {
     return envGuardrail('DOCGEN_GUARDRAIL');
   }
   // Priority 3: record-write feature → RecordWrite guardrail (grounding 0.90)

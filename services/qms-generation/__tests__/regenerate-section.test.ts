@@ -177,6 +177,13 @@ function wire(fx: Fx) {
       if (fx.sectionKindDb === 'MISSING') return emptyRes;
       return rows(['id', 'status'], [[SECTION_ID, 'prose']]);
     }
+    if (sql.includes('SELECT clause_registry_ids FROM qms.generation_sections')) {
+      // S3 override path: clause refs for the approved-draft content JSON
+      return rows(['clause_registry_ids'], [[['c-41']]]);
+    }
+    if (sql.includes('SELECT standard, clause_no FROM qms.clause_registry')) {
+      return rows(['standard', 'clause_no'], [['ISO9001', '4.1']]);
+    }
     if (sql.includes('FROM qms.generation_sections WHERE run_id')) {
       return rows(
         ['id', 'harmonization_key', 'status', 'content_s3_key', 'clause_registry_ids'],
@@ -466,5 +473,60 @@ describe('regenerateSection failure + repair semantics', () => {
       ]),
     );
     expect(params.status).toBe('complete');
+  });
+});
+
+describe('regenerateSection override (S3 Manual Studio — HITL-approved DocStudio draft)', () => {
+  it('skips compose; approved sentences ship as prose in compose shape; step-3 derivations still run', async () => {
+    wire({
+      runStatus: 'complete',
+      manualDocId: MANUAL,
+      sectionKindDb: 'prose',
+      clauseDocMatches: true,
+      otherFailed: false,
+    });
+
+    await handler({
+      tenantId: T,
+      runId: RUN,
+      harmonizationKey: HKEY,
+      actor: 'agent:DocStudio+human:user-9',
+      override: { sentences: [{ text: 'Approved section prose from the card.' }] },
+    });
+
+    // The one door to Bedrock is NEVER opened for an approved draft
+    expect(mockCompose).not.toHaveBeenCalled();
+
+    // Section content PUT: exact compose prose shape at the section key
+    const puts = mockS3Send.mock.calls
+      .map((c) => c[0] as { constructor: { name: string }; input: { Key: string; Body: string } })
+      .filter((c) => c.constructor.name === 'PutObjectCommand');
+    const sectionPut = puts.find(
+      (p) => p.input.Key === `tenants/${T}/generation/${RUN}/sections/${HKEY}.json`,
+    );
+    expect(sectionPut).toBeDefined();
+    const content = JSON.parse(sectionPut!.input.Body);
+    expect(content.kind).toBe('prose');
+    expect(content.sentences).toEqual([{ text: 'Approved section prose from the card.' }]);
+    expect(content.clauseRefs).toEqual([{ standard: 'ISO9001', clauseNo: '4.1' }]);
+
+    // Section row flipped to prose with content keys
+    expect(
+      mockExecute.mock.calls.some(
+        (c) =>
+          (c[0] as string).includes("SET status = 'prose'") &&
+          (c[0] as string).includes('content_s3_key'),
+      ),
+    ).toBe(true);
+
+    // Step-3 derivations still ran: manual + clause-doc + master-list versions
+    const versionInserts = mockExecute.mock.calls.filter((c) =>
+      (c[0] as string).includes('INSERT INTO m1.document_versions'),
+    );
+    expect(versionInserts.length).toBeGreaterThanOrEqual(3);
+
+    // Audit marks the writeback source
+    const auditPayload = mockPublishAudit.mock.calls[0][0].payload as Record<string, unknown>;
+    expect(auditPayload.source).toBe('manual-section-draft');
   });
 });

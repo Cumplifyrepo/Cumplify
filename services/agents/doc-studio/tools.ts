@@ -56,6 +56,46 @@ export const DOC_STUDIO_TOOLS: ToolConfig[] = [
   },
   {
     toolSpec: {
+      name: 'manual-section-draft',
+      description:
+        'Propose prose for ONE section of a generated IMS manual (S3 Manual Studio gap burn-down). HITL-gated: a human reviews (and can edit) the section before the manual is re-versioned.',
+      inputSchema: {
+        json: {
+          type: 'object',
+          required: ['generationRunId', 'harmonizationKey', 'sentences', 'rationale'],
+          properties: {
+            generationRunId: {
+              type: 'string',
+              description: 'The generation run id — copy verbatim from the request',
+            },
+            harmonizationKey: {
+              type: 'string',
+              description: 'The section harmonization key — copy verbatim from the request',
+            },
+            sentences: {
+              type: 'array',
+              description:
+                'The drafted section prose, one entry per sentence. Ground every claim in the org profile facts; where a fact is genuinely missing write "[To be completed: …]" — never invent.',
+              items: {
+                type: 'object',
+                required: ['text'],
+                properties: {
+                  text: { type: 'string', description: 'One sentence of section prose' },
+                },
+              },
+            },
+            rationale: {
+              type: 'string',
+              description:
+                'What this draft covers, which clause intents it answers, and what (if anything) remains bracketed — shown to the approver',
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    toolSpec: {
       name: 'doc-version-control',
       description:
         'Create a new version of a controlled document. HITL-gated: requires human approval.',

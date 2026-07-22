@@ -86,6 +86,7 @@ export const TOOL_MODULES: Record<string, string> = {
   'capa-open': 'M2', // m2.corrective_actions
   'capa-verify-effectiveness': 'M2', // m2.capa_effectiveness_checks
   'doc-draft': 'M1', // m1.documents (S2 Document Studio: agent-drafted creation)
+  'manual-section-draft': 'M1', // m1 manual versions via GEN-6 engine (S3 Manual Studio)
   'doc-publish': 'M1', // m1 document lifecycle
   'doc-version-control': 'M1', // m1.document_versions
   'audit-finding-write': 'M3', // m3.audit_findings

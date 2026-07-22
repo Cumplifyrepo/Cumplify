@@ -38,6 +38,7 @@ const EXPORT_FN = process.env.EXPORT_FN ?? '';
 const REGEN_FN = process.env.REGEN_FN ?? '';
 
 import { z } from 'zod';
+import { ulid } from 'ulid';
 
 const logger = new Logger({ serviceName: 'resolver-qms' });
 
@@ -113,6 +114,8 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return requestImsExport(event, tenantId);
     case 'regenerateSection':
       return requireM1Role(role, () => regenerateSection(event, tenantId, sub));
+    case 'runManualSectionDraft':
+      return runManualSectionDraft(event, tenantId, sub);
     default:
       throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
@@ -744,4 +747,119 @@ async function regenerateSection(event: AppSyncEvent, tenantId: string, actor: s
     }
   }
   return JSON.parse(new TextDecoder().decode(invoke.Payload));
+}
+
+/**
+ * runManualSectionDraft (S3, studio wave) — Manual Studio's gap burn-down
+ * door. The user points at ONE generation-run section (GAP, FAILED, or a
+ * prose redraft); DocStudio drafts its prose grounded in the run's pinned
+ * org profile + the section's clause intents, and proposes it via the
+ * manual-section-draft HITL tool. Fire-and-forget Event invoke (runDocDraft
+ * pattern) — the HITL card is the deliverable; approval drives the GEN-6
+ * regeneration engine with the approved sentences (no re-compose).
+ * READS ONLY here: run finalized guard + section + clauses + profile ride
+ * in the payload so the agent never touches the DB.
+ */
+const QMS_DOC_STUDIO_FN_ARN = process.env.DOC_STUDIO_FN_ARN ?? '';
+
+async function runManualSectionDraft(event: AppSyncEvent, tenantId: string, actor: string) {
+  const generationRunId = (event.arguments.runId as string) ?? '';
+  const harmonizationKey = (event.arguments.harmonizationKey as string) ?? '';
+  if (!generationRunId.trim() || !harmonizationKey.trim())
+    throw new Error('BAD_REQUEST: runId and harmonizationKey required');
+  if (!QMS_DOC_STUDIO_FN_ARN) throw new Error('DOC_STUDIO_NOT_AVAILABLE');
+
+  const txn = await beginTenantTransaction(tenantId);
+  let sectionKind: string;
+  let clauses: Array<Record<string, unknown>>;
+  let profile: Record<string, unknown>;
+  try {
+    const runResult = await txn.execute(
+      `SELECT gr.manual_document_id, opv.payload
+       FROM qms.generation_runs gr
+       JOIN qms.org_profiles op ON op.tenant_id = gr.tenant_id
+       JOIN qms.org_profile_versions opv ON opv.profile_id = op.id AND opv.version_no = gr.profile_version
+       WHERE gr.id = :runId::uuid`,
+      [{ name: 'runId', value: { stringValue: generationRunId } }],
+    );
+    if (!runResult.records?.length) throw new Error('RUN_NOT_FOUND');
+    const manualDocId = (runResult.records[0][0] as { stringValue?: string; isNull?: boolean })
+      .stringValue;
+    if (!manualDocId) throw new Error('RUN_NOT_FINALIZED');
+    profile = JSON.parse(
+      (runResult.records[0][1] as { stringValue?: string }).stringValue ?? '{}',
+    ) as Record<string, unknown>;
+
+    const secResult = await txn.execute(
+      `SELECT status, clause_registry_ids FROM qms.generation_sections
+       WHERE run_id = :runId::uuid AND harmonization_key = :hkey`,
+      [
+        { name: 'runId', value: { stringValue: generationRunId } },
+        { name: 'hkey', value: { stringValue: harmonizationKey } },
+      ],
+    );
+    const section = marshalOne(secResult) as {
+      status: string;
+      clauseRegistryIds: string[] | null;
+    } | null;
+    if (!section) throw new Error('SECTION_NOT_FOUND');
+    sectionKind = section.status.toLowerCase();
+    // A section still being composed has no stable identity to draft against
+    if (sectionKind === 'pending') throw new Error('SECTION_STILL_COMPOSING');
+
+    const clauseIds = (section.clauseRegistryIds ?? []).filter(Boolean);
+    if (clauseIds.length) {
+      const clausesResult = await txn.execute(
+        `SELECT standard, clause_no, clause_title, intent_paraphrase, required_sources
+         FROM qms.clause_registry WHERE id = ANY(:ids::uuid[]) ORDER BY standard`,
+        [{ name: 'ids', value: { stringValue: `{${clauseIds.join(',')}}` } }],
+      );
+      clauses = marshalMany(clausesResult);
+    } else {
+      clauses = [];
+    }
+    await txn.commit();
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+
+  const runId = ulid();
+  await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: QMS_DOC_STUDIO_FN_ARN,
+      InvocationType: 'Event',
+      Payload: JSON.stringify({
+        tenantId,
+        runId,
+        requestedBy: actor,
+        sectionDraftIntent: {
+          generationRunId,
+          harmonizationKey,
+          sectionKind,
+          clauses,
+          orgProfile: profile,
+        },
+      }),
+    }),
+  );
+
+  await publishAuditEvent({
+    tenantId,
+    actor,
+    module: 'M1',
+    clauseRef: 'ISO 9001 7.5.1',
+    standard: 'ISO9001',
+    detailType: 'Agent.RunRequested',
+    source: 'cumplify.qms.manual-studio',
+    entityId: runId,
+    payload: { agent: 'DocStudio', feature: 'manual-section-draft', generationRunId, harmonizationKey },
+  });
+
+  logger.info('Manual section draft dispatched', { tenantId, runId, generationRunId, harmonizationKey });
+  return { runId, status: 'DISPATCHED' };
 }

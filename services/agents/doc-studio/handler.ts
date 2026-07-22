@@ -26,7 +26,12 @@ const DLQ_URL = process.env.DOC_STUDIO_DLQ_URL!;
 const AOSS_ISO_KB_ENDPOINT = process.env.AOSS_ISO_KB_ENDPOINT!;
 const AOSS_TENANT_DOCS_ENDPOINT = process.env.AOSS_TENANT_DOCS_ENDPOINT!;
 
-const HITL_TOOLS = new Set(['doc-draft', 'doc-publish', 'doc-version-control']);
+const HITL_TOOLS = new Set([
+  'doc-draft',
+  'manual-section-draft',
+  'doc-publish',
+  'doc-version-control',
+]);
 const invokeFn = createInvokeFn();
 const embedFn = createEmbedFn();
 
@@ -176,6 +181,89 @@ export async function runDocDraft(input: RunDocDraftInput): Promise<RunDocDraftR
   };
 }
 
+export interface RunSectionDraftInput {
+  tenantId: string;
+  runId: string;
+  requestedBy: string;
+  sectionDraftIntent: {
+    generationRunId: string;
+    harmonizationKey: string;
+    sectionKind: string;
+    clauses: Array<{
+      standard?: string;
+      clauseNo?: string;
+      clauseTitle?: string;
+      intentParaphrase?: string;
+      requiredSources?: unknown;
+    }>;
+    orgProfile: Record<string, unknown>;
+  };
+}
+
+/**
+ * S3 Manual Studio: draft prose for ONE generation-run section. The resolver
+ * already read the run's pinned org profile + the section's clause intents —
+ * they arrive in the payload; this agent never touches the DB. The org
+ * profile carries tenant-typed free text, so it rides in guardedText
+ * (selective PROMPT_ATTACK evaluation — the S2.1 lesson: with no
+ * guardContent block the trusted SECTION-MODE framing itself gets evaluated
+ * as untrusted input and tripped the guardrail live).
+ */
+export async function runSectionDraft(input: RunSectionDraftInput): Promise<RunDocDraftResult> {
+  const { tenantId, requestedBy, sectionDraftIntent } = input;
+  const { generationRunId, harmonizationKey, sectionKind, clauses, orgProfile } =
+    sectionDraftIntent;
+
+  const clauseLines = clauses
+    .map(
+      (c) =>
+        `- ${c.standard ?? ''} ${c.clauseNo ?? ''} ${c.clauseTitle ?? ''}: ${c.intentParaphrase ?? ''}`,
+    )
+    .join('\n');
+
+  const groundingContext = await retrieveGrounding(
+    tenantId,
+    `${harmonizationKey} ${clauses.map((c) => `${c.clauseNo} ${c.clauseTitle}`).join(' ')}`,
+  );
+
+  const preamble = [
+    `SECTION MODE. Draft prose for ONE section of the generated IMS manual`,
+    `via manual-section-draft.`,
+    `generationRunId: ${generationRunId}`,
+    `harmonizationKey: ${harmonizationKey}`,
+    `Current section state: ${sectionKind}`,
+    `\nClause intents this section must answer:\n${clauseLines || '(none on record)'}`,
+    `\nOrganization profile (ground truth — never contradict it; tenant-entered):`,
+  ].join('\n');
+  const content: ContentBlock[] = [
+    { text: preamble },
+    { guardedText: JSON.stringify(orgProfile) },
+    ...(groundingContext ? [{ text: `Relevant context:\n${groundingContext}` }] : []),
+  ];
+
+  const result = await toolLoop([{ role: 'user', content }], {
+    seat: 'workhorse',
+    systemPrompt: DOC_STUDIO_PROMPT,
+    tools: DOC_STUDIO_TOOLS,
+    tenantId,
+    agent: 'DocStudio',
+    module: 'M1',
+    feature: 'manual-section-draft',
+    hitlTools: HITL_TOOLS,
+    requestedBy,
+    invokeFn,
+    dispatchTool: async (toolName, toolInput, tid) => ({
+      output: { toolName, input: toolInput, tenantId: tid },
+      requiresHitl: false,
+    }),
+  });
+
+  return {
+    runId: input.runId,
+    status: result.hitlResult ? 'PENDING_APPROVAL' : 'NO_PROPOSAL',
+  };
+}
+
 const sqsHandler = createHandler({
   dlqUrl: DLQ_URL,
   handler: processEvent,
@@ -184,13 +272,16 @@ const sqsHandler = createHandler({
 /**
  * Lambda entry point — dispatches on event shape (capa-guru precedent):
  * SQS always delivers {Records}; the S2 draft payload alone carries
- * `draftIntent`.
+ * `draftIntent`; the S3 section payload alone carries `sectionDraftIntent`.
  */
 export async function handler(
-  event: SQSEvent | RunDocDraftInput,
+  event: SQSEvent | RunDocDraftInput | RunSectionDraftInput,
 ): Promise<SQSBatchResponse | RunDocDraftResult | void> {
   if ('Records' in event) {
     return sqsHandler(event);
+  }
+  if ('sectionDraftIntent' in event) {
+    return runSectionDraft(event);
   }
   return runDocDraft(event);
 }

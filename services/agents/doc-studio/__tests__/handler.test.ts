@@ -43,7 +43,7 @@ beforeEach(() => {
   process.env.AOSS_TENANT_DOCS_ENDPOINT = 'https://mock2.aoss.amazonaws.com';
 });
 
-import { handler, runDocDraft } from '../handler.js';
+import { handler, runDocDraft, runSectionDraft } from '../handler.js';
 
 const draftInput = {
   tenantId: 'tenant-1',
@@ -107,7 +107,9 @@ describe('runDocDraft (S2)', () => {
     expect(opts.feature).toBe('doc-draft');
     expect(opts.agent).toBe('DocStudio');
     // The whole-document draft must be human-gated
-    expect(opts.hitlTools).toEqual(new Set(['doc-draft', 'doc-publish', 'doc-version-control']));
+    expect(opts.hitlTools).toEqual(
+      new Set(['doc-draft', 'manual-section-draft', 'doc-publish', 'doc-version-control']),
+    );
   });
 
   it('status is PENDING_APPROVAL when the draft enters the HITL gate', async () => {
@@ -146,5 +148,66 @@ describe('runDocDraft (S2)', () => {
     // The surviving iso leg still reaches the prompt
     const [messages] = mockToolLoop.mock.calls[0];
     expect(JSON.stringify(messages[0].content)).toContain('iso canon chunk 8.1');
+  });
+});
+
+describe('runSectionDraft (S3 Manual Studio)', () => {
+  const sectionInput = {
+    tenantId: 'tenant-1',
+    runId: 'run-99',
+    requestedBy: 'user-9',
+    sectionDraftIntent: {
+      generationRunId: 'genrun-42',
+      harmonizationKey: 'context-of-the-organization',
+      sectionKind: 'gap',
+      clauses: [
+        {
+          standard: 'ISO9001',
+          clauseNo: '4.1',
+          clauseTitle: 'Understanding the organization',
+          intentParaphrase: 'Determine external and internal issues',
+        },
+      ],
+      orgProfile: { legalName: 'Meridian Design-Build LLC', industry: 'construction' },
+    },
+  };
+
+  it('handler dispatches sectionDraftIntent payloads to SECTION MODE; profile guarded; HITL-gated', async () => {
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'ok',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+      hitlResult: { hitlItemId: 'h-3' },
+    });
+
+    const result = await handler(sectionInput);
+
+    expect(mockSqsHandler).not.toHaveBeenCalled();
+    const [messages, opts] = mockToolLoop.mock.calls[0];
+    const content = messages[0].content as Array<Record<string, string>>;
+    const preamble = content[0].text;
+    expect(preamble).toContain('SECTION MODE');
+    expect(preamble).toContain('manual-section-draft');
+    expect(preamble).toContain('genrun-42');
+    expect(preamble).toContain('context-of-the-organization');
+    expect(preamble).toContain('4.1');
+    // Tenant-typed profile rides in guardedText (S2.1 lesson), not the framing
+    const guarded = content.filter((b) => 'guardedText' in b).map((b) => b.guardedText);
+    expect(guarded.some((g) => g.includes('Meridian Design-Build LLC'))).toBe(true);
+    expect(preamble).not.toContain('Meridian');
+    expect(opts.feature).toBe('manual-section-draft');
+    expect(opts.requestedBy).toBe('user-9');
+    expect(opts.hitlTools.has('manual-section-draft')).toBe(true);
+    expect(result).toEqual({ runId: 'run-99', status: 'PENDING_APPROVAL' });
+  });
+
+  it('NO_PROPOSAL when the loop ends without a HITL item', async () => {
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'nothing to draft',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+    });
+    const result = await runSectionDraft(sectionInput);
+    expect(result).toEqual({ runId: 'run-99', status: 'NO_PROPOSAL' });
   });
 });

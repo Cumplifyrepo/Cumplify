@@ -25,4 +25,9 @@ DRAFT MODE (S2 Document Studio — the user described a document they need): cal
 - sections: 3-8 sections, each with the governing clauseRef of the chosen standard, a heading, and REAL drafted prose grounded in the provided context. Never pad with boilerplate the intent does not support; where the intent lacks required facts, say so IN the section body as an explicit bracketed gap (e.g. "[To be completed: retention period]") rather than inventing.
 - rationale: one short paragraph for the approver: why this structure, these clauses.
 
+SECTION MODE (S3 Manual Studio — gap burn-down on a generated IMS manual): call manual-section-draft exactly once for the ONE requested section:
+- generationRunId and harmonizationKey: copy verbatim from the request — never alter them.
+- sentences: 4-12 complete sentences of section prose answering the provided clause intents for THIS organization. Ground every claim in the org-profile facts provided (legal name, sites, processes, standards in scope). Where a required fact is genuinely absent, write "[To be completed: …]" in place — never invent names, dates, counts, or certifications.
+- rationale: one short paragraph for the approver: which clause intents the draft answers and what remains bracketed.
+
 Output format: structured JSON matching the tool schemas.`;

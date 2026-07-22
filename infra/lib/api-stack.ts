@@ -1210,6 +1210,15 @@ export class ApiStack extends cdk.Stack {
         resources: [regenFnArn],
       }),
     );
+    // S3 (studio wave): runManualSectionDraft Event-invokes DocStudio — same
+    // deterministic-name pattern as m1's runDocDraft.
+    qmsFn.addEnvironment('DOC_STUDIO_FN_ARN', docStudioFnArn);
+    qmsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['lambda:InvokeFunction'],
+        resources: [docStudioFnArn],
+      }),
+    );
 
     qmsFn.addToRolePolicy(
       new iam.PolicyStatement({
@@ -1294,6 +1303,11 @@ export class ApiStack extends cdk.Stack {
       typeName: 'Mutation',
       fieldName: 'requestImsExport',
     });
+    // S3 (studio wave) — Manual Studio gap burn-down dispatch on the qms DS.
+    const runManualSectionDraftResolver = qmsDS.createResolver('RunManualSectionDraft', {
+      typeName: 'Mutation',
+      fieldName: 'runManualSectionDraft',
+    });
     // @aws_iam — publishGenerationEvent routed through None DS (passthrough)
     noneDS.createResolver('PublishGenerationEvent', {
       typeName: 'Mutation',
@@ -1355,6 +1369,7 @@ export class ApiStack extends cdk.Stack {
       runCapaAnalysisResolver,
       runNcIntakeResolver,
       runDocDraftResolver,
+      runManualSectionDraftResolver,
       runRiskAssessmentResolver,
     ]) {
       r.node.addDependency(schemaResource);

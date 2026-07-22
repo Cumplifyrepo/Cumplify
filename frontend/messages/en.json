@@ -898,7 +898,8 @@
     "markReviewed": "Mark reviewed",
     "loading": "Loading...",
     "print": "Print",
-    "viewerTitle": "Controlled Document Viewer"
+    "viewerTitle": "Controlled Document Viewer",
+    "draftSection": "Draft with DocStudio"
   },
   "documents": {
     "title": "Documents",

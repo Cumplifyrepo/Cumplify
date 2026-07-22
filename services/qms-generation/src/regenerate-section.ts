@@ -39,6 +39,7 @@ import {
   publishAuditEvent,
 } from '../../api/src/resolvers/shared.js';
 import { handler as composeSection } from './compose-section.js';
+import { sectionContentKey } from './seed-sections.js';
 import { sha256Hex } from './facts.js';
 import {
   assembleManualContent,
@@ -60,6 +61,14 @@ export interface RegenerateInput {
   runId: string;
   harmonizationKey: string;
   actor: string;
+  /**
+   * S3 (Manual Studio): HITL-approved DocStudio section draft. When present,
+   * the compose step is SKIPPED — the approved sentences ship as the section's
+   * prose and every step-3 version derivation runs unchanged. No assertion-
+   * ledger rows: approved drafts carry no factRefs; accountability lives in
+   * the version author (agent:DocStudio+human:<sub>) and the audit trail.
+   */
+  override?: { sentences: Array<{ text: string }> };
 }
 
 type Txn = Awaited<ReturnType<typeof beginTenantTransaction>>;
@@ -196,6 +205,79 @@ async function loadRun(txn: Txn, runId: string): Promise<RunRow | null> {
   };
 }
 
+/**
+ * S3 (Manual Studio): write a HITL-approved section draft in the EXACT shape
+ * compose-section ships prose — content JSON {schemaVersion, harmonizationKey,
+ * clauseRefs, kind:'prose', sentences} at sectionContentKey + generation_
+ * sections row update — so step 3's version derivations consume it
+ * identically. Own txn (compose parity).
+ */
+async function applyApprovedDraft(
+  tenantId: string,
+  runId: string,
+  sectionId: string,
+  sectionKey: string,
+  sentences: Array<{ text: string }>,
+): Promise<'prose'> {
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const secResult = await txn.execute(
+      `SELECT clause_registry_ids FROM qms.generation_sections WHERE id = :id::uuid`,
+      [{ name: 'id', value: { stringValue: sectionId } }],
+    );
+    const clauseIds =
+      ((marshalMany(secResult)[0]?.clauseRegistryIds as string[] | undefined) ?? []).filter(Boolean);
+    let clauseRefs: Array<{ standard: string; clauseNo: string }> = [];
+    if (clauseIds.length) {
+      const clausesResult = await txn.execute(
+        `SELECT standard, clause_no FROM qms.clause_registry WHERE id = ANY(:ids::uuid[]) ORDER BY standard`,
+        [{ name: 'ids', value: { stringValue: `{${clauseIds.join(',')}}` } }],
+      );
+      clauseRefs = marshalMany(clausesResult).map((r) => ({
+        standard: r.standard as string,
+        clauseNo: r.clauseNo as string,
+      }));
+    }
+
+    const content = JSON.stringify({
+      schemaVersion: 1,
+      harmonizationKey: sectionKey,
+      clauseRefs,
+      kind: 'prose',
+      sentences: sentences.map((s) => ({ text: s.text })),
+    });
+    const contentKey = sectionContentKey(tenantId, runId, sectionKey);
+    const contentSha = sha256Hex(content);
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: GENERAL_BUCKET,
+        Key: contentKey,
+        Body: content,
+        ContentType: 'application/json',
+      }),
+    );
+    await txn.execute(
+      `UPDATE qms.generation_sections
+       SET status = 'prose', content_s3_key = :key, content_sha256 = :sha, updated_at = NOW()
+       WHERE id = :id::uuid`,
+      [
+        { name: 'key', value: { stringValue: contentKey } },
+        { name: 'sha', value: { stringValue: contentSha } },
+        { name: 'id', value: { stringValue: sectionId } },
+      ],
+    );
+    await txn.commit();
+    return 'prose';
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+}
+
 export async function handler(event: RegenerateInput): Promise<Record<string, unknown>> {
   const { tenantId, runId, harmonizationKey, actor } = event;
   logger.appendKeys({ tenantId, runId, harmonizationKey });
@@ -239,18 +321,36 @@ export async function handler(event: RegenerateInput): Promise<Record<string, un
     throw err;
   }
 
-  // ── 2. Compose (in-process; opens its own txn; honest failed on terminal) ─
-  const composed = await composeSection({
-    runId,
-    tenantId,
-    sectionId,
-    sectionKey: harmonizationKey,
-  });
-  const newKind = composed.status; // prose | gap | failed
+  // ── 2. Compose (in-process; opens its own txn; honest failed on terminal) —
+  //      or apply the HITL-approved DocStudio draft (S3 Manual Studio) ───────
+  let newKind: string;
+  if (event.override?.sentences?.length) {
+    newKind = await applyApprovedDraft(
+      tenantId,
+      runId,
+      sectionId,
+      harmonizationKey,
+      event.override.sentences,
+    );
+  } else {
+    const composed = await composeSection({
+      runId,
+      tenantId,
+      sectionId,
+      sectionKey: harmonizationKey,
+    });
+    newKind = composed.status; // prose | gap | failed
+  }
 
   // ── 3. Version writeback ──────────────────────────────────────────────────
   const txn2 = await beginTenantTransaction(tenantId);
-  const audit: Record<string, unknown> = { runId, harmonizationKey, priorKind, kind: newKind };
+  const audit: Record<string, unknown> = {
+    runId,
+    harmonizationKey,
+    priorKind,
+    kind: newKind,
+    ...(event.override ? { source: 'manual-section-draft' } : {}),
+  };
   let sectionRow: Record<string, unknown>;
   try {
     const run = (await loadRun(txn2, runId))!;

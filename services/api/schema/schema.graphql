@@ -643,6 +643,11 @@ type Mutation {
   # DocStudio drafts it whole (title, clauses, sections) via the doc-draft
   # HITL card; approval creates the DRAFT document with real content.
   runDocDraft(intent: String!, docType: DocumentType, standard: Standard): AgentRunAck! @aws_lambda
+  # S3 (studio wave): Manual Studio gap burn-down — DocStudio drafts prose for
+  # ONE generation-run section (a GAP, a failure, or a redraft); the
+  # manual-section-draft HITL card is the deliverable, approval regenerates
+  # the manual/clause-doc/master-list versions through the GEN-6 engine.
+  runManualSectionDraft(runId: ID!, harmonizationKey: String!): AgentRunAck! @aws_lambda
 
   # M3 — Audit Studio (user-facing)
   createAuditProgramme(input: CreateAuditProgrammeInput!): AuditProgramme! @aws_lambda

@@ -18,6 +18,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useTenantSubscription } from '@/lib/use-tenant-subscription';
 import { canApprove } from '@/lib/role-matrix';
 import { ControlledDocViewer } from '@/components/controlled-doc/ControlledDocViewer';
+import { AgentRunButton } from '@/components/studio';
 import styles from './page.module.css';
 
 /**
@@ -60,6 +61,12 @@ const LIST_DOCUMENT_VERSIONS = `query ListDocumentVersions($documentId: ID!) {
   listDocumentVersions(documentId: $documentId) {
     id documentId versionNo contentRef changeSummary authorId createdAt
   }
+}`;
+
+// S3 (Manual Studio): gap burn-down — DocStudio drafts ONE section's prose,
+// the manual-section-draft HITL card is the deliverable.
+const RUN_MANUAL_SECTION_DRAFT = `mutation RunManualSectionDraft($runId: ID!, $harmonizationKey: String!) {
+  runManualSectionDraft(runId: $runId, harmonizationKey: $harmonizationKey) { runId status }
 }`;
 
 const MARK_SECTION_REVIEWED = `mutation MarkSectionReviewed($input: MarkSectionReviewedInput!) {
@@ -493,6 +500,21 @@ export default function ManualPage() {
                         {t('markReviewed')}
                       </button>
                     )
+                  )}
+                  {/* S3 gap burn-down: the GAP's big button IS DocStudio.
+                      Approval regenerates the manual through GEN-6 with the
+                      approved sentences — gapCount drops on refresh. */}
+                  {(section.kind === 'GAP' || section.kind === 'FAILED') && (
+                    <AgentRunButton
+                      label={t('draftSection')}
+                      mutation={RUN_MANUAL_SECTION_DRAFT}
+                      variables={{
+                        runId: activeRun.id,
+                        harmonizationKey: section.harmonizationKey,
+                      }}
+                      agentName="DocStudio"
+                      onResolved={initialize}
+                    />
                   )}
                 </div>
               ))}
