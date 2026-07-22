@@ -123,6 +123,14 @@
     "auditTrailTitle": "Audit trail",
     "auditTrailEmpty": "No audit events yet for this nonconformity."
   },
+  "docStudio": {
+    "newDocTitle": "New document",
+    "newDocHint": "Describe the document you need. DocStudio drafts it whole — title, governing clauses, full section prose — and you review, edit and approve before it exists.",
+    "intentPlaceholder": "e.g. A procedure for controlling subcontractor site work under ISO 9001…",
+    "draftWithAgent": "Draft with DocStudio",
+    "createManually": "Create empty draft instead",
+    "railLabel": "DocStudio rail"
+  },
   "ask": {
     "title": "Ask Cumplify",
     "placeholder": "Ask a question about your IMS...",

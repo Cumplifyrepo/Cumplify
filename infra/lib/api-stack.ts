@@ -350,6 +350,21 @@ export class ApiStack extends cdk.Stack {
       resourceName: `cumplify-risk-sentinel-${envConfig.envName}`,
       arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
     });
+    // S2 (studio wave): m1's runDocDraft dispatches DocStudio the same way.
+    const docStudioFnArn = cdk.Stack.of(this).formatArn({
+      service: 'lambda',
+      resource: 'function',
+      resourceName: `cumplify-doc-studio-${envConfig.envName}`,
+      arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
+    });
+    resolverFns[0].addEnvironment('DOC_STUDIO_FN_ARN', docStudioFnArn);
+    resolverFns[0].addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['lambda:InvokeFunction'],
+        resources: [docStudioFnArn],
+      }),
+    );
     resolverFns[1].addEnvironment('CAPA_GURU_FN_ARN', capaGuruFnArn);
     resolverFns[1].addToRolePolicy(
       new iam.PolicyStatement({
@@ -665,6 +680,11 @@ export class ApiStack extends cdk.Stack {
     const runNcIntakeResolver = m2DS.createResolver('RunNcIntake', {
       typeName: 'Mutation',
       fieldName: 'runNcIntake',
+    });
+    // S2 (studio wave) — Document Studio drafting dispatch on m1 DS.
+    const runDocDraftResolver = m1DS.createResolver('RunDocDraft', {
+      typeName: 'Mutation',
+      fieldName: 'runDocDraft',
     });
     // M3
     m3DS.createResolver('CreateAuditProgramme', {
@@ -1334,6 +1354,7 @@ export class ApiStack extends cdk.Stack {
       saveDocumentSectionEditResolver,
       runCapaAnalysisResolver,
       runNcIntakeResolver,
+      runDocDraftResolver,
       runRiskAssessmentResolver,
     ]) {
       r.node.addDependency(schemaResource);

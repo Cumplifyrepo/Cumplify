@@ -343,9 +343,21 @@ export class AiStack extends cdk.Stack {
         APP_ROLE_SECRET_ARN: appRoleSecretArn,
         DB_NAME: 'postgres', // C-3e: must match api-core DATABASE setting
         BUS_NAME: props.busName,
+        // S2 (studio wave): doc-draft writeback writes the version-1
+        // ContentJson to S3 (same key scheme as m1's versionContentKey).
+        CONTENT_BUCKET: props.generalBucketName,
         POWERTOOLS_SERVICE_NAME: 'execute-writeback',
       },
     });
+    // S2: content writes are tenant-scoped, mirroring the DocGen plane's grant.
+    executeWritebackLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['s3:PutObject', 's3:GetObject'],
+        resources: [`${props.generalBucketArn}/tenants/*`],
+      }),
+    );
+    props.s3GeneralKey.grantEncryptDecrypt(executeWritebackLambda);
 
     // ─── HITL State Machine (Step Functions Standard, waitForTaskToken) ─────
     // C-2 (Task 8R): No EmitAuditEvent state — execute-writeback.ts emits
@@ -852,7 +864,9 @@ export class AiStack extends cdk.Stack {
       { functionName: riskSentinelFnName },
     );
 
-    // 2. DocStudio (standard queue)
+    // 2. DocStudio (standard queue). Deterministic name (S2 studio wave):
+    // m1's runDocDraft resolver in ApiStack constructs the ARN by this name
+    // via formatArn — same no-cycle pattern as cumplify-capa-guru.
     const docStudioHandler = createAgentHandler(
       'DocStudioHandlerFn',
       'services/agents/doc-studio/handler.ts',
@@ -862,6 +876,7 @@ export class AiStack extends cdk.Stack {
         DLQ_URL: docStudioDlq.queueUrl,
         POWERTOOLS_SERVICE_NAME: 'agent-doc-studio',
       },
+      { functionName: `cumplify-doc-studio-${envConfig.envName}` },
     );
     docStudioHandler.addEventSource(
       new SqsEventSource(docStudioQueue, {

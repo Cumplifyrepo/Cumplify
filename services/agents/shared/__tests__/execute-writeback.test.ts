@@ -77,6 +77,39 @@ describe('execute-writeback dispatch: schema pinning', () => {
     });
   });
 
+  describe('doc-draft (S2 studio wave, m1.documents + version-1 + S3 content)', () => {
+    const fnBody = () =>
+      WRITEBACK_CODE.slice(
+        WRITEBACK_CODE.indexOf('async function executeDocDraft'),
+        WRITEBACK_CODE.indexOf('async function executeDocPublish'),
+      );
+
+    it('INSERTs the document AND its version-1 row — creation, never update', () => {
+      expect(fnBody()).toMatch(/INSERT INTO m1\.documents/);
+      expect(fnBody()).toMatch(/INSERT INTO m1\.document_versions/);
+      expect(fnBody()).not.toContain('UPDATE ');
+    });
+
+    it("writes the ContentJson to S3 in the generation-plane shape (sentences[].text — editor/viewer compatible) under the versionContentKey scheme, born 'draft'", () => {
+      expect(fnBody()).toContain('PutObjectCommand');
+      expect(fnBody()).toContain('sentences: [{ text: s.body }]');
+      expect(fnBody()).toContain('/documents/${documentId}/v1.json');
+      expect(fnBody()).toContain("'draft'");
+    });
+
+    it('S3 put happens BEFORE the version-row insert — a failed put rolls the txn back, no dangling content_ref', () => {
+      const body = fnBody();
+      expect(body.indexOf('PutObjectCommand')).toBeLessThan(
+        body.indexOf('INSERT INTO m1.document_versions'),
+      );
+    });
+
+    it('scopes tenant via current_setting and refuses an empty draft', () => {
+      expect(fnBody()).toContain("current_setting('app.tenant_id')");
+      expect(fnBody()).toContain('DOC_DRAFT_EMPTY');
+    });
+  });
+
   describe('nc-draft-write (S1 studio wave, m2.nonconformities)', () => {
     const fnBody = () =>
       WRITEBACK_CODE.slice(
@@ -176,6 +209,7 @@ describe('execute-writeback dispatch: schema pinning', () => {
         'audit-finding-write',
         'audit-checklist-gen',
         'records-retention-schedule',
+        'doc-draft',
         'nc-draft-write',
         'nc-triage-write',
         'risk-assessment-write',

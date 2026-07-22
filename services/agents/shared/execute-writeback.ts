@@ -34,6 +34,7 @@ import {
   RollbackTransactionCommand,
 } from '@aws-sdk/client-rds-data';
 import { Logger } from '@aws-lambda-powertools/logger';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { publish } from '../../eventing/src/publisher.js';
 import { ulid } from 'ulid';
 
@@ -278,6 +279,8 @@ async function dispatchToolWrite(
       return executeCapaOpen(action.args, tenantId, transactionId, actor);
     case 'capa-verify-effectiveness':
       return executeCapaVerifyEffectiveness(action.args, tenantId, transactionId, actor);
+    case 'doc-draft':
+      return executeDocDraft(action.args, tenantId, transactionId, actor);
     case 'doc-publish':
       return executeDocPublish(action.args, tenantId, transactionId);
     case 'doc-version-control':
@@ -374,6 +377,101 @@ async function executeCapaVerifyEffectiveness(
     }),
   );
   return writtenRow(result);
+}
+
+const s3 = new S3Client({});
+const CONTENT_BUCKET = process.env.CONTENT_BUCKET ?? '';
+
+/**
+ * S2 (studio wave): doc-draft — DocStudio's whole-document draft,
+ * approved: create the document (status 'draft'), its version-1 row, and
+ * the version-1 ContentJson in S3 — the same shape the generation plane
+ * writes (sections with harmonizationKey/kind/sentences), so the Tiptap
+ * editor and ControlledDocViewer consume it with zero adaptation. The S3
+ * key mirrors m1's versionContentKey scheme. docType/standard arrive
+ * DB-ready from the tool schema; CHECK constraints are the backstop.
+ * rationale lives in the Agent.WritebackCommitted payload only.
+ */
+async function executeDocDraft(
+  args: Record<string, unknown>,
+  tenantId: string,
+  transactionId: string,
+  actor: string,
+): Promise<Record<string, unknown>> {
+  const sections = (args.sections ?? []) as Array<{
+    clauseRef: string;
+    heading: string;
+    body: string;
+  }>;
+  if (!CONTENT_BUCKET) throw new Error('CONTENT_BUCKET_UNCONFIGURED');
+  if (sections.length === 0) throw new Error('DOC_DRAFT_EMPTY');
+
+  const docResult = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m1.documents (tenant_id, standard, doc_type, title, owner_id, status, created_by)
+            VALUES (current_setting('app.tenant_id'), :standard, :docType, :title, :actor, 'draft', :actor)
+            RETURNING id, title, doc_type, standard`,
+      parameters: [
+        { name: 'standard', value: { stringValue: args.standard as string } },
+        { name: 'docType', value: { stringValue: args.docType as string } },
+        { name: 'title', value: { stringValue: args.title as string } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
+  const doc = writtenRow(docResult);
+  const documentId = String(doc.id ?? '');
+  const contentRef = `tenants/${tenantId}/documents/${documentId}/v1.json`;
+
+  // ContentJson in the generation-plane shape — one sentence per section
+  // body keeps the editor (sentences[].text) and viewer rendering intact.
+  const content = {
+    schemaVersion: 1,
+    documentId,
+    versionNo: 1,
+    locale: 'en',
+    frontMatter: null,
+    sections: sections.map((s) => ({
+      harmonizationKey: s.clauseRef,
+      clauseRefs: [s.clauseRef],
+      kind: 'prose',
+      heading: s.heading,
+      sentences: [{ text: s.body }],
+    })),
+  };
+
+  // S3 BEFORE the version row commits: if the put fails, the whole
+  // transaction rolls back and no version points at missing content.
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: CONTENT_BUCKET,
+      Key: contentRef,
+      Body: JSON.stringify(content),
+      ContentType: 'application/json',
+    }),
+  );
+
+  await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m1.document_versions (tenant_id, document_id, version_no, content_ref, change_summary, author_id, created_by)
+            VALUES (current_setting('app.tenant_id'), :documentId::uuid, 1, :contentRef, 'Agent draft (Document Studio)', :actor, :actor)`,
+      parameters: [
+        { name: 'documentId', value: { stringValue: documentId } },
+        { name: 'contentRef', value: { stringValue: contentRef } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
+
+  return { ...doc, contentRef, sectionCount: sections.length };
 }
 
 async function executeDocPublish(
@@ -710,6 +808,7 @@ async function emitWritebackAuditEvent(opts: {
   const moduleMap: Record<string, string> = {
     'capa-open': 'M2',
     'capa-verify-effectiveness': 'M2',
+    'doc-draft': 'M1',
     'doc-publish': 'M1',
     'doc-version-control': 'M1',
     'audit-finding-write': 'M3',

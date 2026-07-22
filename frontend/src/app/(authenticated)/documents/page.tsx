@@ -22,6 +22,7 @@ import { useTenantSubscription } from '@/lib/use-tenant-subscription';
 import { useStandardScope } from '@/lib/standard-scope';
 import { canApprove } from '@/lib/role-matrix';
 import { ControlledDocViewer } from '@/components/controlled-doc';
+import { StudioShell, AgentRunButton } from '@/components/studio';
 import { DocumentEditor } from '@/components/document-editor';
 import styles from './page.module.css';
 import { parseAwsJson } from '@/lib/aws-json';
@@ -70,6 +71,10 @@ const CREATE_MUTATION = `mutation CreateDraft($input: CreateDocumentDraftInput!)
   createDocumentDraft(input: $input) { id standard docType title status }
 }`;
 
+const RUN_DOC_DRAFT_MUTATION = `mutation RunDocDraft($intent: String!) {
+  runDocDraft(intent: $intent) { runId status }
+}`;
+
 const LIST_VERSIONS = `query ListVersions($documentId: ID!) {
   listDocumentVersions(documentId: $documentId) { id documentId versionNo contentRef changeSummary authorId createdAt }
 }`;
@@ -109,6 +114,7 @@ const CLAUSE_FAMILIES: Array<{ prefix: string; label: string }> = [
 
 export default function DocumentsPage() {
   const t = useTranslations('documentsPage');
+  const tStudio = useTranslations('docStudio');
   const tM1 = useTranslations('m1');
   const tStatus = useTranslations('status');
   const searchParams = useSearchParams();
@@ -123,6 +129,8 @@ export default function DocumentsPage() {
   const [localFilterStandard, setLocalFilterStandard] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // S2: Document Studio intent (the front door is the agent)
+  const [intentText, setIntentText] = useState('');
 
   // Detail state
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
@@ -472,12 +480,39 @@ export default function DocumentsPage() {
   // ─── List view render ──────────────────────────────────────────────────────
   if (error && !loading) return <ErrorState onRetry={fetchDocs} />;
 
+  // S2 agent rail — the front door IS DocStudio
+  const rail = (
+    <Panel title={tStudio('newDocTitle')}>
+      <p className={styles.railHint}>{tStudio('newDocHint')}</p>
+      <textarea
+        className={styles.intentInput}
+        value={intentText}
+        onChange={(e) => setIntentText(e.target.value)}
+        placeholder={tStudio('intentPlaceholder')}
+        aria-label={tStudio('newDocTitle')}
+        rows={4}
+      />
+      <AgentRunButton
+        label={tStudio('draftWithAgent')}
+        mutation={RUN_DOC_DRAFT_MUTATION}
+        variables={{ intent: intentText }}
+        agentName="DocStudio"
+        disabled={!intentText.trim()}
+        onResolved={() => {
+          setIntentText('');
+          fetchDocs();
+        }}
+      />
+      <SecondaryButton className={styles.manualFallback} onClick={() => setDrawerOpen(true)}>
+        {tStudio('createManually')}
+      </SecondaryButton>
+    </Panel>
+  );
+
   return (
     <>
-      <PageHeader
-        title={t('title')}
-        actions={<PrimaryButton onClick={() => setDrawerOpen(true)}>{tM1('newDraft')}</PrimaryButton>}
-      />
+      <PageHeader title={t('title')} />
+      <StudioShell rail={rail} railLabel={tStudio('railLabel')}>
 
       {/* Filter bar: standard pills visible only in IMS mode */}
       <div className={styles.filters}>
@@ -553,6 +588,8 @@ export default function DocumentsPage() {
           emptyMessage={tM1('emptyList')}
         />
       )}
+
+      </StudioShell>
 
       <FormDrawer
         open={drawerOpen}

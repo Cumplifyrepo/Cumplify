@@ -639,6 +639,10 @@ type Mutation {
   # S1 (studio wave): stage-1 intake — plain-language problem report in,
   # CAPAGuru-drafted NC proposal out (nc-draft-write HITL card).
   runNcIntake(description: String!, evidenceNote: String): AgentRunAck! @aws_lambda
+  # S2 (studio wave): Document Studio — describe the document you need,
+  # DocStudio drafts it whole (title, clauses, sections) via the doc-draft
+  # HITL card; approval creates the DRAFT document with real content.
+  runDocDraft(intent: String!, docType: DocumentType, standard: Standard): AgentRunAck! @aws_lambda
 
   # M3 — Audit Studio (user-facing)
   createAuditProgramme(input: CreateAuditProgrammeInput!): AuditProgramme! @aws_lambda

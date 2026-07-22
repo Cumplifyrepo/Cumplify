@@ -12,6 +12,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const { mockExecute, mockCommit, mockRollback, mockLambdaSend } = vi.hoisted(() => {
   process.env.CAPA_GURU_FN_ARN = 'arn:aws:lambda:us-east-1:123:function:CapaGuruFn';
   process.env.RISK_SENTINEL_FN_ARN = 'arn:aws:lambda:us-east-1:123:function:RiskSentinelFn';
+  process.env.DOC_STUDIO_FN_ARN = 'arn:aws:lambda:us-east-1:123:function:DocStudioFn';
   return {
     mockExecute: vi.fn(),
     mockCommit: vi.fn(),
@@ -55,6 +56,7 @@ vi.mock('ulid', () => ({ ulid: () => 'run-fixed-01' }));
 
 import { handler as m2Handler } from '../../src/resolvers/m2.js';
 import { handler as m5Handler } from '../../src/resolvers/m5.js';
+import { handler as m1Handler } from '../../src/resolvers/m1.js';
 
 function makeEvent(fieldName: string, args: Record<string, unknown> = {}) {
   return {
@@ -163,6 +165,43 @@ describe('runNcIntake (m2.ts, S1 studio wave)', () => {
 
   it('rejects an empty description without invoking the agent', async () => {
     await expect(m2Handler(makeEvent('runNcIntake', { description: '   ' }))).rejects.toThrow(
+      'VALIDATION',
+    );
+    expect(mockLambdaSend).not.toHaveBeenCalled();
+  });
+});
+
+describe('runDocDraft (m1.ts, S2 studio wave)', () => {
+  it('dispatches the draft intent to DocStudio with requestedBy — no DB reads (nothing exists yet)', async () => {
+    const result = await m1Handler(
+      makeEvent('runDocDraft', {
+        intent: 'A procedure for controlling subcontractor site work',
+        docType: 'procedure',
+        standard: 'ISO9001',
+      }),
+    );
+
+    expect(result).toEqual({ runId: 'run-fixed-01', status: 'DISPATCHED' });
+    expect(mockExecute).not.toHaveBeenCalled();
+
+    const cmd = mockLambdaSend.mock.calls[0][0] as { input: { FunctionName: string; InvocationType: string; Payload: string } };
+    expect(cmd.input.FunctionName).toBe('arn:aws:lambda:us-east-1:123:function:DocStudioFn');
+    expect(cmd.input.InvocationType).toBe('Event');
+    const payload = JSON.parse(cmd.input.Payload);
+    expect(payload).toEqual({
+      tenantId: 'tenant-test',
+      runId: 'run-fixed-01',
+      requestedBy: 'user-9',
+      draftIntent: {
+        intent: 'A procedure for controlling subcontractor site work',
+        docType: 'procedure',
+        standard: 'ISO9001',
+      },
+    });
+  });
+
+  it('rejects an empty intent without invoking the agent', async () => {
+    await expect(m1Handler(makeEvent('runDocDraft', { intent: ' ' }))).rejects.toThrow(
       'VALIDATION',
     );
     expect(mockLambdaSend).not.toHaveBeenCalled();

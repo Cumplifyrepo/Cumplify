@@ -11,22 +11,43 @@ export const DOC_STUDIO_TOOLS: ToolConfig[] = [
     toolSpec: {
       name: 'doc-draft',
       description:
-        'Draft a document based on requirements and context. Advisory — no HITL required.',
+        'Draft a COMPLETE controlled document from a described intent (S2 Document Studio). HITL-gated: a human reviews (and can edit) the whole draft before the document is created.',
       inputSchema: {
         json: {
           type: 'object',
-          required: ['docType', 'title', 'content'],
+          required: ['docType', 'standard', 'title', 'sections', 'rationale'],
           properties: {
             docType: {
               type: 'string',
-              description: 'Document type: policy | procedure | work-instruction | form | record',
+              description: 'One of: manual | procedure | work_instruction | policy | scope',
+            },
+            standard: {
+              type: 'string',
+              description: 'Governing standard: ISO9001 | ISO14001 | ISO45001',
             },
             title: { type: 'string', description: 'Document title' },
-            content: { type: 'string', description: 'Draft content for the document' },
-            clauses: {
+            sections: {
               type: 'array',
-              items: { type: 'string' },
-              description: 'Applicable clause references',
+              description: 'The full drafted body, one entry per section',
+              items: {
+                type: 'object',
+                required: ['clauseRef', 'heading', 'body'],
+                properties: {
+                  clauseRef: {
+                    type: 'string',
+                    description: 'Governing clause number of the chosen standard (e.g. 8.5.1)',
+                  },
+                  heading: { type: 'string', description: 'Section heading' },
+                  body: {
+                    type: 'string',
+                    description: 'Drafted prose for this section — facts and practice, no invention',
+                  },
+                },
+              },
+            },
+            rationale: {
+              type: 'string',
+              description: 'Why this structure and these clauses — shown to the approver',
             },
           },
         },

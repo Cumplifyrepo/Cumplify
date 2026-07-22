@@ -18,6 +18,7 @@ import { mapEnum, DOC_TYPE_MAP, DOC_STATUS_MAP, APPROVAL_DECISION_MAP } from './
 import { S3Client, GetObjectCommand, CopyObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { createHash } from 'node:crypto';
+import { ulid } from 'ulid';
 
 const logger = new Logger({ serviceName: 'resolver-m1' });
 const s3 = new S3Client({});
@@ -74,9 +75,48 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return getDocumentContent(event, tenantId);
     case 'saveDocumentSectionEdit':
       return saveDocumentSectionEdit(event, tenantId, sub);
+    case 'runDocDraft':
+      return runDocDraft(event, tenantId, sub);
     default:
       throw new Error(`Unknown field: ${event.info.fieldName}`);
   }
+}
+
+/**
+ * runDocDraft (S2, studio wave) — Document Studio's front door: the user
+ * describes the document they need; DocStudio drafts it whole (title,
+ * clause refs, sections) and proposes via the doc-draft HITL tool.
+ * Fire-and-forget Event invoke (runNcIntake pattern); the HITL card is
+ * the deliverable. No DB reads — nothing exists yet.
+ */
+const DOC_STUDIO_FN_ARN = process.env.DOC_STUDIO_FN_ARN ?? '';
+
+async function runDocDraft(event: AppSyncEvent, tenantId: string, actor: string) {
+  const intent = (event.arguments.intent as string) ?? '';
+  if (!intent.trim()) throw new Error('VALIDATION: intent is required');
+  const docType = event.arguments.docType as string | undefined;
+  const standard = event.arguments.standard as string | undefined;
+
+  const runId = ulid();
+  await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: DOC_STUDIO_FN_ARN,
+      InvocationType: 'Event',
+      Payload: JSON.stringify({
+        tenantId,
+        runId,
+        requestedBy: actor,
+        draftIntent: {
+          intent,
+          ...(docType ? { docType } : {}),
+          ...(standard ? { standard } : {}),
+        },
+      }),
+    }),
+  );
+
+  logger.info('Doc draft dispatched', { tenantId, runId });
+  return { runId, status: 'DISPATCHED' };
 }
 
 async function createDocumentDraft(event: AppSyncEvent, tenantId: string, actor: string) {

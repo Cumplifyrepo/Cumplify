@@ -123,6 +123,14 @@
     "auditTrailTitle": "Trilha de auditoria",
     "auditTrailEmpty": "Ainda não há eventos de auditoria para esta não conformidade."
   },
+  "docStudio": {
+    "newDocTitle": "Novo documento",
+    "newDocHint": "Descreva o documento de que precisa. O DocStudio o redige por completo — título, cláusulas aplicáveis, seções inteiras — e você revisa, edita e aprova antes de ele existir.",
+    "intentPlaceholder": "ex.: Um procedimento para controlar o trabalho de subcontratados sob a ISO 9001…",
+    "draftWithAgent": "Redigir com DocStudio",
+    "createManually": "Criar rascunho vazio",
+    "railLabel": "Painel do DocStudio"
+  },
   "ask": {
     "title": "Perguntar ao Cumplify",
     "placeholder": "Faça uma pergunta sobre seu SGI...",
