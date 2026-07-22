@@ -237,6 +237,30 @@ is open" per Part 19).
 - **E-signatures (ES-1..5, Part 18.2):** Part-11-grade signature manifest on
   approvals/seals — signer identity, meaning of signature, timestamp, bound
   to the record; trail per ES-4 above.
+- **THE CAPA SHALL-WORKFLOW (owner ruling 2026-07-21 — clause 10.2 + 8.7
+  as a staged, approval-gated state machine; one-click approve is NOT
+  compliant):**
+
+  | # | Stage (clause) | Agent heavy-lifting | APPROVAL GATE (matrix-routed + SoD floor) |
+  |---|---|---|---|
+  | 1 | OPEN + containment/correction (10.2.1a; 8.7 control/segregate; Δ45001: investigate with worker participation, 5.4) | NCTriage/CAPAGuru drafts containment + consequence assessment | QM/EHS acknowledges containment |
+  | 2 | TRIAGE (10.2.1b review; similar-NC scan) | agent classifies severity/type, scans register for recurrence | QM (9001) / EHS Mgr (14001/45001) accepts classification |
+  | 3 | ROOT-CAUSE ANALYSIS (10.2.1b causes) | CAPAGuru drafts 5-Why/Fishbone/8D from record context | **analysis itself approved** by QM/EHS per matrix |
+  | 4 | CA PLAN (10.2.1c; Δ45001: hierarchy of controls + pre-action OH&S risk check) | agent drafts actions, owners, due dates | plan approved per approval matrix (RS-6 steps) |
+  | 5 | IMPLEMENTATION | owners execute; agent tracks evidence, nags aging, drafts escalation | evidence attached per action (no gate; sealed records) |
+  | 6 | EFFECTIVENESS VERIFICATION (10.2.1d — time-separated; must cite methodology artifact) | agent drafts verification against the stage-3 artifact | approved; **SoD: verifier ≠ implementer** |
+  | 7 | RISK & QMS UPDATE (10.2.1e/f) | agent proposes linked risk-register update (agentAssessRisk) + doc change draft (DocStudio) when warranted | each proposal gated on its own matrix row |
+  | 8 | CLOSED (10.2.2 records) | agent assembles the closure record (full chain) | final approval → seal to WORM trail |
+
+  8.7 concession path: accept-under-concession is its own gate — recorded
+  WITH the identity of the authorizing role (8.7.2). Every stage transition
+  is an approval-matrix-routed HITL event; every stage record exports with
+  the §7 identification block; the whole chain is one hash-linked thread in
+  the trail. Existing m2 lifecycle (capa-open → verify-effectiveness →
+  close) is the substrate — the build ADDS stages 2/3/4/7 gates, does not
+  replace the engine. CAPA Studio (P4) is this state machine's cockpit; the
+  RS-8 retrofit runs the SAME machine on the legacy drawer (no shortcut
+  path exists anywhere).
 - **Audit programme contract (9.2):** RDS entries via LeadAuditor's
   `audit-programme` tool; the EventBridge calendar IS the agent's trigger;
   auditor assignment validated against the role matrix (independence).

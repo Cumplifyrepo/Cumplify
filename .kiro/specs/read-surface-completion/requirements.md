@@ -167,9 +167,15 @@ The system SHALL provide user-triggered agent invocation for the two legacy
 surfaces retrofitted per the AGENT-FIRST LAW, reusing the existing invoke
 plane (one-door bedrock-invoker; credits metered; guardrails applied):
 - `runCapaAnalysis(ncId: ID!): AgentRunAck!` — invokes CAPAGuru with the NC
-  row + related records context; the agent's proposal (root cause, actions,
-  owner, due) lands as a HITL card (CARD-1..7 anatomy) and, on approval,
-  commits via `agentProposeCorrectiveAction`.
+  row + related records context. **AMENDED (owner ruling): the run is
+  STAGE-AWARE per the CAPA shall-workflow (architecture §8, 10.2/8.7 state
+  machine)** — the agent drafts the artifact for the record's CURRENT stage
+  (containment → triage → root-cause analysis → CA plan → effectiveness
+  verification → closure record), each landing as its own matrix-routed
+  HITL gate; approval commits ONE stage transition via the writeback door.
+  There is NO single-approve shortcut: stage 3's analysis approval, stage
+  4's plan approval, and stage 6's verifier≠implementer SoD are separate,
+  sequential, sealed gates.
 - `runRiskAssessment(riskId: ID!): AgentRunAck!` — invokes the RiskSentinel
   seat with the risk row + register context; proposal (likelihood, severity,
   rationale) lands as a HITL card; on approval commits via
