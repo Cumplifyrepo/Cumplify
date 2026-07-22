@@ -162,7 +162,11 @@ export default function AuditStudioPage() {
         ) : audits.length === 0 ? (
           <EmptyState
             message={t('empty')}
-            action={{ label: t('goToPlanning'), onClick: () => router.push('/m3') }}
+            action={
+              <SecondaryButton onClick={() => router.push('/m3')}>
+                {t('goToPlanning')}
+              </SecondaryButton>
+            }
           />
         ) : (
           <Panel title={t('auditsTitle')}>

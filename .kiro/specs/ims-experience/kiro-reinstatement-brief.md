@@ -85,6 +85,14 @@ already prepared — activate, don't rebuild).
   RS-9 shipped fully tested with s3:GetObject only; the first real Save hit
   AccessDenied. When you wire the FIRST caller of any existing mutation,
   re-verify its resolver's grants against what the code path actually does.
+- **L9 · Root `tsc --noEmit` does NOT cover `frontend/`.** The frontend is
+  only type-checked by `next build`, which runs in the DeployFrontendContent
+  CodeBuild — i.e., at deploy time. The efbbf44 deploy failed exactly this
+  way (EmptyState `action` prop misuse on /audits; architect's own defect).
+  Run `cd frontend && npx tsc --noEmit` before every claim of green, and
+  render every conditional branch (empty states!) in at least one test.
+  Related trap: `EmptyState.action` is a ReactNode; `GuidanceBanner.action`
+  is `{label, onClick}` — don't pattern-match one onto the other.
 
 ## 4. Constitution (unchanged, non-negotiable)
 
@@ -94,8 +102,9 @@ already prepared — activate, don't rebuild).
 - SCHEMA-5: no `tenantId` in any GraphQL mutation input.
 - Hermetic unit lane (fake AWS creds, IMDS disabled); live calls are int-lane.
 - No hardcoded UI strings; en/es/pt catalogs in the SAME commit.
-- `vitest` never typechecks — run `npx tsc --noEmit` at root before claiming
-  green. Baselines at handoff: backend **1262** (3 skipped), frontend **197**.
+- `vitest` never typechecks — run `npx tsc --noEmit` at root AND in
+  `frontend/` (see L9) before claiming green. Baselines at handoff:
+  backend **1262** (3 skipped), frontend **198**.
 - Task closure = checkbox ticks + per-task evidence log in the same commit.
 
 ## 5. Tightened validation gate (new, per the three-strike history)

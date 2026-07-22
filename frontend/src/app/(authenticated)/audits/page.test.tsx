@@ -83,4 +83,15 @@ describe('Audit Studio (S4)', () => {
     expect(JSON.parse(btn.getAttribute('data-variables')!)).toEqual({ auditId: 'audit-1' });
     expect(screen.getByText('auditStudio.generateChecklist')).toBeInTheDocument();
   });
+
+  it('zero audits renders the empty state with a planning action (deploy 8a2e9a17 regression)', async () => {
+    mockQuery.mockImplementation(async (q: string) => {
+      if (q.includes('ListAudits')) return { listAudits: [] };
+      throw new Error(`unmocked: ${q.slice(0, 40)}`);
+    });
+    render(<AuditStudioPage />);
+    await waitFor(() => expect(screen.getByText('auditStudio.empty')).toBeInTheDocument());
+    // Two planning buttons: the rail's and the empty state's action
+    expect(screen.getAllByRole('button', { name: 'auditStudio.goToPlanning' })).toHaveLength(2);
+  });
 });
