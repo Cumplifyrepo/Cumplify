@@ -6,6 +6,8 @@
  */
 
 import { Logger } from '@aws-lambda-powertools/logger';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { ulid } from 'ulid';
 import {
   extractContext,
   extractAgentContext,
@@ -17,6 +19,7 @@ import {
 import { mapEnum, FINDING_TYPE_MAP } from './enum-mappings.js';
 
 const logger = new Logger({ serviceName: 'resolver-m3' });
+const lambdaClient = new LambdaClient({});
 
 interface AppSyncEvent {
   info: { fieldName: string };
@@ -52,6 +55,14 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return completeAudit(event, tenantId, sub);
     case 'getAudit':
       return getAudit(event, tenantId);
+    case 'listAudits':
+      return listAudits(tenantId);
+    case 'listAuditFindings':
+      return listAuditFindings(event, tenantId);
+    case 'listAuditChecklists':
+      return listAuditChecklists(event, tenantId);
+    case 'runAuditFindings':
+      return runAuditFindings(event, tenantId, sub);
     case 'getAuditReadiness':
       return getAuditReadiness(event, tenantId);
     case 'generateAuditChecklist':
@@ -477,4 +488,147 @@ async function generateAuditChecklist(event: AppSyncEvent, tenantId: string, act
     }
     throw err;
   }
+}
+
+
+// ─── S4 Audit Studio read surfaces + LeadAuditor findings dispatch ──────────
+
+async function listAudits(tenantId: string) {
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT id, programme_id, standard, scope, lead_auditor_id, planned_date, actual_date, status
+       FROM m3.audits ORDER BY planned_date DESC`,
+    );
+    await txn.commit();
+    return marshalMany(result);
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+}
+
+async function listAuditFindings(event: AppSyncEvent, tenantId: string) {
+  const auditId = (event.arguments.auditId as string) ?? '';
+  if (!auditId.trim()) throw new Error('VALIDATION: auditId is required');
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT id, audit_id, checklist_id, finding_type, clause_ref, description, evidence_ref
+       FROM m3.audit_findings WHERE audit_id = :auditId::uuid ORDER BY created_at DESC`,
+      [{ name: 'auditId', value: { stringValue: auditId } }],
+    );
+    await txn.commit();
+    // finding_type is stored lowercase-underscored; the enum is UPPERCASE
+    return marshalMany(result).map((r) => ({
+      ...r,
+      findingType: String(r.findingType).toUpperCase(),
+    }));
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+}
+
+async function listAuditChecklists(event: AppSyncEvent, tenantId: string) {
+  const auditId = (event.arguments.auditId as string) ?? '';
+  if (!auditId.trim()) throw new Error('VALIDATION: auditId is required');
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT id, audit_id, clause_ref, question, expected_evidence
+       FROM m3.audit_checklists WHERE audit_id = :auditId::uuid ORDER BY clause_ref`,
+      [{ name: 'auditId', value: { stringValue: auditId } }],
+    );
+    await txn.commit();
+    return marshalMany(result);
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+}
+
+/**
+ * runAuditFindings (S4 Audit Studio) — LeadAuditor reviews the audit's
+ * checklist + prior findings and proposes the MOST SIGNIFICANT new finding
+ * via the audit-finding-write HITL card. Fire-and-forget Event invoke
+ * (runNcIntake pattern); reads ride in the payload — the agent never touches
+ * the DB. Approving a major/minor NC finding also opens the NC in CAPA
+ * Studio (writeback cross-studio link).
+ */
+async function runAuditFindings(event: AppSyncEvent, tenantId: string, actor: string) {
+  const leadAuditorFnArn = process.env.LEAD_AUDITOR_FN_ARN ?? '';
+  const auditId = (event.arguments.auditId as string) ?? '';
+  if (!auditId.trim()) throw new Error('VALIDATION: auditId is required');
+  if (!leadAuditorFnArn) throw new Error('LEAD_AUDITOR_NOT_AVAILABLE');
+
+  const txn = await beginTenantTransaction(tenantId);
+  let audit: Record<string, unknown> | null;
+  let checklist: Array<Record<string, unknown>>;
+  let priorFindings: Array<Record<string, unknown>>;
+  try {
+    const auditResult = await txn.execute(
+      `SELECT id, standard, scope, status FROM m3.audits WHERE id = :id::uuid`,
+      [{ name: 'id', value: { stringValue: auditId } }],
+    );
+    audit = marshalOne(auditResult);
+    if (!audit) {
+      await txn.commit();
+      throw new Error('AUDIT_NOT_FOUND');
+    }
+    const clResult = await txn.execute(
+      `SELECT clause_ref, question, expected_evidence FROM m3.audit_checklists
+       WHERE audit_id = :id::uuid ORDER BY clause_ref LIMIT 50`,
+      [{ name: 'id', value: { stringValue: auditId } }],
+    );
+    checklist = marshalMany(clResult);
+    const fResult = await txn.execute(
+      `SELECT finding_type, clause_ref, description FROM m3.audit_findings
+       WHERE audit_id = :id::uuid ORDER BY created_at DESC LIMIT 20`,
+      [{ name: 'id', value: { stringValue: auditId } }],
+    );
+    priorFindings = marshalMany(fResult);
+    await txn.commit();
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+
+  const runId = ulid();
+  await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: leadAuditorFnArn,
+      InvocationType: 'Event',
+      Payload: JSON.stringify({
+        tenantId,
+        runId,
+        requestedBy: actor,
+        findingsIntent: {
+          auditId,
+          audit: { standard: audit.standard, scope: audit.scope, status: audit.status },
+          checklist,
+          priorFindings,
+        },
+      }),
+    }),
+  );
+
+  logger.info('Audit findings run dispatched', { tenantId, runId, auditId });
+  return { runId, status: 'DISPATCHED' };
 }

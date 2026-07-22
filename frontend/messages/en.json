@@ -1012,6 +1012,25 @@
     "ncType": "NC type",
     "containment": "Containment",
     "method": "Method",
-    "rootCause": "Root cause"
+    "rootCause": "Root cause",
+    "findingType": "Finding"
+  },
+  "auditStudio": {
+    "title": "Audit Studio",
+    "railLabel": "Audit Studio actions",
+    "railTitle": "LeadAuditor works here",
+    "railHint": "Generate the checklist, then let LeadAuditor propose findings with objective evidence. Approving a major or minor NC finding also opens the nonconformity in CAPA Studio.",
+    "goToPlanning": "Audit planning",
+    "loading": "Loading…",
+    "empty": "No audits scheduled yet — plan one first.",
+    "auditsTitle": "Audits",
+    "checklist": "Checklist",
+    "generateChecklist": "Generate checklist",
+    "generating": "Generating…",
+    "moreItems": "+{count} more",
+    "findings": "Findings",
+    "proposeFinding": "Propose finding with LeadAuditor",
+    "noFindings": "No findings yet — let LeadAuditor review the evidence.",
+    "error": "Something went wrong"
   }
 }

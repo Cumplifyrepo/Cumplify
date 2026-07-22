@@ -658,6 +658,38 @@ async function executeAuditFindingWrite(
       ],
     }),
   );
+
+  // S4 cross-studio link: an approved MAJOR/MINOR NC finding ALSO opens the
+  // nonconformity in CAPA Studio — same txn, both rows or neither.
+  // major → high severity, minor → medium; source 'audit' (10.2 loop).
+  if (findingType === 'major_nc' || findingType === 'minor_nc') {
+    const clause = String(args.clauseRef ?? args.clause ?? '');
+    // "ISO 9001 8.5.1" → standard ISO9001 + numeric clause_ref 8.5.1
+    const stdRaw = (args.standard as string) ?? clause;
+    const standard = normalizeStandard(stdRaw) ?? 'ISO9001';
+    const clauseNum = clause.replace(/ISO\s*\d{4,5}(:\d{4})?/i, '').trim() || clause;
+    const ncResult = await rds.send(
+      new ExecuteStatementCommand({
+        resourceArn: CLUSTER_ARN,
+        secretArn: SECRET_ARN,
+        database: DB_NAME,
+        transactionId,
+        sql: `INSERT INTO m2.nonconformities (tenant_id, standard, source, nc_type, description, clause_ref, severity, status, raised_by, raised_at, created_by)
+            VALUES (current_setting('app.tenant_id'), :standard, 'audit', 'nc', :description, :clauseRef, :severity, 'open', :actor, NOW(), :actor)
+            RETURNING id`,
+        parameters: [
+          { name: 'standard', value: { stringValue: standard } },
+          { name: 'description', value: { stringValue: `Audit finding (${findingType}): ${args.description as string}` } },
+          { name: 'clauseRef', value: { stringValue: clauseNum } },
+          { name: 'severity', value: { stringValue: findingType === 'major_nc' ? 'high' : 'medium' } },
+          { name: 'actor', value: { stringValue: actor } },
+        ],
+      }),
+    );
+    const finding = writtenRow(result);
+    const nc = writtenRow(ncResult);
+    return { ...finding, spawnedNcId: nc.id };
+  }
   return writtenRow(result);
 }
 

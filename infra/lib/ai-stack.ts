@@ -921,6 +921,9 @@ export class AiStack extends cdk.Stack {
         DLQ_URL: leadAuditorDlq.queueUrl,
         POWERTOOLS_SERVICE_NAME: 'agent-lead-auditor',
       },
+      // S4: deterministic name (m3's runAuditFindings dispatches by ARN) +
+      // VPC-placed (its KB retrievals 401 outside the VPCE-only AOSS policy).
+      { functionName: `cumplify-lead-auditor-${envConfig.envName}`, vpcPlaced: true },
     );
     leadAuditorHandler.addEventSource(
       new SqsEventSource(leadAuditorQueue, {

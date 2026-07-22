@@ -67,9 +67,13 @@ export const LEAD_AUDITOR_TOOLS: ToolConfig[] = [
       inputSchema: {
         json: {
           type: 'object',
-          required: ['auditId', 'findingType', 'clause', 'description'],
+          required: ['auditId', 'findingType', 'clause', 'description', 'standard'],
           properties: {
             auditId: { type: 'string', description: 'ID of the parent audit' },
+            standard: {
+              type: 'string',
+              description: 'The audited standard: ISO9001 | ISO14001 | ISO45001',
+            },
             findingType: {
               type: 'string',
               description: 'Type: major-nc | minor-nc | observation | ofi',

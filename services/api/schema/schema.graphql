@@ -584,6 +584,10 @@ type Query {
 
   # M3 — Audit Studio
   getAudit(id: ID!): Audit @aws_lambda
+  # S4 (Audit Studio): register + per-audit read surfaces
+  listAudits: [Audit!]! @aws_lambda
+  listAuditFindings(auditId: ID!): [AuditFinding!]! @aws_lambda
+  listAuditChecklists(auditId: ID!): [AuditChecklist!]! @aws_lambda
   getAuditReadiness(standard: Standard!): [ReadinessScore!]! @aws_lambda
 
   # M4 — Records Management
@@ -671,6 +675,11 @@ type Mutation {
   recordFinding(input: RecordFindingInput!): AuditFinding! @aws_lambda
   completeAudit(id: ID!): Audit! @aws_lambda
   generateAuditChecklist(auditId: ID!): [AuditChecklist!]! @aws_lambda
+  # S4 (Audit Studio): LeadAuditor proposes the most significant finding for
+  # the audit (objective evidence from the checklist); the audit-finding-write
+  # HITL card is the deliverable. Approving a major/minor NC finding ALSO
+  # opens the NC in CAPA Studio (cross-studio loop).
+  runAuditFindings(auditId: ID!): AgentRunAck! @aws_lambda
 
   # M4 — Records Management (user-facing)
   registerRecord(input: RegisterRecordInput!): Record! @aws_lambda

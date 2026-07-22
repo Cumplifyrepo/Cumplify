@@ -222,6 +222,31 @@ describe('execute-writeback dispatch: schema pinning', () => {
       }
     });
 
+    describe('audit-finding-write cross-studio NC spawn (S4)', () => {
+      it('major/minor NC findings ALSO insert an m2 nonconformity in the SAME txn (source audit, severity mapped)', () => {
+        const body = WRITEBACK_CODE.slice(
+          WRITEBACK_CODE.indexOf('async function executeAuditFindingWrite'),
+          WRITEBACK_CODE.indexOf('async function executeChecklistGen'),
+        );
+        expect(body).toContain("findingType === 'major_nc' || findingType === 'minor_nc'");
+        expect(body).toMatch(/INSERT INTO m2\.nonconformities[\s\S]*?'audit'/);
+        expect(body).toContain("findingType === 'major_nc' ? 'high' : 'medium'");
+        // Same transactionId on BOTH statements — both rows or neither
+        expect((body.match(/transactionId,/g) ?? []).length).toBeGreaterThanOrEqual(2);
+        expect(body).toContain('spawnedNcId');
+      });
+
+      it('observations and OFIs never spawn NCs', () => {
+        const body = WRITEBACK_CODE.slice(
+          WRITEBACK_CODE.indexOf('async function executeAuditFindingWrite'),
+          WRITEBACK_CODE.indexOf('async function executeChecklistGen'),
+        );
+        // The NC insert is guarded by the major/minor check ONLY
+        expect(body).not.toContain("'observation' ||");
+        expect(body).not.toContain("'ofi' ||");
+      });
+    });
+
     describe('rca-write (C1 CAPA Studio RCA — m2.root_cause_analyses, 003)', () => {
       it('INSERT matches migration 003 columns; method validated against the CHECK', () => {
         expect(MIGRATION_003).toContain("method TEXT NOT NULL CHECK (method IN ('5why', 'fishbone', 'fta'))");

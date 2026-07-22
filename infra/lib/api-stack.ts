@@ -372,6 +372,22 @@ export class ApiStack extends cdk.Stack {
         resources: [capaGuruFnArn],
       }),
     );
+    // S4 (Audit Studio): m3's runAuditFindings dispatches LeadAuditor the
+    // same way (deterministic name, no-cycle pattern).
+    const leadAuditorFnArn = cdk.Stack.of(this).formatArn({
+      service: 'lambda',
+      resource: 'function',
+      resourceName: `cumplify-lead-auditor-${envConfig.envName}`,
+      arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
+    });
+    resolverFns[2].addEnvironment('LEAD_AUDITOR_FN_ARN', leadAuditorFnArn);
+    resolverFns[2].addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['lambda:InvokeFunction'],
+        resources: [leadAuditorFnArn],
+      }),
+    );
     resolverFns[4].addEnvironment('RISK_SENTINEL_FN_ARN', riskSentinelFnArn);
     resolverFns[4].addToRolePolicy(
       new iam.PolicyStatement({
@@ -615,6 +631,23 @@ export class ApiStack extends cdk.Stack {
     });
     // M3
     m3DS.createResolver('GetAudit', { typeName: 'Query', fieldName: 'getAudit' });
+    // S4 (Audit Studio) — register + per-audit reads + LeadAuditor dispatch.
+    const listAuditsResolver = m3DS.createResolver('ListAudits', {
+      typeName: 'Query',
+      fieldName: 'listAudits',
+    });
+    const listAuditFindingsResolver = m3DS.createResolver('ListAuditFindings', {
+      typeName: 'Query',
+      fieldName: 'listAuditFindings',
+    });
+    const listAuditChecklistsResolver = m3DS.createResolver('ListAuditChecklists', {
+      typeName: 'Query',
+      fieldName: 'listAuditChecklists',
+    });
+    const runAuditFindingsResolver = m3DS.createResolver('RunAuditFindings', {
+      typeName: 'Mutation',
+      fieldName: 'runAuditFindings',
+    });
     m3DS.createResolver('GetAuditReadiness', { typeName: 'Query', fieldName: 'getAuditReadiness' });
     // M4
     m4DS.createResolver('GetRecord', { typeName: 'Query', fieldName: 'getRecord' });
@@ -1383,6 +1416,10 @@ export class ApiStack extends cdk.Stack {
       runNcIntakeResolver,
       runRcaResolver,
       listRcaResolver,
+      listAuditsResolver,
+      listAuditFindingsResolver,
+      listAuditChecklistsResolver,
+      runAuditFindingsResolver,
       runDocDraftResolver,
       runManualSectionDraftResolver,
       runRiskAssessmentResolver,

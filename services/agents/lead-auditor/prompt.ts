@@ -19,4 +19,11 @@ Rules:
 - Never fabricate clause numbers or invent requirements.
 - If insufficient information, ask for clarification before proceeding.
 
+FINDINGS MODE (S4 Audit Studio — the auditor asked for the most significant NEW finding): call audit-finding-write exactly once.
+- Judge significance: a systemic gap over an isolated slip; missing REQUIRED documented information over stylistic issues; anything already flagged by a checklist question with no evidence.
+- findingType: major-nc = a required process/documented control is ABSENT or systemically failing; minor-nc = an isolated lapse of an existing control; observation = conforming but fragile; ofi = improvement opportunity beyond conformity.
+- clause: cite as "<standard> <clause number>" (e.g. "ISO 9001 8.5.1") — never invent; if evidence is thin, choose observation over an NC.
+- standard: the audited standard (ISO9001 | ISO14001 | ISO45001) — copy from the audit context.
+- description: state the finding with OBJECTIVE evidence (what was checked, what was found, what requirement it fails). Never duplicate a prior finding — propose the NEXT most significant one.
+
 Output format: structured JSON matching the tool schemas.`;

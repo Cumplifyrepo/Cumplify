@@ -165,11 +165,27 @@ function RcaView({ args }: { args: Record<string, unknown> }) {
   );
 }
 
+function FindingView({ args }: { args: Record<string, unknown> }) {
+  const t = useTranslations('proposal');
+  return (
+    <div className={styles.proposal}>
+      <div className={styles.chipRow}>
+        <FieldChip label={t('findingType')} value={args.findingType} />
+        <FieldChip label={t('clause')} value={(args.clause ?? args.clauseRef) as string} />
+        <FieldChip label={t('standard')} value={args.standard} />
+      </div>
+      {typeof args.description === 'string' && <p className={styles.prose}>{args.description}</p>}
+      <Rationale text={args.rationale} />
+    </div>
+  );
+}
+
 const TOOL_VIEWS: Record<string, (props: { args: Record<string, unknown> }) => React.JSX.Element> = {
   'manual-section-draft': SectionDraftView,
   'doc-draft': DocDraftView,
   'nc-draft-write': NcDraftView,
   'rca-write': RcaView,
+  'audit-finding-write': FindingView,
 };
 
 export function ProposalView({ draftBody }: { draftBody: string }) {

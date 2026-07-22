@@ -1,0 +1,86 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import AuditStudioPage from './page';
+
+const mockQuery = vi.fn();
+const mockMutate = vi.fn();
+
+vi.mock('@/lib/api', () => ({
+  useGraphQL: () => ({ query: mockQuery, mutate: mockMutate }),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+}));
+
+vi.mock('next-intl', () => ({
+  useTranslations: (ns: string) => {
+    const t = (key: string) => `${ns}.${key}`;
+    t.has = () => true;
+    return t;
+  },
+}));
+
+vi.mock('@/components/studio', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/components/studio')>();
+  return {
+    ...actual,
+    AgentRunButton: ({
+      label,
+      mutation,
+      variables,
+      agentName,
+    }: {
+      label: string;
+      mutation: string;
+      variables?: Record<string, unknown>;
+      agentName: string;
+    }) => (
+      <button
+        data-testid="arb-propose-finding"
+        data-mutation={mutation}
+        data-variables={JSON.stringify(variables ?? {})}
+        data-agent={agentName}
+      >
+        {label}
+      </button>
+    ),
+  };
+});
+
+const AUDIT = {
+  id: 'audit-1',
+  programmeId: 'prog-1',
+  standard: 'ISO9001',
+  scope: 'Fabrication shop processes',
+  leadAuditorId: 'aud-1',
+  plannedDate: '2026-08-01T00:00:00Z',
+  actualDate: null,
+  status: 'planned',
+};
+
+beforeEach(() => {
+  mockQuery.mockReset();
+  mockQuery.mockImplementation(async (q: string) => {
+    if (q.includes('ListAudits')) return { listAudits: [AUDIT] };
+    if (q.includes('ListAuditFindings')) return { listAuditFindings: [] };
+    if (q.includes('ListAuditChecklists')) return { listAuditChecklists: [] };
+    throw new Error(`unmocked: ${q.slice(0, 40)}`);
+  });
+});
+
+describe('Audit Studio (S4)', () => {
+  it('audit row expands to the findings section where the big button IS LeadAuditor', async () => {
+    render(<AuditStudioPage />);
+    await waitFor(() => expect(screen.getByTestId('audit-row-audit-1')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId('audit-row-audit-1'));
+    await waitFor(() => expect(screen.getByTestId('arb-propose-finding')).toBeInTheDocument());
+
+    const btn = screen.getByTestId('arb-propose-finding');
+    expect(btn).toHaveAttribute('data-agent', 'LeadAuditor');
+    expect(btn.getAttribute('data-mutation')).toContain('runAuditFindings');
+    expect(JSON.parse(btn.getAttribute('data-variables')!)).toEqual({ auditId: 'audit-1' });
+    expect(screen.getByText('auditStudio.generateChecklist')).toBeInTheDocument();
+  });
+});

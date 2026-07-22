@@ -1012,6 +1012,25 @@
     "ncType": "Tipo de NC",
     "containment": "Contención",
     "method": "Método",
-    "rootCause": "Causa raíz"
+    "rootCause": "Causa raíz",
+    "findingType": "Hallazgo"
+  },
+  "auditStudio": {
+    "title": "Audit Studio",
+    "railLabel": "Acciones de Audit Studio",
+    "railTitle": "LeadAuditor trabaja aquí",
+    "railHint": "Genera la lista de verificación y deja que LeadAuditor proponga hallazgos con evidencia objetiva. Aprobar un hallazgo NC mayor o menor también abre la no conformidad en CAPA Studio.",
+    "goToPlanning": "Planificación de auditorías",
+    "loading": "Cargando…",
+    "empty": "Aún no hay auditorías programadas — planifica una primero.",
+    "auditsTitle": "Auditorías",
+    "checklist": "Lista de verificación",
+    "generateChecklist": "Generar lista",
+    "generating": "Generando…",
+    "moreItems": "+{count} más",
+    "findings": "Hallazgos",
+    "proposeFinding": "Proponer hallazgo con LeadAuditor",
+    "noFindings": "Aún no hay hallazgos — deja que LeadAuditor revise la evidencia.",
+    "error": "Algo salió mal"
   }
 }

@@ -920,6 +920,8 @@ describe('spec-35 FIX-T20-3: guru handlers VPC-placed for AOSS data-plane access
     // Their HITL/DLQ needs ride the states + sqs endpoints (network-stack).
     'agent-capa-guru',
     'agent-doc-studio',
+    // S4: lead-auditor retrieves iso-kb + tenant-docs
+    'agent-lead-auditor',
   ])('%s runs inside the VPC on both private subnets', (service) => {
     const vpcConfig = (fnByService(service).Properties as { VpcConfig?: { SubnetIds: string[] } })
       .VpcConfig;

@@ -1012,6 +1012,25 @@
     "ncType": "Tipo de NC",
     "containment": "Contenção",
     "method": "Método",
-    "rootCause": "Causa raiz"
+    "rootCause": "Causa raiz",
+    "findingType": "Constatação"
+  },
+  "auditStudio": {
+    "title": "Audit Studio",
+    "railLabel": "Ações do Audit Studio",
+    "railTitle": "LeadAuditor trabalha aqui",
+    "railHint": "Gere a lista de verificação e deixe o LeadAuditor propor constatações com evidência objetiva. Aprovar uma constatação NC maior ou menor também abre a não conformidade no CAPA Studio.",
+    "goToPlanning": "Planejamento de auditorias",
+    "loading": "Carregando…",
+    "empty": "Nenhuma auditoria agendada ainda — planeje uma primeiro.",
+    "auditsTitle": "Auditorias",
+    "checklist": "Lista de verificação",
+    "generateChecklist": "Gerar lista",
+    "generating": "Gerando…",
+    "moreItems": "+{count} mais",
+    "findings": "Constatações",
+    "proposeFinding": "Propor constatação com LeadAuditor",
+    "noFindings": "Ainda não há constatações — deixe o LeadAuditor revisar a evidência.",
+    "error": "Algo deu errado"
   }
 }
