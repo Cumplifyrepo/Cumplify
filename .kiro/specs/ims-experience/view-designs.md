@@ -574,3 +574,180 @@ interim to `/m1` (current state).
 - Standard DataTable with the existing column pattern
 - intentParaphrase column: max-width 400px, text-overflow ellipsis, expand on click
 - Harmonization badge: inline icon (chain-link, `accentMuted`) after clauseNo when harmonized
+
+
+---
+
+## 13. Document Studio Editor — Tiptap (Collaboration Law)
+
+**§4 matrix citation:**
+- Row: `5.2` — Policy controlled + communicated; `7.5.2` — Doc/record review & APPROVAL before use
+- Agent: DocStudio (A-BUILT + spec-40)
+- Law: §3 COLLABORATION LAW — every agent artifact is an editable workspace
+  with an iterate-with-agent thread; §3 AGENT-FIRST — Generate IS DocStudio working
+- Law: §7 identification block — controlled renders go through vendored template
+- **Queries consumed:**
+  - `getDocumentContent(versionId)` — **BUILT** (loads baseline content for editor)
+  - `listDocumentVersions(documentId)` — **BUILT** (version history)
+- **Mutations consumed:**
+  - `regenerateSection(input: { runId, harmonizationKey })` — **BUILT** (per
+    schema @ efc2696). This IS the "iterate with agent" primitive — invokes
+    DocStudio to re-compose one section; returned `GenerationSection` lands as
+    a new tracked proposal.
+  - `markSectionReviewed(input: { sectionId })` — **BUILT**
+  - `submitDocumentForApproval(id)` — **BUILT**
+- **DOES NOT EXIST (contract reality @ efc2696):**
+  - `saveDocumentSectionEdit` — RS-9 (architect backend lane). Human edits
+    persist in a LOCAL draft model with a visible "sync pending backend (RS-9)"
+    flag. NO invented mutations. NO fake persistence.
+
+### 13.1 Editor Architecture
+
+```
+<DocumentEditor
+  sections={ContentSection[]}       // from getDocumentContent parse
+  runId={string}                    // active generation run ID (for regenerateSection)
+  documentId={string}               // for submit/version context
+  onConverge={fn}                   // called when user marks section converged
+/>
+  ├── Per-section Tiptap instances (independent editors)
+  │   ├── Baseline text = AGENT generated content (attribution: agent)
+  │   ├── Human edits = TRACKED CHANGES (suggestions) attributed to user
+  │   ├── Agent iterations = NEW tracked proposals attributed to agent
+  │   └── Accept/reject per change → converged state
+  ├── Mermaid code-block nodes → rendered inline diagrams
+  └── Local draft model (versioned, RS-9 sync-pending flag)
+```
+
+### 13.2 Collaboration Law Mechanics
+
+1. **Agent baseline:** When a document is generated/regenerated, section text
+   arrives from DocStudio. This is the BASE content, attributed to
+   `{ actor: 'agent:DocStudio', timestamp }`.
+
+2. **Human edits:** Tiptap tracked-changes extension (suggestions mode). Every
+   human edit lands as a SUGGESTION attributed to the signed-in user:
+   `{ actor: 'user:<sub>', name: user.email, timestamp }`. Visually distinct:
+   human suggestions in `accent` underline; deletions in `danger` strikethrough.
+
+3. **Iterate with agent:** Per-section "Regenerate" button calls
+   `regenerateSection(input: { runId, harmonizationKey })`. The mutation returns
+   an updated `GenerationSection`. The new content lands as a TRACKED PROPOSAL
+   (not replacing existing content) attributed to `{ actor: 'agent:DocStudio' }`.
+   Human edits are NEVER silently overwritten.
+
+4. **Accept/reject:** Each tracked change can be accepted (merges into base) or
+   rejected (discarded). The CONVERGED state (all changes resolved) is what
+   flows to `submitDocumentForApproval`.
+
+5. **Dual attribution (ES-4):** The draft payload carries a change log:
+   `Array<{ actor, type: 'insert'|'delete'|'replace', range, timestamp }>`.
+   This survives into the sealed audit trail when the document is approved.
+   Human and agent contributions are separately attributable at any time.
+
+### 13.3 Local Draft Model (RS-9 sync-pending)
+
+```ts
+interface LocalDraft {
+  documentId: string;
+  runId: string;
+  sections: Map<string, {
+    baseContent: string;        // agent-generated baseline (last committed)
+    editorState: JSONContent;   // tiptap JSON with tracked changes
+    changes: ChangeEntry[];     // dual-attribution log
+    syncStatus: 'local' | 'pending-rs9';
+  }>;
+}
+```
+
+- Stored in component state (session-scoped). NOT localStorage (sensitive content).
+- `syncStatus: 'pending-rs9'` renders a visible warning banner:
+  t('editor.syncPending') — "Edits saved locally. Backend sync pending (RS-9)."
+- When RS-9 lands: replace the local model with a `saveDocumentSectionEdit`
+  call on blur/debounce. Until then: honest local-only state, never faked.
+
+### 13.4 Editor Styling
+
+- Dark-chrome editor shell: bg `surface`, border 1px `border`, radius `card`.
+- Toolbar: bold/italic/heading/table/code-block/mermaid buttons, pill-shaped,
+  bg `surfaceRaised`, icons in `textSecondary`, active in `accent`.
+- Content area: bg `surfaceRaised`, padding `panelPad`, min-height 300px.
+- Agent text: normal rendering (no special style — it IS the base).
+- Human suggestions (insertions): `accent` colored underline + small user badge.
+- Human suggestions (deletions): `danger` strikethrough + small user badge.
+- Agent proposals: `accentMuted` background tint + "DocStudio" badge.
+- Resolved (accepted): normal text, no decoration.
+- Section header: harmonizationKey + kind badge + "Regenerate" button (right).
+
+### 13.5 Mermaid Code-Block Rendering
+
+- Custom Tiptap node extension: `MermaidBlock`.
+- Stores mermaid source in the code-block content.
+- Renders inline as an SVG diagram (mermaid.js `render()` client-side).
+- Edit mode: click diagram → reveals the code editor; blur → re-renders SVG.
+- Dependency: `mermaid` (MIT, per tech.md Tiptap/ProseMirror/Mermaid allowed).
+
+### 13.6 tldraw Canvas Embed
+
+**DEFERRED to P2b.** An honest stub placeholder ("tldraw canvas embedding
+coming in a future update") renders where a tldraw block would go. The
+architecture mandates the attempt but explicitly allows deferral if it
+inflates the session. tldraw (MIT, per tech.md) is the target library.
+
+### 13.7 Integration with /documents Detail
+
+- When `selectedDoc.status === 'DRAFT'`: render `DocumentEditor` (editable).
+- When status is `IN_REVIEW` | `APPROVED` | `OBSOLETE`: render `ControlledDocViewer` (read-only, §7-compliant).
+- The editor and viewer are MUTUALLY EXCLUSIVE per document state.
+- Approval flow unchanged: Submit for approval (editor → viewer transition)
+  flows through the existing `submitDocumentForApproval` → HITL gate.
+
+### 13.8 Dependencies (new)
+
+- `@tiptap/core` + `@tiptap/pm` (peer dep) — editor core
+- `@tiptap/starter-kit` — paragraph, heading, bold, italic, history, etc.
+- `@tiptap/extension-table` + `@tiptap/extension-table-row` + `@tiptap/extension-table-cell` + `@tiptap/extension-table-header` — tables
+- `mermaid` — diagram rendering (MIT, tech.md approved)
+- INC-10 gate: run `npm audit` after install. If new advisory → STOP, flag architect.
+
+### 13.9 Tests (ship WITH the feature — third-strike rule)
+
+1. **§7 identification-block render test** (`frontend/src/test/controlled-doc-id-block.test.ts`):
+   Per §9.7 spec — 7 mandatory assertions across content kinds.
+
+2. **Editor attribution model test** (`frontend/src/test/document-editor-attribution.test.ts`):
+   - Given agent baseline content, when a human edit occurs, the change log
+     carries `actor: 'user:<sub>'` with timestamp.
+   - Given a regenerateSection response, the tracked proposal carries
+     `actor: 'agent:DocStudio'`.
+   - Human edits are NEVER overwritten by agent iterations (additive only).
+   - Accept/reject resolves changes correctly in the converged state.
+3. **Component test** (`DocumentEditor.test.tsx`, colocated — architect
+   addition, matches the `document-viewer.test.tsx`/`generation-view.test.tsx`
+   RTL convention): section-kind routing, human-edit sync-pending banner,
+   regenerateSection wiring, Mermaid insertion, accept/reject → onConverge.
+
+### 13.10 Architect amendment (2026-07-22) — two gaps closed post-delivery
+
+Independent review found this delivery's own §13.5/§13.1 described Mermaid
+diagram rendering as an integrated Tiptap node; `MermaidBlock.tsx` was a
+complete, correct standalone component but was never mounted in
+`DocumentEditor`'s Tiptap `extensions` array — exported, never imported
+anywhere else, unreachable by any real editor flow (unlike §13.6's tldraw,
+which was honestly marked DEFERRED). This was the third occurrence of the
+same pattern class (S1 cited test, S2 spec-only test) — **owner-ruled
+bounce: Kiro loses build authority for `ims-experience`** (see
+[[kiro-bounced-ims-experience]] in architect memory). The architect closed
+both gaps directly rather than discard an otherwise-strong delivery:
+- `MermaidNode.tsx` (new): `@tiptap/core` `Node.create()` + `@tiptap/react`
+  `ReactNodeViewRenderer` wrapping `MermaidBlock` — a real, mounted node
+  (`extensions: [..., MermaidNode]`), plus an `insertMermaidBlock` command
+  and a section-header "Insert diagram" button (i18n added, all 3 locales).
+- `onConverge` was declared but never invoked — now fires from
+  `handleAccept`/`handleReject` the moment resolving a change brings the
+  section to `isConverged() === true`, matching §13.2 point 4's stated
+  behavior.
+Both changes plus the missing `DocumentEditor.test.tsx` are in the SAME
+commit as this note. Migration-law flips (§8 `/manual`, §10 `/documents`)
+remain PENDING regardless — the visual design-gate (screenshots vs tokens)
+is a separate, not-yet-run step.

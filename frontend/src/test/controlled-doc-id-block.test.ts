@@ -4,10 +4,8 @@
  * field is a blocking defect; the §7 law is unconditional. Runs the 7
  * mandatory assertions across three content kinds.
  */
-
 import { describe, expect, it } from 'vitest';
 import { buildDocumentHtml, type DocMeta, type ContentJson } from '../lib/controlled-doc/template';
-
 const meta: DocMeta = {
   title: 'Quality Manual — Context of the Organization',
   documentId: 'QM-9001-4.1',
@@ -17,7 +15,6 @@ const meta: DocMeta = {
   tenantName: 'Acme Manufacturing',
   generatedAt: '2026-07-21T22:30:00.000Z',
 };
-
 const CONTENT_KINDS: Record<string, ContentJson> = {
   sections: {
     sections: [
@@ -40,12 +37,10 @@ const CONTENT_KINDS: Record<string, ContentJson> = {
     recordSections: [] as never[],
   },
 };
-
 describe('§7 identification block — 7 mandatory fields on EVERY controlled render', () => {
   for (const [kindName, content] of Object.entries(CONTENT_KINDS)) {
     describe(`content kind: ${kindName}`, () => {
       const html = buildDocumentHtml(meta, content);
-
       it('1. document ID in the info block', () => {
         expect(html).toContain(meta.documentId);
       });

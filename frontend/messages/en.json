@@ -908,5 +908,17 @@
   "setup": {
     "title": "Setup",
     "comingSoon": "Setup wizard coming in Phase 2."
+  },
+  "editor": {
+    "syncPending": "Edits saved locally. Backend sync pending (RS-9).",
+    "insertDiagram": "Insert diagram",
+    "iterateWithAgent": "Regenerate with DocStudio",
+    "regenerating": "Regenerating...",
+    "trackedChanges": "Tracked Changes",
+    "accept": "Accept",
+    "reject": "Reject",
+    "gapSection": "Gap — required information not recorded",
+    "naSection": "Not applicable",
+    "failedSection": "Section composition failed — no content presented"
   }
 }

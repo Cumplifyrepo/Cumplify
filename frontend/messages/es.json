@@ -911,5 +911,17 @@
   "setup": {
     "title": "Configuración Inicial",
     "comingSoon": "Asistente de configuración disponible en Fase 2."
+  },
+  "editor": {
+    "syncPending": "Ediciones guardadas localmente. Sincronización con backend pendiente (RS-9).",
+    "insertDiagram": "Insertar diagrama",
+    "iterateWithAgent": "Regenerar con DocStudio",
+    "regenerating": "Regenerando...",
+    "trackedChanges": "Cambios Rastreados",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "gapSection": "Brecha — información requerida no registrada",
+    "naSection": "No aplicable",
+    "failedSection": "Composición de sección fallida — sin contenido presentado"
   }
 }

@@ -22,6 +22,7 @@ import { useTenantSubscription } from '@/lib/use-tenant-subscription';
 import { useStandardScope } from '@/lib/standard-scope';
 import { canApprove } from '@/lib/role-matrix';
 import { ControlledDocViewer } from '@/components/controlled-doc';
+import { DocumentEditor } from '@/components/document-editor';
 import styles from './page.module.css';
 
 /**
@@ -404,7 +405,23 @@ export default function DocumentsPage() {
         <div className={styles.detailLayout}>
           <div className={styles.detailMain}>
             {detailLoading && <p className={styles.loading}>{tM1('loading')}</p>}
-            {documentContent && (
+            {/* DRAFT status: DocumentEditor (Collaboration Law — §13) */}
+            {!detailLoading && selectedDoc.status === 'DRAFT' && documentContent && (
+              <DocumentEditor
+                sections={(() => {
+                  try {
+                    const parsed = JSON.parse(documentContent);
+                    return parsed.sections ?? [];
+                  } catch {
+                    return [];
+                  }
+                })()}
+                runId={selectedDoc.id}
+                documentId={selectedDoc.id}
+              />
+            )}
+            {/* Non-DRAFT status: ControlledDocViewer (§7-compliant, read-only) */}
+            {!detailLoading && selectedDoc.status !== 'DRAFT' && documentContent && (
               <ControlledDocViewer
                 contentRaw={documentContent}
                 documentId={selectedDoc.id}
