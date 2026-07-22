@@ -78,10 +78,30 @@ not-configured state (env `NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL` unset
 on dev until the owner supplies the portal URL), AI-usage overage note
 per the 2026-07-08 ruling.
 
+## DEPLOYED RE-WITNESS (execution b8377c44 → commit 11d88e2) — PASS
+
+Dev green 14:06Z (Dev-ApiStack 14:00:50Z; the wave took TWO
+self-mutation restarts because af37ca1 changed the pipeline's own
+definition — i18n gate). Probes at 14:07Z against deployed AppSync:
+
+| Probe | Result |
+|---|---|
+| saveOrgProfile SINGLE-encoded (the frontend wizard's true encoding) | **PASS** — profile v3 saved; the input fix is live (v1/v2 needed the double-encode workaround) |
+| getDocumentContent wire shape | parse depth 1 (single-encoded, 46 sections) — output fix live |
+| getOrgProfile.payload wire shape | parse depth 1, legalName intact |
+
+CloudFront shots (`shot_manual_deployed.png` captured, matches the
+local-gate shots pixel-for-purpose: 46/22/24 tiles, full section list;
+/documents grouping identical). One benign console line: Next static-
+export RSC prefetch for /guide falls back to browser navigation —
+pre-existing pattern, not a functional failure.
+
+Observed AWSJSON wire nuance, recorded for the next engineer: object
+returns arrive to raw-HTTP clients as a single-encoded JSON string
+(depth 1) but reached the Amplify client parsed (depth 0) — which is
+exactly why `parseAwsJson` normalizes depth 0/1/2 rather than assuming.
+
 ## Follow-ups
-1. Deploy d4334ec + this commit; re-witness /manual + /documents against
-   DEPLOYED Dev (the shots above ran the fixed frontend locally against
-   the old API through the both-shapes guard — deliberate, but the
-   deployed pair must be witnessed too).
+1. ~~Deployed-pair re-witness~~ DONE — PASS, above.
 2. Setup Wizard at /setup (unblocks the deferred /qms flip).
 3. Non-DRAFT document detail witness once an approval flow runs on dev.
