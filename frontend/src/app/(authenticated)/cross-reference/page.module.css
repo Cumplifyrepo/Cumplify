@@ -1,0 +1,125 @@
+.loading {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.gridContainer {
+  overflow-x: auto;
+  margin-top: var(--space-lg);
+}
+
+.grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.grid th {
+  background: var(--color-surface-raised);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+}
+
+.sectionCol {
+  min-width: 200px;
+}
+
+.kindCol {
+  min-width: 80px;
+}
+
+.stdCol {
+  min-width: 140px;
+  text-align: center !important;
+}
+
+.stdHighlight {
+  background: var(--color-accent) !important;
+  color: var(--color-text-on-accent) !important;
+}
+
+.row:hover td {
+  background: var(--color-surface-hover);
+}
+
+.sectionCell {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border-subtle);
+  font-weight: 500;
+  color: var(--color-text-heading);
+}
+
+.kindCell {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.cell {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border-subtle);
+  vertical-align: top;
+}
+
+.cellHighlight {
+  background: rgba(0, 101, 248, 0.05);
+}
+
+.cellEntry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--color-text-body);
+  text-align: left;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.cellEntry:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-accent);
+}
+
+.clauseNo {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.modeBadge {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.modeShall {
+  color: var(--color-success);
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.modeShould {
+  color: var(--color-warning);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.modeOther {
+  color: var(--color-text-muted);
+}
+
+.empty {
+  color: var(--color-text-muted);
+}

@@ -832,6 +832,10 @@
     "title": "Documents",
     "comingSoon": "Document browser coming in Phase 2."
   },
+  "documentsPage": {
+    "title": "Documents",
+    "ungrouped": "Other Documents"
+  },
   "formsStub": {
     "title": "Forms",
     "comingSoon": "Forms catalog coming in Phase 3."
@@ -840,9 +844,30 @@
     "title": "Cross-Reference",
     "comingSoon": "Clause cross-reference matrix coming in Phase 2."
   },
+  "crossReferencePage": {
+    "title": "Cross-Reference Matrix",
+    "loading": "Loading...",
+    "noMatrix": "Generate your IMS manual first to see the cross-reference matrix.",
+    "goToManual": "Go to Manual",
+    "colSection": "Section",
+    "colKind": "Kind"
+  },
   "guide": {
     "title": "Clause Guide",
     "comingSoon": "Clause registry guide coming in Phase 2."
+  },
+  "guidePage": {
+    "title": "Clause Guide",
+    "loading": "Loading...",
+    "empty": "No clauses found",
+    "colClause": "Clause",
+    "colTitle": "Title",
+    "colStandard": "Standard",
+    "colIntent": "Intent",
+    "colApplicability": "Applicability",
+    "requiredSources": "Required sources",
+    "exclusionJustification": "Exclusion justification",
+    "harmonizedWith": "Harmonized with"
   },
   "auditReadinessPage": {
     "title": "Audit Readiness",

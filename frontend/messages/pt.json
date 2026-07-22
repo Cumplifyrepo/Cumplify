@@ -835,6 +835,10 @@
     "title": "Documentos",
     "comingSoon": "Explorador de documentos disponível na Fase 2."
   },
+  "documentsPage": {
+    "title": "Documentos",
+    "ungrouped": "Outros Documentos"
+  },
   "formsStub": {
     "title": "Formulários",
     "comingSoon": "Catálogo de formulários disponível na Fase 3."
@@ -843,9 +847,30 @@
     "title": "Referência Cruzada",
     "comingSoon": "Matriz de referência cruzada de cláusulas disponível na Fase 2."
   },
+  "crossReferencePage": {
+    "title": "Matriz de Referência Cruzada",
+    "loading": "Carregando...",
+    "noMatrix": "Gere seu manual SGI primeiro para ver a matriz de referência cruzada.",
+    "goToManual": "Ir para o Manual",
+    "colSection": "Seção",
+    "colKind": "Tipo"
+  },
   "guide": {
     "title": "Guia de Cláusulas",
     "comingSoon": "Guia do registro de cláusulas disponível na Fase 2."
+  },
+  "guidePage": {
+    "title": "Guia de Cláusulas",
+    "loading": "Carregando...",
+    "empty": "Nenhuma cláusula encontrada",
+    "colClause": "Cláusula",
+    "colTitle": "Título",
+    "colStandard": "Norma",
+    "colIntent": "Intenção",
+    "colApplicability": "Aplicabilidade",
+    "requiredSources": "Fontes necessárias",
+    "exclusionJustification": "Justificativa de exclusão",
+    "harmonizedWith": "Harmonizada com"
   },
   "auditReadinessPage": {
     "title": "Prontidão para Auditoria",

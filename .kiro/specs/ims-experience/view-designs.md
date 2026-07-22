@@ -443,12 +443,37 @@ A hermetic test renders the same fixture JSON through both the frontend
 `lib/controlled-doc/template.ts` and asserts the HTML includes the §7
 identification block fields. If template.ts drifts from
 `services/pdf-export/src/template.ts`, the test flags it.
+**Status: BUILT** (architect, `frontend/src/test/controlled-doc-parity.test.ts`,
+commit 97b1f36).
 
 ### 9.6 Vendor procedure
 
 Copy `services/pdf-export/src/template.ts` → `frontend/src/lib/controlled-doc/template.ts`.
 The frontend copy is the iframe render source. The backend copy remains the
 PDF/ZIP export source. Both MUST stay in sync (parity drift test enforces).
+
+### 9.7 §7 Identification-block render test (due P2)
+
+**Law:** Architecture §7 mandates that EVERY controlled render carries the
+identification block. This test ensures the ControlledDocViewer never ships
+a render missing the mandatory fields.
+
+**Test location:** `frontend/src/test/controlled-doc-id-block.test.ts`
+
+**Assertions (per architecture §7 "Mandatory identification block"):**
+Given a fixture ContentJson (prose sections + frontMatter), when
+`buildDocumentHtml(meta, content)` is called, the output HTML MUST contain:
+1. `meta.documentId` — Document ID rendered in the info block
+2. `meta.title` — Title rendered as `<h1>`
+3. `v${meta.versionNo}` — Version number in the info block
+4. `meta.standard` — Standard(s) in the info block
+5. `"Controlled Document"` — CONTROLLED stamp text (the `.controlled-stamp`)
+6. `"CONTROLLED when viewed through Cumplify"` — footer uncontrolled-notice
+7. `meta.generatedAt` — Date in the info block
+
+The test renders multiple content kinds (sections, correlation_matrix,
+form_record) and asserts all 7 fields are present in each. A missing field
+is a blocking defect — the §7 law is unconditional.
 
 ---
 

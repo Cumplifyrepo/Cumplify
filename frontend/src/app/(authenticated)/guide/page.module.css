@@ -1,0 +1,85 @@
+.loading {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.clauseNoCell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-weight: 600;
+  color: var(--color-text-heading);
+}
+
+.harmonizeBadge {
+  font-size: 12px;
+  color: var(--color-accent-muted);
+  cursor: help;
+}
+
+.intentCell {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.expandedDetail {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+}
+
+.expandedTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-heading);
+  margin-bottom: var(--space-md);
+}
+
+.expandedIntent {
+  font-size: 14px;
+  color: var(--color-text-body);
+  line-height: 1.6;
+  margin-bottom: var(--space-md);
+}
+
+.expandedSources {
+  margin-bottom: var(--space-md);
+}
+
+.sourcesLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sourcesList {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-xs) 0 0 0;
+}
+
+.sourcesList li {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 2px 0;
+}
+
+.justification {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.harmonizeNote {
+  font-size: 12px;
+  color: var(--color-accent-muted);
+}
