@@ -16,9 +16,14 @@ These redirect stubs are PREPARED but NOT ACTIVE. Per the migration law
 ## Files
 
 - `qms-to-manual.tsx` → replaces `(authenticated)/qms/page.tsx`
-  - Gate: §8 /manual design-gate PASS
-- `m1-to-documents.tsx` → replaces `(authenticated)/m1/page.tsx`
-  - Gate: §10 /documents design-gate PASS
+  - Gate: §8 /manual design-gate **PASSED 2026-07-22** (architect, evidence:
+    design-gate-p2-surfaces.md) — flip nevertheless DEFERRED: /qms still
+    hosts the only working org-profile wizard and /setup is a stub.
+    Redirecting would strand profile creation (the same law's "always land
+    on a working surface"). Activate when the Setup Wizard ships at /setup.
+- ~~`m1-to-documents.tsx` → replaces `(authenticated)/m1/page.tsx`~~
+  - §10 gate PASSED 2026-07-22 → **ACTIVATED** same day (m5-precedent stub;
+    old register + _detail removed).
 
 ## NEVER
 

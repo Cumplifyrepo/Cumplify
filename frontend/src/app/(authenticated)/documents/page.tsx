@@ -24,6 +24,7 @@ import { canApprove } from '@/lib/role-matrix';
 import { ControlledDocViewer } from '@/components/controlled-doc';
 import { DocumentEditor } from '@/components/document-editor';
 import styles from './page.module.css';
+import { parseAwsJson } from '@/lib/aws-json';
 
 /**
  * /documents — Clause-family browser + M1 absorption.
@@ -410,8 +411,12 @@ export default function DocumentsPage() {
               <DocumentEditor
                 sections={(() => {
                   try {
-                    const parsed = JSON.parse(documentContent);
-                    return parsed.sections ?? [];
+                    // parseAwsJson, NOT bare JSON.parse: the AWSJSON field
+                    // arrives as a parsed object (post-2026-07-22 API) or a
+                    // string (legacy) — bare parse yielded [] in BOTH worlds,
+                    // rendering an empty editor (found at the design gate).
+                    const parsed = parseAwsJson<{ sections?: unknown[] }>(documentContent);
+                    return (parsed.sections ?? []) as never[];
                   } catch {
                     return [];
                   }
