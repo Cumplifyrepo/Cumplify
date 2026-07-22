@@ -8,6 +8,7 @@
 
 import { createHandler } from '../../eventing/src/consumer.js';
 import { toolLoop } from '../shared/tool-loop.js';
+import type { ContentBlock } from '../../ai-invoker/src/types.js';
 import { createInvokeFn, createEmbedFn } from '../shared/invoke-transport.js';
 import { retrieve } from '../shared/retrieval.js';
 import type { CumplifyEvent } from '../../eventing/src/types.js';
@@ -77,13 +78,15 @@ async function processEvent(event: CumplifyEvent, _detailType: string): Promise<
 
   const groundingContext = description ? await retrieveGrounding(tenantId, description) : '';
 
-  const userMessage = [
-    `An audit task has been raised. Analyze and take appropriate action.`,
-    `\nEvent: ${JSON.stringify(event.payload)}`,
-    groundingContext ? `\nRelevant context:\n${groundingContext}` : '',
-  ].join('');
+  // S2.1 lesson: event payloads carry tenant-typed text → guardedText; the
+  // trusted framing and KB grounding stay out of PROMPT_ATTACK evaluation.
+  const content: ContentBlock[] = [
+    { text: `An audit task has been raised. Analyze and take appropriate action.\nEvent payload (tenant data):` },
+    { guardedText: JSON.stringify(event.payload) },
+    ...(groundingContext ? [{ text: `\nRelevant context:\n${groundingContext}` }] : []),
+  ];
 
-  await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+  await toolLoop([{ role: 'user', content }], {
     seat: 'workhorse',
     systemPrompt: LEAD_AUDITOR_PROMPT,
     tools: LEAD_AUDITOR_TOOLS,
@@ -149,18 +152,27 @@ export async function runAuditFindings(input: RunFindingsInput): Promise<RunFind
       .join(' ')}`,
   );
 
-  const userMessage = [
+  // S2.1 lesson (found live AGAIN on the S4 witness, guardrail_intervened at
+  // turn 0): scope/checklist/prior findings are tenant-typed → guardedText;
+  // only the trusted FINDINGS-MODE framing and KB grounding ride plain.
+  const preamble = [
     `FINDINGS MODE. Review this audit's state and propose the MOST SIGNIFICANT`,
     `NEW finding via audit-finding-write, exactly once.`,
     `auditId: ${auditId}`,
     `Audit: standard=${audit.standard ?? '?'} status=${audit.status ?? '?'}`,
-    `Scope: ${audit.scope ?? '?'}`,
-    `\nChecklist:\n${checklistLines}`,
-    `\nPrior findings (do NOT duplicate them):\n${priorLines}`,
-    groundingContext ? `\nRelevant context:\n${groundingContext}` : '',
+    `\nAudit scope (tenant-entered):`,
   ].join('\n');
+  const content: ContentBlock[] = [
+    { text: preamble },
+    { guardedText: audit.scope ?? '?' },
+    { text: `\nChecklist (tenant-entered):` },
+    { guardedText: checklistLines },
+    { text: `\nPrior findings (do NOT duplicate them):` },
+    { guardedText: priorLines },
+    ...(groundingContext ? [{ text: `\nRelevant context:\n${groundingContext}` }] : []),
+  ];
 
-  const result = await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+  const result = await toolLoop([{ role: 'user', content }], {
     seat: 'workhorse',
     systemPrompt: LEAD_AUDITOR_PROMPT,
     tools: LEAD_AUDITOR_TOOLS,

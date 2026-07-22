@@ -80,7 +80,7 @@ describe('LeadAuditor handler() dispatch', () => {
 });
 
 describe('runAuditFindings (S4)', () => {
-  it('FINDINGS MODE carries audit context, checklist, prior findings; requestedBy threaded; finding HITL-gated', async () => {
+  it('FINDINGS MODE: trusted framing rides plain, tenant text rides guardedText (S2.1 selective guardrail, found live on the S4 witness); requestedBy threaded; finding HITL-gated', async () => {
     mockToolLoop.mockResolvedValueOnce({
       finalResponse: 'ok',
       turns: 1,
@@ -90,13 +90,22 @@ describe('runAuditFindings (S4)', () => {
     await runAuditFindings(findingsInput);
 
     const [messages, opts] = mockToolLoop.mock.calls[0];
-    const text = messages[0].content[0].text as string;
-    expect(text).toContain('FINDINGS MODE');
-    expect(text).toContain('audit-31');
-    expect(text).toContain('8.5.1');
-    expect(text).toContain('Is production controlled?');
-    expect(text).toContain('Training log gap');
-    expect(text).toContain('do NOT duplicate');
+    const blocks = messages[0].content as Array<{ text?: string; guardedText?: string }>;
+    const plain = blocks.filter((b) => b.text).map((b) => b.text).join('\n');
+    const guarded = blocks.filter((b) => b.guardedText).map((b) => b.guardedText).join('\n');
+
+    // Trusted framing: plain text only — never guard-evaluated
+    expect(plain).toContain('FINDINGS MODE');
+    expect(plain).toContain('audit-31');
+    expect(plain).toContain('do NOT duplicate');
+    // Tenant-typed content: guardedText only — never trusted
+    expect(guarded).toContain('Fabrication shop');
+    expect(guarded).toContain('8.5.1');
+    expect(guarded).toContain('Is production controlled?');
+    expect(guarded).toContain('Training log gap');
+    expect(plain).not.toContain('Is production controlled?');
+    expect(plain).not.toContain('Training log gap');
+
     expect(opts.requestedBy).toBe('user-9');
     expect(opts.feature).toBe('audit-findings');
     expect(opts.agent).toBe('LeadAuditor');
