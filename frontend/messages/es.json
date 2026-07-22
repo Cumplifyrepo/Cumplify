@@ -25,6 +25,7 @@
     "records": "Registros",
     "managementReview": "Revisión por la Dirección",
     "settings": "Configuración",
+    "billing": "Facturación",
     "setup": "Configuración Inicial",
     "qmsEngine": "Motor QMS",
     "redirecting": "Redirigiendo..."
@@ -91,6 +92,15 @@
     "tenantLocaleReadOnly": "El idioma de documentos se establece a nivel de organización y determina el idioma predeterminado para los documentos generados. Contacte a su administrador para cambiarlo.",
     "myProfileTitle": "Mi Perfil",
     "loading": "Cargando..."
+  },
+  "billing": {
+    "title": "Facturación",
+    "subscriptionTitle": "Suscripción y pagos",
+    "subscriptionDescription": "Su suscripción, facturas y métodos de pago se gestionan de forma segura a través de Stripe. Abra el portal de facturación para ver facturas, actualizar su método de pago o cambiar de plan.",
+    "openPortal": "Abrir portal de facturación",
+    "portalNotConfigured": "El portal de facturación no está configurado para este entorno. Contacte con soporte para gestionar su suscripción.",
+    "usageTitle": "Uso de IA",
+    "usageDescription": "El uso de créditos de IA por encima de su plan nunca se bloquea: el excedente se factura en su próxima factura según la tarifa de su plan."
   },
   "ask": {
     "title": "Preguntar a Cumplify",
@@ -310,7 +320,10 @@
     "fieldImpactAssessment": "Evaluación de impacto"
   },
   "forms": {
-    "pdf": { "yes": "Sí", "no": "No" },
+    "pdf": {
+      "yes": "Sí",
+      "no": "No"
+    },
     "tpl": {
       "ncr": {
         "title": "No Conformidad y Acción Correctiva (NCR)",
@@ -488,7 +501,10 @@
       }
     },
     "legalObl": {
-      "sec": { "info": "Información de la Obligación", "evaluation": "Evaluación de Cumplimiento" },
+      "sec": {
+        "info": "Información de la Obligación",
+        "evaluation": "Evaluación de Cumplimiento"
+      },
       "field": {
         "title": "Título de la Obligación",
         "type": "Tipo de Obligación",
@@ -547,7 +563,10 @@
       }
     },
     "emergency": {
-      "sec": { "scenario": "Escenario de Emergencia", "responsePlan": "Plan de Respuesta" },
+      "sec": {
+        "scenario": "Escenario de Emergencia",
+        "responsePlan": "Plan de Respuesta"
+      },
       "field": {
         "scenarioDesc": "Descripción del Escenario",
         "scenarioType": "Tipo de Escenario",
@@ -561,7 +580,10 @@
       }
     },
     "workerConsult": {
-      "sec": { "info": "Información de la Consulta", "outcomes": "Resultados" },
+      "sec": {
+        "info": "Información de la Consulta",
+        "outcomes": "Resultados"
+      },
       "field": {
         "date": "Fecha de Consulta",
         "topic": "Tema",
@@ -573,7 +595,10 @@
       }
     },
     "competence": {
-      "sec": { "personInfo": "Información de la Persona", "record": "Registro de Competencia" },
+      "sec": {
+        "personInfo": "Información de la Persona",
+        "record": "Registro de Competencia"
+      },
       "field": {
         "employeeName": "Nombre del Empleado",
         "rolePosition": "Rol/Puesto",
@@ -588,7 +613,10 @@
       }
     },
     "supplier": {
-      "sec": { "info": "Información del Proveedor", "evaluation": "Evaluación" },
+      "sec": {
+        "info": "Información del Proveedor",
+        "evaluation": "Evaluación"
+      },
       "field": {
         "name": "Nombre del Proveedor",
         "productService": "Producto/Servicio Proporcionado",
@@ -603,7 +631,10 @@
       }
     },
     "calibration": {
-      "sec": { "equipment": "Información del Equipo", "record": "Registro de Calibración" },
+      "sec": {
+        "equipment": "Información del Equipo",
+        "record": "Registro de Calibración"
+      },
       "field": {
         "assetTag": "Etiqueta de Activo",
         "description": "Descripción del Equipo",
@@ -619,7 +650,10 @@
       }
     },
     "docChange": {
-      "sec": { "request": "Solicitud de Cambio", "assessment": "Evaluación y Decisión" },
+      "sec": {
+        "request": "Solicitud de Cambio",
+        "assessment": "Evaluación y Decisión"
+      },
       "field": {
         "documentRef": "Referencia del Documento",
         "requestedBy": "Solicitado Por",
@@ -634,7 +668,10 @@
       }
     },
     "objectives": {
-      "sec": { "info": "Información del Objetivo", "planning": "Planificación" },
+      "sec": {
+        "info": "Información del Objetivo",
+        "planning": "Planificación"
+      },
       "field": {
         "title": "Título del Objetivo",
         "standard": "Norma(s) Aplicable(s)",
@@ -649,7 +686,10 @@
       }
     },
     "intParties": {
-      "sec": { "info": "Información de la Parte", "needs": "Necesidades y Expectativas" },
+      "sec": {
+        "info": "Información de la Parte",
+        "needs": "Necesidades y Expectativas"
+      },
       "field": {
         "name": "Nombre de la Parte",
         "type": "Tipo de Parte",

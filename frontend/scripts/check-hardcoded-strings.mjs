@@ -43,6 +43,10 @@ function getAllFiles(dir) {
       if (entry === 'node_modules' || entry === 'tokens') continue;
       results.push(...getAllFiles(fullPath));
     } else if (['.tsx', '.jsx'].includes(extname(entry))) {
+      // Test files assert against i18n KEYS ('editor.accept') and use
+      // fixture content strings (mocked editor HTML) that are not
+      // user-facing UI — scanning them only produces false positives.
+      if (/\.test\.[jt]sx$/.test(entry)) continue;
       results.push(fullPath);
     }
   }

@@ -64,6 +64,7 @@ export const navSections: NavSectionDef[] = [
     labelKey: 'admin',
     items: [
       { href: '/settings', labelKey: 'settings' },
+      { href: '/billing', labelKey: 'billing' },
       { href: '/setup', labelKey: 'setup' },
     ],
     roleGate: canSeeAdmin,

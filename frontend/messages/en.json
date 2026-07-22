@@ -25,6 +25,7 @@
     "records": "Records",
     "managementReview": "Management Review",
     "settings": "Settings",
+    "billing": "Billing",
     "setup": "Setup",
     "qmsEngine": "QMS Engine",
     "redirecting": "Redirecting..."
@@ -91,6 +92,15 @@
     "tenantLocaleReadOnly": "The document locale is set at the organization level and determines the default language for generated documents. Contact your administrator to change it.",
     "myProfileTitle": "My Profile",
     "loading": "Loading..."
+  },
+  "billing": {
+    "title": "Billing",
+    "subscriptionTitle": "Subscription & Payments",
+    "subscriptionDescription": "Your subscription, invoices, and payment methods are managed securely through Stripe. Open the billing portal to view invoices, update your payment method, or change your plan.",
+    "openPortal": "Open billing portal",
+    "portalNotConfigured": "The billing portal is not configured for this environment. Contact support to manage your subscription.",
+    "usageTitle": "AI Usage",
+    "usageDescription": "AI credit usage above your plan allowance is never blocked — overage is billed on your next invoice at your plan rate."
   },
   "ask": {
     "title": "Ask Cumplify",
@@ -310,7 +320,10 @@
     "fieldImpactAssessment": "Impact assessment"
   },
   "forms": {
-    "pdf": { "yes": "Yes", "no": "No" },
+    "pdf": {
+      "yes": "Yes",
+      "no": "No"
+    },
     "tpl": {
       "ncr": {
         "title": "Nonconformity & Corrective Action (NCR)",
@@ -471,7 +484,10 @@
       }
     },
     "aspects": {
-      "sec": { "identification": "Aspect Identification", "evaluation": "Impact Evaluation" },
+      "sec": {
+        "identification": "Aspect Identification",
+        "evaluation": "Impact Evaluation"
+      },
       "field": {
         "activity": "Activity/Process",
         "aspectDesc": "Environmental Aspect",
@@ -485,7 +501,10 @@
       }
     },
     "legalObl": {
-      "sec": { "info": "Obligation Information", "evaluation": "Compliance Evaluation" },
+      "sec": {
+        "info": "Obligation Information",
+        "evaluation": "Compliance Evaluation"
+      },
       "field": {
         "title": "Obligation Title",
         "type": "Obligation Type",
@@ -544,7 +563,10 @@
       }
     },
     "emergency": {
-      "sec": { "scenario": "Emergency Scenario", "responsePlan": "Response Plan" },
+      "sec": {
+        "scenario": "Emergency Scenario",
+        "responsePlan": "Response Plan"
+      },
       "field": {
         "scenarioDesc": "Scenario Description",
         "scenarioType": "Scenario Type",
@@ -558,7 +580,10 @@
       }
     },
     "workerConsult": {
-      "sec": { "info": "Consultation Information", "outcomes": "Outcomes" },
+      "sec": {
+        "info": "Consultation Information",
+        "outcomes": "Outcomes"
+      },
       "field": {
         "date": "Consultation Date",
         "topic": "Topic",
@@ -570,7 +595,10 @@
       }
     },
     "competence": {
-      "sec": { "personInfo": "Person Information", "record": "Competence Record" },
+      "sec": {
+        "personInfo": "Person Information",
+        "record": "Competence Record"
+      },
       "field": {
         "employeeName": "Employee Name",
         "rolePosition": "Role/Position",
@@ -585,7 +613,10 @@
       }
     },
     "supplier": {
-      "sec": { "info": "Supplier Information", "evaluation": "Evaluation" },
+      "sec": {
+        "info": "Supplier Information",
+        "evaluation": "Evaluation"
+      },
       "field": {
         "name": "Supplier Name",
         "productService": "Product/Service Provided",
@@ -600,7 +631,10 @@
       }
     },
     "calibration": {
-      "sec": { "equipment": "Equipment Information", "record": "Calibration Record" },
+      "sec": {
+        "equipment": "Equipment Information",
+        "record": "Calibration Record"
+      },
       "field": {
         "assetTag": "Asset Tag",
         "description": "Equipment Description",
@@ -616,7 +650,10 @@
       }
     },
     "docChange": {
-      "sec": { "request": "Change Request", "assessment": "Assessment & Decision" },
+      "sec": {
+        "request": "Change Request",
+        "assessment": "Assessment & Decision"
+      },
       "field": {
         "documentRef": "Document Reference",
         "requestedBy": "Requested By",
@@ -631,7 +668,10 @@
       }
     },
     "objectives": {
-      "sec": { "info": "Objective Information", "planning": "Planning" },
+      "sec": {
+        "info": "Objective Information",
+        "planning": "Planning"
+      },
       "field": {
         "title": "Objective Title",
         "standard": "Applicable Standard(s)",
@@ -646,7 +686,10 @@
       }
     },
     "intParties": {
-      "sec": { "info": "Party Information", "needs": "Needs & Expectations" },
+      "sec": {
+        "info": "Party Information",
+        "needs": "Needs & Expectations"
+      },
       "field": {
         "name": "Party Name",
         "type": "Party Type",
@@ -734,7 +777,7 @@
       "loading": "Loading...",
       "namedGaps": "Missing evidence",
       "requiresRegisterData": "Requires {register} data",
-      "naJustified": "N/A \u2014 justified",
+      "naJustified": "N/A — justified",
       "markApplicable": "Mark applicable",
       "markExcluded": "Mark N/A",
       "justificationPlaceholder": "Justification for exclusion (required)",
@@ -772,7 +815,7 @@
       "versions": "Version History",
       "diffTitle": "Version Diff",
       "diffUnavailable": "Diff unavailable for this version",
-      "noVersions": "Single version \u2014 no diff available",
+      "noVersions": "Single version — no diff available",
       "additions": "additions",
       "deletions": "deletions",
       "kindChange": "Section type changed",

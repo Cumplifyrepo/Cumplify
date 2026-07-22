@@ -96,6 +96,9 @@ export class PipelineStack extends cdk.Stack {
           // form — npm's --prefix flag has install-target quirks.
           'cd frontend && npm ci && cd ..',
           'npm run test',
+          // i18n gate: CLAUDE.md promised this check in CI but it was never
+          // wired — 5 violations shipped unnoticed before 2026-07-22.
+          'cd frontend && npm run i18n:check && cd ..',
           // Hard audit gate with an explicit EXPIRING allowlist — raw
           // `npm audit --audit-level=high` cannot express exceptions for deps
           // bundled inside another package's tarball (aws-cdk-lib

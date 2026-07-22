@@ -1,0 +1,23 @@
+.panels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+.portalLink {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.notConfigured {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
