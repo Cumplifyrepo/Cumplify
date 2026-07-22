@@ -34,6 +34,15 @@ export interface StoreTokenInput {
     agentName: string;
     proposedAction: { tool: string; args: unknown };
     createdAt: string;
+    /**
+     * SOD-1 (RS-8): sub of the human who triggered a user-initiated run.
+     * FOUND MISSING at the 2026-07-22 live witness — enterHitlGate put it in
+     * the SFN input since dfa8ad4, but this file (the SOLE writer of the DDB
+     * item) dropped it, so hitl-approval.ts's author≠approver check saw
+     * undefined and silently skipped: a proposer could approve their own
+     * item live. Persisting it here is what makes SOD-1 actually bite.
+     */
+    requestedBy?: string;
     /** L5-1: guardrail evidence from the invoker response (grounding/AR scores + citations) */
     guardrailEvidence?: {
       groundingScore: number | null;
@@ -56,7 +65,8 @@ export interface StoreTokenInput {
  */
 export async function handler(event: StoreTokenInput): Promise<{ stored: true }> {
   const { taskToken, sfnExecutionArn } = event;
-  const { tenantId, hitlItemId, agentName, proposedAction, createdAt, guardrailEvidence } = event.input;
+  const { tenantId, hitlItemId, agentName, proposedAction, createdAt, guardrailEvidence, requestedBy } =
+    event.input;
 
   logger.info('Creating/updating HITL item with task token', {
     tenantId,
@@ -100,6 +110,14 @@ export async function handler(event: StoreTokenInput): Promise<{ stored: true }>
   if (guardrailEvidence) {
     updateParts.push('guardrailEvidence = :evidence');
     attrValues[':evidence'] = guardrailEvidence;
+  }
+
+  // SOD-1 (RS-8): persist the proposing human's sub so the approval Lambda's
+  // author≠approver check has something to check. Absent for event-triggered
+  // runs (no human proposer) — never write an empty string.
+  if (requestedBy) {
+    updateParts.push('requestedBy = :requestedBy');
+    attrValues[':requestedBy'] = requestedBy;
   }
 
   await ddb.send(

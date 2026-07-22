@@ -190,6 +190,41 @@ describe('store-token handler', () => {
     expect(params.ExpressionAttributeValues[':evidence']).toEqual(evidence);
   });
 
+  it('SOD-1 (RS-8): persists requestedBy when present — found dropped at the 2026-07-22 live witness', async () => {
+    await handler({
+      taskToken: 'token-sod',
+      input: {
+        tenantId: 'tenant-sod',
+        hitlItemId: '08STU',
+        agentName: 'CAPAGuru',
+        proposedAction: { tool: 'capa-open', args: {} },
+        createdAt: '2026-07-22T12:00:00.000Z',
+        requestedBy: 'user-proposer-sub',
+      },
+    });
+
+    const call = mockDdbSend.mock.calls[0][0];
+    expect(call.input.UpdateExpression).toContain('requestedBy = :requestedBy');
+    expect(call.input.ExpressionAttributeValues[':requestedBy']).toBe('user-proposer-sub');
+  });
+
+  it('SOD-1: omits requestedBy entirely for event-triggered runs (no empty-string write)', async () => {
+    await handler({
+      taskToken: 'token-no-sod',
+      input: {
+        tenantId: 'tenant-nosod',
+        hitlItemId: '09VWX',
+        agentName: 'CAPAGuru',
+        proposedAction: { tool: 'capa-open', args: {} },
+        createdAt: '2026-07-22T12:01:00.000Z',
+      },
+    });
+
+    const call = mockDdbSend.mock.calls[0][0];
+    expect(call.input.UpdateExpression).not.toContain('requestedBy');
+    expect(call.input.ExpressionAttributeValues[':requestedBy']).toBeUndefined();
+  });
+
   it('L5-1: omits guardrailEvidence from UpdateExpression when absent', async () => {
     await handler({
       taskToken: 'token-no-evidence',
