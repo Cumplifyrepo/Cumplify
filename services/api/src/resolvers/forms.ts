@@ -430,9 +430,17 @@ async function createFormRecord(
  * REC-3: no validation on save, only on submit.
  */
 async function saveFormRecordValues(event: AppSyncEvent, tenantId: string): Promise<unknown> {
-  const input = event.arguments.input as { recordId: string; values: string };
+  const input = event.arguments.input as {
+    recordId: string;
+    values: string | Record<string, unknown>;
+  };
   const recordId = input.recordId;
-  const values = JSON.parse(input.values) as Record<string, unknown>;
+  // AWSJSON arrives parsed (object) from AppSync, as a string from hermetic
+  // fixtures — accept both (same wire-shape class as saveOrgProfile, found
+  // live 2026-07-22).
+  const values = (
+    typeof input.values === 'string' ? JSON.parse(input.values) : input.values
+  ) as Record<string, unknown>;
 
   const txn = await beginTenantTransaction(tenantId);
   try {

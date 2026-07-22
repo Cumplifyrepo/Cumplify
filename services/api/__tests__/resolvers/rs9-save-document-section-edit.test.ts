@@ -189,6 +189,61 @@ describe('saveDocumentSectionEdit — happy path', () => {
       }),
     );
   });
+
+  it('accepts the LIVE wire shape: trackedChanges arrives as a parsed ARRAY, not a string (found live 2026-07-22)', async () => {
+    // AppSync delivers AWSJSON arguments to direct Lambda resolvers already
+    // parsed — same wire-shape class as saveOrgProfile's "[object Object]".
+    mockExecute
+      .mockResolvedValueOnce({
+        records: [[{ stringValue: 'doc-1' }, { stringValue: 'DRAFT' }, { stringValue: 'v1-key' }]],
+        columnMetadata: [{ name: 'document_id' }, { name: 'status' }, { name: 'content_ref' }],
+      })
+      .mockResolvedValueOnce({
+        records: [[{ longValue: 2 }]],
+        columnMetadata: [{ name: 'next' }],
+      })
+      .mockResolvedValueOnce({
+        records: [
+          [
+            { stringValue: 'ver-2' },
+            { stringValue: 'doc-1' },
+            { longValue: 2 },
+            { stringValue: 'tenants/tenant-test/documents/doc-1/v2.json' },
+            { stringValue: 'Section edit: 4.1' },
+            { stringValue: 'user-9' },
+            { stringValue: '2026-07-22T00:00:00Z' },
+          ],
+        ],
+        columnMetadata: [
+          { name: 'id' },
+          { name: 'document_id' },
+          { name: 'version_no' },
+          { name: 'content_ref' },
+          { name: 'change_summary' },
+          { name: 'author_id' },
+          { name: 'created_at' },
+        ],
+      })
+      .mockResolvedValueOnce({ records: undefined, columnMetadata: undefined });
+
+    mockS3Send.mockResolvedValueOnce(s3GetBody(ORIGINAL_CONTENT));
+    mockS3Send.mockResolvedValueOnce({});
+
+    await handler(
+      makeEvent('saveDocumentSectionEdit', {
+        input: {
+          versionId: 'v1',
+          harmonizationKey: '4.1',
+          body: 'Edited content.',
+          trackedChanges: TRACKED_CHANGES, // the array itself — no stringify
+        },
+      }),
+    );
+
+    const putCall = mockS3Send.mock.calls[1][0] as { input: { Body: string } };
+    const written = JSON.parse(putCall.input.Body);
+    expect(written.sections[0].trackedChanges).toEqual(TRACKED_CHANGES); // round-trip intact
+  });
 });
 
 describe('saveDocumentSectionEdit — sealed-version write rejection (7.5.2)', () => {

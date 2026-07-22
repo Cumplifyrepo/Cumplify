@@ -275,8 +275,12 @@ async function listGenerationRuns(event: AppSyncEvent, tenantId: string) {
  * In ONE txn: UPSERT org_profiles + INSERT new version row + bump current_version.
  */
 async function saveOrgProfile(event: AppSyncEvent, tenantId: string, actor: string) {
-  const input = event.arguments.input as { payload: string };
-  const payloadRaw = JSON.parse(input.payload);
+  const input = event.arguments.input as { payload: string | Record<string, unknown> };
+  // AppSync delivers AWSJSON arguments to direct Lambda resolvers already
+  // parsed (object), while hermetic fixtures pass the JSON string — accept
+  // both (found live 2026-07-22: bare JSON.parse coerced the object to
+  // "[object Object]" and saveOrgProfile had never worked from the wire).
+  const payloadRaw = typeof input.payload === 'string' ? JSON.parse(input.payload) : input.payload;
 
   // Zod validation (full ORG-1 schema — also consumed by wizard Task 10)
   const parseResult = OrgProfileSchema.safeParse(payloadRaw);

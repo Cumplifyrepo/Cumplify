@@ -717,7 +717,13 @@ async function saveDocumentSectionEdit(event: AppSyncEvent, tenantId: string, ac
     const sectionIdx = content.sections.findIndex((s) => s.harmonizationKey === harmonizationKey);
     if (sectionIdx === -1) throw new Error('SECTION_NOT_FOUND');
 
-    const trackedChanges = JSON.parse(input.trackedChanges as string) as unknown;
+    // AWSJSON arrives parsed (object) from AppSync, as a string from hermetic
+    // fixtures — accept both (same wire-shape class as saveOrgProfile, found
+    // live 2026-07-22).
+    const trackedChanges =
+      typeof input.trackedChanges === 'string'
+        ? (JSON.parse(input.trackedChanges) as unknown)
+        : (input.trackedChanges as unknown);
     const newContent: ContentJson = {
       ...content,
       sections: content.sections.map((s, i) =>

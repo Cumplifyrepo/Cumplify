@@ -546,6 +546,24 @@ describe('saveFormRecordValues — typed dispatch', () => {
     expect(sql).toContain('value_json = NULL');
   });
 
+  it('accepts the LIVE wire shape: values arrives as a parsed OBJECT, not a string (found live 2026-07-22)', async () => {
+    // AppSync delivers AWSJSON arguments to direct Lambda resolvers already
+    // parsed — same wire-shape class as saveOrgProfile's "[object Object]".
+    mockExecute.mockResolvedValue(EMPTY_RESULT);
+
+    await handler(
+      makeEvent('saveFormRecordValues', {
+        input: { recordId: 'rec-1', values: { ncr_number: 'NCR-002' } }, // object — no stringify
+      }),
+    ).catch(() => {});
+
+    const upsertCall = mockExecute.mock.calls[2];
+    const [sql, params] = upsertCall;
+    expect(sql).toContain('INSERT INTO forms.record_values');
+    expect(sql).toContain('value_text');
+    expect(params).toContainEqual({ name: 'val', value: { stringValue: 'NCR-002' } });
+  });
+
   it('dispatches number field to value_number column', async () => {
     mockExecute.mockResolvedValue(EMPTY_RESULT);
 

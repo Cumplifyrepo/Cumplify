@@ -152,6 +152,37 @@ describe('saveOrgProfile', () => {
     );
   });
 
+  it('accepts the LIVE wire shape: payload arrives as a parsed OBJECT, not a string (found live 2026-07-22)', async () => {
+    // AppSync delivers AWSJSON arguments to direct Lambda resolvers already
+    // parsed. The prior bare JSON.parse coerced the object to
+    // "[object Object]" — saveOrgProfile had never worked from the wire.
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'profile-1' }, { longValue: 0 }]],
+      columnMetadata: [{ name: 'id' }, { name: 'current_version' }],
+    });
+    mockExecute.mockResolvedValueOnce(EMPTY_RESULT);
+    mockExecute.mockResolvedValueOnce(EMPTY_RESULT);
+
+    const payload = {
+      legalName: 'Wire Shape LLC',
+      sites: [{ name: 'HQ' }],
+      employeeCount: 10,
+      industry: 'Construction',
+      productsServices: 'Remodeling',
+      coreProcesses: ['intake'],
+      designResponsibility: false,
+      standardsInScope: ['ISO9001'],
+      managementRep: 'Ops',
+    };
+    await handler(makeEvent('saveOrgProfile', { input: { payload } }));
+
+    // The version row receives the validated payload serialized for ::jsonb
+    const [, versionParams] = mockExecute.mock.calls[1] as [string, Array<{ name: string; value: { stringValue?: string } }>];
+    const payloadParam = versionParams.find((p) => p.name === 'payload');
+    expect(JSON.parse(payloadParam!.value.stringValue!)).toMatchObject({ legalName: 'Wire Shape LLC' });
+    expect(mockCommit).toHaveBeenCalled();
+  });
+
   it('rejects invalid payload: missing legalName (zod ORG-1 schema)', async () => {
     const payload = JSON.stringify({
       standardsInScope: ['ISO9001'],
