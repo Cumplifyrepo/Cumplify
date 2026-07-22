@@ -10,17 +10,16 @@
     "commandCenter": "Centro de Mando",
     "askCumplify": "Preguntar a Cumplify",
     "documentStudio": "Estudio de Documentos",
-    "manual": "Manual SGI",
-    "docBrowser": "Documentos",
+    "manual": "Manual Studio",
+    "docBrowser": "Document Studio",
     "forms": "Formularios",
     "crossReference": "Referencia Cruzada",
     "guide": "Guía de Cláusulas",
     "auditReadinessItem": "Preparación",
-    "audits": "Auditorías",
-    "aiReview": "Revisión IA",
+    "audits": "Audit Studio",
     "activityLog": "Actividad",
     "analyticsLabel": "Analítica",
-    "capa": "CAPA",
+    "capa": "CAPA Studio",
     "risk": "Riesgo",
     "records": "Registros",
     "managementReview": "Revisión por la Dirección",
@@ -101,6 +100,13 @@
     "portalNotConfigured": "El portal de facturación no está configurado para este entorno. Contacte con soporte para gestionar su suscripción.",
     "usageTitle": "Uso de IA",
     "usageDescription": "El uso de créditos de IA por encima de su plan nunca se bloquea: el excedente se factura en su próxima factura según la tarifa de su plan."
+  },
+  "studio": {
+    "dispatching": "Enviando…",
+    "agentWorking": "{agent} está trabajando — la propuesta aparecerá aquí.",
+    "agentTimeout": "El agente aún no ha respondido. La ejecución puede completarse igualmente — revise la bandeja de aprobaciones en el Command Center.",
+    "dispatchError": "No se pudo iniciar la ejecución del agente.",
+    "agentRail": "Panel del agente"
   },
   "ask": {
     "title": "Preguntar a Cumplify",
@@ -919,10 +925,6 @@
   "audits": {
     "title": "Estudio de Auditoría",
     "comingSoon": "Estudio de Auditoría disponible en Fase 3."
-  },
-  "aiReview": {
-    "title": "Revisión IA",
-    "comingSoon": "Cola de revisión IA estructurada disponible en Fase 3."
   },
   "activity": {
     "title": "Actividad",

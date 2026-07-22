@@ -10,17 +10,16 @@
     "commandCenter": "Command Center",
     "askCumplify": "Ask Cumplify",
     "documentStudio": "Document Studio",
-    "manual": "IMS Manual",
-    "docBrowser": "Documents",
+    "manual": "Manual Studio",
+    "docBrowser": "Document Studio",
     "forms": "Forms",
     "crossReference": "Cross-Reference",
     "guide": "Clause Guide",
     "auditReadinessItem": "Readiness",
-    "audits": "Audits",
-    "aiReview": "AI Review",
+    "audits": "Audit Studio",
     "activityLog": "Activity",
     "analyticsLabel": "Analytics",
-    "capa": "CAPA",
+    "capa": "CAPA Studio",
     "risk": "Risk",
     "records": "Records",
     "managementReview": "Management Review",
@@ -101,6 +100,13 @@
     "portalNotConfigured": "The billing portal is not configured for this environment. Contact support to manage your subscription.",
     "usageTitle": "AI Usage",
     "usageDescription": "AI credit usage above your plan allowance is never blocked — overage is billed on your next invoice at your plan rate."
+  },
+  "studio": {
+    "dispatching": "Dispatching…",
+    "agentWorking": "{agent} is working — the proposal will appear here.",
+    "agentTimeout": "The agent has not responded yet. The run may still complete — check the approval inbox on the Command Center.",
+    "dispatchError": "The agent run could not be dispatched.",
+    "agentRail": "Agent rail"
   },
   "ask": {
     "title": "Ask Cumplify",
@@ -919,10 +925,6 @@
   "audits": {
     "title": "Audit Studio",
     "comingSoon": "Audit Studio coming in Phase 3."
-  },
-  "aiReview": {
-    "title": "AI Review",
-    "comingSoon": "Structured AI review queue coming in Phase 3."
   },
   "activity": {
     "title": "Activity",

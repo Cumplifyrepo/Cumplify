@@ -46,7 +46,8 @@ export const navSections: NavSectionDef[] = [
     items: [
       { href: '/audit-readiness', labelKey: 'auditReadinessItem' },
       { href: '/audits', labelKey: 'audits' },
-      { href: '/ai-review', labelKey: 'aiReview' },
+      // /ai-review removed (studio wave S0): the review-queue concept lives
+      // inside each studio's agent rail + the Command Center inbox.
       { href: '/activity', labelKey: 'activityLog' },
       { href: '/analytics', labelKey: 'analyticsLabel' },
     ],
