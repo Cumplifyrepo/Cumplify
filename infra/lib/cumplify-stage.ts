@@ -160,25 +160,33 @@ export class CumplifyStage extends cdk.Stage {
       vpc: networkStack.vpc,
       privateSubnets: networkStack.privateSubnets,
       bedrockKeyArn: securityStack.outputs.bedrockKey.keyArn,
+      appRoleSecretArn: apiStack.appRoleSecretArn,
       isoKbCollectionArn: dataStack.isoKbCollectionArn,
       isoKbCollectionEndpoint: dataStack.isoKbCollectionEndpoint,
+      graphqlApiId: apiStack.graphqlApiId,
+      graphqlApiUrl: apiStack.graphqlApiUrl,
       generalBucketName: dataStack.generalBucketName,
       generalBucketArn: dataStack.generalBucketArn,
       s3GeneralKey: securityStack.outputs.s3GeneralKey,
     });
     aiStack.addDependency(dataStack);
+    aiStack.addDependency(apiStack);
     aiStack.addDependency(eventingStack);
     aiStack.addDependency(auditTrailStack);
-    // RS-8 (2026-07-22): REVERSED from the old aiStack.addDependency(apiStack)
-    // — AiStack now sources appRoleSecretArn/graphqlApiId/graphqlApiUrl via
-    // Fn.importValue (no CDK dependency edge from that alone), which frees
-    // ApiStack's m2/m5 resolver Lambdas to depend on AiStack for real
-    // (lambda:InvokeFunction on CAPAGuru/RiskSentinel). This explicit
-    // addDependency is what guarantees AiStack deploys BEFORE ApiStack, so
-    // ApiStack's Fn.importValue lookups (added alongside this) always find
-    // AiStack's exports already created — Fn.importValue itself gives no
-    // ordering guarantee, only this call does.
-    apiStack.addDependency(aiStack);
+    // RS-8 (2026-07-22, attempted then reverted): the original design tried
+    // reversing this to apiStack.addDependency(aiStack) with both stacks
+    // importing each other's NEW exports via Fn.importValue, so ApiStack's
+    // m2/m5 resolvers could invoke CAPAGuru/RiskSentinel directly. That
+    // deadlocked on the FIRST real deploy: whichever stack goes first
+    // (per the single addDependency direction) looks up the OTHER's export
+    // before it exists yet ("No export named cumplify-dev-graphql-api-id
+    // found" — AiStack failed, cleanly rolled back, live evidence log has
+    // the full incident). Fixed by NOT reversing this dependency at all —
+    // CapaGuruFn/RiskSentinelFn get deterministic functionName props
+    // instead (ai-stack.ts), and api-stack.ts constructs their ARNs via
+    // formatArn (same proven no-cycle pattern already used here for
+    // DocGenStateMachine/RegenerateSectionFn) — zero new cross-stack
+    // references in either direction, so no ordering hazard exists.
 
     // FrontendStack — S3 + CloudFront for static SPA hosting (spec 5: frontend-app)
     const frontendStack = new FrontendStack(this, 'FrontendStack', {

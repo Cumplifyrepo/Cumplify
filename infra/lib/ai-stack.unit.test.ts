@@ -66,11 +66,15 @@ function createTestStack(): Template {
       }),
     ],
     bedrockKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/bedrock-key-id',
+    appRoleSecretArn:
+      'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
     isoKbCollectionArn: 'arn:aws:aoss:us-east-1:123456789012:collection/mockisokb123',
     isoKbCollectionEndpoint: 'https://mockisokb123.us-east-1.aoss.amazonaws.com',
+    graphqlApiId: 'test-api-id-123',
     generalBucketName: 'mock-general-bucket',
     generalBucketArn: 'arn:aws:s3:::mock-general-bucket',
     s3GeneralKey: mockKey,
+    graphqlApiUrl: 'https://test-api.appsync-api.us-east-1.amazonaws.com/graphql',
     env: { account: envConfig.account, region: envConfig.region },
   });
 
@@ -270,21 +274,14 @@ describe('AiStack', () => {
     });
 
     it('ExecuteWriteback role uses app_role secret NOT master (T4-F1)', () => {
-      // RS-8 (2026-07-22): appRoleSecretArn is now Fn.importValue'd (breaks
-      // the aiStack->apiStack CDK dependency edge — see the comment at its
-      // declaration in ai-stack.ts) rather than a plain string prop, so the
-      // synthesized Resource is an Fn::ImportValue intrinsic, not a literal
-      // ARN string. Still pinned to the SAME well-known export name every
-      // environment's ApiStack publishes (api-stack.ts's AppRoleSecretArn
-      // CfnOutput) — same guarantee (app_role, never master), different
-      // mechanism.
       template.hasResourceProperties('AWS::IAM::Policy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
             Match.objectLike({
               Action: 'secretsmanager:GetSecretValue',
               Effect: 'Allow',
-              Resource: { 'Fn::ImportValue': 'cumplify-dev-app-role-secret-arn' },
+              Resource:
+                'arn:aws:secretsmanager:us-east-1:123456789012:secret:cumplify/dev/rds/app-role',
             }),
           ]),
         },

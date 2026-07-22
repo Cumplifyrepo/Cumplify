@@ -65,9 +65,14 @@ export interface AiStackProps extends cdk.StackProps {
   readonly vpc: ec2.IVpc;
   readonly privateSubnets: ec2.ISubnet[];
   readonly bedrockKeyArn: string;
+  // App-role secret for RLS-safe writes (from ApiStack, T4-F1)
+  readonly appRoleSecretArn: string;
   // Existing iso-kb AOSS collection (OWNED by DataStack, spec 1 — imported here)
   readonly isoKbCollectionArn: string;
   readonly isoKbCollectionEndpoint: string;
+  // AppSync API (from ApiStack) — guru resolver wiring
+  readonly graphqlApiId: string;
+  readonly graphqlApiUrl: string;
   // spec 40 — generation plane working storage (GeneralBucket, CMK)
   readonly generalBucketName: string;
   readonly generalBucketArn: string;
@@ -78,15 +83,7 @@ export class AiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AiStackProps) {
     super(scope, id, props);
 
-    const { envConfig } = props;
-
-    // RS-8 (2026-07-22): imported by well-known export name, NOT as native
-    // CDK cross-stack props — see the exportName comment in api-stack.ts's
-    // CfnOutputs block for why (breaks the aiStack->apiStack dependency edge
-    // so apiStack's m2/m5 resolvers can legitimately depend on THIS stack).
-    const appRoleSecretArn = cdk.Fn.importValue(`cumplify-${envConfig.envName}-app-role-secret-arn`);
-    const graphqlApiId = cdk.Fn.importValue(`cumplify-${envConfig.envName}-graphql-api-id`);
-    const graphqlApiUrl = cdk.Fn.importValue(`cumplify-${envConfig.envName}-graphql-api-url`);
+    const { envConfig, appRoleSecretArn, graphqlApiId, graphqlApiUrl } = props;
 
     // ─── Import existing resources ─────────────────────────────────────────
     const bus = events.EventBus.fromEventBusAttributes(this, 'ImportedBus', {
@@ -787,7 +784,7 @@ export class AiStack extends cdk.Stack {
       id: string,
       entry: string,
       env: Record<string, string>,
-      opts?: { fifo?: boolean; vpcPlaced?: boolean },
+      opts?: { fifo?: boolean; vpcPlaced?: boolean; functionName?: string },
     ) => {
       const fn = new NodejsFunction(this, id, {
         entry,
@@ -796,6 +793,7 @@ export class AiStack extends cdk.Stack {
         architecture: lambda.Architecture.ARM_64,
         memorySize: 512,
         timeout: cdk.Duration.seconds(60),
+        ...(opts?.functionName && { functionName: opts.functionName }),
         bundling: { externalModules: [], target: 'node22', loader: { '.md': 'text' } },
         environment: { ...agentHandlerBaseEnv, ...env },
         // FIX-T20-3 (spec-35): the AOSS network policy is VPCE-only
@@ -817,6 +815,11 @@ export class AiStack extends cdk.Stack {
     // ── SQS Consumer Handlers ──
 
     // 1. CAPAGuru (FIFO queue: capa-intake)
+    // RS-8: deterministic functionName (same no-cycle pattern as
+    // RegenerateSectionFn/DocGenStateMachine below — ApiStack constructs the
+    // ARN from this exact name via formatArn, no cross-stack CDK reference
+    // needed; AiStack keeps depending on ApiStack, unchanged).
+    const capaGuruFnName = `cumplify-capa-guru-${envConfig.envName}`;
     const capaGuruHandler = createAgentHandler(
       'CapaGuruFn',
       'services/agents/capa-guru/handler.ts',
@@ -825,6 +828,7 @@ export class AiStack extends cdk.Stack {
         DLQ_URL: props.capaIntakeDlqUrl,
         POWERTOOLS_SERVICE_NAME: 'agent-capa-guru',
       },
+      { functionName: capaGuruFnName },
     );
     capaGuruHandler.addEventSource(
       new SqsEventSource(capaIntakeQueue, {
@@ -838,12 +842,14 @@ export class AiStack extends cdk.Stack {
     // this agent, PROVISIONAL, expiry 2026-10-06 — no new Register row
     // needed). No SQS trigger yet (hazard/aspect event triggers are
     // catalogued roadmap, agent-catalog.md:198-212) — synchronous direct-
-    // invoke only, from m5.ts's runRiskAssessment via CAPA_GURU_FN_ARN's
-    // sibling wiring (api-stack.ts).
+    // invoke only, from m5.ts's runRiskAssessment, deterministic name
+    // (same pattern as CapaGuruFn above).
+    const riskSentinelFnName = `cumplify-risk-sentinel-${envConfig.envName}`;
     const riskSentinelHandler = createAgentHandler(
       'RiskSentinelFn',
       'services/agents/risk-sentinel/handler.ts',
       { POWERTOOLS_SERVICE_NAME: 'agent-risk-sentinel' },
+      { functionName: riskSentinelFnName },
     );
 
     // 2. DocStudio (standard queue)
@@ -965,9 +971,7 @@ export class AiStack extends cdk.Stack {
     ];
 
     // ─── Guru AppSync Data Sources + Resolvers (Task 8R-2) ──────────────────
-    // Import the existing AppSync API (created by ApiStack; imported by
-    // export name — RS-8, see the appRoleSecretArn/graphqlApiId/graphqlApiUrl
-    // comment above — this stack no longer CDK-depends on ApiStack).
+    // Import the existing AppSync API (created by ApiStack — AiStack depends on it).
     // Auth mode: @aws_lambda (user-facing, consistent with all other Query fields).
     const importedApi = appsync.GraphqlApi.fromGraphqlApiAttributes(this, 'ImportedApi', {
       graphqlApiId,
@@ -1209,14 +1213,8 @@ export class AiStack extends cdk.Stack {
     });
     new cdk.CfnOutput(this, 'StoreTokenLambdaArn', { value: storeTokenLambda.functionArn });
     // Agent handler outputs
-    new cdk.CfnOutput(this, 'CapaGuruHandlerArn', {
-      value: capaGuruHandler.functionArn,
-      exportName: `cumplify-${envConfig.envName}-capa-guru-fn-arn`,
-    });
-    new cdk.CfnOutput(this, 'RiskSentinelHandlerArn', {
-      value: riskSentinelHandler.functionArn,
-      exportName: `cumplify-${envConfig.envName}-risk-sentinel-fn-arn`,
-    });
+    new cdk.CfnOutput(this, 'CapaGuruHandlerArn', { value: capaGuruHandler.functionArn });
+    new cdk.CfnOutput(this, 'RiskSentinelHandlerArn', { value: riskSentinelHandler.functionArn });
     new cdk.CfnOutput(this, 'DocStudioHandlerArn', { value: docStudioHandler.functionArn });
     new cdk.CfnOutput(this, 'LeadAuditorHandlerArn', { value: leadAuditorHandler.functionArn });
     new cdk.CfnOutput(this, 'ControlTowerHandlerArn', { value: controlTowerHandler.functionArn });

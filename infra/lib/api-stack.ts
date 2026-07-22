@@ -328,18 +328,28 @@ export class ApiStack extends cdk.Stack {
     // ─── RS-8: runCapaAnalysis/runRiskAssessment invoke plane ───────────────
     // m2 (index 1) and m5 (index 4) synchronously fetch RDS context then
     // async-invoke CAPAGuru/RiskSentinel (AiStack) to propose via HITL.
-    // Imported by export name (RS-8, same technique as appRoleSecretArn/
-    // graphqlApiId/graphqlApiUrl above) — ApiStack now legitimately depends
-    // on AiStack (apiStack.addDependency(aiStack) in cumplify-stage.ts) so
-    // this could be a native cross-stack ref too, but Fn.importValue keeps
-    // both directions consistent and avoids re-introducing a tight coupling
-    // now that the cycle is broken. Same-account Lambda:InvokeFunction only
-    // needs the CALLER'S identity-based policy — no resource policy needed
-    // on the target.
-    const capaGuruFnArn = cdk.Fn.importValue(`cumplify-${envConfig.envName}-capa-guru-fn-arn`);
-    const riskSentinelFnArn = cdk.Fn.importValue(
-      `cumplify-${envConfig.envName}-risk-sentinel-fn-arn`,
-    );
+    // Deterministic-name ARN construction (same no-cycle pattern as
+    // DocGenStateMachine/RegenerateSectionFn below: AiStack depends on
+    // ApiStack, not the other way — an earlier attempt at Fn.importValue in
+    // BOTH directions simultaneously deadlocked on first deploy, since
+    // whichever stack deploys first would look up an export the OTHER
+    // hasn't created yet. formatArn needs no export/import at all — the
+    // ARN is derivable from the name alone, matching AiStack's
+    // `functionName: cumplify-capa-guru-${env}` / `cumplify-risk-sentinel-
+    // ${env}`). Same-account Lambda:InvokeFunction only needs the CALLER'S
+    // identity-based policy — no resource policy needed on the target.
+    const capaGuruFnArn = cdk.Stack.of(this).formatArn({
+      service: 'lambda',
+      resource: 'function',
+      resourceName: `cumplify-capa-guru-${envConfig.envName}`,
+      arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
+    });
+    const riskSentinelFnArn = cdk.Stack.of(this).formatArn({
+      service: 'lambda',
+      resource: 'function',
+      resourceName: `cumplify-risk-sentinel-${envConfig.envName}`,
+      arnFormat: cdk.ArnFormat.COLON_RESOURCE_NAME,
+    });
     resolverFns[1].addEnvironment('CAPA_GURU_FN_ARN', capaGuruFnArn);
     resolverFns[1].addToRolePolicy(
       new iam.PolicyStatement({
@@ -1324,31 +1334,11 @@ export class ApiStack extends cdk.Stack {
     }
 
     // ─── CfnOutputs ─────────────────────────────────────────────────────────
-    // exportName on these three (RS-8, 2026-07-22): AiStack previously took
-    // these as native CDK cross-stack refs (props.appRoleSecretArn etc),
-    // which forced aiStack.addDependency(apiStack) — blocking the reverse
-    // direction ApiStack's m2/m5 resolvers now need (invoking CAPAGuru/
-    // RiskSentinel's Lambdas + the shared HITL state machine, both in
-    // AiStack). Fn.importValue by well-known name carries the VALUE without
-    // forcing a CDK dependency edge; ai-stack.ts now imports these instead
-    // of receiving them as props. Ordering is still guaranteed correct via
-    // an EXPLICIT apiStack.addDependency(aiStack) in cumplify-stage.ts (the
-    // reverse of the removed one) — Fn.importValue does not manage
-    // deployment order on its own, only the addDependency call does.
-    this.graphqlApiUrlOutput = new cdk.CfnOutput(this, 'GraphqlApiUrl', {
-      value: this.graphqlApiUrl,
-      exportName: `cumplify-${envConfig.envName}-graphql-api-url`,
-    });
-    new cdk.CfnOutput(this, 'GraphqlApiId', {
-      value: this.graphqlApiId,
-      exportName: `cumplify-${envConfig.envName}-graphql-api-id`,
-    });
+    this.graphqlApiUrlOutput = new cdk.CfnOutput(this, 'GraphqlApiUrl', { value: this.graphqlApiUrl });
+    new cdk.CfnOutput(this, 'GraphqlApiId', { value: this.graphqlApiId });
     new cdk.CfnOutput(this, 'AuthorizerArn', { value: this.authorizerArn });
     new cdk.CfnOutput(this, 'TenantDataRoleArn', { value: this.tenantDataRoleArn });
-    new cdk.CfnOutput(this, 'AppRoleSecretArn', {
-      value: appRoleSecret.secretArn,
-      exportName: `cumplify-${envConfig.envName}-app-role-secret-arn`,
-    });
+    new cdk.CfnOutput(this, 'AppRoleSecretArn', { value: appRoleSecret.secretArn });
 
     // ─── CDK Nag Suppressions ────────────────────────────────────────────────
     // FIX-3: path-scoped suppressions instead of stack-wide blanket
