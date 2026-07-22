@@ -1031,6 +1031,12 @@
     "findings": "Hallazgos",
     "proposeFinding": "Proponer hallazgo con LeadAuditor",
     "noFindings": "Aún no hay hallazgos — deja que LeadAuditor revise la evidencia.",
-    "error": "Algo salió mal"
+    "error": "Algo salió mal",
+    "readinessTitle": "Preparación",
+    "viewReadiness": "Ver puntuaciones de preparación",
+    "loadingReadiness": "Cargando…",
+    "completeTitle": "Ciclo de vida",
+    "completeAudit": "Completar auditoría",
+    "completing": "Completando…"
   }
 }

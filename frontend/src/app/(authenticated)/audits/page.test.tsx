@@ -84,6 +84,42 @@ describe('Audit Studio (S4)', () => {
     expect(screen.getByText('auditStudio.generateChecklist')).toBeInTheDocument();
   });
 
+  it('expanded detail shows "Complete audit" action when status is not completed (B1.1)', async () => {
+    render(<AuditStudioPage />);
+    await waitFor(() => expect(screen.getByTestId('audit-row-audit-1')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId('audit-row-audit-1'));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'auditStudio.completeAudit' })).toBeInTheDocument(),
+    );
+  });
+
+  it('expanded detail does NOT show "Complete audit" when status is completed (B1.1)', async () => {
+    mockQuery.mockImplementation(async (q: string) => {
+      if (q.includes('ListAudits'))
+        return { listAudits: [{ ...AUDIT, status: 'completed' }] };
+      if (q.includes('ListAuditFindings')) return { listAuditFindings: [] };
+      if (q.includes('ListAuditChecklists')) return { listAuditChecklists: [] };
+      throw new Error(`unmocked: ${q.slice(0, 40)}`);
+    });
+    render(<AuditStudioPage />);
+    await waitFor(() => expect(screen.getByTestId('audit-row-audit-1')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId('audit-row-audit-1'));
+    await waitFor(() => expect(screen.getByTestId('arb-propose-finding')).toBeInTheDocument());
+    expect(screen.queryByRole('button', { name: 'auditStudio.completeAudit' })).not.toBeInTheDocument();
+  });
+
+  it('expanded detail shows "View readiness scores" action (B1.2)', async () => {
+    render(<AuditStudioPage />);
+    await waitFor(() => expect(screen.getByTestId('audit-row-audit-1')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId('audit-row-audit-1'));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'auditStudio.viewReadiness' })).toBeInTheDocument(),
+    );
+  });
+
   it('zero audits renders the empty state with a planning action (deploy 8a2e9a17 regression)', async () => {
     mockQuery.mockImplementation(async (q: string) => {
       if (q.includes('ListAudits')) return { listAudits: [] };

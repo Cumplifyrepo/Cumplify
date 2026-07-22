@@ -135,3 +135,15 @@
   line-height: 1.5;
   color: var(--color-text-body);
 }
+
+.readinessGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.readinessItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

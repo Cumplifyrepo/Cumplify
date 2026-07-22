@@ -1031,6 +1031,12 @@
     "findings": "Findings",
     "proposeFinding": "Propose finding with LeadAuditor",
     "noFindings": "No findings yet — let LeadAuditor review the evidence.",
-    "error": "Something went wrong"
+    "error": "Something went wrong",
+    "readinessTitle": "Readiness",
+    "viewReadiness": "View readiness scores",
+    "loadingReadiness": "Loading…",
+    "completeTitle": "Lifecycle",
+    "completeAudit": "Complete audit",
+    "completing": "Completing…"
   }
 }

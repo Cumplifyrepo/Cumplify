@@ -1031,6 +1031,12 @@
     "findings": "Constatações",
     "proposeFinding": "Propor constatação com LeadAuditor",
     "noFindings": "Ainda não há constatações — deixe o LeadAuditor revisar a evidência.",
-    "error": "Algo deu errado"
+    "error": "Algo deu errado",
+    "readinessTitle": "Prontidão",
+    "viewReadiness": "Ver pontuações de prontidão",
+    "loadingReadiness": "Carregando…",
+    "completeTitle": "Ciclo de vida",
+    "completeAudit": "Concluir auditoria",
+    "completing": "Concluindo…"
   }
 }

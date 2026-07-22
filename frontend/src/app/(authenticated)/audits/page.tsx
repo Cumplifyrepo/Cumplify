@@ -45,6 +45,14 @@ const RUN_AUDIT_FINDINGS = `mutation RunAuditFindings($auditId: ID!) {
   runAuditFindings(auditId: $auditId) { runId status }
 }`;
 
+const COMPLETE_AUDIT = `mutation CompleteAudit($id: ID!) {
+  completeAudit(id: $id) { id status actualDate }
+}`;
+
+const GET_AUDIT_READINESS = `query GetAuditReadiness($standard: Standard!) {
+  getAuditReadiness(standard: $standard) { id standard clauseRef score assessedAt }
+}`;
+
 interface Audit {
   id: string;
   programmeId: string;
@@ -70,6 +78,14 @@ interface ChecklistItem {
   expectedEvidence: string | null;
 }
 
+interface ReadinessScore {
+  id: string;
+  standard: string;
+  clauseRef: string;
+  score: number;
+  assessedAt: string;
+}
+
 export default function AuditStudioPage() {
   const t = useTranslations('auditStudio');
   const router = useRouter();
@@ -83,6 +99,10 @@ export default function AuditStudioPage() {
   const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
+  const [completing, setCompleting] = useState(false);
+  const [completeError, setCompleteError] = useState<string | null>(null);
+  const [readinessScores, setReadinessScores] = useState<ReadinessScore[]>([]);
+  const [loadingReadiness, setLoadingReadiness] = useState(false);
 
   const fetchAudits = useCallback(async () => {
     try {
@@ -124,6 +144,8 @@ export default function AuditStudioPage() {
     setOpenAuditId(auditId);
     setFindings([]);
     setChecklist([]);
+    setReadinessScores([]);
+    setCompleteError(null);
     fetchDetail(auditId);
   }
 
@@ -137,6 +159,33 @@ export default function AuditStudioPage() {
       setGenError((e as Error).message || t('error'));
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function handleCompleteAudit(audit: Audit) {
+    setCompleting(true);
+    setCompleteError(null);
+    try {
+      await mutate(COMPLETE_AUDIT, { id: audit.id });
+      await fetchAudits();
+    } catch (e) {
+      setCompleteError((e as Error).message || t('error'));
+    } finally {
+      setCompleting(false);
+    }
+  }
+
+  async function handleFetchReadiness(standard: string) {
+    setLoadingReadiness(true);
+    try {
+      const data = await query<{ getAuditReadiness: ReadinessScore[] }>(GET_AUDIT_READINESS, {
+        standard,
+      });
+      setReadinessScores(data.getAuditReadiness);
+    } catch {
+      setReadinessScores([]);
+    } finally {
+      setLoadingReadiness(false);
     }
   }
 
@@ -249,6 +298,49 @@ export default function AuditStudioPage() {
                           ))
                         )}
                       </div>
+
+                      {/* Readiness scoring */}
+                      <div className={styles.detailSection}>
+                        <div className={styles.detailHeader}>
+                          <span className={styles.detailTitle}>{t('readinessTitle')}</span>
+                          <SecondaryButton
+                            onClick={() => handleFetchReadiness(a.standard)}
+                            disabled={loadingReadiness}
+                          >
+                            {loadingReadiness ? t('loadingReadiness') : t('viewReadiness')}
+                          </SecondaryButton>
+                        </div>
+                        {readinessScores.length > 0 && (
+                          <div className={styles.readinessGrid}>
+                            {readinessScores.map((rs) => (
+                              <div key={rs.id} className={styles.readinessItem}>
+                                <span className={styles.clauseTag}>{rs.clauseRef}</span>
+                                <StatusBadge
+                                  status={rs.score >= 100 ? 'APPROVED' : rs.score > 0 ? 'PENDING' : 'DRAFT'}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Complete audit action */}
+                      {a.status !== 'completed' && (
+                        <div className={styles.detailSection}>
+                          <div className={styles.detailHeader}>
+                            <span className={styles.detailTitle}>{t('completeTitle')}</span>
+                            <SecondaryButton
+                              onClick={() => handleCompleteAudit(a)}
+                              disabled={completing}
+                            >
+                              {completing ? t('completing') : t('completeAudit')}
+                            </SecondaryButton>
+                          </div>
+                          {completeError && (
+                            <p className={styles.errorMsg}>{completeError}</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
