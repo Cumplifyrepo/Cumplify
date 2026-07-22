@@ -97,7 +97,7 @@ describe('runCapaAnalysis', () => {
     },
   };
 
-  it('threads requestedBy + all four HITL tools into toolLoop (SOD-1, stage-aware set + S1 intake)', async () => {
+  it('threads requestedBy + all five HITL tools into toolLoop (SOD-1, stage-aware set + S1 intake + C1 RCA)', async () => {
     mockToolLoop.mockResolvedValueOnce({ finalResponse: 'ok', turns: 1, totalUsage: { inputTokens: 1, outputTokens: 1 } });
 
     await runCapaAnalysis(baseInput);
@@ -105,7 +105,7 @@ describe('runCapaAnalysis', () => {
     const [, opts] = mockToolLoop.mock.calls[0];
     expect(opts.requestedBy).toBe('user-9');
     expect(opts.hitlTools).toEqual(
-      new Set(['nc-draft-write', 'nc-triage-write', 'capa-open', 'capa-verify-effectiveness']),
+      new Set(['nc-draft-write', 'nc-triage-write', 'rca-write', 'capa-open', 'capa-verify-effectiveness']),
     );
     expect(opts.agent).toBe('CAPAGuru');
     expect(opts.module).toBe('M2');
@@ -214,5 +214,53 @@ describe('runNcIntake (S1 studio wave)', () => {
 
     const result = await runNcIntake(intakeInput);
     expect(result).toEqual({ runId: 'run-77', status: 'PENDING_APPROVAL' });
+  });
+});
+
+describe('runRootCauseAnalysis (C1 CAPA Studio RCA)', () => {
+  const rcaInput = {
+    tenantId: 'tenant-1',
+    runId: 'run-55',
+    requestedBy: 'user-9',
+    rcaIntent: {
+      ncId: 'nc-42',
+      method: 'fishbone',
+      nc: {
+        standard: 'ISO9001',
+        source: 'complaint',
+        ncType: 'nonconforming_output',
+        description: 'Cabinet doors delivered with wrong finish on lot 42',
+        clauseRef: '8.7',
+        severity: 'medium',
+      },
+    },
+  };
+
+  it('handler dispatches rcaIntent to RCA MODE; method verbatim; description guarded; rca-write HITL-gated', async () => {
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'ok',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+      hitlResult: { hitlItemId: 'h-7' },
+    });
+
+    const result = await handler(rcaInput as never);
+
+    const [messages, opts] = mockToolLoop.mock.calls[0];
+    const content = messages[0].content as Array<Record<string, string>>;
+    const preamble = content[0].text;
+    expect(preamble).toContain('RCA MODE');
+    expect(preamble).toContain('rca-write');
+    expect(preamble).toContain('nc-42');
+    expect(preamble).toContain('fishbone');
+    expect(preamble).toContain('8.7');
+    // Reporter-typed description rides in guardedText (S2.1 lesson)
+    const guarded = content.filter((b) => 'guardedText' in b).map((b) => b.guardedText);
+    expect(guarded).toContain('Cabinet doors delivered with wrong finish on lot 42');
+    expect(preamble).not.toContain('Cabinet doors');
+    expect(opts.feature).toBe('rca');
+    expect(opts.requestedBy).toBe('user-9');
+    expect(opts.hitlTools.has('rca-write')).toBe(true);
+    expect(result).toEqual({ runId: 'run-55', status: 'PENDING_APPROVAL' });
   });
 });

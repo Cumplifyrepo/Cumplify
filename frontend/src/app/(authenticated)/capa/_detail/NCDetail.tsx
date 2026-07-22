@@ -13,6 +13,8 @@ import {
   ErrorState,
 } from '@/components/shared';
 import { FormDrawer, type FieldDef } from '@/components/shared';
+import { AgentRunButton } from '@/components/studio';
+import { parseAwsJson } from '@/lib/aws-json';
 import { useGraphQL } from '@/lib/api';
 import { useTenantSubscription } from '@/lib/use-tenant-subscription';
 import styles from './NCDetail.module.css';
@@ -109,12 +111,63 @@ function deriveStageIndex(nc: Nonconformity, cas: CorrectiveAction[]): number {
   return 3;
 }
 
+// C1 (CAPA Studio RCA — owner directive 2026-07-22): the big buttons ARE the
+// agent; the manual root-cause drawer remains as the demoted fallback.
+const RUN_RCA_MUTATION = `mutation RunRootCauseAnalysis($ncId: ID!, $method: RcaMethod!) {
+  runRootCauseAnalysis(ncId: $ncId, method: $method) { runId status }
+}`;
+const LIST_RCA_QUERY = `query ListRootCauseAnalyses($ncId: ID!) {
+  listRootCauseAnalyses(ncId: $ncId) { id ncId method findings rootCauseSummary createdBy createdAt }
+}`;
+
+interface RcaRecord {
+  id: string;
+  method: string;
+  findings: unknown;
+  rootCauseSummary: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+function RcaFindings({ findings }: { findings: unknown }) {
+  let parsed: { whys?: Array<{ question: string; answer: string }>; categories?: Array<{ category: string; causes: string[] }> };
+  try {
+    parsed = parseAwsJson(typeof findings === 'string' ? findings : JSON.stringify(findings));
+  } catch {
+    return null;
+  }
+  if (parsed.whys?.length) {
+    return (
+      <ol className={styles.rcaWhys}>
+        {parsed.whys.map((w, i) => (
+          <li key={i}>
+            <span className={styles.rcaQuestion}>{w.question}</span> {w.answer}
+          </li>
+        ))}
+      </ol>
+    );
+  }
+  if (parsed.categories?.length) {
+    return (
+      <div className={styles.rcaCategories}>
+        {parsed.categories.map((c, i) => (
+          <p key={i} className={styles.rcaCategory}>
+            <strong>{c.category}:</strong> {c.causes.join('; ')}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
 export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
   const t = useTranslations('m2');
   const { query, mutate } = useGraphQL();
 
   const [nc, setNc] = useState<Nonconformity | null>(null);
   const [cas, setCas] = useState<CorrectiveAction[]>([]);
+  const [rcas, setRcas] = useState<RcaRecord[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeDrawer, setActiveDrawer] = useState<TimelineStage | null>(null);
@@ -144,10 +197,22 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
     }
   }, [query, id]);
 
+  const fetchRcas = useCallback(async () => {
+    try {
+      const data = await query<{ listRootCauseAnalyses: RcaRecord[] }>(LIST_RCA_QUERY, {
+        ncId: id,
+      });
+      setRcas(data.listRootCauseAnalyses);
+    } catch {
+      // Non-critical — RCA list stays empty
+    }
+  }, [query, id]);
+
   useEffect(() => {
     fetchNC();
     fetchCAs();
-  }, [fetchNC, fetchCAs]);
+    fetchRcas();
+  }, [fetchNC, fetchCAs, fetchRcas]);
 
   useTenantSubscription({
     query: `subscription OnCAPA($tenantId: ID!) { onCAPAStatusChanged(tenantId: $tenantId) { id status } }`,
@@ -370,6 +435,45 @@ export function NCDetail({ id, onBack }: { id: string; onBack: () => void }) {
             );
           })}
         </div>
+      </Panel>
+
+      {/* C1: AI-powered root-cause analysis — the agent does the heavy
+          lifting; approval writes m2.root_cause_analyses via HITL. */}
+      <Panel title={t('rcaPanel')}>
+        <div className={styles.rcaActions}>
+          <AgentRunButton
+            label={t('rca5whys')}
+            mutation={RUN_RCA_MUTATION}
+            variables={{ ncId: id, method: 'FIVE_WHYS' }}
+            agentName="CAPAGuru"
+            onResolved={fetchRcas}
+          />
+          <AgentRunButton
+            label={t('rcaIshikawa')}
+            mutation={RUN_RCA_MUTATION}
+            variables={{ ncId: id, method: 'FISHBONE' }}
+            agentName="CAPAGuru"
+            onResolved={fetchRcas}
+          />
+        </div>
+        {rcas.length === 0 ? (
+          <p className={styles.rcaEmpty}>{t('rcaEmpty')}</p>
+        ) : (
+          <div className={styles.rcaList}>
+            {rcas.map((r) => (
+              <div key={r.id} className={styles.rcaItem} data-testid={`rca-${r.id}`}>
+                <div className={styles.rcaHeader}>
+                  <span className={styles.rcaMethod}>{t(`method_${r.method}`)}</span>
+                  <span className={styles.rcaDate}>
+                    {new Date(r.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className={styles.rcaSummary}>{r.rootCauseSummary}</p>
+                <RcaFindings findings={r.findings} />
+              </div>
+            ))}
+          </div>
+        )}
       </Panel>
 
       {/* Root cause drawer */}

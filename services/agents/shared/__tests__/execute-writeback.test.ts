@@ -212,6 +212,7 @@ describe('execute-writeback dispatch: schema pinning', () => {
         'doc-draft',
         'manual-section-draft',
         'nc-draft-write',
+        'rca-write',
         'nc-triage-write',
         'risk-assessment-write',
         'ct-governance-write',
@@ -219,6 +220,27 @@ describe('execute-writeback dispatch: schema pinning', () => {
       for (const tool of hitlTools) {
         expect(WRITEBACK_CODE).toContain(`case '${tool}':`);
       }
+    });
+
+    describe('rca-write (C1 CAPA Studio RCA — m2.root_cause_analyses, 003)', () => {
+      it('INSERT matches migration 003 columns; method validated against the CHECK', () => {
+        expect(MIGRATION_003).toContain("method TEXT NOT NULL CHECK (method IN ('5why', 'fishbone', 'fta'))");
+        expect(WRITEBACK_CODE).toMatch(
+          /INSERT INTO m2\.root_cause_analyses \(tenant_id, nc_id, method, findings, root_cause_summary, created_by\)/,
+        );
+        // Fail-closed on unknown methods BEFORE SQL
+        expect(WRITEBACK_CODE).toContain("['5why', 'fishbone', 'fta'].includes(method)");
+        // Structured findings stored as JSON text (findings TEXT NOT NULL)
+        expect(WRITEBACK_CODE).toMatch(/executeRcaWrite[\s\S]*?JSON\.stringify\(findings\)/);
+        // Tenant scoping via the RLS setting, never a payload value
+        expect(WRITEBACK_CODE).toMatch(
+          /INSERT INTO m2\.root_cause_analyses[\s\S]*?current_setting\('app\.tenant_id'\)/,
+        );
+      });
+
+      it('audits under M2', () => {
+        expect(WRITEBACK_CODE).toMatch(/'rca-write': 'M2'/);
+      });
     });
 
     describe('manual-section-draft (S3 Manual Studio — delegation semantics)', () => {

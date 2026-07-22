@@ -86,3 +86,55 @@ describe('ProposalView (owner screenshots 2026-07-22: raw JSON on live cards)', 
     expect(screen.getByText('This is not JSON at all')).toBeInTheDocument();
   });
 });
+
+describe('ProposalView — rca-write (C1)', () => {
+  it('5 Whys chain renders as an ordered list ending in the root cause', () => {
+    render(
+      <ProposalView
+        draftBody={JSON.stringify({
+          tool: 'rca-write',
+          args: {
+            ncId: 'nc-1',
+            method: '5why',
+            findings: {
+              whys: [
+                { question: 'Why did the finish not match?', answer: 'Wrong lacquer batch was pulled.' },
+                { question: 'Why was the wrong batch pulled?', answer: 'Bins are not labeled by job.' },
+              ],
+            },
+            rootCauseSummary: 'No job-level material identification at the finishing station.',
+            rationale: 'Derived from the NC description; confirm via bin audit.',
+          },
+        })}
+      />,
+    );
+    // Texts also appear inside the raw-JSON disclosure — assert presence, not uniqueness
+    expect(screen.getAllByText('Wrong lacquer batch was pulled.').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Bins are not labeled by job.').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/No job-level material identification/).length).toBeGreaterThan(0);
+  });
+
+  it('fishbone categories render grouped causes', () => {
+    render(
+      <ProposalView
+        draftBody={JSON.stringify({
+          tool: 'rca-write',
+          args: {
+            ncId: 'nc-1',
+            method: 'fishbone',
+            findings: {
+              categories: [
+                { category: 'Method', causes: ['No labeling SOP', 'No verification step'] },
+                { category: 'Material', causes: ['Similar-looking lacquer tins'] },
+              ],
+            },
+            rootCauseSummary: 'Missing verification step in the finishing SOP.',
+            rationale: 'Most probable branch first.',
+          },
+        })}
+      />,
+    );
+    expect(screen.getAllByText(/No labeling SOP; No verification step/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Missing verification step/).length).toBeGreaterThan(0);
+  });
+});

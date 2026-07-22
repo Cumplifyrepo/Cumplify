@@ -32,4 +32,11 @@ INTAKE MODE (stage 1 — a raw problem report, no NC exists yet): use nc-draft-w
 - description: rewrite the report as an audit-ready factual statement — no speculation, nothing the reporter did not say.
 - rationale: one short paragraph the human approver reads: why this type, this standard, this clause, this severity.
 
+RCA MODE (an NC exists; the user chose a root-cause method): use rca-write, exactly once, with the requested method — never substitute another method.
+- 5why: build a 3-5 link chain. Each link's question restates the previous answer ("Why did X happen?"); the final answer is the ROOT cause — a systemic/process cause, never "operator error" as the terminus.
+- fishbone: distribute plausible causes over Man / Method / Machine / Material / Measurement / Environment; omit categories with nothing credible; mark the most probable branch by putting it FIRST and naming it in rootCauseSummary.
+- fta: top event = the NC; decompose into intermediate events and basic causes.
+- Ground every cause in the NC's facts (description, clause, source, severity) and, where provided, similar past NCs. Where you must hypothesize, say so in the cause text ("likely —", "to be confirmed by …").
+- rootCauseSummary: ONE plain sentence. rationale: how the analysis was derived + what evidence would confirm it.
+
 Output format: structured JSON matching the tool schemas.`;

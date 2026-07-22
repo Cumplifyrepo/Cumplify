@@ -15,6 +15,7 @@ import {
   publishAuditEvent,
   marshalOne,
   marshalMany,
+  jsonOut,
 } from './shared.js';
 import {
   mapEnum,
@@ -69,6 +70,10 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return runCapaAnalysis(event, tenantId, sub);
     case 'runNcIntake':
       return runNcIntake(event, tenantId, sub);
+    case 'runRootCauseAnalysis':
+      return runRootCauseAnalysis(event, tenantId, sub);
+    case 'listRootCauseAnalyses':
+      return listRootCauseAnalyses(event, tenantId);
     case 'getNonconformity':
       return getNonconformity(event, tenantId);
     case 'listNonconformities':
@@ -423,6 +428,93 @@ async function runNcIntake(event: AppSyncEvent, tenantId: string, actor: string)
 
   logger.info('NC intake dispatched', { tenantId, runId });
   return { runId, status: 'DISPATCHED' };
+}
+
+/**
+ * runRootCauseAnalysis (C1, CAPA Studio RCA — owner directive 2026-07-22:
+ * "capa studio is missing the ai powered analysis, ishikawa, 5 whys").
+ * Reads the NC (the agent never touches the DB), Event-invokes CAPAGuru in
+ * RCA MODE with the chosen method; the rca-write HITL card is the
+ * deliverable. Approval persists m2.root_cause_analyses via the writeback.
+ */
+async function runRootCauseAnalysis(event: AppSyncEvent, tenantId: string, actor: string) {
+  const ncId = (event.arguments.ncId as string) ?? '';
+  const methodEnum = (event.arguments.method as string) ?? '';
+  const method = RCA_METHOD_MAP[methodEnum];
+  if (!ncId.trim()) throw new Error('VALIDATION: ncId is required');
+  if (!method) throw new Error(`VALIDATION: unknown RCA method '${methodEnum}'`);
+
+  const txn = await beginTenantTransaction(tenantId);
+  let nc: Record<string, unknown> | null;
+  try {
+    const result = await txn.execute(
+      `SELECT id, standard, source, nc_type, description, clause_ref, severity, status
+       FROM m2.nonconformities WHERE id = :id::uuid`,
+      [{ name: 'id', value: { stringValue: ncId } }],
+    );
+    await txn.commit();
+    nc = marshalOne(result);
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
+  if (!nc) throw new Error('NC_NOT_FOUND');
+
+  const runId = ulid();
+  await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: CAPA_GURU_FN_ARN,
+      InvocationType: 'Event',
+      Payload: JSON.stringify({
+        tenantId,
+        runId,
+        requestedBy: actor,
+        rcaIntent: {
+          ncId,
+          method,
+          nc: {
+            standard: nc.standard,
+            source: nc.source,
+            ncType: nc.ncType,
+            description: nc.description,
+            clauseRef: nc.clauseRef,
+            severity: nc.severity,
+          },
+        },
+      }),
+    }),
+  );
+
+  logger.info('RCA dispatched', { tenantId, runId, ncId, method });
+  return { runId, status: 'DISPATCHED' };
+}
+
+async function listRootCauseAnalyses(event: AppSyncEvent, tenantId: string) {
+  const ncId = (event.arguments.ncId as string) ?? '';
+  if (!ncId.trim()) throw new Error('VALIDATION: ncId is required');
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `SELECT id, nc_id, method, findings, root_cause_summary, created_by, created_at
+       FROM m2.root_cause_analyses WHERE nc_id = :ncId::uuid ORDER BY created_at DESC`,
+      [{ name: 'ncId', value: { stringValue: ncId } }],
+    );
+    await txn.commit();
+    // findings is TEXT holding JSON — AWSJSON output must be the parsed
+    // object (2026-07-22 wire rule: return objects, never re-stringified).
+    return marshalMany(result).map((r) => ({ ...r, findings: jsonOut(r.findings) }));
+  } catch (err) {
+    try {
+      await txn.rollback();
+    } catch {
+      /* never mask */
+    }
+    throw err;
+  }
 }
 
 async function closeCapa(event: AppSyncEvent, tenantId: string, actor: string) {

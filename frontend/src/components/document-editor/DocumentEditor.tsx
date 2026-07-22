@@ -46,12 +46,18 @@ interface ContentSection {
   sentences?: Array<{ text: string; factRefs?: string[] }>;
   gap?: { missingSources: string[] };
   naJustification?: string;
+  /** RS-9: a prior saved edit — becomes the editor baseline when present */
+  humanEditedBody?: string;
 }
 
 interface DocumentEditorProps {
   sections: ContentSection[];
   runId: string;
   documentId: string;
+  /** Latest document version id — REQUIRED for saving (RS-9 writes a NEW version on it). */
+  versionId?: string | null;
+  /** A section edit persisted — parent should refetch content + versions. */
+  onSaved?: () => void;
   onConverge?: (harmonizationKey: string, content: string) => void;
 }
 
@@ -59,7 +65,14 @@ const REGENERATE_MUTATION = `mutation RegenerateSection($input: RegenerateSectio
   regenerateSection(input: $input) { id harmonizationKey kind clauseRefs contentSha256 reviewedBy reviewedAt error }
 }`;
 
-export function DocumentEditor({ sections, runId, documentId, onConverge }: DocumentEditorProps) {
+// RS-9 persistence — the missing wire (owner 2026-07-22: "draft documents
+// must be available for edit"): the editor tracked changes locally and never
+// saved. Every save writes a NEW document version (7.5.2 versioning law).
+const SAVE_SECTION_EDIT = `mutation SaveDocumentSectionEdit($input: SaveDocumentSectionEditInput!) {
+  saveDocumentSectionEdit(input: $input) { id versionNo changeSummary createdAt }
+}`;
+
+export function DocumentEditor({ sections, runId, documentId, versionId, onSaved, onConverge }: DocumentEditorProps) {
   const t = useTranslations('editor');
   const { user } = useAuth();
   const { mutate } = useGraphQL();
@@ -69,7 +82,8 @@ export function DocumentEditor({ sections, runId, documentId, onConverge }: Docu
     const map = new Map<string, SectionDraft>();
     for (const section of sections) {
       if (section.kind === 'prose' || section.kind === 'PROSE') {
-        const text = section.sentences?.map((s) => s.text).join(' ') ?? '';
+        const text =
+          section.humanEditedBody ?? section.sentences?.map((s) => s.text).join(' ') ?? '';
         map.set(section.harmonizationKey, createSectionDraft(section.harmonizationKey, text));
       }
     }
@@ -77,6 +91,43 @@ export function DocumentEditor({ sections, runId, documentId, onConverge }: Docu
   });
 
   const [regenerating, setRegenerating] = useState<string | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // RS-9 save: persist the section's current text + tracked-changes payload
+  // as a NEW document version; syncStatus returns to 'local' on success.
+  const handleSaveSection = useCallback(
+    async (harmonizationKey: string) => {
+      const draft = drafts.get(harmonizationKey);
+      if (!draft || !versionId) return;
+      setSaving(harmonizationKey);
+      setSaveError(null);
+      try {
+        await mutate(SAVE_SECTION_EDIT, {
+          input: {
+            versionId,
+            harmonizationKey,
+            body: draft.editorContent,
+            // ES-4: the ChangeEntry[] attribution payload, stored verbatim
+            trackedChanges: JSON.stringify(draft.changes),
+          },
+        });
+        setDrafts((prev) => {
+          const d = prev.get(harmonizationKey);
+          if (!d) return prev;
+          const next = new Map(prev);
+          next.set(harmonizationKey, { ...d, syncStatus: 'local' });
+          return next;
+        });
+        onSaved?.();
+      } catch (err) {
+        setSaveError((err as Error).message || t('saveFailed'));
+      } finally {
+        setSaving(null);
+      }
+    },
+    [drafts, versionId, mutate, onSaved, t],
+  );
 
   // Handle human edit on a section
   const handleEdit = useCallback(
@@ -199,6 +250,10 @@ export function DocumentEditor({ sections, runId, documentId, onConverge }: Docu
             key={section.harmonizationKey}
             draft={draft}
             isRegenerating={regenerating === section.harmonizationKey}
+            isSaving={saving === section.harmonizationKey}
+            canSave={!!versionId}
+            saveError={saving === null && saveError ? saveError : null}
+            onSave={() => handleSaveSection(section.harmonizationKey)}
             onEdit={(content) => handleEdit(section.harmonizationKey, content)}
             onRegenerate={() => handleRegenerate(section.harmonizationKey)}
             onAcceptChange={(changeId) => handleAccept(section.harmonizationKey, changeId)}
@@ -216,6 +271,10 @@ export function DocumentEditor({ sections, runId, documentId, onConverge }: Docu
 interface SectionEditorProps {
   draft: SectionDraft;
   isRegenerating: boolean;
+  isSaving: boolean;
+  canSave: boolean;
+  saveError: string | null;
+  onSave: () => void;
   onEdit: (content: string) => void;
   onRegenerate: () => void;
   onAcceptChange: (changeId: string) => void;
@@ -226,6 +285,10 @@ interface SectionEditorProps {
 function SectionEditor({
   draft,
   isRegenerating,
+  isSaving,
+  canSave,
+  saveError,
+  onSave,
   onEdit,
   onRegenerate,
   onAcceptChange,
@@ -269,8 +332,16 @@ function SectionEditor({
           >
             {isRegenerating ? t('regenerating') : t('iterateWithAgent')}
           </SecondaryButton>
+          {/* RS-9 save — enabled once the draft has unsynced changes */}
+          <PrimaryButton
+            onClick={onSave}
+            disabled={!canSave || isSaving || draft.syncStatus !== 'pending-rs9'}
+          >
+            {isSaving ? t('saving') : t('saveVersion')}
+          </PrimaryButton>
         </div>
       </div>
+      {saveError && <p className={styles.saveError}>{saveError}</p>}
 
       {/* Tiptap editor area */}
       <div className={styles.editorContent}>

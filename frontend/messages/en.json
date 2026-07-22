@@ -250,7 +250,14 @@
     "action_effectiveness": "Verify effectiveness",
     "action_closed": "Close CAPA",
     "caOwner": "Owner",
-    "caDue": "Due"
+    "caDue": "Due",
+    "rcaPanel": "Root cause analysis",
+    "rca5whys": "5 Whys with CAPAGuru",
+    "rcaIshikawa": "Ishikawa with CAPAGuru",
+    "rcaEmpty": "No analyses yet — let CAPAGuru build the first one.",
+    "method_5why": "5 Whys",
+    "method_fishbone": "Ishikawa (fishbone)",
+    "method_fta": "Fault tree"
   },
   "m3": {
     "title": "Audit Studio",
@@ -988,7 +995,10 @@
     "reject": "Reject",
     "gapSection": "Gap — required information not recorded",
     "naSection": "Not applicable",
-    "failedSection": "Section composition failed — no content presented"
+    "failedSection": "Section composition failed — no content presented",
+    "saveVersion": "Save version",
+    "saving": "Saving…",
+    "saveFailed": "Save failed"
   },
   "proposal": {
     "rationale": "Why",
@@ -1000,6 +1010,8 @@
     "severity": "Severity",
     "source": "Source",
     "ncType": "NC type",
-    "containment": "Containment"
+    "containment": "Containment",
+    "method": "Method",
+    "rootCause": "Root cause"
   }
 }

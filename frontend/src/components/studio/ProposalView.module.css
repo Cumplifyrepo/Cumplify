@@ -107,3 +107,20 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+.whysList {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rootCause {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-body);
+  border-left: 2px solid var(--color-accent);
+  padding-left: 10px;
+  margin: 0;
+}

@@ -297,6 +297,8 @@ async function dispatchToolWrite(
       return executeRecordsRetentionSchedule(action.args, tenantId, transactionId, actor);
     case 'nc-draft-write':
       return executeNcDraftWrite(action.args, tenantId, transactionId, actor);
+    case 'rca-write':
+      return executeRcaWrite(action.args, tenantId, transactionId, actor);
     case 'nc-triage-write':
       return executeNcTriageWrite(action.args, tenantId, transactionId, actor);
     case 'risk-assessment-write':
@@ -400,6 +402,49 @@ const REGEN_FN_NAME = process.env.REGEN_FN_NAME ?? '';
  * DB-ready from the tool schema; CHECK constraints are the backstop.
  * rationale lives in the Agent.WritebackCommitted payload only.
  */
+/**
+ * rca-write (C1 CAPA Studio RCA): INSERT the HITL-approved root-cause
+ * analysis. findings arrives structured (whys/categories/tree) and is stored
+ * as JSON text in m2.root_cause_analyses.findings (TEXT NOT NULL, 003);
+ * method must satisfy the 003 CHECK ('5why','fishbone','fta').
+ */
+async function executeRcaWrite(
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
+): Promise<Record<string, unknown>> {
+  const ncId = args.ncId as string;
+  const method = args.method as string;
+  const findings = args.findings;
+  const rootCauseSummary = args.rootCauseSummary as string;
+  if (!ncId || !rootCauseSummary) throw new Error('RCA_WRITE_MISSING_FIELDS');
+  if (!['5why', 'fishbone', 'fta'].includes(method)) {
+    throw new Error(`RCA_WRITE_BAD_METHOD: '${method}'`);
+  }
+  if (!findings || typeof findings !== 'object') throw new Error('RCA_WRITE_FINDINGS_REQUIRED');
+
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m2.root_cause_analyses (tenant_id, nc_id, method, findings, root_cause_summary, created_by)
+            VALUES (current_setting('app.tenant_id'), :ncId::uuid, :method, :findings, :summary, :actor)
+            RETURNING id, method, root_cause_summary`,
+      parameters: [
+        { name: 'ncId', value: { stringValue: ncId } },
+        { name: 'method', value: { stringValue: method } },
+        { name: 'findings', value: { stringValue: JSON.stringify(findings) } },
+        { name: 'summary', value: { stringValue: rootCauseSummary } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
+  return writtenRow(result);
+}
+
 /**
  * manual-section-draft (S3 Manual Studio) — the ONE writeback that DELEGATES
  * instead of writing SQL here: the GEN-6 regeneration engine already owns the
@@ -877,6 +922,7 @@ async function emitWritebackAuditEvent(opts: {
     'ct-governance-write': 'cross-standard',
     'nc-draft-write': 'M2',
     'nc-triage-write': 'M2',
+    'rca-write': 'M2',
     'risk-assessment-write': 'M5',
   };
   const module = moduleMap[opts.proposedAction.tool] ?? opts.agentName;

@@ -35,6 +35,7 @@ const AOSS_ENDPOINT = process.env.AOSS_NC_HISTORY_ENDPOINT!;
 const HITL_TOOLS = new Set([
   'nc-draft-write',
   'nc-triage-write',
+  'rca-write',
   'capa-open',
   'capa-verify-effectiveness',
 ]);
@@ -244,14 +245,111 @@ export async function runNcIntake(input: RunIntakeInput): Promise<RunAnalysisRes
  * {Records: [...]}; runCapaAnalysis's direct invoke never does; the S1
  * intake payload is the only shape carrying `intake`.
  */
+// ─── C1 RCA path (runRootCauseAnalysis) ─────────────────────────────────────
+
+export interface RunRcaInput {
+  tenantId: string;
+  runId: string;
+  requestedBy: string;
+  rcaIntent: {
+    ncId: string;
+    /** DB value: 5why | fishbone | fta */
+    method: string;
+    nc: {
+      standard?: string;
+      source?: string;
+      ncType?: string;
+      description?: string;
+      clauseRef?: string;
+      severity?: string;
+    };
+  };
+}
+
+/**
+ * C1 (owner directive 2026-07-22): structured root-cause analysis on an
+ * existing NC — 5 Whys / Ishikawa fishbone / fault tree — proposed via the
+ * rca-write HITL tool. The resolver read the NC; this agent never touches
+ * the DB. The NC description is reporter-typed → guardedText (S2.1 lesson);
+ * similar past NCs ground the causes when retrieval returns any.
+ */
+export async function runRootCauseAnalysis(input: RunRcaInput): Promise<RunAnalysisResult> {
+  const { tenantId, requestedBy, rcaIntent } = input;
+  const { ncId, method, nc } = rcaIntent;
+
+  // Ground in similar past NCs (nc-history) — non-blocking, VPC path (S2.1)
+  let groundingContext = '';
+  if (nc.description) {
+    try {
+      const { embedding } = await embedFn({
+        tenantId,
+        agent: 'CAPAGuru',
+        module: 'M2',
+        feature: 'rca',
+        text: nc.description,
+      });
+      const results = await retrieve({
+        tenantId,
+        collectionEndpoint: AOSS_ENDPOINT,
+        indexName: 'cumplify-nc-history',
+        queryText: nc.description,
+        queryVector: embedding,
+        topK: 3,
+      });
+      groundingContext = results.chunks.map((c) => c.text).join('\n---\n');
+    } catch {
+      /* retrieval failure is non-blocking */
+    }
+  }
+
+  const preamble = [
+    `RCA MODE. Perform a root-cause analysis on an EXISTING nonconformity`,
+    `via rca-write, using EXACTLY the requested method.`,
+    `ncId: ${ncId}`,
+    `Requested method: ${method}`,
+    `NC facts: standard=${nc.standard ?? '?'} clause=${nc.clauseRef ?? '?'} severity=${nc.severity ?? '?'} source=${nc.source ?? '?'} type=${nc.ncType ?? '?'}`,
+    `\nNC description (reporter-entered):`,
+  ].join('\n');
+  const content: ContentBlock[] = [
+    { text: preamble },
+    { guardedText: nc.description ?? '' },
+    ...(groundingContext ? [{ text: `Similar past NCs for reference:\n${groundingContext}` }] : []),
+  ];
+
+  const result = await toolLoop([{ role: 'user', content }], {
+    seat: 'workhorse',
+    systemPrompt: CAPA_GURU_PROMPT,
+    tools: CAPA_GURU_TOOLS,
+    tenantId,
+    agent: 'CAPAGuru',
+    module: 'M2',
+    feature: 'rca',
+    hitlTools: HITL_TOOLS,
+    requestedBy,
+    invokeFn,
+    dispatchTool: async (toolName, toolInput, tid) => ({
+      output: { toolName, input: toolInput, tenantId: tid },
+      requiresHitl: false,
+    }),
+  });
+
+  return {
+    runId: input.runId,
+    status: result.hitlResult ? 'PENDING_APPROVAL' : 'NO_PROPOSAL',
+  };
+}
+
 export async function handler(
-  event: SQSEvent | RunAnalysisInput | RunIntakeInput,
+  event: SQSEvent | RunAnalysisInput | RunIntakeInput | RunRcaInput,
 ): Promise<SQSBatchResponse | RunAnalysisResult> {
   if ('Records' in event) {
     return sqsHandler(event);
   }
   if ('intake' in event) {
     return runNcIntake(event);
+  }
+  if ('rcaIntent' in event) {
+    return runRootCauseAnalysis(event);
   }
   return runCapaAnalysis(event);
 }

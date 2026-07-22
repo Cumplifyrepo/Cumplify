@@ -681,6 +681,15 @@ export class ApiStack extends cdk.Stack {
       typeName: 'Mutation',
       fieldName: 'runNcIntake',
     });
+    // C1 (CAPA Studio RCA) — 5 Whys / Ishikawa / FTA via CAPAGuru + read surface.
+    const runRcaResolver = m2DS.createResolver('RunRootCauseAnalysis', {
+      typeName: 'Mutation',
+      fieldName: 'runRootCauseAnalysis',
+    });
+    const listRcaResolver = m2DS.createResolver('ListRootCauseAnalyses', {
+      typeName: 'Query',
+      fieldName: 'listRootCauseAnalyses',
+    });
     // S2 (studio wave) — Document Studio drafting dispatch on m1 DS.
     const runDocDraftResolver = m1DS.createResolver('RunDocDraft', {
       typeName: 'Mutation',
@@ -1368,6 +1377,8 @@ export class ApiStack extends cdk.Stack {
       saveDocumentSectionEditResolver,
       runCapaAnalysisResolver,
       runNcIntakeResolver,
+      runRcaResolver,
+      listRcaResolver,
       runDocDraftResolver,
       runManualSectionDraftResolver,
       runRiskAssessmentResolver,

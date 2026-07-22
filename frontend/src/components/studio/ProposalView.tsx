@@ -113,10 +113,63 @@ function NcDraftView({ args }: { args: Record<string, unknown> }) {
   );
 }
 
+function RcaView({ args }: { args: Record<string, unknown> }) {
+  const t = useTranslations('proposal');
+  const findings = (args.findings ?? {}) as {
+    whys?: Array<{ question?: string; answer?: string }>;
+    categories?: Array<{ category?: string; causes?: string[] }>;
+    tree?: Array<{ event?: string; causes?: string[] }>;
+  };
+  return (
+    <div className={styles.proposal}>
+      <div className={styles.chipRow}>
+        <FieldChip label={t('method')} value={args.method} />
+      </div>
+      {findings.whys && findings.whys.length > 0 && (
+        <ol className={styles.whysList}>
+          {findings.whys.map((w, i) => (
+            <li key={i}>
+              <span className={styles.fieldLabel}>{w.question ?? ''}</span>
+              <p className={styles.prose}>{w.answer ?? ''}</p>
+            </li>
+          ))}
+        </ol>
+      )}
+      {findings.categories && findings.categories.length > 0 && (
+        <div className={styles.proposal}>
+          {findings.categories.map((c, i) => (
+            <p key={i} className={styles.prose}>
+              <span className={styles.fieldLabel}>{c.category ?? ''}</span>{' '}
+              {(c.causes ?? []).join('; ')}
+            </p>
+          ))}
+        </div>
+      )}
+      {findings.tree && findings.tree.length > 0 && (
+        <div className={styles.proposal}>
+          {findings.tree.map((n, i) => (
+            <p key={i} className={styles.prose}>
+              <span className={styles.fieldLabel}>{n.event ?? ''}</span>{' '}
+              {(n.causes ?? []).join('; ')}
+            </p>
+          ))}
+        </div>
+      )}
+      {typeof args.rootCauseSummary === 'string' && (
+        <p className={styles.rootCause}>
+          <span className={styles.fieldLabel}>{t('rootCause')}</span> {args.rootCauseSummary}
+        </p>
+      )}
+      <Rationale text={args.rationale} />
+    </div>
+  );
+}
+
 const TOOL_VIEWS: Record<string, (props: { args: Record<string, unknown> }) => React.JSX.Element> = {
   'manual-section-draft': SectionDraftView,
   'doc-draft': DocDraftView,
   'nc-draft-write': NcDraftView,
+  'rca-write': RcaView,
 };
 
 export function ProposalView({ draftBody }: { draftBody: string }) {

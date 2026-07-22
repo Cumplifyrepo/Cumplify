@@ -18,11 +18,13 @@ import { DocumentEditor } from './DocumentEditor';
 
 const mockMutate = vi.fn();
 let capturedOnUpdate: ((args: { editor: { getHTML: () => string } }) => void) | null = null;
+let capturedContent = '';
 const chainCommands: string[] = [];
 
 vi.mock('@tiptap/react', () => ({
-  useEditor: (opts: { onUpdate?: (args: { editor: { getHTML: () => string } }) => void }) => {
+  useEditor: (opts: { content?: string; onUpdate?: (args: { editor: { getHTML: () => string } }) => void }) => {
     capturedOnUpdate = opts.onUpdate ?? null;
+    capturedContent = opts.content ?? '';
     return {
       getHTML: () => '<p>mock content</p>',
       chain: () => ({
@@ -86,6 +88,7 @@ const FAILED_SECTION = { harmonizationKey: '8.1', kind: 'failed' };
 beforeEach(() => {
   mockMutate.mockReset();
   capturedOnUpdate = null;
+  capturedContent = '';
   chainCommands.length = 0;
 });
 
@@ -214,5 +217,59 @@ describe('DocumentEditor — accept/reject + onConverge', () => {
     fireEvent.click(acceptButtons[0]);
 
     expect(onConverge).not.toHaveBeenCalled();
+  });
+});
+
+describe('DocumentEditor — RS-9 save wire (owner 2026-07-22: drafts must be editable)', () => {
+  it('an edit enables Save version; save calls saveDocumentSectionEdit with versionId + body + trackedChanges', async () => {
+    mockMutate.mockResolvedValue({
+      saveDocumentSectionEdit: { id: 'v2', versionNo: 2, changeSummary: 'Section edit: 4.1', createdAt: 'now' },
+    });
+    const onSaved = vi.fn();
+    render(
+      <DocumentEditor
+        sections={[PROSE_SECTION]}
+        runId="doc-1"
+        documentId="doc-1"
+        versionId="v1"
+        onSaved={onSaved}
+      />,
+    );
+
+    // Save disabled until the human edits (syncStatus 'local')
+    const saveBtn = screen.getByText('editor.saveVersion');
+    expect(saveBtn).toBeDisabled();
+
+    // Simulate a Tiptap edit
+    capturedOnUpdate!({ editor: { getHTML: () => '<p>Edited content.</p>' } } as never);
+    await waitFor(() => expect(screen.getByText('editor.saveVersion')).not.toBeDisabled());
+
+    fireEvent.click(screen.getByText('editor.saveVersion'));
+    await waitFor(() => expect(mockMutate).toHaveBeenCalled());
+
+    const [mutation, vars] = mockMutate.mock.calls[0];
+    expect(mutation).toContain('saveDocumentSectionEdit');
+    expect(vars.input.versionId).toBe('v1');
+    expect(vars.input.harmonizationKey).toBe('4.1');
+    expect(vars.input.body).toBe('<p>Edited content.</p>');
+    // ES-4: attribution payload rides as a JSON string
+    const changes = JSON.parse(vars.input.trackedChanges);
+    expect(Array.isArray(changes)).toBe(true);
+    expect(changes.length).toBeGreaterThan(0);
+    await waitFor(() => expect(onSaved).toHaveBeenCalled());
+    // Sync banner clears after a successful save
+    expect(screen.queryByTestId('guidance-banner')).toBeNull();
+  });
+
+  it('a prior humanEditedBody becomes the editor baseline (round-trip)', () => {
+    render(
+      <DocumentEditor
+        sections={[{ ...PROSE_SECTION, humanEditedBody: '<p>Previously saved.</p>' }]}
+        runId="doc-1"
+        documentId="doc-1"
+        versionId="v1"
+      />,
+    );
+    expect(capturedContent).toContain('Previously saved.');
   });
 });

@@ -250,7 +250,14 @@
     "action_effectiveness": "Verificar efectividad",
     "action_closed": "Cerrar CAPA",
     "caOwner": "Responsable",
-    "caDue": "Vencimiento"
+    "caDue": "Vencimiento",
+    "rcaPanel": "Análisis de causa raíz",
+    "rca5whys": "5 porqués con CAPAGuru",
+    "rcaIshikawa": "Ishikawa con CAPAGuru",
+    "rcaEmpty": "Aún no hay análisis — deja que CAPAGuru cree el primero.",
+    "method_5why": "5 porqués",
+    "method_fishbone": "Ishikawa (espina de pescado)",
+    "method_fta": "Árbol de fallos"
   },
   "m3": {
     "title": "Estudio de Auditoría",
@@ -988,7 +995,10 @@
     "reject": "Rechazar",
     "gapSection": "Brecha — información requerida no registrada",
     "naSection": "No aplicable",
-    "failedSection": "Composición de sección fallida — sin contenido presentado"
+    "failedSection": "Composición de sección fallida — sin contenido presentado",
+    "saveVersion": "Guardar versión",
+    "saving": "Guardando…",
+    "saveFailed": "Error al guardar"
   },
   "proposal": {
     "rationale": "Justificación",
@@ -1000,6 +1010,8 @@
     "severity": "Severidad",
     "source": "Origen",
     "ncType": "Tipo de NC",
-    "containment": "Contención"
+    "containment": "Contención",
+    "method": "Método",
+    "rootCause": "Causa raíz"
   }
 }

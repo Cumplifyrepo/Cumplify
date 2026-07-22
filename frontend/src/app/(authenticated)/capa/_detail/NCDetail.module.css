@@ -77,3 +77,80 @@
   align-self: flex-start;
   margin-top: var(--space-xs);
 }
+
+/* C1: RCA panel */
+.rcaActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.rcaEmpty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.rcaList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rcaItem {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-inner);
+  padding: 12px;
+  background: var(--color-surface);
+}
+
+.rcaHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.rcaMethod {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-heading);
+}
+
+.rcaDate {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.rcaSummary {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-body);
+  margin: 0 0 6px;
+}
+
+.rcaWhys {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-body);
+}
+
+.rcaQuestion {
+  color: var(--color-text-muted);
+}
+
+.rcaCategories {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rcaCategory {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-body);
+  margin: 0;
+}

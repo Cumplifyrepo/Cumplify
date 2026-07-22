@@ -75,6 +75,8 @@ export const CAPA_STATUS_MAP: Record<string, string> = {
 /** CHECK (method IN ('5why', 'fishbone', 'fta')) */
 export const RCA_METHOD_MAP: Record<string, string> = {
   '5WHY': '5why',
+  // C1: GraphQL RcaMethod enum value (enum members cannot start with a digit)
+  FIVE_WHYS: '5why',
   FISHBONE: 'fishbone',
   FTA: 'fta',
 };

@@ -84,6 +84,7 @@ export function normalizeRole(role: string): string {
  */
 export const TOOL_MODULES: Record<string, string> = {
   'capa-open': 'M2', // m2.corrective_actions
+  'rca-write': 'M2', // m2.root_cause_analyses (C1 CAPA Studio RCA)
   'capa-verify-effectiveness': 'M2', // m2.capa_effectiveness_checks
   'doc-draft': 'M1', // m1.documents (S2 Document Studio: agent-drafted creation)
   'manual-section-draft': 'M1', // m1 manual versions via GEN-6 engine (S3 Manual Studio)

@@ -431,6 +431,8 @@ export default function DocumentsPage() {
                 })()}
                 runId={selectedDoc.id}
                 documentId={selectedDoc.id}
+                versionId={latestVersion?.id ?? null}
+                onSaved={() => openDetail(selectedDoc)}
               />
             )}
             {/* Non-DRAFT status: ControlledDocViewer (§7-compliant, read-only) */}

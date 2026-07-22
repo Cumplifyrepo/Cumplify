@@ -148,6 +148,12 @@ type Diff @aws_lambda {
 
 # ─── M2: CAPA Types ──────────────────────────────────────────────────────────
 
+enum RcaMethod {
+  FIVE_WHYS
+  FISHBONE
+  FTA
+}
+
 type Nonconformity @aws_lambda @aws_iam {
   id: ID!
   standard: Standard!
@@ -165,8 +171,12 @@ type RootCauseAnalysis @aws_lambda @aws_iam {
   id: ID!
   ncId: ID!
   method: String!
-  findings: String!
+  # C1 (CAPA Studio RCA): structured analysis — { whys: [{question, answer}] }
+  # for 5 Whys, { categories: [{category, causes}] } for Ishikawa/fishbone.
+  findings: AWSJSON!
   rootCauseSummary: String!
+  createdBy: String!
+  createdAt: AWSDateTime!
 }
 
 type CorrectiveAction @aws_lambda @aws_iam {
@@ -569,6 +579,8 @@ type Query {
   listNonconformities(standard: Standard, severity: Severity): [Nonconformity!]! @aws_lambda
   listOpenCAPAs(standard: Standard, severity: Severity): [CorrectiveAction!]! @aws_lambda
   listCorrectiveActions(ncId: ID!): [CorrectiveAction!]! @aws_lambda
+  # C1 (CAPA Studio RCA): approved root-cause analyses for an NC
+  listRootCauseAnalyses(ncId: ID!): [RootCauseAnalysis!]! @aws_lambda
 
   # M3 — Audit Studio
   getAudit(id: ID!): Audit @aws_lambda
@@ -639,6 +651,10 @@ type Mutation {
   # S1 (studio wave): stage-1 intake — plain-language problem report in,
   # CAPAGuru-drafted NC proposal out (nc-draft-write HITL card).
   runNcIntake(description: String!, evidenceNote: String): AgentRunAck! @aws_lambda
+  # C1 (CAPA Studio RCA): CAPAGuru performs a structured root-cause analysis
+  # (5 Whys / Ishikawa fishbone / fault tree) on an NC; the rca-write HITL
+  # card is the deliverable, approval persists m2.root_cause_analyses.
+  runRootCauseAnalysis(ncId: ID!, method: RcaMethod!): AgentRunAck! @aws_lambda
   # S2 (studio wave): Document Studio — describe the document you need,
   # DocStudio drafts it whole (title, clauses, sections) via the doc-draft
   # HITL card; approval creates the DRAFT document with real content.
