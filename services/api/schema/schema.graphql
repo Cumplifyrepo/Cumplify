@@ -98,6 +98,11 @@ type Document @aws_lambda @aws_iam {
   ownerId: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+  # RS-1 (read-surface-completion): m1.documents.clause_refs TEXT[] already
+  # selected by SELECT * in getDocument/listDocuments; shared marshal already
+  # unwraps arrayValue + snake->camelCases the column. SDL-only — found
+  # live-broken 2026-07-21 (P2 S2's /documents already queries this field).
+  clauseRefs: [String!]
 }
 
 type DocumentVersion @aws_lambda @aws_iam {

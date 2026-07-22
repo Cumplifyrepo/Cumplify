@@ -218,6 +218,11 @@ raised, evaluated) belong in the immutable audit trail.
 | `Generation.RunCompleted` | true | spec-40: generation run terminal state (complete/partial) + section-status summary |
 | `Generation.SectionRegenerated` | true | spec-40 GEN-6: single section recomposed — new manual/clause-doc versions + refreshed master list; review state cleared (APR-1) |
 
+### Governance Events (read-surface-completion RS-6 — found unregistered live at architect witness 2026-07-21, same bug class as spec-41's Note 2026-07-15)
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `Governance.ApprovalMatrixChanged` | true | State transition: tenant approval-matrix entry set/narrowed — routing change must be sealed |
+
 ### AI Guardrail Telemetry Events (spec 35 — guardrails-antihallucination)
 
 | detailType | auditTrail | Rationale |

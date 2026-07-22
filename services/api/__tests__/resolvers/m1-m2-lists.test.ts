@@ -79,6 +79,31 @@ describe('m1 listDocuments — filters honored (previously ignored)', () => {
   });
 });
 
+describe('m1 listDocuments — RS-1 clauseRefs (real Data-API arrayValue fixture)', () => {
+  it('marshals m1.documents.clause_refs TEXT[] into Document.clauseRefs', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [
+        [
+          { stringValue: 'doc-1' },
+          { arrayValue: { stringValues: ['9.1', '9.2', '10.2'] } },
+        ],
+      ],
+      columnMetadata: [{ name: 'id' }, { name: 'clause_refs' }],
+    });
+    const result = await m1Handler(makeEvent('listDocuments'));
+    expect(result).toEqual([{ id: 'doc-1', clauseRefs: ['9.1', '9.2', '10.2'] }]);
+  });
+
+  it('NULL clause_refs marshals to null, not an error', async () => {
+    mockExecute.mockResolvedValueOnce({
+      records: [[{ stringValue: 'doc-2' }, { isNull: true }]],
+      columnMetadata: [{ name: 'id' }, { name: 'clause_refs' }],
+    });
+    const result = await m1Handler(makeEvent('listDocuments'));
+    expect(result).toEqual([{ id: 'doc-2', clauseRefs: null }]);
+  });
+});
+
 describe('m1 listDocumentVersions', () => {
   it('selects versions for the document ordered by version_no DESC', async () => {
     await m1Handler(makeEvent('listDocumentVersions', { documentId: 'doc-1' }));

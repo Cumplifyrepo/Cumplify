@@ -114,6 +114,13 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   // new document versions; registered same-commit as the publisher.
   'Generation.SectionRegenerated': true,
 
+  // --- read-surface-completion RS-6: governance (approval-matrix) events.
+  // Found UNREGISTERED at the 2026-07-21 architect live witness: setApprovalMatrixEntry
+  // (m4.ts) published this since dfa8ad4 but publish() threw 'Unregistered detailType' on
+  // every call, silently masking a SUCCESSFUL DDB write as a failed GraphQL mutation
+  // (same bug class as the spec-41 forms.ts finding above).
+  'Governance.ApprovalMatrixChanged': true,
+
   // --- Spec 35 (guardrails-antihallucination): AI guardrail telemetry events.
   // All auditTrail:false — advisory/operational, never sealed to immutable ledger.
   // entityId: '' consistently (invoker has no domain row ID at check time).
