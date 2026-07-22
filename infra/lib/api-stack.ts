@@ -487,14 +487,18 @@ export class ApiStack extends cdk.Stack {
     // ─── AppSync Data Sources & Resolver Attachments (BLOCK-1) ────────────────
 
     // M1 resolver needs S3 read for getDocumentVersionDiff (spec 40, Task 7)
+    // AND write for saveDocumentSectionEdit's new-version ContentJson (RS-9)
+    // — found live 2026-07-22 at the D1 witness: the mutation shipped with
+    // tests but zero callers, so the missing PutObject grant was invisible
+    // until the first real Save click (AccessDenied).
     resolverFns[0].addEnvironment('CONTENT_BUCKET', props.generalBucketName);
     resolverFns[0].addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ['s3:GetObject'],
+        actions: ['s3:GetObject', 's3:PutObject'],
         resources: [`${props.generalBucketArn}/tenants/*`],
       }),
     );
-    props.s3GeneralKey.grantDecrypt(resolverFns[0]);
+    props.s3GeneralKey.grantEncryptDecrypt(resolverFns[0]);
 
     // ─── Spec 40 Task 9: PDF render + IMS export + sealing ───────────────────
     // PdfRenderFn: puppeteer-core + @sparticuz/chromium. X86_64 ONLY — the

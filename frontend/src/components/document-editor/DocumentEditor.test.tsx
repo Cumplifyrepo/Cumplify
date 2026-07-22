@@ -195,7 +195,12 @@ describe('DocumentEditor — accept/reject + onConverge', () => {
     expect(onConverge).toHaveBeenCalledWith('4.1', expect.any(String));
   });
 
-  it('does NOT fire onConverge while a second change is still pending', () => {
+  it('does NOT fire onConverge while a second change is still pending', async () => {
+    // A typing burst COALESCES into one change (2026-07-22 fix) — the real
+    // two-pending scenario is human edit + agent proposal.
+    mockMutate.mockResolvedValue({
+      regenerateSection: { harmonizationKey: '4.1', kind: 'PROSE' },
+    });
     const onConverge = vi.fn();
     render(
       <DocumentEditor
@@ -205,18 +210,29 @@ describe('DocumentEditor — accept/reject + onConverge', () => {
         onConverge={onConverge}
       />,
     );
-    // Two pending changes: one human edit, one agent proposal
     act(() => {
       capturedOnUpdate!({ editor: { getHTML: () => '<p>Edit 1.</p>' } });
     });
-    act(() => {
-      capturedOnUpdate!({ editor: { getHTML: () => '<p>Edit 2.</p>' } });
-    });
+    fireEvent.click(screen.getByText('editor.iterateWithAgent'));
+    await waitFor(() => expect(screen.getAllByText('editor.accept').length).toBe(2));
 
-    const acceptButtons = screen.getAllByText('editor.accept');
-    fireEvent.click(acceptButtons[0]);
+    fireEvent.click(screen.getAllByText('editor.accept')[0]);
 
     expect(onConverge).not.toHaveBeenCalled();
+  });
+
+  it('a typing burst coalesces into ONE tracked change (found live 2026-07-22: four identical entries per sentence)', () => {
+    render(<DocumentEditor sections={[PROSE_SECTION]} runId="run-1" documentId="doc-1" />);
+    act(() => {
+      capturedOnUpdate!({ editor: { getHTML: () => '<p>Edit a.</p>' } });
+    });
+    act(() => {
+      capturedOnUpdate!({ editor: { getHTML: () => '<p>Edit ab.</p>' } });
+    });
+    act(() => {
+      capturedOnUpdate!({ editor: { getHTML: () => '<p>Edit abc.</p>' } });
+    });
+    expect(screen.getAllByText('editor.accept').length).toBe(1);
   });
 });
 

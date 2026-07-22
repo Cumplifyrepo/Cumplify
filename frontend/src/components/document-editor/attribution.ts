@@ -71,9 +71,19 @@ export function addHumanChange(
     timestamp: new Date().toISOString(),
     status: 'pending',
   };
+  // Coalesce a typing burst: Tiptap fires onUpdate per keystroke — if the
+  // LAST change is a still-pending edit by the SAME user, replace it instead
+  // of appending (found live 2026-07-22: four identical entries per sentence).
+  const last = draft.changes[draft.changes.length - 1];
+  const coalesce =
+    last &&
+    last.status === 'pending' &&
+    last.actor.type === 'user' &&
+    last.actor.id === userId &&
+    last.type === changeType;
   return {
     ...draft,
-    changes: [...draft.changes, entry],
+    changes: coalesce ? [...draft.changes.slice(0, -1), entry] : [...draft.changes, entry],
     syncStatus: 'pending-rs9',
   };
 }
