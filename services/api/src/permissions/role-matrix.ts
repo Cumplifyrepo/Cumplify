@@ -91,6 +91,15 @@ export const TOOL_MODULES: Record<string, string> = {
   'audit-checklist-gen': 'M3', // m3.audit_checklists
   'records-retention-schedule': 'M4', // m4.retention_policies
   'ct-governance-write': 'M1', // BLOCKED-ON-DESIGN at writeback; M1 per corpus intent
+  // read-surface-completion RS-8 (queued next): execute-writeback.ts's new
+  // dispatch cases for these two tools (CAPAGuru/RiskSentinel tool-loop
+  // proposals, HITL-gated — the real compliance-gated path per architecture
+  // §4 CAPA stage 2/risk assessment). TOOL_ARTIFACTS (approval-matrix.ts)
+  // already mapped these; this map was the missing half of the pair
+  // (asymmetry found at RS-7 build time) — added now so RS-8 doesn't hit
+  // the same gap.
+  'nc-triage-write': 'M2', // m2.nonconformities (nc_type reclassification)
+  'risk-assessment-write': 'M5', // m5.risks (likelihood/severity update)
 };
 
 /** Resolve a HITL item's module: explicit field first, then tool registry. */

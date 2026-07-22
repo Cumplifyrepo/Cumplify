@@ -10,6 +10,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import {
   extractContext,
+  extractAgentContext,
   beginTenantTransaction,
   publishAuditEvent,
   marshalOne,
@@ -26,6 +27,14 @@ interface AppSyncEvent {
 }
 
 export async function handler(event: AppSyncEvent): Promise<unknown> {
+  // RS-7: agent* (@aws_iam) fields never carry resolverContext — branch
+  // BEFORE extractContext, which would throw for them.
+  if (event.info.fieldName === 'agentAssessRisk') {
+    const { tenantId, actor } = extractAgentContext(event.arguments, 'RiskSentinel');
+    logger.appendKeys({ tenantId, requestField: event.info.fieldName });
+    return agentAssessRisk(event, tenantId, actor);
+  }
+
   const ctx = extractContext(event);
   const { tenantId, sub } = ctx;
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
@@ -98,6 +107,72 @@ async function createRisk(event: AppSyncEvent, tenantId: string, actor: string) 
     });
 
     logger.info('Risk created', { tenantId, riskId: risk?.id });
+    return risk;
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
+}
+
+/**
+ * agentAssessRisk (RS-7, RiskSentinel writeback door) — updates an existing
+ * risk's likelihood/severity. Direct write: no SFN-token HITL gate is
+ * reachable from this Lambda (ApiStack) without a circular stack dependency
+ * on AiStack's HitlStateMachine (AiStack already depends on ApiStack for
+ * its DB/GraphQL props) — found at RS-7 build time, documented in the
+ * evidence log. RS-8's runRiskAssessment is the real compliance-gated path:
+ * the RiskSentinel seat (living in AiStack, zero circularity) proposes via
+ * its own tool-loop -> enterHitlGate, and execute-writeback.ts's new
+ * 'risk-assessment-write' case commits post-approval. rationale has no
+ * m5.risks column (free-text narrative, not a register field) — preserved
+ * in the audit event payload only, same convention as closeCapa's
+ * closureNotes / records-retention-schedule's justification.
+ */
+async function agentAssessRisk(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as Record<string, unknown>;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `UPDATE m5.risks SET likelihood = :likelihood, severity = :severity, updated_at = NOW(), version = version + 1
+       WHERE id = :riskId::uuid AND tenant_id = :tenantId
+       RETURNING id, tenant_id, standard, category, description, likelihood, severity, risk_rating, treatment, owner_id, status, created_at`,
+      [
+        { name: 'likelihood', value: { longValue: input.likelihood as number } },
+        { name: 'severity', value: { longValue: input.severity as number } },
+        { name: 'riskId', value: { stringValue: input.riskId as string } },
+        { name: 'tenantId', value: { stringValue: tenantId } },
+      ],
+    );
+    if (!result.records || result.records.length === 0) {
+      throw new Error('RISK_NOT_FOUND');
+    }
+
+    // Same SECURITY DEFINER accessor as createRisk — app_role cannot REFRESH
+    // the view directly; same transaction so the register reflects the
+    // updated rating atomically.
+    await txn.execute(`SELECT m5_views.refresh_risk_register_view()`);
+
+    await txn.commit();
+    const risk = marshalOne(result);
+
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M5',
+      clauseRef: 'ISO 9001 6.1',
+      standard: (risk?.standard as 'ISO9001' | 'ISO14001' | 'ISO45001') ?? 'ISO9001',
+      detailType: 'Risk.Assessed',
+      source: 'cumplify.m5.risk',
+      entityId: String(risk?.id ?? ''),
+      payload: {
+        riskId: risk?.id,
+        likelihood: input.likelihood,
+        severity: input.severity,
+        rationale: input.rationale,
+      },
+    });
+
+    logger.info('Agent-assessed risk updated', { tenantId, riskId: risk?.id });
     return risk;
   } catch (err) {
     await txn.rollback();

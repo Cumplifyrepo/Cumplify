@@ -480,7 +480,20 @@ input CreateChangePlanInput {
   impactAssessment: String
 }
 
+# read-surface-completion RS-7 (owner-ruled 2026-07-22, SCHEMA-5 exception):
+# these four Input types + agentGenerateChecklist/agentScoreReadiness below
+# carry an explicit tenantId. The six agent* mutations are @aws_iam-only
+# (api-stack.ts: primary auth is the Lambda authorizer; IAM is an ADDITIONAL
+# mode, and a field with only @aws_iam is IAM-only, so the authorizer never
+# runs) — resolverContext.tenantId, which every other resolver relies on via
+# extractContext, is simply never populated for these calls. SCHEMA-5's
+# threat model is a malicious BROWSER client spoofing tenantId; these
+# mutations are only reachable with signed AWS IAM (SigV4) credentials,
+# never exposed to a browser, so the same spoofing risk does not apply.
+# Narrow, explicit, owner-approved exception — NOT a precedent for any
+# @aws_lambda (human-facing) mutation.
 input AgentDraftDocumentInput {
+  tenantId: ID!
   standard: Standard!
   docType: DocumentType!
   title: String!
@@ -488,17 +501,20 @@ input AgentDraftDocumentInput {
 }
 
 input AgentTriageNCInput {
+  tenantId: ID!
   ncId: ID!
   classification: String!
 }
 
 input AgentProposeCorrectiveActionInput {
+  tenantId: ID!
   ncId: ID!
   actionDesc: String!
   suggestedOwnerId: String!
 }
 
 input AgentAssessRiskInput {
+  tenantId: ID!
   riskId: ID!
   likelihood: Int!
   severity: Int!
@@ -629,8 +645,8 @@ type Mutation {
   agentDraftDocument(input: AgentDraftDocumentInput!): Document! @aws_iam
   agentTriageNC(input: AgentTriageNCInput!): Nonconformity! @aws_iam
   agentProposeCorrectiveAction(input: AgentProposeCorrectiveActionInput!): CorrectiveAction! @aws_iam
-  agentGenerateChecklist(auditId: ID!): [AuditChecklist!]! @aws_iam
-  agentScoreReadiness(standard: Standard!): [ReadinessScore!]! @aws_iam
+  agentGenerateChecklist(auditId: ID!, tenantId: ID!): [AuditChecklist!]! @aws_iam
+  agentScoreReadiness(standard: Standard!, tenantId: ID!): [ReadinessScore!]! @aws_iam
   agentAssessRisk(input: AgentAssessRiskInput!): Risk! @aws_iam
   publishGenerationEvent(input: PublishGenerationEventInput!): GenerationEvent @aws_iam
 

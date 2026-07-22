@@ -121,6 +121,10 @@ export const AUDIT_TRAIL_REGISTRY: Record<string, boolean> = {
   // (same bug class as the spec-41 forms.ts finding above).
   'Governance.ApprovalMatrixChanged': true,
 
+  // --- read-surface-completion RS-7 (2026-07-22): agent writeback events.
+  'NC.Triaged': true,
+  'Risk.Assessed': true,
+
   // --- Spec 35 (guardrails-antihallucination): AI guardrail telemetry events.
   // All auditTrail:false — advisory/operational, never sealed to immutable ledger.
   // entityId: '' consistently (invoker has no domain row ID at check time).

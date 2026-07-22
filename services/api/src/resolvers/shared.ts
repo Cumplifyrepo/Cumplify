@@ -252,6 +252,8 @@ export interface ResolverContext {
 /**
  * Extract and validate resolverContext from AppSync event.
  * SCHEMA-5: tenantId comes ONLY from resolverContext — never from input args.
+ * Human-facing (@aws_lambda) mutations ONLY — see extractAgentContext for the
+ * @aws_iam agent-path exception.
  */
 export function extractContext(event: {
   identity?: { resolverContext?: Record<string, string> };
@@ -267,6 +269,29 @@ export function extractContext(event: {
     sub: ctx.sub ?? 'unknown',
     entitlement: ctx.entitlement ?? '{}',
   };
+}
+
+/**
+ * Extract tenant context for the six agent* (@aws_iam) mutations
+ * (read-surface-completion RS-7). These fields carry ONLY @aws_iam auth —
+ * AppSync's Lambda authorizer (the sole source of resolverContext) never
+ * runs for IAM-signed calls, so tenantId cannot come from resolverContext
+ * the way extractContext requires. Owner-approved exception (2026-07-22):
+ * tenantId is an explicit, required argument on these six mutations only —
+ * never extend this pattern to an @aws_lambda (human-facing) mutation.
+ * actor is always 'agent:<agentName>' — there is no human sub on this path.
+ */
+export function extractAgentContext(
+  args: Record<string, unknown>,
+  agentName: string,
+): { tenantId: string; actor: string } {
+  const tenantId = (args.tenantId ?? (args.input as Record<string, unknown> | undefined)?.tenantId) as
+    | string
+    | undefined;
+  if (!tenantId) {
+    throw new Error('Missing tenantId — required on every agent* mutation input (RS-7)');
+  }
+  return { tenantId, actor: `agent:${agentName}` };
 }
 
 export { TABLE_NAME, BUS_NAME, CLUSTER_ARN, Logger };

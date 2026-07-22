@@ -8,6 +8,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import {
   extractContext,
+  extractAgentContext,
   beginTenantTransaction,
   publishAuditEvent,
   marshalOne,
@@ -30,7 +31,19 @@ interface AppSyncEvent {
   identity?: { resolverContext?: Record<string, string> };
 }
 
+const AGENT_FIELDS = new Set(['agentTriageNC', 'agentProposeCorrectiveAction']);
+
 export async function handler(event: AppSyncEvent): Promise<unknown> {
+  // RS-7: agent* (@aws_iam) fields never carry resolverContext — branch
+  // BEFORE extractContext, which would throw for them.
+  if (AGENT_FIELDS.has(event.info.fieldName)) {
+    const { tenantId, actor } = extractAgentContext(event.arguments, 'CAPAGuru');
+    logger.appendKeys({ tenantId, requestField: event.info.fieldName });
+    return event.info.fieldName === 'agentTriageNC'
+      ? agentTriageNC(event, tenantId, actor)
+      : agentProposeCorrectiveAction(event, tenantId, actor);
+  }
+
   const ctx = extractContext(event);
   const { tenantId, sub } = ctx;
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
@@ -194,6 +207,109 @@ async function createCorrectiveAction(event: AppSyncEvent, tenantId: string, act
     });
     logger.info('Corrective action created', { tenantId });
     return ca;
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
+}
+
+/**
+ * agentProposeCorrectiveAction (RS-7, CAPAGuru writeback door) — creates a
+ * corrective action, mirroring createCorrectiveAction. Direct write, no
+ * HITL gate: per architecture §8 the CAPA shall-workflow's approval gates
+ * are STAGED (triage/root-cause/CA-plan/effectiveness), not at creation —
+ * an agent-proposed CA becomes visible/actionable immediately, exactly as
+ * a human-created one does today; RS-8's stage-aware runCapaAnalysis adds
+ * the staged gates on top of this same substrate.
+ * AgentProposeCorrectiveActionInput has no dueDate (unlike the human-facing
+ * CreateCorrectiveActionInput) — defaults to +14 days, matching the
+ * industry-norm CA turnaround; a human edits it at the plan-approval stage.
+ */
+async function agentProposeCorrectiveAction(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as Record<string, unknown>;
+  const dueDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `INSERT INTO m2.corrective_actions (tenant_id, nc_id, action_desc, owner_id, due_date, status, containment_flag, created_by)
+       VALUES (:tenantId, :ncId::uuid, :actionDesc, :ownerId, :dueDate::timestamptz, 'open', false, :actor)
+       RETURNING *`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'ncId', value: { stringValue: input.ncId as string } },
+        { name: 'actionDesc', value: { stringValue: input.actionDesc as string } },
+        { name: 'ownerId', value: { stringValue: input.suggestedOwnerId as string } },
+        { name: 'dueDate', value: { stringValue: dueDate } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
+    await txn.commit();
+    const ca = marshalOne(result);
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      detailType: 'CAPA.Opened',
+      source: 'cumplify.m2.capa',
+      entityId: String(ca?.id ?? ''),
+      payload: { correctiveActionId: ca?.id, ncId: input.ncId, input, agentProposed: true },
+    });
+    logger.info('Agent-proposed corrective action created', { tenantId });
+    return ca;
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
+}
+
+/**
+ * agentTriageNC (RS-7, CAPAGuru writeback door) — reclassifies an existing
+ * NC's nc_type. Direct write: no SFN-token HITL gate is reachable from this
+ * Lambda (ApiStack) without a circular stack dependency on AiStack's
+ * HitlStateMachine (AiStack already depends on ApiStack for its DB/GraphQL
+ * props) — found at RS-7 build time, documented in the evidence log. The
+ * REAL compliance-gated triage path (architecture §4 CAPA stage 2: "QM/EHS
+ * Mgr accepts classification") is RS-8's job: CAPAGuru's own tool-loop
+ * (already living in AiStack, zero circularity) proposes via enterHitlGate,
+ * and execute-writeback.ts's new 'nc-triage-write' case commits post-
+ * approval — this direct mutation is a separate, ungated utility surface,
+ * not that gated path.
+ */
+async function agentTriageNC(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as Record<string, unknown>;
+  const ncType = mapEnum(NC_TYPE_MAP, input.classification as string, 'classification');
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `UPDATE m2.nonconformities SET nc_type = :ncType, updated_at = NOW(), version = version + 1
+       WHERE id = :ncId::uuid AND tenant_id = :tenantId
+       RETURNING *`,
+      [
+        { name: 'ncType', value: { stringValue: ncType } },
+        { name: 'ncId', value: { stringValue: input.ncId as string } },
+        { name: 'tenantId', value: { stringValue: tenantId } },
+      ],
+    );
+    if (!result.records || result.records.length === 0) {
+      throw new Error('NC_NOT_FOUND');
+    }
+    await txn.commit();
+    const nc = marshalOne(result);
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M2',
+      clauseRef: 'ISO 9001 10.2',
+      standard: 'ISO9001',
+      detailType: 'NC.Triaged',
+      source: 'cumplify.m2.capa',
+      entityId: String(nc?.id ?? ''),
+      payload: { ncId: nc?.id, classification: input.classification, agentTriaged: true },
+    });
+    logger.info('Agent-triaged NC reclassified', { tenantId, ncId: input.ncId });
+    return nc;
   } catch (err) {
     await txn.rollback();
     throw err;

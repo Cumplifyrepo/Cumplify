@@ -8,6 +8,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import {
   extractContext,
+  extractAgentContext,
   beginTenantTransaction,
   publishAuditEvent,
   marshalOne,
@@ -35,6 +36,14 @@ interface AppSyncEvent {
 }
 
 export async function handler(event: AppSyncEvent): Promise<unknown> {
+  // RS-7: agent* (@aws_iam) fields never carry resolverContext — branch
+  // BEFORE extractContext, which would throw for them.
+  if (event.info.fieldName === 'agentDraftDocument') {
+    const { tenantId, actor } = extractAgentContext(event.arguments, 'DocStudio');
+    logger.appendKeys({ tenantId, requestField: event.info.fieldName });
+    return agentDraftDocument(event, tenantId, actor);
+  }
+
   const ctx = extractContext(event);
   const { tenantId, sub } = ctx;
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
@@ -86,6 +95,61 @@ async function createDocumentDraft(event: AppSyncEvent, tenantId: string, actor:
     );
     await txn.commit();
     const doc = marshalOne(result);
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M1',
+      clauseRef: 'ISO 9001 7.5.2',
+      standard: 'ISO9001',
+      detailType: 'Document.DraftCreated',
+      source: 'cumplify.m1.document-studio',
+      entityId: String(doc?.id ?? ''),
+      payload: { documentId: doc?.id, input },
+    });
+    return doc;
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
+}
+
+/**
+ * agentDraftDocument (RS-7, DocStudio writeback door) — creates a DRAFT
+ * document row + its first version in one transaction. Direct write, no
+ * HITL gate: a draft is not record-of-truth (7.5.2's review/approve stages
+ * — submitDocumentForApproval -> approveDocumentVersion, unchanged) are the
+ * existing gate a human already walks through downstream, exactly as for a
+ * human-authored createDocumentDraft.
+ */
+async function agentDraftDocument(event: AppSyncEvent, tenantId: string, actor: string) {
+  const input = event.arguments.input as Record<string, unknown>;
+  const docType = mapEnum(DOC_TYPE_MAP, input.docType as string, 'docType');
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const docResult = await txn.execute(
+      `INSERT INTO m1.documents (tenant_id, standard, doc_type, title, owner_id, status, created_by)
+       VALUES (:tenantId, :standard, :docType, :title, :actor, 'draft', :actor)
+       RETURNING *`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'standard', value: { stringValue: input.standard as string } },
+        { name: 'docType', value: { stringValue: docType } },
+        { name: 'title', value: { stringValue: input.title as string } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
+    const doc = marshalOne(docResult);
+    await txn.execute(
+      `INSERT INTO m1.document_versions (tenant_id, document_id, version_no, content_ref, change_summary, author_id, created_by)
+       VALUES (:tenantId, :documentId::uuid, 1, :contentRef, 'Agent draft', :actor, :actor)`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'documentId', value: { stringValue: String(doc?.id ?? '') } },
+        { name: 'contentRef', value: { stringValue: input.contentRef as string } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    );
+    await txn.commit();
     await publishAuditEvent({
       tenantId,
       actor,

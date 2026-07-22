@@ -69,6 +69,15 @@ describe('schema-guard: schema.graphql invariants', () => {
     // because the agent's IAM principal tag IS the tenant identity on that path.
     const TENANT_ID_ALLOWLIST = new Set([
       'PublishGenerationEventInput', // @aws_iam passthrough; None-DS result = input; GenerationEvent.tenantId non-null
+      // read-surface-completion RS-7 (owner-approved 2026-07-22): the six
+      // agent* writeback-door mutations are @aws_iam-ONLY (no @aws_lambda
+      // fallback) — AppSync's Lambda authorizer, the sole source of
+      // resolverContext, never runs for IAM-signed calls, so there is no
+      // session to derive tenantId from. Explicit input field instead.
+      'AgentDraftDocumentInput',
+      'AgentTriageNCInput',
+      'AgentProposeCorrectiveActionInput',
+      'AgentAssessRiskInput',
     ]);
 
     const offenders = inputBlocks()

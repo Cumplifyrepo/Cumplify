@@ -8,6 +8,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import {
   extractContext,
+  extractAgentContext,
   beginTenantTransaction,
   publishAuditEvent,
   marshalOne,
@@ -23,7 +24,19 @@ interface AppSyncEvent {
   identity?: { resolverContext?: Record<string, string> };
 }
 
+const AGENT_FIELDS = new Set(['agentGenerateChecklist', 'agentScoreReadiness']);
+
 export async function handler(event: AppSyncEvent): Promise<unknown> {
+  // RS-7: agent* (@aws_iam) fields never carry resolverContext — branch
+  // BEFORE extractContext, which would throw for them.
+  if (AGENT_FIELDS.has(event.info.fieldName)) {
+    const { tenantId, actor } = extractAgentContext(event.arguments, 'LeadAuditor');
+    logger.appendKeys({ tenantId, requestField: event.info.fieldName });
+    return event.info.fieldName === 'agentGenerateChecklist'
+      ? generateAuditChecklist(event, tenantId, actor) // one implementation, two entry points
+      : agentScoreReadiness(event, tenantId, actor);
+  }
+
   const ctx = extractContext(event);
   const { tenantId, sub } = ctx;
   logger.appendKeys({ tenantId, requestField: event.info.fieldName });
@@ -240,6 +253,89 @@ async function getAuditReadiness(event: AppSyncEvent, tenantId: string) {
     );
     await txn.commit();
     return marshalMany(result);
+  } catch (err) {
+    await txn.rollback();
+    throw err;
+  }
+}
+
+/**
+ * agentScoreReadiness (RS-7, LeadAuditor writeback door) — upserts
+ * m3.audit_readiness_scores from the honest generation-section status
+ * (spec-40 BC-3: never fabricated). For every registry clause of the
+ * standard, the LATEST qms.generation_sections row covering that clause
+ * (across all this tenant's generation runs) determines the score: 'prose'
+ * or 'na_justified' (a resolved, justified state) = 100; 'gap'/'failed'/
+ * 'pending'/never-generated = 0. Direct write, no HITL gate — computed
+ * scoring, not a compliance decision (matches getAuditReadiness's existing
+ * flat, un-gated read).
+ */
+async function agentScoreReadiness(event: AppSyncEvent, tenantId: string, actor: string) {
+  const standard = event.arguments.standard as string;
+  const txn = await beginTenantTransaction(tenantId);
+  try {
+    const result = await txn.execute(
+      `
+      SELECT cr.clause_no, gs.status
+      FROM qms.clause_registry cr
+      LEFT JOIN LATERAL (
+        SELECT status FROM qms.generation_sections
+        WHERE tenant_id = :tenantId AND cr.id = ANY(clause_registry_ids)
+        ORDER BY created_at DESC LIMIT 1
+      ) gs ON true
+      WHERE cr.standard = :standard
+      ORDER BY cr.sort_order
+    `,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'standard', value: { stringValue: standard } },
+      ],
+    );
+
+    const rows = result.records ?? [];
+    for (const row of rows) {
+      const clauseRef = (row[0] as { stringValue?: string }).stringValue!;
+      const status = (row[1] as { stringValue?: string; isNull?: boolean }).stringValue;
+      const score = status === 'prose' || status === 'na_justified' ? 100.0 : 0.0;
+      await txn.execute(
+        `INSERT INTO m3.audit_readiness_scores (tenant_id, standard, clause_ref, score, assessed_at, created_by)
+         VALUES (:tenantId, :standard, :clauseRef, :score, NOW(), :actor)
+         ON CONFLICT (tenant_id, standard, clause_ref)
+         DO UPDATE SET score = EXCLUDED.score, assessed_at = NOW(), updated_at = NOW(), version = m3.audit_readiness_scores.version + 1
+         RETURNING id`,
+        [
+          { name: 'tenantId', value: { stringValue: tenantId } },
+          { name: 'standard', value: { stringValue: standard } },
+          { name: 'clauseRef', value: { stringValue: clauseRef } },
+          { name: 'score', value: { doubleValue: score } },
+          { name: 'actor', value: { stringValue: actor } },
+        ],
+      );
+    }
+
+    const scoresResult = await txn.execute(
+      `SELECT * FROM m3.audit_readiness_scores WHERE standard = :standard AND tenant_id = :tenantId ORDER BY clause_ref ASC`,
+      [
+        { name: 'standard', value: { stringValue: standard } },
+        { name: 'tenantId', value: { stringValue: tenantId } },
+      ],
+    );
+    await txn.commit();
+
+    await publishAuditEvent({
+      tenantId,
+      actor,
+      module: 'M3',
+      clauseRef: '9.1',
+      standard: standard as 'ISO9001' | 'ISO14001' | 'ISO45001',
+      detailType: 'Readiness.Scored',
+      source: 'cumplify.m3.audit-studio',
+      entityId: standard,
+      payload: { standard, clauseCount: rows.length },
+    });
+
+    logger.info('Agent readiness scoring complete', { tenantId, standard, clauseCount: rows.length });
+    return marshalMany(scoresResult);
   } catch (err) {
     await txn.rollback();
     throw err;

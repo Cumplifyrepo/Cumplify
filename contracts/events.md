@@ -223,6 +223,12 @@ raised, evaluated) belong in the immutable audit trail.
 |-----------|------------|-----------|
 | `Governance.ApprovalMatrixChanged` | true | State transition: tenant approval-matrix entry set/narrowed — routing change must be sealed |
 
+### RS-7 Agent Writeback Events (read-surface-completion RS-7, 2026-07-22)
+| detailType | auditTrail | Rationale |
+|-----------|------------|-----------|
+| `NC.Triaged` | true | State transition: agent reclassified an existing NC's nc_type (agentTriageNC) — distinct from NC.Raised (creation) |
+| `Risk.Assessed` | true | State transition: agent updated an existing risk's likelihood/severity (agentAssessRisk) — distinct from Risk.Created |
+
 ### AI Guardrail Telemetry Events (spec 35 — guardrails-antihallucination)
 
 | detailType | auditTrail | Rationale |
