@@ -108,6 +108,21 @@
     "dispatchError": "No se pudo iniciar la ejecución del agente.",
     "agentRail": "Panel del agente"
   },
+  "capaStudio": {
+    "title": "CAPA Studio",
+    "railLabel": "Panel de CAPAGuru",
+    "reportProblemTitle": "Reportar un problema",
+    "reportProblemHint": "Describa lo ocurrido en lenguaje natural. CAPAGuru lo clasifica, identifica la cláusula ISO aplicable, asigna severidad y redacta la no conformidad — usted revisa y aprueba.",
+    "reportPlaceholder": "¿Qué ocurrió? Dónde, cuándo, qué se vio afectado…",
+    "evidencePlaceholder": "Nota de evidencia (opcional): fotos, registros, referencias…",
+    "draftWithAgent": "Redactar NC con CAPAGuru",
+    "raiseManually": "Registrar manualmente",
+    "analyzeTitle": "Análisis de CAPAGuru",
+    "analyzeHint": "El agente lee el estado actual del CAPA y propone la siguiente etapa pendiente del flujo.",
+    "analyzeNextStep": "Analizar siguiente paso",
+    "auditTrailTitle": "Traza de auditoría",
+    "auditTrailEmpty": "Aún no hay eventos de auditoría para esta no conformidad."
+  },
   "ask": {
     "title": "Preguntar a Cumplify",
     "placeholder": "Haz una pregunta sobre tu SGI...",

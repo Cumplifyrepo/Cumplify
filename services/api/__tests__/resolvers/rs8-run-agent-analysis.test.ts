@@ -133,6 +133,42 @@ describe('runCapaAnalysis (m2.ts)', () => {
   });
 });
 
+describe('runNcIntake (m2.ts, S1 studio wave)', () => {
+  it('dispatches the intake payload to CAPAGuru with requestedBy — no DB reads (nothing exists yet)', async () => {
+    const result = await m2Handler(
+      makeEvent('runNcIntake', {
+        description: 'Cabinet doors delivered with wrong finish on lot 42',
+        evidenceNote: 'Photos attached to job folder',
+      }),
+    );
+
+    expect(result).toEqual({ runId: 'run-fixed-01', status: 'DISPATCHED' });
+    // Stage-1 intake: no NC exists — the resolver must not touch RDS
+    expect(mockExecute).not.toHaveBeenCalled();
+
+    const cmd = mockLambdaSend.mock.calls[0][0] as { input: { FunctionName: string; InvocationType: string; Payload: string } };
+    expect(cmd.input.FunctionName).toBe('arn:aws:lambda:us-east-1:123:function:CapaGuruFn');
+    expect(cmd.input.InvocationType).toBe('Event'); // fire-and-forget
+    const payload = JSON.parse(cmd.input.Payload);
+    expect(payload).toEqual({
+      tenantId: 'tenant-test',
+      runId: 'run-fixed-01',
+      requestedBy: 'user-9', // SOD-1: the reporter cannot approve the draft
+      intake: {
+        description: 'Cabinet doors delivered with wrong finish on lot 42',
+        evidenceNote: 'Photos attached to job folder',
+      },
+    });
+  });
+
+  it('rejects an empty description without invoking the agent', async () => {
+    await expect(m2Handler(makeEvent('runNcIntake', { description: '   ' }))).rejects.toThrow(
+      'VALIDATION',
+    );
+    expect(mockLambdaSend).not.toHaveBeenCalled();
+  });
+});
+
 describe('runRiskAssessment (m5.ts)', () => {
   it('fetches risk, async-invokes RiskSentinel with requestedBy, returns DISPATCHED ack', async () => {
     mockExecute.mockResolvedValueOnce({

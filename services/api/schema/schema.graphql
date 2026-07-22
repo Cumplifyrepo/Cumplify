@@ -636,6 +636,9 @@ type Mutation {
   # RS-8: "AI: draft this" on the M2 CAPA drawer — invokes CAPAGuru with the
   # NC's current stage context, stage-aware per the CAPA shall-workflow.
   runCapaAnalysis(ncId: ID!): AgentRunAck! @aws_lambda
+  # S1 (studio wave): stage-1 intake — plain-language problem report in,
+  # CAPAGuru-drafted NC proposal out (nc-draft-write HITL card).
+  runNcIntake(description: String!, evidenceNote: String): AgentRunAck! @aws_lambda
 
   # M3 — Audit Studio (user-facing)
   createAuditProgramme(input: CreateAuditProgrammeInput!): AuditProgramme! @aws_lambda

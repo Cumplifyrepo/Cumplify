@@ -67,6 +67,8 @@ export async function handler(event: AppSyncEvent): Promise<unknown> {
       return disposeNonconformingOutput(event, tenantId, sub);
     case 'runCapaAnalysis':
       return runCapaAnalysis(event, tenantId, sub);
+    case 'runNcIntake':
+      return runNcIntake(event, tenantId, sub);
     case 'getNonconformity':
       return getNonconformity(event, tenantId);
     case 'listNonconformities':
@@ -389,6 +391,37 @@ async function runCapaAnalysis(event: AppSyncEvent, tenantId: string, actor: str
   );
 
   logger.info('CAPA analysis dispatched', { tenantId, ncId, runId });
+  return { runId, status: 'DISPATCHED' };
+}
+
+/**
+ * runNcIntake (S1, studio wave) — stage-1 intake: the reporter describes
+ * the problem in plain language; CAPAGuru classifies, identifies the
+ * governing clause, sets severity/source and proposes the full NC via the
+ * nc-draft-write HITL tool. Fire-and-forget Event invoke (runCapaAnalysis
+ * pattern); the HITL card is the deliverable, this mutation only acks
+ * dispatch. No DB reads — nothing exists yet.
+ */
+async function runNcIntake(event: AppSyncEvent, tenantId: string, actor: string) {
+  const description = (event.arguments.description as string) ?? '';
+  if (!description.trim()) throw new Error('VALIDATION: description is required');
+  const evidenceNote = event.arguments.evidenceNote as string | undefined;
+
+  const runId = ulid();
+  await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: CAPA_GURU_FN_ARN,
+      InvocationType: 'Event',
+      Payload: JSON.stringify({
+        tenantId,
+        runId,
+        requestedBy: actor,
+        intake: { description, ...(evidenceNote ? { evidenceNote } : {}) },
+      }),
+    }),
+  );
+
+  logger.info('NC intake dispatched', { tenantId, runId });
   return { runId, status: 'DISPATCHED' };
 }
 

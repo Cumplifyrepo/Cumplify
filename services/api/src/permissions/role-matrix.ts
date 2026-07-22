@@ -98,6 +98,7 @@ export const TOOL_MODULES: Record<string, string> = {
   // already mapped these; this map was the missing half of the pair
   // (asymmetry found at RS-7 build time) — added now so RS-8 doesn't hit
   // the same gap.
+  'nc-draft-write': 'M2', // m2.nonconformities (S1 intake: agent-drafted NC creation)
   'nc-triage-write': 'M2', // m2.nonconformities (nc_type reclassification)
   'risk-assessment-write': 'M5', // m5.risks (likelihood/severity update)
 };

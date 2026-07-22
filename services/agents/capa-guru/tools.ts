@@ -9,6 +9,48 @@ import type { ToolConfig } from '../../ai-invoker/src/types.js';
 export const CAPA_GURU_TOOLS: ToolConfig[] = [
   {
     toolSpec: {
+      name: 'nc-draft-write',
+      description:
+        'Draft a NEW nonconformity from a raw problem report (S1 intake): classify it, identify the governing ISO clause, set severity and source. HITL-gated: a human reviews and can edit every field before the NC is created.',
+      inputSchema: {
+        json: {
+          type: 'object',
+          required: ['standard', 'ncType', 'clauseRef', 'severity', 'source', 'description', 'rationale'],
+          properties: {
+            standard: {
+              type: 'string',
+              description: 'Governing standard: ISO9001 | ISO14001 | ISO45001',
+            },
+            ncType: {
+              type: 'string',
+              description: 'One of: nonconforming_output | nc | incident',
+            },
+            clauseRef: {
+              type: 'string',
+              description:
+                'The governing clause number of the chosen standard (e.g. 8.7 for nonconforming outputs, 10.2 for nonconformity and corrective action)',
+            },
+            severity: { type: 'string', description: 'One of: low | medium | high | critical' },
+            source: { type: 'string', description: 'One of: audit | incident | complaint | process' },
+            description: {
+              type: 'string',
+              description: 'The refined, audit-ready problem statement (facts only, no invention)',
+            },
+            containmentNote: {
+              type: 'string',
+              description: 'Optional immediate-containment suggestion',
+            },
+            rationale: {
+              type: 'string',
+              description: 'Why this classification and clause — shown to the approver',
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    toolSpec: {
       name: 'nc-triage-write',
       description:
         'Reclassify an existing nonconformity (architecture §4 CAPA stage 2: triage). HITL-gated: requires human (QM/EHS Manager) approval before commit.',

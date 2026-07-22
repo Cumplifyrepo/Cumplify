@@ -108,6 +108,21 @@
     "dispatchError": "The agent run could not be dispatched.",
     "agentRail": "Agent rail"
   },
+  "capaStudio": {
+    "title": "CAPA Studio",
+    "railLabel": "CAPAGuru rail",
+    "reportProblemTitle": "Report a problem",
+    "reportProblemHint": "Describe what happened in plain language. CAPAGuru classifies it, identifies the governing ISO clause, sets severity and drafts the nonconformity — you review and approve.",
+    "reportPlaceholder": "What happened? Where, when, what was affected…",
+    "evidencePlaceholder": "Evidence note (optional): photos, records, references…",
+    "draftWithAgent": "Draft NC with CAPAGuru",
+    "raiseManually": "Raise manually instead",
+    "analyzeTitle": "CAPAGuru analysis",
+    "analyzeHint": "The agent reads the current CAPA state and proposes the next unresolved workflow stage.",
+    "analyzeNextStep": "Analyze next step",
+    "auditTrailTitle": "Audit trail",
+    "auditTrailEmpty": "No audit events yet for this nonconformity."
+  },
   "ask": {
     "title": "Ask Cumplify",
     "placeholder": "Ask a question about your IMS...",

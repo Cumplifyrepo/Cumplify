@@ -77,6 +77,32 @@ describe('execute-writeback dispatch: schema pinning', () => {
     });
   });
 
+  describe('nc-draft-write (S1 studio wave, m2.nonconformities)', () => {
+    const fnBody = () =>
+      WRITEBACK_CODE.slice(
+        WRITEBACK_CODE.indexOf('async function executeNcDraftWrite'),
+        WRITEBACK_CODE.indexOf('async function executeNcTriageWrite'),
+      );
+
+    it('INSERTs a NEW nonconformity — stage-1 intake creates, never updates', () => {
+      expect(fnBody()).toMatch(/INSERT INTO m2\.nonconformities/);
+      expect(fnBody()).not.toContain('UPDATE ');
+    });
+
+    it('scopes tenant_id via current_setting (RLS pattern) and mirrors raiseNonconformity columns', () => {
+      expect(fnBody()).toContain("current_setting('app.tenant_id')");
+      for (const col of ['standard', 'source', 'nc_type', 'description', 'clause_ref', 'severity', 'raised_by']) {
+        expect(fnBody()).toContain(col);
+      }
+      // Born open, like every human-raised NC (migration 003 status CHECK)
+      expect(fnBody()).toContain("'open'");
+    });
+
+    it('actor lands in raised_by/created_by — the dual-attribution writeback actor string', () => {
+      expect(fnBody()).toContain(':actor');
+    });
+  });
+
   describe('nc-triage-write (RS-8, m2.nonconformities)', () => {
     it('UPDATEs nc_type, never INSERTs a new row (this is a reclassification, not a create)', () => {
       const fnBody = WRITEBACK_CODE.slice(
@@ -150,6 +176,7 @@ describe('execute-writeback dispatch: schema pinning', () => {
         'audit-finding-write',
         'audit-checklist-gen',
         'records-retention-schedule',
+        'nc-draft-write',
         'nc-triage-write',
         'risk-assessment-write',
         'ct-governance-write',

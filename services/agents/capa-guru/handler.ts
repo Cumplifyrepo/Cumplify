@@ -31,7 +31,12 @@ import { CAPA_GURU_TOOLS } from './tools.js';
 const DLQ_URL = process.env.DLQ_URL!;
 const AOSS_ENDPOINT = process.env.AOSS_NC_HISTORY_ENDPOINT!;
 
-const HITL_TOOLS = new Set(['nc-triage-write', 'capa-open', 'capa-verify-effectiveness']);
+const HITL_TOOLS = new Set([
+  'nc-draft-write',
+  'nc-triage-write',
+  'capa-open',
+  'capa-verify-effectiveness',
+]);
 const invokeFn = createInvokeFn();
 
 async function processEvent(event: CumplifyEvent, _detailType: string): Promise<void> {
@@ -163,15 +168,72 @@ export async function runCapaAnalysis(input: RunAnalysisInput): Promise<RunAnaly
   };
 }
 
+// ─── S1 intake path (runNcIntake) ───────────────────────────────────────────
+
+export interface RunIntakeInput {
+  tenantId: string;
+  runId: string;
+  /** S1 SOD-1: the human who submitted the problem report. */
+  requestedBy: string;
+  intake: {
+    description: string;
+    evidenceNote?: string;
+  };
+}
+
+/**
+ * Stage-1 intake: a raw problem report, no NC exists yet. CAPAGuru
+ * classifies, identifies the governing clause, sets severity/source and
+ * proposes the full NC via the nc-draft-write HITL tool — the human
+ * approver reviews (and can edit) every field before the NC is created.
+ */
+export async function runNcIntake(input: RunIntakeInput): Promise<RunAnalysisResult> {
+  const { tenantId, requestedBy, intake } = input;
+
+  const userMessage = [
+    `INTAKE MODE. A raw problem report follows — no nonconformity exists yet.`,
+    `Draft the NC via nc-draft-write (classify, identify the governing clause,`,
+    `set severity and source, rewrite the description audit-ready).`,
+    `\nProblem report: ${intake.description}`,
+    ...(intake.evidenceNote ? [`\nReporter's evidence note: ${intake.evidenceNote}`] : []),
+  ].join('\n');
+
+  const result = await toolLoop([{ role: 'user', content: [{ text: userMessage }] }], {
+    seat: 'workhorse',
+    systemPrompt: CAPA_GURU_PROMPT,
+    tools: CAPA_GURU_TOOLS,
+    tenantId,
+    agent: 'CAPAGuru',
+    module: 'M2',
+    feature: 'capa-intake',
+    hitlTools: HITL_TOOLS,
+    requestedBy,
+    invokeFn,
+    dispatchTool: async (toolName, toolInput, tid) => ({
+      output: { toolName, input: toolInput, tenantId: tid },
+      requiresHitl: false,
+    }),
+  });
+
+  return {
+    runId: input.runId,
+    status: result.hitlResult ? 'PENDING_APPROVAL' : 'NO_PROPOSAL',
+  };
+}
+
 /**
  * Lambda entry point — dispatches on event shape. SQS always delivers
- * {Records: [...]}; runCapaAnalysis's direct invoke never does.
+ * {Records: [...]}; runCapaAnalysis's direct invoke never does; the S1
+ * intake payload is the only shape carrying `intake`.
  */
 export async function handler(
-  event: SQSEvent | RunAnalysisInput,
+  event: SQSEvent | RunAnalysisInput | RunIntakeInput,
 ): Promise<SQSBatchResponse | RunAnalysisResult> {
   if ('Records' in event) {
     return sqsHandler(event);
+  }
+  if ('intake' in event) {
+    return runNcIntake(event);
   }
   return runCapaAnalysis(event);
 }

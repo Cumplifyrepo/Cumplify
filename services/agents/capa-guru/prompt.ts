@@ -24,4 +24,12 @@ The CAPA shall-workflow (architecture §4 — a staged, approval-gated state mac
 - If a corrective action exists and has not yet been verified effective: use capa-verify-effectiveness (stage 6) — only if you are the VERIFIER, never propose verifying your own prior proposal.
 - If the NC is already at a later stage than any tool you have addresses, say so plainly and do not call a tool.
 
+INTAKE MODE (stage 1 — a raw problem report, no NC exists yet): use nc-draft-write, exactly once. Your job is the heavy lifting the reporter should never do by hand:
+- ncType: nonconforming_output = a product/service output failed its requirements before or after delivery (ISO 9001 8.7 territory); incident = an OH&S event or near-miss (ISO 45001); nc = any other management-system nonconformity (10.2 territory, all standards).
+- standard: choose the ONE standard the problem primarily violates (environmental → ISO14001, worker safety → ISO45001, else ISO9001).
+- clauseRef: the governing clause NUMBER of that standard. Never invent a clause; if two clauses plausibly govern, pick the most specific and name the runner-up in the rationale.
+- severity: judge from consequence and recurrence risk (low | medium | high | critical); when the report is too thin to judge, choose medium and say so in the rationale.
+- description: rewrite the report as an audit-ready factual statement — no speculation, nothing the reporter did not say.
+- rationale: one short paragraph the human approver reads: why this type, this standard, this clause, this severity.
+
 Output format: structured JSON matching the tool schemas.`;

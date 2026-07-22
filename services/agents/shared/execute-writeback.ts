@@ -288,6 +288,8 @@ async function dispatchToolWrite(
       return executeChecklistGen(action.args, tenantId, transactionId, actor);
     case 'records-retention-schedule':
       return executeRecordsRetentionSchedule(action.args, tenantId, transactionId, actor);
+    case 'nc-draft-write':
+      return executeNcDraftWrite(action.args, tenantId, transactionId, actor);
     case 'nc-triage-write':
       return executeNcTriageWrite(action.args, tenantId, transactionId, actor);
     case 'risk-assessment-write':
@@ -577,6 +579,46 @@ async function executeRecordsRetentionSchedule(
 }
 
 /**
+ * S1 (studio wave): nc-draft-write — CAPAGuru's stage-1 intake proposal,
+ * approved: create the NC the agent drafted (classification, clause,
+ * severity, source all agent-identified, human-reviewed/edited).
+ * Values arrive DB-lowercase from the tool schema (standard stays
+ * uppercase — the column stores 'ISO9001' etc.); CHECK constraints are
+ * the backstop. containmentNote/rationale have no register columns —
+ * they live in the Agent.WritebackCommitted audit payload (writeResult
+ * echoes args), same convention as risk-assessment-write's rationale.
+ */
+async function executeNcDraftWrite(
+  args: Record<string, unknown>,
+  _tenantId: string,
+  transactionId: string,
+  actor: string,
+): Promise<Record<string, unknown>> {
+  const result = await rds.send(
+    new ExecuteStatementCommand({
+      resourceArn: CLUSTER_ARN,
+      secretArn: SECRET_ARN,
+      database: DB_NAME,
+      transactionId,
+      sql: `INSERT INTO m2.nonconformities
+              (tenant_id, standard, source, nc_type, description, clause_ref, severity, status, raised_by, raised_at, created_by)
+            VALUES (current_setting('app.tenant_id'), :standard, :source, :ncType, :description, :clauseRef, :severity, 'open', :actor, NOW(), :actor)
+            RETURNING id, nc_type, clause_ref, severity, standard`,
+      parameters: [
+        { name: 'standard', value: { stringValue: args.standard as string } },
+        { name: 'source', value: { stringValue: args.source as string } },
+        { name: 'ncType', value: { stringValue: args.ncType as string } },
+        { name: 'description', value: { stringValue: args.description as string } },
+        { name: 'clauseRef', value: { stringValue: args.clauseRef as string } },
+        { name: 'severity', value: { stringValue: args.severity as string } },
+        { name: 'actor', value: { stringValue: actor } },
+      ],
+    }),
+  );
+  return writtenRow(result);
+}
+
+/**
  * RS-8: nc-triage-write — CAPAGuru's stage-2 reclassification proposal,
  * approved. classification arrives DB-lowercase already (the tool's
  * inputSchema instructs the model directly — 'nonconforming_output'|'nc'|
@@ -674,6 +716,7 @@ async function emitWritebackAuditEvent(opts: {
     'audit-checklist-gen': 'M3',
     'records-retention-schedule': 'M4',
     'ct-governance-write': 'cross-standard',
+    'nc-draft-write': 'M2',
     'nc-triage-write': 'M2',
     'risk-assessment-write': 'M5',
   };

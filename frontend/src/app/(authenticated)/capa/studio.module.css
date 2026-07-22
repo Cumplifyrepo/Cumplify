@@ -1,0 +1,61 @@
+.railHint {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+.intakeInput,
+.evidenceInput {
+  width: 100%;
+  padding: var(--space-sm);
+  font-size: 13px;
+  color: var(--color-text-heading);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  resize: vertical;
+  font-family: inherit;
+  margin-bottom: var(--space-sm);
+}
+
+.intakeInput:focus,
+.evidenceInput:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.manualFallback {
+  margin-top: var(--space-sm);
+}
+
+.trailList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.trailRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.trailRow:last-child {
+  border-bottom: none;
+}
+
+.trailType {
+  font-size: 13px;
+  color: var(--color-text-heading);
+}
+
+.trailMeta {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}

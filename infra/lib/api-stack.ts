@@ -661,6 +661,11 @@ export class ApiStack extends cdk.Stack {
       typeName: 'Mutation',
       fieldName: 'runCapaAnalysis',
     });
+    // S1 (studio wave) — stage-1 intake dispatch, same m2 DS + invoke grant.
+    const runNcIntakeResolver = m2DS.createResolver('RunNcIntake', {
+      typeName: 'Mutation',
+      fieldName: 'runNcIntake',
+    });
     // M3
     m3DS.createResolver('CreateAuditProgramme', {
       typeName: 'Mutation',
@@ -1328,6 +1333,7 @@ export class ApiStack extends cdk.Stack {
       setApprovalMatrixEntryResolver,
       saveDocumentSectionEditResolver,
       runCapaAnalysisResolver,
+      runNcIntakeResolver,
       runRiskAssessmentResolver,
     ]) {
       r.node.addDependency(schemaResource);

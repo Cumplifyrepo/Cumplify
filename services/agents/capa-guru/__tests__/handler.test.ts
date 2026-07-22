@@ -42,7 +42,7 @@ beforeEach(() => {
   process.env.AOSS_NC_HISTORY_ENDPOINT = 'https://mock.aoss.amazonaws.com';
 });
 
-import { handler, runCapaAnalysis } from '../handler.js';
+import { handler, runCapaAnalysis, runNcIntake } from '../handler.js';
 
 describe('CAPAGuru handler() dispatch', () => {
   it('routes SQS-shaped events ({Records:[...]}) to the SQS path', async () => {
@@ -95,14 +95,16 @@ describe('runCapaAnalysis', () => {
     },
   };
 
-  it('threads requestedBy + all three HITL tools into toolLoop (SOD-1, stage-aware set)', async () => {
+  it('threads requestedBy + all four HITL tools into toolLoop (SOD-1, stage-aware set + S1 intake)', async () => {
     mockToolLoop.mockResolvedValueOnce({ finalResponse: 'ok', turns: 1, totalUsage: { inputTokens: 1, outputTokens: 1 } });
 
     await runCapaAnalysis(baseInput);
 
     const [, opts] = mockToolLoop.mock.calls[0];
     expect(opts.requestedBy).toBe('user-9');
-    expect(opts.hitlTools).toEqual(new Set(['nc-triage-write', 'capa-open', 'capa-verify-effectiveness']));
+    expect(opts.hitlTools).toEqual(
+      new Set(['nc-draft-write', 'nc-triage-write', 'capa-open', 'capa-verify-effectiveness']),
+    );
     expect(opts.agent).toBe('CAPAGuru');
     expect(opts.module).toBe('M2');
   });
@@ -146,5 +148,64 @@ describe('runCapaAnalysis', () => {
 
     const result = await runCapaAnalysis(baseInput);
     expect(result).toEqual({ runId: 'run-42', status: 'NO_PROPOSAL' });
+  });
+});
+
+describe('runNcIntake (S1 studio wave)', () => {
+  const intakeInput = {
+    tenantId: 'tenant-1',
+    runId: 'run-77',
+    requestedBy: 'user-9',
+    intake: {
+      description: 'Cabinet doors delivered with wrong finish on lot 42',
+      evidenceNote: 'Photos in job folder',
+    },
+  };
+
+  it('handler() routes intake-shaped events to runNcIntake', async () => {
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'ok',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+    });
+
+    const result = await handler(intakeInput);
+
+    expect(mockSqsHandler).not.toHaveBeenCalled();
+    expect(mockToolLoop).toHaveBeenCalledOnce();
+    expect(result).toEqual({ runId: 'run-77', status: 'NO_PROPOSAL' });
+  });
+
+  it('prompts INTAKE MODE with the raw report + evidence note, requestedBy threaded (SOD-1)', async () => {
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'ok',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+    });
+
+    await runNcIntake(intakeInput);
+
+    const [messages, opts] = mockToolLoop.mock.calls[0];
+    const text = messages[0].content[0].text as string;
+    expect(text).toContain('INTAKE MODE');
+    expect(text).toContain('Cabinet doors delivered with wrong finish on lot 42');
+    expect(text).toContain('Photos in job folder');
+    expect(text).toContain('nc-draft-write');
+    expect(opts.requestedBy).toBe('user-9');
+    expect(opts.feature).toBe('capa-intake');
+    // The intake tool must be HITL-gated — the reporter never bypasses review
+    expect(opts.hitlTools.has('nc-draft-write')).toBe(true);
+  });
+
+  it('status is PENDING_APPROVAL when the draft enters the HITL gate', async () => {
+    mockToolLoop.mockResolvedValueOnce({
+      finalResponse: 'proposed',
+      turns: 1,
+      totalUsage: { inputTokens: 1, outputTokens: 1 },
+      hitlResult: { hitlItemId: 'h-1' },
+    });
+
+    const result = await runNcIntake(intakeInput);
+    expect(result).toEqual({ runId: 'run-77', status: 'PENDING_APPROVAL' });
   });
 });
