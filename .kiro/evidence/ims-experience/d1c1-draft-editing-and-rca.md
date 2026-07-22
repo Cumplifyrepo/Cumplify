@@ -61,3 +61,29 @@ Chain (runNcIntake/runDocDraft patterns throughout):
 Live witnesses follow the deploy: (D1) edit a draft section → Save version →
 version list gains a row; (C1) 5-Whys click on an NC → structured card
 PENDING.
+
+## Live witnesses (f740d87 deployed, exit 0)
+
+First witness run (df17072) FAILED and caught two more defects → D1.1:
+- **AccessDenied on the first-ever live Save**: the m1 resolver Lambda had
+  s3:GetObject only — RS-9 shipped fully tested with zero callers, so the
+  missing PutObject/KMS-encrypt grant was invisible until a real click.
+  Reproduced via API probe (exact IAM denial captured), granted at
+  writeback-parity scope (tenants/*).
+- **Tracked-changes noise**: one entry per Tiptap keystroke burst (4
+  identical rows per sentence on the live card) — consecutive pending edits
+  by the same user now coalesce (pinned).
+- Also verified CORRECT: GAP-kind clause docs (e.g. Continual improvement
+  10.3) intentionally show the non-editable gap notice — nothing to edit
+  until the gap fills.
+
+Second run (f740d87) PASSED both legs:
+- **D1**: "Leadership and commitment (5.1)" (prose draft) → typed an
+  amendment in Tiptap → **Save version** → version history went [v1] →
+  [v2, v1]. Editor shot: screenshots/d1-editor-prose-draft.png.
+- **C1**: calibration NC → **5 Whys with CAPAGuru** → PENDING RCA-WRITE card
+  (screenshots/c1-rca-5whys-card.png): METHOD 5why chip, numbered chain
+  (records missing → not documented → procedure not followed → technician
+  untrained → curriculum outdated), ROOT CAUSE highlighted and SYSTEMIC
+  ("outdated training curriculum…"), rationale, raw JSON behind disclosure,
+  Approve / Edit & approve / Send back. Left PENDING (SoD).
