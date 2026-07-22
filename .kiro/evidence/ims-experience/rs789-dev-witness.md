@@ -73,7 +73,36 @@ The RiskSentinel item was left PENDING untouched.
 | RS-9 resolver wired | PASS (typed error; e2e blocked on demo-data gap) |
 | RS-7 agent* mutations | Not directly witnessed (IAM-only fields need a SigV4 caller; hermetic tests + the deployed schema carry them for now — flagged, not hidden) |
 
+## SOD-1 RE-WITNESS (post-1dc3df7 deploy) — PASS
+
+1dc3df7 deployed via execution `0afe064a` (one self-mutation restart from
+`00d1e222`, execution-ID cross-check held); Dev-AiStack UPDATE_COMPLETE
+2026-07-22T12:32:29Z, StoreTokenFn LastModified 12:32:36Z. Re-witness
+`scratchpad/witness_sod1_rewitness.py` at 12:36:36Z–12:36:57Z, exit 0,
+7/7 OK — same leg, same user (acc-aaa-admin), same NC:
+
+| Step | Result |
+|---|---|
+| runCapaAnalysis on NC 63fe7200 (IN_PROGRESS) | `{runId: 01KY4X80J07413YDVSS00E4305, DISPATCHED}` |
+| NEW CAPAGuru HITL item | `01KY4X8410DP4AY5NP7Q43R723` at t+15s (again stage-aware: capa-verify-effectiveness) |
+| Proposer self-approves | **REJECTED: "SoD violation: the proposer cannot approve their own item"** |
+| Item state after rejection | still PENDING (approval did not commit) |
+
+Raw-data note: a direct DDB read of the item was attempted for belt-and-
+braces but the `cumplify-dev-readonly` role lacks kms:Decrypt on the
+table CMK (AccessDeniedException — correct posture, not widened). The
+behavior proof subsumes it: hitl-approval.ts Step 7a reads
+`item.requestedBy` FROM THE DDB ITEM and rejects only on match with the
+approver's sub — the 403 firing is existence proof of the persisted field.
+
+**SOD-1 verdict flips FAIL → PASS. The full enforcement order (FLOOR →
+SOD-1 → matrix narrowing) is now live-witnessed end-to-end.** The
+PENDING item `01KY4X8410DP4AY5NP7Q43R723` is left for a second-approver /
+Checkpoint B demo; the RiskSentinel item from the first witness also
+remains PENDING.
+
 ## Open follow-ups
-1. Re-witness SOD-1 after this commit deploys (self-approve → expect 403).
+1. ~~Re-witness SOD-1 after this commit deploys (self-approve → expect 403).~~
+   DONE — PASS, see above.
 2. Owner demo-data decision still gates /manual, /documents e2e, RS-9 e2e.
 3. RS-7 SigV4 live probe — fold into the next witness pass.
