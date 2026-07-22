@@ -183,10 +183,16 @@ plane (one-door bedrock-invoker; credits metered; guardrails applied):
 `AgentRunAck { runId: ID!, status: String! }` — async ack; the HITL card is
 the deliverable (surfaces in Command Center queue + `/ai-review` + the
 originating drawer). UI: an "AI: draft this" primary action on the M2 CAPA
-drawer and the `/risk` register row/drawer. Frontend copy in en/es/pt
-same-commit. Acceptance: int-lane witness — click → run → HITL card with
-guardrail evidence → approve → row updated + sealed event; SoD floor holds
-(§6d).
+drawer and the `/risk` register row/drawer. **Per the COLLABORATION LAW
+(architecture §3): the card renders the artifact as an EDITOR (human edits
+attributed separately from agent contributions) and carries an
+Iterate-with-agent thread (artifact-scoped, routed to the owning agent;
+each iteration re-versions the artifact). Approval seals the CONVERGED
+version — approve/reject-only cards are a defect.** Frontend copy in
+en/es/pt same-commit. Acceptance: int-lane witness — click → run → HITL
+card → human EDITS one node + one agent ITERATION revises the artifact →
+approve converged version → row updated + sealed event with dual
+attribution; SoD floor holds (§6d).
 
 ### 8. Non-functional / gates
 - Hermetic lane stays hermetic (fake AWS creds; unmocked clients fail loudly).

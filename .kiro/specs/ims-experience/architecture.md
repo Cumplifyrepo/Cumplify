@@ -76,6 +76,23 @@ schedules + drafts; retention expiry → RecordsVault disposition task;
 unassigned role → readiness gap; every matrix change → audit event. The
 matrices are the agents' operating contracts, not settings pages.
 
+**THE COLLABORATION LAW (owner ruling 2026-07-21):** every agent artifact
+is a WORKSPACE, not a verdict. The human must be able to (a) **edit the
+artifact directly** — the visual components (§P4 Visual-Method components,
+Tiptap docs, checklists, risk assessments, review packs) are EDITORS, not
+viewers; human edits and agent contributions are separately attributed in
+the version history and the trail (ES-4 actor attribution); and (b)
+**interact with the owning agent ON the artifact** — an artifact-scoped
+conversation thread (Ask-plane pattern, routed to the owning agent with
+the artifact JSON as context) where the human directs revisions
+("regenerate this branch", "justify this cause", "add supplier-side
+causes") and the agent revises the SAME artifact, versioned per iteration.
+Draft → edit/iterate → CONVERGED → then the approval-matrix gate seals the
+converged version. Approve/reject-only HITL cards are a defect; every card
+offers Edit and Iterate-with-agent. Document Studio's tracked-changes
+editor is this law applied to documents; CAPA Studio's visual methods are
+this law applied to analyses — the law binds EVERY agent output.
+
 **THE AGENT-FIRST LAW (owner ruling 2026-07-21, Checkpoint A):** a surface
 is NOT DONE until its agent does the heavy lifting THROUGH it. Every
 register/studio ships its agent action(s) — draft / triage / assess /
