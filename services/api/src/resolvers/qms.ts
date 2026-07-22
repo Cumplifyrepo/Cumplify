@@ -760,14 +760,15 @@ async function regenerateSection(event: AppSyncEvent, tenantId: string, actor: s
  * READS ONLY here: run finalized guard + section + clauses + profile ride
  * in the payload so the agent never touches the DB.
  */
-const QMS_DOC_STUDIO_FN_ARN = process.env.DOC_STUDIO_FN_ARN ?? '';
-
 async function runManualSectionDraft(event: AppSyncEvent, tenantId: string, actor: string) {
+  // Read at call time (not module load) — hermetic tests set the env after
+  // the hoisted import has already evaluated the module body.
+  const docStudioFnArn = process.env.DOC_STUDIO_FN_ARN ?? '';
   const generationRunId = (event.arguments.runId as string) ?? '';
   const harmonizationKey = (event.arguments.harmonizationKey as string) ?? '';
   if (!generationRunId.trim() || !harmonizationKey.trim())
     throw new Error('BAD_REQUEST: runId and harmonizationKey required');
-  if (!QMS_DOC_STUDIO_FN_ARN) throw new Error('DOC_STUDIO_NOT_AVAILABLE');
+  if (!docStudioFnArn) throw new Error('DOC_STUDIO_NOT_AVAILABLE');
 
   const txn = await beginTenantTransaction(tenantId);
   let sectionKind: string;
@@ -831,7 +832,7 @@ async function runManualSectionDraft(event: AppSyncEvent, tenantId: string, acto
   const runId = ulid();
   await lambdaClient.send(
     new InvokeCommand({
-      FunctionName: QMS_DOC_STUDIO_FN_ARN,
+      FunctionName: docStudioFnArn,
       InvocationType: 'Event',
       Payload: JSON.stringify({
         tenantId,
@@ -848,18 +849,10 @@ async function runManualSectionDraft(event: AppSyncEvent, tenantId: string, acto
     }),
   );
 
-  await publishAuditEvent({
-    tenantId,
-    actor,
-    module: 'M1',
-    clauseRef: 'ISO 9001 7.5.1',
-    standard: 'ISO9001',
-    detailType: 'Agent.RunRequested',
-    source: 'cumplify.qms.manual-studio',
-    entityId: runId,
-    payload: { agent: 'DocStudio', feature: 'manual-section-draft', generationRunId, harmonizationKey },
-  });
-
+  // No audit event at dispatch — parity with runNcIntake/runDocDraft: the
+  // HITL plane audits gate-entry/approval, and the registry is fail-closed
+  // (found live 2026-07-22: unregistered 'Agent.RunRequested' threw AFTER the
+  // Event-invoke, erroring the mutation while the agent run proceeded).
   logger.info('Manual section draft dispatched', { tenantId, runId, generationRunId, harmonizationKey });
   return { runId, status: 'DISPATCHED' };
 }

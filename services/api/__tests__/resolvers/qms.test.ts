@@ -6,11 +6,23 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockExecute, mockCommit, mockRollback, mockPublishAuditEvent } = vi.hoisted(() => ({
-  mockExecute: vi.fn(),
-  mockCommit: vi.fn(),
-  mockRollback: vi.fn(),
-  mockPublishAuditEvent: vi.fn(),
+const { mockExecute, mockCommit, mockRollback, mockPublishAuditEvent, mockLambdaSend } = vi.hoisted(
+  () => ({
+    mockExecute: vi.fn(),
+    mockCommit: vi.fn(),
+    mockRollback: vi.fn(),
+    mockPublishAuditEvent: vi.fn(),
+    mockLambdaSend: vi.fn(),
+  }),
+);
+
+vi.mock('@aws-sdk/client-lambda', () => ({
+  LambdaClient: class {
+    send = mockLambdaSend;
+  },
+  InvokeCommand: class {
+    constructor(public input: unknown) {}
+  },
 }));
 
 vi.mock('../../src/resolvers/shared.js', async (importOriginal) => {
@@ -35,6 +47,9 @@ vi.mock('@aws-lambda-powertools/logger', () => ({
     appendKeys = vi.fn();
   },
 }));
+
+// S3: captured at module load — must exist before the import below
+process.env.DOC_STUDIO_FN_ARN = 'arn:aws:lambda:us-east-1:123:function:cumplify-doc-studio-test';
 
 import { handler } from '../../src/resolvers/qms.js';
 
@@ -616,5 +631,84 @@ describe('canApprove role gate on QMS mutations', () => {
 
     // SQL executed (gate passed)
     expect(mockExecute).toHaveBeenCalled();
+  });
+});
+
+describe('runManualSectionDraft (S3 Manual Studio)', () => {
+  const PROFILE = JSON.stringify({ legalName: 'Meridian Design-Build LLC', documentLocale: 'en' });
+
+  function wireReads() {
+    // 1: run+profile (raw records access), 2: section (marshalOne), 3: clauses (marshalMany)
+    mockExecute
+      .mockResolvedValueOnce({
+        records: [[{ stringValue: 'doc-manual-1' }, { stringValue: PROFILE }]],
+        columnMetadata: [{ name: 'manual_document_id' }, { name: 'payload' }],
+      })
+      .mockResolvedValueOnce({
+        records: [[{ stringValue: 'GAP' }, { arrayValue: { stringValues: ['c-41'] } }]],
+        columnMetadata: [{ name: 'status' }, { name: 'clause_registry_ids' }],
+      })
+      .mockResolvedValueOnce({
+        records: [
+          [
+            { stringValue: 'ISO9001' },
+            { stringValue: '4.1' },
+            { stringValue: 'Understanding the organization' },
+            { stringValue: 'Determine external and internal issues' },
+            { stringValue: '["profile.legalName"]' },
+          ],
+        ],
+        columnMetadata: [
+          { name: 'standard' },
+          { name: 'clause_no' },
+          { name: 'clause_title' },
+          { name: 'intent_paraphrase' },
+          { name: 'required_sources' },
+        ],
+      });
+  }
+
+  beforeEach(() => {
+    mockLambdaSend.mockReset().mockResolvedValue({});
+  });
+
+  it('reads context, Event-invokes DocStudio with sectionDraftIntent, acks DISPATCHED — and publishes NO audit event (fail-closed registry, found live 2026-07-22)', async () => {
+    wireReads();
+    const result = (await handler(
+      makeEvent('runManualSectionDraft', { runId: 'genrun-1', harmonizationKey: '4.2' }),
+    )) as { runId: string; status: string };
+
+    expect(result.status).toBe('DISPATCHED');
+    expect(result.runId).toBeTruthy();
+
+    expect(mockLambdaSend).toHaveBeenCalledOnce();
+    const cmd = mockLambdaSend.mock.calls[0][0] as { input: { InvocationType: string; Payload: string } };
+    expect(cmd.input.InvocationType).toBe('Event');
+    const payload = JSON.parse(cmd.input.Payload);
+    expect(payload.sectionDraftIntent.generationRunId).toBe('genrun-1');
+    expect(payload.sectionDraftIntent.harmonizationKey).toBe('4.2');
+    expect(payload.sectionDraftIntent.sectionKind).toBe('gap');
+    expect(payload.sectionDraftIntent.clauses[0].clauseNo).toBe('4.1');
+    expect(payload.sectionDraftIntent.orgProfile.legalName).toBe('Meridian Design-Build LLC');
+    expect(payload.requestedBy).toBe('user-test');
+
+    // The dispatch must NOT audit — 'Agent.RunRequested' is unregistered and
+    // the registry throws AFTER the invoke, failing the mutation while the
+    // agent run proceeds (the S3 witness failure). HITL plane owns the trail.
+    expect(mockPublishAuditEvent).not.toHaveBeenCalled();
+  });
+
+  it('SECTION_NOT_FOUND when the harmonization key does not exist on the run', async () => {
+    mockExecute
+      .mockResolvedValueOnce({
+        records: [[{ stringValue: 'doc-manual-1' }, { stringValue: PROFILE }]],
+        columnMetadata: [{ name: 'manual_document_id' }, { name: 'payload' }],
+      })
+      .mockResolvedValueOnce({ records: [], columnMetadata: [] });
+
+    await expect(
+      handler(makeEvent('runManualSectionDraft', { runId: 'genrun-1', harmonizationKey: 'nope' })),
+    ).rejects.toThrow('SECTION_NOT_FOUND');
+    expect(mockLambdaSend).not.toHaveBeenCalled();
   });
 });
