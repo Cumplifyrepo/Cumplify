@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { HitlQueuePanel } from './HitlQueuePanel';
 
 // ----- Mocks -----
@@ -353,6 +353,114 @@ describe('HitlQueuePanel', () => {
       expect(mockQuery).toHaveBeenCalledTimes(2);
       const secondCallVars = mockQuery.mock.calls[1][1];
       expect(secondCallVars.pagination.nextToken).toBe('page2-token');
+    });
+
+    // HR1-POLL-1 amendment: these three FAIL on 609f5b0's replace-and-reset poll.
+
+    it('a loaded page SURVIVES a poll cycle (HR1-POLL-1)', async () => {
+      vi.useFakeTimers();
+      try {
+        const page2Item = { ...unflaggedItem, hitlItemId: 'item-page2' };
+        mockQuery
+          .mockResolvedValueOnce({
+            listPendingHitlItems: { items: [unflaggedItem], nextToken: 'page2-token' },
+          })
+          .mockResolvedValueOnce({
+            listPendingHitlItems: { items: [page2Item], nextToken: null },
+          })
+          // every poll tick thereafter: page-1 window only
+          .mockResolvedValue({
+            listPendingHitlItems: { items: [unflaggedItem], nextToken: 'page2-token' },
+          });
+
+        render(<HitlQueuePanel />);
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(0);
+        });
+        fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(0);
+        });
+        expect(screen.getByTestId('hitl-card-item-page2')).toBeInTheDocument();
+
+        // Cross the 15s poll interval — the page-1 refresh must keep the tail
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(15_000);
+        });
+        expect(screen.getByTestId('hitl-card-item-page2')).toBeInTheDocument();
+        expect(screen.getByTestId('hitl-card-item-1')).toBeInTheDocument();
+        expect(screen.getAllByTestId(/^hitl-card-/)).toHaveLength(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('overlapping cursor windows never duplicate a card (HR1-DUP-1)', async () => {
+      const sharedItem = { ...unflaggedItem, hitlItemId: 'item-shared' };
+      const page2Only = { ...unflaggedItem, hitlItemId: 'item-21' };
+      mockQuery
+        .mockResolvedValueOnce({
+          listPendingHitlItems: { items: [unflaggedItem, sharedItem], nextToken: 'p2' },
+        })
+        // window shifted between fetches: page 2 re-serves sharedItem
+        .mockResolvedValueOnce({
+          listPendingHitlItems: { items: [sharedItem, page2Only], nextToken: null },
+        });
+
+      render(<HitlQueuePanel />);
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'Load more' })).toBeInTheDocument(),
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+      await waitFor(() =>
+        expect(screen.getByTestId('hitl-card-item-21')).toBeInTheDocument(),
+      );
+      expect(screen.getAllByTestId('hitl-card-item-shared')).toHaveLength(1);
+      expect(screen.getAllByTestId(/^hitl-card-/)).toHaveLength(3);
+    });
+
+    it('poll does not clobber a deeper cursor — next Load more uses the deep token', async () => {
+      vi.useFakeTimers();
+      try {
+        const p2Item = { ...unflaggedItem, hitlItemId: 'item-p2' };
+        const p3Item = { ...unflaggedItem, hitlItemId: 'item-p3' };
+        mockQuery
+          .mockResolvedValueOnce({
+            listPendingHitlItems: { items: [unflaggedItem], nextToken: 'p2' },
+          })
+          .mockResolvedValueOnce({
+            listPendingHitlItems: { items: [p2Item], nextToken: 'p3' },
+          })
+          // poll tick returns a SHALLOWER page-1 token
+          .mockResolvedValueOnce({
+            listPendingHitlItems: { items: [unflaggedItem], nextToken: 'p1x' },
+          })
+          .mockResolvedValueOnce({
+            listPendingHitlItems: { items: [p3Item], nextToken: null },
+          });
+
+        render(<HitlQueuePanel />);
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(0);
+        });
+        fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(0);
+        });
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(15_000); // poll tick (p1x)
+        });
+        fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(0);
+        });
+        expect(screen.getByTestId('hitl-card-item-p3')).toBeInTheDocument();
+        expect(mockQuery).toHaveBeenCalledTimes(4);
+        const lastVars = mockQuery.mock.calls[3][1];
+        expect(lastVars.pagination.nextToken).toBe('p3');
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

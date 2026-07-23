@@ -22,9 +22,25 @@ import styles from './HitlQueuePanel.module.css';
  * "Load more" button until drained. Design choice: explicit load-more over
  * infinite scroll (user controls fetch cadence; no scroll-jank on large
  * queues; deterministic test surface).
+ *
+ * Poll/pagination contract (HR1-POLL-1/HR1-DUP-1): the 15s poll refreshes
+ * the PAGE-1 WINDOW ONLY — it merges by hitlItemId (fresh page 1 first,
+ * then every previously-loaded item not in it) and never clobbers a deeper
+ * nextToken while pagination is open. Once the queue is drained
+ * (nextToken null), the poll may re-adopt page-1's token so items that
+ * slid past the loaded window become reachable again (re-walk is
+ * dedup-safe). Removal of resolved items is owned by the subscription and
+ * the card's own remove path; while paginated, the poll cannot distinguish
+ * "resolved" from "pushed off page 1", so it deliberately keeps the tail.
  */
 
 const PAGE_SIZE = 20;
+
+/** `first` in order, then `rest` minus anything already in `first` — no dup ids. */
+function mergeById(first: HitlItem[], rest: HitlItem[]): HitlItem[] {
+  const firstIds = new Set(first.map((i) => i.hitlItemId));
+  return [...first, ...rest.filter((i) => !firstIds.has(i.hitlItemId))];
+}
 
 export function HitlQueuePanel() {
   const t = useTranslations('commandCenter');
@@ -34,11 +50,20 @@ export function HitlQueuePanel() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [nextToken, setNextToken] = useState<string | null>(null);
+  const [nextToken, setNextTokenState] = useState<string | null>(null);
+  // Refs mirror pagination state so fetchItems keeps stable deps (the 15s
+  // interval must not reset on every page turn).
+  const nextTokenRef = useRef<string | null>(null);
+  const hasLoadedMoreRef = useRef(false);
   // R2: ids with an active approval banner — exempt from removal
   const approvedIdsRef = useRef<Set<string>>(new Set());
 
   const role = user?.role ?? 'employee';
+
+  const setNextToken = useCallback((token: string | null) => {
+    nextTokenRef.current = token;
+    setNextTokenState(token);
+  }, []);
 
   const fetchItems = useCallback(async () => {
     try {
@@ -46,38 +71,55 @@ export function HitlQueuePanel() {
       const data = await query<{
         listPendingHitlItems: { items: HitlItem[]; nextToken: string | null };
       }>(LIST_PENDING_HITL_QUERY, { pagination: { limit: PAGE_SIZE } });
-      setNextToken(data.listPendingHitlItems.nextToken);
-      // R2: keep items that have an active approval banner
+      const fresh = data.listPendingHitlItems;
+      // Token policy: adopt page-1's token unless pagination is open at a
+      // deeper cursor (drained ⇒ re-adopt, so new overflow is reachable).
+      if (!hasLoadedMoreRef.current || nextTokenRef.current === null) {
+        setNextToken(fresh.nextToken);
+      }
       setItems((prev) => {
+        if (hasLoadedMoreRef.current) {
+          // Paginated: refresh the page-1 window, keep the loaded tail
+          // (includes R2 approved-banner items by construction).
+          return mergeById(fresh.items, prev);
+        }
+        // Single-page mode (original R2 semantics): replace, keeping only
+        // items with an active approval banner.
         const approvedIds = approvedIdsRef.current;
-        const freshIds = new Set(data.listPendingHitlItems.items.map((i) => i.hitlItemId));
+        const freshIds = new Set(fresh.items.map((i) => i.hitlItemId));
         const keptApproved = prev.filter(
           (i) => approvedIds.has(i.hitlItemId) && !freshIds.has(i.hitlItemId),
         );
-        return [...data.listPendingHitlItems.items, ...keptApproved];
+        return [...fresh.items, ...keptApproved];
       });
     } catch {
       setError(true);
     } finally {
       setLoading(false);
     }
-  }, [query]);
+  }, [query, setNextToken]);
 
   const fetchMore = useCallback(async () => {
-    if (!nextToken || loadingMore) return;
+    const token = nextTokenRef.current;
+    if (!token || loadingMore) return;
     setLoadingMore(true);
+    // Flag BEFORE the await so a concurrent poll tick cannot clobber the
+    // deeper cursor mid-flight; restore on failure if this was page 1.
+    const wasDeep = hasLoadedMoreRef.current;
+    hasLoadedMoreRef.current = true;
     try {
       const data = await query<{
         listPendingHitlItems: { items: HitlItem[]; nextToken: string | null };
-      }>(LIST_PENDING_HITL_QUERY, { pagination: { limit: PAGE_SIZE, nextToken } });
+      }>(LIST_PENDING_HITL_QUERY, { pagination: { limit: PAGE_SIZE, nextToken: token } });
       setNextToken(data.listPendingHitlItems.nextToken);
-      setItems((prev) => [...prev, ...data.listPendingHitlItems.items]);
+      setItems((prev) => mergeById(prev, data.listPendingHitlItems.items));
     } catch {
       // Load-more failure is non-fatal — existing items stay visible
+      hasLoadedMoreRef.current = wasDeep;
     } finally {
       setLoadingMore(false);
     }
-  }, [query, nextToken, loadingMore]);
+  }, [query, loadingMore, setNextToken]);
 
   useEffect(() => {
     fetchItems();
