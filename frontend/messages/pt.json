@@ -97,6 +97,8 @@
     "subscriptionTitle": "Assinatura e pagamentos",
     "subscriptionDescription": "Sua assinatura, faturas e métodos de pagamento são gerenciados com segurança pelo Stripe. Abra o portal de faturamento para ver faturas, atualizar seu método de pagamento ou mudar de plano.",
     "openPortal": "Abrir portal de faturamento",
+    "openingPortal": "Abrindo o portal…",
+    "portalError": "Não foi possível abrir o portal de faturamento. Tente novamente.",
     "portalNotConfigured": "O portal de faturamento não está configurado para este ambiente. Entre em contato com o suporte para gerenciar sua assinatura.",
     "usageTitle": "Uso de IA",
     "usageDescription": "O uso de créditos de IA acima do seu plano nunca é bloqueado — o excedente é cobrado na sua próxima fatura conforme a tarifa do seu plano."

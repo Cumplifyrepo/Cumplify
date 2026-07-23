@@ -97,6 +97,8 @@
     "subscriptionTitle": "Suscripción y pagos",
     "subscriptionDescription": "Su suscripción, facturas y métodos de pago se gestionan de forma segura a través de Stripe. Abra el portal de facturación para ver facturas, actualizar su método de pago o cambiar de plan.",
     "openPortal": "Abrir portal de facturación",
+    "openingPortal": "Abriendo el portal…",
+    "portalError": "No se pudo abrir el portal de facturación. Inténtalo de nuevo.",
     "portalNotConfigured": "El portal de facturación no está configurado para este entorno. Contacte con soporte para gestionar su suscripción.",
     "usageTitle": "Uso de IA",
     "usageDescription": "El uso de créditos de IA por encima de su plan nunca se bloquea: el excedente se factura en su próxima factura según la tarifa de su plan."

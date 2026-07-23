@@ -11,3 +11,9 @@ cdk.out/
 !**/md.d.ts
 *.tsbuildinfo
 .kiro/evidence/unknown-spec/
+
+# Local secrets — NEVER commit (Stripe keys, etc.). Belong in Secrets Manager.
+Stripe API KEYS
+*stripe*key*
+*.secret
+secrets/

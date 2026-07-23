@@ -589,12 +589,43 @@ export class ApiStack extends cdk.Stack {
     props.s3GeneralKey.grantEncrypt(resolverFns[0]);
     pdfRenderFn.grantInvoke(resolverFns[0]);
 
+    // ─── Billing resolver (Stripe Customer Portal) ────────────────────────────
+    // Standalone Lambda, NOT VPC-placed on purpose: the zero-NAT VPC has no
+    // egress to api.stripe.com, so this fn runs outside the VPC and reaches
+    // Stripe over the default managed egress (rds-data/Secrets Manager are
+    // public AWS endpoints, so nothing here needs the VPC). Reads the Stripe
+    // secret (key + portal config + tenant→customer map) at runtime.
+    const stripeSecretName = `cumplify/${envConfig.envName}/stripe`;
+    const billingFn = new NodejsFunction(this, 'BillingFn', {
+      entry: 'services/api/src/resolvers/billing.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(15),
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        STRIPE_SECRET_NAME: stripeSecretName,
+        POWERTOOLS_SERVICE_NAME: 'resolver-billing',
+      },
+    });
+    // Least-privilege: read ONLY the Stripe secret. It uses the default
+    // AWS-managed KMS key (no CMK), so no extra kms grant is needed. The secret
+    // is provisioned out-of-band per env (cumplify/<env>/stripe); if absent in
+    // an env the resolver throws STRIPE_NOT_CONFIGURED (billing stays inert).
+    secretsmanager.Secret.fromSecretNameV2(this, 'StripeSecret', stripeSecretName).grantRead(
+      billingFn,
+    );
+
     // Lambda data sources — one per module
     const m1DS = api.addLambdaDataSource('M1DataSource', resolverFns[0]);
     const m2DS = api.addLambdaDataSource('M2DataSource', resolverFns[1]);
     const m3DS = api.addLambdaDataSource('M3DataSource', resolverFns[2]);
     const m4DS = api.addLambdaDataSource('M4DataSource', resolverFns[3]);
     const m5DS = api.addLambdaDataSource('M5DataSource', resolverFns[4]);
+
+    // Billing data source (Stripe Customer Portal — standalone fn, not a module)
+    const billingDS = api.addLambdaDataSource('BillingDataSource', billingFn);
 
     // None data source — for subscription publish mutations AND subscription resolvers
     const noneDS = api.addNoneDataSource('NoneDataSource');
@@ -784,6 +815,12 @@ export class ApiStack extends cdk.Stack {
     const runRiskAssessmentResolver = m5DS.createResolver('RunRiskAssessment', {
       typeName: 'Mutation',
       fieldName: 'runRiskAssessment',
+    });
+
+    // Billing — new field, needs the schema node dependency below (9d9c90a1 lesson).
+    const createBillingPortalSessionResolver = billingDS.createResolver('CreateBillingPortalSession', {
+      typeName: 'Mutation',
+      fieldName: 'createBillingPortalSession',
     });
 
     // ─── Mutation resolvers (agent-path, @aws_iam) ───────────────────────────
@@ -1423,6 +1460,7 @@ export class ApiStack extends cdk.Stack {
       runDocDraftResolver,
       runManualSectionDraftResolver,
       runRiskAssessmentResolver,
+      createBillingPortalSessionResolver,
     ]) {
       r.node.addDependency(schemaResource);
     }
@@ -1528,6 +1566,7 @@ export class ApiStack extends cdk.Stack {
       m3DS,
       m4DS,
       m5DS,
+      billingDS,
       hitlApprovalDS,
       hitlQueryDS,
       profileDS,

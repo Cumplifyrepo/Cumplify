@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 
 // ----- Mocks -----
 
 let mockRole = 'QualityManager';
+const mockMutate = vi.fn();
 
 vi.mock('@/lib/auth-context', () => ({
   useAuth: () => ({
@@ -17,6 +18,10 @@ vi.mock('@/lib/auth-context', () => ({
   }),
 }));
 
+vi.mock('@/lib/api', () => ({
+  useGraphQL: () => ({ mutate: mockMutate, query: vi.fn(), client: {} }),
+}));
+
 vi.mock('next-intl', () => {
   const translations: Record<string, Record<string, string>> = {
     billing: {
@@ -24,6 +29,8 @@ vi.mock('next-intl', () => {
       subscriptionTitle: 'Subscription & Payments',
       subscriptionDescription: 'Managed through Stripe.',
       openPortal: 'Open billing portal',
+      openingPortal: 'Opening portal…',
+      portalError: 'Could not open the billing portal. Please try again.',
       portalNotConfigured: 'The billing portal is not configured.',
       usageTitle: 'AI Usage',
       usageDescription: 'Overage is billed, never blocked.',
@@ -48,44 +55,72 @@ vi.mock('@/components/shared', () => ({
   ),
 }));
 
+// window.location.assign is called on success — spy on it (jsdom navigation).
+const mockAssign = vi.fn();
+
 // ----- Tests -----
-// NEXT_PUBLIC_* is inlined at build time, but in vitest it reads process.env
-// live — vi.stubEnv per test works because the module reads it at render
-// via the const only once; import per-test after stubbing instead.
 
 describe('BillingPage', () => {
+  beforeEach(() => {
+    mockMutate.mockReset();
+    mockAssign.mockReset();
+    Object.defineProperty(window, 'location', {
+      value: { href: 'https://app.cumplify.ai/billing', assign: mockAssign },
+      writable: true,
+    });
+  });
   afterEach(() => {
-    vi.unstubAllEnvs();
-    vi.resetModules();
     mockRole = 'QualityManager';
   });
 
-  it('renders the Stripe portal link from NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL, new tab + noopener', async () => {
-    vi.stubEnv('NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL', 'https://billing.stripe.com/p/login/test_123');
+  it('mints a portal session on click and redirects to the returned URL (returnUrl = current page)', async () => {
+    mockMutate.mockResolvedValue({
+      createBillingPortalSession: { url: 'https://billing.stripe.com/p/session/test_live' },
+    });
     const { default: BillingPage } = await import('./page');
     render(<BillingPage />);
 
-    const link = screen.getByRole('link', { name: 'Open billing portal' });
-    expect(link).toHaveAttribute('href', 'https://billing.stripe.com/p/login/test_123');
-    expect(link).toHaveAttribute('target', '_blank');
-    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-    // Both panels present
+    fireEvent.click(screen.getByRole('button', { name: 'Open billing portal' }));
+
+    expect(mockMutate).toHaveBeenCalledWith(expect.stringContaining('createBillingPortalSession'), {
+      returnUrl: 'https://app.cumplify.ai/billing',
+    });
+    await waitFor(() =>
+      expect(mockAssign).toHaveBeenCalledWith('https://billing.stripe.com/p/session/test_live'),
+    );
     expect(screen.getByTestId('panel-Subscription & Payments')).toBeInTheDocument();
     expect(screen.getByTestId('panel-AI Usage')).toBeInTheDocument();
   });
 
-  it('shows the not-configured state when the portal URL is absent — never a dead link', async () => {
-    vi.stubEnv('NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL', '');
+  it('surfaces the not-configured note when the backend has no Stripe secret — never a dead control', async () => {
+    mockMutate.mockRejectedValue(new Error('STRIPE_NOT_CONFIGURED: secretKey missing'));
     const { default: BillingPage } = await import('./page');
     render(<BillingPage />);
 
-    expect(screen.queryByRole('link', { name: 'Open billing portal' })).not.toBeInTheDocument();
-    expect(screen.getByText('The billing portal is not configured.')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Open billing portal' }));
+
+    await waitFor(() =>
+      expect(screen.getByText('The billing portal is not configured.')).toBeInTheDocument(),
+    );
+    expect(mockAssign).not.toHaveBeenCalled();
+  });
+
+  it('surfaces a generic error on any other failure', async () => {
+    mockMutate.mockRejectedValue(new Error('boom'));
+    const { default: BillingPage } = await import('./page');
+    render(<BillingPage />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open billing portal' }));
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('Could not open the billing portal. Please try again.'),
+      ).toBeInTheDocument(),
+    );
   });
 
   it('renders nothing for non-admin roles (CON-6 presentation-only gate)', async () => {
     mockRole = 'Employee';
-    vi.stubEnv('NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL', 'https://billing.stripe.com/p/login/test_123');
     const { default: BillingPage } = await import('./page');
     const { container } = render(<BillingPage />);
 

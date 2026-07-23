@@ -97,6 +97,8 @@
     "subscriptionTitle": "Subscription & Payments",
     "subscriptionDescription": "Your subscription, invoices, and payment methods are managed securely through Stripe. Open the billing portal to view invoices, update your payment method, or change your plan.",
     "openPortal": "Open billing portal",
+    "openingPortal": "Opening portal…",
+    "portalError": "Could not open the billing portal. Please try again.",
     "portalNotConfigured": "The billing portal is not configured for this environment. Contact support to manage your subscription.",
     "usageTitle": "AI Usage",
     "usageDescription": "AI credit usage above your plan allowance is never blocked — overage is billed on your next invoice at your plan rate."

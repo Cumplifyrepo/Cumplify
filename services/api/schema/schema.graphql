@@ -264,6 +264,13 @@ type AgentRunAck @aws_lambda {
   status: String!
 }
 
+# One-time Stripe Billing Portal URL (createBillingPortalSession). The /billing
+# page redirects the admin to `url`; the session is minted server-side against
+# the tenant's Stripe customer — no key or customer id ever reaches the client.
+type BillingPortalSession @aws_lambda {
+  url: String!
+}
+
 # ─── M4: Records Management Types ────────────────────────────────────────────
 
 type Record @aws_lambda @aws_iam {
@@ -695,6 +702,12 @@ type Mutation {
   # RS-8: "AI: draft this" on the /risk register row/drawer — invokes the
   # RiskSentinel seat with the risk's current context.
   runRiskAssessment(riskId: ID!): AgentRunAck! @aws_lambda
+
+  # Billing — subscription management. Mints a one-time Stripe Customer Portal
+  # session for the caller's tenant; the /billing page redirects to the URL.
+  # tenantId is injected from resolverContext (SCHEMA-5); returnUrl is where
+  # Stripe sends the admin back after they close the portal.
+  createBillingPortalSession(returnUrl: String!): BillingPortalSession! @aws_lambda
 
   # Agent-path mutations (@aws_iam)
   agentDraftDocument(input: AgentDraftDocumentInput!): Document! @aws_iam
