@@ -74,8 +74,18 @@ harmonization_key, which carries UNIQUE(run_id, harmonization_key)).
 
 **All finalize-produced doc_types covered:** manual, procedure,
 work_instruction, correlation_matrix, master_list. `policy` and `scope` are
-user-created (not finalize-produced) — their harmonization_key stays NULL
-(exempt from the partial unique index).
+NOT finalize-produced — they come from `createDocumentDraft` (m1.ts:149,
+user-initiated) and `agentDraftDocument` (m1.ts:194, DocStudio writeback).
+Their titles are user/agent-specified (no `(sectionKey)` suffix), so the
+regex returns NULL → they stay exempt from the partial unique index.
+
+**92 policy/scope rows — deferred:** These 92 rows are duplicates from
+repeated DocStudio agent drafts (same intent → same title, new row each
+time). They require a SEPARATE dedup mechanism on the user-facing INSERT
+path (not finalize's concern). **Cost of deferral:** 92 extra rows in the
+register — cosmetic clutter (doubled titles in the document list), no
+data-integrity risk, no FK orphans, no constraint violations. Fixing
+requires design on the agent-draft idempotency path (separate spec scope).
 
 ## Fix (forward path — unchanged from f50bbb3)
 
@@ -88,16 +98,22 @@ user-created (not finalize-produced) — their harmonization_key stays NULL
 | Correlation matrix | `harmonizationKey: '__CORRELATION_MATRIX__'` | `finalize-manual.ts:354` |
 | Master list | `harmonizationKey: '__MASTER_LIST__'` | `finalize-manual.ts:382` |
 
-## Migration 019 (rewritten, amendment)
+## Migration 019 (rewritten, amendment 2)
+
+Order: schema (column) → derive keys → dedup → index. Index LAST avoids
+23505 on pre-existing duplicate keys. No `BEGIN`/`COMMIT` — the migration
+runner owns the transaction.
 
 | Step | Action | Safety |
 |------|--------|--------|
-| RLS bracket open | `NO FORCE ROW LEVEL SECURITY` on m1.documents + m1.document_versions | Allows cross-tenant DML under master role |
-| Derive harmonization_key | `CASE doc_type WHEN manual/matrix/masterlist → well-known ELSE extract from title END` | Deterministic from clauseDocTitle lineage |
+| Add column | `ALTER TABLE ADD COLUMN harmonization_key TEXT NULL` | Nullable, no constraint yet |
+| RLS bracket open | `NO FORCE ROW LEVEL SECURITY` on documents + versions | Allows cross-tenant DML |
+| Derive harmonization_key | `CASE doc_type WHEN manual/matrix/masterlist → well-known ELSE extract from title END` | Deterministic from clauseDocTitle lineage; policy/scope → NULL (regex miss) |
 | Re-parent human-edited versions | `UPDATE document_versions SET document_id = survivor WHERE version_no > 1 OR non-standard summary` | Preserves human work |
-| Delete machine versions on duplicates | `DELETE FROM document_versions WHERE document_id IN (duplicates) AND pure-machine` | Redundant copies (survivor has identical v1) |
+| Delete machine versions on duplicates | `DELETE FROM document_versions WHERE document_id IN (duplicates)` | Redundant copies |
 | Delete duplicate documents | `DELETE FROM documents WHERE NOT IN survivors` | Zero FK references remain |
 | RLS bracket close | `FORCE ROW LEVEL SECURITY` | Restores enforcement |
+| Create partial unique index | `CREATE UNIQUE INDEX (tenant_id, harmonization_key) WHERE NOT NULL` | Fires AFTER dedup — no 23505 |
 
 ## Carried backlog (not fixed in B2)
 
