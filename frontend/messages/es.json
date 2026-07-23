@@ -54,6 +54,8 @@
     "noItems": "No hay elementos pendientes de aprobación",
     "noAgentActivity": "Sin actividad reciente de agentes",
     "noRisks": "Sin riesgos registrados",
+    "loadMore": "Cargar más",
+    "loadingMore": "Cargando…",
     "viewAll": "Ver todos",
     "loading": "Cargando...",
     "eventDocument": "Documento",

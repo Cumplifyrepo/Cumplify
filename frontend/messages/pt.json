@@ -54,6 +54,8 @@
     "noItems": "Nenhum item pendente de aprovação",
     "noAgentActivity": "Sem atividade recente de agentes",
     "noRisks": "Sem riscos registrados",
+    "loadMore": "Carregar mais",
+    "loadingMore": "Carregando…",
     "viewAll": "Ver todos",
     "loading": "Carregando...",
     "eventDocument": "Documento",

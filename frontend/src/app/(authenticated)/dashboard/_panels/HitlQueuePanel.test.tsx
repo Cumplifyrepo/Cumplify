@@ -36,6 +36,8 @@ vi.mock('next-intl', () => {
       hitlQueue: 'Approval Queue',
       loading: 'Loading...',
       noItems: 'No items',
+      loadMore: 'Load more',
+      loadingMore: 'Loading…',
     },
     hitlCard: {
       approve: 'Approve',
@@ -293,6 +295,64 @@ describe('HitlQueuePanel', () => {
       // object to the resolver — services hitl-approval.test.ts asserts that side)
       expect(callArgs.input.editedPayload).toBe(JSON.stringify(newArgs));
       expect(callArgs.input.decision).toBe('APPROVE');
+    });
+  });
+
+  describe('HITL-REACH-1: load-more pagination', () => {
+    it('renders "Load more" button when nextToken is present', async () => {
+      mockQuery.mockResolvedValue({
+        listPendingHitlItems: {
+          items: [unflaggedItem],
+          nextToken: 'page2-token',
+        },
+      });
+      render(<HitlQueuePanel />);
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'Load more' })).toBeInTheDocument(),
+      );
+    });
+
+    it('does NOT render "Load more" when nextToken is null (all items loaded)', async () => {
+      mockQuery.mockResolvedValue({
+        listPendingHitlItems: {
+          items: [unflaggedItem],
+          nextToken: null,
+        },
+      });
+      render(<HitlQueuePanel />);
+      await waitFor(() => expect(screen.getByTestId('hitl-card-item-1')).toBeInTheDocument());
+      expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument();
+    });
+
+    it('clicking "Load more" appends page 2 items and passes nextToken', async () => {
+      const page2Item = { ...unflaggedItem, hitlItemId: 'item-page2' };
+      mockQuery
+        .mockResolvedValueOnce({
+          listPendingHitlItems: { items: [unflaggedItem], nextToken: 'page2-token' },
+        })
+        .mockResolvedValueOnce({
+          listPendingHitlItems: { items: [page2Item], nextToken: null },
+        });
+
+      render(<HitlQueuePanel />);
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'Load more' })).toBeInTheDocument(),
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+
+      await waitFor(() =>
+        expect(screen.getByTestId('hitl-card-item-page2')).toBeInTheDocument(),
+      );
+      // Original item still visible
+      expect(screen.getByTestId('hitl-card-item-1')).toBeInTheDocument();
+      // Load more disappears (nextToken now null)
+      expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument();
+
+      // Second query passed the nextToken
+      expect(mockQuery).toHaveBeenCalledTimes(2);
+      const secondCallVars = mockQuery.mock.calls[1][1];
+      expect(secondCallVars.pagination.nextToken).toBe('page2-token');
     });
   });
 });

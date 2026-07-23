@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { Panel, EmptyState, ErrorState } from '@/components/shared';
+import { Panel, EmptyState, ErrorState, SecondaryButton } from '@/components/shared';
 import { useGraphQL } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import { useTenantSubscription } from '@/lib/use-tenant-subscription';
@@ -17,7 +17,14 @@ import styles from './HitlQueuePanel.module.css';
  * polling fallback, onHitlItemResolved subscription, and the R2 merge
  * that keeps approved items mounted while their ProvenanceLink banner
  * shows.
+ *
+ * HITL-REACH-1: load-more pagination — consumes nextToken via an explicit
+ * "Load more" button until drained. Design choice: explicit load-more over
+ * infinite scroll (user controls fetch cadence; no scroll-jank on large
+ * queues; deterministic test surface).
  */
+
+const PAGE_SIZE = 20;
 
 export function HitlQueuePanel() {
   const t = useTranslations('commandCenter');
@@ -26,6 +33,8 @@ export function HitlQueuePanel() {
   const [items, setItems] = useState<HitlItem[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [nextToken, setNextToken] = useState<string | null>(null);
   // R2: ids with an active approval banner — exempt from removal
   const approvedIdsRef = useRef<Set<string>>(new Set());
 
@@ -36,7 +45,8 @@ export function HitlQueuePanel() {
       setError(false);
       const data = await query<{
         listPendingHitlItems: { items: HitlItem[]; nextToken: string | null };
-      }>(LIST_PENDING_HITL_QUERY, { pagination: { limit: 20 } });
+      }>(LIST_PENDING_HITL_QUERY, { pagination: { limit: PAGE_SIZE } });
+      setNextToken(data.listPendingHitlItems.nextToken);
       // R2: keep items that have an active approval banner
       setItems((prev) => {
         const approvedIds = approvedIdsRef.current;
@@ -52,6 +62,22 @@ export function HitlQueuePanel() {
       setLoading(false);
     }
   }, [query]);
+
+  const fetchMore = useCallback(async () => {
+    if (!nextToken || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const data = await query<{
+        listPendingHitlItems: { items: HitlItem[]; nextToken: string | null };
+      }>(LIST_PENDING_HITL_QUERY, { pagination: { limit: PAGE_SIZE, nextToken } });
+      setNextToken(data.listPendingHitlItems.nextToken);
+      setItems((prev) => [...prev, ...data.listPendingHitlItems.items]);
+    } catch {
+      // Load-more failure is non-fatal — existing items stay visible
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [query, nextToken, loadingMore]);
 
   useEffect(() => {
     fetchItems();
@@ -99,18 +125,27 @@ export function HitlQueuePanel() {
       ) : items.length === 0 ? (
         <EmptyState message={t('noItems')} />
       ) : (
-        <ul className={styles.list}>
-          {items.map((item) => (
-            <li key={item.hitlItemId} className={styles.listItem}>
-              <HitlCard
-                item={item}
-                role={role}
-                onApproved={handleApproved}
-                onRemove={handleRemove}
-              />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className={styles.list}>
+            {items.map((item) => (
+              <li key={item.hitlItemId} className={styles.listItem}>
+                <HitlCard
+                  item={item}
+                  role={role}
+                  onApproved={handleApproved}
+                  onRemove={handleRemove}
+                />
+              </li>
+            ))}
+          </ul>
+          {nextToken && (
+            <div className={styles.loadMore}>
+              <SecondaryButton onClick={fetchMore} disabled={loadingMore}>
+                {loadingMore ? t('loadingMore') : t('loadMore')}
+              </SecondaryButton>
+            </div>
+          )}
+        </>
       )}
     </Panel>
   );
