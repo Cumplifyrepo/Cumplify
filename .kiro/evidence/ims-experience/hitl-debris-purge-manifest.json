@@ -1,0 +1,242 @@
+[
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KX4A4Z83PP0R8V9SJWH6A9HX",
+  "hitlItemId": "01KX4A4Z83PP0R8V9SJWH6A9HX",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-09T20:47:16.229Z",
+  "sfnExecutionArn": null,
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY3MZEDE56Y9F0AKM3Q4GYDG",
+  "hitlItemId": "01KY3MZEDE56Y9F0AKM3Q4GYDG",
+  "status": "PENDING",
+  "agentName": "RecordsVault",
+  "createdAt": "2026-07-22T00:52:56.880Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-RecordsVault-01KY3MZEDE56Y9F0AKM3Q4GYDG",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY4VJDYVY2T0175FKWQNN8Z1",
+  "hitlItemId": "01KY4VJDYVY2T0175FKWQNN8Z1",
+  "status": "PENDING",
+  "agentName": "RiskSentinel",
+  "createdAt": "2026-07-22T12:07:24.892Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-RiskSentinel-01KY4VJDYVY2T0175FKWQNN8Z1",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY4X8410DP4AY5NP7Q43R723",
+  "hitlItemId": "01KY4X8410DP4AY5NP7Q43R723",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T12:36:44.194Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY4X8410DP4AY5NP7Q43R723",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY54RKW6EPTDZ1593DG2R2EZ",
+  "hitlItemId": "01KY54RKW6EPTDZ1593DG2R2EZ",
+  "status": "PENDING",
+  "agentName": "RecordsVault",
+  "createdAt": "2026-07-22T14:48:04.744Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-RecordsVault-01KY54RKW6EPTDZ1593DG2R2EZ",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY57VV48H3HNBTE134028TX1",
+  "hitlItemId": "01KY57VV48H3HNBTE134028TX1",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T15:42:16.203Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY57VV48H3HNBTE134028TX1",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5D0YYEA69YRZT03CHX1QXP",
+  "hitlItemId": "01KY5D0YYEA69YRZT03CHX1QXP",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T17:12:26.832Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5D0YYEA69YRZT03CHX1QXP",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5EDHN3JB6GHQB4NG8M2RJ4",
+  "hitlItemId": "01KY5EDHN3JB6GHQB4NG8M2RJ4",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T17:36:47.782Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5EDHN3JB6GHQB4NG8M2RJ4",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5JAGAV4HPBVZ89A208ZA8C",
+  "hitlItemId": "01KY5JAGAV4HPBVZ89A208ZA8C",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T18:45:02.430Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5JAGAV4HPBVZ89A208ZA8C",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5KVVPT0DYQ95KX3VXCCEYM",
+  "hitlItemId": "01KY5KVVPT0DYQ95KX3VXCCEYM",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T19:11:59.708Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5KVVPT0DYQ95KX3VXCCEYM",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5MT88R7HKV47E8B83M3GZ0",
+  "hitlItemId": "01KY5MT88R7HKV47E8B83M3GZ0",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T19:28:35.610Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5MT88R7HKV47E8B83M3GZ0",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5MTCF9ZCH20FNQCZX9MJFC",
+  "hitlItemId": "01KY5MTCF9ZCH20FNQCZX9MJFC",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T19:28:39.915Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5MTCF9ZCH20FNQCZX9MJFC",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5MVR9HPDR8DZCFMCJQZ73W",
+  "hitlItemId": "01KY5MVR9HPDR8DZCFMCJQZ73W",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T19:29:24.786Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5MVR9HPDR8DZCFMCJQZ73W",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5N1WCYWGF63QB4S0ZSMYNA",
+  "hitlItemId": "01KY5N1WCYWGF63QB4S0ZSMYNA",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T19:32:45.600Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY5N1WCYWGF63QB4S0ZSMYNA",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5PNDH1XWZ2BJZ5E1547AE4",
+  "hitlItemId": "01KY5PNDH1XWZ2BJZ5E1547AE4",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T20:00:54.308Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY5PNDH1XWZ2BJZ5E1547AE4",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5PZ11NHZ058FDEZ6XZWP0H",
+  "hitlItemId": "01KY5PZ11NHZ058FDEZ6XZWP0H",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T20:06:09.207Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY5PZ11NHZ058FDEZ6XZWP0H",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5Q092B83S75Y2HZDR2G2M7",
+  "hitlItemId": "01KY5Q092B83S75Y2HZDR2G2M7",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T20:06:50.187Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY5Q092B83S75Y2HZDR2G2M7",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5TGJVQBK4K1NK8KT207FHR",
+  "hitlItemId": "01KY5TGJVQBK4K1NK8KT207FHR",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T21:08:10.233Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY5TGJVQBK4K1NK8KT207FHR",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5WQF9CDVXG1A0990TYQMJ7",
+  "hitlItemId": "01KY5WQF9CDVXG1A0990TYQMJ7",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T21:46:53.103Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY5WQF9CDVXG1A0990TYQMJ7",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5WRX57K8K08FAGZJCT1JPG",
+  "hitlItemId": "01KY5WRX57K8K08FAGZJCT1JPG",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T21:47:40.071Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY5WRX57K8K08FAGZJCT1JPG",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY5WVYZMNHX3BZQVT9BFDTZS",
+  "hitlItemId": "01KY5WVYZMNHX3BZQVT9BFDTZS",
+  "status": "PENDING",
+  "agentName": "CAPAGuru",
+  "createdAt": "2026-07-22T21:49:20.244Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-CAPAGuru-01KY5WVYZMNHX3BZQVT9BFDTZS",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY61QZZ7G4APVKGRMG2HJTNG",
+  "hitlItemId": "01KY61QZZ7G4APVKGRMG2HJTNG",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-22T23:14:33.065Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY61QZZ7G4APVKGRMG2HJTNG",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY7XW6GZVE9YWTRE5X1VVMN6",
+  "hitlItemId": "01KY7XW6GZVE9YWTRE5X1VVMN6",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-23T16:45:25.409Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY7XW6GZVE9YWTRE5X1VVMN6",
+  "hasTaskToken": true
+ },
+ {
+  "PK": "TENANT#tenant-AAA#HITL",
+  "SK": "PENDING#01KY7XXZ0YN2235Q7YPDKYD4VB",
+  "hitlItemId": "01KY7XXZ0YN2235Q7YPDKYD4VB",
+  "status": "PENDING",
+  "agentName": "DocStudio",
+  "createdAt": "2026-07-23T16:46:23.263Z",
+  "sfnExecutionArn": "arn:aws:states:us-east-1:697114252993:execution:HitlStateMachine1F6B4EA3-NaXnao6slsM8:hitl-DocStudio-01KY7XXZ0YN2235Q7YPDKYD4VB",
+  "hasTaskToken": true
+ }
+]
