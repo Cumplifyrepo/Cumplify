@@ -18,7 +18,10 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import {
   RDSDataClient,
+  BeginTransactionCommand,
   ExecuteStatementCommand,
+  CommitTransactionCommand,
+  RollbackTransactionCommand,
 } from '@aws-sdk/client-rds-data';
 import { createHandler } from '../../eventing/src/consumer.js';
 import { createEmbedFn, type EmbedFn } from '../../agents/shared/invoke-transport.js';
@@ -49,10 +52,15 @@ const MAX_ATTEMPTS = 12;
 async function aossWriteWithRetry(
   endpoint: string,
   indexName: string,
-  docId: string,
   body: Record<string, unknown>,
 ): Promise<void> {
-  const path = `/${indexName}/_doc/${docId}`;
+  // POST /_doc (auto-ID): VECTORSEARCH collections reject client-supplied _id
+  // on PUT /_doc/<id> (FIX-P12-4). Dedup: on re-publish, prior version's
+  // sections become stale — the new publish re-indexes all prose sections with
+  // the current versionId in metadata. Consumers filter by versionId freshness
+  // at retrieval time (metadata.versionId = latest wins). A periodic cleanup
+  // job (roadmap) deletes stale-version documents.
+  const path = `/${indexName}/_doc`;
   const startTime = Date.now();
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
@@ -68,7 +76,7 @@ async function aossWriteWithRetry(
     }
 
     const resp = await signedAossFetch(
-      'PUT',
+      'POST',
       endpoint,
       path,
       JSON.stringify(body),
@@ -77,9 +85,10 @@ async function aossWriteWithRetry(
 
     if (resp.status >= 200 && resp.status < 300) return;
 
-    // Retryable: 5xx, 429, 503
-    if (resp.status >= 500 || resp.status === 429 || resp.status === 503) {
-      logger.warn('AOSS write retrying', { status: resp.status, attempt, docId });
+    // House write-path retryable statuses: 403 (cold-start IAM propagation),
+    // 404 (index not yet created on cold AOSS), 429, 5xx
+    if (resp.status === 403 || resp.status === 404 || resp.status === 429 || resp.status >= 500) {
+      logger.warn('AOSS write retrying', { status: resp.status, attempt, indexName });
       continue;
     }
 
@@ -88,7 +97,7 @@ async function aossWriteWithRetry(
   }
 
   throw new Error(
-    `AOSS write timed out after ${Date.now() - startTime}ms (${MAX_ATTEMPTS} attempts) for ${docId}`,
+    `AOSS write timed out after ${Date.now() - startTime}ms (${MAX_ATTEMPTS} attempts)`,
   );
 }
 
@@ -129,22 +138,55 @@ async function processDocumentPublished(
   const aossEndpoint = env('AOSS_TENANT_DOCS_ENDPOINT');
   const indexName = 'cumplify-tenant-docs';
 
-  // 1. Read content_ref from RDS (app_role, tenant-scoped via RLS)
-  const contentRefResult = await rdsClient.send(
-    new ExecuteStatementCommand({
+  // 1. Read content_ref from RDS via C-2 pattern (BeginTransaction → set_config → SELECT → Commit)
+  const { transactionId } = await rdsClient.send(
+    new BeginTransactionCommand({
       resourceArn: clusterArn,
       secretArn,
       database: 'postgres',
-      sql: `SELECT set_config('app.tenant_id', :tenantId, false); SELECT content_ref FROM m1.document_versions WHERE id = :versionId::uuid`,
-      parameters: [
-        { name: 'tenantId', value: { stringValue: tenantId } },
-        { name: 'versionId', value: { stringValue: versionId } },
-      ],
-      includeResultMetadata: true,
     }),
   );
 
-  const contentRef = contentRefResult.records?.[0]?.[0]?.stringValue;
+  let contentRef: string | undefined;
+  try {
+    // C-2 INVARIANT: set_config is the FIRST statement, transaction-local (true)
+    await rdsClient.send(
+      new ExecuteStatementCommand({
+        resourceArn: clusterArn,
+        secretArn,
+        database: 'postgres',
+        transactionId,
+        sql: `SELECT set_config('app.tenant_id', :tenantId, true)`,
+        parameters: [{ name: 'tenantId', value: { stringValue: tenantId } }],
+      }),
+    );
+
+    const contentRefResult = await rdsClient.send(
+      new ExecuteStatementCommand({
+        resourceArn: clusterArn,
+        secretArn,
+        database: 'postgres',
+        transactionId,
+        sql: `SELECT content_ref FROM m1.document_versions WHERE id = :versionId::uuid`,
+        parameters: [{ name: 'versionId', value: { stringValue: versionId } }],
+        includeResultMetadata: true,
+      }),
+    );
+
+    await rdsClient.send(
+      new CommitTransactionCommand({ resourceArn: clusterArn, secretArn, transactionId }),
+    );
+
+    contentRef = contentRefResult.records?.[0]?.[0]?.stringValue;
+  } catch (err) {
+    try {
+      await rdsClient.send(
+        new RollbackTransactionCommand({ resourceArn: clusterArn, secretArn, transactionId }),
+      );
+    } catch { /* never mask */ }
+    throw err;
+  }
+
   if (!contentRef) {
     logger.warn('No content_ref found for version — skipping', { tenantId, versionId });
     return;
@@ -188,7 +230,6 @@ async function processDocumentPublished(
     });
 
     // AOSS document: matches the retrieval schema (retrieval.ts buildKnnQuery)
-    const aossDocId = `${tenantId}:${documentId}:${section.harmonizationKey}`;
     const aossDoc = {
       embedding,
       text,
@@ -201,7 +242,7 @@ async function processDocumentPublished(
       },
     };
 
-    await aossWriteWithRetry(aossEndpoint, indexName, encodeURIComponent(aossDocId), aossDoc);
+    await aossWriteWithRetry(aossEndpoint, indexName, aossDoc);
   }
 
   logger.info('Document indexed successfully', {
