@@ -78,8 +78,33 @@ async function insertDocument(
     title: string;
     clauseRefs: string[];
     owner: string;
+    harmonizationKey?: string;
   },
 ): Promise<string> {
+  if (opts.harmonizationKey) {
+    // B2 (ruling C): idempotent finalize per harmonizationKey — ON CONFLICT
+    // updates the existing document instead of creating a duplicate.
+    const result = await txn.execute(
+      `INSERT INTO m1.documents (tenant_id, standard, doc_type, title, clause_refs, harmonization_key, owner_id, status, created_by)
+       VALUES (:tenantId, :standard, :docType, :title, :clauseRefs::text[], :hk, :owner, 'draft', :owner)
+       ON CONFLICT (tenant_id, harmonization_key) WHERE harmonization_key IS NOT NULL
+       DO UPDATE SET title = EXCLUDED.title, clause_refs = EXCLUDED.clause_refs,
+                     standard = EXCLUDED.standard, updated_at = NOW(), version = m1.documents.version + 1
+       RETURNING id`,
+      [
+        { name: 'tenantId', value: { stringValue: tenantId } },
+        { name: 'standard', value: { stringValue: opts.standard } },
+        { name: 'docType', value: { stringValue: opts.docType } },
+        { name: 'title', value: { stringValue: opts.title } },
+        { name: 'clauseRefs', value: { stringValue: `{${opts.clauseRefs.join(',')}}` } },
+        { name: 'hk', value: { stringValue: opts.harmonizationKey } },
+        { name: 'owner', value: { stringValue: opts.owner } },
+      ],
+    );
+    return (result.records![0][0] as { stringValue?: string }).stringValue!;
+  }
+
+  // Non-generated documents (manual creation, no harmonizationKey)
   const result = await txn.execute(
     `INSERT INTO m1.documents (tenant_id, standard, doc_type, title, clause_refs, owner_id, status, created_by)
      VALUES (:tenantId, :standard, :docType, :title, :clauseRefs::text[], :owner, 'draft', :owner)
@@ -245,6 +270,7 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
       title: MANUAL_TITLES[manualStandard] ?? MANUAL_TITLES.IMS,
       clauseRefs: allClauseNos,
       owner,
+      harmonizationKey: '__MANUAL__',
     });
     const manualContent = assembleManualContent(
       manualDocumentId,
@@ -281,6 +307,7 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
         title,
         clauseRefs: clauseNos,
         owner,
+        harmonizationKey: section.sectionKey,
       });
       const content = {
         schemaVersion: 1,
@@ -327,6 +354,7 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
       title: 'Standards Correlation Matrix',
       clauseRefs: allClauseNos,
       owner,
+      harmonizationKey: '__CORRELATION_MATRIX__',
     });
     const matrixVersion = await writeVersion(
       txn,
@@ -353,6 +381,7 @@ export async function handler(event: FinalizeInput): Promise<FinalizeOutput> {
       title: 'Documented Information Master List',
       clauseRefs: ['7.5'],
       owner,
+      harmonizationKey: '__MASTER_LIST__',
     });
     await writeVersion(
       txn,

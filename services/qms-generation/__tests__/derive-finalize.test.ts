@@ -401,4 +401,122 @@ describe('FinalizeManual handler', () => {
       }),
     );
   });
+
+  it('B2 (ruling C): INSERT INTO m1.documents uses ON CONFLICT (tenant_id, harmonization_key) for clause docs — idempotent finalize', async () => {
+    const REG_COLS = [
+      { name: 'id' },
+      { name: 'standard' },
+      { name: 'clause_no' },
+      { name: 'clause_title' },
+      { name: 'annex_sl_mode' },
+      { name: 'doc_type' },
+      { name: 'sort_order' },
+    ];
+    mockExecute.mockImplementation((sql: string) => {
+      if (sql.includes('FROM qms.generation_runs')) {
+        return Promise.resolve({
+          records: [
+            [
+              { arrayValue: { stringValues: ['ISO9001'] } },
+              { isNull: true },
+              { stringValue: 'owner-1' },
+              { stringValue: JSON.stringify({ legalName: 'X' }) },
+            ],
+          ],
+          columnMetadata: [
+            { name: 'standards' },
+            { name: 'manual_document_id' },
+            { name: 'requested_by' },
+            { name: 'payload' },
+          ],
+        });
+      }
+      if (sql.includes('FROM qms.generation_sections')) {
+        return Promise.resolve({
+          records: [
+            [
+              { stringValue: 's-1' },
+              { stringValue: '4.4' },
+              { stringValue: 'prose' },
+              { stringValue: 'sec/4.4.json' },
+              { arrayValue: { stringValues: ['c-1'] } },
+            ],
+          ],
+          columnMetadata: [
+            { name: 'id' },
+            { name: 'harmonization_key' },
+            { name: 'status' },
+            { name: 'content_s3_key' },
+            { name: 'clause_registry_ids' },
+          ],
+        });
+      }
+      if (sql.includes('FROM qms.clause_registry')) {
+        return Promise.resolve({
+          records: [
+            [
+              { stringValue: 'c-1' },
+              { stringValue: 'ISO9001' },
+              { stringValue: '4.4' },
+              { stringValue: 'QMS' },
+              { stringValue: 'shared' },
+              { stringValue: 'procedure' },
+              { longValue: 44 },
+            ],
+          ],
+          columnMetadata: REG_COLS,
+        });
+      }
+      if (sql.includes('INSERT INTO m1.documents')) {
+        return Promise.resolve({
+          records: [[{ stringValue: 'doc-idem' }]],
+          columnMetadata: [{ name: 'id' }],
+        });
+      }
+      return Promise.resolve({ records: [], columnMetadata: [] });
+    });
+    mockS3Send.mockImplementation((cmd: { input: { Key?: string } }) => {
+      if (cmd.constructor.name === 'GetObjectCommand') {
+        return Promise.resolve({
+          Body: {
+            transformToString: () =>
+              Promise.resolve(JSON.stringify({ sentences: [{ text: 'X.' }] })),
+          },
+        });
+      }
+      return Promise.resolve({});
+    });
+
+    await finalizeHandler({ runId: 'run-1', tenantId: 'tenant-test' });
+
+    // Every INSERT INTO m1.documents carries harmonization_key + ON CONFLICT
+    const insertCalls = mockExecute.mock.calls.filter((c) =>
+      (c[0] as string).includes('INSERT INTO m1.documents'),
+    );
+    expect(insertCalls.length).toBeGreaterThanOrEqual(3); // manual + clause + matrix (master list)
+
+    for (const call of insertCalls) {
+      const sql = call[0] as string;
+      expect(sql).toContain('harmonization_key');
+      expect(sql).toContain('ON CONFLICT');
+      // harmonizationKey param is present
+      const params = call[1] as Array<{ name: string; value: { stringValue?: string } }>;
+      const hkParam = params.find((p) => p.name === 'hk');
+      expect(hkParam).toBeDefined();
+      expect(hkParam!.value.stringValue).toBeTruthy();
+    }
+
+    // Verify well-known keys: manual=__MANUAL__, matrix=__CORRELATION_MATRIX__
+    const hkValues = insertCalls.map(
+      (c) =>
+        (c[1] as Array<{ name: string; value: { stringValue?: string } }>).find(
+          (p) => p.name === 'hk',
+        )!.value.stringValue,
+    );
+    expect(hkValues).toContain('__MANUAL__');
+    expect(hkValues).toContain('__CORRELATION_MATRIX__');
+    expect(hkValues).toContain('__MASTER_LIST__');
+    // Clause doc gets the section's sectionKey
+    expect(hkValues).toContain('4.4');
+  });
 });
