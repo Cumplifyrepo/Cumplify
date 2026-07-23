@@ -49,6 +49,8 @@ function createTestStack(): Template {
     auditSinkQueueArn: 'arn:aws:sqs:us-east-1:123456789012:AuditSinkQueue.fifo',
     recordsQueueArn: 'arn:aws:sqs:us-east-1:123456789012:RecordsQueue',
     recordsDlqUrl: 'https://sqs.us-east-1.amazonaws.com/123456789012/RecordsDlq',
+    tenantDocsIndexerQueueArn: 'arn:aws:sqs:us-east-1:123456789012:TenantDocsIndexerQueue',
+    tenantDocsIndexerDlqUrl: 'https://sqs.us-east-1.amazonaws.com/123456789012/TenantDocsIndexerDlq',
     aossVpcEndpointId: 'vpce-0123456789abcdef0',
     vpc: ec2.Vpc.fromVpcAttributes(stack, 'MockVpc', {
       vpcId: 'vpc-0123456789abcdef0',
@@ -641,8 +643,9 @@ describe('Agent Handler Lambdas (H-2/H-4 Task 8R)', () => {
     });
     // 9 agent handler Lambdas (RS-8 adds RiskSentinelFn) + ComposeSectionFn
     // (spec-40 Task 5) + RegenerateSectionFn (GEN-6 — compose runs in-process) +
-    // IsoKbSeederFn (iso-kb-seeding Task 5) — all reach Bedrock via one door
-    expect(handlerLambdas.length).toBe(12);
+    // IsoKbSeederFn (iso-kb-seeding Task 5) + TenantDocsIndexerFn (B3) —
+    // all reach Bedrock via one door
+    expect(handlerLambdas.length).toBe(13);
   });
 
   it('SQS Event Source Mappings exist for consumer handlers', () => {

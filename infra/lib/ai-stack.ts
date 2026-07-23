@@ -59,6 +59,9 @@ export interface AiStackProps extends cdk.StackProps {
   readonly auditSinkQueueArn: string;
   readonly recordsQueueArn: string;
   readonly recordsDlqUrl: string;
+  // B3: tenant-docs indexer
+  readonly tenantDocsIndexerQueueArn: string;
+  readonly tenantDocsIndexerDlqUrl: string;
   // AOSS infra (from NetworkStack + SecurityStack)
   readonly aossVpcEndpointId: string;
   // VPC placement for the apply-template Lambda (AOSS is VPC-endpoint-only)
@@ -1038,6 +1041,93 @@ export class AiStack extends cdk.Stack {
       fieldName: 'askISO45001',
     });
 
+    // ─── B3: Tenant-docs indexer (Document.Published → embed → AOSS write) ──
+    // L1 MANDATE: MUST be vpcPlaced — AOSS VPCE-only network policy.
+    // Separate from agent handlers: needs RDS + S3 + AOSS write + embed invoke.
+    const tenantDocsIndexerQueue = sqs.Queue.fromQueueArn(
+      this,
+      'ImportedTenantDocsIndexerQueue',
+      props.tenantDocsIndexerQueueArn,
+    );
+    const tenantDocsIndexerDlq = props.tenantDocsIndexerDlqUrl;
+
+    const tenantDocsIndexerFn = new NodejsFunction(this, 'TenantDocsIndexerFn', {
+      entry: 'services/indexer/tenant-docs/handler.ts',
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(90), // 02-aoss-rule: timeout >= 60s
+      bundling: { externalModules: [], target: 'node22' },
+      environment: {
+        CLUSTER_ARN: props.clusterArn,
+        APP_ROLE_SECRET_ARN: appRoleSecretArn,
+        CONTENT_BUCKET: props.generalBucketName,
+        AOSS_TENANT_DOCS_ENDPOINT: collectionEndpoints['cumplify-tenant-docs-kb'],
+        AI_INVOKER_ARN: aiInvoker.functionArn,
+        DLQ_URL: tenantDocsIndexerDlq,
+        POWERTOOLS_SERVICE_NAME: 'indexer-tenant-docs',
+      },
+      // L1: VPC-placed — AOSS rejects public data-plane calls
+      vpc: props.vpc,
+      vpcSubnets: { subnets: props.privateSubnets },
+    });
+
+    // SQS event source
+    tenantDocsIndexerFn.addEventSource(
+      new SqsEventSource(tenantDocsIndexerQueue, {
+        batchSize: 1,
+        reportBatchItemFailures: true,
+      }),
+    );
+
+    // IAM: RDS Data API (read content_ref)
+    tenantDocsIndexerFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'rds-data:ExecuteStatement',
+          'rds-data:BeginTransaction',
+          'rds-data:CommitTransaction',
+          'rds-data:RollbackTransaction',
+        ],
+        resources: [props.clusterArn],
+      }),
+    );
+    // Secrets Manager (app_role secret for RDS Data API)
+    tenantDocsIndexerFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [appRoleSecretArn],
+      }),
+    );
+    // S3: read document content
+    tenantDocsIndexerFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: [`${props.generalBucketArn}/*`],
+      }),
+    );
+    // KMS decrypt (S3 SSE-KMS + Secrets Manager)
+    props.s3GeneralKey.grantDecrypt(tenantDocsIndexerFn);
+    props.dbSecretKey.grantDecrypt(tenantDocsIndexerFn);
+    // Lambda invoke: AI Invoker (one-door embed path)
+    tenantDocsIndexerFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['lambda:InvokeFunction'],
+        resources: [aiInvoker.functionArn],
+      }),
+    );
+    // AOSS: write (APIAccessAll on tenant-docs-kb collection)
+    tenantDocsIndexerFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['aoss:APIAccessAll'],
+        resources: collectionArns,
+      }),
+    );
+
+    // Add indexer role to AOSS data-access policy principals
+    const indexerRoleArn = tenantDocsIndexerFn.role!.roleArn;
+
     // ─── Spec 40: DocGen generation plane (design §4.1) ────────────────────
     // SeedSections → Map(ComposeSection, MaxConcurrency 4) → FinalizeManual.
     // State machine name is DETERMINISTIC (`cumplify-docgen-<env>`): QmsFn in
@@ -1532,7 +1622,7 @@ export class AiStack extends cdk.Stack {
                 Permission: ['aoss:DescribeIndex', 'aoss:ReadDocument'],
               },
             ],
-            Principal: [aiInvoker.role!.roleArn, ...agentHandlerRoleArns],
+            Principal: [aiInvoker.role!.roleArn, ...agentHandlerRoleArns, indexerRoleArn],
           },
           {
             // WRITE access: weight-seeder + apply-template (T-9a exact role ARNs)
@@ -1558,7 +1648,7 @@ export class AiStack extends cdk.Stack {
                 ],
               },
             ],
-            Principal: [weightSeeder.role!.roleArn, applyTemplateFn.role!.roleArn],
+            Principal: [weightSeeder.role!.roleArn, applyTemplateFn.role!.roleArn, indexerRoleArn],
           },
           {
             // Task-12 prover: own block because cleanup needs aoss:DeleteIndex,

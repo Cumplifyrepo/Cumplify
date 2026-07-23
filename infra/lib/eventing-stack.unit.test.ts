@@ -27,8 +27,8 @@ describe('EventingStack — InputTransformer assertions', () => {
     const rules = template.findResources('AWS::Events::Rule');
     const ruleIds = Object.keys(rules);
 
-    // We expect 7 rules
-    expect(ruleIds.length).toBe(7);
+    // We expect 8 rules (R-1..R-8: nc-triage, capa-intake, audit-sink, hazard, aspect, review-fanout, records, tenant-docs-indexer)
+    expect(ruleIds.length).toBe(8);
 
     for (const ruleId of ruleIds) {
       const rule = rules[ruleId];
@@ -110,13 +110,13 @@ describe('EventingStack — InputTransformer assertions', () => {
     });
   });
 
-  it('all 15 queues have enforceSSL (SQS policy with aws:SecureTransport)', () => {
-    // 15 queues: 7 consumer + 7 DLQ + 1 delivery-failure
+  it('all 17 queues have enforceSSL (SQS policy with aws:SecureTransport)', () => {
+    // 17 queues: 8 consumer + 8 DLQ + 1 delivery-failure
     const queues = template.findResources('AWS::SQS::Queue');
-    expect(Object.keys(queues).length).toBe(15);
+    expect(Object.keys(queues).length).toBe(17);
 
     // Each queue should have an associated QueuePolicy with SecureTransport condition
     const policies = template.findResources('AWS::SQS::QueuePolicy');
-    expect(Object.keys(policies).length).toBe(15);
+    expect(Object.keys(policies).length).toBe(17);
   });
 });

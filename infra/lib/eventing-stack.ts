@@ -35,6 +35,8 @@ export class EventingStack extends cdk.Stack {
   public readonly capaIntakeDlqUrl: string;
   public readonly recordsQueueArn: string;
   public readonly recordsDlqUrl: string;
+  public readonly tenantDocsIndexerQueueArn: string;
+  public readonly tenantDocsIndexerDlqUrl: string;
 
   constructor(scope: Construct, id: string, props: EventingStackProps) {
     super(scope, id, props);
@@ -290,6 +292,24 @@ export class EventingStack extends cdk.Stack {
     recordsRule.addTarget(new targets.SqsQueue(recordsQueue, { ...ruleRetryPolicy }));
     this.applyInputTransformer(recordsRule, canonicalTransformer);
 
+    // R-8: tenant-docs-indexer rule (B3: indexes published documents into AOSS)
+    const tenantDocsIndexerDlq = this.createStdDlq('TenantDocsIndexerDlq');
+    const tenantDocsIndexerQueue = this.createStdQueue('TenantDocsIndexerQueue', tenantDocsIndexerDlq);
+
+    const tenantDocsIndexerRule = new events.Rule(this, 'TenantDocsIndexerRule', {
+      eventBus: bus,
+      eventPattern: {
+        detailType: ['Document.Published'],
+      },
+    });
+    tenantDocsIndexerRule.addTarget(
+      new targets.SqsQueue(tenantDocsIndexerQueue, { ...ruleRetryPolicy }),
+    );
+    this.applyInputTransformer(tenantDocsIndexerRule, canonicalTransformer);
+
+    this.tenantDocsIndexerQueueArn = tenantDocsIndexerQueue.queueArn;
+    this.tenantDocsIndexerDlqUrl = tenantDocsIndexerDlq.queueUrl;
+
     // ─── CloudWatch DLQ Alarms (FIX-6: treatMissingData NOT_BREACHING) ──────
     const allDlqs = [
       { id: 'CapaIntakeDlqAlarm', dlq: capaIntakeDlq },
@@ -299,6 +319,7 @@ export class EventingStack extends cdk.Stack {
       { id: 'AspectDlqAlarm', dlq: aspectDlq },
       { id: 'ReviewFanoutDlqAlarm', dlq: reviewFanoutDlq },
       { id: 'RecordsDlqAlarm', dlq: recordsDlq },
+      { id: 'TenantDocsIndexerDlqAlarm', dlq: tenantDocsIndexerDlq },
       { id: 'DeliveryFailureDlqAlarm', dlq: deliveryFailureDlq },
     ];
 
@@ -328,6 +349,7 @@ export class EventingStack extends cdk.Stack {
       ['Aspect', aspectQueue, aspectDlq],
       ['ReviewFanout', reviewFanoutQueue, reviewFanoutDlq],
       ['Records', recordsQueue, recordsDlq],
+      ['TenantDocsIndexer', tenantDocsIndexerQueue, tenantDocsIndexerDlq],
     ];
     for (const [name, queue, dlq] of queueOutputs) {
       new cdk.CfnOutput(this, `${name}QueueUrl`, { value: queue.queueUrl });
@@ -345,6 +367,7 @@ export class EventingStack extends cdk.Stack {
       ['AspectRule', aspectRule],
       ['ReviewFanoutRule', reviewFanoutRule],
       ['RecordsRule', recordsRule],
+      ['TenantDocsIndexerRule', tenantDocsIndexerRule],
     ];
     for (const [name, rule] of ruleOutputs) {
       new cdk.CfnOutput(this, `${name}Name`, { value: rule.ruleName });
