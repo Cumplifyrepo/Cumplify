@@ -1,38 +1,21 @@
 /**
- * Tenant-docs indexer unit tests (B3).
- * Hermetic: mocks RDS Data API, S3, embed (one-door), AOSS signed client.
- * Validates: C-2 transaction pattern, S3 fetch, prose-only chunking, embed
- * call per section, POST /_doc auto-ID writes, skips non-prose sections,
- * handles missing payload gracefully, retries on 403/404/429/5xx.
+ * Tenant-docs indexer unit tests (B3, amendment 2).
+ * Hermetic: mocks S3, embed (one-door), AOSS signed client.
+ * NO RDS mocks — contentRef comes from the event payload (B3-VPC-1).
+ * Validates: payload-driven contentRef read, S3 fetch, prose-only chunking,
+ * embed call per section, POST /_doc auto-ID writes, skips on missing
+ * contentRef (old-format drain), IMS-standard passthrough, retries on
+ * 403/404/429/5xx.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ─── Hoisted mocks ──────────────────────────────────────────────────────────
 
-const { mockRdsSend, mockS3Send, mockEmbedFn, mockAossFetch } = vi.hoisted(() => ({
-  mockRdsSend: vi.fn(),
+const { mockS3Send, mockEmbedFn, mockAossFetch } = vi.hoisted(() => ({
   mockS3Send: vi.fn(),
   mockEmbedFn: vi.fn(),
   mockAossFetch: vi.fn(),
-}));
-
-vi.mock('@aws-sdk/client-rds-data', () => ({
-  RDSDataClient: class {
-    send = mockRdsSend;
-  },
-  BeginTransactionCommand: class {
-    constructor(public input: unknown) {}
-  },
-  ExecuteStatementCommand: class {
-    constructor(public input: unknown) {}
-  },
-  CommitTransactionCommand: class {
-    constructor(public input: unknown) {}
-  },
-  RollbackTransactionCommand: class {
-    constructor(public input: unknown) {}
-  },
 }));
 
 vi.mock('@aws-sdk/client-s3', () => ({
@@ -69,8 +52,6 @@ vi.mock('../../eventing/src/consumer.js', async (importOriginal) => {
 
 // ─── Env setup (L4: call-time read) ─────────────────────────────────────────
 
-process.env.CLUSTER_ARN = 'arn:aws:rds:us-east-1:123:cluster:test';
-process.env.APP_ROLE_SECRET_ARN = 'arn:aws:secretsmanager:us-east-1:123:secret:test';
 process.env.CONTENT_BUCKET = 'mock-general-bucket';
 process.env.AOSS_TENANT_DOCS_ENDPOINT = 'https://mock.us-east-1.aoss.amazonaws.com';
 process.env.AI_INVOKER_ARN = 'arn:aws:lambda:us-east-1:123:function:ai-invoker';
@@ -81,15 +62,18 @@ import type { CumplifyEvent } from '../../eventing/src/types.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function makeEvent(payload: Record<string, unknown>): CumplifyEvent<any> {
+function makeEvent(
+  payload: Record<string, unknown>,
+  standard: string = 'ISO9001',
+): CumplifyEvent<any> {
   return {
     tenantId: 'tenant-aaa',
     eventId: 'evt-1',
-    timestamp: '2026-07-22T00:00:00Z',
+    timestamp: '2026-07-23T00:00:00Z',
     actor: 'user-1',
     module: 'M1',
     clauseRef: 'ISO 9001 7.5.3',
-    standard: 'ISO9001',
+    standard: standard as any,
     auditTrail: true,
     entityId: 'doc-1',
     payload,
@@ -132,34 +116,7 @@ function mockS3ContentStream(content: unknown) {
 
 const FAKE_EMBEDDING = new Array(1024).fill(0.01);
 
-/**
- * Wire the C-2 RDS transaction pattern:
- * call 0: BeginTransactionCommand → {transactionId}
- * call 1: ExecuteStatementCommand (set_config) → {}
- * call 2: ExecuteStatementCommand (SELECT content_ref) → records
- * call 3: CommitTransactionCommand → {}
- */
-function wireRdsHappyPath(contentRef: string = CONTENT_REF) {
-  mockRdsSend
-    .mockResolvedValueOnce({ transactionId: 'txn-test' }) // Begin
-    .mockResolvedValueOnce({}) // set_config
-    .mockResolvedValueOnce({ // SELECT content_ref
-      records: [[{ stringValue: contentRef }]],
-      columnMetadata: [{ name: 'content_ref' }],
-    })
-    .mockResolvedValueOnce({}); // Commit
-}
-
-function wireRdsNoResult() {
-  mockRdsSend
-    .mockResolvedValueOnce({ transactionId: 'txn-test' }) // Begin
-    .mockResolvedValueOnce({}) // set_config
-    .mockResolvedValueOnce({ records: [], columnMetadata: [] }) // SELECT: empty
-    .mockResolvedValueOnce({}); // Commit
-}
-
 beforeEach(() => {
-  mockRdsSend.mockReset();
   mockS3Send.mockReset();
   mockEmbedFn.mockReset();
   mockAossFetch.mockReset();
@@ -177,19 +134,12 @@ beforeEach(() => {
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 describe('Tenant-docs indexer (B3)', () => {
-  it('indexes only prose sections: C-2 txn → S3 → embeds → POST /_doc (auto-ID)', async () => {
-    wireRdsHappyPath();
-    await processDocumentPublished(makeEvent({ versionId: 'v1', documentId: 'doc-1' }));
+  it('happy path: reads contentRef from payload → S3 → embeds prose → POST /_doc', async () => {
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1', contentRef: CONTENT_REF }),
+    );
 
-    // RDS: C-2 pattern (Begin + set_config + SELECT + Commit = 4 calls)
-    expect(mockRdsSend).toHaveBeenCalledTimes(4);
-    const setConfigCmd = mockRdsSend.mock.calls[1][0] as { input: { sql: string } };
-    expect(setConfigCmd.input.sql).toContain('set_config');
-    const selectCmd = mockRdsSend.mock.calls[2][0] as { input: { sql: string } };
-    expect(selectCmd.input.sql).toContain('content_ref');
-    expect(selectCmd.input.sql).toContain(':versionId::uuid');
-
-    // S3 called for content
+    // S3 called with correct bucket and key from payload
     expect(mockS3Send).toHaveBeenCalledOnce();
     const s3Cmd = mockS3Send.mock.calls[0][0] as { input: { Bucket: string; Key: string } };
     expect(s3Cmd.input.Key).toBe(CONTENT_REF);
@@ -219,32 +169,47 @@ describe('Tenant-docs indexer (B3)', () => {
     expect(parsed.metadata.standard).toBe('ISO9001');
   });
 
-  it('skips gracefully when versionId is missing from payload', async () => {
-    await processDocumentPublished(makeEvent({ documentId: 'doc-1' }));
+  it('missing contentRef in payload → skip with warn (old-format event drain)', async () => {
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1' }),
+    );
 
-    expect(mockRdsSend).not.toHaveBeenCalled();
+    // No S3, embed, or AOSS calls — graceful skip
     expect(mockS3Send).not.toHaveBeenCalled();
     expect(mockEmbedFn).not.toHaveBeenCalled();
     expect(mockAossFetch).not.toHaveBeenCalled();
   });
 
-  it('skips gracefully when documentId is missing from payload', async () => {
-    await processDocumentPublished(makeEvent({ versionId: 'v1' }));
-
-    expect(mockRdsSend).not.toHaveBeenCalled();
-    expect(mockS3Send).not.toHaveBeenCalled();
-  });
-
-  it('skips when no content_ref found (version not in RDS)', async () => {
-    wireRdsNoResult();
-    await processDocumentPublished(makeEvent({ versionId: 'v1', documentId: 'doc-1' }));
+  it('empty string contentRef → skip with warn', async () => {
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1', contentRef: '' }),
+    );
 
     expect(mockS3Send).not.toHaveBeenCalled();
     expect(mockEmbedFn).not.toHaveBeenCalled();
   });
 
+  it('missing versionId or documentId → skip', async () => {
+    await processDocumentPublished(makeEvent({ contentRef: CONTENT_REF }));
+    expect(mockS3Send).not.toHaveBeenCalled();
+
+    await processDocumentPublished(makeEvent({ versionId: 'v1', contentRef: CONTENT_REF }));
+    expect(mockS3Send).not.toHaveBeenCalled();
+  });
+
+  it('IMS standard passes through to AOSS metadata (multi-standard docs)', async () => {
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1', contentRef: CONTENT_REF }, 'IMS'),
+    );
+
+    expect(mockAossFetch).toHaveBeenCalledTimes(2);
+    const body1 = JSON.parse(mockAossFetch.mock.calls[0][3]);
+    expect(body1.metadata.standard).toBe('IMS');
+    const body2 = JSON.parse(mockAossFetch.mock.calls[1][3]);
+    expect(body2.metadata.standard).toBe('IMS');
+  });
+
   it('skips when document has no prose sections', async () => {
-    wireRdsHappyPath();
     mockS3Send.mockResolvedValue(
       mockS3ContentStream({
         schemaVersion: 1,
@@ -252,37 +217,40 @@ describe('Tenant-docs indexer (B3)', () => {
       }),
     );
 
-    await processDocumentPublished(makeEvent({ versionId: 'v1', documentId: 'doc-1' }));
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1', contentRef: CONTENT_REF }),
+    );
 
     expect(mockEmbedFn).not.toHaveBeenCalled();
     expect(mockAossFetch).not.toHaveBeenCalled();
   });
 
   it('POST path is /cumplify-tenant-docs/_doc for all sections (auto-ID)', async () => {
-    wireRdsHappyPath();
-    await processDocumentPublished(makeEvent({ versionId: 'v1', documentId: 'doc-1' }));
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1', contentRef: CONTENT_REF }),
+    );
 
     for (const call of mockAossFetch.mock.calls) {
-      expect(call[2]).toBe('/cumplify-tenant-docs/_doc');
       expect(call[0]).toBe('POST');
+      expect(call[2]).toBe('/cumplify-tenant-docs/_doc');
     }
   });
 
   it('retries on 503 from AOSS (cold-start backoff)', async () => {
-    wireRdsHappyPath();
     mockAossFetch
       .mockResolvedValueOnce({ status: 503, body: 'Service Unavailable' })
       .mockResolvedValueOnce({ status: 201, body: '{"result":"created"}' })
       .mockResolvedValue({ status: 201, body: '{"result":"created"}' });
 
-    await processDocumentPublished(makeEvent({ versionId: 'v1', documentId: 'doc-1' }));
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1', contentRef: CONTENT_REF }),
+    );
 
     // First section: 503 then 201 = 2 calls; second section: 201 = 1 call → total 3
     expect(mockAossFetch).toHaveBeenCalledTimes(3);
   });
 
   it('retries on 403 and 404 from AOSS (house write-path rule)', async () => {
-    wireRdsHappyPath();
     mockS3Send.mockResolvedValue(
       mockS3ContentStream({
         schemaVersion: 1,
@@ -294,7 +262,9 @@ describe('Tenant-docs indexer (B3)', () => {
       .mockResolvedValueOnce({ status: 404, body: 'Not Found' })
       .mockResolvedValueOnce({ status: 201, body: '{"result":"created"}' });
 
-    await processDocumentPublished(makeEvent({ versionId: 'v1', documentId: 'doc-1' }));
+    await processDocumentPublished(
+      makeEvent({ versionId: 'v1', documentId: 'doc-1', contentRef: CONTENT_REF }),
+    );
 
     expect(mockAossFetch).toHaveBeenCalledTimes(3);
   });

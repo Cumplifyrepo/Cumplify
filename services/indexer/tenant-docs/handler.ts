@@ -3,8 +3,13 @@
  * cumplify-tenant-docs AOSS collection for agent retrieval.
  *
  * Trigger: Document.Published event via SQS (standard queue, eventing-stack).
- * Flow: read content_ref from RDS → fetch content from S3 → chunk prose
- * sections → embed via createEmbedFn (one-door) → bulk write to AOSS.
+ * Flow: read contentRef from event payload → fetch content from S3 → chunk
+ * prose sections → embed via createEmbedFn (one-door) → POST to AOSS.
+ *
+ * B3-VPC-1: the RDS leg was removed — this Lambda runs in the zero-NAT VPC
+ * (L1 mandate for AOSS VPCE-only) and cannot reach the RDS Data API endpoint.
+ * contentRef is emitted by the publishControlledDocument resolver in the
+ * Document.Published event payload instead.
  *
  * L1 MANDATE: this Lambda MUST be vpcPlaced — AOSS collections reject
  * public data-plane calls (VPCE-only network policy). Without VPC
@@ -16,13 +21,6 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-import {
-  RDSDataClient,
-  BeginTransactionCommand,
-  ExecuteStatementCommand,
-  CommitTransactionCommand,
-  RollbackTransactionCommand,
-} from '@aws-sdk/client-rds-data';
 import { createHandler } from '../../eventing/src/consumer.js';
 import { createEmbedFn, type EmbedFn } from '../../agents/shared/invoke-transport.js';
 import { signedAossFetch } from '../../agents/shared/aoss-signed-client.js';
@@ -39,7 +37,6 @@ function env(key: string): string {
 
 // ─── Clients (module-scope cold-cached per Lambda container) ────────────────
 const s3Client = new S3Client({});
-const rdsClient = new RDSDataClient({});
 const embedFn: EmbedFn = createEmbedFn();
 
 // ─── AOSS write with exponential-backoff retry (02-aoss-rule) ───────────────
@@ -117,6 +114,7 @@ interface DocumentContent {
 interface DocumentPublishedPayload {
   versionId: string;
   documentId: string;
+  contentRef?: string;
 }
 
 // ─── Handler ────────────────────────────────────────────────────────────────
@@ -125,81 +123,36 @@ async function processDocumentPublished(
   event: CumplifyEvent<DocumentPublishedPayload>,
 ): Promise<void> {
   const { tenantId, standard, payload } = event;
-  const { versionId, documentId } = payload;
+  const { versionId, documentId, contentRef } = payload;
 
   if (!versionId || !documentId) {
     logger.warn('Missing versionId or documentId in payload — skipping', { tenantId });
     return;
   }
 
-  const clusterArn = env('CLUSTER_ARN');
-  const secretArn = env('APP_ROLE_SECRET_ARN');
+  // B3-VPC-1: contentRef comes from the event payload (emitter amendment).
+  // Old-format events without contentRef drain gracefully — skip, don't crash.
+  if (!contentRef) {
+    logger.warn('Missing contentRef in payload — old-format event, skipping', {
+      tenantId,
+      documentId,
+      versionId,
+    });
+    return;
+  }
+
   const bucket = env('CONTENT_BUCKET');
   const aossEndpoint = env('AOSS_TENANT_DOCS_ENDPOINT');
   const indexName = 'cumplify-tenant-docs';
 
-  // 1. Read content_ref from RDS via C-2 pattern (BeginTransaction → set_config → SELECT → Commit)
-  const { transactionId } = await rdsClient.send(
-    new BeginTransactionCommand({
-      resourceArn: clusterArn,
-      secretArn,
-      database: 'postgres',
-    }),
-  );
-
-  let contentRef: string | undefined;
-  try {
-    // C-2 INVARIANT: set_config is the FIRST statement, transaction-local (true)
-    await rdsClient.send(
-      new ExecuteStatementCommand({
-        resourceArn: clusterArn,
-        secretArn,
-        database: 'postgres',
-        transactionId,
-        sql: `SELECT set_config('app.tenant_id', :tenantId, true)`,
-        parameters: [{ name: 'tenantId', value: { stringValue: tenantId } }],
-      }),
-    );
-
-    const contentRefResult = await rdsClient.send(
-      new ExecuteStatementCommand({
-        resourceArn: clusterArn,
-        secretArn,
-        database: 'postgres',
-        transactionId,
-        sql: `SELECT content_ref FROM m1.document_versions WHERE id = :versionId::uuid`,
-        parameters: [{ name: 'versionId', value: { stringValue: versionId } }],
-        includeResultMetadata: true,
-      }),
-    );
-
-    await rdsClient.send(
-      new CommitTransactionCommand({ resourceArn: clusterArn, secretArn, transactionId }),
-    );
-
-    contentRef = contentRefResult.records?.[0]?.[0]?.stringValue;
-  } catch (err) {
-    try {
-      await rdsClient.send(
-        new RollbackTransactionCommand({ resourceArn: clusterArn, secretArn, transactionId }),
-      );
-    } catch { /* never mask */ }
-    throw err;
-  }
-
-  if (!contentRef) {
-    logger.warn('No content_ref found for version — skipping', { tenantId, versionId });
-    return;
-  }
-
-  // 2. Fetch content from S3
+  // 1. Fetch content from S3
   const s3Resp = await s3Client.send(
     new GetObjectCommand({ Bucket: bucket, Key: contentRef }),
   );
   const bodyStr = await s3Resp.Body!.transformToString('utf-8');
   const content: DocumentContent = JSON.parse(bodyStr);
 
-  // 3. Chunk prose sections — each prose section becomes one index document
+  // 2. Chunk prose sections — each prose section becomes one index document
   const proseSections = content.sections.filter((s) => s.kind === 'prose' && s.sentences?.length);
 
   if (proseSections.length === 0) {
@@ -214,7 +167,7 @@ async function processDocumentPublished(
     sectionCount: proseSections.length,
   });
 
-  // 4. Embed + write each section
+  // 3. Embed + write each section
   for (const section of proseSections) {
     const text = section.sentences!.map((s) => s.text).join(' ');
     if (!text.trim()) continue;

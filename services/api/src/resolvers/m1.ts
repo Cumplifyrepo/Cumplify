@@ -524,11 +524,11 @@ async function publishControlledDocument(event: AppSyncEvent, tenantId: string, 
       actor,
       module: 'M1',
       clauseRef: 'ISO 9001 7.5.3',
-      standard: 'ISO9001',
+      standard: meta.standard as 'ISO9001' | 'ISO14001' | 'ISO45001' | 'IMS',
       detailType: 'Document.Published',
       source: 'cumplify.m1.document-studio',
-      entityId: meta.documentId, // mutation returns the document (RETURNING d.*)
-      payload: { versionId, documentId: meta.documentId, ...sealed },
+      entityId: meta.documentId,
+      payload: { versionId, documentId: meta.documentId, contentRef: meta.contentRef, ...sealed },
     });
     return marshalOne(result);
   } catch (err) {

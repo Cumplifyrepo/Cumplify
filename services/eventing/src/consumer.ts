@@ -59,7 +59,8 @@ export function createHandler(config: ConsumerConfig) {
           // Transient error — let SQS retry via visibility timeout
           logger.error('Transient processing failure', {
             messageId: record.messageId,
-            error: (err as Error).message,
+            error: ((err as Error).message ?? '').slice(0, 300),
+            errorName: (err as Error).name,
           });
           batchItemFailures.push({ itemIdentifier: record.messageId });
         }
@@ -156,7 +157,8 @@ export function createFifoHandler(config: FifoConsumerConfig) {
           // TRANSIENT FAILURE: report this + ALL subsequent as unprocessed
           logger.error('Transient failure — stopping batch (FIFO)', {
             messageId: record.messageId,
-            error: (err as Error).message,
+            error: ((err as Error).message ?? '').slice(0, 300),
+            errorName: (err as Error).name,
           });
           for (let j = i; j < sqsEvent.Records.length; j++) {
             batchItemFailures.push({ itemIdentifier: sqsEvent.Records[j].messageId });

@@ -1060,8 +1060,6 @@ export class AiStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(90), // 02-aoss-rule: timeout >= 60s
       bundling: { externalModules: [], target: 'node22' },
       environment: {
-        CLUSTER_ARN: props.clusterArn,
-        APP_ROLE_SECRET_ARN: appRoleSecretArn,
         CONTENT_BUCKET: props.generalBucketName,
         AOSS_TENANT_DOCS_ENDPOINT: collectionEndpoints['cumplify-tenant-docs-kb'],
         AI_INVOKER_ARN: aiInvoker.functionArn,
@@ -1081,25 +1079,6 @@ export class AiStack extends cdk.Stack {
       }),
     );
 
-    // IAM: RDS Data API (read content_ref)
-    tenantDocsIndexerFn.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: [
-          'rds-data:ExecuteStatement',
-          'rds-data:BeginTransaction',
-          'rds-data:CommitTransaction',
-          'rds-data:RollbackTransaction',
-        ],
-        resources: [props.clusterArn],
-      }),
-    );
-    // Secrets Manager (app_role secret for RDS Data API)
-    tenantDocsIndexerFn.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ['secretsmanager:GetSecretValue'],
-        resources: [appRoleSecretArn],
-      }),
-    );
     // S3: read document content
     tenantDocsIndexerFn.addToRolePolicy(
       new iam.PolicyStatement({
@@ -1107,9 +1086,8 @@ export class AiStack extends cdk.Stack {
         resources: [`${props.generalBucketArn}/*`],
       }),
     );
-    // KMS decrypt (S3 SSE-KMS + Secrets Manager)
+    // KMS decrypt (S3 SSE-KMS)
     props.s3GeneralKey.grantDecrypt(tenantDocsIndexerFn);
-    props.dbSecretKey.grantDecrypt(tenantDocsIndexerFn);
     // Lambda invoke: AI Invoker (one-door embed path)
     tenantDocsIndexerFn.addToRolePolicy(
       new iam.PolicyStatement({
