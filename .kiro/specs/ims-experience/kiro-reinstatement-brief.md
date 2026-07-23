@@ -56,6 +56,27 @@ Per-customer portal-session mutation + `NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL`
 ### B5 — `/qms` → `/manual` flip after Setup Wizard (Migration Law stubs
 already prepared — activate, don't rebuild).
 
+### B6 — GEN-LANE-1: composer empty-`factRefs` flake takes a whole run PARTIAL
+Found live during B2 ruling-C acceptance (2026-07-23), evidence
+`b2-readback-green.md` §3 negative control. On a full `generateImsManual`
+re-run the composer emitted a sentence with an **empty `factRefs` array** for
+section `10.2#ISO45001`; the structured-output schema rejects it
+(`services/ai-invoker/src/doc-composer-schema.ts:24-28`, `factRefs`
+`minItems:1` → "expected ≥1 items,
+got 0"), the invoker schema-retry (SERVE-10) exhausted, the section never
+composed, and the run terminated **PARTIAL**. Consequence: that one clause's
+register doc was left at its **stale version** (`10.2#ISO45001` was the sole
+key of 45 that did not bump v→v+1) with **no user-facing signal** — the other
+44 sections finalized fine. This is a pre-existing generation-lane class, NOT
+a B2 defect (B2's idempotent finalize behaved correctly: errored section →
+no finalize call → no version change). Design options (Kiro's call): prime the
+schema-retry prompt on the empty-`factRefs` failure specifically; add a
+per-sentence repair pass before giving up; or degrade gracefully so a single
+flaky section surfaces as a named, re-runnable gap instead of a silent PARTIAL.
+Deterministic checker parity to preserve:
+`services/qms-generation/src/checker.ts:64` (fact RESOLUTION
+stays in checker code — the model never grades itself).
+
 ## 3. Standing lessons — every one was found live, not in tests
 
 - **L1 · AOSS is VPCE-only.** All three collections reject public data-plane
